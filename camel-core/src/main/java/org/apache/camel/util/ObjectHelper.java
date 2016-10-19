@@ -42,9 +42,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
+import java.util.function.Function;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -456,6 +458,23 @@ public final class ObjectHelper {
     }
 
     /**
+     * Returns an object after the given token
+     *
+     * @param text  the text
+     * @param after the token
+     * @param mapper a mapping function to convert the string after the token to type T
+     * @return an Optional describing the result of applying a mapping function to the text after the token.
+     */
+    public static <T> Optional<T> after(String text, String after, Function<String, T> mapper) {
+        String result = after(text, after);
+        if (result == null) {
+            return Optional.empty();            
+        } else {
+            return Optional.ofNullable(mapper.apply(result));
+        }
+    }
+
+    /**
      * Returns the string before the given token
      *
      * @param text  the text
@@ -468,6 +487,24 @@ public final class ObjectHelper {
         }
         return text.substring(0, text.indexOf(before));
     }
+
+    /**
+     * Returns an object before the given token
+     *
+     * @param text  the text
+     * @param before the token
+     * @param mapper a mapping function to convert the string before the token to type T
+     * @return an Optional describing the result of applying a mapping function to the text before the token.
+     */
+    public static <T> Optional<T> before(String text, String before, Function<String, T> mapper) {
+        String result = before(text, before);
+        if (result == null) {
+            return Optional.empty();            
+        } else {
+            return Optional.ofNullable(mapper.apply(result));
+        }
+    }
+
 
     /**
      * Returns the string between the given tokens
@@ -483,6 +520,24 @@ public final class ObjectHelper {
             return null;
         }
         return before(text, before);
+    }
+
+    /**
+     * Returns an object between the given token
+     *
+     * @param text  the text
+     * @param after the before token
+     * @param before the after token
+     * @param mapper a mapping function to convert the string between the token to type T
+     * @return an Optional describing the result of applying a mapping function to the text between the token.
+     */
+    public static <T> Optional<T> between(String text, String after, String before, Function<String, T> mapper) {
+        String result = between(text, after, before);
+        if (result == null) {
+            return Optional.empty();            
+        } else {
+            return Optional.ofNullable(mapper.apply(result));
+        }
     }
 
     /**
@@ -548,6 +603,24 @@ public final class ObjectHelper {
         return text.substring(pos + 1, pos2);
     }
 
+    /**
+     * Returns an object between the most outer pair of tokens
+     *
+     * @param text  the text
+     * @param after the before token
+     * @param before the after token
+     * @param mapper a mapping function to convert the string between the most outer pair of tokens to type T
+     * @return an Optional describing the result of applying a mapping function to the text between the most outer pair of tokens.
+     */
+    public static <T> Optional<T> betweenOuterPair(String text, char before, char after, Function<String, T> mapper) {
+        String result = betweenOuterPair(text, before, after);
+        if (result == null) {
+            return Optional.empty();            
+        } else {
+            return Optional.ofNullable(mapper.apply(result));
+        }
+    }
+    
     /**
      * Returns true if the collection contains the specified value
      */
