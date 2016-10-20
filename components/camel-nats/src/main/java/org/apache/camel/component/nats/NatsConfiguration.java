@@ -222,37 +222,37 @@ public class NatsConfiguration {
     /**
      * set set secure option indicating TLS is required
      */
-	public boolean isSecure() {
-		return secure;
-	}
+    public boolean isSecure() {
+        return secure;
+    }
 
-	public void setSecure(boolean secure) {
-		this.secure = secure;
-	}
-	
+    public void setSecure(boolean secure) {
+        this.secure = secure;
+    }
+
     /**
      * TLS Debug, it will add additional console output
      */
     public boolean isTlsDebug() {
-		return tlsDebug;
-	}
+        return tlsDebug;
+    }
 
-	public void setTlsDebug(boolean tlsDebug) {
-		this.tlsDebug = tlsDebug;
-	}
+    public void setTlsDebug(boolean tlsDebug) {
+        this.tlsDebug = tlsDebug;
+    }
 
     /**
      * To configure security using SSLContextParameters
      */
-	public SSLContextParameters getSslContextParameters() {
-		return sslContextParameters;
-	}
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
 
-	public void setSslContextParameters(SSLContextParameters sslContextParameters) {
-		this.sslContextParameters = sslContextParameters;
-	}
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
 
-	private static <T> void addPropertyIfNotNull(Properties props, String key, T value) {
+    private static <T> void addPropertyIfNotNull(Properties props, String key, T value) {
         if (value != null) {
             props.put(key, value);
         }
