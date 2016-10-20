@@ -68,7 +68,7 @@ The Nats component supports 21 endpoint options which are listed below:
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | replySubject | producer |  | String | the subject to which subscribers should send response
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| secure | security | false | boolean | set set secure option indicating TLS is required
+| secure | security | false | boolean | Set secure option indicating TLS is required
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
 | tlsDebug | security | false | boolean | TLS Debug it will add additional console output
 |=======================================================================
