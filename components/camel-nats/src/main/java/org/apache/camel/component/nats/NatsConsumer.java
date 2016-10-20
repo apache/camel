@@ -17,9 +17,12 @@
 package org.apache.camel.component.nats;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeoutException;
+
+import javax.net.ssl.SSLContext;
 
 import io.nats.client.Connection;
 import io.nats.client.ConnectionFactory;
@@ -95,9 +98,16 @@ public class NatsConsumer extends DefaultConsumer {
         }
     }
 
-    private Connection getConnection() throws IOException, InterruptedException, TimeoutException {
+    private Connection getConnection() throws IOException, InterruptedException, TimeoutException, GeneralSecurityException {
         Properties prop = getEndpoint().getNatsConfiguration().createProperties();
         ConnectionFactory factory = new ConnectionFactory(prop);
+        if (getEndpoint().getNatsConfiguration().getSslContextParameters() != null && getEndpoint().getNatsConfiguration().isSecure()) {
+        	SSLContext sslCtx = getEndpoint().getNatsConfiguration().getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()); 
+        	factory.setSSLContext(sslCtx);
+        	if (getEndpoint().getNatsConfiguration().isTlsDebug()) {
+        		factory.setTlsDebug(getEndpoint().getNatsConfiguration().isTlsDebug());
+        	}
+        }
         connection = factory.createConnection();
         return connection;
     }

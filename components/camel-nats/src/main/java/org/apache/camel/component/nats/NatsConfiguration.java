@@ -22,6 +22,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.jsse.SSLContextParameters;
 
 @UriParams
 public class NatsConfiguration {
@@ -56,6 +57,12 @@ public class NatsConfiguration {
     private String maxMessages;
     @UriParam(label = "consumer", defaultValue = "10")
     private int poolSize = 10;
+    @UriParam(label = "security")
+    private boolean secure;
+    @UriParam(label = "security")
+    private boolean tlsDebug;
+    @UriParam(label = "security", description = "SSL configuration")
+    private SSLContextParameters sslContextParameters;
 
     /**
      * URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers.
@@ -212,7 +219,40 @@ public class NatsConfiguration {
         this.poolSize = poolSize;
     }
 
-    private static <T> void addPropertyIfNotNull(Properties props, String key, T value) {
+    /**
+     * set set secure option indicating TLS is required
+     */
+	public boolean isSecure() {
+		return secure;
+	}
+
+	public void setSecure(boolean secure) {
+		this.secure = secure;
+	}
+	
+    /**
+     * TLS Debug, it will add additional console output
+     */
+    public boolean isTlsDebug() {
+		return tlsDebug;
+	}
+
+	public void setTlsDebug(boolean tlsDebug) {
+		this.tlsDebug = tlsDebug;
+	}
+
+    /**
+     * To configure security using SSLContextParameters
+     */
+	public SSLContextParameters getSslContextParameters() {
+		return sslContextParameters;
+	}
+
+	public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+		this.sslContextParameters = sslContextParameters;
+	}
+
+	private static <T> void addPropertyIfNotNull(Properties props, String key, T value) {
         if (value != null) {
             props.put(key, value);
         }
