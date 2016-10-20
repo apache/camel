@@ -1830,6 +1830,8 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>wrap:mvn:io.undertow/undertow-core/${undertow-version}</bundle>
     <bundle dependency='true'>wrap:mvn:org.jboss.xnio/xnio-api/${jboss-xnio-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-undertow/${project.version}</bundle>
   </feature>
   <feature name='camel-univocity-parsers' version='${project.version}' resolver='(obr)' start-level='50'>
