@@ -220,7 +220,7 @@ public class NatsConfiguration {
     }
 
     /**
-     * set set secure option indicating TLS is required
+     * Set secure option indicating TLS is required
      */
     public boolean isSecure() {
         return secure;
