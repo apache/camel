@@ -45,8 +45,8 @@ The ServiceNow component supports 6 options which are listed below.
 |=======================================================================
 | Name | Java Type | Description
 | apiUrl | String | The ServiceNow REST API url
-| userName | String | ServiceNow user account name MUST be provided
-| password | String | ServiceNow account password MUST be provided
+| userName | String | ServiceNow user account name
+| password | String | ServiceNow account password
 | oauthClientId | String | OAuth2 ClientID
 | oauthClientSecret | String | OAuth2 ClientSecret
 | oauthTokenUrl | String | OAuth token Url
