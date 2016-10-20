@@ -32,11 +32,11 @@ public class ServiceNowComponentConfiguration {
      */
     private String apiUrl;
     /**
-     * ServiceNow user account name MUST be provided
+     * ServiceNow user account name
      */
     private String userName;
     /**
-     * ServiceNow account password MUST be provided
+     * ServiceNow account password
      */
     private String password;
     /**
