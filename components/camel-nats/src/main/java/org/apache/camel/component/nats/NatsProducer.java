@@ -86,11 +86,11 @@ public class NatsProducer extends DefaultProducer {
         Properties prop = getEndpoint().getNatsConfiguration().createProperties();
         ConnectionFactory factory = new ConnectionFactory(prop);
         if (getEndpoint().getNatsConfiguration().getSslContextParameters() != null && getEndpoint().getNatsConfiguration().isSecure()) {
-        	SSLContext sslCtx = getEndpoint().getNatsConfiguration().getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()); 
-        	factory.setSSLContext(sslCtx);
-        	if (getEndpoint().getNatsConfiguration().isTlsDebug()) {
-        		factory.setTlsDebug(getEndpoint().getNatsConfiguration().isTlsDebug());
-        	}
+            SSLContext sslCtx = getEndpoint().getNatsConfiguration().getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()); 
+            factory.setSSLContext(sslCtx);
+            if (getEndpoint().getNatsConfiguration().isTlsDebug()) {
+                factory.setTlsDebug(getEndpoint().getNatsConfiguration().isTlsDebug());
+            }
         }
         connection = factory.createConnection();
         return connection;
