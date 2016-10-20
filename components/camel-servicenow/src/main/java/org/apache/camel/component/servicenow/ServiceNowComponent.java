@@ -29,6 +29,13 @@ import org.apache.camel.util.IntrospectionSupport;
  */
 public class ServiceNowComponent extends UriEndpointComponent {
 
+    private String userName;
+    private String password;
+    private String oauthClientId;
+    private String oauthClientSecret;
+    private String oauthTokenUrl;
+    private String apiUrl;
+
     public ServiceNowComponent() {
         super(ServiceNowEndpoint.class);
     }
@@ -47,14 +54,95 @@ public class ServiceNowComponent extends UriEndpointComponent {
 
         setProperties(configuration, parameters);
 
+        if (configuration.getUserName() == null) {
+            configuration.setUserName(userName);
+        }
+        if (configuration.getPassword() == null) {
+            configuration.setPassword(password);
+        }
+        if (configuration.getOauthClientId() == null) {
+            configuration.setOauthClientId(oauthClientId);
+        }
+        if (configuration.getOauthClientSecret() == null) {
+            configuration.setOauthClientSecret(oauthClientSecret);
+        }
+
         String instanceName = getCamelContext().resolvePropertyPlaceholders(remaining);
         if (!configuration.hasApiUrl()) {
-            configuration.setApiUrl(String.format("https://%s.service-now.com/api", instanceName));
+            configuration.setApiUrl(apiUrl != null
+                ? apiUrl
+                : String.format("https://%s.service-now.com/api", instanceName)
+            );
         }
         if (!configuration.hasOautTokenUrl()) {
-            configuration.setOauthTokenUrl(String.format("https://%s.service-now.com/oauth_token.do", instanceName));
+            configuration.setOauthTokenUrl(oauthTokenUrl != null
+                ? oauthTokenUrl
+                : String.format("https://%s.service-now.com/oauth_token.do", instanceName)
+            );
         }
 
         return new ServiceNowEndpoint(uri, this, configuration, instanceName);
+    }
+
+    public String getApiUrl() {
+        return apiUrl;
+    }
+
+    /**
+     * The ServiceNow REST API url
+     */
+    public void setApiUrl(String apiUrl) {
+        this.apiUrl = apiUrl;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * ServiceNow user account name, MUST be provided
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * ServiceNow account password, MUST be provided
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getOauthClientId() {
+        return oauthClientId;
+    }
+
+    /**
+     * OAuth2 ClientID
+     */
+    public void setOauthClientId(String oauthClientId) {
+        this.oauthClientId = oauthClientId;
+    }
+
+    /**
+     * OAuth2 ClientSecret
+     */
+    public void setOauthClientSecret(String oauthClientSecret) {
+        this.oauthClientSecret = oauthClientSecret;
+    }
+
+    public String getOauthTokenUrl() {
+        return oauthTokenUrl;
+    }
+
+    /**
+     * OAuth token Url
+     */
+    public void setOauthTokenUrl(String oauthTokenUrl) {
+        this.oauthTokenUrl = oauthTokenUrl;
     }
 }
