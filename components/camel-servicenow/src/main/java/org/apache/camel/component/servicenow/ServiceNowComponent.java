@@ -100,7 +100,7 @@ public class ServiceNowComponent extends UriEndpointComponent {
     }
 
     /**
-     * ServiceNow user account name, MUST be provided
+     * ServiceNow user account name
      */
     public void setUserName(String userName) {
         this.userName = userName;
@@ -111,7 +111,7 @@ public class ServiceNowComponent extends UriEndpointComponent {
     }
 
     /**
-     * ServiceNow account password, MUST be provided
+     * ServiceNow account password
      */
     public void setPassword(String password) {
         this.password = password;
