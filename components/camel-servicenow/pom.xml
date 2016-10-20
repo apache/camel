@@ -96,9 +96,28 @@
     </dependency>
 
     <!-- testing -->
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>${javax.servlet-api-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.compendium</artifactId>
+      <version>${osgi-version}</version>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test-blueprint</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -161,6 +180,11 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <skipTests>false</skipTests>
+              <systemPropertyVariables>
+                <servicenow.instance>${env.SERVICENOW_INSTANCE}</servicenow.instance>
+                <servicenow.username>${env.SERVICENOW_USERNAME}</servicenow.username>
+                <servicenow.password>${env.SERVICENOW_PASSWORD}</servicenow.password>
+              </systemPropertyVariables>
             </configuration>
           </plugin>
         </plugins>
