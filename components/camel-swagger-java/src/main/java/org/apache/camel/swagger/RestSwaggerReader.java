@@ -297,7 +297,9 @@ public class RestSwaggerReader {
 
                         if (verb.getType() != null) {
                             if(verb.getType().endsWith("[]")){
-                                Property prop = modelTypeAsProperty(verb.getType(), swagger);
+                                String typeName = verb.getType();
+                                typeName = typeName.substring(0, typeName.length() - 2);
+                                Property prop = modelTypeAsProperty(typeName, swagger);
                                 if (prop != null) {
                                     ArrayModel arrayModel = new ArrayModel();
                                     arrayModel.setItems(prop);
