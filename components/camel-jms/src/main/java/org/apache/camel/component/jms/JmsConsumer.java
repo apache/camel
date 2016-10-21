@@ -236,6 +236,8 @@ public class JmsConsumer extends DefaultConsumer implements Suspendable {
         } else {
             if (listenerContainer != null) {
                 startListenerContainer();
+            } else {
+                log.warn("The listenerContainer is not instantiated. Probably there was a timeout during the Suspend operation. Please restart your consumer route.");
             }
         }
     }
