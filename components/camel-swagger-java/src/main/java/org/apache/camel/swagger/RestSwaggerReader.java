@@ -296,9 +296,21 @@ public class RestSwaggerReader {
                         BodyParameter bp = (BodyParameter) parameter;
 
                         if (verb.getType() != null) {
-                            String ref = modelTypeAsRef(verb.getType(), swagger);
-                            if (ref != null) {
-                                bp.setSchema(new RefModel(ref));
+                            if(verb.getType().endsWith("[]")){
+                                String typeName = verb.getType();
+                                typeName = typeName.substring(0, typeName.length() - 2);
+                                Property prop = modelTypeAsProperty(typeName, swagger);
+                                if (prop != null) {
+                                    ArrayModel arrayModel = new ArrayModel();
+                                    arrayModel.setItems(prop);
+                                    bp.setSchema(arrayModel);
+                                }
+                            }
+                            else {
+                                String ref = modelTypeAsRef(verb.getType(), swagger);
+                                if (ref != null) {
+                                    bp.setSchema(new RefModel(ref));
+                                }
                             }
                         }
                     }
