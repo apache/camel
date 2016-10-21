@@ -446,7 +446,7 @@
     <pax-exam-version>4.8.0</pax-exam-version>
     <pax-tiny-bundle-version>1.3.2</pax-tiny-bundle-version>
     <pax-logging-version>1.8.5</pax-logging-version>
-    <pdfbox-version>1.8.11</pdfbox-version>
+    <pdfbox-version>1.8.12</pdfbox-version>
     <pgjdbc-ng-driver-version>0.6</pgjdbc-ng-driver-version>  
     <powermock-version>1.6.1</powermock-version>
     <protobuf-version>2.6.1</protobuf-version>
