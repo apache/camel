@@ -132,7 +132,8 @@ perform a `cookieHandler.loadCookies(exchange, uri)` call. It will return a
 The details how you need to send these headers to the server depend on the underlying HTTP
 API you are using.
 . After your code does receive the HTTP response if a cookie handler is set on the endpoint
-perform a `cookieHandler.storeCookies(exchange, uri, m)` call. `m` is a `Map<String, List<String>>`.
+perform a `cookieHandler.storeCookies(exchange, uri, m)` call. `m` is a 
+`Map<String, List<String>>` containing the HTTP headers returned from the server.
 
 Note: some APIs provide more direct support for cookie handling. In this case it might be easier
 to get the underlying `java.net.CookieStore` with a `cookeManager.getCookieStore(exchange)` call
