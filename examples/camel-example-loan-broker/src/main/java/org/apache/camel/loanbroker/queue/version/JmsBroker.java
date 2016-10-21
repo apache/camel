@@ -75,8 +75,8 @@ public final class JmsBroker {
             try {  
                 BrokerService broker = new BrokerService();
                 synchronized (this) {                                     
-                    broker.setPersistenceAdapter(new MemoryPersistenceAdapter());                    
-                    broker.setTmpDataDirectory(new File("./target"));
+                    broker.setPersistenceAdapter(new MemoryPersistenceAdapter());
+                    broker.setTmpDataDirectory(new File(System.getProperty("broker.tmp.datadir", "./target/broker-tmp")));
                     broker.addConnector(brokerUrl);
                     broker.start();
                     Thread.sleep(200);
@@ -86,7 +86,7 @@ public final class JmsBroker {
                     while (!shutdownBroker) {
                         wait(1000);
                     }
-                }                
+                }
                 broker.stop();              
             } catch (Exception e) {
                 exception = e;
