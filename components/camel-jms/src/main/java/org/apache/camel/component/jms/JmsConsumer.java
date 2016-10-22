@@ -185,6 +185,7 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
         // then we will use updated configuration from jms endpoint that may have been managed using JMX
         listenerContainer = null;
         messageListener = null;
+        initialized = false;
 
         // shutdown thread pool if listener container was using a private thread pool
         if (shutdownExecutorService && executorService != null) {
