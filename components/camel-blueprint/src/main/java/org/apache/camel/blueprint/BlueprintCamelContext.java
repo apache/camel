@@ -19,7 +19,9 @@ package org.apache.camel.blueprint;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.blueprint.handler.CamelNamespaceHandler;
 import org.apache.camel.core.osgi.OsgiCamelContextHelper;
@@ -54,6 +56,7 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
     private BundleContext bundleContext;
     private BlueprintContainer blueprintContainer;
     private ServiceRegistration<?> registration;
+    protected final AtomicBoolean routeDefinitionValid = new AtomicBoolean(true);
 
     public BlueprintCamelContext() {
     }
@@ -183,13 +186,21 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
             // let's set a more suitable TCCL while starting the context
             Thread.currentThread().setContextClassLoader(getApplicationContextClassLoader());
             super.start();
-        } finally {
+        } catch (FailedToCreateRouteException e){
+            routeDefinitionValid.set(false);
+        }
+        finally {
             Thread.currentThread().setContextClassLoader(original);
         }
     }
 
     private void maybeStart() throws Exception {
         LOG.trace("maybeStart: {}", this);
+
+        if(!routeDefinitionValid.get()){
+            LOG.trace("maybeStart: {} is skipping since CamelRoute definition is not correct.", this);
+            return;
+        }
 
         // allow to register the BluerintCamelContext eager in the OSGi Service Registry, which ex is needed
         // for unit testing with camel-test-blueprint
