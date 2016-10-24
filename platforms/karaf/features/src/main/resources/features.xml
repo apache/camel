@@ -427,7 +427,7 @@
   <feature name='camel-drill' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${spring-version-range}'>spring-jdbc</feature>
-	<bundle dependency='true'>wrap:mvn:org.apache.drill.exec/drill-jdbc-all/${apache-drill-bundle-version}</bundle>
+	<bundle dependency='true'>wrap:mvn:org.apache.drill.exec/drill-jdbc-all/${apache-drill-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-drill/${project.version}</bundle>
   </feature>
   <feature name='camel-dozer' version='${project.version}' resolver='(obr)' start-level='50'>
