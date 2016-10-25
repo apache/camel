@@ -80,6 +80,7 @@
     * [Message Channel](message-channel.adoc)
     * [Message Router](message-router.adoc)
     * [Message Translator](message-translator.adoc)
+    * [Message Endpoint](message-endpoint.adoc)
     * [Pipes and Filter](pipes-and-filters.adoc)
     * [Request Reply](request-reply.adoc)
     * [Return Address](return-address.adoc)
