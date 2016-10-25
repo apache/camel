@@ -53,10 +53,11 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
 
     private static final Logger LOG = LoggerFactory.getLogger(BlueprintCamelContext.class);
     
+    protected final AtomicBoolean routeDefinitionValid = new AtomicBoolean(true);
+
     private BundleContext bundleContext;
     private BlueprintContainer blueprintContainer;
     private ServiceRegistration<?> registration;
-    protected final AtomicBoolean routeDefinitionValid = new AtomicBoolean(true);
 
     public BlueprintCamelContext() {
     }
@@ -186,10 +187,9 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
             // let's set a more suitable TCCL while starting the context
             Thread.currentThread().setContextClassLoader(getApplicationContextClassLoader());
             super.start();
-        } catch (FailedToCreateRouteException e){
+        } catch (FailedToCreateRouteException e) {
             routeDefinitionValid.set(false);
-        }
-        finally {
+        } finally {
             Thread.currentThread().setContextClassLoader(original);
         }
     }
@@ -197,7 +197,7 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
     private void maybeStart() throws Exception {
         LOG.trace("maybeStart: {}", this);
 
-        if(!routeDefinitionValid.get()){
+        if (!routeDefinitionValid.get()) {
             LOG.trace("maybeStart: {} is skipping since CamelRoute definition is not correct.", this);
             return;
         }
