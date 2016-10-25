@@ -35,13 +35,11 @@
             <artifactId>azure-storage</artifactId>
             <version>4.4.0</version>
         </dependency>
-        <!-- Azure servicebus -->
         <dependency>
             <groupId>com.microsoft.azure</groupId>
             <artifactId>azure-servicebus</artifactId>
             <version>0.9.5</version>
         </dependency>
-
         <!-- support camel documentation -->
         <dependency>
             <groupId>org.apache.camel</groupId>
