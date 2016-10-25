@@ -944,7 +944,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public void addRouteDefinition(RouteDefinition routeDefinition) throws Exception {
-        addRouteDefinitions(Arrays.asList(routeDefinition));
+        try {
+            addRouteDefinitions(Arrays.asList(routeDefinition));
+        } catch (Exception e) {
+            removeRouteDefinition(routeDefinition);
+            throw e;
+        }
     }
 
     /**
