@@ -74,16 +74,20 @@
 -->
 
 * [Enterprise Integration Patterns](enterprise-integration-patterns.adoc)
-    * [Correlation Identifier](correlation-identifier.adoc)
-    * [Event Message](event-message.adoc)
-    * [Message](message.adoc)
-    * [Message Channel](message-channel.adoc)
-    * [Message Router](message-router.adoc)
-    * [Message Translator](message-translator.adoc)
-    * [Message Endpoint](message-endpoint.adoc)
-    * [Pipes and Filter](pipes-and-filters.adoc)
-    * [Request Reply](request-reply.adoc)
-    * [Return Address](return-address.adoc)
+    * Messaging Systems
+        * [Message Channel](message-channel.adoc)
+        * [Message](message.adoc)
+        * [Message Router](message-router.adoc)
+        * [Message Translator](message-translator.adoc)
+        * [Message Endpoint](message-endpoint.adoc)
+        * [Pipes and Filter](pipes-and-filters.adoc)
+    * Messaging Channels
+        * [Point to Point Channel](point-to-point-channel.adoc)
+    * Message Construction
+        * [Correlation Identifier](correlation-identifier.adoc)
+        * [Event Message](event-message.adoc)
+        * [Return Address](return-address.adoc)
+        * [Request Reply](request-reply.adoc)
 
 * Community
     * FAQ
