@@ -18,7 +18,7 @@
 <route id="foo" xmlns="http://camel.apache.org/schema/spring">
     <from uri="direct:start"/>
     <setHeader headerName="failureHeader">
-    	<simple>${headers.error}</simple> <!--  it is an error -->
+    	<simple>${headers.error}</simple> <!--  now it is correct! -->
     </setHeader>
     <to uri="mock:foo"/>
     <to uri="mock:result"/>
