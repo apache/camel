@@ -86,6 +86,7 @@
         * [Publish Subscribe Channel](publish-subscribe-channel.adoc)
         * [Dead Letter Channel](dead-letter-channel.adoc)
         * [Guaranteed Delivery](guaranteed-delivery.adoc)
+        * [Message Bus](message-bus.adoc)
     * Message Construction
         * [Correlation Identifier](correlation-identifier.adoc)
         * [Event Message](event-message.adoc)
