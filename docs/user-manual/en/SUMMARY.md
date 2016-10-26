@@ -83,7 +83,8 @@
         * [Pipes and Filter](pipes-and-filters.adoc)
     * Messaging Channels
         * [Point to Point Channel](point-to-point-channel.adoc)
-        * [Publish Subscribe Channel](point-to-point-channel.adoc)
+        * [Publish Subscribe Channel](publish-subscribe-channel.adoc)
+        * [Dead Letter Channel](dead-letter-channel.adoc)
     * Message Construction
         * [Correlation Identifier](correlation-identifier.adoc)
         * [Event Message](event-message.adoc)
