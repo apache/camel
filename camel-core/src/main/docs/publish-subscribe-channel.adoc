@@ -29,7 +29,33 @@ link:dsl.html[DSL] or link:xml-configuration.html[Xml Configuration].
 
 *Using the link:fluent-builders.html[Fluent Builders]*
 
+[source,java]
+---------------------------------------------------
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+        errorHandler(deadLetterChannel("mock:error"));
+ 
+        from("direct:a")
+            .multicast().to("direct:b", "direct:c", "direct:d");
+    }
+};
+---------------------------------------------------
+
 *Using the link:spring-xml-extensions.html[Spring XML Extensions]*
+
+[source,xml]
+---------------------------------------------------
+<camelContext errorHandlerRef="errorHandler" xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:a"/>
+        <multicast>
+            <to uri="direct:b"/>
+            <to uri="direct:c"/>
+            <to uri="direct:d"/>
+        </multicast>
+    </route>
+</camelContext>
+---------------------------------------------------
 
 [[PublishSubscribeChannel-UsingThisPattern]]
 Using This Pattern

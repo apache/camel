@@ -420,7 +420,7 @@ The `Exchange.FAILURE_ROUTE_ID` have the constant value
 This allows for example you to fetch this information in your dead
 letter queue and use that for error reporting.
 
-[[DeadLetterChannel-Controlifredeliveryisallowedduringstopping/shutdown]]
+[[DeadLetterChannel-Controlifredeliveryisallowedduringstoppingshutdown]]
 Control if redelivery is allowed during stopping/shutdown
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -458,7 +458,7 @@ You can also configure the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/processor/RedeliveryPolicy.html[RedeliveryPolicy]
 as this example shows
 
-[[DeadLetterChannel-HowcanImodifytheExchangebeforeredelivery?]]
+[[DeadLetterChannel-HowcanImodifytheExchangebeforeredelivery]]
 How can I modify the Exchange before redelivery?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -479,7 +479,7 @@ redelivery.
 And this is the processor `MyRedeliveryProcessor` where we alter the
 message.
 
-[[DeadLetterChannel-HowcanIlogwhatcausedtheDeadLetterChanneltobeinvoked?]]
+[[DeadLetterChannel-HowcanIlogwhatcausedtheDeadLetterChanneltobeinvoked]]
 How can I log what caused the Dead Letter Channel to be invoked?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
