@@ -20,4 +20,4 @@ in order to see the changes in the browser.
 == More information
 
 You can find more information about Apache Camel at the website: http://camel.apache.org/.
-You can find more information about the LiveReload feature in the http://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html[dev tools documentation].
+For information about the LiveReload feature, check the http://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html[dev tools documentation].
