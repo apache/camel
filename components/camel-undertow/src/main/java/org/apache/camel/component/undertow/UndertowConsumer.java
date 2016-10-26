@@ -16,24 +16,30 @@
  */
 package org.apache.camel.component.undertow;
 
-import java.net.URI;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import io.undertow.server.HttpHandler;
-
+import io.undertow.server.HttpServerExchange;
+import io.undertow.util.Headers;
+import io.undertow.util.HttpString;
+import io.undertow.util.Methods;
+import io.undertow.util.MimeMappings;
+import io.undertow.util.StatusCodes;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.undertow.handlers.HttpCamelHandler;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Undertow consumer.
+ * The Undertow consumer which is also an Undertow HttpHandler implementation to handle incoming request.
  */
-public class UndertowConsumer extends DefaultConsumer {
+public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowConsumer.class);
 
-    private UndertowHost undertowHost;
     private HttpHandlerRegistrationInfo registrationInfo;
 
     public UndertowConsumer(UndertowEndpoint endpoint, Processor processor) {
@@ -45,46 +51,19 @@ public class UndertowConsumer extends DefaultConsumer {
         return (UndertowEndpoint) super.getEndpoint();
     }
 
-    public UndertowHost getUndertowHost() {
-        if (undertowHost == null) {
-            undertowHost = createUndertowHost();
-        }
-        return undertowHost;
-    }
-
-    protected UndertowHost createUndertowHost() {
-        return new DefaultUndertowHost();
-    }
-
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        LOG.debug("Undertow consumer is starting");
         getEndpoint().getComponent().registerConsumer(this);
-
-        UndertowHost host = getUndertowHost();
-
-        HttpCamelHandler httpCamelHandler = new HttpCamelHandler();
-        httpCamelHandler.connectConsumer(this);
-
-        HttpHandlerRegistrationInfo registrationInfo = getHttpHandlerRegistrationInfo();
-
-        host.validateEndpointURI(registrationInfo.getUri());
-        host.registerHandler(registrationInfo, httpCamelHandler);
     }
 
     @Override
-    protected void doStop() {
-        LOG.debug("Undertow consumer is stopping");
-
-        HttpHandlerRegistrationInfo registrationInfo = getHttpHandlerRegistrationInfo();
-        UndertowHost host = getUndertowHost();
-        host.unregisterHandler(registrationInfo);
-
+    protected void doStop() throws Exception {
+        super.doStop();
         getEndpoint().getComponent().unregisterConsumer(this);
     }
 
-    private HttpHandlerRegistrationInfo getHttpHandlerRegistrationInfo() {
+    public HttpHandlerRegistrationInfo getHttpHandlerRegistrationInfo() {
         if (registrationInfo == null) {
             UndertowEndpoint endpoint = getEndpoint();
 
@@ -96,21 +75,68 @@ public class UndertowConsumer extends DefaultConsumer {
         return registrationInfo;
     }
 
-    class DefaultUndertowHost implements UndertowHost {
+    @Override
+    public void handleRequest(HttpServerExchange httpExchange) throws Exception {
+        HttpString requestMethod = httpExchange.getRequestMethod();
 
-        @Override
-        public void validateEndpointURI(URI httpURI) {
-            // all URIs are good
+        if (Methods.OPTIONS.equals(requestMethod) && !getEndpoint().isOptionsEnabled()) {
+            String allowedMethods;
+            if (getEndpoint().getHttpMethodRestrict() != null) {
+                allowedMethods = "OPTIONS," + getEndpoint().getHttpMethodRestrict();
+            } else {
+                allowedMethods = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
+            }
+            //return list of allowed methods in response headers
+            httpExchange.setStatusCode(StatusCodes.OK);
+            httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"));
+            httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_LENGTH, 0);
+            httpExchange.getResponseHeaders().put(Headers.ALLOW, allowedMethods);
+            httpExchange.getResponseSender().close();
+            return;
         }
 
-        @Override
-        public void registerHandler(HttpHandlerRegistrationInfo registrationInfo, HttpHandler handler) {
-            getEndpoint().getComponent().startServer(UndertowConsumer.this);
+        //perform blocking operation on exchange
+        if (httpExchange.isInIoThread()) {
+            httpExchange.dispatch(this);
+            return;
         }
 
-        @Override
-        public void unregisterHandler(HttpHandlerRegistrationInfo registrationInfo) {
-            // do nothing
+        //create new Exchange
+        //binding is used to extract header and payload(if available)
+        Exchange camelExchange = getEndpoint().createExchange(httpExchange);
+
+        //Unit of Work to process the Exchange
+        createUoW(camelExchange);
+        try {
+            getProcessor().process(camelExchange);
+        } catch (Exception e) {
+            getExceptionHandler().handleException(e);
+        } finally {
+            doneUoW(camelExchange);
         }
+
+        Object body = getResponseBody(httpExchange, camelExchange);
+        TypeConverter tc = getEndpoint().getCamelContext().getTypeConverter();
+
+        if (body == null) {
+            LOG.trace("No payload to send as reply for exchange: " + camelExchange);
+            httpExchange.getResponseHeaders().put(ExchangeHeaders.CONTENT_TYPE, MimeMappings.DEFAULT_MIME_MAPPINGS.get("txt"));
+            httpExchange.getResponseSender().send("No response available");
+        } else {
+            ByteBuffer bodyAsByteBuffer = tc.convertTo(ByteBuffer.class, body);
+            httpExchange.getResponseSender().send(bodyAsByteBuffer);
+        }
+        httpExchange.getResponseSender().close();
     }
+
+    private Object getResponseBody(HttpServerExchange httpExchange, Exchange camelExchange) throws IOException {
+        Object result;
+        if (camelExchange.hasOut()) {
+            result = getEndpoint().getUndertowHttpBinding().toHttpResponse(httpExchange, camelExchange.getOut());
+        } else {
+            result = getEndpoint().getUndertowHttpBinding().toHttpResponse(httpExchange, camelExchange.getIn());
+        }
+        return result;
+    }
+
 }
