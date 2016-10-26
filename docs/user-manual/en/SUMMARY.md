@@ -85,6 +85,7 @@
         * [Point to Point Channel](point-to-point-channel.adoc)
         * [Publish Subscribe Channel](publish-subscribe-channel.adoc)
         * [Dead Letter Channel](dead-letter-channel.adoc)
+        * [Guaranteed Delivery](guaranteed-delivery.adoc)
     * Message Construction
         * [Correlation Identifier](correlation-identifier.adoc)
         * [Event Message](event-message.adoc)
