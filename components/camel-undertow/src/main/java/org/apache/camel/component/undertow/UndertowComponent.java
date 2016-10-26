@@ -23,6 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.net.ssl.SSLContext;
 
 import io.undertow.Handlers;
 import io.undertow.Undertow;
@@ -30,15 +33,16 @@ import io.undertow.attribute.ExchangeAttributes;
 import io.undertow.predicate.PathTemplatePredicate;
 import io.undertow.predicate.Predicate;
 import io.undertow.predicate.Predicates;
+import io.undertow.server.HttpHandler;
 import io.undertow.server.handlers.PathHandler;
+import io.undertow.server.handlers.PathTemplateHandler;
 import io.undertow.server.handlers.PredicateHandler;
-
+import io.undertow.util.PathTemplate;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.undertow.handlers.HttpCamelHandler;
 import org.apache.camel.component.undertow.handlers.NotFoundHandler;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.RestApiConsumerFactory;
@@ -63,7 +67,7 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
     private UndertowHttpBinding undertowHttpBinding;
-    private final Map<Integer, UndertowRegistry> serversRegistry = new HashMap<Integer, UndertowRegistry>();
+    private Map<UndertowHostKey, UndertowHost> undertowRegistry = new ConcurrentHashMap<UndertowHostKey, UndertowHost>();
     private SSLContextParameters sslContextParameters;
 
     public UndertowComponent() {
@@ -275,86 +279,26 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
     }
 
     public void registerConsumer(UndertowConsumer consumer) {
-        int port = consumer.getEndpoint().getHttpURI().getPort();
-        if (serversRegistry.containsKey(port)) {
-            UndertowRegistry undertowRegistry = serversRegistry.get(port);
-            undertowRegistry.registerConsumer(consumer);
-        } else {
-            // Create a new server to listen on the specified port
-            serversRegistry.put(port, new UndertowRegistry(consumer, port));
+        URI uri = consumer.getEndpoint().getHttpURI();
+        UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), consumer.getEndpoint().getSslContext());
+        UndertowHost host = undertowRegistry.get(key);
+        if (host == null) {
+            host = createUndertowHost(key);
+            undertowRegistry.put(key, host);
         }
+        host.validateEndpointURI(uri);
+        host.registerHandler(consumer.getHttpHandlerRegistrationInfo(), consumer);
     }
 
     public void unregisterConsumer(UndertowConsumer consumer) {
-        int port = consumer.getEndpoint().getHttpURI().getPort();
-        if (serversRegistry.containsKey(port)) {
-            UndertowRegistry undertowRegistry = serversRegistry.get(port);
-            undertowRegistry.unregisterConsumer(consumer);
-
-            if (undertowRegistry.isEmpty()) {
-                // If there are no consumers left, we can shut down the server
-                Undertow server = undertowRegistry.getServer();
-                if (server != null) {
-                    server.stop();
-                }
-                serversRegistry.remove(port);
-            } else {
-                // Else, rebuild the server
-                startServer(consumer);
-            }
-        }
+        URI uri = consumer.getEndpoint().getHttpURI();
+        UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), consumer.getEndpoint().getSslContext());
+        UndertowHost host = undertowRegistry.get(key);
+        host.unregisterHandler(consumer.getHttpHandlerRegistrationInfo());
     }
 
-    public void startServer(UndertowConsumer consumer) {
-        int port = consumer.getEndpoint().getHttpURI().getPort();
-        LOG.info("Starting server on port: {}", port);
-        UndertowRegistry undertowRegistry = serversRegistry.get(port);
-        if (undertowRegistry.getServer() != null) {
-            //server is running, we need to stop it first and then rebuild
-            undertowRegistry.getServer().stop();
-        }
-        Undertow newServer = rebuildServer(undertowRegistry);
-        newServer.start();
-        undertowRegistry.setServer(newServer);
-    }
-
-    protected Undertow rebuildServer(UndertowRegistry registry) {
-        Undertow.Builder result = Undertow.builder();
-        if (registry.getSslContext() != null) {
-            result = result.addHttpsListener(registry.getPort(), registry.getHost(), registry.getSslContext());
-        } else {
-            result = result.addHttpListener(registry.getPort(), registry.getHost());
-        }
-
-        PathHandler pathHandler = Handlers.path(new NotFoundHandler());
-        HttpCamelHandler handler = new HttpCamelHandler();
-        List<Predicate> predicates = new ArrayList<Predicate>();
-        for (String key : registry.getConsumersRegistry().keySet()) {
-            UndertowConsumer consumer = registry.getConsumersRegistry().get(key);
-            UndertowEndpoint endpoint = consumer.getEndpoint();
-            String path = endpoint.getHttpURI().getPath();
-
-            // Assume URI contains REST variables
-            if (path.contains("{")) {
-                predicates.add(new PathTemplatePredicate(path, ExchangeAttributes.relativePath()));
-            } else {
-                if (endpoint.getMatchOnUriPrefix()) {
-                    predicates.add(Predicates.prefix(path));
-                } else {
-                    predicates.add(Predicates.path(path));
-                }
-            }
-
-            handler.connectConsumer(consumer);
-
-            LOG.debug("Rebuild for pathHandler: {}", path);
-        }
-
-        Predicate combinedPathPredicate = Predicates.or(predicates.toArray(new Predicate[0]));
-        pathHandler.addPrefixPath("/", new PredicateHandler(combinedPathPredicate, handler, new NotFoundHandler()));
-
-        result = result.setHandler(pathHandler);
-        return result.build();
+    protected UndertowHost createUndertowHost(UndertowHostKey key) {
+        return new DefaultUndertowHost(key);
     }
 
     public UndertowHttpBinding getUndertowHttpBinding() {
