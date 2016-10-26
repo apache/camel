@@ -16,6 +16,21 @@
  */
 package org.apache.camel.component.netty4;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.TrustManagerFactory;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -33,22 +48,6 @@ import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import io.netty.handler.ssl.SslHandler;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLEngine;
-import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -170,30 +169,30 @@ public class NettySSLConsumerClientModeTest extends BaseNettyTest {
 
         private SSLContext sslContext;
 
-        public ServerInitializer() {
-			super();
-			try {
-				// create the SSLContext that will be used to create SSLEngine instances
-				char[] pass = "changeit".toCharArray();
-				
-			    KeyManagerFactory kmf;
-					kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-			    TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-			    
-			    KeyStore ks = KeyStore.getInstance("JKS");
-			    try (InputStream ksStream = new FileInputStream(new File("src/test/resources/keystore.jks"))) {
-			    	ks.load(ksStream, pass);
-				}
-			    kmf.init(ks, pass);
-			    tmf.init(ks);
+        ServerInitializer() {
+            super();
+            try {
+                // create the SSLContext that will be used to create SSLEngine instances
+                char[] pass = "changeit".toCharArray();
+                
+                KeyManagerFactory kmf;
+                kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+                TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                
+                KeyStore ks = KeyStore.getInstance("JKS");
+                try (InputStream ksStream = new FileInputStream(new File("src/test/resources/keystore.jks"))) {
+                    ks.load(ksStream, pass);
+                }
+                kmf.init(ks, pass);
+                tmf.init(ks);
 
-			    sslContext = SSLContext.getInstance("TLS");
-	
-			    sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
-			} catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException | UnrecoverableKeyException | KeyManagementException e) {
-				e.printStackTrace();
-			}
-		}
+                sslContext = SSLContext.getInstance("TLS");
+
+                sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+            } catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException | UnrecoverableKeyException | KeyManagementException e) {
+                e.printStackTrace();
+            }
+        }
        
         @Override
         public void initChannel(SocketChannel ch) throws Exception {
