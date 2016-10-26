@@ -102,6 +102,12 @@ public class MultiPartFormTest extends BaseJettyTest {
 
                         // The other form date can be get from the message
                         // header
+
+                        // For binary attachment, header should also be populated by DataHandler but not payload
+                        Object header = in.getHeader("NOTICE.txt");
+                        assertEquals(DataHandler.class, header.getClass());
+                        assertEquals(data, header);
+
                         exchange.getOut().setBody(in.getHeader("comment"));
                     }
 
