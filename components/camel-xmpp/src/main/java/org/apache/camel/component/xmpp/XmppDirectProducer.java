@@ -26,20 +26,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class XmppDirectProducer extends DefaultProducer {
-    
-	private static final transient Logger LOG = LoggerFactory.getLogger(XmppDirectProducer.class);
-    
-	private final XmppEndpoint endpoint;
-	
-	private XMPPConnection connection;
 
-	public XmppDirectProducer(XmppEndpoint endpoint) {
+    private static final transient Logger LOG = LoggerFactory.getLogger(XmppDirectProducer.class);
+
+    private final XmppEndpoint endpoint;
+
+    private XMPPConnection connection;
+
+    public XmppDirectProducer(XmppEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-	}
+    }
 
-	@Override
-	public void process(Exchange exchange) throws Exception {
+    @Override
+    public void process(Exchange exchange) throws Exception {
         try {
             if (connection == null) {
                 connection = endpoint.createConnection();
@@ -54,8 +54,8 @@ public class XmppDirectProducer extends DefaultProducer {
                 connection.connect();
             }
         } catch (XMPPException e) {
-            throw new RuntimeExchangeException("Cannot connect to XMPP Server: " + 
-            								   ((connection != null) ? XmppEndpoint.getConnectionMessage(connection) : endpoint.getHost()), exchange, e);
+            throw new RuntimeExchangeException("Cannot connect to XMPP Server: "
+                                               + ((connection != null) ? XmppEndpoint.getConnectionMessage(connection) : endpoint.getHost()), exchange, e);
         }
 
         try {
@@ -64,21 +64,22 @@ public class XmppDirectProducer extends DefaultProducer {
                 connection.sendPacket((Packet) body);
 
             } else if (body instanceof Packet[]) {
-            	final Packet[] packets = (Packet[]) body;
-            	for (final Packet packet : packets) {
+                final Packet[] packets = (Packet[]) body;
+                for (final Packet packet : packets) {
                     connection.sendPacket(packet);
-            	}
-            	
+                }
+
             } else {
                 throw new Exception("Body does not contain Packet/Packet[] object(s)");
             }
         } catch (XMPPException xmppe) {
-            throw new RuntimeExchangeException("Cannot send XMPP direct: from " + endpoint.getUser() + 
-            								   " to: " + XmppEndpoint.getConnectionMessage(connection), exchange, xmppe);
-            
+            throw new RuntimeExchangeException("Cannot send XMPP direct: from " + endpoint.getUser()
+                                               + " to: " + XmppEndpoint.getConnectionMessage(connection), exchange, xmppe);
+
         } catch (Exception e) {
-            throw new RuntimeExchangeException("Cannot send XMPP direct: from " + endpoint.getUser() + 
-            								   " to: " + XmppEndpoint.getConnectionMessage(connection), exchange, e);
+            throw new RuntimeExchangeException("Cannot send XMPP direct: from " + endpoint.getUser()
+                                               + " to: " + XmppEndpoint.getConnectionMessage(connection), exchange, e);
+
         }
-	}
+    }
 }

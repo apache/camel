@@ -23,62 +23,62 @@ import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionConfiguration.SecurityMode;
 
 public class XmppConnectionConfigurationFactory {
-	
-	private String host;
-	
-	private int port;
-	
-	private String serviceName;
-	
-	private SocketFactory socketFactory;
-	
-	private SecurityMode securityMode;
-	
-	private boolean isReconnectionAllowed;
-	
-	private boolean isRosterLoadedAtLogin;
-	
-	private boolean isSendPresence;
 
-	public void setPort(final int port) {
-		this.port = port;
-	}
-	
-	public void setHost(final String host) {
-		this.host = host;
-	}
+    private String host;
 
-	public void setServiceName(final String serviceName) {
-		this.serviceName = serviceName;
-	}
+    private int port;
 
-	public void setSocketFactory(final SocketFactory socketFactory) {
-		this.socketFactory = socketFactory;
-	}
+    private String serviceName;
 
-	public void setSecurityMode(SecurityMode securityMode) {
-		this.securityMode = securityMode;
-	}
+    private SocketFactory socketFactory;
 
-	public void setReconnectionAllowed(final boolean isReconnectionAllowed) {
-		this.isReconnectionAllowed = isReconnectionAllowed;
-	}
+    private SecurityMode securityMode;
 
-	public void setRosterLoadedAtLogin(final boolean isRosterLoadedAtLogin) {
-		this.isRosterLoadedAtLogin = isRosterLoadedAtLogin;
-	}
+    private boolean isReconnectionAllowed;
 
-	public void setSendPresence(final boolean isSendPresence) {
-		this.isSendPresence = isSendPresence;
-	}
+    private boolean isRosterLoadedAtLogin;
 
-	public ConnectionConfiguration createConnectionConfiguration() {
-    	final ConnectionConfiguration connectionConfig = new ConnectionConfiguration(host, port, serviceName == null ? host : serviceName);
-    	connectionConfig.setSocketFactory(socketFactory == null ? SSLSocketFactory.getDefault() : socketFactory);
-    	connectionConfig.setSecurityMode(securityMode == null ? SecurityMode.disabled : securityMode);
-    	connectionConfig.setReconnectionAllowed(isReconnectionAllowed);
-    	connectionConfig.setRosterLoadedAtLogin(isRosterLoadedAtLogin);
-    	connectionConfig.setSendPresence(isSendPresence);
-    	return connectionConfig;
-	}
+    private boolean isSendPresence;
+
+    public void setPort(final int port) {
+        this.port = port;
+    }
+
+    public void setHost(final String host) {
+        this.host = host;
+    }
+
+    public void setServiceName(final String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public void setSocketFactory(final SocketFactory socketFactory) {
+        this.socketFactory = socketFactory;
+    }
+
+    public void setSecurityMode(SecurityMode securityMode) {
+        this.securityMode = securityMode;
+    }
+
+    public void setReconnectionAllowed(final boolean isReconnectionAllowed) {
+        this.isReconnectionAllowed = isReconnectionAllowed;
+    }
+
+    public void setRosterLoadedAtLogin(final boolean isRosterLoadedAtLogin) {
+        this.isRosterLoadedAtLogin = isRosterLoadedAtLogin;
+    }
+
+    public void setSendPresence(final boolean isSendPresence) {
+        this.isSendPresence = isSendPresence;
+    }
+
+    public ConnectionConfiguration createConnectionConfiguration() {
+        final ConnectionConfiguration connectionConfig = new ConnectionConfiguration(host, port, serviceName == null ? host : serviceName);
+        connectionConfig.setSocketFactory(socketFactory == null ? SSLSocketFactory.getDefault() : socketFactory);
+        connectionConfig.setSecurityMode(securityMode == null ? SecurityMode.disabled : securityMode);
+        connectionConfig.setReconnectionAllowed(isReconnectionAllowed);
+        connectionConfig.setRosterLoadedAtLogin(isRosterLoadedAtLogin);
+        connectionConfig.setSendPresence(isSendPresence);
+        return connectionConfig;
+    }
 }

@@ -114,7 +114,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
             }
 
             if (getParticipant(true) == null) {
-            	return createDirectProducer();
+                return createDirectProducer();
             }
 
             return createPrivateChatProducer(getParticipant());
@@ -377,14 +377,17 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public void setRoom(String room) {
         this.room = room;
     }
-    
-    private String getParticipant(boolean isStrict) {
-    	if (isStrict) return participant;
-    	else return getParticipant();
-    }
 
     public String getParticipant() {
         // participant is optional so use user if not provided
+        return getParticipant(false);
+    }
+
+    private String getParticipant(boolean isStrict) {
+        if (isStrict) {
+            return participant;
+        }
+
         return participant != null ? participant : user;
     }
 
