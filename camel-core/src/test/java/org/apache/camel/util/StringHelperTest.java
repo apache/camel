@@ -147,4 +147,63 @@ public class StringHelperTest extends TestCase {
         assertEquals("fooDOT", StringHelper.replaceAll("foo.", ".", "DOT"));
     }
 
+    public void testRemoveInitialCharacters() throws Exception {
+        assertEquals(StringHelper.removeStartingCharacters("foo", '/'), "foo");
+        assertEquals(StringHelper.removeStartingCharacters("/foo", '/'), "foo");
+        assertEquals(StringHelper.removeStartingCharacters("//foo", '/'), "foo");
+    }
+
+    public void testBefore() {
+        assertEquals("Hello ", StringHelper.before("Hello World", "World"));
+        assertEquals("Hello ", StringHelper.before("Hello World Again", "World"));
+        assertEquals(null, StringHelper.before("Hello Again", "Foo"));
+
+        assertTrue(StringHelper.before("mykey:ignore", ":", "mykey"::equals).orElse(false));
+        assertFalse(StringHelper.before("ignore:ignore", ":", "mykey"::equals).orElse(false));
+    }
+
+    public void testAfter() {
+        assertEquals(" World", StringHelper.after("Hello World", "Hello"));
+        assertEquals(" World Again", StringHelper.after("Hello World Again", "Hello"));
+        assertEquals(null, StringHelper.after("Hello Again", "Foo"));
+
+        assertTrue(StringHelper.after("ignore:mykey", ":", "mykey"::equals).orElse(false));
+        assertFalse(StringHelper.after("ignore:ignore", ":", "mykey"::equals).orElse(false));
+    }
+
+    public void testBetween() {
+        assertEquals("foo bar", StringHelper.between("Hello 'foo bar' how are you", "'", "'"));
+        assertEquals("foo bar", StringHelper.between("Hello ${foo bar} how are you", "${", "}"));
+        assertEquals(null, StringHelper.between("Hello ${foo bar} how are you", "'", "'"));
+
+        assertTrue(StringHelper.between("begin:mykey:end", "begin:", ":end", "mykey"::equals).orElse(false));
+        assertFalse(StringHelper.between("begin:ignore:end", "begin:", ":end", "mykey"::equals).orElse(false));
+    }
+
+    public void testBetweenOuterPair() {
+        assertEquals("bar(baz)123", StringHelper.betweenOuterPair("foo(bar(baz)123)", '(', ')'));
+        assertEquals(null, StringHelper.betweenOuterPair("foo(bar(baz)123))", '(', ')'));
+        assertEquals(null, StringHelper.betweenOuterPair("foo(bar(baz123", '(', ')'));
+        assertEquals(null, StringHelper.betweenOuterPair("foo)bar)baz123", '(', ')'));
+        assertEquals("bar", StringHelper.betweenOuterPair("foo(bar)baz123", '(', ')'));
+        assertEquals("'bar', 'baz()123', 123", StringHelper.betweenOuterPair("foo('bar', 'baz()123', 123)", '(', ')'));
+
+        assertTrue(StringHelper.betweenOuterPair("foo(bar)baz123", '(', ')', "bar"::equals).orElse(false));
+        assertFalse(StringHelper.betweenOuterPair("foo[bar)baz123", '(', ')', "bar"::equals).orElse(false));
+    }
+
+    public void testIsJavaIdentifier() {
+        assertEquals(true, StringHelper.isJavaIdentifier("foo"));
+        assertEquals(false, StringHelper.isJavaIdentifier("foo.bar"));
+        assertEquals(false, StringHelper.isJavaIdentifier(""));
+        assertEquals(false, StringHelper.isJavaIdentifier(null));
+    }
+
+    public void testNormalizeClassName() {
+        assertEquals("Should get the right class name", "my.package-info", StringHelper.normalizeClassName("my.package-info"));
+        assertEquals("Should get the right class name", "Integer[]", StringHelper.normalizeClassName("Integer[] \r"));
+        assertEquals("Should get the right class name", "Hello_World", StringHelper.normalizeClassName("Hello_World"));
+        assertEquals("Should get the right class name", "", StringHelper.normalizeClassName("////"));
+    }
+
 }

@@ -335,36 +335,32 @@ public final class ObjectHelper {
     /**
      * Asserts whether the string is <b>not</b> empty.
      *
-     * @param value  the string to test
-     * @param name   the key that resolved the value
+     * @param value the string to test
+     * @param name the key that resolved the value
      * @return the passed {@code value} as is
      * @throws IllegalArgumentException is thrown if assertion fails
+     * @deprecated use {@link StringHelper#notEmpty(String, String)} instead
      */
+    @Deprecated
     public static String notEmpty(String value, String name) {
-        if (isEmpty(value)) {
-            throw new IllegalArgumentException(name + " must be specified and not empty");
-        }
-
-        return value;
+        return StringHelper.notEmpty(value, name);
     }
 
     /**
      * Asserts whether the string is <b>not</b> empty.
      *
-     * @param value  the string to test
-     * @param on     additional description to indicate where this problem occurred (appended as toString())
-     * @param name   the key that resolved the value
+     * @param value the string to test
+     * @param on additional description to indicate where this problem occurred
+     *            (appended as toString())
+     * @param name the key that resolved the value
      * @return the passed {@code value} as is
      * @throws IllegalArgumentException is thrown if assertion fails
+     * @deprecated use {@link StringHelper#notEmpty(String, String, Object)}
+     *             instead
      */
+    @Deprecated
     public static String notEmpty(String value, String name, Object on) {
-        if (on == null) {
-            notNull(value, name);
-        } else if (isEmpty(value)) {
-            throw new IllegalArgumentException(name + " must be specified and not empty on: " + on);
-        }
-
-        return value;
+        return StringHelper.notEmpty(value, name, on);
     }
 
     /**
@@ -394,19 +390,13 @@ public final class ObjectHelper {
         }
     }
 
+    /**
+     * @deprecated use
+     *             {@link StringHelper#splitOnCharacter(String, String, int)} instead
+     */
+    @Deprecated
     public static String[] splitOnCharacter(String value, String needle, int count) {
-        String rc[] = new String[count];
-        rc[0] = value;
-        for (int i = 1; i < count; i++) {
-            String v = rc[i - 1];
-            int p = v.indexOf(needle);
-            if (p < 0) {
-                return rc;
-            }
-            rc[i - 1] = v.substring(0, p);
-            rc[i] = v.substring(p + 1);
-        }
-        return rc;
+        return StringHelper.splitOnCharacter(value, needle, count);
     }
 
     /**
@@ -416,31 +406,19 @@ public final class ObjectHelper {
      * @param text the string
      * @param ch the initial characters to remove
      * @return either the original string or the new substring
+     * @deprecated use {@link StringHelper#removeStartingCharacters(String, char)} instead
      */
+    @Deprecated
     public static String removeStartingCharacters(String text, char ch) {
-        int idx = 0;
-        while (text.charAt(idx) == ch) {
-            idx++;
-        }
-        if (idx > 0) {
-            return text.substring(idx);
-        }
-        return text;
+        return StringHelper.removeStartingCharacters(text, ch);
     }
 
+    /**
+     * @deprecated use {@link StringHelper#capitalize(String)} instead
+     */
+    @Deprecated
     public static String capitalize(String text) {
-        if (text == null) {
-            return null;
-        }
-        int length = text.length();
-        if (length == 0) {
-            return text;
-        }
-        String answer = text.substring(0, 1).toUpperCase(Locale.ENGLISH);
-        if (length > 1) {
-            answer += text.substring(1, length);
-        }
-        return answer;
+        return StringHelper.capitalize(text);
     }
 
     /**
@@ -449,29 +427,29 @@ public final class ObjectHelper {
      * @param text  the text
      * @param after the token
      * @return the text after the token, or <tt>null</tt> if text does not contain the token
+     * @deprecated use {@link StringHelper#after(String, String)} instead
      */
+    @Deprecated
     public static String after(String text, String after) {
-        if (!text.contains(after)) {
-            return null;
-        }
-        return text.substring(text.indexOf(after) + after.length());
+        return StringHelper.after(text, after);
     }
 
     /**
      * Returns an object after the given token
      *
-     * @param text  the text
+     * @param text the text
      * @param after the token
-     * @param mapper a mapping function to convert the string after the token to type T
-     * @return an Optional describing the result of applying a mapping function to the text after the token.
+     * @param mapper a mapping function to convert the string after the token to
+     *            type T
+     * @return an Optional describing the result of applying a mapping function
+     *         to the text after the token.
+     * @deprecated use {@link StringHelper#after(String, String, Function)
+     *             StringHelper.after(String, String, Function&lt;String,T&gt;)}
+     *             instead
      */
+    @Deprecated
     public static <T> Optional<T> after(String text, String after, Function<String, T> mapper) {
-        String result = after(text, after);
-        if (result == null) {
-            return Optional.empty();            
-        } else {
-            return Optional.ofNullable(mapper.apply(result));
-        }
+        return StringHelper.after(text, after, mapper);
     }
 
     /**
@@ -480,31 +458,30 @@ public final class ObjectHelper {
      * @param text  the text
      * @param before the token
      * @return the text before the token, or <tt>null</tt> if text does not contain the token
+     * @deprecated use {@link StringHelper#before(String, String)} instead
      */
+    @Deprecated
     public static String before(String text, String before) {
-        if (!text.contains(before)) {
-            return null;
-        }
-        return text.substring(0, text.indexOf(before));
+        return StringHelper.before(text, before);
     }
 
     /**
      * Returns an object before the given token
      *
-     * @param text  the text
+     * @param text the text
      * @param before the token
-     * @param mapper a mapping function to convert the string before the token to type T
-     * @return an Optional describing the result of applying a mapping function to the text before the token.
+     * @param mapper a mapping function to convert the string before the token
+     *            to type T
+     * @return an Optional describing the result of applying a mapping function
+     *         to the text before the token.
+     * @deprecated use {@link StringHelper#before(String, String, Function)
+     *             StringHelper.before(String, String, Function&lt;String,T&gt;)}
+     *             instead
      */
+    @Deprecated
     public static <T> Optional<T> before(String text, String before, Function<String, T> mapper) {
-        String result = before(text, before);
-        if (result == null) {
-            return Optional.empty();            
-        } else {
-            return Optional.ofNullable(mapper.apply(result));
-        }
+        return StringHelper.before(text, before, mapper);
     }
-
 
     /**
      * Returns the string between the given tokens
@@ -513,13 +490,11 @@ public final class ObjectHelper {
      * @param after the before token
      * @param before the after token
      * @return the text between the tokens, or <tt>null</tt> if text does not contain the tokens
+     * @deprecated use {@link StringHelper#between(String, String, String)} instead
      */
+    @Deprecated
     public static String between(String text, String after, String before) {
-        text = after(text, after);
-        if (text == null) {
-            return null;
-        }
-        return before(text, before);
+        return StringHelper.between(text, after, before);
     }
 
     /**
@@ -530,14 +505,13 @@ public final class ObjectHelper {
      * @param before the after token
      * @param mapper a mapping function to convert the string between the token to type T
      * @return an Optional describing the result of applying a mapping function to the text between the token.
+     * @deprecated use {@link StringHelper#between(String, String, String, Function)
+     *             StringHelper.between(String, String, String, Function&lt;String,T&gt;)}
+     *             instead
      */
+    @Deprecated
     public static <T> Optional<T> between(String text, String after, String before, Function<String, T> mapper) {
-        String result = between(text, after, before);
-        if (result == null) {
-            return Optional.empty();            
-        } else {
-            return Optional.ofNullable(mapper.apply(result));
-        }
+        return StringHelper.between(text, after, before, mapper);
     }
 
     /**
@@ -554,53 +528,11 @@ public final class ObjectHelper {
      * @param after the before token
      * @param before the after token
      * @return the text between the outer most tokens, or <tt>null</tt> if text does not contain the tokens
+     * @deprecated use {@link StringHelper#betweenOuterPair(String, char, char)} instead
      */
+    @Deprecated
     public static String betweenOuterPair(String text, char before, char after) {
-        if (text == null) {
-            return null;
-        }
-
-        int pos = -1;
-        int pos2 = -1;
-        int count = 0;
-        int count2 = 0;
-
-        boolean singleQuoted = false;
-        boolean doubleQuoted = false;
-        for (int i = 0; i < text.length(); i++) {
-            char ch = text.charAt(i);
-            if (!doubleQuoted && ch == '\'') {
-                singleQuoted = !singleQuoted;
-            } else if (!singleQuoted && ch == '\"') {
-                doubleQuoted = !doubleQuoted;
-            }
-            if (singleQuoted || doubleQuoted) {
-                continue;
-            }
-
-            if (ch == before) {
-                count++;
-            } else if (ch == after) {
-                count2++;
-            }
-
-            if (ch == before && pos == -1) {
-                pos = i;
-            } else if (ch == after) {
-                pos2 = i;
-            }
-        }
-
-        if (pos == -1 || pos2 == -1) {
-            return null;
-        }
-
-        // must be even paris
-        if (count != count2) {
-            return null;
-        }
-
-        return text.substring(pos + 1, pos2);
+        return StringHelper.betweenOuterPair(text, before, after);
     }
 
     /**
@@ -611,16 +543,15 @@ public final class ObjectHelper {
      * @param before the after token
      * @param mapper a mapping function to convert the string between the most outer pair of tokens to type T
      * @return an Optional describing the result of applying a mapping function to the text between the most outer pair of tokens.
+     * @deprecated use {@link StringHelper#betweenOuterPair(String, char, char, Function)
+     *             StringHelper.betweenOuterPair(String, char, char, Function&lt;String,T&gt;)}
+     *             instead
      */
+    @Deprecated
     public static <T> Optional<T> betweenOuterPair(String text, char before, char after, Function<String, T> mapper) {
-        String result = betweenOuterPair(text, before, after);
-        if (result == null) {
-            return Optional.empty();            
-        } else {
-            return Optional.ofNullable(mapper.apply(result));
-        }
+        return StringHelper.betweenOuterPair(text, before, after, mapper);
     }
-    
+
     /**
      * Returns true if the collection contains the specified value
      */
@@ -1693,24 +1624,11 @@ public final class ObjectHelper {
 
     /**
      * Returns true if the given name is a valid java identifier
+     * @deprecated use {@link StringHelper#isJavaIdentifier(String)} instead
      */
+    @Deprecated
     public static boolean isJavaIdentifier(String name) {
-        if (name == null) {
-            return false;
-        }
-        int size = name.length();
-        if (size < 1) {
-            return false;
-        }
-        if (Character.isJavaIdentifierStart(name.charAt(0))) {
-            for (int i = 1; i < size; i++) {
-                if (!Character.isJavaIdentifierPart(name.charAt(i))) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
+        return StringHelper.isJavaIdentifier(name);
     }
 
     /**
@@ -1781,22 +1699,19 @@ public final class ObjectHelper {
     }
 
     /**
-     * Cleans the string to a pure Java identifier so we can use it for loading class names.
+     * Cleans the string to a pure Java identifier so we can use it for loading
+     * class names.
      * <p/>
-     * Especially from Spring DSL people can have \n \t or other characters that otherwise
-     * would result in ClassNotFoundException
+     * Especially from Spring DSL people can have \n \t or other characters that
+     * otherwise would result in ClassNotFoundException
      *
      * @param name the class name
      * @return normalized classname that can be load by a class loader.
+     * @deprecated use {@link StringHelper#normalizeClassName(String)} instead
      */
+    @Deprecated
     public static String normalizeClassName(String name) {
-        StringBuilder sb = new StringBuilder(name.length());
-        for (char ch : name.toCharArray()) {
-            if (ch == '.' || ch == '[' || ch == ']' || ch == '-' || Character.isJavaIdentifierPart(ch)) {
-                sb.append(ch);
-            }
-        }
-        return sb.toString();
+        return StringHelper.normalizeClassName(name);
     }
 
     /**
