@@ -259,6 +259,24 @@ the
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
 on the OSGi platform
 
+[[SERVLET-Spring-Boot]]
+Usage with Spring-Boot
+++++++++++++++++++++++
+
+From *Camel 2.19.0* onwards, the _camel-servlet-starter_ library binds automatically all the rest endpoints under the "/camel/*" context path.
+The following table summarizes the additional configuration properties available in the camel-servlet-starter library.
+The automatic mapping of the Camel servlet can also be disabled.
+
+{% raw %}
+[width="100%",cols="3,1m,6",options="header"]
+|=======================================================================
+| Spring-Boot Property | Default | Description
+| camel.component.servlet.mapping.enabled | true | Enables the automatic mapping of the servlet component into the Spring web context
+| camel.component.servlet.mapping.context-path | /camel/* | Context path used by the servlet component for automatic mapping
+| camel.component.servlet.mapping.servlet-name | CamelServlet | The name of the Camel servlet
+|=======================================================================
+{% endraw %}
+
 [[SERVLET-SeeAlso]]
 See Also
 ^^^^^^^^
