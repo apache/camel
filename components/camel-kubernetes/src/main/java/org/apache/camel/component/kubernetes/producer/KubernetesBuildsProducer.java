@@ -21,10 +21,12 @@ import java.util.Map;
 import io.fabric8.kubernetes.client.dsl.ClientMixedOperation;
 import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
 import io.fabric8.kubernetes.client.dsl.ClientResource;
+import io.fabric8.kubernetes.client.dsl.LogWatch;
 import io.fabric8.openshift.api.model.Build;
 import io.fabric8.openshift.api.model.BuildList;
 import io.fabric8.openshift.api.model.DoneableBuild;
 import io.fabric8.openshift.client.OpenShiftClient;
+import io.fabric8.openshift.client.dsl.ClientBuildResource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -87,14 +89,16 @@ public class KubernetesBuildsProducer extends DefaultProducer {
                 Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            ClientNonNamespaceOperation<Build, BuildList, DoneableBuild, ClientResource<Build, DoneableBuild>> builds = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds()
-                    .inNamespace(namespaceName);
+            ClientNonNamespaceOperation<Build, BuildList, DoneableBuild, ClientBuildResource<Build, DoneableBuild, String, LogWatch>> builds = getEndpoint().getKubernetesClient().
+                adapt(OpenShiftClient.class).builds()
+                .inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 builds.withLabel(entry.getKey(), entry.getValue());
             }
             buildList = builds.list();
         } else {
-            ClientMixedOperation<Build, BuildList, DoneableBuild, ClientResource<Build, DoneableBuild>> builds = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).builds();
+            ClientMixedOperation<Build, BuildList, DoneableBuild, ClientBuildResource<Build, DoneableBuild, String, LogWatch>> builds = getEndpoint().getKubernetesClient().
+                adapt(OpenShiftClient.class).builds();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 builds.withLabel(entry.getKey(), entry.getValue());
             }
