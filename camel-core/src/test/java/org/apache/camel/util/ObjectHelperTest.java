@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
-import java.util.function.Function;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -63,12 +62,6 @@ public class ObjectHelperTest extends TestCase {
 
         assertNotNull("Cannot load resource without leading \"/\"", url1);
         assertNotNull("Cannot load resource with leading \"/\"", url2);
-    }
-
-    public void testRemoveInitialCharacters() throws Exception {
-        assertEquals(ObjectHelper.removeStartingCharacters("foo", '/'), "foo");
-        assertEquals(ObjectHelper.removeStartingCharacters("/foo", '/'), "foo");
-        assertEquals(ObjectHelper.removeStartingCharacters("//foo", '/'), "foo");
     }
 
     public void testGetPropertyName() throws Exception {
@@ -678,52 +671,6 @@ public class ObjectHelperTest extends TestCase {
         assertFalse(ObjectHelper.isPrimitiveArrayType(null));
     }
 
-    public void testBefore() {
-        assertEquals("Hello ", ObjectHelper.before("Hello World", "World"));
-        assertEquals("Hello ", ObjectHelper.before("Hello World Again", "World"));
-        assertEquals(null, ObjectHelper.before("Hello Again", "Foo"));
-
-        assertTrue(ObjectHelper.before("mykey:ignore", ":", "mykey"::equals).orElse(false));
-        assertFalse(ObjectHelper.before("ignore:ignore", ":", "mykey"::equals).orElse(false));
-    }
-
-    public void testAfter() {
-        assertEquals(" World", ObjectHelper.after("Hello World", "Hello"));
-        assertEquals(" World Again", ObjectHelper.after("Hello World Again", "Hello"));
-        assertEquals(null, ObjectHelper.after("Hello Again", "Foo"));
-
-        assertTrue(ObjectHelper.after("ignore:mykey", ":", "mykey"::equals).orElse(false));
-        assertFalse(ObjectHelper.after("ignore:ignore", ":", "mykey"::equals).orElse(false));
-    }
-
-    public void testBetween() {
-        assertEquals("foo bar", ObjectHelper.between("Hello 'foo bar' how are you", "'", "'"));
-        assertEquals("foo bar", ObjectHelper.between("Hello ${foo bar} how are you", "${", "}"));
-        assertEquals(null, ObjectHelper.between("Hello ${foo bar} how are you", "'", "'"));
-
-        assertTrue(ObjectHelper.between("begin:mykey:end", "begin:", ":end", "mykey"::equals).orElse(false));
-        assertFalse(ObjectHelper.between("begin:ignore:end", "begin:", ":end", "mykey"::equals).orElse(false));
-    }
-
-    public void testBetweenOuterPair() {
-        assertEquals("bar(baz)123", ObjectHelper.betweenOuterPair("foo(bar(baz)123)", '(', ')'));
-        assertEquals(null, ObjectHelper.betweenOuterPair("foo(bar(baz)123))", '(', ')'));
-        assertEquals(null, ObjectHelper.betweenOuterPair("foo(bar(baz123", '(', ')'));
-        assertEquals(null, ObjectHelper.betweenOuterPair("foo)bar)baz123", '(', ')'));
-        assertEquals("bar", ObjectHelper.betweenOuterPair("foo(bar)baz123", '(', ')'));
-        assertEquals("'bar', 'baz()123', 123", ObjectHelper.betweenOuterPair("foo('bar', 'baz()123', 123)", '(', ')'));
-
-        assertTrue(ObjectHelper.betweenOuterPair("foo(bar)baz123", '(', ')', "bar"::equals).orElse(false));
-        assertFalse(ObjectHelper.betweenOuterPair("foo[bar)baz123", '(', ')', "bar"::equals).orElse(false));
-    }
-
-    public void testIsJavaIdentifier() {
-        assertEquals(true, ObjectHelper.isJavaIdentifier("foo"));
-        assertEquals(false, ObjectHelper.isJavaIdentifier("foo.bar"));
-        assertEquals(false, ObjectHelper.isJavaIdentifier(""));
-        assertEquals(false, ObjectHelper.isJavaIdentifier(null));
-    }
-
     public void testGetDefaultCharSet() {
         assertNotNull(ObjectHelper.getDefaultCharacterSet());
     }
@@ -856,13 +803,6 @@ public class ObjectHelperTest extends TestCase {
         } catch (NoSuchElementException nsee) {
             // expected
         }
-    }
-
-    public void testNormalizeClassName() {
-        assertEquals("Should get the right class name", "my.package-info", ObjectHelper.normalizeClassName("my.package-info"));
-        assertEquals("Should get the right class name", "Integer[]", ObjectHelper.normalizeClassName("Integer[] \r"));
-        assertEquals("Should get the right class name", "Hello_World", ObjectHelper.normalizeClassName("Hello_World"));
-        assertEquals("Should get the right class name", "", ObjectHelper.normalizeClassName("////"));
     }
 
     public void testLookupConstantFieldValue() {
