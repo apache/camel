@@ -95,6 +95,7 @@
     * Message Routing
         * [Content Based Router](content-based-router.adoc)
         * [Message Filter](message-filter.adoc)
+        * [Dynamic Router](dynamic-router.adoc)
 
 * Community
     * FAQ
