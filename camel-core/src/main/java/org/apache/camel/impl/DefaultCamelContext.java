@@ -931,15 +931,21 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public synchronized void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
-        if (routeDefinitions == null || routeDefinitions.isEmpty()) {
-            return;
-        }
-        for (RouteDefinition routeDefinition : routeDefinitions) {
-            removeRouteDefinition(routeDefinition);
-        }
-        this.routeDefinitions.addAll(routeDefinitions);
-        if (shouldStartRoutes()) {
-            startRouteDefinitions(routeDefinitions);
+        try {
+            if (routeDefinitions == null || routeDefinitions.isEmpty()) {
+
+                return;
+            }
+            for (RouteDefinition routeDefinition : routeDefinitions) {
+                removeRouteDefinition(routeDefinition);
+            }
+            this.routeDefinitions.addAll(routeDefinitions);
+            if (shouldStartRoutes()) {
+                startRouteDefinitions(routeDefinitions);
+            }
+        } catch (Exception e) {
+            removeRouteDefinitions(routeDefinitions);
+            throw e;
         }
     }
 
