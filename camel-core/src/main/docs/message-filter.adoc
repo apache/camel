@@ -76,8 +76,7 @@ in the Message Filter, as shown below:
 ----------------------------------------------------------------------------
 
 
-INFO:*filtered endpoint required inside </filter> tag*
-make sure you put the endpoint you want to filter (<to uri="seda:b"/>,
+INFO:make sure you put the endpoint you want to filter (<to uri="seda:b"/>,
 etc.) before the closing </filter> tag or the filter will not be applied
 (in 2.8+, omitting this will result in an error)
 
