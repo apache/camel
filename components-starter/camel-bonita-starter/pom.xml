@@ -22,10 +22,10 @@
     <artifactId>components-starter</artifactId>
     <version>2.18.1-SNAPSHOT</version>
   </parent>
-  <artifactId>camel-amqp-starter</artifactId>
+  <artifactId>camel-bonita-starter</artifactId>
   <packaging>jar</packaging>
-  <name>Spring-Boot Starter :: Camel :: AMQP</name>
-  <description>Spring-Boot Starter for Camel AMQP component which is based on the Apache Qpid project</description>
+  <name>Spring-Boot Starter :: Camel :: Bonita</name>
+  <description>Spring-Boot Starter for Camel Bonita support</description>
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -34,7 +34,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-amqp</artifactId>
+      <artifactId>camel-bonita</artifactId>
       <version>${project.version}</version>
       <exclusions>
         <exclusion>
