@@ -75,6 +75,7 @@
     <module>camel-bean-validator</module>
     <module>camel-barcode</module>
     <module>camel-bindy</module>
+    <module>camel-bonita</module>
     <module>camel-boon</module>
     <module>camel-box</module>
     <module>camel-braintree</module>
