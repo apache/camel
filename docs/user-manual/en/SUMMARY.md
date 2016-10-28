@@ -94,6 +94,7 @@
         * [Request Reply](request-reply.adoc)
     * Message Routing
         * [Content Based Router](content-based-router.adoc)
+        * [Message Filter](message-filter.adoc)
 
 * Community
     * FAQ
