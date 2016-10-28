@@ -32,9 +32,8 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public class PropertiesComponentConfiguration {
 
     /**
-     * A list of locations to load properties. You can use comma to separate
-     * multiple locations. This option will override any default locations and
-     * only use the locations from this option.
+     * A list of locations to load properties. This option will override any
+     * default locations and only use the locations from this option.
      */
     private String[] locations;
     /**

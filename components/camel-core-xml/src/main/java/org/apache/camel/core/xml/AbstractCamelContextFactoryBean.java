@@ -567,8 +567,21 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getCamelPropertyPlaceholder() != null) {
             CamelPropertyPlaceholderDefinition def = getCamelPropertyPlaceholder();
 
+            List<String> locations = new ArrayList<>();
+
+            if (def.getLocation() != null) {
+                ObjectHelper.createIterable(def.getLocation()).forEach(
+                    location -> locations.add((String) location)
+                );
+            }
+            if (def.getLocations() != null) {
+                def.getLocations().forEach(
+                    definition -> locations.add(definition.getPath())
+                );
+            }
+
             PropertiesComponent pc = new PropertiesComponent();
-            pc.setLocation(def.getLocation());
+            pc.setLocations(locations);
             pc.setEncoding(def.getEncoding());
 
             if (def.isCache() != null) {

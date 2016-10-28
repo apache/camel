@@ -60,8 +60,7 @@ public class BlueprintPropertiesResolver implements PropertiesResolver {
         if (!explicit) {
             // auto lookup blueprint property placeholders to use if none explicit was configured
             // this is convention over configuration
-            String[] ids = blueprint.lookupPropertyPlaceholderIds();
-            for (String id : ids) {
+            for (String id : blueprint.lookupPropertyPlaceholderIds()) {
                 blueprint.addPropertyPlaceholder(id);
             }
         }
