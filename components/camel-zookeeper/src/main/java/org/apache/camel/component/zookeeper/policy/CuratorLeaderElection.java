@@ -16,20 +16,6 @@
  */
 package org.apache.camel.component.zookeeper.policy;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.StatefulService;
-import org.apache.camel.impl.JavaUuidGenerator;
-import org.apache.camel.spi.UuidGenerator;
-import org.apache.curator.RetryPolicy;
-import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.framework.recipes.leader.LeaderSelector;
-import org.apache.curator.framework.recipes.leader.LeaderSelectorListenerAdapter;
-import org.apache.curator.retry.ExponentialBackoffRetry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -38,6 +24,20 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.StatefulService;
+import org.apache.camel.impl.JavaUuidGenerator;
+import org.apache.camel.spi.UuidGenerator;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.recipes.leader.LeaderSelector;
+import org.apache.curator.framework.recipes.leader.LeaderSelectorListenerAdapter;
+import org.apache.curator.retry.ExponentialBackoffRetry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * <code>CuratorLeaderElection</code> uses the leader election capabilities of a
@@ -62,12 +62,11 @@ public class CuratorLeaderElection {
     private final String candidateName;
     private final Lock lock = new ReentrantLock();
     private final CountDownLatch electionComplete = new CountDownLatch(1);
+    private final List<ElectionWatcher> watchers = new ArrayList<ElectionWatcher>();
     private AtomicBoolean masterNode = new AtomicBoolean(false);
     private volatile boolean isCandidateCreated;
     private int enabledCount = 1;
     private UuidGenerator uuidGenerator = new JavaUuidGenerator();
-    private final List<ElectionWatcher> watchers = new ArrayList<ElectionWatcher>();
-
     private LeaderSelector leaderSelector;
     private CuratorFramework client;
 
@@ -81,9 +80,9 @@ public class CuratorLeaderElection {
         this.uri = uri;
         this.candidateName = createCandidateName();
 
-        String connectionString = uri.substring( 1 + uri.indexOf(':')).split("/")[0];
+        String connectionString = uri.substring(1 + uri.indexOf(':')).split("/")[0];
         String protocol = uri.substring(0, uri.indexOf(':'));
-        String path = uri.replace(protocol + ":" +  connectionString, "" );
+        String path = uri.replace(protocol + ":" + connectionString, "");
         client = CuratorFrameworkFactory.newClient(connectionString, new ExponentialBackoffRetry(1000, 3));
         client.start();
 
@@ -91,10 +90,19 @@ public class CuratorLeaderElection {
         leaderSelector.start();
     }
 
-    public void shutdownClients(){
+    // stolen from org/apache/camel/processor/CamelInternalProcessor
+    public static boolean isCamelStopping(CamelContext context) {
+        if (context instanceof StatefulService) {
+            StatefulService ss = (StatefulService) context;
+            return ss.isStopping() || ss.isStopped();
+        }
+        return false;
+    }
+
+    public void shutdownClients() {
         try {
             leaderSelector.close();
-        } finally{
+        } finally {
             client.close();
         }
     }
@@ -120,7 +128,6 @@ public class CuratorLeaderElection {
         return candidateName;
     }
 
-
     private void notifyElectionWatchers() {
         for (ElectionWatcher watcher : watchers) {
             try {
@@ -135,16 +142,7 @@ public class CuratorLeaderElection {
         return watchers.add(e);
     }
 
-    // stolen from org/apache/camel/processor/CamelInternalProcessor
-    public static boolean isCamelStopping(CamelContext context) {
-        if (context instanceof StatefulService) {
-            StatefulService ss = (StatefulService) context;
-            return ss.isStopping() || ss.isStopped();
-        }
-        return false;
-    }
-
-    class CamelLeaderElectionListener extends LeaderSelectorListenerAdapter{
+    class CamelLeaderElectionListener extends LeaderSelectorListenerAdapter {
 
         @Override
         public void takeLeadership(CuratorFramework curatorFramework) throws Exception {
@@ -153,10 +151,10 @@ public class CuratorLeaderElection {
             notifyElectionWatchers();
 
             // this is supposed to never return as long as it wants to keep its own leader status
-            while(!isCamelStopping(camelContext)){
+            while (!isCamelStopping(camelContext)) {
                 try {
                     Thread.sleep(5000);
-                } catch (InterruptedException e){
+                } catch (InterruptedException e) {
                     Thread.interrupted();
                     break;
                 }
