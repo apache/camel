@@ -64,7 +64,7 @@ public class ZooKeeperProducer extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
 
-        if(connection == null){
+        if (connection == null) {
             connection = this.zkm.getConnection();
         }
         ProductionContext context = new ProductionContext(connection, exchange);
