@@ -92,6 +92,8 @@
         * [Event Message](event-message.adoc)
         * [Return Address](return-address.adoc)
         * [Request Reply](request-reply.adoc)
+    * Message Routing
+        * [Content Based Router](content-based-router.adoc)
 
 * Community
     * FAQ
