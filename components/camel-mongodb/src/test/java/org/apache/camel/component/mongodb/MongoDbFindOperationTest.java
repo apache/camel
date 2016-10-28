@@ -58,7 +58,62 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
         assertEquals("Result page size header should equal 1000", 1000, resultExchange.getIn().getHeader(MongoDbConstants.RESULT_PAGE_SIZE));
 
     }
-    
+
+    @Test
+    public void testFindAllWithQueryAndNoFIlter() throws Exception {
+        // Test that the collection has 0 documents in it
+        assertEquals(0, testCollection.count());
+        pumpDataIntoTestCollection();
+
+        DBObject query = BasicDBObjectBuilder.start("scientist", "Einstein").get();
+        Object result = template.requestBody("direct:findAll", query);
+        assertTrue("Result is not of type List", result instanceof List);
+
+        @SuppressWarnings("unchecked")
+        List<DBObject> resultList = (List<DBObject>) result;
+
+        assertListSize("Result does not contain correct number of Einstein entries", resultList, 100);
+
+        // Ensure that all returned documents contain all fields, and that they only contain 'Einstein'
+        for (DBObject dbObject : resultList) {
+            assertNotNull("DBObject in returned list should not contain field _id", dbObject.get("_id"));
+            assertNotNull("DBObject in returned list does not contain field 'scientist'", dbObject.get("scientist"));
+            assertNotNull("DBObject in returned list should not contain field fixedField", dbObject.get("fixedField"));
+            assertEquals("DBOject.scientist should only be Einstein", "Einstein", dbObject.get("scientist"));
+        }
+
+        Exchange resultExchange = getMockEndpoint("mock:resultFindAll").getReceivedExchanges().get(0);
+        assertEquals("Result page size header should equal 100", 100, resultExchange.getIn().getHeader(MongoDbConstants.RESULT_PAGE_SIZE));
+    }
+
+    @Test
+    public void testFindAllWithQueryAndFilter() throws Exception {
+        // Test that the collection has 0 documents in it
+        assertEquals(0, testCollection.count());
+        pumpDataIntoTestCollection();
+
+        DBObject fieldFilter = BasicDBObjectBuilder.start().add("_id", 0).add("fixedField", 0).get();
+        DBObject query = BasicDBObjectBuilder.start("scientist", "Einstein").get();
+        Object result = template.requestBodyAndHeader("direct:findAll", query, MongoDbConstants.FIELDS_FILTER, fieldFilter);
+        assertTrue("Result is not of type List", result instanceof List);
+
+        @SuppressWarnings("unchecked")
+        List<DBObject> resultList = (List<DBObject>) result;
+
+        assertListSize("Result does not contain correct number of Einstein entries", resultList, 100);
+
+        // Ensure that all returned documents contain all fields, and that they only contain 'Einstein'
+        for (DBObject dbObject : resultList) {
+            assertNull("DBObject in returned list should not contain field _id", dbObject.get("_id"));
+            assertNotNull("DBObject in returned list does not contain field 'scientist'", dbObject.get("scientist"));
+            assertNull("DBObject in returned list should not contain field fixedField", dbObject.get("fixedField"));
+            assertEquals("DBOject.scientist should only be Einstein", "Einstein", dbObject.get("scientist"));
+        }
+
+        Exchange resultExchange = getMockEndpoint("mock:resultFindAll").getReceivedExchanges().get(0);
+        assertEquals("Result page size header should equal 100", 100, resultExchange.getIn().getHeader(MongoDbConstants.RESULT_PAGE_SIZE));
+    }
+
     @Test
     public void testFindAllNoCriteriaWithFilterOperation() throws Exception {
         // Test that the collection has 0 documents in it

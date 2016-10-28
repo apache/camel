@@ -315,6 +315,8 @@ public class MongoDbProducer extends DefaultProducer {
                 ret = dbCol.find(new BasicDBObject());
             } else if (fieldFilter == null) {
                 ret = dbCol.find(query);
+            } else if (query != null) {
+                ret = dbCol.find(query).projection(fieldFilter);
             } else {
                 ret = dbCol.find(new BasicDBObject()).projection(fieldFilter);
             }
