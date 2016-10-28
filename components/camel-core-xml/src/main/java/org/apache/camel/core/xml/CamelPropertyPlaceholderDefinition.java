@@ -36,7 +36,7 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
 
-    @XmlAttribute(required = true)
+    @XmlAttribute
     private String location;
     @XmlAttribute
     private String encoding;
@@ -62,6 +62,8 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
     private String suffixToken;
     @XmlElement(name = "propertiesFunction")
     private List<CamelPropertyPlaceholderFunctionDefinition> functions;
+    @XmlElement(name = "propertiesLocation")
+    private List<CamelPropertyPlaceholderLocationDefinition> locations;
 
     public String getLocation() {
         return location;
@@ -211,5 +213,16 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
      */
     public void setFunctions(List<CamelPropertyPlaceholderFunctionDefinition> functions) {
         this.functions = functions;
+    }
+
+    public List<CamelPropertyPlaceholderLocationDefinition> getLocations() {
+        return locations;
+    }
+
+    /**
+     * List of property locations to use.
+     */
+    public void setLocations(List<CamelPropertyPlaceholderLocationDefinition> locations) {
+        this.locations = locations;
     }
 }

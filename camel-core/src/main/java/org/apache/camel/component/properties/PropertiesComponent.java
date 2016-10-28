@@ -19,6 +19,7 @@ package org.apache.camel.component.properties;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -229,7 +230,7 @@ public class PropertiesComponent extends UriEndpointComponent {
     }
 
     /**
-     * A list of locations to load properties. You can use comma to separate multiple locations.
+     * A list of locations to load properties.
      * This option will override any default locations and only use the locations from this option.
      */
     public void setLocations(String[] locations) {
@@ -243,6 +244,16 @@ public class PropertiesComponent extends UriEndpointComponent {
         }
 
         this.locations = locations;
+    }
+
+    /**
+     * A list of locations to load properties.
+     * This option will override any default locations and only use the locations from this option.
+     */
+    public void setLocations(Collection<String> locations) {
+        if (locations != null && !locations.isEmpty()) {
+            setLocations(locations.toArray(new String[locations.size()]));
+        }
     }
 
     /**

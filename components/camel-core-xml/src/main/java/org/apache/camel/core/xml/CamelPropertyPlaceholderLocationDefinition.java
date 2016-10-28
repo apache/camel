@@ -21,24 +21,42 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.ObjectHelper;
 
 /**
- * Function to use with properties placeholder
+ * Properties to use with properties placeholder
  */
 @Metadata(label = "spring,configuration")
-@XmlRootElement(name = "propertiesFunction")
-public class CamelPropertyPlaceholderFunctionDefinition extends IdentifiedType {
+@XmlRootElement(name = "propertiesLocation")
+public class CamelPropertyPlaceholderLocationDefinition extends IdentifiedType {
     @XmlAttribute(required = true)
-    private String ref;
+    public String path;
+    @XmlAttribute
+    public String resolver;
 
-    public String getRef() {
-        return ref;
+    public String getPath() {
+        return path;
     }
 
     /**
-     * Reference to the custom properties function to lookup in the registry
+     * Property locations to use.
      */
-    public void setRef(String ref) {
-        this.ref = ref;
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getResolver() {
+        return resolver;
+    }
+
+    /**
+     * The resolver to use to locate the location
+     */
+    public void setResolver(String resolver) {
+        this.resolver = resolver;
+    }
+
+    public String getLocation() {
+        return ObjectHelper.isEmpty(resolver) ? path : resolver + path;
     }
 }
