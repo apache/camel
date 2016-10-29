@@ -19,6 +19,7 @@ package org.apache.camel.spring.boot;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 
+@Deprecated
 public abstract class FatWarInitializer extends SpringBootServletInitializer {
 
     @Override
