@@ -75,7 +75,7 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
             // only add and start Camel if its stopped (initial state)
             if (camelContext.getStatus().isStopped()) {
                 LOG.debug("Post-processing CamelContext bean: {}", camelContext.getName());
-                for (RoutesBuilder routesBuilder : applicationContext.getBeansOfType(RoutesBuilder.class).values()) {
+                for (RoutesBuilder routesBuilder : applicationContext.getBeansOfType(RoutesBuilder.class, configurationProperties.isIncludeNonSingletons(), true).values()) {
                     // filter out abstract classes
                     boolean abs = Modifier.isAbstract(routesBuilder.getClass().getModifiers());
                     // filter out FatJarRouter which can be in the spring app context

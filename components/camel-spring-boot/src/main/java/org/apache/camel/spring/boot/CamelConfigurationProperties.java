@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@
 package org.apache.camel.spring.boot;
 
 import org.apache.camel.ManagementStatisticsLevel;
-import org.apache.camel.api.management.ManagedAttribute;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "camel.springboot")
@@ -81,6 +80,12 @@ public class CamelConfigurationProperties {
      * If you run Spring-Boot with spring-boot-starter-web then the web container keeps the JVM running.
      */
     private boolean mainRunController;
+
+    /**
+     * Whether to include non-singleton beans (prototypes) when scanning for RouteBuilder instances.
+     * By default only singleton beans is included in the context scan.
+     */
+    private boolean includeNonSingletons;
 
     /**
      * Is used to limit the maximum length of the logging Camel message bodies. If the message body
@@ -678,5 +683,13 @@ public class CamelConfigurationProperties {
 
     public void setTracerFormatterMaxChars(Integer tracerFormatterMaxChars) {
         this.tracerFormatterMaxChars = tracerFormatterMaxChars;
+    }
+
+    public boolean isIncludeNonSingletons() {
+        return includeNonSingletons;
+    }
+
+    public void setIncludeNonSingletons(boolean includeNonSingletons) {
+        this.includeNonSingletons = includeNonSingletons;
     }
 }
