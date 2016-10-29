@@ -37,17 +37,20 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionEvaluationException;
+import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Pattern;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.StreamCache;
+import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.processor.DynamicRouter;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.RoutingSlip;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
@@ -116,15 +119,15 @@ public class MethodInfo {
         this.hasCustomAnnotation = hasCustomAnnotation;
         this.hasHandlerAnnotation = hasHandlerAnnotation;
         this.parametersExpression = createParametersExpression();
-        
+
         Map<Class<?>, Annotation> collectedMethodAnnotation = collectMethodAnnotations(type, method);
 
         Pattern oneway = findOneWayAnnotation(method);
         if (oneway != null) {
             pattern = oneway.value();
         }
-        
-        org.apache.camel.RoutingSlip routingSlipAnnotation = 
+
+        org.apache.camel.RoutingSlip routingSlipAnnotation =
             (org.apache.camel.RoutingSlip)collectedMethodAnnotation.get(org.apache.camel.RoutingSlip.class);
         if (routingSlipAnnotation != null && matchContext(routingSlipAnnotation.context())) {
             routingSlip = new RoutingSlip(camelContext);
@@ -138,7 +141,7 @@ public class MethodInfo {
             }
         }
 
-        org.apache.camel.DynamicRouter dynamicRouterAnnotation = 
+        org.apache.camel.DynamicRouter dynamicRouterAnnotation =
             (org.apache.camel.DynamicRouter)collectedMethodAnnotation.get(org.apache.camel.DynamicRouter.class);
         if (dynamicRouterAnnotation != null
                 && matchContext(dynamicRouterAnnotation.context())) {
@@ -153,7 +156,7 @@ public class MethodInfo {
             }
         }
 
-        org.apache.camel.RecipientList recipientListAnnotation = 
+        org.apache.camel.RecipientList recipientListAnnotation =
             (org.apache.camel.RecipientList)collectedMethodAnnotation.get(org.apache.camel.RecipientList.class);
         if (recipientListAnnotation != null
                 && matchContext(recipientListAnnotation.context())) {
@@ -201,7 +204,7 @@ public class MethodInfo {
         collectMethodAnnotations(c, method, annotations);
         return annotations;
     }
-    
+
     private void collectMethodAnnotations(Class<?> c, Method method, Map<Class<?>, Annotation> annotations) {
         for (Class<?> i : c.getInterfaces()) {
             collectMethodAnnotations(i, method, annotations);
@@ -337,16 +340,37 @@ public class MethodInfo {
     }
 
     private void fillResult(Exchange exchange, Object result) {
-        if (exchange.getPattern().isOutCapable()) {
-            // force out creating if not already created (as its lazy)
-            LOG.debug("Setting bean invocation result on the OUT message: {}", result);
-            exchange.getOut().setBody(result);
+        LOG.trace("Setting bean invocation result : {}", result);
+
+        // the bean component forces OUT if the MEP is OUT capable
+        boolean out = ExchangeHelper.isOutCapable(exchange) || exchange.hasOut();
+        Message old;
+        if (out) {
+            old = exchange.getOut();
             // propagate headers
             exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+            // propagate attachments
+            if (exchange.getIn().hasAttachments()) {
+                exchange.getOut().getAttachments().putAll(exchange.getIn().getAttachments());
+            }
         } else {
-            // if not out then set it on the in
-            LOG.debug("Setting bean invocation result on the IN message: {}", result);
-            exchange.getIn().setBody(result);
+            old = exchange.getIn();
+        }
+
+        // create a new message container so we do not drag specialized message objects along
+        // but that is only needed if the old message is a specialized message
+        boolean copyNeeded = !(old.getClass().equals(DefaultMessage.class));
+
+        if (copyNeeded) {
+            Message msg = new DefaultMessage();
+            msg.copyFrom(old);
+            msg.setBody(result);
+
+            // replace message on exchange
+            ExchangeHelper.replaceMessage(exchange, msg, false);
+        } else {
+            // no copy needed so set replace value directly
+            old.setBody(result);
         }
     }
 
@@ -417,16 +441,16 @@ public class MethodInfo {
     public boolean isStaticMethod() {
         return Modifier.isStatic(method.getModifiers());
     }
-    
+
     /**
      * Returns true if this method is covariant with the specified method
      * (this method may above or below the specified method in the class hierarchy)
      */
     public boolean isCovariantWith(MethodInfo method) {
-        return 
+        return
             method.getMethod().getName().equals(this.getMethod().getName())
             && (method.getMethod().getReturnType().isAssignableFrom(this.getMethod().getReturnType())
-            || this.getMethod().getReturnType().isAssignableFrom(method.getMethod().getReturnType())) 
+            || this.getMethod().getReturnType().isAssignableFrom(method.getMethod().getReturnType()))
             && Arrays.deepEquals(method.getMethod().getParameterTypes(), this.getMethod().getParameterTypes());
     }
 
