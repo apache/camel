@@ -63,6 +63,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.PropertySource;
 import org.jboss.forge.roaster.model.util.Strings;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
@@ -766,6 +767,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.getJavaDoc().setFullText(doc);
 
         javaClass.addAnnotation(Configuration.class);
+        javaClass.addAnnotation(ConditionalOnBean.class).setStringValue("type", "org.apache.camel.springboot.CamelAutoConfiguration");
 
         String configurationName = name.replace("ComponentAutoConfiguration", "ComponentConfiguration");
         AnnotationSource<JavaClassSource> ann = javaClass.addAnnotation(EnableConfigurationProperties.class);
@@ -818,6 +820,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.getJavaDoc().setFullText(doc);
 
         javaClass.addAnnotation(Configuration.class);
+        javaClass.addAnnotation(ConditionalOnBean.class).setStringValue("type", "org.apache.camel.springboot.CamelAutoConfiguration");
 
         String configurationName = name.replace("DataFormatAutoConfiguration", "DataFormatConfiguration");
         AnnotationSource<JavaClassSource> ann = javaClass.addAnnotation(EnableConfigurationProperties.class);
@@ -873,6 +876,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.getJavaDoc().setFullText(doc);
 
         javaClass.addAnnotation(Configuration.class);
+        javaClass.addAnnotation(ConditionalOnBean.class).setStringValue("type", "org.apache.camel.springboot.CamelAutoConfiguration");
 
         String configurationName = name.replace("LanguageAutoConfiguration", "LanguageConfiguration");
         AnnotationSource<JavaClassSource> ann = javaClass.addAnnotation(EnableConfigurationProperties.class);
