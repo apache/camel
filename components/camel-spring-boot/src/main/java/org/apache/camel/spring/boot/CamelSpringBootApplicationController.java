@@ -53,7 +53,8 @@ public class CamelSpringBootApplicationController {
                 try {
                     super.doStop();
                 } finally {
-                    latch.countDown();
+                    // should use the latch on this instance
+                    CamelSpringBootApplicationController.this.latch.countDown();
                 }
             }
         };
