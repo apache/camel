@@ -1467,6 +1467,14 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body.length}", 3);
     }
 
+    public void testIntArrayLength() throws Exception {
+        exchange.getIn().setBody(new int[]{1, 20, 300});
+        assertExpression("${body[0]}", 1);
+        assertExpression("${body[1]}", 20);
+        assertExpression("${body[2]}", 300);
+        assertExpression("${body.length}", 3);
+    }
+
     public void testSimpleMapBoolean() throws Exception {
         Map<String, Object> map = new HashMap<String, Object>();
         exchange.getIn().setBody(map);
