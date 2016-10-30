@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.consumer;
 
 import org.apache.camel.Processor;
@@ -27,17 +28,17 @@ import org.slf4j.LoggerFactory;
  */
 public class BonitaConsumer extends ScheduledPollConsumer {
 
-	protected static final transient Logger LOG = LoggerFactory.getLogger(BonitaConsumer.class);
+    protected static final transient Logger LOG = LoggerFactory.getLogger(BonitaConsumer.class);
 
-	protected BonitaEndpoint endpoint;
+    protected BonitaEndpoint endpoint;
 
-	public BonitaConsumer(BonitaEndpoint endpoint, Processor processor) {
-		super(endpoint, processor);
-		this.endpoint = endpoint;
-	}
+    public BonitaConsumer(BonitaEndpoint endpoint, Processor processor) {
+        super(endpoint, processor);
+        this.endpoint = endpoint;
+    }
 
-	@Override
-	protected int poll() throws Exception {
-		return 0;
-	}
+    @Override
+    protected int poll() throws Exception {
+        return 0;
+    }
 }

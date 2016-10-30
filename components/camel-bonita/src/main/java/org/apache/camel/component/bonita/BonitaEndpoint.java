@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita;
 
 import org.apache.camel.Consumer;
@@ -26,26 +27,30 @@ import org.apache.camel.component.bonita.util.BonitaOperation;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Represents a bonita endpoint.
  */
-@UriEndpoint(scheme = "bonita", title = "bonita", syntax="bonita:operation", consumerClass = BonitaConsumer.class, label = "bonita")
+@UriEndpoint(
+        scheme = "bonita",
+        title = "bonita",
+        syntax = "bonita:operation",
+        consumerClass = BonitaConsumer.class,
+        label = "bonita")
 public class BonitaEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(BonitaEndpoint.class);
-	
- 
+
     @UriParam
     private BonitaConfiguration configuration;
 
     public BonitaEndpoint() {
     }
-    
-    public BonitaEndpoint(String uri, BonitaComponent component, BonitaConfiguration configuration) {
+
+    public BonitaEndpoint(String uri, BonitaComponent component,
+            BonitaConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
@@ -56,9 +61,9 @@ public class BonitaEndpoint extends DefaultEndpoint {
 
     public Producer createProducer() throws Exception {
         if (configuration.getOperation() == BonitaOperation.startCase) {
-	        return new BonitaStartProducer(this, configuration);
+            return new BonitaStartProducer(this, configuration);
         } else {
-        	throw new BonitaException("Operation specified is not supported.");
+            throw new BonitaException("Operation specified is not supported.");
         }
     }
 
@@ -69,10 +74,9 @@ public class BonitaEndpoint extends DefaultEndpoint {
     public boolean isSingleton() {
         return true;
     }
-    
-    public BonitaConfiguration getConfiguration() {
-    	return configuration;
-    }
 
+    public BonitaConfiguration getConfiguration() {
+        return configuration;
+    }
 
 }

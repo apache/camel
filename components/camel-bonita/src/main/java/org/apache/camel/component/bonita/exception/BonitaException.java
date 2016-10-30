@@ -14,18 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.exception;
 
 public class BonitaException extends Exception {
-	
-	 private static final long serialVersionUID = 1L;
 
-	    public BonitaException(String message) {
-	        super(message);
-	    }
+    private static final long serialVersionUID = 1L;
 
-	    public BonitaException(Throwable throwable) {
-	        super(throwable);
-	    }
+    public BonitaException(String message) {
+        super(message);
+    }
+
+    public BonitaException(Throwable throwable) {
+        super(throwable);
+    }
 
 }

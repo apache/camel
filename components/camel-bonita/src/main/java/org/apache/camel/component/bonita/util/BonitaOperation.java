@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.util;
 
 public enum BonitaOperation {
-	 startCase("startCase");
+    startCase("startCase");
 
     private final String text;
 

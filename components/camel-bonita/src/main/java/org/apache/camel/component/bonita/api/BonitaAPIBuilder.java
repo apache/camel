@@ -14,31 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.api;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
 
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+
 import org.apache.camel.component.bonita.api.filter.BonitaAuthFilter;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
 import org.glassfish.jersey.client.ClientConfig;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-
 public class BonitaAPIBuilder {
-	
-	public static BonitaAPI build(BonitaAPIConfig bonitaAPIConfig) {
-		if (bonitaAPIConfig == null) { throw new IllegalArgumentException("bonitaApiConfig is null"); }
-		ClientConfig clientConfig = new ClientConfig();
+
+    protected BonitaAPIBuilder() {
+
+    }
+
+    public static BonitaAPI build(BonitaAPIConfig bonitaAPIConfig) {
+        if (bonitaAPIConfig == null) {
+            throw new IllegalArgumentException("bonitaApiConfig is null");
+        }
+        ClientConfig clientConfig = new ClientConfig();
         clientConfig.register(JacksonJsonProvider.class);
         ClientBuilder clientBuilder = ClientBuilder.newBuilder().withConfig(clientConfig);
         Client client = clientBuilder.build();
         client.register(new BonitaAuthFilter(bonitaAPIConfig));
         WebTarget webTarget = client.target(bonitaAPIConfig.getBaseBonitaURI()).path("/API/bpm");
-		return new BonitaAPI(bonitaAPIConfig, webTarget); 
-	}
-	
-	
+        return new BonitaAPI(bonitaAPIConfig, webTarget);
+    }
 
 }

@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.api.filter;
 
 import java.io.IOException;
@@ -35,47 +36,49 @@ import javax.ws.rs.core.Response;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
 import org.apache.camel.util.ObjectHelper;
 
-public class BonitaAuthFilter implements ClientRequestFilter { 
-	
-	private BonitaAPIConfig bonitaApiConfig;	
-	
-	public BonitaAuthFilter(BonitaAPIConfig bonitaApiConfig) {
-		this.bonitaApiConfig = bonitaApiConfig;
-	}
-	
-	@Override
+public class BonitaAuthFilter implements ClientRequestFilter {
+
+    private BonitaAPIConfig bonitaApiConfig;
+
+    public BonitaAuthFilter(BonitaAPIConfig bonitaApiConfig) {
+        this.bonitaApiConfig = bonitaApiConfig;
+    }
+
+    @Override
     public void filter(ClientRequestContext requestContext) throws IOException {
         if (requestContext.getCookies().get("JSESSIONID") == null) {
-        	String username = bonitaApiConfig.getUsername();
-        	String password = bonitaApiConfig.getPassword();
-        	if (ObjectHelper.isEmpty(username)) {
-        		throw new IllegalArgumentException("Username provided is null or empty.");
-        	}
-        	if (ObjectHelper.isEmpty(password)) {
-        		throw new IllegalArgumentException("Password provided is null or empty.");
-        	}
+            String username = bonitaApiConfig.getUsername();
+            String password = bonitaApiConfig.getPassword();
+            if (ObjectHelper.isEmpty(username)) {
+                throw new IllegalArgumentException("Username provided is null or empty.");
+            }
+            if (ObjectHelper.isEmpty(password)) {
+                throw new IllegalArgumentException("Password provided is null or empty.");
+            }
             ClientBuilder clientBuilder = ClientBuilder.newBuilder();
             Client client = clientBuilder.build();
-            WebTarget webTarget = client.target(bonitaApiConfig.getBaseBonitaURI()).path("loginservice");
+            WebTarget webTarget =
+                    client.target(bonitaApiConfig.getBaseBonitaURI()).path("loginservice");
             MultivaluedMap<String, String> form = new MultivaluedHashMap<String, String>();
             form.add("username", username);
             form.add("password", password);
             form.add("redirect", "false");
-            Response response = webTarget.request().accept(MediaType.APPLICATION_FORM_URLENCODED).post(Entity.form(form));
+            Response response = webTarget.request().accept(MediaType.APPLICATION_FORM_URLENCODED)
+                    .post(Entity.form(form));
             Map<String, NewCookie> cr = response.getCookies();
             ArrayList<Object> cookies = new ArrayList<>();
             for (NewCookie cookie : cr.values()) {
-            	cookies.add(cookie.toCookie());
+                cookies.add(cookie.toCookie());
             }
             requestContext.getHeaders().put("Cookie", cookies);
         }
     }
 
-	public BonitaAPIConfig getBonitaApiConfig() {
-		return bonitaApiConfig;
-	}
+    public BonitaAPIConfig getBonitaApiConfig() {
+        return bonitaApiConfig;
+    }
 
-	public void setBonitaApiConfig(BonitaAPIConfig bonitaApiConfig) {
-		this.bonitaApiConfig = bonitaApiConfig;
-	}
+    public void setBonitaApiConfig(BonitaAPIConfig bonitaApiConfig) {
+        this.bonitaApiConfig = bonitaApiConfig;
+    }
 }
