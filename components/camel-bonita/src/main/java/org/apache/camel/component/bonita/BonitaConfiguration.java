@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita;
 
 import java.util.Map;
@@ -26,66 +27,69 @@ import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class BonitaConfiguration implements Cloneable {
-	
-	
-    @UriPath(enums = "startCase") @Metadata(required = "true")
+
+    @UriPath(
+            enums = "startCase")
+    @Metadata(
+            required = "true")
     private BonitaOperation operation;
-    
-    @UriParam(defaultValue = "localhost")
+
+    @UriParam(
+            defaultValue = "localhost")
     private String hostname = "localhost";
-    
-    @UriParam(defaultValue = "8080")
-	private String port = "8080";
-    
+
+    @UriParam(
+            defaultValue = "8080")
+    private String port = "8080";
+
     @UriParam
     private String processName;
-    
-    @UriParam(label = "security")
-    private String username;
-    
-    @UriParam(label = "security")
-    private String password;
-    
-    
-    public String getHostname() {
-		return hostname;
-	}
 
-    /** 
+    @UriParam(
+            label = "security")
+    private String username;
+
+    @UriParam(
+            label = "security")
+    private String password;
+
+    public String getHostname() {
+        return hostname;
+    }
+
+    /**
      * Hostname where Bonita engine runs
      */
-	public void setHostname(String hostname) {
-		this.hostname = hostname;
-	}
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
 
-	public String getPort() {
-		return port;
-	}
+    public String getPort() {
+        return port;
+    }
 
-	/**
-	 * Port of the server hosting Bonita engine
-	 */
-	public void setPort(String port) {
-		this.port = port;
-	}
+    /**
+     * Port of the server hosting Bonita engine
+     */
+    public void setPort(String port) {
+        this.port = port;
+    }
 
-	public String getProcessName() {
-		return processName;
-	}
+    public String getProcessName() {
+        return processName;
+    }
 
-	/**
-	 * Name of the process involved in the operation
-	 */
-	public void setProcessName(String processName) {
-		this.processName = processName;
-	}
-
+    /**
+     * Name of the process involved in the operation
+     */
+    public void setProcessName(String processName) {
+        this.processName = processName;
+    }
 
     public BonitaOperation getOperation() {
         return operation;
     }
 
-    
     /**
      * Operation to use
      */
@@ -93,35 +97,39 @@ public class BonitaConfiguration implements Cloneable {
         this.operation = operation;
     }
 
+    public void setParameters(Map<String, Object> parameters) {
+        if (parameters.get("hostname") != null) {
+            this.hostname = (String) parameters.get("hostname");
+        }
+        if (parameters.get("port") != null) {
+            this.port = (String) parameters.get("port");
+        }
+        if (parameters.get("processName") != null) {
+            this.processName = (String) parameters.get("processName");
+        }
 
+    }
 
-	public void setParameters(Map<String, Object> parameters) {
-		if (parameters.get("hostname") != null) this.hostname = (String) parameters.get("hostname");
-		if (parameters.get("port") != null) this.port = (String) parameters.get("port");
-		if (parameters.get("processName") != null) this.processName = (String) parameters.get("processName");
+    public String getUsername() {
+        return username;
+    }
 
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	 /**
+    /**
      * Username to authenticate to Bonita engine.
      */
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	 /**
+    /**
      * Password to authenticate to Bonita engine.
      */
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
 }

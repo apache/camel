@@ -14,6 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.api;
 
 import java.util.HashMap;
@@ -34,25 +35,22 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 public class BonitaAuthFilterAlreadyConnectedTest {
 
-	
-	@Mock
-	private ClientRequestContext requestContext;
-	
-	
-	
-	@Before
-	public void setup() {
-		Map<String,Cookie> resultCookies = new HashMap<>();
-		resultCookies.put("JSESSIONID", new Cookie("JSESSIONID","something"));
-		Mockito.when(requestContext.getCookies()).thenReturn(resultCookies);
+    @Mock
+    private ClientRequestContext requestContext;
 
-	}
-	
-	
-	@Test
-	public void testAlreadyConnected() throws Exception{
-		BonitaAPIConfig bonitaApiConfig = new BonitaAPIConfig("hostname", "port", "username", "password");
-		BonitaAuthFilter bonitaAuthFilter = new BonitaAuthFilter(bonitaApiConfig);
-		bonitaAuthFilter.filter(requestContext);
-	}
+    @Before
+    public void setup() {
+        Map<String, Cookie> resultCookies = new HashMap<>();
+        resultCookies.put("JSESSIONID", new Cookie("JSESSIONID", "something"));
+        Mockito.when(requestContext.getCookies()).thenReturn(resultCookies);
+
+    }
+
+    @Test
+    public void testAlreadyConnected() throws Exception {
+        BonitaAPIConfig bonitaApiConfig =
+                new BonitaAPIConfig("hostname", "port", "username", "password");
+        BonitaAuthFilter bonitaAuthFilter = new BonitaAuthFilter(bonitaApiConfig);
+        bonitaAuthFilter.filter(requestContext);
+    }
 }

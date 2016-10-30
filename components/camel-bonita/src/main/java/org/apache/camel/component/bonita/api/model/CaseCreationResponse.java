@@ -14,23 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class CaseCreationResponse {
-	
-	@JsonProperty("caseId")
-	private String caseId;
 
-	public String getCaseId() {
-		return caseId;
-	}
+    @JsonProperty("caseId")
+    private String caseId;
 
-	public void setCaseId(String caseId) {
-		this.caseId = caseId;
-	}
-	
-	
+    public String getCaseId() {
+        return caseId;
+    }
+
+    public void setCaseId(String caseId) {
+        this.caseId = caseId;
+    }
 
 }
