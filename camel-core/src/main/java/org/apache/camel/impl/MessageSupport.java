@@ -136,9 +136,17 @@ public abstract class MessageSupport implements Message {
             // the same instance so do not need to copy
             return;
         }
+        copyFromWithNewBody(that, that.getBody());
+    }
+
+    public void copyFromWithNewBody(Message that, Object newBody) {
+        if (that == this) {
+            // the same instance so do not need to copy
+            return;
+        }
 
         setMessageId(that.getMessageId());
-        setBody(that.getBody());
+        setBody(newBody);
         setFault(that.isFault());
 
         // the headers may be the same instance if the end user has made some mistake

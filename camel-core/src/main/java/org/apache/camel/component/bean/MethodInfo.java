@@ -363,8 +363,7 @@ public class MethodInfo {
 
         if (copyNeeded) {
             Message msg = new DefaultMessage();
-            msg.copyFrom(old);
-            msg.setBody(result);
+            msg.copyFromWithNewBody(old, result);
 
             // replace message on exchange
             ExchangeHelper.replaceMessage(exchange, msg, false);
