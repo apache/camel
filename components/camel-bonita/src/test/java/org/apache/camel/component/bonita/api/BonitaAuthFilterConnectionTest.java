@@ -16,16 +16,13 @@
  */
 package org.apache.camel.component.bonita.api;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-
 import java.util.HashMap;
 
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MultivaluedHashMap;
+
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 import org.apache.camel.component.bonita.api.filter.BonitaAuthFilter;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
@@ -37,36 +34,41 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.modules.junit4.PowerMockRunner;
-import static org.junit.Assert.*;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore("javax.net.ssl.*")
 public class BonitaAuthFilterConnectionTest {
-	
-	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(0); 
-	
-	@Mock
-	private ClientRequestContext requestContext;
-	
-	@Before
-	public void setup() {
-		Mockito.when(requestContext.getCookies()).thenReturn(new HashMap<String,Cookie>());
-		Mockito.when(requestContext.getHeaders()).thenReturn(new MultivaluedHashMap());
-	}
 
-	@Test
-	public void testConnection() throws Exception{
-		String port = wireMockRule.port() + "";
-		stubFor(post(urlEqualTo("/bonita/loginservice"))
-	            .willReturn(aResponse()
-	                .withHeader("Set-Cookie", "JSESSIONID=something")));
-		
-		BonitaAPIConfig bonitaApiConfig = new BonitaAPIConfig("localhost", port, "username", "password");
-		BonitaAuthFilter bonitaAuthFilter = new BonitaAuthFilter(bonitaApiConfig);
-		bonitaAuthFilter.filter(requestContext);
-		assertEquals(1, requestContext.getHeaders().size());
-	}
-	
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(0);
+
+    @Mock
+    private ClientRequestContext requestContext;
+
+    @Before
+    public void setup() {
+        Mockito.when(requestContext.getCookies()).thenReturn(new HashMap<String, Cookie>());
+        Mockito.when(requestContext.getHeaders()).thenReturn(new MultivaluedHashMap());
+    }
+
+    @Test
+    public void testConnection() throws Exception {
+        String port = wireMockRule.port() + "";
+        stubFor(post(urlEqualTo("/bonita/loginservice"))
+                .willReturn(aResponse().withHeader("Set-Cookie", "JSESSIONID=something")));
+
+        BonitaAPIConfig bonitaApiConfig =
+                new BonitaAPIConfig("localhost", port, "username", "password");
+        BonitaAuthFilter bonitaAuthFilter = new BonitaAuthFilter(bonitaApiConfig);
+        bonitaAuthFilter.filter(requestContext);
+        assertEquals(1, requestContext.getHeaders().size());
+    }
+
 }

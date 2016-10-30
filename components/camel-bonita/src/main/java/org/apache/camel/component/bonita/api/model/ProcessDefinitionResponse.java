@@ -14,147 +14,147 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ProcessDefinitionResponse {
 
-	@JsonProperty("id")
-	private String id;
-	
-	@JsonProperty("displayDescription")
-	private String displayDescription;
-	
-	@JsonProperty("deploymentDate")
-	private String deploymentDate;
-	
-	@JsonProperty("description")
-	private String description;
-	
-	@JsonProperty("activationState")
-	private String activationState;
-	
-	@JsonProperty("name")
-	private String name;
-	
-	@JsonProperty("deployedBy")
-	private String deployedBy;
-	
-	@JsonProperty("displayName")
-	private String displayName;
-	
-	@JsonProperty("actorinitiatorid")
-	private String actorInitiatorId;
-	
-	@JsonProperty("last_update_date")
-	private String lastUpdateDate;
-	
-	@JsonProperty("configurationState")
-	private String configurationState;
-	
-	@JsonProperty("version")
-	private String version;
-	
-	public ProcessDefinitionResponse() {
-		super();
-	}
+    @JsonProperty("id")
+    private String id;
 
-	public String getId() {
-		return id;
-	}
+    @JsonProperty("displayDescription")
+    private String displayDescription;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    @JsonProperty("deploymentDate")
+    private String deploymentDate;
 
-	public String getDisplayDescription() {
-		return displayDescription;
-	}
+    @JsonProperty("description")
+    private String description;
 
-	public void setDisplayDescription(String displayDescription) {
-		this.displayDescription = displayDescription;
-	}
+    @JsonProperty("activationState")
+    private String activationState;
 
-	public String getDeploymentDate() {
-		return deploymentDate;
-	}
+    @JsonProperty("name")
+    private String name;
 
-	public void setDeploymentDate(String deploymentDate) {
-		this.deploymentDate = deploymentDate;
-	}
+    @JsonProperty("deployedBy")
+    private String deployedBy;
 
-	public String getDescription() {
-		return description;
-	}
+    @JsonProperty("displayName")
+    private String displayName;
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    @JsonProperty("actorinitiatorid")
+    private String actorInitiatorId;
 
-	public String getActivationState() {
-		return activationState;
-	}
+    @JsonProperty("last_update_date")
+    private String lastUpdateDate;
 
-	public void setActivationState(String activationState) {
-		this.activationState = activationState;
-	}
+    @JsonProperty("configurationState")
+    private String configurationState;
 
-	public String getName() {
-		return name;
-	}
+    @JsonProperty("version")
+    private String version;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public ProcessDefinitionResponse() {
+        super();
+    }
 
-	public String getDeployedBy() {
-		return deployedBy;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setDeployedBy(String deployedBy) {
-		this.deployedBy = deployedBy;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getDisplayName() {
-		return displayName;
-	}
+    public String getDisplayDescription() {
+        return displayDescription;
+    }
 
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
+    public void setDisplayDescription(String displayDescription) {
+        this.displayDescription = displayDescription;
+    }
 
-	public String getActorInitiatorId() {
-		return actorInitiatorId;
-	}
+    public String getDeploymentDate() {
+        return deploymentDate;
+    }
 
-	public void setActorInitiatorId(String actorInitiatorId) {
-		this.actorInitiatorId = actorInitiatorId;
-	}
+    public void setDeploymentDate(String deploymentDate) {
+        this.deploymentDate = deploymentDate;
+    }
 
-	public String getLastUpdateDate() {
-		return lastUpdateDate;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setLastUpdateDate(String lastUpdateDate) {
-		this.lastUpdateDate = lastUpdateDate;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getConfigurationState() {
-		return configurationState;
-	}
+    public String getActivationState() {
+        return activationState;
+    }
 
-	public void setConfigurationState(String configurationState) {
-		this.configurationState = configurationState;
-	}
+    public void setActivationState(String activationState) {
+        this.activationState = activationState;
+    }
 
-	public String getVersion() {
-		return version;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setVersion(String version) {
-		this.version = version;
-	}
-	
-	
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDeployedBy() {
+        return deployedBy;
+    }
+
+    public void setDeployedBy(String deployedBy) {
+        this.deployedBy = deployedBy;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String getActorInitiatorId() {
+        return actorInitiatorId;
+    }
+
+    public void setActorInitiatorId(String actorInitiatorId) {
+        this.actorInitiatorId = actorInitiatorId;
+    }
+
+    public String getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    public void setLastUpdateDate(String lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
+    }
+
+    public String getConfigurationState() {
+        return configurationState;
+    }
+
+    public void setConfigurationState(String configurationState) {
+        this.configurationState = configurationState;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
 }

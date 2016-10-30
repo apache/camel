@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.bonita.api.util;
 
-import static javax.ws.rs.client.Entity.entity;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.Serializable;
@@ -33,6 +31,10 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.MediaType;
 
+import static javax.ws.rs.client.Entity.entity;
+
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+
 import org.apache.camel.component.bonita.api.filter.BonitaAuthFilter;
 import org.apache.camel.component.bonita.api.filter.JsonClientFilter;
 import org.apache.camel.component.bonita.api.model.FileInput;
@@ -45,77 +47,75 @@ import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-
 public class BonitaAPIUtil {
 
-	private static BonitaAPIUtil instance;
-	private WebTarget webTarget;
-	
-	public static BonitaAPIUtil getInstance(BonitaAPIConfig bonitaAPIConfig) {
-		if (instance == null) {
-			instance = new BonitaAPIUtil();
-			ClientConfig clientConfig = new ClientConfig();
-	        clientConfig.register(MultiPartFeature.class);
-	        clientConfig.register(JacksonJsonProvider.class);
-	        Logger logger = Logger.getLogger("org.bonitasoft.camel.bonita.api.util.BonitaAPIUtil");
+    private static BonitaAPIUtil instance;
+    private WebTarget webTarget;
 
-	        Feature feature = new LoggingFeature(logger, Level.INFO, null, null);
-	        clientConfig.register(feature);
-	        ClientBuilder clientBuilder = ClientBuilder.newBuilder().withConfig(clientConfig);
-	        Client client = clientBuilder.build();
-	        client.register(new JsonClientFilter());
-	        client.register(new BonitaAuthFilter(bonitaAPIConfig));
-	       	instance.setWebTarget(client.target(bonitaAPIConfig.getBaseBonitaURI()));
-		}
-		return instance;
-	}
-	
-	
-	public UploadFileResponse uploadFile(ProcessDefinitionResponse processDefinition, FileInput file) {
-		WebTarget resource = webTarget.path("portal/resource/process/{processName}/{processVersion}/API/formFileUpload").resolveTemplate("processName",
-				processDefinition.getName()).resolveTemplate("processVersion", processDefinition.getVersion());
-		try {
-			File tempFile = File.createTempFile("tempFile",".tmp");
-			FileOutputStream fos = new FileOutputStream(tempFile);
-			fos.write(file.getContent());
-			fos.close();
-			final FileDataBodyPart filePart = new FileDataBodyPart("file", tempFile, MediaType.APPLICATION_OCTET_STREAM_TYPE);
-			final MultiPart multipart = new FormDataMultiPart().bodyPart(filePart);
-//			resource.request().header("ContentType", "application/json");
-			return resource.request().accept(MediaType.APPLICATION_JSON).post(entity(multipart, MediaType.MULTIPART_FORM_DATA),
-					UploadFileResponse.class);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-		
-		
-	}
+    public static BonitaAPIUtil getInstance(BonitaAPIConfig bonitaAPIConfig) {
+        if (instance == null) {
+            instance = new BonitaAPIUtil();
+            ClientConfig clientConfig = new ClientConfig();
+            clientConfig.register(MultiPartFeature.class);
+            clientConfig.register(JacksonJsonProvider.class);
+            Logger logger = Logger.getLogger("org.bonitasoft.camel.bonita.api.util.BonitaAPIUtil");
 
+            Feature feature = new LoggingFeature(logger, Level.INFO, null, null);
+            clientConfig.register(feature);
+            ClientBuilder clientBuilder = ClientBuilder.newBuilder().withConfig(clientConfig);
+            Client client = clientBuilder.build();
+            client.register(new JsonClientFilter());
+            client.register(new BonitaAuthFilter(bonitaAPIConfig));
+            instance.setWebTarget(client.target(bonitaAPIConfig.getBaseBonitaURI()));
+        }
+        return instance;
+    }
 
-	public Map<String, Serializable> prepareInputs(ProcessDefinitionResponse processDefinition, Map<String,Serializable> inputs) {
-		for (Entry<String, Serializable> entry : inputs.entrySet()) {
-			if (entry.getValue() instanceof FileInput) {
-				FileInput file = (FileInput) entry.getValue();
-				String tmpFile = uploadFile(processDefinition, file).getTempPath();
-				HashMap<String,Serializable> fileInput = new HashMap<String,Serializable>();
-				fileInput.put("filename", file.getFilename());
-				fileInput.put("tempPath", tmpFile);
-				entry.setValue(fileInput);
-			}
-		}
-		return inputs;
-	}
+    public UploadFileResponse uploadFile(ProcessDefinitionResponse processDefinition,
+            FileInput file) {
+        WebTarget resource = webTarget
+                .path("portal/resource/process/{processName}/{processVersion}/API/formFileUpload")
+                .resolveTemplate("processName", processDefinition.getName())
+                .resolveTemplate("processVersion", processDefinition.getVersion());
+        try {
+            File tempFile = File.createTempFile("tempFile", ".tmp");
+            FileOutputStream fos = new FileOutputStream(tempFile);
+            fos.write(file.getContent());
+            fos.close();
+            final FileDataBodyPart filePart =
+                    new FileDataBodyPart("file", tempFile, MediaType.APPLICATION_OCTET_STREAM_TYPE);
+            final MultiPart multipart = new FormDataMultiPart().bodyPart(filePart);
+            // resource.request().header("ContentType", "application/json");
+            return resource.request().accept(MediaType.APPLICATION_JSON).post(
+                    entity(multipart, MediaType.MULTIPART_FORM_DATA), UploadFileResponse.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
 
+    }
 
-	public WebTarget getWebTarget() {
-		return webTarget;
-	}
+    public Map<String, Serializable> prepareInputs(ProcessDefinitionResponse processDefinition,
+            Map<String, Serializable> inputs) {
+        for (Entry<String, Serializable> entry : inputs.entrySet()) {
+            if (entry.getValue() instanceof FileInput) {
+                FileInput file = (FileInput) entry.getValue();
+                String tmpFile = uploadFile(processDefinition, file).getTempPath();
+                HashMap<String, Serializable> fileInput = new HashMap<String, Serializable>();
+                fileInput.put("filename", file.getFilename());
+                fileInput.put("tempPath", tmpFile);
+                entry.setValue(fileInput);
+            }
+        }
+        return inputs;
+    }
 
+    public WebTarget getWebTarget() {
+        return webTarget;
+    }
 
-	public void setWebTarget(WebTarget webTarget) {
-		this.webTarget = webTarget;
-	}
-	
+    public void setWebTarget(WebTarget webTarget) {
+        this.webTarget = webTarget;
+    }
+
 }

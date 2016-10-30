@@ -14,38 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.bonita.api;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.camel.component.bonita.api.BonitaAPI;
-import org.apache.camel.component.bonita.api.BonitaAPIBuilder;
 import org.apache.camel.component.bonita.api.model.ProcessDefinitionResponse;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
 import org.junit.Test;
 
 public class BonitaAPITest {
-	@Test(expected=IllegalArgumentException.class)
-	public void testGetProcessDefinitionEmptyInput() {
-		BonitaAPI bonitaApi = BonitaAPIBuilder.build(new BonitaAPIConfig("hostname","port","username","password"));
-		bonitaApi.getProcessDefinition("");
-	}
-	
-	@Test(expected=IllegalArgumentException.class)
-	public void testStartCaseEmptyProcessDefinitionId() {
-		BonitaAPI bonitaApi = BonitaAPIBuilder.build(new BonitaAPIConfig("hostname","port","username","password"));
-		bonitaApi.startCase(null, new HashMap<String,Serializable>());
-	}
-	
-	@Test(expected=IllegalArgumentException.class)
-	public void testStartCaseNUllContractInput() {
-		BonitaAPI bonitaApi = BonitaAPIBuilder.build(new BonitaAPIConfig("hostname","port","username","password"));
-		ProcessDefinitionResponse processDefinition = new ProcessDefinitionResponse();
-		bonitaApi.startCase(processDefinition, null);
-	}
-	
-	
+    @Test(
+            expected = IllegalArgumentException.class)
+    public void testGetProcessDefinitionEmptyInput() {
+        BonitaAPI bonitaApi = BonitaAPIBuilder
+                .build(new BonitaAPIConfig("hostname", "port", "username", "password"));
+        bonitaApi.getProcessDefinition("");
+    }
+
+    @Test(
+            expected = IllegalArgumentException.class)
+    public void testStartCaseEmptyProcessDefinitionId() {
+        BonitaAPI bonitaApi = BonitaAPIBuilder
+                .build(new BonitaAPIConfig("hostname", "port", "username", "password"));
+        bonitaApi.startCase(null, new HashMap<String, Serializable>());
+    }
+
+    @Test(
+            expected = IllegalArgumentException.class)
+    public void testStartCaseNUllContractInput() {
+        BonitaAPI bonitaApi = BonitaAPIBuilder
+                .build(new BonitaAPIConfig("hostname", "port", "username", "password"));
+        ProcessDefinitionResponse processDefinition = new ProcessDefinitionResponse();
+        bonitaApi.startCase(processDefinition, null);
+    }
 
 }
