@@ -36,6 +36,8 @@ class RichMessage(val message: Message) extends Message {
 
   def copyFrom(other: Message) = message.copyFrom(other)
 
+  def copyFromWithNewBody(other: Message, newBody: Any) = message.copyFromWithNewBody(other, newBody)
+
   @Deprecated
   def createExchangeId = message.createExchangeId
 
