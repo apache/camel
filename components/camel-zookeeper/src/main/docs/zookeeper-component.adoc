@@ -227,7 +227,7 @@ template.sendBodyAndHeader("direct:create-and-write-to-persistent-znode", testPa
 ----
 
 [[Zookeeper-ZooKeeperenabledRoutepolicy]]
-ZooKeeper enabled Route policy
+ZooKeeper enabled Route policies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ZooKeeper allows for very simple and effective leader election out of
@@ -268,6 +268,18 @@ from("direct:policy-controlled")
     .routePolicy(policy)
     .to("mock:controlled");
 ----
+
+There are currently 2 policies defined in the component, with different SLAs:
+
+* `ZooKeeperRoutePolicy`
+* `CuratorLeaderRoutePolicy` (since *2.19*)
+
+*ZooKeeperRoutePolicy* supports multiple active nodes, but it's activation kicks in only after a Camel component and its correspondent Consumer have already been started,
+ this introduces, depending on your routes definition, the risk that you component can already start consuming events and producing `Exchange`s, before the policy could estabilish
+ that the node should not be activated.
+ 
+*CuratorLeaderRoutePolicy* supports only a single active node, but it's bound to a different `CamelContext` lifecycle method; this Policy kicks in before any route or consumer is started
+ thus you can be sure that no even is processed before the Policy takes its decision.
 
 [[Zookeeper-SeeAlso]]
 See Also
