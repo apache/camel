@@ -12,3 +12,7 @@
   SELECT *
   FROM projects
   ORDER BY id
+@NAME(projectById)
+  SELECT *
+  FROM projects
+  WHERE id = :id
