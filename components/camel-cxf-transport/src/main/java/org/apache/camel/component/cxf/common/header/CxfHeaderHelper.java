@@ -70,9 +70,10 @@ public final class CxfHeaderHelper {
                     message.put(Message.CONTENT_TYPE, entry.getValue());
                 }
                 if (Client.REQUEST_CONTEXT.equals(entry.getKey())
-                    || Client.RESPONSE_CONTEXT.equals(entry.getKey())
-                    || Message.RESPONSE_CODE.equals(entry.getKey())) {
+                    || Client.RESPONSE_CONTEXT.equals(entry.getKey())) {
                     message.put(entry.getKey(), entry.getValue());
+                } else if (Exchange.HTTP_RESPONSE_CODE.equals(entry.getKey())) {
+                    message.put(Message.RESPONSE_CODE, entry.getValue());
                 } else {
                     Object values = entry.getValue();
                     if (values instanceof List<?>) {
