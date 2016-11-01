@@ -35,7 +35,6 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <jersey.version>2.23.2</jersey.version>
-    <wiremock.version>2.1.12</wiremock.version>
   </properties>
 
   <dependencies>
@@ -102,7 +101,7 @@
     <dependency>
       <groupId>com.github.tomakehurst</groupId>
       <artifactId>wiremock-standalone</artifactId>
-      <version>${wiremock.version}</version>
+      <version>${wiremock-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
