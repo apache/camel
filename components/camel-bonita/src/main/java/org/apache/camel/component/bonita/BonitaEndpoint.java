@@ -14,13 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.bonita;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.bonita.consumer.BonitaConsumer;
 import org.apache.camel.component.bonita.exception.BonitaException;
 import org.apache.camel.component.bonita.producer.BonitaStartProducer;
 import org.apache.camel.component.bonita.util.BonitaOperation;
@@ -30,14 +28,11 @@ import org.apache.camel.spi.UriParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Represents a bonita endpoint.
- */
 @UriEndpoint(
         scheme = "bonita",
         title = "bonita",
         syntax = "bonita:operation",
-        consumerClass = BonitaConsumer.class,
+        consumerOnly = true,
         label = "bonita")
 public class BonitaEndpoint extends DefaultEndpoint {
 
@@ -68,7 +63,7 @@ public class BonitaEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new BonitaConsumer(this, processor);
+        throw new UnsupportedOperationException("Consumer not supported");
     }
 
     public boolean isSingleton() {
