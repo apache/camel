@@ -45,14 +45,15 @@ public class HystrixProcessorCommand extends HystrixCommand {
 
     @Override
     protected Message getFallback() {
-        // only run fallback if there was an exception
-        Exception exception = exchange.getException();
-        if (exception == null) {
-            return exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-        }
+        // grab the exception that caused the error (can be failure in run, or from hystrix if short circuited)
+        Throwable exception = getExecutionException();
 
         if (fallback != null || fallbackCommand != null) {
-            LOG.debug("Error occurred processing. Will now run fallback. Exception class: {} message: {}.", exception.getClass().getName(), exception.getMessage());
+            if (exception != null) {
+                LOG.debug("Error occurred processing. Will now run fallback. Exception class: {} message: {}.", exception.getClass().getName(), exception.getMessage());
+            } else {
+                LOG.debug("Error occurred processing. Will now run fallback.");
+            }
             // store the last to endpoint as the failure endpoint
             if (exchange.getProperty(Exchange.FAILURE_ENDPOINT) == null) {
                 exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
