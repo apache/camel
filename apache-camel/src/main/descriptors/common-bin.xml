@@ -42,6 +42,7 @@
         <include>org.apache.camel:camel-beanstalk</include>
         <include>org.apache.camel:camel-bindy</include>
         <include>org.apache.camel:camel-blueprint</include>
+        <include>org.apache.camel:camel-bonita</include>
         <include>org.apache.camel:camel-boon</include>
         <include>org.apache.camel:camel-box</include>
         <include>org.apache.camel:camel-braintree</include>
@@ -68,7 +69,7 @@
         <include>org.apache.camel:camel-docker</include>
         <include>org.apache.camel:camel-dozer</include>
         <include>org.apache.camel:camel-drill</include>
-	<include>org.apache.camel:camel-dropbox</include>
+	    <include>org.apache.camel:camel-dropbox</include>
         <include>org.apache.camel:camel-eclipse</include>
         <include>org.apache.camel:camel-ehcache</include>
         <include>org.apache.camel:camel-ejb</include>
@@ -292,6 +293,7 @@
         <include>org.apache.camel:camel-beanstalk-starter</include>
         <include>org.apache.camel:camel-bean-validator-starter</include>
         <include>org.apache.camel:camel-bindy-starter</include>
+        <include>org.apache.camel:camel-bonita-starter</include>
         <include>org.apache.camel:camel-boon-starter</include>
         <include>org.apache.camel:camel-box-starter</include>
         <include>org.apache.camel:camel-braintree-starter</include>
@@ -317,6 +319,7 @@
         <include>org.apache.camel:camel-dns-starter</include>
         <include>org.apache.camel:camel-docker-starter</include>
         <include>org.apache.camel:camel-dozer-starter</include>
+        <include>org.apache.camel:camel-drill-starter</include>
         <include>org.apache.camel:camel-dropbox-starter</include>
         <include>org.apache.camel:camel-eclipse-starter</include>
         <include>org.apache.camel:camel-ehcache-starter</include>
