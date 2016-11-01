@@ -67,7 +67,7 @@ public class ElsqlSqlMapSource extends AbstractSqlParameterSource {
         } else {
             answer = bodyMap.get(paramName);
             if (answer == null) {
-                headersMap.get(paramName);
+                answer = headersMap.get(paramName);
             }
         }
         return answer;
