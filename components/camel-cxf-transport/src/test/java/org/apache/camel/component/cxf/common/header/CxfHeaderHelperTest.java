@@ -45,10 +45,11 @@ public class CxfHeaderHelperTest extends Assert {
     @Test
     public void testPropagateCamelToCxf() {
         Exchange exchange = new DefaultExchange(context);
-        
+
         exchange.getIn().setHeader("soapAction", "urn:hello:world");
         exchange.getIn().setHeader("MyFruitHeader", "peach");
         exchange.getIn().setHeader("MyBrewHeader", Arrays.asList("cappuccino", "espresso"));
+        exchange.getIn().setHeader(Exchange.HTTP_RESPONSE_CODE, "200");
         org.apache.cxf.message.Message cxfMessage = new org.apache.cxf.message.MessageImpl();
         
         CxfHeaderHelper.propagateCamelToCxf(new DefaultHeaderFilterStrategy(), 
@@ -59,7 +60,7 @@ public class CxfHeaderHelperTest extends Assert {
             CastUtils.cast((Map<?, ?>)cxfMessage.get(org.apache.cxf.message.Message.PROTOCOL_HEADERS));
         assertNotNull(cxfHeaders);
         assertTrue(cxfHeaders.size() == 3);
-        
+
         verifyHeader(cxfHeaders, "soapaction", "urn:hello:world");
         verifyHeader(cxfHeaders, "SoapAction", "urn:hello:world");
         verifyHeader(cxfHeaders, "SOAPAction", "urn:hello:world");
@@ -67,6 +68,7 @@ public class CxfHeaderHelperTest extends Assert {
         verifyHeader(cxfHeaders, "myFruitHeader", "peach");
         verifyHeader(cxfHeaders, "MYFRUITHEADER", "peach");
         verifyHeader(cxfHeaders, "MyBrewHeader", Arrays.asList("cappuccino", "espresso"));
+        assertEquals("200", cxfMessage.get(Message.RESPONSE_CODE));
     } 
 
     @Test
@@ -79,6 +81,7 @@ public class CxfHeaderHelperTest extends Assert {
         cxfHeaders.put("myfruitheader", Arrays.asList("peach"));
         cxfHeaders.put("mybrewheader", Arrays.asList("cappuccino", "espresso"));
         cxfMessage.put(org.apache.cxf.message.Message.PROTOCOL_HEADERS, cxfHeaders);
+        cxfMessage.put(Message.RESPONSE_CODE, "200");
         
         Map<String, Object> camelHeaders = exchange.getIn().getHeaders();
         CxfHeaderHelper.propagateCxfToCamel(new DefaultHeaderFilterStrategy(), 
@@ -89,6 +92,7 @@ public class CxfHeaderHelperTest extends Assert {
         assertEquals("241", camelHeaders.get("content-length"));
         assertEquals("peach", camelHeaders.get("MyFruitHeader"));
         assertEquals(Arrays.asList("cappuccino", "espresso"), camelHeaders.get("MyBrewHeader"));
+        assertEquals("200", camelHeaders.get(Exchange.HTTP_RESPONSE_CODE));
     } 
 
     @Test
