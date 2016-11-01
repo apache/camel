@@ -49,8 +49,7 @@ public class BonitaConfigurationTest extends CamelTestSupport {
         assertEquals(0, configuration.getOperation().compareTo(BonitaOperation.startCase));
     }
 
-    @Test(
-            expected = ResolveEndpointFailedException.class)
+    @Test(expected = ResolveEndpointFailedException.class)
     public void testBonitaConfigurationWrongOperation() {
         BonitaEndpoint bonitaEndpoint =
                 context.getEndpoint("bonita:wrongOperation", BonitaEndpoint.class);
