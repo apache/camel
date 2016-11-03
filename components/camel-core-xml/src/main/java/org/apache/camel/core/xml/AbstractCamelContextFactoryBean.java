@@ -41,6 +41,7 @@ import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesFunction;
+import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.component.properties.PropertiesResolver;
 import org.apache.camel.management.DefaultManagementAgent;
@@ -567,16 +568,16 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getCamelPropertyPlaceholder() != null) {
             CamelPropertyPlaceholderDefinition def = getCamelPropertyPlaceholder();
 
-            List<String> locations = new ArrayList<>();
+            List<PropertiesLocation> locations = new ArrayList<>();
 
             if (def.getLocation() != null) {
                 ObjectHelper.createIterable(def.getLocation()).forEach(
-                    location -> locations.add((String) location)
+                    location -> locations.add(new PropertiesLocation((String) location))
                 );
             }
             if (def.getLocations() != null) {
                 def.getLocations().forEach(
-                    definition -> locations.add(definition.getPath())
+                    definition -> locations.add(definition.toLocation())
                 );
             }
 

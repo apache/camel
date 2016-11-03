@@ -28,7 +28,7 @@ The Properties component supports 16 options which are listed below.
 [width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
-| locations | String[] | A list of locations to load properties. This option will override any default locations and only use the locations from this option.
+| locations | List | A list of locations to load properties. This option will override any default locations and only use the locations from this option.
 | location | String | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option.
 | encoding | String | Encoding to use when loading properties file from the file system or classpath. If no encoding has been set then the properties files is loaded using ISO-8859-1 encoding (latin-1) as documented by link java.util.Propertiesload(java.io.InputStream)
 | propertiesResolver | PropertiesResolver | To use a custom PropertiesResolver

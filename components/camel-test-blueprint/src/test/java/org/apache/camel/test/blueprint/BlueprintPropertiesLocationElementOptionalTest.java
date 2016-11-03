@@ -14,44 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.spring;
+
+package org.apache.camel.test.blueprint;
 
 import java.util.List;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.Produce;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesLocation;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.BootstrapWith;
-import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-@RunWith(CamelSpringRunner.class)
-@BootstrapWith(CamelTestContextBootstrapper.class)
-@ContextConfiguration()
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class CamelSpringPropertiesLocationElementTest {
-    @Autowired
-    protected CamelContext context;
-    @Produce
-    private ProducerTemplate producer;
-    @EndpointInject(uri = "mock:result")
-    private MockEndpoint mock;
+public class BlueprintPropertiesLocationElementOptionalTest extends CamelBlueprintTestSupport {
+    @Override
+    protected String getBlueprintDescriptor() {
+        return "org/apache/camel/test/blueprint/properties-location-element-optional-test.xml";
+    }
 
     @Test
     public void testPropertiesLocationElement() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedHeaderReceived("property-1", "property-value-1");
         mock.expectedHeaderReceived("property-2", "property-value-2");
-        mock.expectedHeaderReceived("property-3", "property-value-3");
+        mock.expectedHeaderReceived("cm", "cm-value");
 
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         assertNotNull("Properties component not defined", pc);
@@ -59,9 +43,9 @@ public class CamelSpringPropertiesLocationElementTest {
         List<PropertiesLocation> locations = pc.getLocations();
 
         assertNotNull(locations);
-        assertEquals("Properties locations", 4, locations.size());
+        assertEquals("Properties locations", 3, locations.size());
 
-        producer.sendBody("direct:start", null);
+        template.sendBody("direct:start", null);
 
         mock.assertIsSatisfied();
     }

@@ -32,7 +32,7 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/blueprint">
     <propertyPlaceholder id="property-placeholder-camel" location="blueprint:properties-element">
-      <propertiesLocation path="classpath:org/apache/camel/test/blueprint/properties-location-element-1.properties"/>
+      <propertiesLocation resolver="classpath" path="org/apache/camel/test/blueprint/properties-location-element-1.properties"/>
       <propertiesLocation resolver="classpath" path="org/apache/camel/test/blueprint/properties-location-element-2.properties"/>
     </propertyPlaceholder>
 

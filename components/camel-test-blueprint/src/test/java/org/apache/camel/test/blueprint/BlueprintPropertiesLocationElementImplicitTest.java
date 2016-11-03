@@ -17,8 +17,11 @@
 
 package org.apache.camel.test.blueprint;
 
+import java.util.List;
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.component.properties.PropertiesLocation;
 import org.junit.Test;
 
 public class BlueprintPropertiesLocationElementImplicitTest extends CamelBlueprintTestSupport {
@@ -37,10 +40,10 @@ public class BlueprintPropertiesLocationElementImplicitTest extends CamelBluepri
         PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
         assertNotNull("Properties component not defined", pc);
 
-        String[] locations = pc.getLocations();
+        List<PropertiesLocation> locations = pc.getLocations();
 
         assertNotNull(locations);
-        assertEquals("Properties locations", 2, locations.length);
+        assertEquals("Properties locations", 2, locations.size());
 
         template.sendBody("direct:start", null);
 
