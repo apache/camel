@@ -23,8 +23,9 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <propertyPlaceholder id="property-placeholder-camel" location="classpath:org/apache/camel/test/spring/properties-location-element-3.properties">
-      <propertiesLocation path="classpath:org/apache/camel/test/spring/properties-location-element-1.properties"/>
+      <propertiesLocation resolver="classpath" path="org/apache/camel/test/spring/properties-location-element-1.properties"/>
       <propertiesLocation resolver="classpath" path="org/apache/camel/test/spring/properties-location-element-2.properties"/>
+      <propertiesLocation resolver="classpath" path="org/apache/camel/test/spring/properties-location-element-4.properties" optional="true"/>
     </propertyPlaceholder>
 
     <route>

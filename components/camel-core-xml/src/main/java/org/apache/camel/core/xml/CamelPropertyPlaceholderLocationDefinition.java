@@ -19,6 +19,7 @@ package org.apache.camel.core.xml;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
@@ -29,21 +30,13 @@ import org.apache.camel.util.ObjectHelper;
 @Metadata(label = "spring,configuration")
 @XmlRootElement(name = "propertiesLocation")
 public class CamelPropertyPlaceholderLocationDefinition extends IdentifiedType {
+    @XmlAttribute @Metadata(defaultValue = "classpath")
+    public String resolver;
     @XmlAttribute(required = true)
     public String path;
-    @XmlAttribute
-    public String resolver;
+    @XmlAttribute @Metadata(defaultValue = "false")
+    public Boolean optional;
 
-    public String getPath() {
-        return path;
-    }
-
-    /**
-     * Property locations to use.
-     */
-    public void setPath(String path) {
-        this.path = path;
-    }
 
     public String getResolver() {
         return resolver;
@@ -56,7 +49,46 @@ public class CamelPropertyPlaceholderLocationDefinition extends IdentifiedType {
         this.resolver = resolver;
     }
 
-    public String getLocation() {
-        return ObjectHelper.isEmpty(resolver) ? path : resolver + path;
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * Property locations to use.
+     */
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public Boolean getOptional() {
+        return optional;
+    }
+
+    /**
+     * If the location is optional.
+     */
+    public void setOptional(Boolean optional) {
+        this.optional = optional;
+    }
+
+    @Override
+    public String toString() {
+        String answer = path;
+        if (ObjectHelper.isNotEmpty(resolver)) {
+            answer = resolver + ":" + answer;
+        }
+        if (ObjectHelper.isNotEmpty(optional)) {
+            answer = answer + ";optional=true";
+        }
+
+        return answer;
+    }
+
+    public PropertiesLocation toLocation() {
+        return new PropertiesLocation(
+            resolver != null ? resolver : "classpath",
+            path,
+            optional != null ? optional : false
+        );
     }
 }

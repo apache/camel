@@ -34,6 +34,7 @@
     <propertyPlaceholder id="property-placeholder-camel">
       <propertiesLocation resolver="classpath" path="org/apache/camel/test/blueprint/properties-location-element-1.properties"/>
       <propertiesLocation resolver="classpath" path="org/apache/camel/test/blueprint/properties-location-element-2.properties"/>
+      <propertiesLocation resolver="classpath" path="org/apache/camel/test/blueprint/properties-location-element-3.properties" optional="true"/>
     </propertyPlaceholder>
 
     <route>
