@@ -22,12 +22,12 @@ General Options
 ^^^^^^^^^^^^^^^
 
 // component options: START
-The bonita component has no options.
+The Bonita component has no options.
 // component options: END
 
 
 // endpoint options: START
-The bonita component supports 10 endpoint options which are listed below:
+The Bonita component supports 10 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
