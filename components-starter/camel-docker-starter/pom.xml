@@ -36,6 +36,7 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-docker</artifactId>
       <version>${project.version}</version>
+      <!--START OF GENERATED CODE-->
       <exclusions>
         <exclusion>
           <groupId>commons-logging</groupId>
@@ -46,7 +47,9 @@
           <artifactId>log4j</artifactId>
         </exclusion>
       </exclusions>
+      <!--END OF GENERATED CODE-->
     </dependency>
+    <!--START OF GENERATED CODE-->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core-starter</artifactId>
@@ -55,5 +58,6 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-boot-starter</artifactId>
     </dependency>
+    <!--END OF GENERATED CODE-->
   </dependencies>
 </project>

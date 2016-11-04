@@ -37,6 +37,7 @@
       <artifactId>camel-bean-validator</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!--START OF GENERATED CODE-->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core-starter</artifactId>
@@ -45,5 +46,6 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-boot-starter</artifactId>
     </dependency>
+    <!--END OF GENERATED CODE-->
   </dependencies>
 </project>

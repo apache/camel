@@ -37,6 +37,7 @@
       <artifactId>camel-scala</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!--START OF GENERATED CODE-->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core-starter</artifactId>
@@ -55,5 +56,6 @@
       <artifactId>scala-library</artifactId>
       <version>${scala-version}</version>
     </dependency>
+    <!--END OF GENERATED CODE-->
   </dependencies>
 </project>
