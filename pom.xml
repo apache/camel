@@ -143,7 +143,6 @@
     <module>platforms</module>
     <module>tests</module>
     <module>examples</module>
-    <module>spring-boot-dm</module>
   </modules>
 
   <scm>

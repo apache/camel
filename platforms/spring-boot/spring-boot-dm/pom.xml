@@ -19,7 +19,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>camel</artifactId>
+        <artifactId>spring-boot</artifactId>
         <groupId>org.apache.camel</groupId>
         <version>2.19.0-SNAPSHOT</version>
     </parent>
@@ -28,7 +28,7 @@
     <artifactId>camel-spring-boot-dm</artifactId>
     <packaging>pom</packaging>
 
-    <name>Camel :: Spring-Boot :: Dependency Management</name>
+    <name>Camel :: Platforms :: Spring-Boot :: Dependency Management</name>
     <description>Camel Spring-Boot Dependency Management POM</description>
     <modules>
         <module>camel-spring-boot-generator-bom</module>
