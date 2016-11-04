@@ -37,6 +37,7 @@
       <artifactId>camel-netty4</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!--START OF GENERATED CODE-->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core-starter</artifactId>
@@ -49,5 +50,6 @@
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
     </dependency>
+    <!--END OF GENERATED CODE-->
   </dependencies>
 </project>

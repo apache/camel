@@ -37,6 +37,7 @@
       <artifactId>camel-jcr</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!--START OF GENERATED CODE-->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core-starter</artifactId>
@@ -50,5 +51,6 @@
       <artifactId>lucene-core</artifactId>
       <version>${lucene3-version}</version>
     </dependency>
+    <!--END OF GENERATED CODE-->
   </dependencies>
 </project>
