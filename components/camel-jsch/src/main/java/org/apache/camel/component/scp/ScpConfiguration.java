@@ -154,15 +154,15 @@ public class ScpConfiguration extends RemoteFileConfiguration {
 
     /**
      * Set a comma separated list of authentications that will be used in order of preference.
-	 * Possible authentication methods are defined by JCraft JSCH. Some examples include: gssapi-with-mic,publickey,keyboard-interactive,password
+     * Possible authentication methods are defined by JCraft JSCH. Some examples include: gssapi-with-mic,publickey,keyboard-interactive,password
      * If not specified the JSCH and/or system defaults will be used.
      */
     public void setPreferredAuthentications(final String preferredAuthentications) {
-      this.preferredAuthentications = preferredAuthentications;
+        this.preferredAuthentications = preferredAuthentications;
     }
 
     public String getPreferredAuthentications() {
-      return preferredAuthentications;
+        return preferredAuthentications;
     }
-	
+
 }
