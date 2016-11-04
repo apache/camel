@@ -46,6 +46,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.DataFormatClause;
+import org.apache.camel.builder.EnrichClause;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessClause;
@@ -3319,6 +3320,42 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    public EnrichClause<ProcessorDefinition<Type>> enrichWith(String resourceUri) {
+        EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
+        enrich(resourceUri, clause);
+        return clause;
+    }
+
+    /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    public EnrichClause<ProcessorDefinition<Type>> enrichWith(String resourceUri, boolean aggregateOnException) {
+        EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
+        enrich(resourceUri, clause, aggregateOnException, false);
+        return clause;
+    }
+
+    /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    public EnrichClause<ProcessorDefinition<Type>> enrichWith(String resourceUri, boolean aggregateOnException, boolean shareUnitOfWork) {
+        EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
+        enrich(resourceUri, clause, aggregateOnException, shareUnitOfWork);
+        return clause;
+    }
+
+    /**
      * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
      * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
      *
@@ -3523,6 +3560,43 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri, long timeout, String aggregationStrategyRef) {
         return pollEnrich(resourceUri, timeout, aggregationStrategyRef, false);
+    }
+
+
+    /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(String resourceUri) {
+        EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
+        pollEnrich(resourceUri, -1, clause, false);
+        return clause;
+    }
+
+    /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(String resourceUri, long timeout) {
+        EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
+        pollEnrich(resourceUri, timeout, clause, false);
+        return clause;
+    }
+
+    /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    public EnrichClause<ProcessorDefinition<Type>> pollEnrichWith(String resourceUri, long timeout, boolean aggregateOnException) {
+        EnrichClause<ProcessorDefinition<Type>> clause = new EnrichClause<>(this);
+        pollEnrich(resourceUri, timeout, clause, aggregateOnException);
+        return clause;
     }
 
     /**
