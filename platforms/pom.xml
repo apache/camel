@@ -37,6 +37,7 @@
     <module>catalog-maven</module>
     <module>commands</module>
     <module>karaf</module>
+    <module>spring-boot</module>
   </modules>
 
 </project>

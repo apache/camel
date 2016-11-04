@@ -27,7 +27,7 @@
 
     <artifactId>camel-starter-parent</artifactId>
     <packaging>pom</packaging>
-    <name>Camel :: Spring-Boot :: Dependency Management :: Starter Parent</name>
+    <name>Camel :: Platforms :: Spring-Boot :: Dependency Management :: Starter Parent</name>
     <description>Camel Spring-Boot Starters Parent POM</description>
 
     <dependencies>

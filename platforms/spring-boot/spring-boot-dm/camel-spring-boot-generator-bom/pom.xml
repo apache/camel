@@ -27,7 +27,7 @@
 
     <artifactId>camel-spring-boot-generator-bom</artifactId>
     <packaging>pom</packaging>
-    <name>Camel :: Spring-Boot :: Dependency Management :: BOM Generator</name>
+    <name>Camel :: Platforms :: Spring-Boot :: Dependency Management :: BOM Generator</name>
     <description>Camel Spring-Boot BOM Generator</description>
 
     <dependencyManagement>

@@ -99,7 +99,7 @@ public final class DependencyResolver {
     }
 
     public static String resolveSpringBootParentProperty(String property) {
-        return resolveProperty(camelRoot("spring-boot-dm/pom.xml"), property, 0);
+        return resolveProperty(camelRoot("platforms/spring-boot/spring-boot-dm/pom.xml"), property, 0);
     }
 
     public static String resolveCamelParentProperty(String property) {
