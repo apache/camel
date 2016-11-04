@@ -1163,7 +1163,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public Type pipeline(String... uris) {
-        return to(uris);
+        PipelineDefinition answer = new PipelineDefinition();
+        addOutput(answer);
+        answer.to(uris);
+        return (Type) this;
     }
 
     /**
@@ -1176,7 +1179,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public Type pipeline(Endpoint... endpoints) {
-        return to(endpoints);
+        PipelineDefinition answer = new PipelineDefinition();
+        addOutput(answer);
+        answer.to(endpoints);
+        return (Type) this;
     }
 
     /**
@@ -1189,7 +1195,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public Type pipeline(Collection<Endpoint> endpoints) {
-        return to(endpoints);
+        PipelineDefinition answer = new PipelineDefinition();
+        addOutput(answer);
+        answer.to(endpoints);
+        return (Type) this;
     }
 
     /**

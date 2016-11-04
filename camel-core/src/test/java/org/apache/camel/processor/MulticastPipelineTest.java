@@ -18,15 +18,35 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.util.toolbox.AggregationStrategies;
 
 public class MulticastPipelineTest extends ContextTestSupport {
 
-    public void testMulticastPipeline() throws Exception {
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
+    public void testPlainPipeline() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .pipeline("direct:a", "direct:b")
+                    .pipeline("direct:c", "direct:d")
+                    .to("mock:result");
+
+                from("direct:a").to("mock:a").setBody().constant("A");
+                from("direct:b").to("mock:b").setBody().constant("B");
+                from("direct:c").to("mock:c").setBody().constant("C");
+                from("direct:d").to("mock:d").setBody().constant("D");
+            }
+        });
+        context.start();
+
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:c").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:d").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:b").expectedBodiesReceived("A");
+        getMockEndpoint("mock:c").expectedBodiesReceived("B");
+        getMockEndpoint("mock:d").expectedBodiesReceived("C");
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");
@@ -34,13 +54,40 @@ public class MulticastPipelineTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
+    public void testPlainPipelineTo() throws Exception {
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .multicast().aggregationStrategy(AggregationStrategies.groupedExchange())
+                    .pipeline().to("direct:a", "direct:b").end()
+                    .pipeline().to("direct:c", "direct:d").end()
+                    .to("mock:result");
+
+                from("direct:a").to("mock:a").setBody().constant("A");
+                from("direct:b").to("mock:b").setBody().constant("B");
+                from("direct:c").to("mock:c").setBody().constant("C");
+                from("direct:d").to("mock:d").setBody().constant("D");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:b").expectedBodiesReceived("A");
+        getMockEndpoint("mock:c").expectedBodiesReceived("B");
+        getMockEndpoint("mock:d").expectedBodiesReceived("C");
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testMulticastPipeline() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .multicast()
                         .pipeline("direct:a", "direct:b")
                         .pipeline("direct:c", "direct:d")
                     .end()
@@ -51,6 +98,48 @@ public class MulticastPipelineTest extends ContextTestSupport {
                 from("direct:c").to("mock:c").setBody().constant("C");
                 from("direct:d").to("mock:d").setBody().constant("D");
             }
-        };
+        });
+        context.start();
+
+        getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:b").expectedBodiesReceived("A");
+        getMockEndpoint("mock:c").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:d").expectedBodiesReceived("C");
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
     }
+
+    public void testMulticastPipelineTo() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .multicast()
+                        .pipeline().to("direct:a", "direct:b").end()
+                        .pipeline().to("direct:c", "direct:d").end()
+                    .end()
+                    .to("mock:result");
+
+                from("direct:a").to("mock:a").setBody().constant("A");
+                from("direct:b").to("mock:b").setBody().constant("B");
+                from("direct:c").to("mock:c").setBody().constant("C");
+                from("direct:d").to("mock:d").setBody().constant("D");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:b").expectedBodiesReceived("A");
+        getMockEndpoint("mock:c").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:d").expectedBodiesReceived("C");
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
 }
