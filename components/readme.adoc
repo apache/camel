@@ -78,6 +78,9 @@ Components
 | link:camel-beanstalk/src/main/docs/beanstalk-component.adoc[Beanstalk] (camel-beanstalk) +
 `beanstalk:connectionSettings` | The beanstalk component is used for job retrieval and post-processing of Beanstalk jobs.
 
+| link:camel-bonita/src/main/docs/bonita-component.adoc[Bonita] (camel-bonita) +
+`bonita:operation` | Camel Bonita support
+
 | link:camel-box/src/main/docs/box-component.adoc[Box] (camel-box) +
 `box:apiName/methodName` | For uploading downloading and managing files folders groups collaborations etc on box DOT com.
 

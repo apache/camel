@@ -25,18 +25,9 @@ import org.apache.camel.component.bonita.util.BonitaOperation;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-@UriEndpoint(
-        scheme = "bonita",
-        title = "bonita",
-        syntax = "bonita:operation",
-        consumerOnly = true,
-        label = "bonita")
+@UriEndpoint(scheme = "bonita", title = "Bonita", syntax = "bonita:operation", consumerOnly = true, label = "process")
 public class BonitaEndpoint extends DefaultEndpoint {
-
-    private static final transient Logger LOG = LoggerFactory.getLogger(BonitaEndpoint.class);
 
     @UriParam
     private BonitaConfiguration configuration;
