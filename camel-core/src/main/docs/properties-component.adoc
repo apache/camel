@@ -160,6 +160,17 @@ with comma such as:
 pc.setLocation("com/mycompany/myprop.properties,com/mycompany/other.properties");
 ----
 
+*Available as of Camel 2.19.0*
+
+You can set which location can be discarded if missing by by setting the ``optional`` attribute, which is false by default, i.e:
+
+[source,java]
+----
+pc.setLocations(
+    "com/mycompany/override.properties;optional=true"
+    "com/mycompany/defaults.properties");
+----
+
 [[Properties-Usingsystemandenvironmentvariablesinlocations]]
 Using system and environment variables in locations
 +++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -271,6 +282,28 @@ fresh such as:
 ----
 <camelContext ...>
    <propertyPlaceholder id="properties" location="com/mycompany/myprop.properties"/>
+</camelContext>
+----
+
+Setting the properties location through the location tag works just fine but sometime you have a number of resources to take into account and starting from *Camel 2.19.0* you can set the properties location with a dedicated propertiesLocation:
+
+[source,xml]
+----
+<camelContext ...>
+  <propertyPlaceholder id="myPropertyPlaceholder">
+    <propertiesLocation
+      resolver = "classpath"
+      path     = "com/my/company/something/my-properties-1.properties"
+      optional = "false"/>
+    <propertiesLocation
+      resolver = "classpath"
+      path     = "com/my/company/something/my-properties-2.properties"
+      optional = "false"/>
+    <propertiesLocation
+      resolver = "file"
+      path     = "${karaf.home}/etc/my-override.properties"
+      optional = "true"/>
+   </propertyPlaceholder>
 </camelContext>
 ----
 
@@ -531,7 +564,7 @@ OSGi Blueprint property placeholder in the XML file as shown below:
            xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
            xsi:schemaLocation="
            http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
- 
+
     <!-- OSGI blueprint property placeholder -->
     <cm:property-placeholder id="myblueprint.placeholder" persistent-id="camel.blueprint">
         <!-- list some properties as needed -->
@@ -539,7 +572,7 @@ OSGi Blueprint property placeholder in the XML file as shown below:
             <cm:property name="result" value="mock:result"/>
         </cm:default-properties>
     </cm:property-placeholder>
- 
+
     <camelContext xmlns="http://camel.apache.org/schema/blueprint">
         <!-- in the route we can use {{ }} placeholders which will lookup in blueprint
              as Camel will auto detect the OSGi blueprint property placeholder and use it -->
@@ -587,7 +620,7 @@ placeholder by its id. For that you need to use the Camel's
            xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
            xsi:schemaLocation="
            http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
- 
+
     <!-- OSGI blueprint property placeholder -->
     <cm:property-placeholder id="myblueprint.placeholder" persistent-id="camel.blueprint">
         <!-- list some properties as needed -->
@@ -595,13 +628,13 @@ placeholder by its id. For that you need to use the Camel's
             <cm:property name="prefix.result" value="mock:result"/>
         </cm:default-properties>
     </cm:property-placeholder>
- 
+
     <camelContext xmlns="http://camel.apache.org/schema/blueprint">
         <!-- using Camel properties component and refer to the blueprint property placeholder by its id -->
         <propertyPlaceholder id="properties" location="blueprint:myblueprint.placeholder"
                              prefixToken="[[" suffixToken="]]"
                              propertyPrefix="prefix."/>
- 
+
         <!-- in the route we can use {{ }} placeholders which will lookup in blueprint -->
         <route>
             <from uri="direct:start"/>
@@ -968,7 +1001,7 @@ placeholder. This is best illustrated in the example code below
   <bean id="beerFunction" class="MyBeerFunction"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/blueprint">
-    <propertyPlaceholder id="properties" location="none" ignoreMissingLocation="true">
+    <propertyPlaceholder id="properties">
       <propertiesFunction ref="beerFunction"/>
     </propertyPlaceholder>
 
@@ -979,6 +1012,8 @@ placeholder. This is best illustrated in the example code below
     </route>
   </camelContext>
 ----
+
+NOTE: from *camel 2.19.0* the location attribute (on propertyPlaceholder tag) is not more mandatory
 
 Here we have a Camel XML route where we have defined the
 `<propertyPlaceholder>` to use a custom function, which we refer to be the
