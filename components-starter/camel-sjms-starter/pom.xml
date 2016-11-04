@@ -37,6 +37,7 @@
       <artifactId>camel-sjms</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!--START OF GENERATED CODE-->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core-starter</artifactId>
@@ -49,5 +50,6 @@
       <groupId>org.apache.geronimo.specs</groupId>
       <artifactId>geronimo-jms_1.1_spec</artifactId>
     </dependency>
+    <!--END OF GENERATED CODE-->
   </dependencies>
 </project>

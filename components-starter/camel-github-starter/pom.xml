@@ -37,6 +37,7 @@
       <artifactId>camel-github</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!--START OF GENERATED CODE-->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core-starter</artifactId>
@@ -50,5 +51,6 @@
       <artifactId>org.eclipse.egit.github.core</artifactId>
       <version>${egit-github-core-version}</version>
     </dependency>
+    <!--END OF GENERATED CODE-->
   </dependencies>
 </project>
