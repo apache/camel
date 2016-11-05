@@ -43,8 +43,8 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.component.cxf.common.header.CxfHeaderHelper;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.camel.component.cxf.util.ReaderInputStream;
 import org.apache.camel.impl.DefaultAttachment;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -532,7 +532,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         camelHeaders.put(CxfConstants.CAMEL_CXF_MESSAGE, cxfMessage);
         
         // Copy the http header to CAMEL as we do in camel-cxfrs
-        CxfUtils.copyHttpHeadersFromCxfToCamel(cxfMessage, camelMessage);
+        CxfHeaderHelper.copyHttpHeadersFromCxfToCamel(headerFilterStrategy, cxfMessage, camelMessage, exchange);
         
         if (cxfHeaders != null) {
             for (Map.Entry<String, List<String>> entry : cxfHeaders.entrySet()) {

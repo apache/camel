@@ -29,8 +29,8 @@ import javax.ws.rs.core.Response;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.component.cxf.common.header.CxfHeaderHelper;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.ExchangeHelper;
@@ -108,7 +108,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         org.apache.cxf.message.Message cxfMessage = cxfExchange.getInMessage();
         
         // TODO use header filter strategy and cxfToCamelHeaderMap
-        CxfUtils.copyHttpHeadersFromCxfToCamel(cxfMessage, camelMessage);
+        CxfHeaderHelper.copyHttpHeadersFromCxfToCamel(headerFilterStrategy, cxfMessage, camelMessage, camelExchange);
         
         // setup the charset from content-type header
         setCharsetWithContentType(camelExchange);
@@ -273,12 +273,6 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
 
     public void setCxfToCamelHeaderMap(Map<String, String> cxfToCamelHeaderMap) {
         this.cxfToCamelHeaderMap = cxfToCamelHeaderMap;
-    }
-    
-    protected void copyMessageHeader(org.apache.cxf.message.Message cxfMessage, Message camelMessage, String cxfKey, String camelKey) {
-        if (cxfMessage.get(cxfKey) != null) {
-            camelMessage.setHeader(camelKey, cxfMessage.get(cxfKey));
-        }
     }
     
     @SuppressWarnings("unchecked")

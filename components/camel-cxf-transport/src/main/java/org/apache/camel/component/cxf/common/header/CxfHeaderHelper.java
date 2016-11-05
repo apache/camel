@@ -88,71 +88,100 @@ public final class CxfHeaderHelper {
         }
     }
 
-    public static void propagateCxfToCamel(HeaderFilterStrategy strategy,
-            Message message, Map<String, Object> headers, Exchange exchange) {
+    /**
+     * Propagates CXF headers to Camel message.
+     *
+     * @param strategy header filter strategy
+     * @param cxfMessage CXF message
+     * @param camelMessage Camel message
+     * @param exchange provides context for filtering
+     */
+    public static void propagateCxfToCamel(HeaderFilterStrategy strategy, Message cxfMessage,
+            org.apache.camel.Message camelMessage, Exchange exchange) {
 
         if (strategy == null) {
             return;
         }
 
+        // Copy the CXF HTTP headers to the camel headers
+        copyHttpHeadersFromCxfToCamel(strategy, cxfMessage, camelMessage, exchange);
+
         // Copy the CXF protocol headers to the camel headers
         Map<String, List<String>> cxfHeaders =
-            CastUtils.cast((Map<?, ?>)message.get(Message.PROTOCOL_HEADERS));
+            CastUtils.cast((Map<?, ?>) cxfMessage.get(Message.PROTOCOL_HEADERS));
         if (cxfHeaders != null) {
             for (Map.Entry<String, List<String>> entry : cxfHeaders.entrySet()) {
                 if (!strategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
                     List<String> values = entry.getValue();
-                    //headers.put(entry.getKey(), entry.getValue().get(0));
-                    Object evalue;
-                    if (values.size() > 1) {
-                        if (exchange.getProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.FALSE, Boolean.class)) {
-                            StringBuilder sb = new StringBuilder();
-                            for (Iterator<String> it = values.iterator(); it.hasNext();) {
-                                sb.append(it.next());
-                                if (it.hasNext()) {
-                                    sb.append(',').append(' ');
-                                }
-                            }
-                            evalue = sb.toString();
-                        } else {
-                            evalue = values;
-                        }
-                    } else {
-                        evalue = values.get(0);
-                    }
-                    headers.put(entry.getKey(), evalue);
+                    camelMessage.setHeader(entry.getKey(), protocolHeaderValuesToSingleValue(values, exchange));
                 }
             }
         }
 
-        // propagate content type with the encoding information
-        // We need to do it as the CXF does this kind of thing in transport level
-        String key = Message.CONTENT_TYPE;
-        Object value = determineContentType(message);
-        
-        if (value != null && !strategy.applyFilterToExternalHeaders(key, value, exchange)) {
-            headers.put(Exchange.CONTENT_TYPE, value);
-        }
-
         // propagate request context
-        key = Client.REQUEST_CONTEXT;
-        value = message.get(key);
-        if (value != null && !strategy.applyFilterToExternalHeaders(key, value, exchange)) {
-            headers.put(key, value);
-        }
+        copyMessageHeader(strategy, exchange, cxfMessage, camelMessage, Client.REQUEST_CONTEXT);
 
         // propagate response context
-        key = Client.RESPONSE_CONTEXT;
-        value = message.get(key);
-        if (value != null && !strategy.applyFilterToExternalHeaders(key, value, exchange)) {
-            headers.put(key, value);
-        }
+        copyMessageHeader(strategy, exchange, cxfMessage, camelMessage, Client.RESPONSE_CONTEXT);
         
         // propagate response code
-        key = Message.RESPONSE_CODE;
-        value = message.get(key);
-        if (value != null && !strategy.applyFilterToExternalHeaders(key, value, exchange)) {
-            headers.put(Exchange.HTTP_RESPONSE_CODE, value);
+        copyMessageHeader(strategy, exchange, cxfMessage, camelMessage, Message.RESPONSE_CODE, Exchange.HTTP_RESPONSE_CODE);
+    }
+
+    private static Object protocolHeaderValuesToSingleValue(List<String> values, Exchange exchange) {
+        if (values.size() < 2) {
+            return values.get(0);
+        }
+        if (!exchange.getProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.FALSE, Boolean.class)) {
+            return values;
+        }
+        StringBuilder sb = new StringBuilder();
+        Iterator<String> it = values.iterator();
+        while (it.hasNext()) {
+            sb.append(it.next());
+            if (it.hasNext()) {
+                sb.append(',').append(' ');
+            }
+        }
+        return sb.toString();
+    }
+
+    public static void copyHttpHeadersFromCxfToCamel(HeaderFilterStrategy strategy, Message cxfMessage,
+            org.apache.camel.Message camelMessage, Exchange exchange) {
+        copyMessageHeader(strategy, exchange, cxfMessage, camelMessage, Message.REQUEST_URI, Exchange.HTTP_URI);
+        copyMessageHeader(strategy, exchange, cxfMessage, camelMessage, Message.HTTP_REQUEST_METHOD, Exchange.HTTP_METHOD);
+
+        // We need remove the BASE_PATH from the PATH_INFO
+        String pathInfo = (String) cxfMessage.get(Message.PATH_INFO);
+        String basePath = (String) cxfMessage.get(Message.BASE_PATH);
+        if (pathInfo != null && basePath != null && pathInfo.startsWith(basePath)) {
+            pathInfo = pathInfo.substring(basePath.length());
+        }
+        if (pathInfo != null) {
+            camelMessage.setHeader(Exchange.HTTP_PATH, pathInfo);
+        }
+
+        copyMessageHeader(strategy, exchange, cxfMessage, camelMessage, Message.CONTENT_TYPE, Exchange.CONTENT_TYPE);
+        copyMessageHeader(strategy, exchange, cxfMessage, camelMessage, Message.ENCODING, Exchange.HTTP_CHARACTER_ENCODING);
+        copyMessageHeader(strategy, exchange, cxfMessage, camelMessage, Message.QUERY_STRING, Exchange.HTTP_QUERY);
+        copyMessageHeader(strategy, exchange, cxfMessage, camelMessage, Message.ACCEPT_CONTENT_TYPE, Exchange.ACCEPT_CONTENT_TYPE);
+    }
+
+    private static void copyMessageHeader(HeaderFilterStrategy strategy, Exchange exchange,
+            Message cxfMessage, org.apache.camel.Message camelMessage, String key) {
+        copyMessageHeader(strategy, exchange, cxfMessage, camelMessage, key, key);
+    }
+
+    private static void copyMessageHeader(HeaderFilterStrategy strategy, Exchange exchange,
+            Message cxfMessage, org.apache.camel.Message camelMessage, String cxfKey, String camelKey) {
+        Object value = cxfMessage.get(cxfKey);
+        if (Message.CONTENT_TYPE.equals(cxfKey)) {
+            // propagate content type with the encoding information
+            // We need to do it as the CXF does this kind of thing in transport level
+            value = determineContentType(cxfMessage);
+        }
+        if (value != null && !strategy.applyFilterToExternalHeaders(cxfKey, value, exchange)) {
+            camelMessage.setHeader(camelKey, value);
         }
     }
     
