@@ -29,6 +29,9 @@ import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.UpdateResult;
 import com.mongodb.util.JSON;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -137,8 +140,16 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
 
         DBObject updateObj = new BasicDBObject("$set", new BasicDBObject("scientist", "Darwin"));
         
-        Object result = template.requestBodyAndHeader("direct:update", new Object[] {extraField, updateObj}, MongoDbConstants.MULTIUPDATE, true);
+        Exchange resultExchange = template.request("direct:update", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody(new Object[] {extraField, updateObj});
+                exchange.getIn().setHeader(MongoDbConstants.MULTIUPDATE, true);
+            }
+        });
+        Object result = resultExchange.getOut().getBody();
         assertTrue(result instanceof UpdateResult);
+        assertEquals("Number of records updated header should equal 50", 50L, resultExchange.getOut().getHeader(MongoDbConstants.RECORDS_AFFECTED));
         
         assertEquals("Number of records with 'scientist' field = Darwin on must equal 50 after update", 50, 
                 testCollection.count(new BasicDBObject("scientist", "Darwin")));
@@ -166,8 +177,15 @@ public class MongoDbOperationsTest extends AbstractMongoDbTest {
         BasicDBObject extraField = new BasicDBObject("extraField", true);
         assertEquals("Number of records with 'extraField' flag on must equal 50", 50L, testCollection.count(extraField));
         
-        Object result = template.requestBody("direct:remove", extraField);
+        Exchange resultExchange = template.request("direct:remove", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody(extraField);
+            }
+        });
+        Object result = resultExchange.getOut().getBody();
         assertTrue(result instanceof DeleteResult);
+        assertEquals("Number of records deleted header should equal 50", 50L, resultExchange.getOut().getHeader(MongoDbConstants.RECORDS_AFFECTED));
         
         assertEquals("Number of records with 'extraField' flag on must be 0 after remove", 0, 
                 testCollection.count(extraField));
