@@ -478,7 +478,7 @@ public class MongoDbProducer extends DefaultProducer {
         return exchange1 -> {
             try {
                 MongoCollection<BasicDBObject> dbCol = calculateCollection(exchange1);
-                String id = exchange1.getIn().getMandatoryBody(String.class);
+                Object id = exchange1.getIn().getMandatoryBody();
                 BasicDBObject o = new BasicDBObject("_id", id);
                 DBObject ret;
 
