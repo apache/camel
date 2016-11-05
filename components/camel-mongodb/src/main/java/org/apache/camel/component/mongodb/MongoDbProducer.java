@@ -409,6 +409,9 @@ public class MongoDbProducer extends DefaultProducer {
                 } else {
                     result = dbCol.updateMany(updateCriteria, objNew, options);
                 }
+                if (result.isModifiedCountAvailable()) {
+                    exchange1.getOut().setHeader(MongoDbConstants.RECORDS_AFFECTED, result.getModifiedCount());
+                }
                 return result;
             } catch (InvalidPayloadException e) {
                 throw new CamelMongoDbException("Invalid payload for update", e);
@@ -423,6 +426,9 @@ public class MongoDbProducer extends DefaultProducer {
                 BasicDBObject removeObj = exchange1.getIn().getMandatoryBody(BasicDBObject.class);
 
                 DeleteResult result = dbCol.deleteMany(removeObj);
+                if (result.wasAcknowledged()) {
+                    exchange1.getOut().setHeader(MongoDbConstants.RECORDS_AFFECTED, result.getDeletedCount());
+                }
                 return result;
             } catch (InvalidPayloadException e) {
                 throw new CamelMongoDbException("Invalid payload for remove", e);
