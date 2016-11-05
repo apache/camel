@@ -409,11 +409,11 @@
     <maven-bundle-version>${maven-bundle-plugin-version}</maven-bundle-version>
     <maven-bundle-plugin-version>3.2.0</maven-bundle-plugin-version>
     <maven-checkstyle-plugin-version>2.17</maven-checkstyle-plugin-version>
-    <!-- AtomicException.java causes a problem with Checksyle > 6.6 due to 
+    <!-- AtomicException.java causes a problem with Checksyle > 6.6 due to
         https://github.com/checkstyle/checkstyle/issues/1903
      -->
     <maven-checkstyle-version>6.17</maven-checkstyle-version>
-    <maven-owasp-plugin-version>1.4.3</maven-owasp-plugin-version>
+    <maven-owasp-plugin-version>1.4.4</maven-owasp-plugin-version>
     <maven-eclipse-plugin-version>2.10</maven-eclipse-plugin-version>
     <maven-jar-plugin-version>2.6</maven-jar-plugin-version>
     <maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
@@ -479,7 +479,7 @@
     <pax-tiny-bundle-version>1.3.2</pax-tiny-bundle-version>
     <pax-logging-version>1.8.6</pax-logging-version>
     <pdfbox-version>1.8.12</pdfbox-version>
-    <pgjdbc-ng-driver-version>0.6</pgjdbc-ng-driver-version>  
+    <pgjdbc-ng-driver-version>0.6</pgjdbc-ng-driver-version>
     <powermock-version>1.6.1</powermock-version>
     <protobuf-version>3.1.0</protobuf-version>
     <qpid-bundle-version>0.28_1</qpid-bundle-version>
@@ -657,7 +657,7 @@
     <camel.osgi.import.default.version>[$(version;==;$(@)),$(version;+;$(@)))</camel.osgi.import.default.version>
     <camel.osgi.import.defaults>
       !org.springframework.boot.*,
-      !org.springframework.context.annotation.*;resolution:=optional,    
+      !org.springframework.context.annotation.*;resolution:=optional,
       org.osgi.framework;version="[1.5,2)",
       org.osgi.framework.wiring;version="[1.0,2)",
       org.springframework.ws.*;version="[2,3)",
@@ -1181,7 +1181,7 @@
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ignite</artifactId>
         <version>${project.version}</version>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-irc</artifactId>
@@ -3115,7 +3115,7 @@
           </exclusion>
         </exclusions>
       </dependency>
-            
+
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-annotations</artifactId>
@@ -3177,7 +3177,7 @@
         <artifactId>netty-all</artifactId>
         <version>${netty-version}</version>
       </dependency>
-      
+
       <!-- abdera dependencies-->
       <dependency>
         <groupId>org.apache.abdera</groupId>
@@ -3191,7 +3191,7 @@
         <artifactId>commons-pool2</artifactId>
         <version>${commons-pool2-version}</version>
       </dependency>
-      
+
       <!-- cxf dependencies -->
       <dependency>
         <groupId>org.apache.cxf</groupId>
@@ -3299,7 +3299,7 @@
         <artifactId>kafka-clients</artifactId>
         <version>${kafka-version}</version>
       </dependency>
-      
+
       <!-- embedded concurrent lru map -->
       <dependency>
         <groupId>com.github.ben-manes.caffeine</groupId>
@@ -3626,7 +3626,7 @@
         <artifactId>scala-library</artifactId>
         <version>${scala-version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>javax.annotation</groupId>
         <artifactId>jsr250-api</artifactId>
@@ -4015,7 +4015,7 @@
         <artifactId>jira-rest-java-client</artifactId>
         <version>${jira-rest-client-version}</version>
       </dependency>
- 
+
       <!-- optional misc -->
       <dependency>
         <groupId>com.google.code.scriptengines</groupId>
@@ -4686,7 +4686,7 @@
           </execution>
         </executions>
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
