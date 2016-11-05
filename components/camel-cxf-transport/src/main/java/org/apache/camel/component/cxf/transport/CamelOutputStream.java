@@ -89,7 +89,7 @@ class CamelOutputStream extends CachedOutputStream {
         exchange.setProperty(Exchange.TO_ENDPOINT, this.targetCamelEndpointUri);
         CachedOutputStream outputStream = (CachedOutputStream) outMessage.getContent(OutputStream.class);
         // Send out the request message here, copy the protocolHeader back
-        CxfHeaderHelper.propagateCxfToCamel(this.headerFilterStrategy, outMessage, exchange.getIn().getHeaders(), exchange);
+        CxfHeaderHelper.propagateCxfToCamel(this.headerFilterStrategy, outMessage, exchange.getIn(), exchange);
 
         // TODO support different encoding
         exchange.getIn().setBody(outputStream.getInputStream());

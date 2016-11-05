@@ -51,14 +51,9 @@
             <setHeader headerName="Content-Type">
                 <constant>text/plain</constant>
             </setHeader>
-            <setHeader headerName="CamelHttpUri">
-                <simple>/greeting/hello/${body}</simple>
-            </setHeader>
-            <!-- doesn't work for Camel tranport
             <setHeader headerName="CamelHttpPath">
                 <simple>/greeting/hello/${body}</simple>
             </setHeader>
-            -->
             <setHeader headerName="CamelHttpMethod">
                 <constant>GET</constant>
             </setHeader>
