@@ -20,12 +20,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
+import org.bson.types.ObjectId;
 import org.junit.Test;
 
 public class MongoDbFindOperationTest extends AbstractMongoDbTest {
@@ -212,6 +214,27 @@ public class MongoDbFindOperationTest extends AbstractMongoDbTest {
         assertNotNull("DBObject in returned list should contain all fields", result.get("_id"));
         assertNotNull("DBObject in returned list should contain all fields", result.get("scientist"));
         assertNotNull("DBObject in returned list should contain all fields", result.get("fixedField"));
+        
+    }
+    
+    @Test
+    public void testFindOneByIdWithObjectId() throws Exception {
+        // Test that the collection has 0 documents in it
+        assertEquals(0, testCollection.count());
+        BasicDBObject insertObject = new BasicDBObject("scientist", "Einstein");
+        testCollection.insertOne(insertObject);
+        assertTrue("The ID of the inserted document should be ObjectId", insertObject.get("_id") instanceof ObjectId);
+        ObjectId id = (ObjectId) insertObject.get("_id");
+        
+        DBObject result = template.requestBody("direct:findById", id, DBObject.class);
+        assertTrue("Result is not of type DBObject", result instanceof DBObject);
+
+        assertTrue("The ID of the retrieved DBObject should be ObjectId", result.get("_id") instanceof ObjectId);
+        assertEquals("The ID of the retrieved DBObject should equal to the inserted", id, result.get("_id"));
+        assertEquals("The scientist name of the retrieved DBObject should equal Einstein", "Einstein", result.get("scientist"));
+        
+        assertNotNull("DBObject in returned list should contain all fields", result.get("_id"));
+        assertNotNull("DBObject in returned list should contain all fields", result.get("scientist"));
         
     }
     
