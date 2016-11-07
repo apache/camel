@@ -32,11 +32,14 @@
   <packaging>pom</packaging>
 
   <modules>
+    <module>commands</module>
+    <module>karaf</module>
+    <module>spring-boot</module>
+    <!-- run catalog last -->
     <module>catalog</module>
     <module>catalog-lucene</module>
     <module>catalog-maven</module>
-    <module>commands</module>
-    <module>karaf</module>
+    <module>catalog-provider-karaf</module>
   </modules>
 
 </project>

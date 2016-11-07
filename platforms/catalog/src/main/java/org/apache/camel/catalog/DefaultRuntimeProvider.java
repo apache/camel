@@ -27,7 +27,10 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     private static final String DATA_FORMATS_CATALOG = "org/apache/camel/catalog/dataformats.properties";
     private static final String LANGUAGE_CATALOG = "org/apache/camel/catalog/languages.properties";
 
-    private final CamelCatalog camelCatalog;
+    private CamelCatalog camelCatalog;
+
+    public DefaultRuntimeProvider() {
+    }
 
     public DefaultRuntimeProvider(CamelCatalog camelCatalog) {
         this.camelCatalog = camelCatalog;
@@ -36,6 +39,11 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     @Override
     public CamelCatalog getCamelCatalog() {
         return camelCatalog;
+    }
+
+    @Override
+    public void setCamelCatalog(CamelCatalog camelCatalog) {
+        this.camelCatalog = camelCatalog;
     }
 
     @Override
