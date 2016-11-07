@@ -509,10 +509,10 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
     }
 
     private Set<String> findKarafFeatures() throws MojoExecutionException, MojoFailureException {
-        Set<String> answer = new LinkedHashSet<>();
+        // load features.xml file and parse it
 
+        Set<String> answer = new LinkedHashSet<>();
         try {
-            // load features.xml file
             InputStream is = new FileInputStream(new File(featuresDir, "features.xml"));
 
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -522,8 +522,8 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
             dbf.setValidating(false);
             dbf.setXIncludeAware(false);
             Document dom = dbf.newDocumentBuilder().parse(is);
-            NodeList children = dom.getElementsByTagName("features");
 
+            NodeList children = dom.getElementsByTagName("features");
             for (int i = 0; i < children.getLength(); i++) {
                 Node child = children.item(i);
                 if (child.getNodeType() == ELEMENT_NODE) {
@@ -531,10 +531,8 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                     for (int j = 0; j < children2.getLength(); j++) {
                         Node child2 = children2.item(j);
                         if ("feature".equals(child2.getNodeName())) {
-                            // the name attribute is the maven artifact id of the component
                             String artifactId = child2.getAttributes().getNamedItem("name").getTextContent();
                             if (artifactId != null && artifactId.startsWith("camel-")) {
-                                // find the component name based on the artifact id
                                 answer.add(artifactId);
                             }
                         }
