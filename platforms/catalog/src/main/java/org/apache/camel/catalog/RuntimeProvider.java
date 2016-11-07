@@ -25,11 +25,6 @@ import java.util.List;
  */
 public interface RuntimeProvider {
 
-    // TODO: maven archetype GAV
-    // original GAV
-    // spring-boot GAV
-    // karaf feature name
-
     /**
      * Gets the {@link CamelCatalog}
      */
@@ -44,6 +39,21 @@ public interface RuntimeProvider {
      * Name of provider such as <tt>default</tt>, <tt>karaf</tt>, <tt>spring-boot</tt>
      */
     String getProviderName();
+
+    /**
+     * Gets the directory where the component json files are stored in the catalog JAR file
+     */
+    String getComponentJSonSchemaDirectory();
+
+    /**
+     * Gets the directory where the data format json files are stored in the catalog JAR file
+     */
+    String getDataFormatJSonSchemaDirectory();
+
+    /**
+     * Gets the directory where the language json files are stored in the catalog JAR file
+     */
+    String getLanguageJSonSchemaDirectory();
 
     /**
      * Find all the component names from the Camel catalog supported by the provider

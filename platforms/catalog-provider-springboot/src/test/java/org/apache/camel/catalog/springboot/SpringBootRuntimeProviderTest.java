@@ -93,4 +93,28 @@ public class SpringBootRuntimeProviderTest {
         assertTrue(names.contains("xpath"));
     }
 
+    @Test
+    public void testComponentArtifactId() throws Exception {
+        String json = catalog.componentJSonSchema("ftp");
+
+        assertNotNull(json);
+        assertTrue(json.contains("camel-ftp-starter"));
+    }
+
+    @Test
+    public void testDataFormatArtifactId() throws Exception {
+        String json = catalog.dataFormatJSonSchema("bindy-csv");
+
+        assertNotNull(json);
+        assertTrue(json.contains("camel-bindy-starter"));
+    }
+
+    @Test
+    public void testLanguageArtifactId() throws Exception {
+        String json = catalog.languageJSonSchema("spel");
+
+        assertNotNull(json);
+        assertTrue(json.contains("camel-spring-starter"));
+    }
+
 }
