@@ -29,6 +29,17 @@ import javax.management.MXBean;
 public interface CamelCatalog {
 
     /**
+     * To plugin a custom {@link RuntimeProvider} that amends the catalog to only include information that is supported on the runtime.
+     */
+    void setRuntimeProvider(RuntimeProvider provider);
+
+    /**
+     * Gets the {@link RuntimeProvider} in use.
+     * @return
+     */
+    RuntimeProvider getRuntimeProvider();
+
+    /**
      * Enables caching of the resources which makes the catalog faster, but keeps data in memory during caching.
      * <p/>
      * The catalog does not cache by default.
