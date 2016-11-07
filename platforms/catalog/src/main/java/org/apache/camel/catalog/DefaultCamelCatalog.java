@@ -122,6 +122,8 @@ public class DefaultCamelCatalog implements CamelCatalog {
     @Override
     public void setRuntimeProvider(RuntimeProvider runtimeProvider) {
         this.runtimeProvider = runtimeProvider;
+        // inject CamelCatalog to the provider
+        this.runtimeProvider.setCamelCatalog(this);
     }
 
     @Override

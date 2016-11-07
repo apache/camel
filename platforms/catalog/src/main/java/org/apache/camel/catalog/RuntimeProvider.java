@@ -25,10 +25,20 @@ import java.util.List;
  */
 public interface RuntimeProvider {
 
+    // TODO: maven archetype GAV
+    // original GAV
+    // spring-boot GAV
+    // karaf feature name
+
     /**
      * Gets the {@link CamelCatalog}
      */
     CamelCatalog getCamelCatalog();
+
+    /**
+     * Sets the {@link CamelCatalog} to use
+     */
+    void setCamelCatalog(CamelCatalog camelCatalog);
 
     /**
      * Name of provider such as <tt>default</tt>, <tt>karaf</tt>, <tt>spring-boot</tt>
