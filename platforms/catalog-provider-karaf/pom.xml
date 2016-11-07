@@ -89,7 +89,7 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${basedir}/target/resources</outputDirectory>
+              <outputDirectory>${basedir}/target/classes/org/apache/camel/catalog/karaf</outputDirectory>
               <resources>
                 <resource>
                   <directory>../karaf/features/target/classes</directory>
