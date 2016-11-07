@@ -25,14 +25,14 @@
     <version>2.19.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-catalog-provider-karaf</artifactId>
+  <artifactId>camel-catalog-provider-springboot</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Platforms :: Catalog :: Provider Karaf</name>
-  <description>Camel Catalog Karaf</description>
+  <name>Camel :: Platforms :: Catalog :: Provider Spring Boot</name>
+  <description>Camel Catalog Spring Boot</description>
 
   <properties>
     <camel.osgi.export.pkg>
-      org.apache.camel.catalog.karaf
+      org.apache.camel.catalog.springboot
     </camel.osgi.export.pkg>
   </properties>
 
@@ -85,7 +85,7 @@
         <executions>
           <execution>
             <goals>
-              <goal>prepare-catalog-karaf</goal>
+              <goal>prepare-catalog-springboot</goal>
             </goals>
             <phase>process-resources</phase>
           </execution>
