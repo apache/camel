@@ -34,7 +34,6 @@
   <modules>
     <module>commands</module>
     <module>karaf</module>
-    <module>spring-boot</module>
     <!-- run catalog last -->
     <module>catalog</module>
     <module>catalog-lucene</module>
