@@ -31,6 +31,9 @@ import org.apache.camel.catalog.RuntimeProvider;
  */
 public class SpringBootRuntimeProvider implements RuntimeProvider {
 
+    private static final String COMPONENT_DIR = "org/apache/camel/catalog/springboot/components";
+    private static final String DATAFORMAT_DIR = "org/apache/camel/catalog/springboot/dataformats";
+    private static final String LANGUAGE_DIR = "org/apache/camel/catalog/springboot/languages";
     private static final String COMPONENTS_CATALOG = "org/apache/camel/catalog/springboot/components.properties";
     private static final String DATA_FORMATS_CATALOG = "org/apache/camel/catalog/springboot/dataformats.properties";
     private static final String LANGUAGE_CATALOG = "org/apache/camel/catalog/springboot/languages.properties";
@@ -50,6 +53,21 @@ public class SpringBootRuntimeProvider implements RuntimeProvider {
     @Override
     public String getProviderName() {
         return "springboot";
+    }
+
+    @Override
+    public String getComponentJSonSchemaDirectory() {
+        return COMPONENT_DIR;
+    }
+
+    @Override
+    public String getDataFormatJSonSchemaDirectory() {
+        return DATAFORMAT_DIR;
+    }
+
+    @Override
+    public String getLanguageJSonSchemaDirectory() {
+        return LANGUAGE_DIR;
     }
 
     @Override

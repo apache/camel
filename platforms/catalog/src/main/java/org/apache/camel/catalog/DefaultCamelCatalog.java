@@ -74,9 +74,6 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     private static final String MODELS_CATALOG = "org/apache/camel/catalog/models.properties";
     private static final String MODEL_DIR = "org/apache/camel/catalog/models";
-    private static final String COMPONENT_DIR = "org/apache/camel/catalog/components";
-    private static final String DATAFORMAT_DIR = "org/apache/camel/catalog/dataformats";
-    private static final String LANGUAGE_DIR = "org/apache/camel/catalog/languages";
     private static final String DOC_DIR = "org/apache/camel/catalog/docs";
     private static final String ARCHETYPES_CATALOG = "org/apache/camel/catalog/archetypes/archetype-catalog.xml";
     private static final String SCHEMAS_XML = "org/apache/camel/catalog/schemas";
@@ -457,7 +454,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public String componentJSonSchema(String name) {
-        String file = COMPONENT_DIR + "/" + name + ".json";
+        String file = runtimeProvider.getComponentJSonSchemaDirectory() + "/" + name + ".json";
 
         String answer = null;
         if (caching) {
@@ -503,7 +500,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public String dataFormatJSonSchema(String name) {
-        String file = DATAFORMAT_DIR + "/" + name + ".json";
+        String file = runtimeProvider.getDataFormatJSonSchemaDirectory() + "/" + name + ".json";
 
         String answer = null;
         if (caching) {
@@ -554,7 +551,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
             name = "bean";
         }
 
-        String file = LANGUAGE_DIR + "/" + name + ".json";
+        String file = runtimeProvider.getLanguageJSonSchemaDirectory() + "/" + name + ".json";
 
         String answer = null;
         if (caching) {

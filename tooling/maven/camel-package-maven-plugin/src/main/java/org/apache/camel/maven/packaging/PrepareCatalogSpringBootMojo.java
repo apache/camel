@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,11 +24,11 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -46,6 +46,8 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 public class PrepareCatalogSpringBootMojo extends AbstractMojo {
 
     public static final int BUFFER_SIZE = 128 * 1024;
+
+    private static final Pattern ARTIFACT_PATTERN = Pattern.compile("\"artifactId\": \"camel-(.*)\"");
 
     /**
      * The maven project.
@@ -170,14 +172,23 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
         // make sure to create out dir
         componentsOutDir.mkdirs();
 
-        Set<String> alternativeSchemes = new HashSet<>();
-
         for (File file : jsonFiles) {
-            File to = new File(componentsOutDir, file.getName());
+            // for spring-boot we need to amend the json file to use -starter as the artifact-id
             try {
-                copyFile(file, to);
+                String text = loadText(new FileInputStream(file));
+
+                text = ARTIFACT_PATTERN.matcher(text).replaceFirst("\"artifactId\": \"camel-$1-starter\"");
+
+                // write new json file
+                File to = new File(componentsOutDir, file.getName());
+                FileOutputStream fos = new FileOutputStream(to, false);
+
+                fos.write(text.getBytes());
+
+                fos.close();
+
             } catch (IOException e) {
-                throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
+                throw new MojoFailureException("Cannot write json file " + file, e);
             }
         }
 
@@ -248,11 +259,22 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
         dataFormatsOutDir.mkdirs();
 
         for (File file : jsonFiles) {
-            File to = new File(dataFormatsOutDir, file.getName());
+            // for spring-boot we need to amend the json file to use -starter as the artifact-id
             try {
-                copyFile(file, to);
+                String text = loadText(new FileInputStream(file));
+
+                text = ARTIFACT_PATTERN.matcher(text).replaceFirst("\"artifactId\": \"camel-$1-starter\"");
+
+                // write new json file
+                File to = new File(dataFormatsOutDir, file.getName());
+                FileOutputStream fos = new FileOutputStream(to, false);
+
+                fos.write(text.getBytes());
+
+                fos.close();
+
             } catch (IOException e) {
-                throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
+                throw new MojoFailureException("Cannot write json file " + file, e);
             }
         }
 
@@ -323,11 +345,22 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
         languagesOutDir.mkdirs();
 
         for (File file : jsonFiles) {
-            File to = new File(languagesOutDir, file.getName());
+            // for spring-boot we need to amend the json file to use -starter as the artifact-id
             try {
-                copyFile(file, to);
+                String text = loadText(new FileInputStream(file));
+
+                text = ARTIFACT_PATTERN.matcher(text).replaceFirst("\"artifactId\": \"camel-$1-starter\"");
+
+                // write new json file
+                File to = new File(languagesOutDir, file.getName());
+                FileOutputStream fos = new FileOutputStream(to, false);
+
+                fos.write(text.getBytes());
+
+                fos.close();
+
             } catch (IOException e) {
-                throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
+                throw new MojoFailureException("Cannot write json file " + file, e);
             }
         }
 

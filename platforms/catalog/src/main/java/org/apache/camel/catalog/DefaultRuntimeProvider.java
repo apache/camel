@@ -23,6 +23,9 @@ import java.util.List;
 
 public class DefaultRuntimeProvider implements RuntimeProvider {
 
+    private static final String COMPONENT_DIR = "org/apache/camel/catalog/components";
+    private static final String DATAFORMAT_DIR = "org/apache/camel/catalog/dataformats";
+    private static final String LANGUAGE_DIR = "org/apache/camel/catalog/languages";
     private static final String COMPONENTS_CATALOG = "org/apache/camel/catalog/components.properties";
     private static final String DATA_FORMATS_CATALOG = "org/apache/camel/catalog/dataformats.properties";
     private static final String LANGUAGE_CATALOG = "org/apache/camel/catalog/languages.properties";
@@ -49,6 +52,21 @@ public class DefaultRuntimeProvider implements RuntimeProvider {
     @Override
     public String getProviderName() {
         return "default";
+    }
+
+    @Override
+    public String getComponentJSonSchemaDirectory() {
+        return COMPONENT_DIR;
+    }
+
+    @Override
+    public String getDataFormatJSonSchemaDirectory() {
+        return DATAFORMAT_DIR;
+    }
+
+    @Override
+    public String getLanguageJSonSchemaDirectory() {
+        return LANGUAGE_DIR;
     }
 
     @Override
