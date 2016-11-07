@@ -728,6 +728,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             // from the previous request or response propagated with the invocation context
             cxfContext.remove(Message.PROTOCOL_HEADERS);
         }
+        cxfContext.put(SoapBindingConstants.SOAP_ACTION, camelHeaders.get(SoapBindingConstants.SOAP_ACTION));
     }
 
     protected static Object getContentFromCxf(Message message, DataFormat dataFormat, String encoding) {
