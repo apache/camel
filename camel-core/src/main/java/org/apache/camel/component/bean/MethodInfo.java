@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutorService;
 
@@ -287,6 +288,18 @@ public class MethodInfo {
                     LOG.trace(">>>> invoking: {} on bean: {} with arguments: {} for exchange: {}", new Object[]{method, pojo, asString(arguments), exchange});
                 }
                 Object result = invoke(method, pojo, arguments, exchange);
+
+                // the method may be a closure or chained method returning a callable which should be called
+                if (result instanceof Callable) {
+                    LOG.trace("Method returned Callback which will be called: {}", result);
+                    Object callableResult = ((Callable) result).call();
+                    if (callableResult != null) {
+                        result = callableResult;
+                    } else {
+                        // if callable returned null we should not change the body
+                        result = Void.TYPE;
+                    }
+                }
 
                 if (recipientList != null) {
                     // ensure its started
