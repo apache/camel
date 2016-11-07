@@ -121,6 +121,13 @@ public class DefaultCamelCatalog implements CamelCatalog {
         this.runtimeProvider = runtimeProvider;
         // inject CamelCatalog to the provider
         this.runtimeProvider.setCamelCatalog(this);
+        // invalidate the cache
+        cache.remove("findComponentNames");
+        cache.remove("listComponentsAsJson");
+        cache.remove("findDataFormatNames");
+        cache.remove("listDataFormatsAsJson");
+        cache.remove("findLanguageNames");
+        cache.remove("listLanguagesAsJson");
     }
 
     @Override
