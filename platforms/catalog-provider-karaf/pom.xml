@@ -77,28 +77,18 @@
         <extensions>true</extensions>
       </plugin>
 
+      <!-- generate and include all components in the catalog -->
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <version>${maven-resources-plugin-version}</version>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <version>${project.version}</version>
         <executions>
           <execution>
-            <id>copy-resources</id>
-            <phase>compile</phase>
+            <!-- prepare the catalog before the user guide / readme -->
             <goals>
-              <goal>copy-resources</goal>
+              <goal>prepare-catalog-karaf</goal>
             </goals>
-            <configuration>
-              <outputDirectory>${basedir}/target/classes/org/apache/camel/catalog/karaf</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>../karaf/features/target/classes</directory>
-                  <includes>
-                    <include>features.xml</include>
-                  </includes>
-                </resource>
-              </resources>
-            </configuration>
+            <phase>process-resources</phase>
           </execution>
         </executions>
       </plugin>
