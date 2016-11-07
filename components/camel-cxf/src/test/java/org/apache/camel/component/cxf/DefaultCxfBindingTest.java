@@ -200,7 +200,7 @@ public class DefaultCxfBindingTest extends Assert {
         cxfBinding.populateCxfRequestFromExchange(cxfExchange, exchange, requestContext);
 
         String actualSoapActionHeader = (String)requestContext.get(SoapBindingConstants.SOAP_ACTION);
-        assertEquals(expectedSoapActionHeader,actualSoapActionHeader);
+        assertEquals(expectedSoapActionHeader, actualSoapActionHeader);
     }
     
     @Test
