@@ -176,30 +176,30 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             }
 
             // Group the models by implementing classes
-            Map<String, List<ComponentModel>> grModels = allModels.stream().collect(Collectors.groupingBy(m -> m.getJavaType()));
+            Map<String, List<ComponentModel>> grModels = allModels.stream().collect(Collectors.groupingBy(ComponentModel::getJavaType));
             for (String componentClass : grModels.keySet()) {
                 List<ComponentModel> compModels = grModels.get(componentClass);
                 ComponentModel model = compModels.get(0); // They should be equivalent
-                List<String> aliases = compModels.stream().map(m -> m.getScheme()).sorted().collect(Collectors.toList());
+                List<String> aliases = compModels.stream().map(ComponentModel::getScheme).sorted().collect(Collectors.toList());
 
-                // only create source code if the component has options that can be used in auto configuration
-                if (!model.getComponentOptions().isEmpty()) {
+                boolean hasOptions = !model.getComponentOptions().isEmpty();
 
-                    // use springboot as sub package name so the code is not in normal
-                    // package so the Spring Boot JARs can be optional at runtime
-                    int pos = model.getJavaType().lastIndexOf(".");
-                    String pkg = model.getJavaType().substring(0, pos) + ".springboot";
+                // use springboot as sub package name so the code is not in normal
+                // package so the Spring Boot JARs can be optional at runtime
+                int pos = model.getJavaType().lastIndexOf(".");
+                String pkg = model.getJavaType().substring(0, pos) + ".springboot";
 
-                    String overrideComponentName = null;
-                    if (aliases.size() > 1) {
-                        // determine component name when there are multiple ones
-                        overrideComponentName = model.getArtifactId().replace("camel-", "");
-                    }
-
-                    createComponentConfigurationSource(pkg, model, overrideComponentName);
-                    createComponentAutoConfigurationSource(pkg, model, aliases);
-                    createComponentSpringFactorySource(pkg, model);
+                String overrideComponentName = null;
+                if (aliases.size() > 1) {
+                    // determine component name when there are multiple ones
+                    overrideComponentName = model.getArtifactId().replace("camel-", "");
                 }
+
+                if (hasOptions) {
+                    createComponentConfigurationSource(pkg, model, overrideComponentName);
+                }
+                createComponentAutoConfigurationSource(pkg, model, aliases, hasOptions);
+                createComponentSpringFactorySource(pkg, model);
             }
         }
     }
@@ -232,24 +232,24 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 DataFormatModel model = dfModels.get(0); // They should be equivalent
                 List<String> aliases = dfModels.stream().map(m -> m.getName()).sorted().collect(Collectors.toList());
 
-                // only create source code if the data format has options that can be used in auto configuration
-                if (!model.getDataFormatOptions().isEmpty()) {
+                boolean hasOptions = !model.getDataFormatOptions().isEmpty();
 
-                    // use springboot as sub package name so the code is not in normal
-                    // package so the Spring Boot JARs can be optional at runtime
-                    int pos = model.getJavaType().lastIndexOf(".");
-                    String pkg = model.getJavaType().substring(0, pos) + ".springboot";
+                // use springboot as sub package name so the code is not in normal
+                // package so the Spring Boot JARs can be optional at runtime
+                int pos = model.getJavaType().lastIndexOf(".");
+                String pkg = model.getJavaType().substring(0, pos) + ".springboot";
 
-                    String overrideDataformatName = null;
-                    if (aliases.size() > 1) {
-                        // determine component name when there are multiple ones
-                        overrideDataformatName = model.getArtifactId().replace("camel-", "");
-                    }
-
-                    createDataFormatConfigurationSource(pkg, model, overrideDataformatName);
-                    createDataFormatAutoConfigurationSource(pkg, model, aliases);
-                    createDataFormatSpringFactorySource(pkg, model);
+                String overrideDataformatName = null;
+                if (aliases.size() > 1) {
+                    // determine component name when there are multiple ones
+                    overrideDataformatName = model.getArtifactId().replace("camel-", "");
                 }
+
+                if (hasOptions) {
+                    createDataFormatConfigurationSource(pkg, model, overrideDataformatName);
+                }
+                createDataFormatAutoConfigurationSource(pkg, model, aliases, hasOptions);
+                createDataFormatSpringFactorySource(pkg, model);
             }
         }
     }
@@ -282,24 +282,25 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 LanguageModel model = dfModels.get(0); // They should be equivalent
                 List<String> aliases = dfModels.stream().map(m -> m.getName()).sorted().collect(Collectors.toList());
 
-                // only create source code if the language has options that can be used in auto configuration
-                if (!model.getLanguageOptions().isEmpty()) {
 
-                    // use springboot as sub package name so the code is not in normal
-                    // package so the Spring Boot JARs can be optional at runtime
-                    int pos = model.getJavaType().lastIndexOf(".");
-                    String pkg = model.getJavaType().substring(0, pos) + ".springboot";
+                boolean hasOptions = !model.getLanguageOptions().isEmpty();
 
-                    String overrideLanguageName = null;
-                    if (aliases.size() > 1) {
-                        // determine language name when there are multiple ones
-                        overrideLanguageName = model.getArtifactId().replace("camel-", "");
-                    }
+                // use springboot as sub package name so the code is not in normal
+                // package so the Spring Boot JARs can be optional at runtime
+                int pos = model.getJavaType().lastIndexOf(".");
+                String pkg = model.getJavaType().substring(0, pos) + ".springboot";
 
-                    createLanguageConfigurationSource(pkg, model, overrideLanguageName);
-                    createLanguageAutoConfigurationSource(pkg, model, aliases);
-                    createLanguageSpringFactorySource(pkg, model);
+                String overrideLanguageName = null;
+                if (aliases.size() > 1) {
+                    // determine language name when there are multiple ones
+                    overrideLanguageName = model.getArtifactId().replace("camel-", "");
                 }
+
+                if (hasOptions) {
+                    createLanguageConfigurationSource(pkg, model, overrideLanguageName);
+                }
+                createLanguageAutoConfigurationSource(pkg, model, aliases, hasOptions);
+                createLanguageSpringFactorySource(pkg, model);
             }
         }
     }
@@ -755,7 +756,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         writeSourceIfChanged(javaClass, fileName);
     }
 
-    private void createComponentAutoConfigurationSource(String packageName, ComponentModel model, List<String> componentAliases) throws MojoFailureException {
+    private void createComponentAutoConfigurationSource(String packageName, ComponentModel model, List<String> componentAliases, boolean hasOptions) throws MojoFailureException {
         final JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
 
         int pos = model.getJavaType().lastIndexOf(".");
@@ -770,18 +771,20 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addAnnotation(ConditionalOnBean.class).setStringValue("type", "org.apache.camel.springboot.CamelAutoConfiguration");
 
         String configurationName = name.replace("ComponentAutoConfiguration", "ComponentConfiguration");
-        AnnotationSource<JavaClassSource> ann = javaClass.addAnnotation(EnableConfigurationProperties.class);
-        ann.setLiteralValue("value", configurationName + ".class");
+        if (hasOptions) {
+            AnnotationSource<JavaClassSource> ann = javaClass.addAnnotation(EnableConfigurationProperties.class);
+            ann.setLiteralValue("value", configurationName + ".class");
 
-        // add method for auto configure
+            javaClass.addImport("java.util.HashMap");
+            javaClass.addImport("java.util.Map");
+            javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
+        }
 
-        javaClass.addImport("java.util.HashMap");
-        javaClass.addImport("java.util.Map");
         javaClass.addImport(model.getJavaType());
         javaClass.addImport("org.apache.camel.CamelContext");
-        javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
 
-        String body = createComponentBody(model.getShortJavaType());
+        // add method for auto configure
+        String body = createComponentBody(model.getShortJavaType(), hasOptions);
         String methodName = "configure" + model.getShortJavaType();
 
         MethodSource<JavaClassSource> method = javaClass.addMethod()
@@ -792,7 +795,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 .addThrows(Exception.class);
 
         method.addParameter("CamelContext", "camelContext");
-        method.addParameter(configurationName, "configuration");
+
+        if (hasOptions) {
+            method.addParameter(configurationName, "configuration");
+        }
 
         // Determine all the aliases
         String[] springBeanAliases = componentAliases.stream().map(alias -> alias + "-component").toArray(size -> new String[size]);
@@ -808,7 +814,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         writeSourceIfChanged(javaClass, fileName);
     }
 
-    private void createDataFormatAutoConfigurationSource(String packageName, DataFormatModel model, List<String> dataFormatAliases) throws MojoFailureException {
+    private void createDataFormatAutoConfigurationSource(String packageName, DataFormatModel model, List<String> dataFormatAliases, boolean hasOptions) throws MojoFailureException {
         final JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
 
         int pos = model.getJavaType().lastIndexOf(".");
@@ -823,19 +829,20 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addAnnotation(ConditionalOnBean.class).setStringValue("type", "org.apache.camel.springboot.CamelAutoConfiguration");
 
         String configurationName = name.replace("DataFormatAutoConfiguration", "DataFormatConfiguration");
-        AnnotationSource<JavaClassSource> ann = javaClass.addAnnotation(EnableConfigurationProperties.class);
-        ann.setLiteralValue("value", configurationName + ".class");
+        if (hasOptions) {
+            AnnotationSource<JavaClassSource> ann = javaClass.addAnnotation(EnableConfigurationProperties.class);
+            ann.setLiteralValue("value", configurationName + ".class");
 
-        // add method for auto configure
+            javaClass.addImport("java.util.HashMap");
+            javaClass.addImport("java.util.Map");
+            javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
+        }
 
-        javaClass.addImport("java.util.HashMap");
-        javaClass.addImport("java.util.Map");
+        javaClass.addImport("org.apache.camel.CamelContextAware");
         javaClass.addImport(model.getJavaType());
         javaClass.addImport("org.apache.camel.CamelContext");
-        javaClass.addImport("org.apache.camel.CamelContextAware");
-        javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
 
-        String body = createDataFormatBody(model.getShortJavaType());
+        String body = createDataFormatBody(model.getShortJavaType(), hasOptions);
         String methodName = "configure" + model.getShortJavaType();
 
         MethodSource<JavaClassSource> method = javaClass.addMethod()
@@ -846,7 +853,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 .addThrows(Exception.class);
 
         method.addParameter("CamelContext", "camelContext");
-        method.addParameter(configurationName, "configuration");
+
+        if (hasOptions) {
+            method.addParameter(configurationName, "configuration");
+        }
 
 
         // Determine all the aliases
@@ -864,7 +874,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         writeSourceIfChanged(javaClass, fileName);
     }
 
-    private void createLanguageAutoConfigurationSource(String packageName, LanguageModel model, List<String> languageAliases) throws MojoFailureException {
+    private void createLanguageAutoConfigurationSource(String packageName, LanguageModel model, List<String> languageAliases, boolean hasOptions) throws MojoFailureException {
         final JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
 
         int pos = model.getJavaType().lastIndexOf(".");
@@ -879,19 +889,20 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addAnnotation(ConditionalOnBean.class).setStringValue("type", "org.apache.camel.springboot.CamelAutoConfiguration");
 
         String configurationName = name.replace("LanguageAutoConfiguration", "LanguageConfiguration");
-        AnnotationSource<JavaClassSource> ann = javaClass.addAnnotation(EnableConfigurationProperties.class);
-        ann.setLiteralValue("value", configurationName + ".class");
+        if (hasOptions) {
+            AnnotationSource<JavaClassSource> ann = javaClass.addAnnotation(EnableConfigurationProperties.class);
+            ann.setLiteralValue("value", configurationName + ".class");
 
-        // add method for auto configure
+            javaClass.addImport("java.util.HashMap");
+            javaClass.addImport("java.util.Map");
+            javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
+        }
 
-        javaClass.addImport("java.util.HashMap");
-        javaClass.addImport("java.util.Map");
+        javaClass.addImport("org.apache.camel.CamelContextAware");
         javaClass.addImport(model.getJavaType());
         javaClass.addImport("org.apache.camel.CamelContext");
-        javaClass.addImport("org.apache.camel.CamelContextAware");
-        javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
 
-        String body = createLanguageBody(model.getShortJavaType());
+        String body = createLanguageBody(model.getShortJavaType(), hasOptions);
         String methodName = "configure" + model.getShortJavaType();
 
         MethodSource<JavaClassSource> method = javaClass.addMethod()
@@ -944,64 +955,70 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         writeComponentSpringFactorySource(packageName, name);
     }
 
-    private static String createComponentBody(String shortJavaType) {
+    private static String createComponentBody(String shortJavaType, boolean hasOptions) {
         StringBuilder sb = new StringBuilder();
         sb.append(shortJavaType).append(" component = new ").append(shortJavaType).append("();").append("\n");
         sb.append("component.setCamelContext(camelContext);\n");
         sb.append("\n");
-        sb.append("Map<String, Object> parameters = new HashMap<>();\n");
-        sb.append("IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
-        sb.append("\n");
-        sb.append("for (Map.Entry<String, Object> entry : parameters.entrySet()) {\n");
-        sb.append("    Object value = entry.getValue();\n");
-        sb.append("    Class<?> paramClass = value.getClass();\n");
-        sb.append("    if (paramClass.getName().endsWith(\"NestedConfiguration\")) {\n");
-        sb.append("        Class nestedClass = null;\n");
-        sb.append("        try {\n");
-        sb.append("            nestedClass = (Class) paramClass.getDeclaredField(\"CAMEL_NESTED_CLASS\").get(null);\n");
-        sb.append("            HashMap<String, Object> nestedParameters = new HashMap<>();\n");
-        sb.append("            IntrospectionSupport.getProperties(value, nestedParameters, null, false);\n");
-        sb.append("            Object nestedProperty = nestedClass.newInstance();\n");
-        sb.append("            IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), nestedProperty, nestedParameters);\n");
-        sb.append("            entry.setValue(nestedProperty);\n");
-        sb.append("        } catch (NoSuchFieldException e) {\n");
-        sb.append("            // ignore, class must not be a nested configuration class after all\n");
-        sb.append("        }\n");
-        sb.append("    }\n");
-        sb.append("}\n");
-        sb.append("IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), component, parameters);\n");
+        if (hasOptions) {
+            sb.append("Map<String, Object> parameters = new HashMap<>();\n");
+            sb.append("IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
+            sb.append("\n");
+            sb.append("for (Map.Entry<String, Object> entry : parameters.entrySet()) {\n");
+            sb.append("    Object value = entry.getValue();\n");
+            sb.append("    Class<?> paramClass = value.getClass();\n");
+            sb.append("    if (paramClass.getName().endsWith(\"NestedConfiguration\")) {\n");
+            sb.append("        Class nestedClass = null;\n");
+            sb.append("        try {\n");
+            sb.append("            nestedClass = (Class) paramClass.getDeclaredField(\"CAMEL_NESTED_CLASS\").get(null);\n");
+            sb.append("            HashMap<String, Object> nestedParameters = new HashMap<>();\n");
+            sb.append("            IntrospectionSupport.getProperties(value, nestedParameters, null, false);\n");
+            sb.append("            Object nestedProperty = nestedClass.newInstance();\n");
+            sb.append("            IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), nestedProperty, nestedParameters);\n");
+            sb.append("            entry.setValue(nestedProperty);\n");
+            sb.append("        } catch (NoSuchFieldException e) {\n");
+            sb.append("            // ignore, class must not be a nested configuration class after all\n");
+            sb.append("        }\n");
+            sb.append("    }\n");
+            sb.append("}\n");
+            sb.append("IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), component, parameters);\n");
+        }
         sb.append("\n");
         sb.append("return component;");
         return sb.toString();
     }
 
-    private static String createDataFormatBody(String shortJavaType) {
+    private static String createDataFormatBody(String shortJavaType, boolean hasOptions) {
         StringBuilder sb = new StringBuilder();
         sb.append(shortJavaType).append(" dataformat = new ").append(shortJavaType).append("();").append("\n");
         sb.append("if (dataformat instanceof CamelContextAware) {\n");
         sb.append("    ((CamelContextAware) dataformat).setCamelContext(camelContext);\n");
         sb.append("}\n");
-        sb.append("\n");
-        sb.append("Map<String, Object> parameters = new HashMap<>();\n");
-        sb.append("IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
-        sb.append("\n");
-        sb.append("IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), dataformat, parameters);\n");
+        if (hasOptions) {
+            sb.append("\n");
+            sb.append("Map<String, Object> parameters = new HashMap<>();\n");
+            sb.append("IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
+            sb.append("\n");
+            sb.append("IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), dataformat, parameters);\n");
+        }
         sb.append("\n");
         sb.append("return dataformat;");
         return sb.toString();
     }
 
-    private static String createLanguageBody(String shortJavaType) {
+    private static String createLanguageBody(String shortJavaType, boolean hasOptions) {
         StringBuilder sb = new StringBuilder();
         sb.append(shortJavaType).append(" language = new ").append(shortJavaType).append("();").append("\n");
         sb.append("if (language instanceof CamelContextAware) {\n");
         sb.append("    ((CamelContextAware) language).setCamelContext(camelContext);\n");
         sb.append("}\n");
-        sb.append("\n");
-        sb.append("Map<String, Object> parameters = new HashMap<>();\n");
-        sb.append("IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
-        sb.append("\n");
-        sb.append("IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), language, parameters);\n");
+        if (hasOptions) {
+            sb.append("\n");
+            sb.append("Map<String, Object> parameters = new HashMap<>();\n");
+            sb.append("IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
+            sb.append("\n");
+            sb.append("IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), language, parameters);\n");
+        }
         sb.append("\n");
         sb.append("return language;");
         return sb.toString();
