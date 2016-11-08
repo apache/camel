@@ -17,21 +17,30 @@
 package org.apache.camel.component.undertow;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.ByteBuffer;
+import java.nio.file.Path;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
 
 import io.undertow.client.ClientExchange;
 import io.undertow.client.ClientRequest;
 import io.undertow.client.ClientResponse;
 import io.undertow.predicate.Predicate;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.form.FormData;
+import io.undertow.server.handlers.form.FormData.FormValue;
+import io.undertow.server.handlers.form.FormDataParser;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
@@ -39,6 +48,7 @@ import io.undertow.util.Methods;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.impl.DefaultAttachment;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
@@ -94,14 +104,33 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
         populateCamelHeaders(httpExchange, result.getHeaders(), exchange);
 
-        //extract body if the method is allowed to have one
-        //body is extracted as byte[] then auto TypeConverter kicks in
-        if (Methods.POST.equals(httpExchange.getRequestMethod()) || Methods.PUT.equals(httpExchange.getRequestMethod())) {
-            result.setBody(readFromChannel(httpExchange.getRequestChannel()));
+        // Map form data which is parsed by undertow form parsers
+        FormData formData = httpExchange.getAttachment(FormDataParser.FORM_DATA);
+        if (formData != null) {
+            Map<String, Object> body = new HashMap<>();
+            formData.forEach(key -> {
+                formData.get(key).forEach(value -> {
+                    if (value.isFile()) {
+                        DefaultAttachment attachment = new DefaultAttachment(new FilePartDataSource(value));
+                        result.addAttachmentObject(key, attachment);
+                        body.put(key, attachment.getDataHandler());
+                    } else if (headerFilterStrategy != null
+                        && !headerFilterStrategy.applyFilterToExternalHeaders(key, value.getValue(), exchange)) {
+                        UndertowHelper.appendHeader(result.getHeaders(), key, value.getValue());
+                        UndertowHelper.appendHeader(body, key, value.getValue());
+                    }
+                });
+            });
+            result.setBody(body);
         } else {
-            result.setBody(null);
+            //extract body by myself if undertow parser didn't handle and the method is allowed to have one
+            //body is extracted as byte[] then auto TypeConverter kicks in
+            if (Methods.POST.equals(httpExchange.getRequestMethod()) || Methods.PUT.equals(httpExchange.getRequestMethod())) {
+                result.setBody(readFromChannel(httpExchange.getRequestChannel()));
+            } else {
+                result.setBody(null);
+            }
         }
-
         return result;
     }
 
@@ -388,6 +417,27 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                 out.write(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.arrayOffset() + buffer.limit());
                 buffer.clear();
             }
+        }
+    }
+
+    class FilePartDataSource extends FileDataSource {
+        private String name;
+        private String contentType;
+
+        FilePartDataSource(FormValue value) {
+            super(value.getPath().toFile());
+            this.name = value.getFileName();
+            this.contentType = value.getHeaders().getFirst(Headers.CONTENT_TYPE);
+        }
+
+        @Override
+        public String getName() {
+            return this.name;
+        }
+
+        @Override
+        public String getContentType() {
+            return this.contentType;
         }
     }
 }

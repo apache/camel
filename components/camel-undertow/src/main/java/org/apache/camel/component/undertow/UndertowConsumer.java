@@ -21,6 +21,7 @@ import java.nio.ByteBuffer;
 
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
+import io.undertow.server.handlers.form.EagerFormParsingHandler;
 import io.undertow.util.Headers;
 import io.undertow.util.HttpString;
 import io.undertow.util.Methods;
@@ -73,6 +74,11 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
             registrationInfo.setMatchOnUriPrefix(endpoint.getMatchOnUriPrefix());
         }
         return registrationInfo;
+    }
+
+    public HttpHandler getHttpHandler() {
+        // wrap with EagerFormParsingHandler to enable undertow form parsers
+        return new EagerFormParsingHandler().setNext(this);
     }
 
     @Override
