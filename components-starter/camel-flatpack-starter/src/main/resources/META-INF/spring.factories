@@ -16,4 +16,6 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.dataformat.flatpack.springboot.FlatpackDataFormatAutoConfiguration
+org.apache.camel.dataformat.flatpack.springboot.FlatpackDataFormatAutoConfiguration,\
+org.apache.camel.component.flatpack.springboot.FlatpackComponentAutoConfiguration
+

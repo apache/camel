@@ -16,4 +16,6 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.dataformat.xmlrpc.springboot.XmlRpcDataFormatAutoConfiguration
+org.apache.camel.dataformat.xmlrpc.springboot.XmlRpcDataFormatAutoConfiguration,\
+org.apache.camel.component.xmlrpc.springboot.XmlRpcComponentAutoConfiguration
+
