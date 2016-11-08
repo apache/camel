@@ -287,7 +287,7 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
             undertowRegistry.put(key, host);
         }
         host.validateEndpointURI(uri);
-        host.registerHandler(consumer.getHttpHandlerRegistrationInfo(), consumer);
+        host.registerHandler(consumer.getHttpHandlerRegistrationInfo(), consumer.getHttpHandler());
     }
 
     public void unregisterConsumer(UndertowConsumer consumer) {
