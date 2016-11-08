@@ -274,7 +274,7 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(description = "If true, a producer will behave like a InOnly exchange with the exception that JMSReplyTo header is sent out and"
             + " not be suppressed like in the case of InOnly. Like InOnly the producer will not wait for a reply."
             + " A consumer with this flag will behave like InOnly. This feature can be used to bridge InOut requests to"
-            + " another queue so that a route on the other queue will send it´s response directly back to the original JMSReplyTo.")
+            + " another queue so that a route on the other queue will send its response directly back to the original JMSReplyTo.")
     private boolean disableReplyTo;
     @UriParam(label = "consumer,advanced",
             description = "Enables eager loading of JMS properties as soon as a message is loaded"
@@ -340,7 +340,8 @@ public class JmsConfiguration implements Cloneable {
     private boolean transferException;
     @UriParam(label = "advanced",
             description = "If enabled and you are using Request Reply messaging (InOut) and an Exchange failed with a SOAP fault (not exception) on the consumer side,"
-                    + " then the fault flag on Message#isFault() will be send back in the response as a JMS header with the key JmsConstants#JMS_TRANSFER_FAULT."
+                    + " then the fault flag on Message#isFault() will be send back in the response as a JMS header with the key"
+                    + " org.apache.camel.component.jms.JmsConstants#JMS_TRANSFER_FAULT#JMS_TRANSFER_FAULT."
                     + " If the client is Camel, the returned fault flag will be set on the {@link org.apache.camel.Message#setFault(boolean)}."
                     + " You may want to enable this when using Camel components that support faults such as SOAP based such as cxf or spring-ws.")
     private boolean transferFault;
@@ -1360,7 +1361,7 @@ public class JmsConfiguration implements Cloneable {
      * If true, a producer will behave like a InOnly exchange with the exception that JMSReplyTo header is sent out and
      * not be suppressed like in the case of InOnly. Like InOnly the producer will not wait for a reply.
      * A consumer with this flag will behave like InOnly. This feature can be used to bridge InOut requests to
-     * another queue so that a route on the other queue will send it´s response directly back to the original JMSReplyTo.
+     * another queue so that a route on the other queue will send its response directly back to the original JMSReplyTo.
      */
     public void setDisableReplyTo(boolean disableReplyTo) {
         this.disableReplyTo = disableReplyTo;
