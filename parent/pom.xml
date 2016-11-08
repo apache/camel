@@ -144,8 +144,8 @@
     <commons-pool2-version>2.4.2</commons-pool2-version>
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <compress-lzf-version>1.0.3</compress-lzf-version>
-    <consul-client-version>0.12.7</consul-client-version>
-    <consul-client-bundle-version>0.12.7_1</consul-client-bundle-version>
+    <consul-client-version>0.13.2</consul-client-version>
+    <consul-client-bundle-version>0.13.2_1</consul-client-bundle-version>
     <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
     <curator-version>2.11.0</curator-version>
     <cxf-version>3.1.8</cxf-version>
@@ -580,6 +580,7 @@
     <squareup-okio-version>1.9.0</squareup-okio-version>
     <squareup-okio-bundle-version>1.9.0_1</squareup-okio-bundle-version>
     <squareup-retrofit-bundle-version>1.9.0_1</squareup-retrofit-bundle-version>
+    <squareup-retrofit2-bundle-version>2.1.0_1</squareup-retrofit2-bundle-version>
     <sshd-version>0.14.0</sshd-version>
     <stompjms-version>1.19</stompjms-version>
     <swagger-scala-version>1.3.12</swagger-scala-version>
