@@ -37,6 +37,14 @@
       <artifactId>camel-servlet</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!-- Test dependencies -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+      <version>${spring-boot-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- End of test dependencies -->
     <!--START OF GENERATED CODE-->
     <dependency>
       <groupId>org.apache.camel</groupId>
