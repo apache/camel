@@ -26,6 +26,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -116,6 +117,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         PRIMITIVEMAP.put("float", "java.lang.Float");
     }
 
+    private static final String[] IGNORE_MODULES = { /* Non-standard -> */ "camel-grape"};
+
     /**
      * The maven project.
      *
@@ -141,8 +144,13 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        // Spring-boot configuration has been moved on starters
+        // Do not generate code for ignored module
+        if (Arrays.asList(IGNORE_MODULES).contains(project.getArtifactId())) {
+            getLog().info("Component auto-configuration will not be created: component contained in the ignore list");
+            return;
+        }
 
+        // Spring-boot configuration has been moved on starters
         File starterDir = SpringBootHelper.starterDir(baseDir, project.getArtifactId());
         if (!starterDir.exists() || !(new File(starterDir, "pom.xml").exists())) {
             // If the starter does not exist, no configuration can be created
@@ -226,11 +234,11 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             }
 
             // Group the models by implementing classes
-            Map<String, List<DataFormatModel>> grModels = allModels.stream().collect(Collectors.groupingBy(m -> m.getJavaType()));
+            Map<String, List<DataFormatModel>> grModels = allModels.stream().collect(Collectors.groupingBy(DataFormatModel::getJavaType));
             for (String dataFormatClass : grModels.keySet()) {
                 List<DataFormatModel> dfModels = grModels.get(dataFormatClass);
                 DataFormatModel model = dfModels.get(0); // They should be equivalent
-                List<String> aliases = dfModels.stream().map(m -> m.getName()).sorted().collect(Collectors.toList());
+                List<String> aliases = dfModels.stream().map(DataFormatModel::getName).sorted().collect(Collectors.toList());
 
                 boolean hasOptions = !model.getDataFormatOptions().isEmpty();
 
@@ -276,11 +284,11 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             }
 
             // Group the models by implementing classes
-            Map<String, List<LanguageModel>> grModels = allModels.stream().collect(Collectors.groupingBy(m -> m.getJavaType()));
+            Map<String, List<LanguageModel>> grModels = allModels.stream().collect(Collectors.groupingBy(LanguageModel::getJavaType));
             for (String languageClass : grModels.keySet()) {
                 List<LanguageModel> dfModels = grModels.get(languageClass);
                 LanguageModel model = dfModels.get(0); // They should be equivalent
-                List<String> aliases = dfModels.stream().map(m -> m.getName()).sorted().collect(Collectors.toList());
+                List<String> aliases = dfModels.stream().map(LanguageModel::getName).sorted().collect(Collectors.toList());
 
 
                 boolean hasOptions = !model.getLanguageOptions().isEmpty();
