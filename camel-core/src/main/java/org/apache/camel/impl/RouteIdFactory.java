@@ -63,11 +63,10 @@ public class RouteIdFactory implements NodeIdFactory {
         }
 
         return defaultNodeIdFactory.createId(definition);
-
     }
 
     /**
-     * Extract id from direct/seda route.
+     * Extract id from routes
      */
     private Optional<String> extractId(RouteDefinition routeDefinition) {
         List<FromDefinition> inputs = routeDefinition.getInputs();
@@ -79,6 +78,7 @@ public class RouteIdFactory implements NodeIdFactory {
         FromDefinition from = inputs.get(0);
         String uri = from.getUri();
 
+        // we want to use the context-path of the route
         int colon = uri.indexOf(':');
 
         if (colon > 0) {
