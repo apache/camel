@@ -3111,8 +3111,8 @@
         <version>${cassandra-unit-version}</version>
         <exclusions>
           <exclusion>
-            <artifactId>org.apache.cassandra</artifactId>
-            <groupId>cassandra-all</groupId>
+            <groupId>org.apache.cassandra</groupId>
+            <artifactId>cassandra-all</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
