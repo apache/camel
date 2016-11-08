@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.grape.springboot;
+package org.apache.camel.component.language.springboot;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.grape.GrapeEndpoint;
+import org.apache.camel.component.language.LanguageComponent;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -29,14 +29,14 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnBean(type = "org.apache.camel.springboot.CamelAutoConfiguration")
-public class GrapeEndpoint {
+public class LanguageComponentAutoConfiguration {
 
-    @Bean(name = "grape-component")
+    @Bean(name = "language-component")
     @ConditionalOnClass(CamelContext.class)
-    @ConditionalOnMissingBean(GrapeEndpoint.class)
-    public GrapeEndpoint configureGrapeEndpoint(CamelContext camelContext)
-            throws Exception {
-        GrapeEndpoint component = new GrapeEndpoint();
+    @ConditionalOnMissingBean(LanguageComponent.class)
+    public LanguageComponent configureLanguageComponent(
+            CamelContext camelContext) throws Exception {
+        LanguageComponent component = new LanguageComponent();
         component.setCamelContext(camelContext);
         return component;
     }
