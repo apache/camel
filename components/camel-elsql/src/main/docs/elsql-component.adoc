@@ -73,7 +73,7 @@ The ElSQL component supports 4 options which are listed below.
 // component options: END
 
 // endpoint options: START
-The ElSQL component supports 49 endpoint options which are listed below:
+The ElSQL component supports 48 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -105,7 +105,6 @@ The ElSQL component supports 49 endpoint options which are listed below:
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | processingStrategy | consumer (advanced) |  | SqlProcessingStrategy | Allows to plugin to use a custom org.apache.camel.component.sql.SqlProcessingStrategy to execute queries when the consumer has processed the rows/batch.
-| batch | producer | false | boolean | Enables or disables batch mode
 | noop | producer | false | boolean | If set will ignore the results of the SQL query and use the existing IN message as the OUT message for the continuation of processing
 | useMessageBodyForSql | producer | false | boolean | Whether to use the message body as the SQL and then headers for parameters. If this option is enabled then the SQL in the uri is not used.
 | alwaysPopulateStatement | producer (advanced) | false | boolean | If enabled then the populateStatement method from org.apache.camel.component.sql.SqlPrepareStatementStrategy is always invoked also if there is no expected parameters to be prepared. When this is false then the populateStatement is only invoked if there is 1 or more expected parameters to be set; for example this avoids reading the message body/headers for SQL queries with no parameters.
