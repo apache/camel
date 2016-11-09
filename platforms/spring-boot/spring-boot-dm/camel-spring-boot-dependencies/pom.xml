@@ -162,12 +162,12 @@
       <dependency>
         <groupId>net.sf.saxon</groupId>
         <artifactId>Saxon-HE</artifactId>
-        <version>9.7.0-8</version>
+        <version>9.7.0-10</version>
       </dependency>
       <dependency>
         <groupId>ognl</groupId>
         <artifactId>ognl</artifactId>
-        <version>3.1.10</version>
+        <version>3.1.12</version>
       </dependency>
       <dependency>
         <groupId>org.apache-extras.beanshell</groupId>
@@ -2720,12 +2720,12 @@
       <dependency>
         <groupId>org.apache.kafka</groupId>
         <artifactId>kafka-clients</artifactId>
-        <version>0.10.0.1</version>
+        <version>0.10.1.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.kafka</groupId>
         <artifactId>kafka_2.11</artifactId>
-        <version>0.10.0.1</version>
+        <version>0.10.1.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.mina</groupId>
@@ -2763,8 +2763,8 @@
         <version>3.0.0.1</version>
         <exclusions>
           <exclusion>
-            <groupId>cassandra-all</groupId>
-            <artifactId>org.apache.cassandra</artifactId>
+            <groupId>org.apache.cassandra</groupId>
+            <artifactId>cassandra-all</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
