@@ -16,21 +16,40 @@
  */
 package org.apache.camel.component.nagios;
 
+import com.googlecode.jsendnsca.core.NagiosPassiveCheckSender;
+import com.googlecode.jsendnsca.core.NonBlockingNagiosPassiveCheckSender;
+import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.BeforeClass;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 
 /**
  * @version 
  */
 public class NagiosAsyncSendTest extends NagiosTest {
 
+    @BeforeClass
+    public static void setSender() {
+        nagiosPassiveCheckSender =  Mockito.mock(NonBlockingNagiosPassiveCheckSender.class);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // START SNIPPET: e1
-                from("direct:start").to("nagios:127.0.0.1:25667?password=secret&sendSync=false").to("mock:result");
-                // END SNIPPET: e1
+                String uri = "nagios:127.0.0.1:25664?password=secret&sendSync=false";
+
+                NagiosComponent nagiosComponent = new NagiosComponent();
+                nagiosComponent.setCamelContext(context);
+                NagiosEndpoint nagiousEndpoint = (NagiosEndpoint) nagiosComponent.createEndpoint(uri);
+                nagiousEndpoint.setSender(nagiosPassiveCheckSender);
+                Producer nagiosProducer = nagiousEndpoint.createProducer();
+
+                from("direct:start")
+                        .to(nagiousEndpoint)
+                        .to("mock:result");
             }
         };
     }

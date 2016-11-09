@@ -19,50 +19,46 @@ package org.apache.camel.component.nagios;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.googlecode.jsendnsca.core.INagiosPassiveCheckSender;
 import com.googlecode.jsendnsca.core.Level;
 import com.googlecode.jsendnsca.core.MessagePayload;
-import com.googlecode.jsendnsca.core.mocks.NagiosNscaStub;
+import com.googlecode.jsendnsca.core.NagiosPassiveCheckSender;
+import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 
 /**
  * @version 
  */
 public class NagiosTest extends CamelTestSupport {
+    @Mock
+    protected static INagiosPassiveCheckSender nagiosPassiveCheckSender;
+
     protected boolean canRun;
-    private NagiosNscaStub nagios;
-    
+
+    @BeforeClass
+    public static void setSender() {
+        nagiosPassiveCheckSender =  Mockito.mock(NagiosPassiveCheckSender.class);
+    }
+
     @Before
     @Override
     public void setUp() throws Exception {
         canRun = true;
-
-        nagios = new NagiosNscaStub(25667, "secret");
-        try {
-            nagios.start();
-        } catch (Exception e) {
-            log.warn("Error starting NagiosNscaStub. This exception is ignored.", e);
-            canRun = false;
-        }
-
         super.setUp();
     }
 
-    @After
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-        try {
-            nagios.stop();
-        } catch (Exception e) {
-            // ignore
-            log.warn("Error stopping NagiosNscaStub. This exception is ignored.", e);
-        }
-    }
 
     @Test
     public void testSendToNagios() throws Exception {
@@ -70,24 +66,18 @@ public class NagiosTest extends CamelTestSupport {
             return;
         }
 
+        MessagePayload expectedPayload = new MessagePayload("localhost", Level.OK.ordinal(), context.getName(),  "Hello Nagios");
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.allMessages().body().isInstanceOf(String.class);
+        mock.expectedBodiesReceived("Hello Nagios");
 
         template.sendBody("direct:start", "Hello Nagios");
 
         assertMockEndpointsSatisfied();
 
-        // sleep a little to let nagios stub process the payloads
-        Thread.sleep(2000);
-
-        assertEquals(1, nagios.getMessagePayloadList().size());
-
-        MessagePayload payload = nagios.getMessagePayloadList().get(0);
-        assertEquals("Hello Nagios", payload.getMessage());
-        assertEquals("localhost", payload.getHostname());
-        assertEquals(Level.OK.ordinal(), payload.getLevel());
-        assertEquals(context.getName(), payload.getServiceName());
+        verify(nagiosPassiveCheckSender, times(1)).send(expectedPayload);
     }
 
     @Test
@@ -96,35 +86,21 @@ public class NagiosTest extends CamelTestSupport {
             return;
         }
 
+        MessagePayload expectedPayload1 = new MessagePayload("localhost", Level.OK.ordinal(), context.getName(),  "Hello Nagios");
+        MessagePayload expectedPayload2 = new MessagePayload("localhost", Level.OK.ordinal(), context.getName(),  "Bye Nagios");
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
         mock.allMessages().body().isInstanceOf(String.class);
+        mock.expectedBodiesReceived("Hello Nagios", "Bye Nagios");
 
         template.sendBody("direct:start", "Hello Nagios");
         template.sendBody("direct:start", "Bye Nagios");
 
         assertMockEndpointsSatisfied();
 
-        // sleep a little to let nagios stub process the payloads
-        Thread.sleep(3000);
-
-        assertEquals(2, nagios.getMessagePayloadList().size());
-
-        MessagePayload payload = nagios.getMessagePayloadList().get(0);
-        MessagePayload payload2 = nagios.getMessagePayloadList().get(1);
-
-        assertEquals("localhost", payload.getHostname());
-        assertEquals(Level.OK.ordinal(), payload.getLevel());
-        assertEquals(context.getName(), payload.getServiceName());
-        assertEquals("localhost", payload2.getHostname());
-        assertEquals(Level.OK.ordinal(), payload2.getLevel());
-        assertEquals(context.getName(), payload2.getServiceName());
-
-        // when using async they may arrive in different order
-        boolean hello = "Hello Nagios".equals(payload.getMessage()) || "Hello Nagios".equals(payload2.getMessage());
-        boolean bye = "Bye Nagios".equals(payload.getMessage()) || "Bye Nagios".equals(payload2.getMessage());
-        assertTrue("Should have received Hello Nagios message", hello);
-        assertTrue("Should have received Bye Nagios message", bye);
+        verify(nagiosPassiveCheckSender).send(expectedPayload1);
+        verify(nagiosPassiveCheckSender).send(expectedPayload2);
     }
 
     @Test
@@ -133,23 +109,16 @@ public class NagiosTest extends CamelTestSupport {
             return;
         }
 
+        MessagePayload expectedPayload1 = new MessagePayload("localhost", Level.WARNING.ordinal(), context.getName(),  "Hello Nagios");
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("Hello Nagios");
 
         template.sendBodyAndHeader("direct:start", "Hello Nagios", NagiosConstants.LEVEL, Level.WARNING);
 
         assertMockEndpointsSatisfied();
-
-        // sleep a little to let nagios stub process the payloads
-        Thread.sleep(2000);
-
-        assertEquals(1, nagios.getMessagePayloadList().size());
-
-        MessagePayload payload = nagios.getMessagePayloadList().get(0);
-        assertEquals("Hello Nagios", payload.getMessage());
-        assertEquals("localhost", payload.getHostname());
-        assertEquals(Level.WARNING.ordinal(), payload.getLevel());
-        assertEquals(context.getName(), payload.getServiceName());
+        verify(nagiosPassiveCheckSender).send(expectedPayload1);
     }
 
     @Test
@@ -158,23 +127,16 @@ public class NagiosTest extends CamelTestSupport {
             return;
         }
 
+        MessagePayload expectedPayload1 = new MessagePayload("localhost", Level.WARNING.ordinal(), context.getName(),  "Hello Nagios");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("Hello Nagios");
 
         template.sendBodyAndHeader("direct:start", "Hello Nagios", NagiosConstants.LEVEL, "WARNING");
 
         assertMockEndpointsSatisfied();
 
-        // sleep a little to let nagios stub process the payloads
-        Thread.sleep(2000);
-
-        assertEquals(1, nagios.getMessagePayloadList().size());
-
-        MessagePayload payload = nagios.getMessagePayloadList().get(0);
-        assertEquals("Hello Nagios", payload.getMessage());
-        assertEquals("localhost", payload.getHostname());
-        assertEquals(Level.WARNING.ordinal(), payload.getLevel());
-        assertEquals(context.getName(), payload.getServiceName());
+        verify(nagiosPassiveCheckSender).send(expectedPayload1);
     }
 
     @Test
@@ -183,8 +145,10 @@ public class NagiosTest extends CamelTestSupport {
             return;
         }
 
+        MessagePayload expectedPayload1 = new MessagePayload("myHost", Level.CRITICAL.ordinal(), "myService",  "Hello Nagios");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("Hello Nagios");
 
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(NagiosConstants.LEVEL, "CRITICAL");
@@ -193,17 +157,7 @@ public class NagiosTest extends CamelTestSupport {
         template.sendBodyAndHeaders("direct:start", "Hello Nagios", headers);
 
         assertMockEndpointsSatisfied();
-
-        // sleep a little to let nagios stub process the payloads
-        Thread.sleep(2000);
-
-        assertEquals(1, nagios.getMessagePayloadList().size());
-
-        MessagePayload payload = nagios.getMessagePayloadList().get(0);
-        assertEquals("Hello Nagios", payload.getMessage());
-        assertEquals("myHost", payload.getHostname());
-        assertEquals(Level.CRITICAL.ordinal(), payload.getLevel());
-        assertEquals("myService", payload.getServiceName());
+        verify(nagiosPassiveCheckSender).send(expectedPayload1);
     }
 
     @Override
@@ -211,9 +165,17 @@ public class NagiosTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // START SNIPPET: e1
-                from("direct:start").to("nagios:127.0.0.1:25667?password=secret").to("mock:result");
-                // END SNIPPET: e1
+                String uri = "nagios:127.0.0.1:25664?password=secret";
+
+                NagiosComponent nagiosComponent = new NagiosComponent();
+                nagiosComponent.setCamelContext(context);
+                NagiosEndpoint nagiousEndpoint = (NagiosEndpoint) nagiosComponent.createEndpoint(uri);
+                nagiousEndpoint.setSender(nagiosPassiveCheckSender);
+                Producer nagiosProducer = nagiousEndpoint.createProducer();
+
+                from("direct:start")
+                        .to(nagiousEndpoint)
+                        .to("mock:result");
             }
         };
     }
