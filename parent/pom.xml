@@ -541,14 +541,14 @@
     <splunk-version>1.5.0.0_1</splunk-version>
     <spring-batch-version>3.0.7.RELEASE</spring-batch-version>
     <spring-batch-bundle-version>3.0.7.RELEASE_1</spring-batch-bundle-version>
-    <spring-boot-version>1.4.1.RELEASE</spring-boot-version>
+    <spring-boot-version>1.4.2.RELEASE</spring-boot-version>
     <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
     <spring-data-commons-version>1.6.5.RELEASE</spring-data-commons-version>
     <spring-data-redis-version>1.7.5.RELEASE</spring-data-redis-version>
-    <spring-integration-version>4.3.1.RELEASE</spring-integration-version>
+    <spring-integration-version>4.3.5.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-ldap-version>2.0.4.RELEASE</spring-ldap-version>
-    <spring-ldap-bundle-version>2.0.3.RELEASE_1</spring-ldap-bundle-version>
+    <spring-ldap-bundle-version>2.0.4.RELEASE_2</spring-ldap-bundle-version>
     <!-- spring 1.1.0 is not OSGi bundle any more -->
     <spring-retry-version>1.0.3.RELEASE</spring-retry-version>
     <!-- spring-dm only supports spring 3.x -->
@@ -563,9 +563,9 @@
     <spring-version>${spring4-version}</spring-version>
     <spring40-version>4.0.9.RELEASE</spring40-version>
     <spring41-version>4.1.9.RELEASE</spring41-version>
-    <spring42-version>4.2.7.RELEASE</spring42-version>
-    <spring43-version>4.3.3.RELEASE</spring43-version>
-    <spring4-version>4.3.3.RELEASE</spring4-version>
+    <spring42-version>4.2.8.RELEASE</spring42-version>
+    <spring43-version>4.3.4.RELEASE</spring43-version>
+    <spring4-version>4.3.4.RELEASE</spring4-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>4.0.4.RELEASE</spring-security-version>
     <spring-security-bundle-version>4.0.4.RELEASE_1</spring-security-bundle-version>
