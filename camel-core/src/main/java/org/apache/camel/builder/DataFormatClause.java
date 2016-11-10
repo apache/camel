@@ -351,7 +351,7 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      *                                   into a MIME Multipart (with only one body part).
      * @param headersInline              define the MIME Multipart headers as part of the message body
      *                                   or as Camel headers
-     * @param includeHeadeers            if headersInline is set to true all camel headers matching this
+     * @param includeHeaders            if headersInline is set to true all camel headers matching this
      *                                   regex are also stored as MIME headers on the Multipart
      * @param binaryContent              have binary encoding for binary content (true) or use Base-64
      *                                   encoding for binary content (false)
@@ -904,8 +904,8 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     /**
      * Uses the YAML data format
      *
-     * @param type          the yaml type to use
-     * @param type          the type for json snakeyaml type
+     * @param library the yaml type to use
+     * @param type the type for json snakeyaml type
      */
     public T yaml(YAMLLibrary library, Class<?> type) {
         return dataFormat(new YAMLDataFormat(library, type));
