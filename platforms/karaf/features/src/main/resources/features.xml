@@ -1630,6 +1630,7 @@
     <bundle>mvn:org.apache.camel/camel-solr/${project.version}</bundle>
   </feature>
   <feature name='camel-spark-rest' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>This feature requires sun.reflect package, you'll need to add it to your container. In Karaf you can do this by adding sun.reflect in the JDK8 section of etc/jre.properties file</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-jetty9</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.sparkjava-core/${spark-rest-bundle-version}</bundle>
