@@ -45,7 +45,7 @@ public interface Attachment {
      * Get all the headers for this header name. Returns null if no headers for
      * this header name are available.
      *
-     * @param headerName he name of this header
+     * @param name The name of this header
      * @return a list of all header values
      */
     List<String> getHeaderAsList(String name);
