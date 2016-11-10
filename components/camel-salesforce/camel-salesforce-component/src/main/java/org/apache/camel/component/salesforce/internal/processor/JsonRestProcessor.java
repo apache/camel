@@ -33,6 +33,7 @@ import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
+import org.apache.camel.component.salesforce.api.dto.Limits;
 import org.apache.camel.component.salesforce.api.dto.RestResources;
 import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
@@ -102,6 +103,11 @@ public class JsonRestProcessor extends AbstractRestProcessor {
             // handle known response type
             exchange.setProperty(RESPONSE_TYPE, new TypeReference<List<SearchResult>>() {
             });
+            break;
+
+        case LIMITS:
+            // handle known response type
+            exchange.setProperty(RESPONSE_CLASS, Limits.class);
             break;
 
         default:
