@@ -66,3 +66,39 @@ To create and subscribe to a topic
 To subscribe to an existing topic
 
 	from("force:CamelTestTopic&sObjectName=Merchandise__c")...
+
+## Developing the Camel Salesforce component
+
+### Running the integration tests
+
+**Note:** These instructions are only for running integration tests, they use permissions and IP restrictions that should be reconsidered for production use. 
+
+In order to run the integration tests you need a Salesforce Developer account. You can get a Salesforce Developer account by visiting [developer.salesforce.com](https://developer.salesforce.com/) and sign up for one.
+
+Besides that account you'll need a _test user_ account that has `Bulk API Hard Delete` permission. You can create one by going to _My Developer Account_ (link from [developer.salesforce.com](https://login.salesforce.com/?lt=de)). Under _Administer_ expand _Manage Users_  and select _Profiles_ find _System Administrator_ profile and select _Clone_. Use `System Administrator With Hard Delete` as the profile name, and after saving under _Administrative Permissions_ click edit and tick _Bulk API Hard Delete_ and save. Next, create a new user under _Administer_ expand _Manage Users_  and select _Users_ and then click on _New User_. Fill in the required fields, and select _Salesforce_ for _User License_ and newly created profile for _Profile_. You get two user _Salesforce_ licenses so the newly created user will put you at a maximum.
+
+Install the Warehouse package, tested with _Spring 2013_ (version 1.2) that can be installed from the [https://login.salesforce.com/packaging/installPackage.apexp?p0=04ti0000000Pj8s](https://login.salesforce.com/packaging/installPackage.apexp?p0=04ti0000000Pj8s), and make the following modifications manually:
+ - add custom field `Description` of type `Text` with maxumum length of `100` on the `Merchandise` object
+ - add custom **required** field `Total_Inventory` of type `Number` with maximum length of `18` without default value on the `Merchandise` object
+ - add custom field `Shipping_Location` of type `GeoLocation` on the `Account` object
+ - add custom field `Units_Sold` of `Number` type with maximum length of `18` on the `Line_Item` object
+ - delete custom fields `Quantity`, `Invoice`, `Line_Item_Total` from the `Line_Item` object
+ - delete custom field `Quantity` from the `Merchanidise` object, you will need to delete dependencies (ApexClass and Visualforce Page)
+ - create new ApexClass named `MerchandiseRestResource` with the content of `MerchandiseRestResource.apxc`
+
+You'll need to access a Merchandise record and run a `Test Report` in order for them to appear in _Recent Items_ and _Recent Reports_. Do this by accessing _Warehouse_ application from the menu in the top right, and selecting _Merchandise_ click _Go!_ (preselected is View: _All_) and click on the single Merchandise item available. Next go to Reports and select and run _Test Report_ from _Test Reports_. This is needed by the integration tests as they access recent items and recently run reports.
+
+Create `Camel` connected application by selecting under _Apps_ in _Build_ and _Create_ sections by clicking _New_ in _Connected Apps_ section. Fill in the required fields and in the _API (Enable OAuth Settings)_ section thick _Enable OAuth Settings_ and move all scopes from _Available OAuth Scopes_ to _Selected OAuth Scopes_. For _Callback URL_ you can use any URL it's not needed by the REST API used by the Camel Salesforce component. Make note of _Consumer Key_ and _Consumer Secret_ you'll need to specify them in `test-salesforce-login.properties`, more on that below.
+
+Next enable relaxed IP restrictions, by editing the policy of the _Camel_ connected application in _Connected Apps_ under _Administer_ and _Manage Apps_ pick _Relax IP restrictions_ for _IP Relaxation_.  
+
+Create `test-salesforce-login.properties` in `camel-salesforce` directory (one up from the directory this file resides in) with the content:
+
+    clientId=<Consumer Key of the `Camel` connected App>
+    clientSecret=<Consumer Secret of the `Camel` connected app>
+    userName=<Username of the user with the `System Administrator With Hard Delete` profile>
+    password=<Password of the above user>
+    loginUrl=https://login.salesforce.com/
+    report.0=Test_Report
+
+
