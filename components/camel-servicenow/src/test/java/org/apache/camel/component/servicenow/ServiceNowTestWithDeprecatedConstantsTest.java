@@ -22,7 +22,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class ServiceNowTestWithDeprecatedConstants extends ServiceNowTestSupport {
+public class ServiceNowTestWithDeprecatedConstantsTest extends ServiceNowTestSupport {
 
     @Test
     public void testExceptions() throws Exception {
