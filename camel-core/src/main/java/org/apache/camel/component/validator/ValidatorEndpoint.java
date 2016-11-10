@@ -232,7 +232,7 @@ public class ValidatorEndpoint extends DefaultEndpoint {
     }
 
     /** For creating a resource resolver which depends on the endpoint resource URI. 
-     * Must not be used in combination with method {@link #setResourceResolver(LSResourceResolver). 
+     * Must not be used in combination with method {@link #setResourceResolver(LSResourceResolver)}. 
      * If not set then {@link DefaultValidatorResourceResolverFactory} is used 
      */
     public void setResourceResolverFactory(ValidatorResourceResolverFactory resourceResolverFactory) {
