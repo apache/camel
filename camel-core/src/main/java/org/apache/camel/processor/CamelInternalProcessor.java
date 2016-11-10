@@ -748,7 +748,18 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 list = new LinkedList<>();
                 exchange.setProperty(Exchange.MESSAGE_HISTORY, list);
             }
-            MessageHistory history = factory.newMessageHistory(routeId, definition, new Date());
+
+            // we may be routing outside a route in an onException or interceptor and if so then grab
+            // route id from the exchange UoW state
+            String targetRouteId = this.routeId;
+            if (targetRouteId == null) {
+                UnitOfWork uow = exchange.getUnitOfWork();
+                if (uow != null && uow.getRouteContext() != null) {
+                    targetRouteId = uow.getRouteContext().getRoute().getId();
+                }
+            }
+
+            MessageHistory history = factory.newMessageHistory(targetRouteId, definition, new Date());
             list.add(history);
             return history;
         }
