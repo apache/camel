@@ -23,7 +23,6 @@ import org.apache.camel.model.TransformDefinition;
 import org.apache.camel.processor.TransformProcessor;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed Transformer")
 public class ManagedTransformer extends ManagedProcessor implements ManagedTransformMBean {

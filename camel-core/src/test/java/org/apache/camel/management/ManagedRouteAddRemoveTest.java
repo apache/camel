@@ -29,7 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Tests mbeans is registered when adding a 2nd route after CamelContext has been started.
  *
- * @version 
  */
 public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
     

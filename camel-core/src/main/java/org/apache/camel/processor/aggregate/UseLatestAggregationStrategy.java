@@ -25,7 +25,6 @@ import static org.apache.camel.util.ExchangeHelper.hasExceptionBeenHandledByErro
  * for status messages where old status messages have no real value. Another example is things
  * like market data prices, where old stock prices are not that relevant, only the current price is.
  *
- * @version 
  */
 public class UseLatestAggregationStrategy implements AggregationStrategy {
 

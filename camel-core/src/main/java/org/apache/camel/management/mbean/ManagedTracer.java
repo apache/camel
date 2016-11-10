@@ -29,7 +29,6 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed Tracer")
 @ManagedNotifications(@ManagedNotification(name = "javax.management.Notification", 

@@ -25,7 +25,6 @@ import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class ManagedRouteStopUsingMBeanAPITest extends ManagementTestSupport {
 

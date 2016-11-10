@@ -23,7 +23,6 @@ import org.apache.camel.TimeoutMap;
 /**
  * Represents an entry in a {@link TimeoutMap}
  *
- * @version 
  */
 public class TimeoutMapEntry<K, V> implements Comparable<Object>, Map.Entry<K, V> {
     private K key;

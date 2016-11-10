@@ -23,7 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectComponent;
 
 /**
- * @version 
  */
 public class StartupListenerComponentFromRegistryTest extends ContextTestSupport {
 

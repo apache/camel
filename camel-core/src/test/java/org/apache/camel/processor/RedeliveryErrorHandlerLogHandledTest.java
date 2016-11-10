@@ -23,7 +23,6 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class RedeliveryErrorHandlerLogHandledTest extends ContextTestSupport {
 

@@ -24,7 +24,6 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class ManagedUnregisterComponentTest extends ManagementTestSupport {
 

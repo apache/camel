@@ -22,7 +22,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 
 /**
- * @version 
  */
 public class SimpleOperatorTest extends LanguageTestSupport {
 

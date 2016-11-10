@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class MulticastStopOnExceptionLastWithOnExceptionTest extends MulticastStopOnExceptionWithOnExceptionTest {
 

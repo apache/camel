@@ -29,7 +29,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * For JXPath expressions and predicates
  *
- * @version 
  */
 @Metadata(label = "language,java", title = "JXPath")
 @XmlRootElement(name = "jxpath")

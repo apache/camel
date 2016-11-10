@@ -30,7 +30,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * Avro data format
  *
- * @version 
  */
 @Metadata(label = "dataformat,transformation", title = "Avro")
 @XmlRootElement(name = "avro")

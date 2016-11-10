@@ -29,7 +29,6 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 
 /**
- * @version
  */
 public class DistributedConcurrentPerCorrelationKeyTest extends AbstractDistributedTest {
 

@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Base class to extend for custom {@link EventNotifier} implementations.
  *
- * @version 
  */
 public abstract class EventNotifierSupport extends ServiceSupport implements EventNotifier {
     protected Logger log = LoggerFactory.getLogger(getClass());

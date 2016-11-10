@@ -44,7 +44,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * Processor implementing <a href="http://camel.apache.org/oncompletion.html">onCompletion</a>.
  *
- * @version 
  */
 public class OnCompletionProcessor extends ServiceSupport implements AsyncProcessor, Traceable, IdAware {
 

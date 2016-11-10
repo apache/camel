@@ -28,7 +28,6 @@ import org.apache.camel.model.loadbalancer.StickyLoadBalancerDefinition;
 import org.apache.camel.model.loadbalancer.TopicLoadBalancerDefinition;
 
 /**
- * @version 
  */
 public class XmlParseTest extends XmlTestSupport {
 

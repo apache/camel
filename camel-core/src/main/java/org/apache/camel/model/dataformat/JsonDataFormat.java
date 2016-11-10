@@ -33,7 +33,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * JSon data format
  *
- * @version 
  */
 @Metadata(label = "dataformat,transformation,json", title = "JSon")
 @XmlRootElement(name = "json")

@@ -28,7 +28,6 @@ package org.apache.camel;
  * <p/>
  * Camel component is very often singleton based, only a few components is not.
  *
- * @version 
  */
 public interface IsSingleton {
 

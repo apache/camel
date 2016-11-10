@@ -23,7 +23,6 @@ import org.apache.camel.model.SetHeaderDefinition;
 import org.apache.camel.processor.SetHeaderProcessor;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed SetHeader")
 public class ManagedSetHeader extends ManagedProcessor implements ManagedSetHeaderMBean {

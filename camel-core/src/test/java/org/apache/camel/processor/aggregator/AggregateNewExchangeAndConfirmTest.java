@@ -27,7 +27,6 @@ import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 /**
  * Testing CAMEL-3139
  * 
- * @version 
  */
 public class AggregateNewExchangeAndConfirmTest extends ContextTestSupport {
 

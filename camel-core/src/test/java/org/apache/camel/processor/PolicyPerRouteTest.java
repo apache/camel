@@ -26,7 +26,6 @@ import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * @version 
  */
 public class PolicyPerRouteTest extends ContextTestSupport {
 

@@ -25,7 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 
 /**
- * @version 
  */
 public class AggregateExpressionSizeOverrideFixedTest extends ContextTestSupport {
 

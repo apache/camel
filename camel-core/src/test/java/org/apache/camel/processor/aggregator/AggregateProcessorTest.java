@@ -34,7 +34,6 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.ExceptionHandler;
 
 /**
- * @version 
  */
 public class AggregateProcessorTest extends ContextTestSupport {
 

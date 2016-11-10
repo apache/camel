@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlEnum;
 /**
  * Used to configure the logging levels
  *
- * @version 
  */
 @XmlEnum
 public enum LoggingLevel {

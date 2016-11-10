@@ -26,7 +26,6 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.support.ServiceSupport;
 
 /**
- * @version 
  */
 public class ManagedNonManagedServiceTest extends ManagementTestSupport {
 

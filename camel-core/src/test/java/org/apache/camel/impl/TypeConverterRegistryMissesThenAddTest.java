@@ -21,7 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.TypeConverterSupport;
 
 /**
- * @version 
  */
 public class TypeConverterRegistryMissesThenAddTest extends TestCase {
 

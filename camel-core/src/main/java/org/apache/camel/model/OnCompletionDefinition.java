@@ -41,7 +41,6 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Route to be executed when normal route processing completes
  *
- * @version 
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "onCompletion")

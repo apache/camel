@@ -30,7 +30,6 @@ import org.apache.camel.Exchange;
  * The {@link ExchangeSentEvent} is an event which is emitted <b>after</b> the sending is done.
  *
  * @see ExchangeSentEvent
- * @version 
  */
 public class ExchangeSendingEvent extends AbstractExchangeEvent {
     private static final long serialVersionUID = -19248832613958122L;

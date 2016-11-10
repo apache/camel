@@ -25,7 +25,6 @@ import org.apache.camel.model.ProcessDefinition;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed Process")
 public class ManagedProcess extends ManagedProcessor implements ManagedProcessMBean {

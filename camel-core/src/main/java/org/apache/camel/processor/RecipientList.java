@@ -48,7 +48,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * pattern where the list of actual endpoints to send a message exchange to are
  * dependent on some dynamic expression.
  *
- * @version 
  */
 public class RecipientList extends ServiceSupport implements AsyncProcessor, IdAware {
 

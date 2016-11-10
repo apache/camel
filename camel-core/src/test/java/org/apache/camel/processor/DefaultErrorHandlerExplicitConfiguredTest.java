@@ -23,7 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * Default error handler test
  *
- * @version 
  */
 public class DefaultErrorHandlerExplicitConfiguredTest extends DefaultErrorHandlerTest {
 

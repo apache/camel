@@ -26,7 +26,6 @@ import org.apache.camel.impl.JndiRegistry;
 
 
 /**
- * @version
  */
 public class ThrottlerMethodCallTest extends ContextTestSupport {
     private static final int INTERVAL = 500;

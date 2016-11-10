@@ -19,7 +19,6 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class AdviceWithRouteIdTest extends AdviceWithTest {
 

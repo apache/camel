@@ -19,7 +19,6 @@ package org.apache.camel.converter;
 import org.apache.camel.ContextTestSupport;
 
 /**
- * @version 
  */
 public class TypeConverterAwareTest extends ContextTestSupport {
 

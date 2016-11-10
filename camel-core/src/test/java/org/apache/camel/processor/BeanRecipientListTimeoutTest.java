@@ -27,7 +27,6 @@ import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
 import org.apache.camel.util.jndi.JndiContext;
 
 /**
- * @version 
  */
 public class BeanRecipientListTimeoutTest extends ContextTestSupport {
 

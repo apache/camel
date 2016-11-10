@@ -28,7 +28,6 @@ import org.apache.camel.processor.interceptor.Tracer;
 /**
  * Default error handler test with trace
  *
- * @version 
  */
 public class DefaultErrorHandlerOnExceptionTraceTest extends ContextTestSupport {
 

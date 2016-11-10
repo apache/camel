@@ -29,7 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 
 /**
- * @version 
  */
 public class DefaultCamelContextEndpointCacheLimitTest extends ContextTestSupport {
 

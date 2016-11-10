@@ -23,7 +23,6 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version
  */
 public class NotifyBuilderExactlyDoneSplitterWhereSentToIssueTest extends ContextTestSupport {
 

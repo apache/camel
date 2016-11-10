@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
  * JMX enabled processor that uses the {@link org.apache.camel.management.mbean.ManagedCounter} for instrumenting
  * processing of exchanges.
  *
- * @version 
  */
 public class InstrumentationProcessor extends DelegateAsyncProcessor {
 

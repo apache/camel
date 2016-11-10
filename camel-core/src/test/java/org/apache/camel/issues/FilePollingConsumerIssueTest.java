@@ -22,7 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 
 /**
- * @version 
  */
 public class FilePollingConsumerIssueTest extends ContextTestSupport {
 

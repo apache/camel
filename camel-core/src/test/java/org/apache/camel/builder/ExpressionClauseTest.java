@@ -31,7 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultAttachment;
 
 /**
- * @version 
  */
 public class ExpressionClauseTest extends ContextTestSupport {
 

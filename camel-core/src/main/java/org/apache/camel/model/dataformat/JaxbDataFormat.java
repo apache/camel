@@ -33,7 +33,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * JAXB data format
  *
- * @version 
  */
 @Metadata(label = "dataformat,transformation,xml", title = "JAXB")
 @XmlRootElement(name = "jaxb")

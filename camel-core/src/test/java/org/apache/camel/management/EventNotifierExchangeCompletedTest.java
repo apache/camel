@@ -30,7 +30,6 @@ import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.support.EventNotifierSupport;
 
 /**
- * @version 
  */
 public class EventNotifierExchangeCompletedTest extends ContextTestSupport {
 

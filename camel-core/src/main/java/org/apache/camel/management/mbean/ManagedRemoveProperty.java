@@ -23,7 +23,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.RemovePropertyProcessor;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed RemoveProperty")
 public class ManagedRemoveProperty extends ManagedProcessor implements ManagedRemovePropertyMBean {

@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
  * to implement one of the {@link #evaluate(org.apache.camel.Exchange, Class)} or
  * {@link #evaluate(org.apache.camel.Exchange)} methods.
  *
- * @version 
  */
 public abstract class ExpressionAdapter extends ExpressionSupport {
 

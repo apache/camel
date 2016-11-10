@@ -35,7 +35,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed DynamicRouter")
 public class ManagedDynamicRouter extends ManagedProcessor implements ManagedDynamicRouterMBean {

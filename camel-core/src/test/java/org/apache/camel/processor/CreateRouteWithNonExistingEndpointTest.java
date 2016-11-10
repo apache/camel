@@ -22,7 +22,6 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class CreateRouteWithNonExistingEndpointTest extends ContextTestSupport {
 

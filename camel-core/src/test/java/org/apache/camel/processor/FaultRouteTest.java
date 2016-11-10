@@ -24,7 +24,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.interceptor.HandleFault;
 
 /**
- * @version 
  */
 public class FaultRouteTest extends ContextTestSupport {
     protected MockEndpoint a;

@@ -24,7 +24,6 @@ import org.apache.camel.processor.ThrowExceptionProcessor;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed ThrowException")
 public class ManagedThrowException extends ManagedProcessor implements ManagedThrowExceptionMBean {

@@ -26,7 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version 
  */
 public class FilePollEnrichTest extends ContextTestSupport {
 

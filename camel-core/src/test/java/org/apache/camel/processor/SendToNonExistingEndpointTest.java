@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NoSuchEndpointException;
 
 /**
- * @version 
  */
 public class SendToNonExistingEndpointTest extends ContextTestSupport {
 

@@ -27,7 +27,6 @@ import org.apache.camel.util.ServiceHelper;
 /**
  * Ensures a {@link Producer} is executed within an {@link org.apache.camel.spi.UnitOfWork}.
  *
- * @version 
  */
 public final class UnitOfWorkProducer implements Producer {
 

@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Implements try/catch/finally type processing
  *
- * @version 
  */
 public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable, IdAware {
     private static final Logger LOG = LoggerFactory.getLogger(TryProcessor.class);

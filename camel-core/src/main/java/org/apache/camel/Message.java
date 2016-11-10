@@ -29,7 +29,6 @@ import javax.activation.DataHandler;
  * See {@link org.apache.camel.impl.DefaultMessage DefaultMessage} for how headers
  * is represented in Camel using a {@link org.apache.camel.util.CaseInsensitiveMap CaseInsensitiveMap}.
  *
- * @version 
  */
 public interface Message {
 

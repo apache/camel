@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
 /**
  * IO helper class.
  *
- * @version 
  */
 public final class IOHelper {
 

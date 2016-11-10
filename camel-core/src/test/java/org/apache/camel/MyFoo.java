@@ -17,7 +17,6 @@
 package org.apache.camel;
 
 /**
- * @version 
  */
 public class MyFoo {
 

@@ -27,7 +27,6 @@ import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.concurrent.SizedScheduledExecutorService;
 
 /**
- * @version 
  */
 public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     

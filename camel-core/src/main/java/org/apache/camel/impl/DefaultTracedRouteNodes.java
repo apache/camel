@@ -31,7 +31,6 @@ import org.apache.camel.spi.TracedRouteNodes;
 /**
  * Default {@link org.apache.camel.spi.TracedRouteNodes}
  *
- * @version 
  */
 public class DefaultTracedRouteNodes implements TracedRouteNodes {
     private final Stack<List<RouteNode>> routeNodes = new Stack<List<RouteNode>>();

@@ -26,7 +26,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version 
  */
 public class DomConverterTest extends ContextTestSupport {
 

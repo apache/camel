@@ -31,7 +31,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
- * @version 
  */
 public class PredicateBuilderConcurrentTest extends ContextTestSupport {
 

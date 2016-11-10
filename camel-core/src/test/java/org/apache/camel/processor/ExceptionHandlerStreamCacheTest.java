@@ -34,7 +34,6 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 /**
  * Test cases for dealing with stream types in an exception handler
  * 
- * @version 
  */
 public class ExceptionHandlerStreamCacheTest extends ContextTestSupport {
 

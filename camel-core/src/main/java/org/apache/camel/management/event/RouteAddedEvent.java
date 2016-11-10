@@ -21,7 +21,6 @@ import java.util.EventObject;
 import org.apache.camel.Route;
 
 /**
- * @version 
  */
 public class RouteAddedEvent extends EventObject {
 

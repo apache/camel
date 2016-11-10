@@ -30,7 +30,6 @@ import org.apache.camel.util.CastUtils;
  * This implementation is prototype based, by creating a <b>new</b> context on each call to
  * {@link #getInitialContext(java.util.Hashtable)}.
  *
- * @version 
  */
 public class CamelInitialContextFactory implements InitialContextFactory {
 

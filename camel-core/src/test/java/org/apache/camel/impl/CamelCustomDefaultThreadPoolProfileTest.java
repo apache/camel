@@ -23,7 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.ThreadPoolProfile;
 
 /**
- * @version 
  */
 public class CamelCustomDefaultThreadPoolProfileTest extends ContextTestSupport {
 

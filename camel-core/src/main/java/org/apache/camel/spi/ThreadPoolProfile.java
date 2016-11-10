@@ -27,7 +27,6 @@ import org.apache.camel.ThreadPoolRejectedPolicy;
  * <p/>
  * See more details at <a href="http://camel.apache.org/threading-model.html">threading model</a>
  *
- * @version 
  */
 public class ThreadPoolProfile implements Serializable, Cloneable {
 

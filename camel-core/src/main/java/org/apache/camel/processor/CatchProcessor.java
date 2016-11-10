@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A processor which catches exceptions.
  *
- * @version 
  */
 public class CatchProcessor extends DelegateAsyncProcessor implements Traceable, IdAware {
     private static final Logger LOG = LoggerFactory.getLogger(CatchProcessor.class);

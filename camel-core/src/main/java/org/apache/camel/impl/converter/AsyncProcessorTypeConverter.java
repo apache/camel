@@ -27,7 +27,6 @@ import org.apache.camel.util.AsyncProcessorConverterHelper;
  * Processing will still occur synchronously but it will provide the required
  * notifications that the caller expects.
  *
- * @version
  */
 public class AsyncProcessorTypeConverter extends TypeConverterSupport {
 

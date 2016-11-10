@@ -22,7 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.seda.SedaEndpoint;
 
 /**
- * @version 
  */
 public class AdviceWithMockEndpointsWithSkipTest extends ContextTestSupport {
 

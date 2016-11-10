@@ -176,7 +176,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the context used to configure routes and the policies to use.
  *
- * @version
  */
 @SuppressWarnings("deprecation")
 public class DefaultCamelContext extends ServiceSupport implements ModelCamelContext, Suspendable {

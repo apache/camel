@@ -29,7 +29,6 @@ import org.apache.camel.spi.RouteContext;
 /**
  * String (text based) data format
  *
- * @version 
  */
 @Metadata(label = "dataformat,transformation,core", title = "String Encoding")
 @XmlRootElement(name = "string")

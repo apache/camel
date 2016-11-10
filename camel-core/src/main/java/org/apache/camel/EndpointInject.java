@@ -32,7 +32,6 @@ import java.lang.annotation.Target;
  *
  * If no ref or uri is specified then the ref is defaulted from the field, property or method name.
  *
- * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

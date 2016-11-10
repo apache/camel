@@ -20,7 +20,6 @@ import org.apache.camel.impl.DefaultInjector;
 import org.apache.camel.spi.Injector;
 
 /**
- * @version 
  */
 public class InjectorDefaultsTest extends ContextTestSupport {
 

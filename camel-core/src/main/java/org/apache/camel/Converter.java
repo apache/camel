@@ -28,7 +28,6 @@ import java.lang.annotation.Target;
  * the <a href="http://camel.apache.org/type-converter.html">Type
  * Conversion Support</a>
  * 
- * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

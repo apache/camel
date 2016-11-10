@@ -23,7 +23,6 @@ import org.apache.camel.model.RouteDefinition;
 /**
  * Based on user form issue
  *
- * @version 
  */
 public class ErrorHandlerAdviceIssueTest extends ContextTestSupport {
 

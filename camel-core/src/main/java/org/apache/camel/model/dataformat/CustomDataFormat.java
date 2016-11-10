@@ -29,7 +29,6 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Custom data format
  *
- * @version
  */
 @Metadata(label = "dataformat,transformation", title = "Custom")
 @XmlRootElement(name = "customDataFormat")

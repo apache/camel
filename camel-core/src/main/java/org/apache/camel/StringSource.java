@@ -33,7 +33,6 @@ import javax.xml.transform.stream.StreamSource;
  * Source} from a String which can be read as many times as required. Encoding
  * is default UTF-8.
  * 
- * @version
  */
 public class StringSource extends StreamSource implements Externalizable {
     private String text;

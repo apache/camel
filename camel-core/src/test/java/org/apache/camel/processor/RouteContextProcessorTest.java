@@ -26,7 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * This is a manual test to run
  *
- * @version
  */
 public class RouteContextProcessorTest extends ContextTestSupport {
 

@@ -23,7 +23,6 @@ import org.apache.camel.model.LoopDefinition;
 import org.apache.camel.processor.LoopProcessor;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed Loop")
 public class ManagedLoop extends ManagedProcessor implements ManagedLoopMBean {

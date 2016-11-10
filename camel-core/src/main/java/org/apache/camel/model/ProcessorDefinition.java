@@ -78,7 +78,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Base class for processor types that most XML types extend.
  *
- * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type> implements Block, OtherAttributesAware {

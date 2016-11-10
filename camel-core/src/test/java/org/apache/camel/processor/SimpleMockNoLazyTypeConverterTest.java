@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 /**
- * @version 
  */
 public class SimpleMockNoLazyTypeConverterTest extends SimpleMockTest {
 

@@ -21,7 +21,6 @@ import javax.management.ObjectName;
 /**
  * This module contains test cases that verifies jmx system property uses.
  *
- * @version 
  */
 public class JmxInstrumentationUsingPropertiesTest extends JmxInstrumentationUsingDefaultsTest {
 

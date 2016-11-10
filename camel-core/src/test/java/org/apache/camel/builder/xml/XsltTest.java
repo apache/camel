@@ -25,7 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.builder.xml.XsltBuilder.xslt;
 
 /**
- * @version 
  */
 public class XsltTest extends ContextTestSupport {
 

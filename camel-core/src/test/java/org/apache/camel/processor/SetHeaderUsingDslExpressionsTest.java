@@ -23,7 +23,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.ExpressionAdapter;
 
 /**
- * @version 
  */
 public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     protected String body = "<person name='James' city='London'/>";

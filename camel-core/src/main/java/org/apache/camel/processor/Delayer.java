@@ -32,7 +32,6 @@ import org.apache.camel.spi.IdAware;
  * <p/>
  * This implementation will block while waiting.
  *
- * @version 
  */
 public class Delayer extends DelayProcessorSupport implements Traceable, IdAware {
     private String id;

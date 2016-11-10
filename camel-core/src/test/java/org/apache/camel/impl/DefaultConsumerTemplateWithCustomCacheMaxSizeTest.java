@@ -23,7 +23,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
 /**
- * @version 
  */
 public class DefaultConsumerTemplateWithCustomCacheMaxSizeTest extends ContextTestSupport {
 

@@ -19,7 +19,6 @@ package org.apache.camel;
 import junit.framework.TestCase;
 
 /**
- * @version 
  */
 public class SuspendableServiceTest extends TestCase {
 

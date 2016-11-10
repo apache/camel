@@ -22,7 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 
 /**
- * @version 
  */
 public class PropertiesComponentLoadPropertiesFromFileTrimValuesTest extends ContextTestSupport {
 

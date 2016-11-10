@@ -22,7 +22,6 @@ import org.apache.camel.Route;
 import org.apache.camel.support.RoutePolicySupport;
 
 /**
- * @version 
  */
 public class FlipRoutePolicy extends RoutePolicySupport {
 

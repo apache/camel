@@ -24,7 +24,6 @@ import org.apache.camel.Expression;
  * <code>long</code> values returned by this comparator's
  * <code>expression</code>.
  * 
- * @version 
  */
 public class DefaultExchangeComparator implements ExpressionResultComparator {
 

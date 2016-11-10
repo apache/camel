@@ -40,7 +40,6 @@ import org.apache.camel.util.OgnlHelper;
 /**
  * For expressions and predicates using a java bean (aka method call)
  *
- * @version
  */
 @Metadata(label = "language,core,java", title = "Bean method")
 @XmlRootElement(name = "method")

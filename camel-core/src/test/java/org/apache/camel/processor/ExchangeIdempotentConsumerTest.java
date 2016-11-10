@@ -31,7 +31,6 @@ import org.apache.camel.spi.ExchangeIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
 
 /**
- * @version 
  */
 public class ExchangeIdempotentConsumerTest extends ContextTestSupport {
     protected Endpoint startEndpoint;

@@ -21,7 +21,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version 
  */
 public class NotifyBuilderTest extends ContextTestSupport {
 

@@ -28,7 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Test for handling a StreamSource in a content-based router with XPath predicates
  *
- * @version 
  */
 public class StreamSourceContentBasedRouterTest extends ContextTestSupport {
     protected MockEndpoint x;

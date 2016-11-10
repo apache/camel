@@ -29,7 +29,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 
 /**
- * @version 
  */
 public class ManagedRouteDumpRouteAsXmlPlaceholderTest extends ManagementTestSupport {
 

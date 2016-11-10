@@ -31,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version 
  */
 public class BeanWithExceptionTest extends ContextTestSupport {
     protected MockEndpoint validEndpoint;

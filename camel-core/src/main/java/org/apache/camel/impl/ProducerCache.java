@@ -50,7 +50,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Cache containing created {@link Producer}.
  *
- * @version
  */
 public class ProducerCache extends ServiceSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ProducerCache.class);

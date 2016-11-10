@@ -21,7 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.support.ExpressionSupport;
 
 /**
- * @version 
  */
 public class ExpressionSupportTest extends ContextTestSupport {
 

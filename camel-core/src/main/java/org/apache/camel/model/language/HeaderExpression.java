@@ -25,7 +25,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * An expression which extracts the named exchange header
  *
- * @version 
  */
 @Metadata(label = "language,core", title = "Header")
 @XmlRootElement(name = "header")

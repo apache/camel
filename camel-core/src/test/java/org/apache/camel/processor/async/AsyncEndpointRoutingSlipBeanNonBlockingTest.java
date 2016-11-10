@@ -36,7 +36,6 @@ import org.apache.camel.util.ServiceHelper;
 import org.junit.Assert;
 
 /**
- * @version 
  */
 public class AsyncEndpointRoutingSlipBeanNonBlockingTest extends ContextTestSupport {
     private AsyncCallback innerCallback;

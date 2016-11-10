@@ -27,7 +27,6 @@ import org.apache.camel.model.SendDefinition;
 import org.apache.camel.spi.IdAware;
 
 /**
- * @version 
  */
 public class SimpleProcessorIdAwareTest extends ContextTestSupport {
 

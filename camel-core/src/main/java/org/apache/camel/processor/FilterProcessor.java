@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
  * The processor which implements the
  * <a href="http://camel.apache.org/message-filter.html">Message Filter</a> EIP pattern.
  *
- * @version 
  */
 public class FilterProcessor extends DelegateAsyncProcessor implements Traceable, IdAware {
     private static final Logger LOG = LoggerFactory.getLogger(FilterProcessor.class);

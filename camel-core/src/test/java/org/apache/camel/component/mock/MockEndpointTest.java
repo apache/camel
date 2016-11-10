@@ -35,7 +35,6 @@ import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.impl.JndiRegistry;
 
 /**
- * @version 
  */
 public class MockEndpointTest extends ContextTestSupport {
 

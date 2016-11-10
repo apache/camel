@@ -27,7 +27,6 @@ import org.apache.camel.impl.DefaultAsyncProducer;
  * A simple {@link org.apache.camel.Producer} which just appends to a {@link Collection} the {@link Exchange} object.
  *
  * @deprecated will be removed in a future Camel release
- * @version 
  */
 @Deprecated
 public class CollectionProducer extends DefaultAsyncProducer {

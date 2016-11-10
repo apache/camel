@@ -31,7 +31,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * For XQuery expressions and predicates
  *
- * @version 
  */
 @Metadata(label = "language,xml", title = "XQuery")
 @XmlRootElement(name = "xquery")

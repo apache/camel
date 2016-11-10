@@ -29,7 +29,6 @@ import org.apache.camel.util.ServiceHelper;
 /**
  * Language producer.
  *
- * @version 
  */
 public class LanguageProducer extends DefaultProducer {
 

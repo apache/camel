@@ -22,7 +22,6 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.util.jndi.JndiContext;
 
 /**
- * @version 
  */
 public class LifecycleStrategyServiceTest extends TestSupport {
 

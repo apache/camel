@@ -56,7 +56,6 @@ import org.apache.camel.util.concurrent.ThreadHelper;
  * <i>ready-for-delivery</i>.
  * <p>
  *
- * @version 
  */
 public class ResequencerEngine<E> {
 

@@ -23,7 +23,6 @@ import java.util.Iterator;
 import junit.framework.TestCase;
 
 /**
- * @version 
  */
 public class ObjectConverterTest extends TestCase {
 

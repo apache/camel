@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
  * and then attach your own debugger and be able to use the custom ids to know at what
  * point you are debugging
  *
- * @version 
  */
 public class CustomIdFactoryTest extends ContextTestSupport {
 

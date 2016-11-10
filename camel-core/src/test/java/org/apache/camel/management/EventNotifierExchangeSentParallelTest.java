@@ -22,7 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 
 /**
- * @version 
  */
 public class EventNotifierExchangeSentParallelTest extends EventNotifierExchangeSentTest {
 

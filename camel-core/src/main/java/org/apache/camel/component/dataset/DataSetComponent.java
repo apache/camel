@@ -25,7 +25,6 @@ import org.apache.camel.util.CamelContextHelper;
 /**
  * Component for <a href="http://camel.apache.org/dataset.html">DataSet</a>.
  *
- * @version 
  */
 public class DataSetComponent extends UriEndpointComponent {
 

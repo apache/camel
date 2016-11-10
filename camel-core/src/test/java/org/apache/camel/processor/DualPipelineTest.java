@@ -23,7 +23,6 @@ import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.SendDefinition;
 
 /**
- * @version 
  */
 public class DualPipelineTest extends ContextTestSupport {
 

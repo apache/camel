@@ -26,7 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class MulticastParallelNoStopOnExceptionTest extends ContextTestSupport {
     private ExecutorService service; 

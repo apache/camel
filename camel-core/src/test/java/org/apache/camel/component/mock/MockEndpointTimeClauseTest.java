@@ -29,7 +29,6 @@ import org.apache.camel.StatefulService;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class MockEndpointTimeClauseTest extends ContextTestSupport {
 

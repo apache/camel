@@ -22,7 +22,6 @@ import java.util.concurrent.Executors;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class OnCompletionGlobalCustomPoolTest extends OnCompletionGlobalTest {
 

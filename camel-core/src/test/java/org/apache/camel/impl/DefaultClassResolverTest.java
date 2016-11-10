@@ -22,7 +22,6 @@ import java.net.URL;
 import junit.framework.TestCase;
 
 /**
- * @version 
  */
 public class DefaultClassResolverTest extends TestCase {
 

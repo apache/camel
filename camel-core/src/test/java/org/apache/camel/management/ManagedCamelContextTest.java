@@ -30,7 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.StringHelper;
 
 /**
- * @version 
  */
 public class ManagedCamelContextTest extends ManagementTestSupport {
 

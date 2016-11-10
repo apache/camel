@@ -25,7 +25,6 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
 
 /**
- * @version 
  */
 public class BeanInfoOverloadedTest extends ContextTestSupport {
 

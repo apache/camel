@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 import junit.framework.TestCase;
 
 /**
- * @version 
  */
 public class SubmitOrderedCompletionServiceTest extends TestCase {
 

@@ -21,7 +21,6 @@ import java.util.EventObject;
 import org.apache.camel.CamelContext;
 
 /**
- * @version 
  */
 public class CamelContextStoppedEvent extends EventObject {
     private static final long serialVersionUID = -8406258841784891998L;

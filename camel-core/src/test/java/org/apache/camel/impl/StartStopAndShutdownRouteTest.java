@@ -23,7 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * This test stops a route, mutates it then restarts it
  *
- * @version 
  */
 public class StartStopAndShutdownRouteTest extends ContextTestSupport {
 

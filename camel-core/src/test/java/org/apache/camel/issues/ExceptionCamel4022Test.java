@@ -22,7 +22,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class ExceptionCamel4022Test extends ContextTestSupport {
 

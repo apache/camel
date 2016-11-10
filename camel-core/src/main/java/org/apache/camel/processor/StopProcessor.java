@@ -26,7 +26,6 @@ import org.apache.camel.util.AsyncProcessorHelper;
 /**
  * Stops continue processing the route and marks it as complete.
  *
- * @version 
  */
 public class StopProcessor extends ServiceSupport implements AsyncProcessor, IdAware {
 

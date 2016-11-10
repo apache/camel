@@ -26,7 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.Synchronization;
 
 /**
- * @version 
  */
 public class UnitOfWorkTest extends ContextTestSupport {
     protected Synchronization synchronization;

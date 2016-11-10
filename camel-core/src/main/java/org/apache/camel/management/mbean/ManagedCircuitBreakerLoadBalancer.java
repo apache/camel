@@ -36,7 +36,6 @@ import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed CircuitBreaker LoadBalancer")
 public class ManagedCircuitBreakerLoadBalancer extends ManagedProcessor implements ManagedCircuitBreakerLoadBalancerMBean {

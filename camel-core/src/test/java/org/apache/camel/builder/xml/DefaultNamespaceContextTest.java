@@ -23,7 +23,6 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 
 /**
- * @version 
  */
 public class DefaultNamespaceContextTest extends ContextTestSupport {
 

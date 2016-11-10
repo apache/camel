@@ -27,7 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.jndi.JndiContext;
 
 /**
- * @version 
  */
 public class SimulatorTest extends ContextTestSupport {
 

@@ -25,7 +25,6 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 
 /**
- * @version
  */
 public class URISupportTest extends ContextTestSupport {
 

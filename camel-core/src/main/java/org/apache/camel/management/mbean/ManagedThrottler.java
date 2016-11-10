@@ -25,7 +25,6 @@ import org.apache.camel.processor.Throttler;
 import static org.apache.camel.builder.Builder.constant;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed Throttler")
 public class ManagedThrottler extends ManagedProcessor implements ManagedThrottlerMBean {

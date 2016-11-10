@@ -24,7 +24,6 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
- * @version 
  */
 public class TwoManagedNamePatternTest extends TestSupport {
 

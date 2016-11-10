@@ -25,7 +25,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.RoutePolicySupport;
 
 /**
- * @version 
  */
 public class RoutePoliciesRefTest extends ContextTestSupport {
 

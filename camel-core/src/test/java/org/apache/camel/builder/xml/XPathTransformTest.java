@@ -38,7 +38,6 @@ import static org.easymock.EasyMock.verify;
 
 
 /**
- * @version
  */
 public class XPathTransformTest extends ContextTestSupport {
 

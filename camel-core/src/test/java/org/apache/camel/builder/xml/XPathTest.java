@@ -45,7 +45,6 @@ import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
 /**
- * @version 
  */
 public class XPathTest extends ContextTestSupport {
 

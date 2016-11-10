@@ -27,7 +27,6 @@ import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.language.bean.BeanLanguage;
 
 /**
- * @version 
  */
 public class BeanTest extends LanguageTestSupport {
 

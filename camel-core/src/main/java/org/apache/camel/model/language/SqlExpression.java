@@ -25,7 +25,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * For SQL expressions and predicates
  *
- * @version 
  */
 @Metadata(label = "language", title = "SQL")
 @XmlRootElement(name = "sql")

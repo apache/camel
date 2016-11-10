@@ -24,7 +24,6 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 
 /**
- * @version 
  */
 public class MessageSupportTest extends ContextTestSupport {
 

@@ -23,7 +23,6 @@ import org.apache.camel.converter.MyCoolBean;
 import org.apache.camel.spi.TypeConverterRegistry;
 
 /**
- * @version 
  */
 @Converter
 public class MyFallbackPromoteConverter {

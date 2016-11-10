@@ -25,7 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockComponent;
 
 /**
- * @version 
  */
 public class ManagedCustomComponentNameTest extends ManagementTestSupport {
 

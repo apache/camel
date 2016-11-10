@@ -25,7 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 /**
- * @version 
  */
 public class DataSetConsumerTest extends ContextTestSupport {
     protected SimpleDataSet dataSet = new SimpleDataSet(5);

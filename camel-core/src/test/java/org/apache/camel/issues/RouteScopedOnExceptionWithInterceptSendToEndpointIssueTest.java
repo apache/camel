@@ -27,7 +27,6 @@ import org.apache.camel.model.RouteDefinition;
 /**
  * Based on user forum issue
  *
- * @version 
  */
 public class RouteScopedOnExceptionWithInterceptSendToEndpointIssueTest extends ContextTestSupport {
 

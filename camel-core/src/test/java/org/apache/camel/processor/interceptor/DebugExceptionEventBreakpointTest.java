@@ -33,7 +33,6 @@ import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Condition;
 
 /**
- * @version 
  */
 public class DebugExceptionEventBreakpointTest extends ContextTestSupport {
 

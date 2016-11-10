@@ -38,7 +38,6 @@ import java.lang.annotation.Target;
  * Then for each endpoint or URI the message is routed in a pipes and filter fashion.
  *
  * @see org.apache.camel.DynamicRouter
- * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

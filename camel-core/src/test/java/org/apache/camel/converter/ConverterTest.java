@@ -46,7 +46,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version 
  */
 public class ConverterTest extends TestCase {
     private static final Logger LOG = LoggerFactory.getLogger(ConverterTest.class);

@@ -27,7 +27,6 @@ import org.apache.camel.spi.ThreadPoolProfile;
 /**
  * A builder to create thread pools.
  *
- * @version 
  */
 public final class ThreadPoolBuilder {
 

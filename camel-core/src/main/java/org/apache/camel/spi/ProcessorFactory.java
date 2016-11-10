@@ -31,7 +31,6 @@ import org.apache.camel.model.ProcessorDefinition;
  * the {@link Processor}. You want to do this if you <i>only</i> want to manipulate the
  * {@link org.apache.camel.model.ProcessorDefinition definition}s.
  *
- * @version 
  */
 public interface ProcessorFactory {
 

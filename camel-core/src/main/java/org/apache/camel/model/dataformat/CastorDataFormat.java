@@ -29,7 +29,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * Castor data format
  *
- * @version 
  */
 @Metadata(label = "dataformat,transformation,xml", title = "Castor")
 @XmlRootElement(name = "castor")

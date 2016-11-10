@@ -26,7 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 /**
- * @version 
  */
 public class RecipientListExchangePropertyAggregationStrategyTest extends ContextTestSupport {
 

@@ -23,7 +23,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
- * @version 
  */
 public class MyAsyncComponent extends DefaultComponent {
 

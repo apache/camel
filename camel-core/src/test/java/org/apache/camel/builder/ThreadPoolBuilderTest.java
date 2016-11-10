@@ -26,7 +26,6 @@ import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.impl.JndiRegistry;
 
 /**
- * @version 
  */
 public class ThreadPoolBuilderTest extends ContextTestSupport {
 

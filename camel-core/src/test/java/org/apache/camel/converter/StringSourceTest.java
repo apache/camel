@@ -33,7 +33,6 @@ import org.apache.camel.util.ReflectionInjector;
 import org.apache.camel.util.ServiceHelper;
 
 /**
- * @version 
  */
 public class StringSourceTest extends TestCase {
     protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),

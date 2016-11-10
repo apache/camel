@@ -31,7 +31,6 @@ import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.SendProcessor;
 
 /**
- * @version 
  */
 public class ErrorHandlerTest extends TestSupport {
 

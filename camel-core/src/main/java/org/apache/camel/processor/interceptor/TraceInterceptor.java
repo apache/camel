@@ -49,7 +49,6 @@ import org.slf4j.LoggerFactory;
 /**
  * An interceptor for debugging and tracing routes
  *
- * @version 
  */
 public class TraceInterceptor extends DelegateAsyncProcessor implements ExchangeFormatter {
     private static final Logger LOG = LoggerFactory.getLogger(TraceInterceptor.class);

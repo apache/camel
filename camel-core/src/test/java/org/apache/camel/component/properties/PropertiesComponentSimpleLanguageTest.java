@@ -23,7 +23,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class PropertiesComponentSimpleLanguageTest extends ContextTestSupport {
 

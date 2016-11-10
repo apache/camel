@@ -32,7 +32,6 @@ import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version 
  */
 public class SamplingThrottlerTest extends ContextTestSupport {
 

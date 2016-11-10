@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class AsyncEndpointTryCatchFinally4Test extends ContextTestSupport {
 

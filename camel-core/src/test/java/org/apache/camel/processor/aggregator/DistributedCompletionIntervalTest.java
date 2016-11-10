@@ -24,7 +24,6 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 /**
  * Unit test to verify that aggregate by interval only also works.
  *
- * @version 
  */
 public class DistributedCompletionIntervalTest extends AbstractDistributedTest {
 

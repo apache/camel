@@ -48,7 +48,6 @@ import org.slf4j.LoggerFactory;
  * a {@link org.apache.camel.spi.Synchronization} callback on the current {@link Exchange} which triggers the
  * {@link #throttle(org.apache.camel.Route, org.apache.camel.Exchange)} when the current {@link Exchange} is done.
  *
- * @version 
  */
 public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements CamelContextAware, NonManagedService {
 

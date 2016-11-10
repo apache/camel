@@ -40,7 +40,6 @@ import org.apache.camel.util.CamelContextHelper;
 /**
  *  Routes the same message to multiple paths either sequentially or in parallel.
  *
- * @version 
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "multicast")

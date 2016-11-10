@@ -22,7 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 /**
- * @version 
  */
 public class MulticastSingleAggregateIssueTest extends ContextTestSupport {
 

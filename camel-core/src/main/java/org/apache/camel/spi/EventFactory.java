@@ -29,7 +29,6 @@ import org.apache.camel.Route;
  * <p/>
  * For example when an {@link Exchange} is being created and then later when its done.
  *
- * @version 
  */
 public interface EventFactory {
 

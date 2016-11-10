@@ -25,7 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
  * Unit test for intercepting sending to endpoint with dynamic endpoints
  * and uri matching
  *
- * @version 
  */
 public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
 

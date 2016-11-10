@@ -23,7 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.ServiceSupport;
 
 /**
- * @version 
  */
 public class RouteSuspendResumeWarmUpTest extends ContextTestSupport {
 

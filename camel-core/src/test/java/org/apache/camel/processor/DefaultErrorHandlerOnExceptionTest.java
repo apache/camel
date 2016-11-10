@@ -25,7 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Default error handler test
  *
- * @version 
  */
 public class DefaultErrorHandlerOnExceptionTest extends ContextTestSupport {
 

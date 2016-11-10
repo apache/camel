@@ -33,7 +33,6 @@ import org.apache.camel.spi.ShutdownStrategy;
 import org.junit.Test;
 
 /**
- * @version 
  */
 public class EnricherAsyncUnhandledExceptionTest extends ContextTestSupport {
 

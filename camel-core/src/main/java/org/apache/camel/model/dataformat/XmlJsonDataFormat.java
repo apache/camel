@@ -33,7 +33,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * XML-JSon data format
  *
- * @version 
  */
 @Metadata(label = "dataformat,transformation,xml,json", title = "XML JSon")
 @XmlRootElement(name = "xmljson")

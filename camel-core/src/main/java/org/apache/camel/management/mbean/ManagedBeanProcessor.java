@@ -25,7 +25,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed Bean Processor")
 public class ManagedBeanProcessor extends ManagedProcessor implements ManagedBeanMBean {

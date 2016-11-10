@@ -36,7 +36,6 @@ import javax.xml.bind.annotation.XmlType;
  * &lt;/complexType>
  * </pre>
  *
- * @version 
  */
 @XmlType(name = "identifiedType")
 @XmlAccessorType(XmlAccessType.FIELD)

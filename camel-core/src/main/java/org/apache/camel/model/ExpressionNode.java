@@ -33,7 +33,6 @@ import org.apache.camel.spi.RouteContext;
 /**
  * A base class for nodes which contain an expression and a number of outputs
  *
- * @version
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class ExpressionNode extends ProcessorDefinition<ExpressionNode> {

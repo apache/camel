@@ -24,7 +24,6 @@ import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class MethodFilterTest extends ContextTestSupport {
     public void testSendMatchingMessage() throws Exception {

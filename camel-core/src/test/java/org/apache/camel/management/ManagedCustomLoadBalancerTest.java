@@ -28,7 +28,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.loadbalancer.LoadBalancerSupport;
 
 /**
- * @version 
  */
 public class ManagedCustomLoadBalancerTest extends ManagementTestSupport {
 

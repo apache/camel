@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 /**
- * @version 
  */
 public class NotifyBuilderWhenDoneByIndexTest extends ContextTestSupport {
 

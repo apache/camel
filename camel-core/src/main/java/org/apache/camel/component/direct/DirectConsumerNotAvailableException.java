@@ -22,7 +22,6 @@ import org.apache.camel.Exchange;
 /**
  * Exception thrown when no consumers are available.
  *
- * @version
  */
 public class DirectConsumerNotAvailableException extends CamelExchangeException {
 

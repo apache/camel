@@ -24,7 +24,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.StringHelper;
 
 /**
- * @version 
  */
 public class MethodCallStaticMethodTest extends ContextTestSupport {
 

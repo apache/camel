@@ -25,7 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultMessage;
 
 /**
- * @version 
  */
 public class SetBodyProcessorTest extends ContextTestSupport {
 

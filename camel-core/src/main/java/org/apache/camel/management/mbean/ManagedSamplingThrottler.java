@@ -25,7 +25,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.SamplingThrottler;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed SamplingThrottler")
 public class ManagedSamplingThrottler extends ManagedProcessor implements ManagedSamplingThrottlerMBean {

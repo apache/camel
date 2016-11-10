@@ -36,7 +36,6 @@ import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 
 /**
- * @version
  */
 public class DistributedOptimisticLockFailingTest extends AbstractDistributedTest {
 

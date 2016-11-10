@@ -32,7 +32,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Jackson XML data format
  *
- * @version
  */
 @Metadata(label = "dataformat,transformation,xml", title = "JacksonXML")
 @XmlRootElement(name = "jacksonxml")

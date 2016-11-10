@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 /**
  * Access to a repository to store aggregated exchanges to support pluggable implementations.
  *  
- * @version 
  */
 public interface AggregationRepository {
 

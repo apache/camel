@@ -29,7 +29,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * iCal data format
  *
- * @version 
  */
 @Metadata(label = "dataformat,transformation", title = "iCal")
 @XmlRootElement(name = "ical")

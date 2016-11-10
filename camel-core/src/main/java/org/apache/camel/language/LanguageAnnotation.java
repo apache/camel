@@ -27,7 +27,6 @@ import org.apache.camel.component.bean.DefaultAnnotationExpressionFactory;
 /**
  * Base annotation for languages.
  *
- * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

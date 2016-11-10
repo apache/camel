@@ -33,7 +33,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed SendProcessor")
 public class ManagedSendProcessor extends ManagedProcessor implements ManagedSendProcessorMBean {

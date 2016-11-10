@@ -25,7 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class AsyncEndpointTryCatchFinally3Test extends ContextTestSupport {
 

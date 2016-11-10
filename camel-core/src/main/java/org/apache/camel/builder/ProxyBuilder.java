@@ -24,7 +24,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A build to create Camel proxies.
  *
- * @version 
  */
 public final class ProxyBuilder {
 

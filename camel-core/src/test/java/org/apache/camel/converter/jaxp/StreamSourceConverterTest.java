@@ -23,7 +23,6 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.ContextTestSupport;
 
 /**
- * @version 
  */
 public class StreamSourceConverterTest extends ContextTestSupport {
 

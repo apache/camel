@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Future type converter.
  *
- * @version 
  */
 @Converter
 public final class FutureTypeConverter extends TypeConverterSupport {

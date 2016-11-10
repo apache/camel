@@ -24,7 +24,6 @@ import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class SedaWaitForTaskAsPropertyTest extends ContextTestSupport {
 

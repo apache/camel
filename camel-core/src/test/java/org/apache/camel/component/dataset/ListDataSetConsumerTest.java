@@ -25,7 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version 
  */
 public class ListDataSetConsumerTest extends ContextTestSupport {
     protected ListDataSet dataSet;

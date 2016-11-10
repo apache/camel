@@ -30,7 +30,6 @@ import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
 
 /**
- * @version 
  */
 public class ManagedMemoryIdempotentClearTest extends ManagementTestSupport {
     protected Endpoint startEndpoint;

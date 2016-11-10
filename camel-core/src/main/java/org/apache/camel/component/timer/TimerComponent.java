@@ -33,7 +33,6 @@ import org.apache.camel.impl.UriEndpointComponent;
  * Represents the component that manages {@link TimerEndpoint}.  It holds the
  * list of {@link TimerConsumer} objects that are started.
  *
- * @version 
  */
 public class TimerComponent extends UriEndpointComponent {
     private final Map<String, Timer> timers = new HashMap<String, Timer>();

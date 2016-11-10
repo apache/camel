@@ -25,7 +25,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
- * @version 
  */
 public class PredicateBinaryCoerceTypeTest extends TestSupport {
     protected Exchange exchange = new DefaultExchange(new DefaultCamelContext());

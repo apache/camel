@@ -22,7 +22,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 
 /**
- * @version 
  */
 public class FileEagerDeleteTargetFileTest extends ContextTestSupport {
 

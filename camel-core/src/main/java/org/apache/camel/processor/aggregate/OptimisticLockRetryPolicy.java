@@ -39,7 +39,6 @@ import java.util.Random;
  * <p/>
  * The default behaviour of this policy is to retry forever and exponentially increase the back-off delay starting with 50ms.
  *
- * @version
  */
 public class OptimisticLockRetryPolicy {
     private static final long DEFAULT_MAXIMUM_RETRY_DELAY = 1000L;

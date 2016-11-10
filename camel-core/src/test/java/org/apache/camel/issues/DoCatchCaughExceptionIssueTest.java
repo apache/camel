@@ -24,7 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * Based on user forum issue
  *
- * @version 
  */
 public class DoCatchCaughExceptionIssueTest extends ContextTestSupport {
 

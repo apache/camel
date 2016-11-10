@@ -25,7 +25,6 @@ import java.lang.annotation.Target;
  * Marks a method as being invoked for a specific header value.
  *
  * @see Message#getHeader(String)
- * @version
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

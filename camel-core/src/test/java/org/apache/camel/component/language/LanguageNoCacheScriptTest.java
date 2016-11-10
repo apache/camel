@@ -23,7 +23,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class LanguageNoCacheScriptTest extends ContextTestSupport {
 

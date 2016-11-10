@@ -20,7 +20,6 @@ import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class ManagedDuplicateIdTest extends ManagementTestSupport {
 

@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
  * Its important to <b>not</b> throw any exceptions when handling exceptions as they handler
  * is often invoked in a try .. catch logic already
  *
- * @version 
  */
 public interface ExceptionHandler {
     

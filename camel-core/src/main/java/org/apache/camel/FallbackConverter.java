@@ -36,7 +36,6 @@ import java.lang.annotation.Target;
  *
  * @see org.apache.camel.component.file.GenericFileConverter GenericFileConverter for an example.
  *
- * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

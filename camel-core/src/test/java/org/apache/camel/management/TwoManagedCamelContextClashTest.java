@@ -25,7 +25,6 @@ import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
- * @version 
  */
 public class TwoManagedCamelContextClashTest extends TestSupport {
 

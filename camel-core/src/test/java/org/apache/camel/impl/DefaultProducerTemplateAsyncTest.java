@@ -33,7 +33,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.SynchronizationAdapter;
 
 /**
- * @version 
  */
 public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
 

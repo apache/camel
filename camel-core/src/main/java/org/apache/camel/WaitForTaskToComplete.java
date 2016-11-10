@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlType;
  * With these options the caller can choose whether to wait for the task to complete
  * or not before the caller thread continues.
  *
- * @version 
  */
 @XmlType
 @XmlEnum

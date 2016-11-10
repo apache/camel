@@ -27,7 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
 
 /**
- * @version 
  */
 public class BeanWithHeadersAndBodyInject3Test extends ContextTestSupport {
     private MyBean myBean = new MyBean();

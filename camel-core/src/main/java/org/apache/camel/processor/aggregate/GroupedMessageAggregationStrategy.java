@@ -28,7 +28,6 @@ import org.apache.camel.impl.DefaultExchange;
  * 
  * This aggregation strategy can used in combination with {@link org.apache.camel.processor.Splitter} to batch messages
  * 
- * @version
  */
 public class GroupedMessageAggregationStrategy extends AbstractListAggregationStrategy<Message> {
 

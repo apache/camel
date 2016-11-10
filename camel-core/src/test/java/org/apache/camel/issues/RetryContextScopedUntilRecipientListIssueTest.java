@@ -19,7 +19,6 @@ package org.apache.camel.issues;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class RetryContextScopedUntilRecipientListIssueTest extends RetryRouteScopedUntilRecipientListIssueTest {
 

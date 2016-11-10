@@ -36,7 +36,6 @@ import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed Failover LoadBalancer")
 public class ManagedFailoverLoadBalancer extends ManagedProcessor implements ManagedFailoverLoadBalancerMBean {

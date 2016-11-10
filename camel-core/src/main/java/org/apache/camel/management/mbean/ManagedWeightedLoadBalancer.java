@@ -25,7 +25,6 @@ import org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition;
 import org.apache.camel.processor.loadbalancer.WeightedLoadBalancer;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed Weighted LoadBalancer")
 public class ManagedWeightedLoadBalancer extends ManagedProcessor implements ManagedWeightedBalancerMBean {

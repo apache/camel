@@ -25,7 +25,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * For JavaScript expressions and predicates
  *
- * @version 
  */
 @Metadata(label = "language,script", title = "JavaScript")
 @XmlRootElement(name = "javaScript")

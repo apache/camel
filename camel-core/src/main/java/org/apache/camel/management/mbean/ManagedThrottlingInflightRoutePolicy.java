@@ -23,7 +23,6 @@ import org.apache.camel.api.management.mbean.ManagedThrottlingInflightRoutePolic
 import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed ThrottlingInflightRoutePolicy")
 public class ManagedThrottlingInflightRoutePolicy extends ManagedService implements ManagedThrottlingInflightRoutePolicyMBean {

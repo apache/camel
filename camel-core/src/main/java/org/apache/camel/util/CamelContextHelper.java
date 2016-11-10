@@ -53,7 +53,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * A number of helper methods
  *
- * @version 
  */
 public final class CamelContextHelper {
     public static final String COMPONENT_BASE = "META-INF/services/org/apache/camel/component/";

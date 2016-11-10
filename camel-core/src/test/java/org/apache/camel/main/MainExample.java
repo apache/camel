@@ -23,7 +23,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 // START SNIPPET: e1
 public class MainExample {

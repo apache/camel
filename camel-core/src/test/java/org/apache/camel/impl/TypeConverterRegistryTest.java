@@ -28,7 +28,6 @@ import org.apache.camel.TypeConverterExistsException;
 import org.apache.camel.support.TypeConverterSupport;
 
 /**
- * @version 
  */
 public class TypeConverterRegistryTest extends TestCase {
 

@@ -22,7 +22,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.BodyInAggregatingStrategy;
 
 /**
- * @version 
  */
 public class AggregateForceCompletionOnStopTest extends ContextTestSupport {
 

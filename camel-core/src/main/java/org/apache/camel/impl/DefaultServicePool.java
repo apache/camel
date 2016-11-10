@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Default implementation to inherit for a basic service pool.
  *
- * @version 
  */
 public abstract class DefaultServicePool<Key, Service> extends ServiceSupport implements ServicePool<Key, Service> {
     protected final Logger log = LoggerFactory.getLogger(getClass());

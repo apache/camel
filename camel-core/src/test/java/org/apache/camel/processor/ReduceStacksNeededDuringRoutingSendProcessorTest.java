@@ -29,7 +29,6 @@ import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.impl.DefaultEndpoint;
 
 /**
- * @version 
  */
 public class ReduceStacksNeededDuringRoutingSendProcessorTest extends ContextTestSupport {
 

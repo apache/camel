@@ -35,7 +35,6 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Delays processing for a specified length of time
  *
- * @version 
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "delay")

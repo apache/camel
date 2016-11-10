@@ -32,7 +32,6 @@ import java.io.OutputStream;
  * It is recommended in the {@link #copy(Exchange)} method to let the copied stream start from the start. If the implementation
  * does not support copy, then return <tt>null</tt>.
  *
- * @version 
  */
 public interface StreamCache {
 

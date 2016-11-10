@@ -62,7 +62,6 @@ import org.slf4j.LoggerFactory;
  * Likewise the procedure for scanning using {@link PackageScanClassResolver} may require custom implementations
  * to work in various containers such as JBoss, OSGi, etc.
  *
- * @version
  */
 public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/TypeConverter";

@@ -33,7 +33,6 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 /**
  * To test CAMEL-4037 that a restart of aggregator can re-initialize the timeout map
  *
- * @version 
  */
 public class AggregateProcessorTimeoutCompletionRestartTest extends ContextTestSupport {
 

@@ -29,7 +29,6 @@ import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.util.PredicateAssertHelper;
 
 /**
- * @version 
  */
 public class CustomDataSetTest extends ContextTestSupport {
     protected DataSet dataSet = new DataSetSupport() {

@@ -26,7 +26,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
 /**
- * @version 
  */
 public class PollEnricherRefTest extends ContextTestSupport {
 

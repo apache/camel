@@ -34,7 +34,6 @@ import org.apache.camel.Service;
  * Implementations for the <a href="http://camel.apache.org/idempotent-consumer.html">idempotent consumer EIP</a>
  * should favor using {@link org.apache.camel.spi.ExchangeIdempotentRepository} instead.
  *
- * @version
  * @see org.apache.camel.spi.ExchangeIdempotentRepository
  */
 public interface IdempotentRepository<E> extends Service {

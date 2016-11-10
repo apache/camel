@@ -23,7 +23,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class ManagedEndpointTest extends ManagementTestSupport {
 
