@@ -193,4 +193,11 @@ public interface RestClient {
      */
     void apexCall(String httpMethod, String apexUrl, Map<String, Object> queryParams, InputStream requestDto,
                   ResponseCallback callback);
+
+    /**
+     * Fetches Organization Limits.
+     *
+     * @param responseCallback {@link ResponseCallback} to handle response or exception
+     */
+    void limits(ResponseCallback responseCallback);
 }

@@ -152,6 +152,9 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
             case APEX_CALL:
                 processApexCall(exchange, callback);
                 break;
+            case LIMITS:
+                processLimits(exchange, callback);
+                break;
             default:
                 throw new SalesforceException("Unknown operation name: " + operationName.value(), null);
             }
@@ -559,6 +562,10 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
             return resolvedUrl;
         }
         return apexUrl;
+    }
+
+    private void processLimits(Exchange exchange, AsyncCallback callback) {
+        restClient.limits((response, exception) -> processResponse(exchange, response, exception, callback));
     }
 
     @SuppressWarnings("unchecked")
