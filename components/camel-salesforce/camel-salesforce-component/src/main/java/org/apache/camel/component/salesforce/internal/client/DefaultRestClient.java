@@ -405,6 +405,16 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         return instanceUrl + SERVICES_APEXREST + apexUrl;
     }
 
+    @Override
+    public void limits(final ResponseCallback responseCallback) {
+        final Request get = getRequest(HttpMethod.GET, versionUrl() + "limits/");
+
+        // requires authorization token
+        setAccessToken(get);
+
+        doHttpRequest(get, new DelegatingClientCallback(responseCallback));
+    }
+
     private String servicesDataUrl() {
         return instanceUrl + SERVICES_DATA;
     }
