@@ -172,6 +172,9 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+
+import static org.apache.camel.impl.MDCUnitOfWork.MDC_CAMEL_CONTEXT_ID;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -2896,56 +2899,87 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
     }
 
+    @Override
     public void start() throws Exception {
-        vetoStated.set(false);
-        startDate = new Date();
-        stopWatch.restart();
-        log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is starting");
+        try (MDCHelper mdcHelper = new MDCHelper()) {
+            vetoStated.set(false);
+            startDate = new Date();
+            stopWatch.restart();
+            log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") is starting");
 
-        // Note: This is done on context start as we want to avoid doing it during object construction
-        // where we could be dealing with CDI proxied camel contexts which may never be started (CAMEL-9657)
-        // [TODO] Remove in 3.0
-        Container.Instance.manage(this);
+            // Note: This is done on context start as we want to avoid doing it during object construction
+            // where we could be dealing with CDI proxied camel contexts which may never be started (CAMEL-9657)
+            // [TODO] Remove in 3.0
+            Container.Instance.manage(this);
 
-        doNotStartRoutesOnFirstStart = !firstStartDone && !isAutoStartup();
+            doNotStartRoutesOnFirstStart = !firstStartDone && !isAutoStartup();
 
-        // if the context was configured with auto startup = false, and we are already started,
-        // then we may need to start the routes on the 2nd start call
-        if (firstStartDone && !isAutoStartup() && isStarted()) {
-            // invoke this logic to warm up the routes and if possible also start the routes
-            doStartOrResumeRoutes(routeServices, true, true, false, true);
-        }
-
-        // super will invoke doStart which will prepare internal services and start routes etc.
-        try {
-            firstStartDone = true;
-            super.start();
-        } catch (VetoCamelContextStartException e) {
-            // mark we veto against starting Camel
-            vetoStated.set(true);
-            if (e.isRethrowException()) {
-                throw e;
-            } else {
-                log.info("CamelContext ({}) vetoed to not start due {}", getName(), e.getMessage());
-                // swallow exception and change state of this camel context to stopped
-                stop();
-                return;
+            // if the context was configured with auto startup = false, and we are already started,
+            // then we may need to start the routes on the 2nd start call
+            if (firstStartDone && !isAutoStartup() && isStarted()) {
+                // invoke this logic to warm up the routes and if possible also start the routes
+                doStartOrResumeRoutes(routeServices, true, true, false, true);
             }
-        }
 
-        stopWatch.stop();
-        if (log.isInfoEnabled()) {
-            // count how many routes are actually started
-            int started = 0;
-            for (Route route : getRoutes()) {
-                if (getRouteStatus(route.getId()).isStarted()) {
-                    started++;
+            // super will invoke doStart which will prepare internal services and start routes etc.
+            try {
+                firstStartDone = true;
+                super.start();
+            } catch (VetoCamelContextStartException e) {
+                // mark we veto against starting Camel
+                vetoStated.set(true);
+                if (e.isRethrowException()) {
+                    throw e;
+                } else {
+                    log.info("CamelContext ({}) vetoed to not start due {}", getName(), e.getMessage());
+                    // swallow exception and change state of this camel context to stopped
+                    stop();
+                    return;
                 }
             }
-            log.info("Total " + getRoutes().size() + " routes, of which " + started + " are started.");
-            log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") started in " + TimeUtils.printDuration(stopWatch.taken()));
+
+            stopWatch.stop();
+            if (log.isInfoEnabled()) {
+                // count how many routes are actually started
+                int started = 0;
+                for (Route route : getRoutes()) {
+                    if (getRouteStatus(route.getId()).isStarted()) {
+                        started++;
+                    }
+                }
+                log.info("Total " + getRoutes().size() + " routes, of which " + started + " are started.");
+                log.info("Apache Camel " + getVersion() + " (CamelContext: " + getName() + ") started in " + TimeUtils.printDuration(stopWatch.taken()));
+            }
+            EventHelper.notifyCamelContextStarted(this);
         }
-        EventHelper.notifyCamelContextStarted(this);
+    }
+
+    @Override
+    public void stop() throws Exception {
+        try (MDCHelper mdcHelper = new MDCHelper()) {
+            super.stop();
+        }
+    }
+
+    @Override
+    public void suspend() throws Exception {
+        try (MDCHelper mdcHelper = new MDCHelper()) {
+            super.suspend();
+        }
+    }
+
+    @Override
+    public void resume() throws Exception {
+        try (MDCHelper mdcHelper = new MDCHelper()) {
+            super.resume();
+        }
+    }
+
+    @Override
+    public void shutdown() throws Exception {
+        try (MDCHelper mdcHelper = new MDCHelper()) {
+            super.shutdown();
+        }
     }
 
     // Implementation methods
@@ -4265,5 +4299,30 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     @Override
     public String toString() {
         return "CamelContext(" + getName() + ")";
+    }
+
+    class MDCHelper implements AutoCloseable {
+        final Map<String, String> originalContextMap;
+
+        MDCHelper() {
+            if (isUseMDCLogging()) {
+                originalContextMap = MDC.getCopyOfContextMap();
+                MDC.put(MDC_CAMEL_CONTEXT_ID, getName());
+            } else {
+                originalContextMap = null;
+            }
+        }
+
+        @Override
+        public void close() {
+            if (isUseMDCLogging()) {
+                if (originalContextMap != null) {
+                    MDC.setContextMap(originalContextMap);
+                } else {
+                    MDC.clear();
+                }
+            }
+        }
+
     }
 }
