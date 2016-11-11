@@ -20,7 +20,6 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
 import javax.mail.search.SearchTerm;
 
 import org.apache.camel.CamelContext;
@@ -63,10 +62,25 @@ public class MailComponent extends UriEndpointComponent {
         configureAdditionalJavaMailProperties(config, parameters);
 
         MailEndpoint endpoint = new MailEndpoint(uri, this, config);
+
+        // special for search term bean reference
+        Object searchTerm = getAndRemoveOrResolveReferenceParameter(parameters, "searchTerm", Object.class);
+        if (searchTerm != null) {
+            SearchTerm st;
+            if (searchTerm instanceof SimpleSearchTerm) {
+                // okay its a SimpleSearchTerm then lets convert that to SearchTerm
+                st = MailConverters.toSearchTerm((SimpleSearchTerm) searchTerm, getCamelContext().getTypeConverter());
+            } else {
+                st = getCamelContext().getTypeConverter().mandatoryConvertTo(SearchTerm.class, searchTerm);
+            }
+            endpoint.setSearchTerm(st);
+        }
+
         endpoint.setContentTypeResolver(contentTypeResolver);
         setProperties(endpoint.getConfiguration(), parameters);
         setProperties(endpoint, parameters);
 
+        // special for searchTerm.xxx options
         Map<String, Object> sstParams = IntrospectionSupport.extractProperties(parameters, "searchTerm.");
         if (!sstParams.isEmpty()) {
             // use SimpleSearchTerm as POJO to store the configuration and then convert that to the actual SearchTerm

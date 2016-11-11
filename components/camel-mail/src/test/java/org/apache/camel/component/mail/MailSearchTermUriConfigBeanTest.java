@@ -14,40 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.enricher;
+package org.apache.camel.component.mail;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
 
-public class EnricherDslTest extends ContextTestSupport {
-
-    public void testEnrich() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:enriched");
-        mock.expectedBodiesReceived("res-1", "res-2", "res-3");
-
-        template.sendBody("direct:start", 1);
-        template.sendBody("direct:start", 2);
-        template.sendBody("direct:start", 3);
-
-        mock.assertIsSatisfied();
-    }
+public class MailSearchTermUriConfigBeanTest extends MailSearchTermUriConfigTest {
 
     @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        SimpleSearchTerm mySearchTerm = new SimpleSearchTerm();
+        mySearchTerm.setSubjectOrBody("Camel");
+
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("mySearchTerm", mySearchTerm);
+        return jndi;
+    }
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .enrichWith("direct:resource")
-                        .body(Integer.class, String.class, (o, n) -> n + o)
-                    .to("mock:enriched");
-
-                // set an empty message
-                from("direct:resource")
-                    .transform()
-                        .body(b -> "res-");
+                from("pop3://bill@localhost?password=secret&searchTerm=#mySearchTerm").to("mock:result");
             }
         };
     }
+
 }
