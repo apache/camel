@@ -258,6 +258,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     protected Processor wrapChannel(RouteContext routeContext, Processor processor, ProcessorDefinition<?> child) throws Exception {
+        return wrapChannel(routeContext, processor, child, isInheritErrorHandler());
+    }
+
+    protected Processor wrapChannel(RouteContext routeContext, Processor processor, ProcessorDefinition<?> child, Boolean inheritErrorHandler) throws Exception {
         // put a channel in between this and each output to control the route flow logic
         ModelChannel channel = createChannel(routeContext);
         channel.setNextProcessor(processor);
@@ -294,13 +298,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             boolean isShareUnitOfWork = def.getShareUnitOfWork() != null && def.getShareUnitOfWork();
             if (isShareUnitOfWork && child == null) {
                 // only wrap the parent (not the children of the multicast)
-                wrapChannelInErrorHandler(channel, routeContext);
+                wrapChannelInErrorHandler(channel, routeContext, inheritErrorHandler);
             } else {
                 log.trace("{} is part of multicast which have special error handling so no error handler is applied", defn);
             }
         } else {
             // use error handler by default or if configured to do so
-            wrapChannelInErrorHandler(channel, routeContext);
+            wrapChannelInErrorHandler(channel, routeContext, inheritErrorHandler);
         }
 
         // do post init at the end
@@ -313,12 +317,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * Wraps the given channel in error handler (if error handler is inherited)
      *
-     * @param channel       the channel
-     * @param routeContext  the route context
+     * @param channel             the channel
+     * @param routeContext        the route context
+     * @param inheritErrorHandler whether to inherit error handler
      * @throws Exception can be thrown if failed to create error handler builder
      */
-    private void wrapChannelInErrorHandler(Channel channel, RouteContext routeContext) throws Exception {
-        if (isInheritErrorHandler() == null || isInheritErrorHandler()) {
+    private void wrapChannelInErrorHandler(Channel channel, RouteContext routeContext, Boolean inheritErrorHandler) throws Exception {
+        if (inheritErrorHandler == null || inheritErrorHandler) {
             log.trace("{} is configured to inheritErrorHandler", this);
             Processor output = channel.getOutput();
             Processor errorHandler = wrapInErrorHandler(routeContext, output);
