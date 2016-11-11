@@ -48,7 +48,7 @@
     <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty-all</artifactId>
-      <version>${netty-version}</version>
+      <version>${netty-ahc-version}</version>
     </dependency>
 
     <!-- testing -->
