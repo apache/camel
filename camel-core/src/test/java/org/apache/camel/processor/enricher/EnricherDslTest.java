@@ -26,9 +26,9 @@ public class EnricherDslTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:enriched");
         mock.expectedBodiesReceived("res-1", "res-2", "res-3");
 
-        template.sendBody("direct:start", "1");
-        template.sendBody("direct:start", "2");
-        template.sendBody("direct:start", "3");
+        template.sendBody("direct:start", 1);
+        template.sendBody("direct:start", 2);
+        template.sendBody("direct:start", 3);
 
         mock.assertIsSatisfied();
     }
@@ -40,7 +40,7 @@ public class EnricherDslTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .enrichWith("direct:resource")
-                        .body(String.class, (o, n) -> n + o)
+                        .body(Integer.class, String.class, (o, n) -> n + o)
                     .to("mock:enriched");
 
                 // set an empty message

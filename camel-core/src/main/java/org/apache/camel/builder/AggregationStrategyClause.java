@@ -95,14 +95,23 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
      *
      * Note: this is experimental and subject to changes in future releases.
      */
-    public <B> T body(final Class<B> type, final BiFunction<B, B, B> function) {
+    public <B> T body(final Class<B> type, final BiFunction<B, B, Object> function) {
+        return body(type, type, function);
+    }
+
+    /**
+     * TODO: document
+     *
+     * Note: this is experimental and subject to changes in future releases.
+     */
+    public <O, N> T body(final Class<O> oldType, final Class<N> newType, final BiFunction<O, N, Object> function) {
         return exchange((Exchange oldExchange, Exchange newExchange) -> {
             Message oldMessage = oldExchange != null ? oldExchange.getIn() : null;
             Message newMessage = ObjectHelper.notNull(newExchange, "NewExchange").getIn();
 
-            B result = function.apply(
-                oldMessage != null ? oldMessage.getBody(type) : null,
-                newMessage != null ? newMessage.getBody(type) : null);
+            Object result = function.apply(
+                oldMessage != null ? oldMessage.getBody(oldType) : null,
+                newMessage != null ? newMessage.getBody(newType) : null);
 
             if (oldExchange != null) {
                 oldExchange.getIn().setBody(result);
