@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,13 @@
  */
 package org.apache.camel.component.google.pubsub.integration;
 
-import org.apache.camel.*;
+import java.util.List;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.pubsub.PubsubTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -25,34 +31,32 @@ import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.List;
-
 public class GroupedExchangeRoundtripTest extends PubsubTestSupport {
 
-    private static final String topicName="groupTopic";
-    private static final String subscriptionName="groupSubscription";
-
-    @Produce(uri = "direct:aggregator")
-    protected ProducerTemplate producer;
+    private static final String TOPIC_NAME = "groupTopic";
+    private static final String SUBSCRIPTION_NAME = "groupSubscription";
 
     @EndpointInject(uri = "direct:aggregator")
     private Endpoint aggregator;
 
-    @EndpointInject(uri = "google-pubsub:{{project.id}}:"+topicName)
+    @EndpointInject(uri = "google-pubsub:{{project.id}}:" + TOPIC_NAME)
     private Endpoint topic;
 
     @EndpointInject(uri = "mock:sendResult")
-    protected MockEndpoint sendResult;
+    private MockEndpoint sendResult;
 
-    @EndpointInject(uri = "google-pubsub:{{project.id}}:"+subscriptionName)
+    @EndpointInject(uri = "google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME)
     private Endpoint pubsubSubscription;
 
     @EndpointInject(uri = "mock:receiveResult")
-    protected MockEndpoint receiveResult;
+    private MockEndpoint receiveResult;
+
+    @Produce(uri = "direct:aggregator")
+    private ProducerTemplate producer;
 
     @BeforeClass
-    public static void createTopicSubscription() throws Exception{
-        createTopicSubscriptionPair(topicName, subscriptionName);
+    public static void createTopicSubscription() throws Exception {
+        createTopicSubscriptionPair(TOPIC_NAME, SUBSCRIPTION_NAME);
     }
 
     @Override

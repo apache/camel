@@ -14,21 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.google.pubsub;
+package org.apache.camel.itest.karaf;
 
-public final class GooglePubsubConstants {
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.junit.PaxExam;
 
-    public static final String MESSAGE_ID = "CamelGooglePubsub.MessageId";
-    public static final String ACK_ID = "CamelGooglePubsub.MsgAckId";
-    public static final String PUBLISH_TIME = "CamelGooglePubsub.PublishTime";
-    public static final String ATTRIBUTES = "CamelGooglePubsub.Attributes";
+@RunWith(PaxExam.class)
+public class CamelGooglePubsubTest extends BaseKarafTest {
 
-    public enum AckMode {
-        AUTO, NONE
+    public static final String COMPONENT = extractName(CamelGooglePubsubTest.class);
+
+    @Test
+    public void test() throws Exception {
+        testComponent(COMPONENT);
     }
 
-    private GooglePubsubConstants() {
-        //not called
-    }
 }
-

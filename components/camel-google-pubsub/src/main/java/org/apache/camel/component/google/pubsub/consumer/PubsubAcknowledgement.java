@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.google.pubsub.consumer;
 
+import java.util.List;
+
 import com.google.api.client.repackaged.com.google.common.base.Strings;
 import com.google.api.services.pubsub.model.AcknowledgeRequest;
 import com.google.api.services.pubsub.model.ModifyAckDeadlineRequest;
@@ -23,11 +25,10 @@ import org.apache.camel.component.google.pubsub.GooglePubsubEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 
 public abstract class PubsubAcknowledgement {
 
-    private Logger LOG;
+    private Logger logger;
     private final String subscriptionFullName;
 
     private final GooglePubsubEndpoint endpoint;
@@ -39,15 +40,16 @@ public abstract class PubsubAcknowledgement {
 
         String loggerId = endpoint.getLoggerId();
 
-        if (Strings.isNullOrEmpty(loggerId))
+        if (Strings.isNullOrEmpty(loggerId)) {
             loggerId = this.getClass().getName();
+        }
 
-        LOG = LoggerFactory.getLogger(loggerId);
+        logger = LoggerFactory.getLogger(loggerId);
     }
 
     void acknowledge(List<String> ackIdList) {
         AcknowledgeRequest ackRequest = new AcknowledgeRequest()
-                                            .setAckIds(ackIdList);
+                .setAckIds(ackIdList);
         try {
             endpoint.getPubsub()
                     .projects()
@@ -73,7 +75,7 @@ public abstract class PubsubAcknowledgement {
                     .execute();
         } catch (Exception e) {
             // It will timeout automatically on the channel
-            LOG.warn("Unable to reset ack deadline " + ackIdList, e);
+            logger.warn("Unable to reset ack deadline " + ackIdList, e);
         }
     }
 }

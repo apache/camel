@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,10 @@
  * limitations under the License.
  */
 package org.apache.camel.component.google.pubsub;
+
+import java.net.SocketTimeoutException;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import com.google.api.client.repackaged.com.google.common.base.Strings;
 import com.google.api.services.pubsub.model.PubsubMessage;
@@ -32,10 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
-import java.net.SocketTimeoutException;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-
 class GooglePubsubConsumer extends DefaultConsumer {
 
     private Logger localLog;
@@ -45,7 +45,7 @@ class GooglePubsubConsumer extends DefaultConsumer {
     private final Processor processor;
     private final Synchronization ackStrategy;
 
-    public GooglePubsubConsumer(GooglePubsubEndpoint endpoint, Processor processor) {
+    GooglePubsubConsumer(GooglePubsubEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.processor = processor;
@@ -53,7 +53,9 @@ class GooglePubsubConsumer extends DefaultConsumer {
 
         String loggerId = endpoint.getLoggerId();
 
-        if (Strings.isNullOrEmpty(loggerId)) loggerId = this.getClass().getName();
+        if (Strings.isNullOrEmpty(loggerId)) {
+            loggerId = this.getClass().getName();
+        }
 
         localLog = LoggerFactory.getLogger(loggerId);
     }
@@ -101,15 +103,17 @@ class GooglePubsubConsumer extends DefaultConsumer {
         @SuppressWarnings("unchecked")
         public void run() {
             try {
-                if (localLog.isDebugEnabled())
+                if (localLog.isDebugEnabled()) {
                     localLog.debug("Subscribing {} to {}", threadId, subscriptionFullName);
+                }
 
                 while (isRunAllowed() && !isSuspendingOrSuspended()) {
                     PullRequest pullRequest = new PullRequest().setMaxMessages(endpoint.getMaxMessagesPerPoll());
                     PullResponse pullResponse;
                     try {
-                        if (localLog.isTraceEnabled())
+                        if (localLog.isTraceEnabled()) {
                             localLog.trace("Polling : {}", threadId);
+                        }
                         pullResponse = GooglePubsubConsumer.this.endpoint
                                                .getPubsub()
                                                .projects()
@@ -127,8 +131,9 @@ class GooglePubsubConsumer extends DefaultConsumer {
 
                         byte[] body = pubsubMessage.decodeData();
 
-                        if (localLog.isTraceEnabled())
+                        if (localLog.isTraceEnabled()) {
                             localLog.trace("Received message ID : {}", pubsubMessage.getMessageId());
+                        }
 
                         Exchange exchange = endpoint.createExchange();
                         exchange.getIn().setBody(body);
@@ -137,11 +142,13 @@ class GooglePubsubConsumer extends DefaultConsumer {
                         exchange.getIn().setHeader(GooglePubsubConstants.MESSAGE_ID, pubsubMessage.getMessageId());
                         exchange.getIn().setHeader(GooglePubsubConstants.PUBLISH_TIME, pubsubMessage.getPublishTime());
 
-                        if (null != receivedMessage.getMessage().getAttributes())
+                        if (null != receivedMessage.getMessage().getAttributes()) {
                             exchange.getIn().setHeader(GooglePubsubConstants.ATTRIBUTES, receivedMessage.getMessage().getAttributes());
+                        }
 
-                        if (endpoint.getAckMode() != GooglePubsubConstants.AckMode.NONE)
+                        if (endpoint.getAckMode() != GooglePubsubConstants.AckMode.NONE) {
                             exchange.addOnCompletion(GooglePubsubConsumer.this.ackStrategy);
+                        }
 
                         try {
                             processor.process(exchange);
@@ -151,7 +158,7 @@ class GooglePubsubConsumer extends DefaultConsumer {
                     }
                 }
             } catch (Exception e) {
-                localLog.error("Requesting messages from PubSub Failed:",e);
+                localLog.error("Requesting messages from PubSub Failed:", e);
                 RuntimeCamelException rce = wrapRuntimeCamelException(e);
                 throw rce;
             }

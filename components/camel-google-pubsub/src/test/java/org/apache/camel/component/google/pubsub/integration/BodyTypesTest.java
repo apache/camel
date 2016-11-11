@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,15 +15,6 @@
  * limitations under the License.
  */
 package org.apache.camel.component.google.pubsub.integration;
-
-import org.apache.camel.*;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.google.pubsub.GooglePubsubConstants;
-import org.apache.camel.component.google.pubsub.PubsubTestSupport;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultExchange;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -33,39 +24,51 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.google.pubsub.PubsubTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultExchange;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 public class BodyTypesTest extends PubsubTestSupport {
 
-    private static final String topicName="typesSend";
-    private static final String subscriptionName="TypesReceive";
-
-    @Produce(uri = "direct:from")
-    protected ProducerTemplate producer;
+    private static final String TOPIC_NAME = "typesSend";
+    private static final String SUBSCRIPTION_NAME = "TypesReceive";
 
     @EndpointInject(uri = "direct:from")
     private Endpoint directIn;
 
-    @EndpointInject(uri = "google-pubsub:{{project.id}}:"+topicName)
+    @EndpointInject(uri = "google-pubsub:{{project.id}}:" + TOPIC_NAME)
     private Endpoint pubsubTopic;
 
     @EndpointInject(uri = "mock:sendResult")
-    protected MockEndpoint sendResult;
+    private MockEndpoint sendResult;
 
-    @EndpointInject(uri = "google-pubsub:{{project.id}}:"+subscriptionName)
+    @EndpointInject(uri = "google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME)
     private Endpoint pubsubSubscription;
 
     @EndpointInject(uri = "mock:receiveResult")
-    protected MockEndpoint receiveResult;
+    private MockEndpoint receiveResult;
+
+    @Produce(uri = "direct:from")
+    private ProducerTemplate producer;
 
     @BeforeClass
-    public static void createTopicSubscription() throws Exception{
-        createTopicSubscriptionPair(topicName, subscriptionName);
+    public static void createTopicSubscription() throws Exception {
+        createTopicSubscriptionPair(TOPIC_NAME, SUBSCRIPTION_NAME);
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                 from(directIn)
+                from(directIn)
                         .routeId("Single_Send")
                         .to(pubsubTopic)
                         .to(sendResult);
@@ -99,10 +102,10 @@ public class BodyTypesTest extends PubsubTestSupport {
         Exchange sentExchange = sentExchanges.get(0);
 
         assertTrue("Sent body type is byte[]",
-                   (sentExchange.getIn().getBody() instanceof byte[]));
+                   sentExchange.getIn().getBody() instanceof byte[]);
 
         assertTrue("Sent body type is the one sent",
-                   (sentExchange.getIn().getBody() == body));
+                   sentExchange.getIn().getBody() == body);
 
         receiveResult.assertIsSatisfied(5000);
 
@@ -113,10 +116,10 @@ public class BodyTypesTest extends PubsubTestSupport {
         Exchange receivedExchange = receivedExchanges.get(0);
 
         assertTrue("Received body is of byte[] type",
-                   (receivedExchange.getIn().getBody() instanceof byte[]));
+                   receivedExchange.getIn().getBody() instanceof byte[]);
 
         assertTrue("Received body equals sent",
-                   (Arrays.equals(body, (byte[])receivedExchange.getIn().getBody())));
+                   Arrays.equals(body, (byte[]) receivedExchange.getIn().getBody()));
 
     }
 
@@ -140,7 +143,7 @@ public class BodyTypesTest extends PubsubTestSupport {
         Exchange sentExchange = sentExchanges.get(0);
 
         assertTrue("Sent body type is byte[]",
-                   (sentExchange.getIn().getBody() instanceof Map));
+                   sentExchange.getIn().getBody() instanceof Map);
 
         receiveResult.assertIsSatisfied(5000);
 
@@ -151,12 +154,12 @@ public class BodyTypesTest extends PubsubTestSupport {
         Exchange receivedExchange = receivedExchanges.get(0);
 
         assertTrue("Received body is of byte[] type",
-                   (receivedExchange.getIn().getBody() instanceof byte[]));
+                   receivedExchange.getIn().getBody() instanceof byte[]);
 
-        Object bodyReceived = deserialize((byte[])receivedExchange.getIn().getBody());
+        Object bodyReceived = deserialize((byte[]) receivedExchange.getIn().getBody());
 
         assertTrue("Received body is a Map ",
-                    (((Map)bodyReceived).get("KEY").equals("VALUE1212")));
+                   ((Map) bodyReceived).get("KEY").equals("VALUE1212"));
 
     }
 

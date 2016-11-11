@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.google.pubsub.integration;
 
-import org.apache.camel.*;
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.pubsub.PubsubTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -29,42 +33,43 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AckModeNoneTest extends PubsubTestSupport {
 
-    private static final String topicName="ackNoneTopic";
-    private static final String subscriptionName="ackNoneSub";
-
-    @Produce(uri = "direct:in")
-    protected ProducerTemplate producer;
+    private static final String TOPIC_NAME = "ackNoneTopic";
+    private static final String SUBSCRIPTION_NAME = "ackNoneSub";
 
     @EndpointInject(uri = "direct:in")
     private Endpoint directIn;
 
-    @EndpointInject(uri = "google-pubsub:{{project.id}}:"+topicName)
+    @EndpointInject(uri = "google-pubsub:{{project.id}}:" + TOPIC_NAME)
     private Endpoint pubsubTopic;
 
-    @EndpointInject(uri = "google-pubsub:{{project.id}}:"+subscriptionName+
-            "?ackMode=NONE")
+    @EndpointInject(uri = "google-pubsub:{{project.id}}:"
+            + SUBSCRIPTION_NAME
+            + "?ackMode=NONE")
     private Endpoint pubsubSub;
 
     @EndpointInject(uri = "mock:receiveResult")
-    protected MockEndpoint receiveResult;
+    private MockEndpoint receiveResult;
 
-   @BeforeClass
-    public static void createPubSub() throws Exception{
-        createTopicSubscriptionPair(topicName, subscriptionName, 1);
+    @Produce(uri = "direct:in")
+    private ProducerTemplate producer;
+
+    @BeforeClass
+    public static void createPubSub() throws Exception {
+        createTopicSubscriptionPair(TOPIC_NAME, SUBSCRIPTION_NAME, 1);
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                 from(directIn)
-                        .routeId("AckNONE_SEND")
-                        .to(pubsubTopic);
+                from(directIn)
+                    .routeId("AckNONE_SEND")
+                    .to(pubsubTopic);
 
                 from(pubsubSub)
-                        .routeId("AckNONE_RECV")
-                        .autoStartup(true)
-                        .to(receiveResult);
+                    .routeId("AckNONE_RECV")
+                    .autoStartup(true)
+                    .to(receiveResult);
             }
         };
     }

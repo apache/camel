@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.component.google.pubsub;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import com.google.api.client.util.Strings;
 import com.google.api.services.pubsub.model.PublishRequest;
@@ -25,28 +32,23 @@ import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 /**
  * Generic PubSub Producer
  */
 public class GooglePubsubProducer extends DefaultProducer {
 
-    private Logger LOG;
+    private Logger logger;
 
     public GooglePubsubProducer(GooglePubsubEndpoint endpoint) throws Exception {
         super(endpoint);
 
         String loggerId = endpoint.getLoggerId();
 
-        if (Strings.isNullOrEmpty(loggerId)) loggerId = this.getClass().getName();
+        if (Strings.isNullOrEmpty(loggerId)) {
+            loggerId = this.getClass().getName();
+        }
 
-        LOG = LoggerFactory.getLogger(loggerId);
+        logger = LoggerFactory.getLogger(loggerId);
     }
 
     /**
@@ -60,13 +62,16 @@ public class GooglePubsubProducer extends DefaultProducer {
         List<Exchange> entryList = prepareExchangeList(exchange);
 
         if (entryList == null || entryList.size() == 0) {
-            LOG.warn("The incoming message is either null or empty. Triggered by an aggregation timeout?");
+            logger.warn("The incoming message is either null or empty. Triggered by an aggregation timeout?");
             return;
         }
 
-        if (LOG.isDebugEnabled())
-            LOG.debug("uploader thread/id: " +
-                              Thread.currentThread().getId() + " / " + exchange.getExchangeId() + " . api call completed.");
+        if (logger.isDebugEnabled()) {
+            logger.debug("uploader thread/id: "
+                                 + Thread.currentThread().getId()
+                                 + " / " + exchange.getExchangeId()
+                                 + " . api call completed.");
+        }
 
         sendMessages(entryList);
     }
@@ -93,7 +98,7 @@ public class GooglePubsubProducer extends DefaultProducer {
 
     private void sendMessages(List<Exchange> exchanges) throws Exception {
 
-        GooglePubsubEndpoint endpoint = ((GooglePubsubEndpoint) getEndpoint());
+        GooglePubsubEndpoint endpoint = (GooglePubsubEndpoint) getEndpoint();
         String topicName = String.format("projects/%s/topics/%s", endpoint.getProjectId(), endpoint.getDestinationName());
 
         List<PubsubMessage> messages = new ArrayList<>();
@@ -103,17 +108,17 @@ public class GooglePubsubProducer extends DefaultProducer {
 
             Object body = exchange.getIn().getBody();
 
-            if ( body instanceof String)
-                message.encodeData(((String)body).getBytes("UTF-8"));
-            else if (body instanceof byte[])
-                message.encodeData((byte[])body);
-            else
+            if (body instanceof String) {
+                message.encodeData(((String) body).getBytes("UTF-8"));
+            } else if (body instanceof byte[]) {
+                message.encodeData((byte[]) body);
+            } else {
                 message.encodeData(serialize(body));
+            }
 
             Object attributes = exchange.getIn().getHeader(GooglePubsubConstants.ATTRIBUTES);
 
-            if ( attributes != null && attributes instanceof Map && ((Map)attributes).size() > 0)
-            {
+            if (attributes != null && attributes instanceof Map && ((Map)attributes).size() > 0) {
                 message.setAttributes((Map)attributes);
             }
 
@@ -121,7 +126,6 @@ public class GooglePubsubProducer extends DefaultProducer {
         }
 
         PublishRequest publishRequest = new PublishRequest().setMessages(messages);
-
 
         PublishResponse response = endpoint.getPubsub()
                                            .projects()

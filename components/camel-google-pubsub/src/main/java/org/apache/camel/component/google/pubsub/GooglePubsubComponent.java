@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.google.pubsub;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
 
 /**
  * Represents the component that manages {@link GooglePubsubEndpoint}.
@@ -45,14 +46,13 @@ public class GooglePubsubComponent extends UriEndpointComponent {
 
         String[] parts = remaining.split(":");
 
-        if (parts.length < 2)
+        if (parts.length < 2) {
             throw new IllegalArgumentException("Google PubSub Endpoint format \"projectId:destinationName[:subscriptionName]\"");
+        }
 
         GooglePubsubEndpoint pubsubEndpoint = new GooglePubsubEndpoint(uri, this, remaining);
         pubsubEndpoint.setProjectId(parts[0]);
         pubsubEndpoint.setDestinationName(parts[1]);
-
-//        pubsubEndpoint.setPubsub(getConnectionFactory().getClient());
 
         setProperties(pubsubEndpoint, parameters);
 
@@ -66,8 +66,9 @@ public class GooglePubsubComponent extends UriEndpointComponent {
      * - the Service Account Key / Email pair
      */
     public GooglePubsubConnectionFactory getConnectionFactory() {
-        if (connectionFactory == null)
+        if (connectionFactory == null) {
             connectionFactory = new GooglePubsubConnectionFactory();
+        }
         return connectionFactory;
     }
 

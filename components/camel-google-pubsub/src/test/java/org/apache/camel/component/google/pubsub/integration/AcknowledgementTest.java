@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,12 @@
  */
 package org.apache.camel.component.google.pubsub.integration;
 
-import org.apache.camel.*;
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.pubsub.PubsubTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -26,36 +31,35 @@ import org.junit.Test;
 
 public class AcknowledgementTest extends PubsubTestSupport {
 
-    private static final String topicName="failureSingle";
-    private static final String subscriptionName="failureSub";
-
-    @Produce(uri = "direct:in")
-    protected ProducerTemplate producer;
+    private static final String TOPIC_NAME = "failureSingle";
+    private static final String SUBSCRIPTION_NAME = "failureSub";
+    private static Boolean fail = false;
 
     @EndpointInject(uri = "direct:in")
     private Endpoint directIn;
 
-    @EndpointInject(uri = "google-pubsub:{{project.id}}:"+topicName)
+    @EndpointInject(uri = "google-pubsub:{{project.id}}:" + TOPIC_NAME)
     private Endpoint pubsubTopic;
 
-    @EndpointInject(uri = "google-pubsub:{{project.id}}:"+subscriptionName)
+    @EndpointInject(uri = "google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME)
     private Endpoint pubsubSubscription;
 
     @EndpointInject(uri = "mock:receiveResult")
-    protected MockEndpoint receiveResult;
+    private MockEndpoint receiveResult;
+
+    @Produce(uri = "direct:in")
+    private ProducerTemplate producer;
 
     @BeforeClass
-    public static void createTopicSubscription() throws Exception{
-        createTopicSubscriptionPair(topicName, subscriptionName);
+    public static void createTopicSubscription() throws Exception {
+        createTopicSubscriptionPair(TOPIC_NAME, SUBSCRIPTION_NAME);
     }
-
-    public static Boolean FAIL = false;
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                 from(directIn)
+                from(directIn)
                         .routeId("Send_to_Fail")
                         .to(pubsubTopic);
 
@@ -66,9 +70,9 @@ public class AcknowledgementTest extends PubsubTestSupport {
                                 new Processor() {
                                     @Override
                                     public void process(Exchange exchange) throws Exception {
-                                        if (AcknowledgementTest.FAIL){
+                                        if (AcknowledgementTest.fail) {
                                             Thread.sleep(750);
-                                            throw new Exception("FAIL");
+                                            throw new Exception("fail");
                                         }
                                     }
                                 }
@@ -102,13 +106,13 @@ public class AcknowledgementTest extends PubsubTestSupport {
         Exchange secondExchange = new DefaultExchange(context);
 
         firstExchange.getIn().setBody("SUCCESS  : " + firstExchange.getExchangeId());
-        secondExchange.getIn().setBody("FAIL  : " + secondExchange.getExchangeId());
+        secondExchange.getIn().setBody("fail  : " + secondExchange.getExchangeId());
 
         // Check 1 : Successful roundtrip.
         System.out.println("Acknowledgement Test : Stage 1");
         receiveResult.reset();
-        FAIL = false;
-        receiveResult.expectedMessageCount( 1);
+        fail = false;
+        receiveResult.expectedMessageCount(1);
         receiveResult.expectedBodiesReceivedInAnyOrder(firstExchange.getIn().getBody());
         producer.send(firstExchange);
         receiveResult.assertIsSatisfied(3000);
@@ -116,7 +120,7 @@ public class AcknowledgementTest extends PubsubTestSupport {
         // Check 2 : Failure for the second message.
         System.out.println("Acknowledgement Test : Stage 2");
         receiveResult.reset();
-        FAIL = true;
+        fail = true;
         receiveResult.expectedMessageCount(0);
         producer.send(secondExchange);
         receiveResult.assertIsSatisfied(3000);
@@ -124,7 +128,7 @@ public class AcknowledgementTest extends PubsubTestSupport {
         // Check 3 : Success for the second message.
         System.out.println("Acknowledgement Test : Stage 3");
         receiveResult.reset();
-        FAIL = false;
+        fail = false;
         receiveResult.expectedMessageCount(1);
         receiveResult.expectedBodiesReceivedInAnyOrder(secondExchange.getIn().getBody());
         receiveResult.assertIsSatisfied(3000);
