@@ -121,6 +121,7 @@
     <module>camel-google-calendar</module>
     <module>camel-google-drive</module>
     <module>camel-google-mail</module>
+    <module>camel-google-pubsub</module>
     <module>camel-gora</module>
     <module>camel-grape</module>
     <module>camel-gson</module>

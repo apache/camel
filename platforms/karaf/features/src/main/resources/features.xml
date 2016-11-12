@@ -92,7 +92,7 @@
     <bundle dependency='true'>mvn:io.netty/netty-transport/${netty40-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-handler/${netty40-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-transport-native-epoll/${netty40-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-codec/${netty40-version}</bundle>    
+    <bundle dependency='true'>mvn:io.netty/netty-codec/${netty40-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-codec-http/${netty40-version}</bundle>
     <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
@@ -458,10 +458,10 @@
     <feature version="${project.version}">camel-core</feature>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>    
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.dropbox.core/dropbox-core-sdk/${dropbox-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.okhttp/${squareup-okhttp-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.okio/${squareup-okio-bundle-version}</bundle>    
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.okio/${squareup-okio-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-dropbox/${project.version}</bundle>
   </feature>
   <feature name='camel-ehcache' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -655,6 +655,21 @@
     <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-jetty/${google-api-client-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-google-mail/${project.version}</bundle>
   </feature>
+  <feature name='camel-google-pubsub' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:com.google.apis/google-api-services-pubsub/${google-api-services-pubsub-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.api-client/google-api-client/${google-api-client-version}</bundle>
+    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-jackson2/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-java6/${google-api-client-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.oauth-client/google-oauth-client-jetty/${google-api-client-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/${commons-httpclient-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-google-pubsub/${project.version}</bundle>
+  </feature>
   <feature name='camel-grape' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.codehaus.groovy/groovy-all/${groovy-version}</bundle>
@@ -664,7 +679,7 @@
   </feature>
   <feature name='camel-groovy' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/${ant-bundle-version}</bundle>    
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/${ant-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.codehaus.groovy/groovy-all/${groovy-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-groovy/${project.version}</bundle>
   </feature>
@@ -811,8 +826,8 @@
   <feature name='camel-hystrix' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hystrix/${hystrix-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hystrix-event-stream/${hystrix-bundle-version}</bundle>    
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>    
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hystrix-event-stream/${hystrix-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
     <bundle dependency='true'>mvn:commons-configuration/commons-configuration/${commons-configuration-version}</bundle>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency='true'>mvn:io.reactivex/rxjava/${rxjava-version}</bundle>
@@ -836,7 +851,7 @@
         You need to add this package to the list of packages exported by the system bundle in the etc/jre.properties file.
 
         Additionally, you must provision the Ignite Karaf features repository in your container: mvn:org.apache.ignite/ignite-osgi-karaf/${ignite-version}.
-        
+
         Please refer to the component page (https://camel.apache.org/ignite.html) and to the Ignite docs (https://apacheignite.readme.io/docs/osgi-installation-in-karaf#preparatory-steps) for more information.]]>
     </details>
     <feature version='${project.version}'>camel-core</feature>
@@ -1547,7 +1562,7 @@
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${cxf-version-range}'>cxf-core</feature>
     <feature version='${cxf-version-range}'>cxf-jaxrs</feature>
-    <feature version='${cxf-version-range}'>cxf-rs-security-oauth2</feature>    
+    <feature version='${cxf-version-range}'>cxf-rs-security-oauth2</feature>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
