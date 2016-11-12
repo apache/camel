@@ -28,6 +28,9 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+/**
+ * The sql component allows you to work with databases using JDBC Stored Procedure queries.
+ */
 @UriEndpoint(scheme = "sql-stored", title = "SQL StoredProcedure", syntax = "sql-stored:template", producerOnly = true, label = "database,sql")
 public class SqlStoredEndpoint extends DefaultPollingEndpoint {
 
