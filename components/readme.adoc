@@ -204,6 +204,9 @@ Components
 | link:camel-google-mail/src/main/docs/google-mail-component.adoc[Google Mail] (camel-google-mail) +
 `google-mail:apiName/methodName` | The google-mail component provides access to Google Mail.
 
+| link:camel-google-pubsub/src/main/docs/google-pubsub-component.adoc[Google Pubsub] (camel-google-pubsub) +
+`google-pubsub:projectId:destinationName?[options]` | PubSub Endpoint Definition
+
 | link:camel-gora/src/main/docs/gora-component.adoc[Gora] (camel-gora) +
 `gora:name` | The gora component allows you to work with NoSQL databases using the Apache Gora framework.
 
