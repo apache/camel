@@ -137,6 +137,7 @@
     <module>camel-google-calendar-starter</module>
     <module>camel-google-drive-starter</module>
     <module>camel-google-mail-starter</module>
+    <module>camel-google-pubsub-starter</module>
     <module>camel-gora-starter</module>
     <module>camel-grape-starter</module>
     <module>camel-groovy-starter</module>
