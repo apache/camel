@@ -143,23 +143,80 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
 
     @Override
     public void blueprintEvent(BlueprintEvent event) {
-        // noop as we just needed to enlist the BlueprintListener to have events triggered to serviceChanged method
+        if (LOG.isDebugEnabled()) {
+            String eventTypeString;
+
+            switch (event.getType()) {
+            case BlueprintEvent.CREATING:
+                eventTypeString = "CREATING";
+                break;
+            case BlueprintEvent.CREATED:
+                eventTypeString = "CREATED";
+                break;
+            case BlueprintEvent.DESTROYING:
+                eventTypeString = "DESTROYING";
+                break;
+            case BlueprintEvent.DESTROYED:
+                eventTypeString = "DESTROYED";
+                break;
+            case BlueprintEvent.GRACE_PERIOD:
+                eventTypeString = "GRACE_PERIOD";
+                break;
+            case BlueprintEvent.WAITING:
+                eventTypeString = "WAITING";
+                break;
+            case BlueprintEvent.FAILURE:
+                eventTypeString = "FAILURE";
+                break;
+            default:
+                eventTypeString = "UNKNOWN";
+            }
+
+            LOG.debug(String.format("blueprintEvent{ replay=%b type=%s bundle=%s } : ", event.isReplay(), eventTypeString, event.getBundle().getSymbolicName()));
+        }
+
+
+        if (!event.isReplay() && this.getBundleContext().getBundle().getBundleId() == event.getBundle().getBundleId()) {
+            if (event.getType() == BlueprintEvent.CREATED) {
+                try {
+                    this.start();
+                } catch (Exception startEx) {
+                    LOG.error("Error occurred starting Camel: " + this, startEx);
+                }
+            } else if (event.getType() == BlueprintEvent.DESTROYING) {
+                try {
+                    this.stop();
+                } catch (Exception stopEx) {
+                    LOG.warn("Error occurred stopping Camel: " + this, stopEx);
+                }
+            }
+        }
+
     }
 
     @Override
     public void serviceChanged(ServiceEvent event) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Service {} changed to {}", event, event.getType());
-        }
-        // look for blueprint container to be registered, and then we can start the CamelContext
-        if (event.getType() == ServiceEvent.REGISTERED
-                && event.getServiceReference().isAssignableTo(bundleContext.getBundle(), "org.osgi.service.blueprint.container.BlueprintContainer")
-                && bundleContext.getBundle().equals(event.getServiceReference().getBundle())) {
-            try {
-                maybeStart();
-            } catch (Exception e) {
-                LOG.error("Error occurred during starting Camel: " + this + " due " + e.getMessage(), e);
+            String serviceEventTypeString;
+            switch (event.getType()) {
+            case ServiceEvent.REGISTERED:
+                serviceEventTypeString = "REGISTERED";
+                break;
+            case ServiceEvent.MODIFIED:
+                serviceEventTypeString = "MODIFIED";
+                break;
+            case ServiceEvent.UNREGISTERING:
+                serviceEventTypeString = "UNREGISTERING";
+                break;
+            case ServiceEvent.MODIFIED_ENDMATCH:
+                serviceEventTypeString = "MODIFIED_ENDMATCH";
+                break;
+            default:
+                serviceEventTypeString = "UNKNOWN";
+                break;
             }
+
+            LOG.debug("Service {} changed to {}", event, event.getType());
         }
     }
 
