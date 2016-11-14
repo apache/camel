@@ -56,10 +56,10 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
     @UriParam(name = "loggerId", description = "Logger ID to use when a match to the parent route required")
     private String loggerId;
 
-    @UriParam(name = "concurrentConsumers", description = "The number of parallel streams consuming from the subscription", defaultValue=1)
+    @UriParam(name = "concurrentConsumers", description = "The number of parallel streams consuming from the subscription", defaultValue = "1")
     private Integer concurrentConsumers = 1;
 
-    @UriParam(name = "maxMessagesPerPoll", description = "The max number of messages to receive from the server in a single API call", defaultValue=1)
+    @UriParam(name = "maxMessagesPerPoll", description = "The max number of messages to receive from the server in a single API call", defaultValue = "1")
     private Integer maxMessagesPerPoll = 1;
 
     @UriParam(name = "connectionFactory", description = "ConnectionFactory to obtain connection to PubSub Service. If non provided the default one will be used")
