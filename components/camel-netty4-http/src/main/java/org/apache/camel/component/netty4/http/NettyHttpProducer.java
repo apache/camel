@@ -86,19 +86,6 @@ public class NettyHttpProducer extends NettyProducer {
             }
         }
 
-        // need to release the request when we are done
-        exchange.addOnCompletion(new SynchronizationAdapter() {
-            @Override
-            public void onDone(Exchange exchange) {
-                if (request instanceof ReferenceCounted) {
-                    if (((ReferenceCounted) request).refCnt() > 0) {
-                        log.debug("Releasing Netty HttpRequest ByteBuf");
-                        ReferenceCountUtil.release(request);
-                    }
-                }
-            }
-        });
-
         return request;
     }
 
