@@ -179,7 +179,7 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
         if (!event.isReplay() && this.getBundleContext().getBundle().getBundleId() == event.getBundle().getBundleId()) {
             if (event.getType() == BlueprintEvent.CREATED) {
                 try {
-                    this.start();
+                    this.maybeStart();
                 } catch (Exception startEx) {
                     LOG.error("Error occurred starting Camel: " + this, startEx);
                 }
