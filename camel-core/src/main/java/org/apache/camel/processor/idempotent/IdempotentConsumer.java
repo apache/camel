@@ -132,7 +132,7 @@ public class IdempotentConsumer extends ServiceSupport implements CamelContextAw
             } else {
                 // check if we already have the key
                 if (idempotentRepository instanceof ExchangeIdempotentRepository) {
-                    newKey = ((ExchangeIdempotentRepository<String>) idempotentRepository).contains(exchange, messageId);
+                    newKey = !((ExchangeIdempotentRepository<String>) idempotentRepository).contains(exchange, messageId);
                 } else {
                     newKey = !idempotentRepository.contains(messageId);
                 }
