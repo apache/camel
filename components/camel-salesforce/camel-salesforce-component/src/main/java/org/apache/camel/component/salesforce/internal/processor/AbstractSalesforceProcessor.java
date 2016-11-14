@@ -19,7 +19,9 @@ package org.apache.camel.component.salesforce.internal.processor;
 import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.component.salesforce.SalesforceComponent;
@@ -28,6 +30,8 @@ import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
+import org.apache.camel.spi.Language;
+import org.eclipse.jetty.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +95,9 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
                                        Class<T> parameterClass) throws SalesforceException {
 
         final Message in = exchange.getIn();
-        T propValue = in.getHeader(propName, parameterClass);
+
+        final T valueFromHeader = in.getHeader(propName, parameterClass);
+        T propValue = evaluate(valueFromHeader, exchange, parameterClass);
 
         if (propValue == null) {
             // check if type conversion failed
@@ -100,7 +106,8 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
                     + " could not be converted to type " + parameterClass.getName());
             }
 
-            final Object value = endpointConfigMap.get(propName);
+            final Object valueFromEndpointConfig = endpointConfigMap.get(propName);
+            final Object value = evaluate(valueFromEndpointConfig, exchange);
 
             if (value == null || parameterClass.isInstance(value)) {
                 propValue = parameterClass.cast(value);
@@ -124,6 +131,28 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
         }
 
         return propValue;
+    }
+
+    final Object evaluate(final Object value, final Exchange exchange) {
+        return evaluate(value, exchange, Object.class);
+    }
+
+    final <T> T evaluate(final T value, final Exchange exchange, final Class<T> type) {
+        if (value == null) {
+            return null;
+        }
+
+        if (!(value instanceof String)) {
+            return value;
+        }
+
+        final CamelContext context = exchange.getContext();
+        final Language language = context.resolveLanguage("simple");
+
+        final String simpleExpression = (String)value;
+        final Expression expression = language.createExpression(simpleExpression);
+
+        return expression.evaluate(exchange, type);
     }
 
 }
