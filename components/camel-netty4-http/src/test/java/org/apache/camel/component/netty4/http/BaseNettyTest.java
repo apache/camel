@@ -18,7 +18,11 @@ package org.apache.camel.component.netty4.http;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Collection;
 import java.util.Properties;
+
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.util.ResourceLeakDetector;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -26,6 +30,7 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.logging.log4j.core.LogEvent;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
@@ -62,6 +67,26 @@ public class BaseNettyTest extends CamelTestSupport {
             fos.write(String.valueOf(port).getBytes());
         } finally {
             fos.close();
+        }
+    }
+
+    @BeforeClass
+    public static void startLeakDetection() {
+        System.setProperty("io.netty.leakDetection.maxRecords", "100");
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+    }
+
+    @AfterClass
+    public static void verifyNoLeaks() throws Exception {
+        //Force GC to bring up leaks
+        System.gc();
+        //Kick leak detection logging
+        ByteBufAllocator.DEFAULT.buffer(1).release();
+        Collection<LogEvent> events = LogCaptureAppender.getEvents();
+        if (!events.isEmpty()) {
+            String message = "Leaks detected while running tests: " + events;
+            LogCaptureAppender.reset();
+            throw new AssertionError(message);
         }
     }
 

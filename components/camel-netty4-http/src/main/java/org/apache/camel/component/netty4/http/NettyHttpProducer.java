@@ -74,20 +74,6 @@ public class NettyHttpProducer extends NettyProducer {
             // Need to remove the Host key as it should be not used when bridging/proxying
             exchange.getIn().removeHeader("host");
         }
-
-        // need to release the request when we are done
-        exchange.addOnCompletion(new SynchronizationAdapter() {
-            @Override
-            public void onDone(Exchange exchange) {
-                if (request instanceof ReferenceCounted) {
-                    if (((ReferenceCounted) request).refCnt() > 0) {
-                        log.debug("Releasing Netty HttpRequest ByteBuf");
-                        ReferenceCountUtil.release(request);
-                    }
-                }
-            }
-        });
-
         return request;
     }
 

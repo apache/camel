@@ -38,6 +38,7 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -193,11 +194,15 @@ public class NettyProducer extends DefaultAsyncProducer {
                 callback.done(true);
                 return true;
             }
+            return processWithBody(exchange, body, new BodyReleaseCallback(callback, body));
         } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
             return true;
         }
+    }
+
+    private boolean processWithBody(final Exchange exchange, Object body, BodyReleaseCallback callback) {
 
         // set the exchange encoding property
         if (getConfiguration().getCharsetName() != null) {
@@ -240,7 +245,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         return false;
     }
 
-    public void processWithConnectedChannel(final Exchange exchange, final AsyncCallback callback, final ChannelFuture channelFuture, final Object body) {
+    public void processWithConnectedChannel(final Exchange exchange, final BodyReleaseCallback callback, final ChannelFuture channelFuture, final Object body) {
         // remember channel so we can reuse it
         final Channel channel = channelFuture.channel();
         if (getConfiguration().isReuseChannel() && exchange.getProperty(NettyConstants.NETTY_CHANNEL) == null) {
@@ -283,15 +288,16 @@ public class NettyProducer extends DefaultAsyncProducer {
                 channel.pipeline().replace(oldHandler, "timeout", newHandler);
             }
         }
-        
+
+        //This will refer to original callback since netty will release body by itself
         final AsyncCallback producerCallback;
 
         if (configuration.isReuseChannel()) {
             // use callback as-is because we should not put it back in the pool as NettyProducerCallback would do
             // as when reuse channel is enabled it will put the channel back in the pool when exchange is done using on completion
-            producerCallback = callback;
+            producerCallback = callback.getOriginalCallback();
         } else {
-            producerCallback = new NettyProducerCallback(channelFuture, callback);
+            producerCallback = new NettyProducerCallback(channelFuture, callback.getOriginalCallback());
         }
 
         // setup state as attachment on the channel, so we can access the state later when needed
@@ -618,10 +624,10 @@ public class NettyProducer extends DefaultAsyncProducer {
      */
     private class ChannelConnectedListener implements ChannelFutureListener {
         private final Exchange exchange;
-        private final AsyncCallback callback;
+        private final BodyReleaseCallback callback;
         private final Object body;
 
-        ChannelConnectedListener(Exchange exchange, AsyncCallback callback, Object body) {
+        ChannelConnectedListener(Exchange exchange, BodyReleaseCallback callback, Object body) {
             this.exchange = exchange;
             this.callback = callback;
             this.body = body;
@@ -636,6 +642,7 @@ public class NettyProducer extends DefaultAsyncProducer {
                 }
                 exchange.setException(cause);
                 callback.done(false);
+                return;
             }
 
             try {
@@ -644,6 +651,30 @@ public class NettyProducer extends DefaultAsyncProducer {
                 exchange.setException(e);
                 callback.done(false);
             }
+        }
+    }
+
+    /**
+     * This class is used to release body in case when some error occured and body was not handed over
+     * to netty
+     */
+    private static final class BodyReleaseCallback implements AsyncCallback {
+        private volatile Object body;
+        private final AsyncCallback originalCallback;
+
+        private BodyReleaseCallback(AsyncCallback originalCallback, Object body) {
+            this.body = body;
+            this.originalCallback = originalCallback;
+        }
+
+        public AsyncCallback getOriginalCallback() {
+            return originalCallback;
+        }
+
+        @Override
+        public void done(boolean doneSync) {
+            ReferenceCountUtil.release(body);
+            originalCallback.done(doneSync);
         }
     }
 }
