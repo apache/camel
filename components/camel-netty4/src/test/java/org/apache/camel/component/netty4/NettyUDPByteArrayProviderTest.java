@@ -36,7 +36,7 @@ import org.junit.Test;
 public class NettyUDPByteArrayProviderTest extends BaseNettyTest {
     private static final String SEND_STRING = "ef3e00559f5faf0262f5ff0962d9008daa91001cd46b0fa9330ef0f3030fff250e46f72444d1cc501678c351e04b8004c"
             + "4000002080000fe850bbe011030000008031b031bfe9251305441593830354720020800050440ff";
-    private static final int SEND_COUNT = 20;
+    private static final int SEND_COUNT = 10;
     private volatile int receivedCount;
     private EventLoopGroup group;
     private Bootstrap bootstrap;

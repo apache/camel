@@ -40,7 +40,7 @@ import org.junit.runners.MethodSorters;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class NettyUdpConnectedSendTest extends BaseNettyTest {
     private static final String SEND_STRING = "***<We all love camel>***";
-    private static final int SEND_COUNT = 20;
+    private static final int SEND_COUNT = 10;
     private volatile int receivedCount;
     private EventLoopGroup group;
     private Bootstrap bootstrap;
