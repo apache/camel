@@ -73,91 +73,109 @@ public final class ServiceNowConstants {
     /**
      * @deprecated As of release 2.18.1, replaced by ServiceNowParams.PARAM_TABLE_NAME
      */
+    @Deprecated
     public static final String TABLE = "CamelServiceNowTable";
 
     /**
      * @deprecated As of release 2.18.1, replaced by ServiceNowParams.PARAM_SYS_ID
      */
+    @Deprecated
     public static final String SYSPARM_ID = "CamelServiceNowSysId";
 
     /**
      * @deprecated As of release 2.18.1, replaced by ServiceNowParams.SYSPARM_QUERY
      */
+    @Deprecated
     public static final String SYSPARM_QUERY = "CamelServiceNowQuery";
 
     /**
      * @deprecated As of release 2.18.1, replaced by ServiceNowParams.SYSPARM_DISPLAY_VALUE
      */
+    @Deprecated
     public static final String SYSPARM_DISPLAY_VALUE = "CamelServiceNowDisplayValue";
 
     /**
      * @deprecated As of release 2.18.1, replaced by ServiceNowParams.SYSPARM_INPUT_DISPLAY_VALUE
      */
+    @Deprecated
     public static final String SYSPARM_INPUT_DISPLAY_VALUE = "CamelServiceNowInputDisplayValue";
 
     /**
      * @deprecated As of release 2.18.1, replaced by ServiceNowParams.SYSPARM_EXCLUDE_REFERENCE_LINK
      */
+    @Deprecated
     public static final String SYSPARM_EXCLUDE_REFERENCE_LINK = "CamelServiceNowExcludeReferenceLink";
 
     /**
      * @deprecated As of release 2.18.1, replaced by ServiceNowParams.SYSPARM_FIELDS
      */
+    @Deprecated
     public static final String SYSPARM_FIELDS = "CamelServiceNowFields";
 
     /**
      * @deprecated As of release 2.18.1, replaced by ServiceNowParams.SYSPARM_MIN_FIELDS
      */
+    @Deprecated
     public static final String SYSPARM_MIN_FIELDS = "CamelServiceNowMinFields";
 
     /**
      * @deprecated As of release 2.18.1, replaced by ServiceNowParams.SYSPARM_MAX_FIELDS
      */
+    @Deprecated
     public static final String SYSPARM_MAX_FIELDS = "CamelServiceNowMaxFields";
 
     /**
      * @deprecated As of release 2.18.1, replaced by ServiceNowParams.SYSPARM_SUM_FIELDS
      */
+    @Deprecated
     public static final String SYSPARM_SUM_FIELDS = "CamelServiceNowSumFields";
 
     /**
      * @deprecated As of release 2.18.1, replaced by ServiceNowParams.SYSPARM_AVG_FIELDS
      */
+    @Deprecated
     public static final String SYSPARM_AVG_FIELDS = "CamelServiceNowAvgFields";
 
     /**
      * @deprecated As of release 2.18.1, replaced by ServiceNowParams.SYSPARM_LIMIT
      */
+    @Deprecated
     public static final String SYSPARM_LIMIT = "CamelServiceNowLimit";
 
     /**
      * @deprecated As of release 2.18.1, replaced by ServiceNowParams.SYSPARM_VIEW
      */
+    @Deprecated
     public static final String SYSPARM_VIEW = "CamelServiceNowView";
 
     /**
      * @deprecated As of release 2.18.1, replaced by ServiceNowParams.SYSPARM_SUPPRESS_AUTO_SYS_FIELD
      */
+    @Deprecated
     public static final String SYSPARM_SUPPRESS_AUTO_SYS_FIELD = "CamelServiceNowSuppressAutoSysField";
 
     /**
      * @deprecated As of release 2.18.1, replaced by ServiceNowParams.SYSPARM_COUNT
      */
+    @Deprecated
     public static final String SYSPARM_COUNT = "CamelServiceNowCount";
 
     /**
      * @deprecated As of release 2.18.1, replaced by ServiceNowParams.SYSPARM_GROUP_BY
      */
+    @Deprecated
     public static final String SYSPARM_GROUP_BY = "CamelServiceNowGroupBy";
 
     /**
      * @deprecated As of release 2.18.1, replaced by ServiceNowParams.SYSPARM_ORDER_BY
      */
+    @Deprecated
     public static final String SYSPARM_ORDER_BY = "CamelServiceNowOrderBy";
 
     /**
      * @deprecated As of release 2.18.1, replaced by ServiceNowParams.SYSPARM_HAVING
      */
+    @Deprecated
     public static final String SYSPARM_HAVING = "CamelServiceNowHaving";
 
     private ServiceNowConstants() {
