@@ -3113,6 +3113,11 @@
 
       <!-- cassandra -->
       <dependency>
+        <groupId>org.apache.cassandra</groupId>
+        <artifactId>cassandra-all</artifactId>
+        <version>${cassandra-version}</version>
+      </dependency>
+      <dependency>
         <groupId>com.datastax.cassandra</groupId>
         <artifactId>cassandra-driver-core</artifactId>
         <version>${cassandra-driver-version}</version>
