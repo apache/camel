@@ -30,6 +30,8 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.logging.log4j.core.LogEvent;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.ResourceLeakDetector;
@@ -38,6 +40,8 @@ import io.netty.util.ResourceLeakDetector;
  *
  */
 public class BaseNettyTest extends CamelTestSupport {
+    protected static final Logger LOG = LoggerFactory.getLogger(BaseNettyTest.class);
+
     private static volatile int port;
 
     @BeforeClass
@@ -73,6 +77,7 @@ public class BaseNettyTest extends CamelTestSupport {
     @BeforeClass
     public static void startLeakDetection() {
         System.setProperty("io.netty.leakDetection.maxRecords", "100");
+        System.setProperty("io.netty.leakDetection.acquireAndReleaseOnly", "true");
         ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
     }
 
@@ -85,6 +90,10 @@ public class BaseNettyTest extends CamelTestSupport {
         Collection<LogEvent> events = LogCaptureAppender.getEvents();
         if (!events.isEmpty()) {
             String message = "Leaks detected while running tests: " + events;
+            // Just write the message into log to help debug
+            for(LogEvent event: events) {
+                LOG.info(event.getMessage().getFormattedMessage());
+            }
             LogCaptureAppender.reset();
             throw new AssertionError(message);
         }
