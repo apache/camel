@@ -37,7 +37,6 @@ public class MultipleCodecsSpringTest extends CamelSpringTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:multiple-codec");
         mock.expectedBodiesReceived(poem);
         sendBody("direct:multiple-codec", poem);
-        mock.await(1, TimeUnit.SECONDS);
         mock.assertIsSatisfied();
     }
 }

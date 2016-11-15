@@ -61,7 +61,7 @@ public class NettyConsumerClientModeReconnectTest extends BaseNettyTest {
             log.info(">>> starting Camel route while Netty server is not ready");
             context.startRoute("client");
 
-            Thread.sleep(5000);
+            Thread.sleep(500);
 
             log.info(">>> starting Netty server");
             startNettyServer();
@@ -81,7 +81,7 @@ public class NettyConsumerClientModeReconnectTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty4:tcp://localhost:{{port}}?textline=true&clientMode=true&reconnect=true&reconnectInterval=2000").id("client")
+                from("netty4:tcp://localhost:{{port}}?textline=true&clientMode=true&reconnect=true&reconnectInterval=200").id("client")
                         .process(new Processor() {
                             public void process(final Exchange exchange) {
                                 log.info("Processing exchange in Netty server {}", exchange);
