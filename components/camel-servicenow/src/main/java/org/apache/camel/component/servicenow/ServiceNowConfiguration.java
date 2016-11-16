@@ -100,7 +100,7 @@ public class ServiceNowConfiguration implements Cloneable {
     @UriParam(label = "advanced")
     private ObjectMapper mapper = MAPPER;
     @UriParam(defaultValue = "HELSINKI", enums = "FUJI,GENEVA,HELSINKI")
-    private ServiceNowRelease release = ServiceNowRelease.HELSINKY;
+    private ServiceNowRelease release = ServiceNowRelease.HELSINKI;
 
 
     public String getUserName() {

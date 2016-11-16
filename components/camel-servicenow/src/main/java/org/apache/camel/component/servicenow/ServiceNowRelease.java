@@ -32,7 +32,7 @@ public enum ServiceNowRelease implements ServiceNowProducerSupplier {
             return null;
         }
     },
-    HELSINKY {
+    HELSINKI {
         @Override
         public ServiceNowProducer get(ServiceNowEndpoint endpoint) throws Exception {
             return new HelsinkiServiceNowProducer(endpoint);
