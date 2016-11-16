@@ -23,6 +23,8 @@ public final class ServiceNowConstants {
     public static final String ACTION = "CamelServiceNowAction";
     public static final String ACTION_SUBJECT = "CamelServiceNowActionSubject";
     public static final String MODEL = "CamelServiceNowModel";
+    public static final String REQUEST_MODEL = "CamelServiceNowRequestModel";
+    public static final String RESPONSE_MODEL = "CamelServiceNowResponseModel";
     public static final String OFFSET_NEXT = "CamelServiceNowOffsetNext";
     public static final String OFFSET_PREV = "CamelServiceNowOffsetPrev";
     public static final String OFFSET_FIRST = "CamelServiceNowOffsetFirst";
@@ -30,6 +32,7 @@ public final class ServiceNowConstants {
     public static final String CONTENT_TYPE = "CamelServiceNowContentType";
     public static final String CONTENT_ENCODING = "CamelServiceNowContentEncoding";
     public static final String CONTENT_META = "CamelServiceNowContentMeta";
+    public static final String RESPONSE_META = "CamelServiceNowResponseMeta";
 
     public static final String ATTACHMENT_META_HEADER = "X-Attachment-Metadata";
 
