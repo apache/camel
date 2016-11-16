@@ -2588,6 +2588,11 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.apache.cassandra</groupId>
+        <artifactId>cassandra-all</artifactId>
+        <version>3.7</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.cxf.services.sts</groupId>
         <artifactId>cxf-services-sts-core</artifactId>
         <version>3.1.8</version>
@@ -2867,12 +2872,12 @@
       <dependency>
         <groupId>org.jruby</groupId>
         <artifactId>jruby</artifactId>
-        <version>1.7.18</version>
+        <version>1.7.26</version>
       </dependency>
       <dependency>
         <groupId>org.jruby</groupId>
         <artifactId>jruby-complete</artifactId>
-        <version>1.7.18</version>
+        <version>1.7.26</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
