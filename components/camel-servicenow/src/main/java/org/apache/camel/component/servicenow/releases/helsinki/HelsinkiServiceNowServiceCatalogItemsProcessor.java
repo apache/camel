@@ -61,12 +61,14 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
     private void retrieveItems(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
-        final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
+        final String sysId = getSysID(in);
+        final String apiVersion  =getApiVersion(in);
 
         Response response = ObjectHelper.isEmpty(sysId)
             ? client.reset()
                 .types(MediaType.APPLICATION_JSON_TYPE)
                 .path("sn_sc")
+                .path(apiVersion)
                 .path("servicecatalog")
                 .path("items")
                 .query(ServiceNowParams.SYSPARM_CATEGORY, in)
@@ -80,6 +82,7 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
             : client.reset()
                 .types(MediaType.APPLICATION_JSON_TYPE)
                 .path("sn_sc")
+                .path(apiVersion)
                 .path("items")
                 .path("items")
                 .path(sysId)
@@ -102,11 +105,13 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
     private void submitItemGuide(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
-        final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
+        final String sysId = getSysID(in);
+        final String apiVersion  =getApiVersion(in);
 
         Response response =  client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("sn_sc")
+            .path(apiVersion)
             .path("servicecatalog")
             .path("items")
             .path(ObjectHelper.notNull(sysId, "sysId"))
@@ -129,11 +134,13 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
     private void checkoutItemGuide(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
-        final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
+        final String sysId = getSysID(in);
+        final String apiVersion  =getApiVersion(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("sn_sc")
+            .path(apiVersion)
             .path("servicecatalog")
             .path("items")
             .path(ObjectHelper.notNull(sysId, "sysId"))
@@ -155,11 +162,13 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
     private void addItemToCart(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
-        final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
+        final String sysId = getSysID(in);
+        final String apiVersion  =getApiVersion(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("sn_sc")
+            .path(apiVersion)
             .path("servicecatalog")
             .path("items")
             .path(ObjectHelper.notNull(sysId, "sysId"))
@@ -182,11 +191,13 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
     private void submitItemProducer(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
-        final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
+        final String sysId = getSysID(in);
+        final String apiVersion  =getApiVersion(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("sn_sc")
+            .path(apiVersion)
             .path("servicecatalog")
             .path("items")
             .path(ObjectHelper.notNull(sysId, "sysId"))

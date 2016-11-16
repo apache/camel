@@ -22,7 +22,6 @@ import org.apache.camel.Message;
 import org.apache.camel.component.servicenow.AbstractServiceNowProcessor;
 import org.apache.camel.component.servicenow.ServiceNowConstants;
 import org.apache.camel.component.servicenow.ServiceNowEndpoint;
-import org.apache.camel.component.servicenow.ServiceNowParams;
 import org.apache.camel.util.ObjectHelper;
 
 public abstract class FujiServiceNowProcessor extends AbstractServiceNowProcessor {
@@ -33,24 +32,29 @@ public abstract class FujiServiceNowProcessor extends AbstractServiceNowProcesso
     @Override
     public void process(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final String tableName = in.getHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(), config.getTable(), String.class);
+        final String tableName = getTableName(in);
         final Class<?> requestModel = getRequestModel(in, tableName);
         final Class<?> responseModel = getResponseModel(in, tableName);
+        final String apiVersion = getApiVersion(in);
         final String action = in.getHeader(ServiceNowConstants.ACTION, String.class);
-        final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
+        final String sysId = getSysID(in);
 
         doProcess(
             exchange,
             ObjectHelper.notNull(requestModel, "requestModel"),
             ObjectHelper.notNull(responseModel, "responseModel"),
+            apiVersion,
             ObjectHelper.notNull(action, "action"),
-            ObjectHelper.notNull(tableName, "tableName"), sysId);
+            ObjectHelper.notNull(tableName, "tableName"),
+            sysId);
     }
 
     protected abstract void doProcess(
         Exchange exchange,
         Class<?> requestModel,
-        Class<?> responseModel, String action,
+        Class<?> responseModel,
+        String apiVersion,
+        String action,
         String tableName,
         String sysId) throws Exception;
 }
