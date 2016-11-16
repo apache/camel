@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.springldap;
 
-import static org.apache.camel.component.springldap.LdapOperation.FUNCTION_DRIVEN;
-
 import java.util.Map;
 
 import javax.naming.NamingException;
@@ -89,9 +87,9 @@ public class SpringLdapProducer extends DefaultProducer {
         if (null == operation) {
             throw new UnsupportedOperationException("LDAP operation must not be empty, but you provided an empty operation");
         }
-        
+
         String dn = (String)body.get(DN);
-        if (operation != FUNCTION_DRIVEN && (StringUtils.isBlank(dn))) {
+        if (operation != LdapOperation.FUNCTION_DRIVEN && (StringUtils.isBlank(dn))) {
             throw new UnsupportedOperationException("DN must not be empty, but you provided an empty DN");
         }
 
@@ -121,8 +119,8 @@ public class SpringLdapProducer extends DefaultProducer {
             exchange.getIn().setBody(ldapOperationFunction.apply(ldapTemplate, ldapOperationRequest));
             break;
         default:
-			throw new UnsupportedOperationException(
-					"Bug in the Spring-LDAP component. Despite of all assertions, you managed to call an unsupported operation '" + operation + "'");
+            throw new UnsupportedOperationException("Bug in the Spring-LDAP component. Despite of all assertions, you managed to call an unsupported operation '" + operation
+                                                    + "'");
         }
     }
 }
