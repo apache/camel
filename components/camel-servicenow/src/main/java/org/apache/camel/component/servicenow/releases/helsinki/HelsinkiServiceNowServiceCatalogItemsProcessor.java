@@ -60,7 +60,7 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
      */
     private void retrieveItems(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final Class<?> model = getModel(in);
+        final Class<?> responseModel = getResponseModel(in);
         final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
 
         Response response = ObjectHelper.isEmpty(sysId)
@@ -86,7 +86,7 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
                 .query(ServiceNowParams.SYSPARM_VIEW, in)
                 .invoke(HttpMethod.GET);
 
-        setBodyAndHeaders(in, model, response);
+        setBodyAndHeaders(in, responseModel, response);
     }
 
     /*
@@ -101,7 +101,7 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
      */
     private void submitItemGuide(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final Class<?> model = getModel(in);
+        final Class<?> responseModel = getResponseModel(in);
         final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
 
         Response response =  client.reset()
@@ -114,7 +114,7 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
             .query(ServiceNowParams.SYSPARM_VIEW, in)
             .invoke(HttpMethod.POST, in.getMandatoryBody());
 
-        setBodyAndHeaders(in, model, response);
+        setBodyAndHeaders(in, responseModel, response);
     }
 
     /*
@@ -128,7 +128,7 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
      */
     private void checkoutItemGuide(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final Class<?> model = getModel(in);
+        final Class<?> responseModel = getResponseModel(in);
         final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
 
         Response response = client.reset()
@@ -140,7 +140,7 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
             .path("submit_guide")
             .invoke(HttpMethod.POST, in.getMandatoryBody());
 
-        setBodyAndHeaders(in, model, response);
+        setBodyAndHeaders(in, responseModel, response);
     }
 
     /*
@@ -154,7 +154,7 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
      */
     private void addItemToCart(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final Class<?> model = getModel(in);
+        final Class<?> responseModel = getResponseModel(in);
         final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
 
         Response response = client.reset()
@@ -166,7 +166,7 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
             .path("add_to_cart")
             .invoke(HttpMethod.POST);
 
-        setBodyAndHeaders(in, model, response);
+        setBodyAndHeaders(in, responseModel, response);
     }
 
     /*
@@ -181,7 +181,7 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
      */
     private void submitItemProducer(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final Class<?> model = getModel(in);
+        final Class<?> responseModel = getResponseModel(in);
         final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
 
         Response response = client.reset()
@@ -194,6 +194,6 @@ class HelsinkiServiceNowServiceCatalogItemsProcessor extends AbstractServiceNowP
             .query(ServiceNowParams.SYSPARM_VIEW, in)
             .invoke(HttpMethod.POST, in.getMandatoryBody());
 
-        setBodyAndHeaders(in, model, response);
+        setBodyAndHeaders(in, responseModel, response);
     }
 }
