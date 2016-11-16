@@ -129,6 +129,10 @@ public class ServiceNowComponentConfiguration {
          */
         private String apiUrl;
         /**
+         * The ServiceNow REST API version, default latest
+         */
+        private String apiVersion;
+        /**
          * ServiceNow account password, MUST be provided
          */
         private String password;
@@ -284,6 +288,14 @@ public class ServiceNowComponentConfiguration {
 
         public void setApiUrl(String apiUrl) {
             this.apiUrl = apiUrl;
+        }
+
+        public String getApiVersion() {
+            return apiVersion;
+        }
+
+        public void setApiVersion(String apiVersion) {
+            this.apiVersion = apiVersion;
         }
 
         public String getPassword() {

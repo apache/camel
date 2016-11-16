@@ -239,6 +239,10 @@ public abstract class AbstractServiceNowProcessor implements Processor {
         return null;
     }
 
+    // *********************************
+    // Helpers
+    // *********************************
+
     protected Object getRequestParamFromHeader(ServiceNowParam sysParam, Message message) {
         return message.getHeader(
             sysParam.getHeader(),
@@ -289,6 +293,18 @@ public abstract class AbstractServiceNowProcessor implements Processor {
         return model != null
             ? model
             : ObjectHelper.isEmpty(modelName) ? Map.class : config.getResponseModel(modelName, Map.class);
+    }
+
+    protected String getApiVersion(Message message) {
+        return message.getHeader(ServiceNowConstants.API_VERSION, config.getApiVersion(), String.class);
+    }
+
+    protected String getTableName(Message message) {
+        return message.getHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(), config.getTable(), String.class);
+    }
+
+    protected String getSysID(Message message) {
+        return message.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
     }
 
     // *************************************************************************
