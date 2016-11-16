@@ -134,6 +134,10 @@ public class ElsqlProducer extends DefaultProducer {
                         } else {
                             throw new IllegalArgumentException("Invalid outputType=" + outputType);
                         }
+                    } else {
+                        // if we are here, there isResultSet is false. This can happen only if we are doing an update operation or there is no result.
+                        // we can simply add the updateCount in this case.
+                        exchange.getOut().setHeader(SqlConstants.SQL_UPDATE_COUNT, ps.getUpdateCount());
                     }
                 } finally {
                     closeResultSet(rs);

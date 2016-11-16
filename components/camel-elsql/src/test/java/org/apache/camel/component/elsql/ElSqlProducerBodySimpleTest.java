@@ -17,6 +17,7 @@
 package org.apache.camel.component.elsql;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -105,6 +106,21 @@ public class ElSqlProducerBodySimpleTest extends CamelTestSupport {
 
         assertEquals("Camel", row.get("PROJECT"));
     }
+    
+    @Test
+    public void testUpdateHeader() throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).header(SqlConstants.SQL_UPDATE_COUNT).isEqualTo(1);
+        
+        Map<String, Object> headers = new HashMap<>();       
+        headers.put("id", "3");
+        headers.put("lic", "GNU");
+
+        template.sendBodyAndHeaders("direct:update", "", headers);
+
+        mock.assertIsSatisfied();
+    }
 
     @After
     public void tearDown() throws Exception {
@@ -123,6 +139,10 @@ public class ElSqlProducerBodySimpleTest extends CamelTestSupport {
 
                 from("direct:parameters")
                         .to("elsql:projectById:elsql/projects.elsql?dataSource=#dataSource")
+                        .to("mock:result");
+                
+                from("direct:update")
+                        .to("elsql:updateLicense:elsql/projects.elsql?dataSource=#dataSource")
                         .to("mock:result");
             }
         };

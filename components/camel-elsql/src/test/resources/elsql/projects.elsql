@@ -16,3 +16,7 @@
   SELECT *
   FROM projects
   WHERE id = :id
+@NAME(updateLicense)
+  UPDATE projects
+  SET license = :lic
+  WHERE id = :id
