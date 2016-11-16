@@ -90,8 +90,8 @@ public abstract class AbstractServiceNowProcessor implements Processor {
                 }
 
                 // Sanitize parts
-                String uri = StringHelper.between(parts[0], "<", ">");
-                String rel = StringHelper.removeQuotes(StringHelper.after(parts[1], "="));
+                String uri = ObjectHelper.between(parts[0], "<", ">");
+                String rel = StringHelper.removeQuotes(ObjectHelper.after(parts[1], "="));
 
                 Map<String, Object> query = URISupport.parseQuery(uri);
                 Object offset = query.get(ServiceNowParams.SYSPARM_OFFSET.getId());
