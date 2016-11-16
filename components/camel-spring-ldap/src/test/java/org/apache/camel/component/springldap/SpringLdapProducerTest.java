@@ -16,12 +16,6 @@
  */
 package org.apache.camel.component.springldap;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +38,12 @@ import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapOperations;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.ldap.query.LdapQuery;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class SpringLdapProducerTest extends CamelTestSupport {
 
@@ -82,17 +82,17 @@ public class SpringLdapProducerTest extends CamelTestSupport {
 
         processBody(exchange, in, body);
     }
-    
+
     @Test
-    public void testNoDN_FunctionDrivenOperation() throws Exception {
+    public void testNoDNForFunctionDrivenOperation() throws Exception {
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage();
 
         Map<String, Object> body = new HashMap<String, Object>();
         body.put(SpringLdapProducer.FUNCTION, Mockito.mock(LdapOperationsFunction.class));
-        
+
         when(ldapEndpoint.getOperation()).thenReturn(LdapOperation.FUNCTION_DRIVEN);
-        
+
         processBody(exchange, in, body);
     }
 
