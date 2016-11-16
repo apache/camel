@@ -51,6 +51,8 @@ public class ServiceNowConfiguration implements Cloneable {
     private String oauthTokenUrl;
     @UriParam(label = "security")
     private String apiUrl;
+    @UriParam(label = "advanced")
+    private String apiVersion;
     @UriParam
     private String resource;
     @UriParam
@@ -118,6 +120,17 @@ public class ServiceNowConfiguration implements Cloneable {
 
     public boolean hasApiUrl() {
         return apiUrl != null;
+    }
+
+    public String getApiVersion() {
+        return apiVersion;
+    }
+
+    /**
+     * The ServiceNow REST API version, default latest
+     */
+    public void setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
     }
 
     /**

@@ -33,6 +33,7 @@ public final class ServiceNowConstants {
     public static final String CONTENT_ENCODING = "CamelServiceNowContentEncoding";
     public static final String CONTENT_META = "CamelServiceNowContentMeta";
     public static final String RESPONSE_META = "CamelServiceNowResponseMeta";
+    public static final String API_VERSION = "CamelServiceNowApiVersion";
 
     public static final String ATTACHMENT_META_HEADER = "X-Attachment-Metadata";
 

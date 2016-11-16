@@ -34,18 +34,18 @@ class FujiServiceNowTableProcessor extends FujiServiceNowProcessor {
     }
 
     @Override
-    protected void doProcess(Exchange exchange, Class<?> requestModel, Class<?> responseModel, String action, String tableName, String sysId) throws Exception {
+    protected void doProcess(Exchange exchange, Class<?> requestModel, Class<?> responseModel, String apiVersion, String action, String tableName, String sysId) throws Exception {
         Response response;
         if (ObjectHelper.equal(ServiceNowConstants.ACTION_RETRIEVE, action, true)) {
-            response = retrieveRecord(exchange.getIn(), requestModel, responseModel, tableName, sysId);
+            response = retrieveRecord(exchange.getIn(), requestModel, responseModel, apiVersion, tableName, sysId);
         } else if (ObjectHelper.equal(ServiceNowConstants.ACTION_CREATE, action, true)) {
-            response = createRecord(exchange.getIn(), requestModel, responseModel, tableName);
+            response = createRecord(exchange.getIn(), requestModel, responseModel, apiVersion, tableName);
         } else if (ObjectHelper.equal(ServiceNowConstants.ACTION_MODIFY, action, true)) {
-            response = modifyRecord(exchange.getIn(), requestModel, responseModel, tableName, sysId);
+            response = modifyRecord(exchange.getIn(), requestModel, responseModel, apiVersion, tableName, sysId);
         } else if (ObjectHelper.equal(ServiceNowConstants.ACTION_DELETE, action, true)) {
-            response = deleteRecord(exchange.getIn(), requestModel, responseModel, tableName, sysId);
+            response = deleteRecord(exchange.getIn(), requestModel, responseModel, apiVersion, tableName, sysId);
         } else if (ObjectHelper.equal(ServiceNowConstants.ACTION_UPDATE, action, true)) {
-            response = updateRecord(exchange.getIn(), requestModel, responseModel, tableName, sysId);
+            response = updateRecord(exchange.getIn(), requestModel, responseModel, apiVersion, tableName, sysId);
         } else {
             throw new IllegalArgumentException("Unknown action " + action);
         }
@@ -58,11 +58,12 @@ class FujiServiceNowTableProcessor extends FujiServiceNowProcessor {
      * https://instance.service-now.com/api/now/table/{tableName}
      * https://instance.service-now.com/api/now/table/{tableName}/{sys_id}
      */
-    private Response retrieveRecord(Message in, Class<?> requestModel, Class<?> responseModel, String tableName, String sysId) throws Exception {
+    private Response retrieveRecord(Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName, String sysId) throws Exception {
         return ObjectHelper.isEmpty(sysId)
             ? client.reset()
                 .types(MediaType.APPLICATION_JSON_TYPE)
                 .path("now")
+                .path(apiVersion)
                 .path("table")
                 .path(tableName)
                 .query(ServiceNowParams.SYSPARM_QUERY, in)
@@ -75,6 +76,7 @@ class FujiServiceNowTableProcessor extends FujiServiceNowProcessor {
             : client.reset()
                 .types(MediaType.APPLICATION_JSON_TYPE)
                 .path("now")
+                .path(apiVersion)
                 .path("table")
                 .path(tableName)
                 .path(sysId)
@@ -89,11 +91,12 @@ class FujiServiceNowTableProcessor extends FujiServiceNowProcessor {
      * POST
      * https://instance.service-now.com/api/now/table/{tableName}
      */
-    private Response createRecord(Message in, Class<?> requestModel, Class<?> responseModel, String tableName) throws Exception {
+    private Response createRecord(Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName) throws Exception {
         validateBody(in, requestModel);
         return client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("now")
+            .path(apiVersion)
             .path("table")
             .path(tableName)
             .query(ServiceNowParams.SYSPARM_DISPLAY_VALUE, in)
@@ -109,11 +112,12 @@ class FujiServiceNowTableProcessor extends FujiServiceNowProcessor {
      * PUT
      * https://instance.service-now.com/api/now/table/{tableName}/{sys_id}
      */
-    private Response modifyRecord(Message in, Class<?> requestModel, Class<?> responseModel, String tableName, String sysId) throws Exception {
+    private Response modifyRecord(Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName, String sysId) throws Exception {
         validateBody(in, requestModel);
         return client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("now")
+            .path(apiVersion)
             .path("table")
             .path(tableName)
             .path(ObjectHelper.notNull(sysId, "sysId"))
@@ -130,10 +134,11 @@ class FujiServiceNowTableProcessor extends FujiServiceNowProcessor {
      * DELETE
      * https://instance.service-now.com/api/now/table/{tableName}/{sys_id}
      */
-    private Response deleteRecord(Message in, Class<?> requestModel, Class<?> responseModel, String tableName, String sysId) throws Exception {
+    private Response deleteRecord(Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName, String sysId) throws Exception {
         return client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("now")
+            .path(apiVersion)
             .path("table")
             .path(tableName)
             .path(ObjectHelper.notNull(sysId, "sysId"))
@@ -144,11 +149,12 @@ class FujiServiceNowTableProcessor extends FujiServiceNowProcessor {
      * PATCH
      * http://instance.service-now.com/api/now/table/{tableName}/{sys_id}
      */
-    private Response updateRecord(Message in, Class<?> requestModel, Class<?> responseModel, String tableName, String sysId) throws Exception {
+    private Response updateRecord(Message in, Class<?> requestModel, Class<?> responseModel, String apiVersion, String tableName, String sysId) throws Exception {
         validateBody(in, requestModel);
         return client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("now")
+            .path(apiVersion)
             .path("table")
             .path(tableName)
             .path(ObjectHelper.notNull(sysId, "sysId"))
