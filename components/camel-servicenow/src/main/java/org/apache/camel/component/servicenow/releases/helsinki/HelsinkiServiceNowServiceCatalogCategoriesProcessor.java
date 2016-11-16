@@ -49,7 +49,7 @@ class HelsinkiServiceNowServiceCatalogCategoriesProcessor extends AbstractServic
      */
     private void retrieveCategory(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final Class<?> model = getModel(in);
+        final Class<?> responseModel = getResponseModel(in);
         final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
 
         Response response = client.reset()
@@ -61,6 +61,6 @@ class HelsinkiServiceNowServiceCatalogCategoriesProcessor extends AbstractServic
             .query(ServiceNowParams.SYSPARM_VIEW, in)
             .invoke(HttpMethod.GET);
 
-        setBodyAndHeaders(in, model, response);
+        setBodyAndHeaders(in, responseModel, response);
     }
 }

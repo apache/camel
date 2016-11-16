@@ -22,13 +22,14 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
 
 @UriParams
-public class ServiceNowConfiguration {
+public class ServiceNowConfiguration implements Cloneable {
 
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .configure(
@@ -90,8 +91,10 @@ public class ServiceNowConfiguration {
     private String displayValue = "false";
     @UriParam
     private Boolean inputDisplayValue = false;
-    @UriParam(prefix = "model.", multiValue = true, javaType = "java.lang.String")
-    private Map<String, Class<?>> models;
+    @UriParam(prefix = "request-model.", multiValue = true, javaType = "java.lang.String")
+    private Map<String, Class<?>> requestModels;
+    @UriParam(prefix = "response-model.", multiValue = true, javaType = "java.lang.String")
+    private Map<String, Class<?>> responseModels;
     @UriParam(label = "advanced")
     private ObjectMapper mapper = MAPPER;
     @UriParam(defaultValue = "HELSINKI", enums = "FUJI,GENEVA,HELSINKI")
@@ -414,37 +417,8 @@ public class ServiceNowConfiguration {
         this.inputDisplayValue = inputDisplayValue;
     }
 
-    public Map<String, Class<?>> getModels() {
-        return models;
-    }
-
-    /**
-     * Defines the default model to use for a table
-     */
-    public void setModels(Map<String, Class<?>> models) {
-        this.models = models;
-    }
-
-    public void addModel(String name, Class<?> type) {
-        if (this.models == null) {
-            this.models = new HashMap<>();
-        }
-
-        this.models.put(name, type);
-    }
-
-    public Class<?> getModel(String name) {
-        return getModel(name, null);
-    }
-
-    public Class<?> getModel(String name, Class<?> defaultType) {
-        Class<?> model = defaultType;
-
-        if (this.models != null && this.models.containsKey(name)) {
-            model = this.models.get(name);
-        }
-
-        return model;
+    public Map<String, Class<?>> getRequestModels() {
+        return requestModels;
     }
 
     /**
@@ -484,5 +458,107 @@ public class ServiceNowConfiguration {
      */
     public void setTopLevelOnly(Boolean topLevelOnly) {
         this.topLevelOnly = topLevelOnly;
+    }
+
+    // *************************************************
+    //
+    // *************************************************
+
+    public void setModels(Map<String, Class<?>> models) {
+        setRequestModels(models);
+        setResponseModels(models);
+    }
+
+    public void addModel(String name, Class<?> type) {
+        addRequestModel(name, type);
+        addResponseModel(name, type);
+    }
+
+    // *************************************************
+    // Request model
+    // *************************************************
+
+    /**
+     * Defines the request model
+     */
+    public void setRequestModels(Map<String, Class<?>> models) {
+        if (this.requestModels == null) {
+            this.requestModels = new HashMap<>();
+        }
+
+        this.requestModels.clear();
+        this.requestModels.putAll(models);
+    }
+
+    public void addRequestModel(String name, Class<?> type) {
+        if (this.requestModels == null) {
+            this.requestModels = new HashMap<>();
+        }
+
+        this.requestModels.put(name, type);
+    }
+
+    public Class<?> getRequestModel(String name) {
+        return getRequestModel(name, null);
+    }
+
+    public Class<?> getRequestModel(String name, Class<?> defaultType) {
+        Class<?> model = defaultType;
+
+        if (this.requestModels != null && this.requestModels.containsKey(name)) {
+            model = this.requestModels.get(name);
+        }
+
+        return model;
+    }
+
+    // *************************************************
+    // Response model
+    // *************************************************
+
+    /**
+     * Defines the response model
+     */
+    public void setResponseModels(Map<String, Class<?>> models) {
+        if (this.responseModels == null) {
+            this.responseModels = new HashMap<>();
+        }
+
+        this.responseModels.putAll(models);
+    }
+
+    public void addResponseModel(String name, Class<?> type) {
+        if (this.responseModels == null) {
+            this.responseModels = new HashMap<>();
+        }
+
+        this.responseModels.clear();
+        this.responseModels.put(name, type);
+    }
+
+    public Class<?> getResponseModel(String name) {
+        return getResponseModel(name, null);
+    }
+
+    public Class<?> getResponseModel(String name, Class<?> defaultType) {
+        Class<?> model = defaultType;
+
+        if (this.responseModels != null && this.responseModels.containsKey(name)) {
+            model = this.responseModels.get(name);
+        }
+
+        return model;
+    }
+
+    // *************************************************
+    //
+    // *************************************************
+
+    public ServiceNowConfiguration copy() {
+        try {
+            return (ServiceNowConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }

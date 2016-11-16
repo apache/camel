@@ -34,22 +34,23 @@ public abstract class FujiServiceNowProcessor extends AbstractServiceNowProcesso
     public void process(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final String tableName = in.getHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(), config.getTable(), String.class);
-        final Class<?> model = getModel(in, tableName);
+        final Class<?> requestModel = getRequestModel(in, tableName);
+        final Class<?> responseModel = getResponseModel(in, tableName);
         final String action = in.getHeader(ServiceNowConstants.ACTION, String.class);
         final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
 
         doProcess(
             exchange,
-            ObjectHelper.notNull(model, "model"),
+            ObjectHelper.notNull(requestModel, "requestModel"),
+            ObjectHelper.notNull(responseModel, "responseModel"),
             ObjectHelper.notNull(action, "action"),
-            ObjectHelper.notNull(tableName, "tableName"),
-            sysId);
+            ObjectHelper.notNull(tableName, "tableName"), sysId);
     }
 
     protected abstract void doProcess(
         Exchange exchange,
-        Class<?> model,
-        String action,
+        Class<?> requestModel,
+        Class<?> responseModel, String action,
         String tableName,
         String sysId) throws Exception;
 }

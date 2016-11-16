@@ -58,7 +58,7 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
      */
     private void retrieveCarts(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final Class<?> model = getModel(in);
+        final Class<?> responseModel = getResponseModel(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
@@ -67,7 +67,7 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
             .path("cart")
             .invoke(HttpMethod.GET);
 
-        setBodyAndHeaders(in, model, response);
+        setBodyAndHeaders(in, responseModel, response);
     }
 
     /*
@@ -81,7 +81,7 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
      */
     private void retrieveDeliveryAddress(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final Class<?> model = getModel(in);
+        final Class<?> responseModel = getResponseModel(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
@@ -92,7 +92,7 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
             .path(getMandatoryRequestParamFromHeader(ServiceNowParams.PARAM_USER_ID, in))
             .invoke(HttpMethod.GET);
 
-        setBodyAndHeaders(in, model, response);
+        setBodyAndHeaders(in, responseModel, response);
     }
 
     /*
@@ -106,7 +106,7 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
      */
     private void updateCart(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final Class<?> model = getModel(in);
+        final Class<?> responseModel = getResponseModel(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
@@ -116,7 +116,7 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
             .path(getMandatoryRequestParamFromHeader(ServiceNowParams.PARAM_CART_ITEM_ID, in))
             .invoke(HttpMethod.POST, in.getMandatoryBody());
 
-        setBodyAndHeaders(in, model, response);
+        setBodyAndHeaders(in, responseModel, response);
     }
 
     /*
@@ -131,7 +131,7 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
      */
     private void deleteCart(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final Class<?> model = getModel(in);
+        final Class<?> responseModel = getResponseModel(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
@@ -142,7 +142,7 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
             .path("empty")
             .invoke(HttpMethod.DELETE);
 
-        setBodyAndHeaders(in, model, response);
+        setBodyAndHeaders(in, responseModel, response);
     }
 
     /*
@@ -160,7 +160,7 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
      */
     private void retrieveCheckoutCart(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final Class<?> model = getModel(in);
+        final Class<?> responseModel = getResponseModel(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
@@ -170,7 +170,7 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
             .path("checkout")
             .invoke(HttpMethod.POST);
 
-        setBodyAndHeaders(in, model, response);
+        setBodyAndHeaders(in, responseModel, response);
     }
 
     /*
@@ -185,7 +185,7 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
      */
     private void checkoutCart(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final Class<?> model = getModel(in);
+        final Class<?> responseModel = getResponseModel(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
@@ -195,6 +195,6 @@ class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowP
             .path("submit_order")
             .invoke(HttpMethod.POST);
 
-        setBodyAndHeaders(in, model, response);
+        setBodyAndHeaders(in, responseModel, response);
     }
 }

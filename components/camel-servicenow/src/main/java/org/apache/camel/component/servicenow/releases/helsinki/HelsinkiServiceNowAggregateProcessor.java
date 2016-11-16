@@ -49,7 +49,7 @@ class HelsinkiServiceNowAggregateProcessor extends AbstractServiceNowProcessor {
     private void retrieveStats(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final String tableName = in.getHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(), config.getTable(), String.class);
-        final Class<?> model = getModel(in, tableName);
+        final Class<?> responseModel = getResponseModel(in, tableName);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
@@ -69,6 +69,6 @@ class HelsinkiServiceNowAggregateProcessor extends AbstractServiceNowProcessor {
             .query(ServiceNowParams.SYSPARM_DISPLAY_VALUE, in)
             .invoke(HttpMethod.GET);
 
-        setBodyAndHeaders(in, model, response);
+        setBodyAndHeaders(in, responseModel, response);
     }
 }

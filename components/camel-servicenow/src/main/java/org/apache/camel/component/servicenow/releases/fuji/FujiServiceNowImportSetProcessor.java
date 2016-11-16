@@ -34,17 +34,17 @@ class FujiServiceNowImportSetProcessor extends FujiServiceNowProcessor {
     }
 
     @Override
-    protected void doProcess(Exchange exchange, Class<?> model, String action, String tableName, String sysId) throws Exception {
+    protected void doProcess(Exchange exchange, Class<?> requestModel, Class<?> responseModel, String action, String tableName, String sysId) throws Exception {
         Response response;
         if (ObjectHelper.equal(ServiceNowConstants.ACTION_RETRIEVE, action, true)) {
             response = retrieveRecord(exchange.getIn(), tableName, sysId);
         } else if (ObjectHelper.equal(ServiceNowConstants.ACTION_CREATE, action, true)) {
-            response = createRecord(exchange.getIn(), model, tableName);
+            response = createRecord(exchange.getIn(), requestModel, responseModel, tableName);
         } else {
             throw new IllegalArgumentException("Unknown action " + action);
         }
 
-        setBodyAndHeaders(exchange.getIn(), model, response);
+        setBodyAndHeaders(exchange.getIn(), responseModel, response);
     }
 
     /*
@@ -65,8 +65,8 @@ class FujiServiceNowImportSetProcessor extends FujiServiceNowProcessor {
      * POST
      * https://instance.service-now.com/api/now/import/{tableName}
      */
-    private Response createRecord(Message in, Class<?> model, String tableName) throws Exception {
-        validateBody(in, model);
+    private Response createRecord(Message in, Class<?> requestModel, Class<?> responseModell, String tableName) throws Exception {
+        validateBody(in, requestModel);
         return client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("now")
