@@ -36,7 +36,7 @@ import org.apache.camel.spi.Metadata;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
 
-    @XmlAttribute(required = true)
+    @XmlAttribute
     private String location;
     @XmlAttribute
     private String encoding;
@@ -54,12 +54,16 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
     private String propertySuffix;
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean fallbackToUnaugmentedProperty;
+    @XmlAttribute @Metadata(defaultValue = "true")
+    private Boolean defaultFallbackEnabled;
     @XmlAttribute @Metadata(defaultValue = "{{")
     private String prefixToken;
     @XmlAttribute @Metadata(defaultValue = "}}")
     private String suffixToken;
     @XmlElement(name = "propertiesFunction")
     private List<CamelPropertyPlaceholderFunctionDefinition> functions;
+    @XmlElement(name = "propertiesLocation")
+    private List<CamelPropertyPlaceholderLocationDefinition> locations;
 
     public String getLocation() {
         return location;
@@ -154,6 +158,17 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
         this.fallbackToUnaugmentedProperty = fallbackToUnaugmentedProperty;
     }
 
+    public Boolean getDefaultFallbackEnabled() {
+        return defaultFallbackEnabled;
+    }
+
+    /**
+     * If false, the component does not attempt to find a default for the key by looking after the colon separator.
+     */
+    public void setDefaultFallbackEnabled(Boolean defaultFallbackEnabled) {
+        this.defaultFallbackEnabled = defaultFallbackEnabled;
+    }
+
     public Boolean isIgnoreMissingLocation() {
         return ignoreMissingLocation;
     }
@@ -198,5 +213,16 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
      */
     public void setFunctions(List<CamelPropertyPlaceholderFunctionDefinition> functions) {
         this.functions = functions;
+    }
+
+    public List<CamelPropertyPlaceholderLocationDefinition> getLocations() {
+        return locations;
+    }
+
+    /**
+     * List of property locations to use.
+     */
+    public void setLocations(List<CamelPropertyPlaceholderLocationDefinition> locations) {
+        this.locations = locations;
     }
 }

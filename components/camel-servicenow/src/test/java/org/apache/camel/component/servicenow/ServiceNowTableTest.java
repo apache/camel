@@ -38,8 +38,8 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
             new KVBuilder()
                 .put(ServiceNowConstants.RESOURCE, "table")
                 .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                .put(ServiceNowConstants.SYSPARM_LIMIT, "10")
-                .put(ServiceNowConstants.TABLE, "incident")
+                .put(ServiceNowParams.SYSPARM_LIMIT, 10)
+                .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
                 .build()
         );
 
@@ -50,6 +50,9 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
 
         assertNotNull(items);
         assertTrue(items.size() <= 10);
+        assertNotNull(exchange.getIn().getHeader(ServiceNowConstants.OFFSET_FIRST));
+        assertNotNull(exchange.getIn().getHeader(ServiceNowConstants.OFFSET_NEXT));
+        assertNotNull(exchange.getIn().getHeader(ServiceNowConstants.OFFSET_LAST));
     }
 
     @Test
@@ -62,7 +65,7 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
             null,
             new KVBuilder()
                 .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                .put(ServiceNowConstants.SYSPARM_LIMIT, "10")
+                .put(ServiceNowParams.SYSPARM_LIMIT, 10)
                 .build()
         );
 
@@ -103,7 +106,7 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
                 new KVBuilder()
                     .put(ServiceNowConstants.RESOURCE, "table")
                     .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
-                    .put(ServiceNowConstants.TABLE, "incident")
+                    .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
                     .build()
             );
 
@@ -114,9 +117,9 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
             number = incident.getNumber();
 
             LOGGER.info("****************************************************");
-            LOGGER.info("* Incident created");
-            LOGGER.info("*  sysid  = {}", sysId);
-            LOGGER.info("*  number = {}", number);
+            LOGGER.info(" Incident created");
+            LOGGER.info("  sysid  = {}", sysId);
+            LOGGER.info("  number = {}", number);
             LOGGER.info("****************************************************");
         }
 
@@ -125,6 +128,8 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
         // ************************
 
         {
+            LOGGER.info("Search the record {}", sysId);
+
             mock.reset();
             mock.expectedMessageCount(1);
 
@@ -134,8 +139,8 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
                 new KVBuilder()
                     .put(ServiceNowConstants.RESOURCE, "table")
                     .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                    .put(ServiceNowConstants.TABLE, "incident")
-                    .put(ServiceNowConstants.SYSPARM_QUERY, "number=" + number)
+                    .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                    .put(ServiceNowParams.SYSPARM_QUERY, "number=" + number)
                     .build()
             );
 
@@ -152,6 +157,8 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
         // ************************
 
         {
+            LOGGER.info("Update the record {}", sysId);
+
             mock.reset();
             mock.expectedMessageCount(1);
 
@@ -167,8 +174,8 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
                 new KVBuilder()
                     .put(ServiceNowConstants.RESOURCE, "table")
                     .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_MODIFY)
-                    .put(ServiceNowConstants.TABLE, "incident")
-                    .put(ServiceNowConstants.SYSPARM_ID, sysId)
+                    .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                    .put(ServiceNowParams.PARAM_SYS_ID, sysId)
                     .build()
             );
 
@@ -186,6 +193,8 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
         // ************************
 
         {
+            LOGGER.info("Retrieve the record {}", sysId);
+
             mock.reset();
             mock.expectedMessageCount(1);
 
@@ -195,8 +204,8 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
                 new KVBuilder()
                     .put(ServiceNowConstants.RESOURCE, "table")
                     .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                    .put(ServiceNowConstants.TABLE, "incident")
-                    .put(ServiceNowConstants.SYSPARM_QUERY, "number=" + number)
+                    .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                    .put(ServiceNowParams.SYSPARM_QUERY, "number=" + number)
                     .build()
             );
 
@@ -216,6 +225,8 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
         // ************************
 
         {
+            LOGGER.info("Search the record {}", sysId);
+
             mock.reset();
             mock.expectedMessageCount(1);
 
@@ -225,8 +236,8 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
                 new KVBuilder()
                     .put(ServiceNowConstants.RESOURCE, "table")
                     .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                    .put(ServiceNowConstants.TABLE, "incident")
-                    .put(ServiceNowConstants.SYSPARM_ID, sysId)
+                    .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                    .put(ServiceNowParams.PARAM_SYS_ID, sysId)
                     .build()
             );
 
@@ -244,6 +255,8 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
         // ************************
 
         {
+            LOGGER.info("Delete the record {}", sysId);
+
             mock.reset();
             mock.expectedMessageCount(1);
 
@@ -253,8 +266,8 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
                 new KVBuilder()
                     .put(ServiceNowConstants.RESOURCE, "table")
                     .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_DELETE)
-                    .put(ServiceNowConstants.TABLE, "incident")
-                    .put(ServiceNowConstants.SYSPARM_ID, sysId)
+                    .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                    .put(ServiceNowParams.PARAM_SYS_ID, sysId)
                     .build()
             );
 
@@ -262,10 +275,12 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
         }
 
         // ************************
-        // Retrieve it via query, should fail
+        // Retrieve by id, should fail
         // ************************
 
         {
+            LOGGER.info("Find the record {}, should fail", sysId);
+
             try {
                 template().sendBodyAndHeaders(
                     "direct:servicenow",
@@ -273,12 +288,12 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
                     new KVBuilder()
                         .put(ServiceNowConstants.RESOURCE, "table")
                         .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                        .put(ServiceNowConstants.SYSPARM_QUERY, "number=" + number)
-                        .put(ServiceNowConstants.TABLE, "incident")
+                        .put(ServiceNowParams.PARAM_SYS_ID, sysId)
+                        .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
                         .build()
                 );
 
-                fail("Record +" + number + " should have been deleted");
+                fail("Record " + number + " should have been deleted");
             } catch (CamelExecutionException e) {
                 assertTrue(e.getCause() instanceof ServiceNowException);
                 // we are good

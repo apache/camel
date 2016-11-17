@@ -20,4 +20,6 @@ public interface SjmsConstants {
 
     String JMS_MESSAGE_TYPE = "JmsMessageType";
 
+    String JMS_SESSION = "CamelJMSSession";
+
 }

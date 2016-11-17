@@ -35,6 +35,7 @@ import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.TypeConverterExists;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
@@ -312,21 +313,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
             // replace existing resolver with us
             configurer.setResolver(pc.getPropertiesResolver());
             configurer.setParser(pc.getPropertiesParser());
-            String ref = "ref:" + id;
             // use the bridge to handle the resolve and parsing
             pc.setPropertiesResolver(configurer);
             pc.setPropertiesParser(configurer);
+
             // and update locations to have our as ref first
-            String[] locations = pc.getLocations();
-            String[] updatedLocations;
-            if (locations != null && locations.length > 0) {
-                updatedLocations = new String[locations.length + 1];
-                updatedLocations[0] = ref;
-                System.arraycopy(locations, 0, updatedLocations, 1, locations.length);
-            } else {
-                updatedLocations = new String[]{ref};
-            }
-            pc.setLocations(updatedLocations);
+            List<PropertiesLocation> locations = new ArrayList<>(pc.getLocations());
+            locations.add(0, new PropertiesLocation("ref", id));
+
+            pc.setLocations(locations);
         } else if (beans.size() > 1) {
             LOG.warn("Cannot bridge Camel and Spring property placeholders, as exact only 1 bean of type BridgePropertyPlaceholderConfigurer"
                     + " must be defined, was {} beans defined.", beans.size());

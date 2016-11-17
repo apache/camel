@@ -67,7 +67,7 @@ The SCP component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The SCP component supports 21 endpoint options which are listed below:
+The SCP component supports 22 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -89,6 +89,7 @@ The SCP component supports 21 endpoint options which are listed below:
 | timeout | advanced | 30000 | int | Sets the data timeout for waiting for reply Used only by FTPClient
 | knownHostsFile | security |  | String | Sets the known_hosts file so that the jsch endpoint can do host key verification.
 | password | security |  | String | Password to use for login
+| preferredAuthentications | security |  | String | Set a comma separated list of authentications that will be used in order of preference. Possible authentication methods are defined by JCraft JSCH. Some examples include: gssapi-with-micpublickeykeyboard-interactivepassword If not specified the JSCH and/or system defaults will be used.
 | privateKeyFile | security |  | String | Set the private key file to that the SFTP endpoint can do private key verification.
 | privateKeyFilePassphrase | security |  | String | Set the private key file passphrase to that the SFTP endpoint can do private key verification.
 | username | security |  | String | Username to use for login

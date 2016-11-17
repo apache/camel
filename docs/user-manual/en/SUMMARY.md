@@ -34,6 +34,7 @@
     * [Exchange](exchange.adoc)
     * [Exchange Pattern](exchange-pattern.adoc)
     * [Expression](expression.adoc)
+    * [HTTP Session Handling](http-session.adoc)
     * [Injector](injector.adoc)
     * [Intercept](intercept.adoc)
     * [Inversion Of Control With Smart Defaults](inversion-of-control-with-smart-defaults.adoc)
@@ -73,12 +74,28 @@
 -->
 
 * [Enterprise Integration Patterns](enterprise-integration-patterns.adoc)
-    * [Correlation Identifier](correlation-identifier.adoc)
-    * [Event Message](event-message.adoc)
-    * [Message](message.adoc)
-    * [Message Channel](message-channel.adoc)
-    * [Request Reply](request-reply.adoc)
-    * [Return Address](return-address.adoc)
+    * Messaging Systems
+        * [Message Channel](message-channel.adoc)
+        * [Message](message.adoc)
+        * [Message Router](message-router.adoc)
+        * [Message Translator](message-translator.adoc)
+        * [Message Endpoint](message-endpoint.adoc)
+        * [Pipes and Filter](pipes-and-filters.adoc)
+    * Messaging Channels
+        * [Point to Point Channel](point-to-point-channel.adoc)
+        * [Publish Subscribe Channel](publish-subscribe-channel.adoc)
+        * [Dead Letter Channel](dead-letter-channel.adoc)
+        * [Guaranteed Delivery](guaranteed-delivery.adoc)
+        * [Message Bus](message-bus.adoc)
+    * Message Construction
+        * [Correlation Identifier](correlation-identifier.adoc)
+        * [Event Message](event-message.adoc)
+        * [Return Address](return-address.adoc)
+        * [Request Reply](request-reply.adoc)
+    * Message Routing
+        * [Content Based Router](content-based-router.adoc)
+        * [Message Filter](message-filter.adoc)
+        * [Dynamic Router](dynamic-router.adoc)
 
 * Community
     * FAQ
@@ -151,6 +168,7 @@
 	* [AWS SimpleDB](aws-sdb-component.adoc)
 	* [Bean Validator](bean-validator-component.adoc)
 	* [Beanstalk](beanstalk-component.adoc)
+	* [Bonita](bonita-component.adoc)
 	* [Box](box-component.adoc)
 	* [Braintree](braintree-component.adoc)
 	* [Camel Context](context-component.adoc)
@@ -170,6 +188,7 @@
 	* [DNS](dns-component.adoc)
 	* [Docker](docker-component.adoc)
 	* [Dozer](dozer-component.adoc)
+	* [Drill](drill-component.adoc)
 	* [Dropbox](dropbox-component.adoc)
 	* [EHCache](cache-component.adoc)
 	* [Ehcache](ehcache-component.adoc)
@@ -191,6 +210,7 @@
 	* [Google Calendar](google-calendar-component.adoc)
 	* [Google Drive](google-drive-component.adoc)
 	* [Google Mail](google-mail-component.adoc)
+	* [Google Pubsub](google-pubsub-component.adoc)
 	* [Gora](gora-component.adoc)
 	* [Grape](grape-component.adoc)
 	* [Guava EventBus](guava-eventbus-component.adoc)

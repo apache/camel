@@ -1,0 +1,77 @@
+[[Drill-DrillComponent]]
+Drill Component
+~~~~~~~~~~~~~~
+
+*Available as of Camel 2.18*
+
+The *drill:* component gives you the ability to querying to https://drill.apache.org/[Apache Drill Cluster]
+
+Drill is an Apache open-source SQL query engine for Big Data exploration. Drill is designed from the ground up to support high-performance analysis on the semi-structured and rapidly evolving data coming from modern Big Data applications, while still providing the familiarity and ecosystem of ANSI SQL, the industry-standard query language
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-drill</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+[[Drill-URIformat]]
+URI format
+^^^^^^^^^^
+
+[source,java]
+--------------------------------
+drill://host[?options]
+--------------------------------
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+[[Drill-Producer]]
+Drill Producer 
+^^^^^^^^^^^^^
+
+The producer execute query using *CamelDrillQuery* header and put results into body.
+
+[[Drill-Options]]
+Options
+^^^^^^^
+
+// component options: START
+The Drill component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The Drill component supports 6 endpoint options which are listed below:
+
+{% raw %}
+[width="100%",cols="2,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| host | producer |  | String | *Required* ZooKeeper host name or IP address. Use local instead of a host name or IP address to connect to the local Drillbit
+| clusterId | producer |  | String | Cluster ID https://drill.apache.org/docs/using-the-jdbc-driver/determining-the-cluster-id
+| directory | producer |  | String | Drill directory in ZooKeeper
+| mode | producer | ZK | DrillConnectionMode | Connection mode: zk: Zookeeper drillbit: Drillbit direct connection https://drill.apache.org/docs/using-the-jdbc-driver/
+| port | producer |  | Integer | ZooKeeper port number
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+|=======================================================================
+{% endraw %}
+// endpoint options: END
+
+[[Drill-SeeAlso]]
+See Also
+^^^^^^^^
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]
+

@@ -16,4 +16,6 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.dataformat.rss.springboot.RssDataFormatAutoConfiguration
+org.apache.camel.dataformat.rss.springboot.RssDataFormatAutoConfiguration,\
+org.apache.camel.component.rss.springboot.RssComponentAutoConfiguration
+

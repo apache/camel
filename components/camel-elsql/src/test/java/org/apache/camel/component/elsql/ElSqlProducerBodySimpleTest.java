@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.elsql;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.sql.SqlConstants;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
@@ -68,6 +71,57 @@ public class ElSqlProducerBodySimpleTest extends CamelTestSupport {
         assertEquals("Linux", row.get("PROJECT"));
     }
 
+    @Test
+    public void testBodyParameter() throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(List.class);
+        mock.message(0).header(SqlConstants.SQL_ROW_COUNT).isEqualTo(1);
+
+        template.sendBody("direct:parameters", Collections.singletonMap("id", 1));
+
+        mock.assertIsSatisfied();
+
+        List<?> received = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
+
+        Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
+
+        assertEquals("Camel", row.get("PROJECT"));
+    }
+
+    @Test
+    public void testHeadersParameter() throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(List.class);
+        mock.message(0).header(SqlConstants.SQL_ROW_COUNT).isEqualTo(1);
+
+        template.sendBodyAndHeader("direct:parameters", "", "id", 1);
+
+        mock.assertIsSatisfied();
+
+        List<?> received = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
+
+        Map<?, ?> row = assertIsInstanceOf(Map.class, received.get(0));
+
+        assertEquals("Camel", row.get("PROJECT"));
+    }
+    
+    @Test
+    public void testUpdateHeader() throws InterruptedException {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.message(0).header(SqlConstants.SQL_UPDATE_COUNT).isEqualTo(1);
+        
+        Map<String, Object> headers = new HashMap<>();       
+        headers.put("id", "3");
+        headers.put("lic", "GNU");
+
+        template.sendBodyAndHeaders("direct:update", "", headers);
+
+        mock.assertIsSatisfied();
+    }
+
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -81,6 +135,14 @@ public class ElSqlProducerBodySimpleTest extends CamelTestSupport {
             public void configure() {
                 from("direct:simple")
                         .to("elsql:projectsByIdBody:elsql/projects.elsql?dataSource=#dataSource")
+                        .to("mock:result");
+
+                from("direct:parameters")
+                        .to("elsql:projectById:elsql/projects.elsql?dataSource=#dataSource")
+                        .to("mock:result");
+                
+                from("direct:update")
+                        .to("elsql:updateLicense:elsql/projects.elsql?dataSource=#dataSource")
                         .to("mock:result");
             }
         };

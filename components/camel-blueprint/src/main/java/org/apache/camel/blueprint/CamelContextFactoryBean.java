@@ -270,14 +270,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
             // no locations has been set, so its a default component
             if (pc.getLocations() == null) {
-                StringBuilder sb = new StringBuilder();
                 String[] ids = parser.lookupPropertyPlaceholderIds();
-                for (String id : ids) {
-                    sb.append("blueprint:").append(id).append(",");
+                for (int i = 0; i < ids.length; i++) {
+                    if (!ids[i].startsWith( "blueprint:")) {
+                        ids[i] = "blueprint:" + ids[i];
+                    }
                 }
-                if (sb.length() > 0) {
+                if (ids.length > 0) {
                     // location supports multiple separated by comma
-                    pc.setLocation(sb.toString());
+                    pc.setLocations(ids);
                 }
             }
 

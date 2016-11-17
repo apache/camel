@@ -16,4 +16,5 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.servlet.springboot.ServletComponentAutoConfiguration
+org.apache.camel.component.servlet.springboot.ServletComponentAutoConfiguration,\
+org.apache.camel.component.servlet.springboot.ServletMappingAutoConfiguration

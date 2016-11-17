@@ -44,13 +44,13 @@ public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendar
         return GoogleCalendarApiName.fromValue(apiNameStr);
     }
 
-    public Calendar getClient() {
+    public Calendar getClient(GoogleCalendarConfiguration config) {
         if (client == null) {
-            client = getClientFactory().makeClient(configuration.getClientId(),
-                    configuration.getClientSecret(), configuration.getScopes(),
-                    configuration.getApplicationName(), configuration.getRefreshToken(),
-                    configuration.getAccessToken(), configuration.getEmailAddress(),
-                    configuration.getP12FileName(), configuration.getUser());
+            client = getClientFactory().makeClient(config.getClientId(),
+                    config.getClientSecret(), config.getScopes(),
+                    config.getApplicationName(), config.getRefreshToken(),
+                    config.getAccessToken(), config.getEmailAddress(),
+                    config.getP12FileName(), config.getUser());
         }
         return client;
     }
@@ -64,6 +64,9 @@ public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendar
 
     @Override
     public GoogleCalendarConfiguration getConfiguration() {
+        if (configuration == null) {
+            configuration = new GoogleCalendarConfiguration();
+        }
         return super.getConfiguration();
     }
 

@@ -45,6 +45,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IOHelper;
 import org.apache.cxf.attachment.AttachmentImpl;
 import org.apache.cxf.binding.Binding;
+import org.apache.cxf.binding.soap.SoapBindingConstants;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.helpers.CastUtils;
@@ -183,6 +184,23 @@ public class DefaultCxfBindingTest extends Assert {
         Attachment att = attachments.iterator().next();
         assertEquals("att-1", att.getId());
         assertEquals("value 1", att.getHeader("attachment-header"));
+    }
+
+    @Test
+    public void testPopulateCxfSoapHeaderRequestFromExchange() {
+        DefaultCxfBinding cxfBinding = new DefaultCxfBinding();
+        cxfBinding.setHeaderFilterStrategy(new DefaultHeaderFilterStrategy());
+        Exchange exchange = new DefaultExchange(context);
+        org.apache.cxf.message.Exchange cxfExchange = new org.apache.cxf.message.ExchangeImpl();
+        Map<String, Object> requestContext = new HashMap<>();
+
+        String expectedSoapActionHeader = "urn:hello:world";
+        exchange.getIn().setHeader("soapAction", expectedSoapActionHeader);
+
+        cxfBinding.populateCxfRequestFromExchange(cxfExchange, exchange, requestContext);
+
+        String actualSoapActionHeader = (String)requestContext.get(SoapBindingConstants.SOAP_ACTION);
+        assertEquals(expectedSoapActionHeader, actualSoapActionHeader);
     }
     
     @Test

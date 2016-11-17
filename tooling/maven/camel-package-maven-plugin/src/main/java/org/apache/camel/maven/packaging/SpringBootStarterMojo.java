@@ -18,6 +18,7 @@ package org.apache.camel.maven.packaging;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -63,7 +64,6 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactCollector;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.artifact.resolver.filter.ScopeArtifactFilter;
-import org.apache.maven.model.Repository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -91,6 +91,11 @@ public class SpringBootStarterMojo extends AbstractMojo {
 
     private static final boolean IGNORE_TEST_MODULES = true;
 
+    private static final String GENERATED_SECTION_START = "START OF GENERATED CODE";
+    private static final String GENERATED_SECTION_START_COMMENT = "<!--" + GENERATED_SECTION_START + "-->";
+    private static final String GENERATED_SECTION_END = "END OF GENERATED CODE";
+    private static final String GENERATED_SECTION_END_COMMENT = "<!--" + GENERATED_SECTION_END + "-->";
+
     /**
      * The maven project.
      *
@@ -100,6 +105,12 @@ public class SpringBootStarterMojo extends AbstractMojo {
      */
     protected MavenProject project;
 
+    /**
+     * Allows using the existing pom.xml file if present.
+     *
+     * @parameter property="reuseExistingPom" default-value="true"
+     */
+    protected boolean reuseExistingPom;
 
     /**
      * The project directory
@@ -224,29 +235,33 @@ public class SpringBootStarterMojo extends AbstractMojo {
             XPath xpath = XPathFactory.newInstance().newXPath();
             Node dependencies = ((NodeList) xpath.compile("/project/dependencies").evaluate(pom, XPathConstants.NODESET)).item(0);
 
-            for (String dep : deps) {
-                Element dependency = pom.createElement("dependency");
-                dependencies.appendChild(dependency);
+            if (deps.size() > 0) {
+                dependencies.appendChild(pom.createComment(GENERATED_SECTION_START));
+                for (String dep : deps) {
+                    Element dependency = pom.createElement("dependency");
+                    dependencies.appendChild(dependency);
 
-                String[] comps = dep.split("\\:");
-                String groupIdStr = comps[0];
-                String artifactIdStr = comps[1];
-                String versionStr = comps.length > 2 ? comps[2] : null;
+                    String[] comps = dep.split("\\:");
+                    String groupIdStr = comps[0];
+                    String artifactIdStr = comps[1];
+                    String versionStr = comps.length > 2 ? comps[2] : null;
 
-                Element groupId = pom.createElement("groupId");
-                groupId.setTextContent(groupIdStr);
-                dependency.appendChild(groupId);
+                    Element groupId = pom.createElement("groupId");
+                    groupId.setTextContent(groupIdStr);
+                    dependency.appendChild(groupId);
 
-                Element artifactId = pom.createElement("artifactId");
-                artifactId.setTextContent(artifactIdStr);
-                dependency.appendChild(artifactId);
+                    Element artifactId = pom.createElement("artifactId");
+                    artifactId.setTextContent(artifactIdStr);
+                    dependency.appendChild(artifactId);
 
-                if (versionStr != null) {
-                    Element version = pom.createElement("version");
-                    version.setTextContent(versionStr);
-                    dependency.appendChild(version);
+                    if (versionStr != null) {
+                        Element version = pom.createElement("version");
+                        version.setTextContent(versionStr);
+                        dependency.appendChild(version);
+                    }
+
                 }
-
+                dependencies.appendChild(pom.createComment(GENERATED_SECTION_END));
             }
 
         }
@@ -263,7 +278,9 @@ public class SpringBootStarterMojo extends AbstractMojo {
             XPath xpath = XPathFactory.newInstance().newXPath();
             Node repositories = (Node) xpath.compile("/project/repositories").evaluate(originalPom, XPathConstants.NODE);
             if (repositories != null) {
+                pom.getDocumentElement().appendChild(pom.createComment(GENERATED_SECTION_START));
                 pom.getDocumentElement().appendChild(pom.importNode(repositories, true));
+                pom.getDocumentElement().appendChild(pom.createComment(GENERATED_SECTION_END));
             }
         } else {
             getLog().warn("Cannot access the project pom file to retrieve repositories");
@@ -343,7 +360,9 @@ public class SpringBootStarterMojo extends AbstractMojo {
 
             Element exclusions = pom.createElement("exclusions");
 
+            dependency.appendChild(pom.createComment(GENERATED_SECTION_START));
             dependency.appendChild(exclusions);
+            dependency.appendChild(pom.createComment(GENERATED_SECTION_END));
 
             for (String lib : libsToRemove) {
                 String groupIdStr = lib.split("\\:")[0];
@@ -420,6 +439,63 @@ public class SpringBootStarterMojo extends AbstractMojo {
     }
 
     private Document createBasePom() throws Exception {
+        Document pom = null;
+        if (reuseExistingPom) {
+            pom = createBasePomFromExisting();
+        }
+        if (pom == null) {
+            pom = createBasePomFromScratch();
+        }
+
+        return pom;
+    }
+
+    private Document createBasePomFromExisting() {
+        try {
+            File pomFile = new File(starterDir(), "pom.xml");
+            if (pomFile.exists()) {
+                try (InputStream in = new FileInputStream(pomFile)) {
+                    String content = IOUtils.toString(in, "UTF-8");
+                    boolean editablePom = content.contains(GENERATED_SECTION_START_COMMENT);
+                    if (editablePom) {
+                        content = removeGeneratedSections(content, 10);
+                        DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+
+                        Document pom;
+                        try (InputStream contentIn = new ByteArrayInputStream(content.getBytes("UTF-8"))) {
+                            pom = builder.parse(contentIn);
+                        }
+
+                        getLog().info("Reusing the existing pom.xml for the starter");
+                        return pom;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            getLog().warn("Cannot use the existing pom.xml file", e);
+        }
+
+        return null;
+    }
+
+    private String removeGeneratedSections(String pom, int maxNumber) {
+        if (maxNumber > 0 && pom.contains(GENERATED_SECTION_START_COMMENT)) {
+            int start = pom.indexOf(GENERATED_SECTION_START_COMMENT);
+            int end = pom.indexOf(GENERATED_SECTION_END_COMMENT);
+            if (end <= start) {
+                throw new IllegalArgumentException("Generated sections inside the xml document are not well-formed");
+            }
+
+            String newPom = pom.substring(0, start) + pom.substring(end + GENERATED_SECTION_END_COMMENT.length());
+            return removeGeneratedSections(newPom, maxNumber - 1);
+        }
+
+        return pom;
+    }
+
+    private Document createBasePomFromScratch() throws Exception {
+        getLog().info("Creating a new pom.xml for the starter from scratch");
+
         Template pomTemplate = getTemplate("spring-boot-starter-template-pom.template");
         Map<String, String> props = new HashMap<>();
         props.put("version", project.getVersion());

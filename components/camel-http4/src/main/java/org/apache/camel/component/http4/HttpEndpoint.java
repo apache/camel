@@ -27,6 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.http.common.HttpCommonEndpoint;
 import org.apache.camel.http.common.HttpHelper;
+import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.IOHelper;
@@ -269,9 +270,17 @@ public class HttpEndpoint extends HttpCommonEndpoint {
      * By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store.
      * Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie
      * shouldn't be stored as we are just bridging (eg acting as a proxy).
+     * If a cookieHandler is set then the cookie store is also forced to be a noop cookie store as cookie handling is
+     * then performed by the cookieHandler.
      */
     public void setCookieStore(CookieStore cookieStore) {
         this.cookieStore = cookieStore;
+    }
+
+    public void setCookieHandler(CookieHandler cookieHandler) {
+        super.setCookieHandler(cookieHandler);
+        // if we set an explicit cookie handler 
+        this.cookieStore = new NoopCookieStore();
     }
 
     public boolean isAuthenticationPreemptive() {

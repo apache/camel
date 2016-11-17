@@ -328,13 +328,18 @@ public class BeanInfo {
         }
 
         Set<Method> overrides = new HashSet<Method>();
-        Set<Method> bridges = new HashSet<Method>();
 
         // do not remove duplicates form class from the Java itself as they have some "duplicates" we need
         boolean javaClass = clazz.getName().startsWith("java.") || clazz.getName().startsWith("javax.");
         if (!javaClass) {
             // it may have duplicate methods already, even from declared or from interfaces + declared
             for (Method source : methods) {
+
+                // skip bridge methods in duplicate checks (as the bridge method is inserted by the compiler due to type erasure)
+                if (source.isBridge()) {
+                    continue;
+                }
+
                 for (Method target : methods) {
                     // skip ourselves
                     if (ObjectHelper.isOverridingMethod(source, target, true)) {
@@ -354,10 +359,15 @@ public class BeanInfo {
         if (Modifier.isPublic(clazz.getModifiers())) {
             // add additional interface methods
             List<Method> extraMethods = getInterfaceMethods(clazz);
-            for (Method target : extraMethods) {
-                for (Method source : methods) {
+            for (Method source : extraMethods) {
+                for (Method target : methods) {
                     if (ObjectHelper.isOverridingMethod(source, target, false)) {
-                        overrides.add(target);
+                        overrides.add(source);
+                    }
+                }
+                for (Method target : methodMap.keySet()) {
+                    if (ObjectHelper.isOverridingMethod(source, target, false)) {
+                        overrides.add(source);
                     }
                 }
             }

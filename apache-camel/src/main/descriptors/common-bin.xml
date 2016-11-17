@@ -42,6 +42,7 @@
         <include>org.apache.camel:camel-beanstalk</include>
         <include>org.apache.camel:camel-bindy</include>
         <include>org.apache.camel:camel-blueprint</include>
+        <include>org.apache.camel:camel-bonita</include>
         <include>org.apache.camel:camel-boon</include>
         <include>org.apache.camel:camel-box</include>
         <include>org.apache.camel:camel-braintree</include>
@@ -67,7 +68,8 @@
         <include>org.apache.camel:camel-dns</include>
         <include>org.apache.camel:camel-docker</include>
         <include>org.apache.camel:camel-dozer</include>
-        <include>org.apache.camel:camel-dropbox</include>
+        <include>org.apache.camel:camel-drill</include>
+	    <include>org.apache.camel:camel-dropbox</include>
         <include>org.apache.camel:camel-eclipse</include>
         <include>org.apache.camel:camel-ehcache</include>
         <include>org.apache.camel:camel-ejb</include>
@@ -89,6 +91,7 @@
         <include>org.apache.camel:camel-google-calendar</include>
         <include>org.apache.camel:camel-google-drive</include>
         <include>org.apache.camel:camel-google-mail</include>
+        <include>org.apache.camel:camel-google-pubsub</include>
         <include>org.apache.camel:camel-gora</include>
         <include>org.apache.camel:camel-groovy</include>
         <include>org.apache.camel:camel-guava-eventbus</include>
@@ -232,7 +235,7 @@
         <include>org.apache.camel:camel-stringtemplate</include>
         <include>org.apache.camel:camel-syslog</include>
         <include>org.apache.camel:camel-swagger</include>
-        <include>org.apache.camel:camel-swagger-java</include> 
+        <include>org.apache.camel:camel-swagger-java</include>
         <include>org.apache.camel:camel-tagsoup</include>
         <include>org.apache.camel:camel-tarfile</include>
         <include>org.apache.camel:camel-telegram</include>
@@ -291,6 +294,7 @@
         <include>org.apache.camel:camel-beanstalk-starter</include>
         <include>org.apache.camel:camel-bean-validator-starter</include>
         <include>org.apache.camel:camel-bindy-starter</include>
+        <include>org.apache.camel:camel-bonita-starter</include>
         <include>org.apache.camel:camel-boon-starter</include>
         <include>org.apache.camel:camel-box-starter</include>
         <include>org.apache.camel:camel-braintree-starter</include>
@@ -316,6 +320,7 @@
         <include>org.apache.camel:camel-dns-starter</include>
         <include>org.apache.camel:camel-docker-starter</include>
         <include>org.apache.camel:camel-dozer-starter</include>
+        <include>org.apache.camel:camel-drill-starter</include>
         <include>org.apache.camel:camel-dropbox-starter</include>
         <include>org.apache.camel:camel-eclipse-starter</include>
         <include>org.apache.camel:camel-ehcache-starter</include>
@@ -336,6 +341,7 @@
         <include>org.apache.camel:camel-google-calendar-starter</include>
         <include>org.apache.camel:camel-google-drive-starter</include>
         <include>org.apache.camel:camel-google-mail-starter</include>
+        <include>org.apache.camel:camel-google-pubsub-starter</include>
         <include>org.apache.camel:camel-gora-starter</include>
         <include>org.apache.camel:camel-grape-starter</include>
         <include>org.apache.camel:camel-groovy-starter</include>

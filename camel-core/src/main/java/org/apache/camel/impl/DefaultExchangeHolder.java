@@ -373,7 +373,7 @@ public class DefaultExchangeHolder implements Serializable {
      * We only want to store exchange property values of primitive and String related types, and
      * as well any caught exception that Camel routing engine has caught.
      * <p/>
-     * This default implementation will allow the same values as {@link #getValidHeaderValue(String, Object)}
+     * This default implementation will allow the same values as {@link #getValidHeaderValue(String, Object, boolean)}
      * and in addition any value of type {@link Throwable}.
      *
      * @param propertyName   the property name

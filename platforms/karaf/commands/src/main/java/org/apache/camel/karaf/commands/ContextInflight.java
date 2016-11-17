@@ -17,14 +17,22 @@
 package org.apache.camel.karaf.commands;
 
 import org.apache.camel.commands.ContextInflightCommand;
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
-import org.apache.felix.gogo.commands.Option;
+import org.apache.camel.karaf.commands.completers.CamelContextCompleter;
+import org.apache.camel.karaf.commands.completers.RouteCompleter;
+import org.apache.camel.karaf.commands.internal.CamelControllerImpl;
+import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 @Command(scope = "camel", name = "context-inflight", description = "List inflight exchanges.")
-public class ContextInflight extends CamelCommandSupport {
+@Service
+public class ContextInflight extends CamelControllerImpl implements Action {
 
     @Argument(index = 0, name = "name", description = "The Camel context name", required = true, multiValued = false)
+    @Completion(CamelContextCompleter.class)
     String name;
 
     @Option(name = "--limit", aliases = "-l", description = "To limit the number of exchanges shown",
@@ -32,15 +40,16 @@ public class ContextInflight extends CamelCommandSupport {
     int limit = -1;
 
     @Argument(index = 1, name = "route", description = "The Camel route ID", required = false, multiValued = false)
+    @Completion(RouteCompleter.class)
     String route;
 
     @Option(name = "--sort", aliases = "-s", description = "true = sort by longest duration, false = sort by exchange id",
             required = false, multiValued = false, valueToShowInHelp = "false")
     boolean sortByLongestDuration;
 
-    protected Object doExecute() throws Exception {
+    public Object execute() throws Exception {
         ContextInflightCommand command = new ContextInflightCommand(name, route, limit, sortByLongestDuration);
-        return command.execute(camelController, System.out, System.err);
+        return command.execute(this, System.out, System.err);
     }
 
 }

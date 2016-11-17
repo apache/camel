@@ -35,9 +35,9 @@ public class AuthenticationRequestFilter implements ClientRequestFilter {
     private final OAuthToken token;
     private final String authString;
 
-    public AuthenticationRequestFilter(ServiceNowConfiguration configuration, OAuthToken token) throws IOException {
+    public AuthenticationRequestFilter(ServiceNowConfiguration configuration) throws IOException {
         this.configuration = configuration;
-        this.token = token;
+        this.token = configuration.hasOAuthAuthentication() ? new OAuthToken(this.configuration) : null;
         this.authString = buildBasicAuthString(configuration);
     }
 

@@ -258,6 +258,15 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body[0][code]}", 4321);
     }
     
+    public void testOGNLBodyEmptyList() throws Exception {
+        Map<String, List<String>> map = new HashMap<String, List<String>>();
+        map.put("list", new ArrayList<String>());
+         
+        exchange.getIn().setBody(map);
+
+        assertExpression("${in.body?.get('list')[0].toString}", null);
+    }
+    
     public void testOGNLBodyExpression() throws Exception {
         exchange.getIn().setBody("hello world");
         assertPredicate("${body} == 'hello world'", true);
@@ -1455,6 +1464,14 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body[0]}", 65);
         assertExpression("${body[1]}", 66);
         assertExpression("${body[2]}", 67);
+        assertExpression("${body.length}", 3);
+    }
+
+    public void testIntArrayLength() throws Exception {
+        exchange.getIn().setBody(new int[]{1, 20, 300});
+        assertExpression("${body[0]}", 1);
+        assertExpression("${body[1]}", 20);
+        assertExpression("${body[2]}", 300);
         assertExpression("${body.length}", 3);
     }
 

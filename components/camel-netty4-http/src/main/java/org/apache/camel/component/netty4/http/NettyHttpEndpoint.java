@@ -29,6 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.netty4.NettyConfiguration;
 import org.apache.camel.component.netty4.NettyEndpoint;
+import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -67,6 +68,8 @@ public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, H
     private NettyHttpSecurityConfiguration securityConfiguration;
     @UriParam(label = "consumer,security", prefix = "securityConfiguration.", multiValue = true)
     private Map<String, Object> securityOptions; // to include in component docs
+    @UriParam(label = "producer")
+    private CookieHandler cookieHandler;
 
     public NettyHttpEndpoint(String endpointUri, NettyHttpComponent component, NettyConfiguration configuration) {
         super(endpointUri, component, configuration);
@@ -225,6 +228,17 @@ public class NettyHttpEndpoint extends NettyEndpoint implements AsyncEndpoint, H
      */
     public void setSecurityOptions(Map<String, Object> securityOptions) {
         this.securityOptions = securityOptions;
+    }
+
+    public CookieHandler getCookieHandler() {
+        return cookieHandler;
+    }
+
+    /**
+     * Configure a cookie handler to maintain a HTTP session
+     */
+    public void setCookieHandler(CookieHandler cookieHandler) {
+        this.cookieHandler = cookieHandler;
     }
 
     @Override

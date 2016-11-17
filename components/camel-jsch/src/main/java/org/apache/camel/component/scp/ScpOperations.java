@@ -245,6 +245,11 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 session.setConfig("StrictHostKeyChecking", config.getStrictHostKeyChecking());
             }
 
+            if (ObjectHelper.isNotEmpty(config.getPreferredAuthentications())) {
+                LOG.trace("Using preferredAuthentications: {}", config.getPreferredAuthentications());
+                session.setConfig("PreferredAuthentications", config.getPreferredAuthentications());
+            }
+
             int timeout = config.getConnectTimeout();
             LOG.debug("Connecting to {} with {} timeout...", config.remoteServerInformation(),
                 timeout > 0 ? (Integer.toString(timeout) + " ms") : "no");

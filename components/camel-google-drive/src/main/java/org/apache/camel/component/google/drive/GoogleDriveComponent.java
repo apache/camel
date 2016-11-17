@@ -44,10 +44,11 @@ public class GoogleDriveComponent extends AbstractApiComponent<GoogleDriveApiNam
         return GoogleDriveApiName.fromValue(apiNameStr);
     }
 
-    public Drive getClient() {
+    public Drive getClient(GoogleDriveConfiguration googleDriveConfiguration) {
         if (client == null) {
-            client = getClientFactory().makeClient(configuration.getClientId(), configuration.getClientSecret(), configuration.getScopes(), 
-                configuration.getApplicationName(), configuration.getRefreshToken(), configuration.getAccessToken());
+            client = getClientFactory().makeClient(googleDriveConfiguration.getClientId(), googleDriveConfiguration.getClientSecret(), 
+                    googleDriveConfiguration.getScopes(), googleDriveConfiguration.getApplicationName(), 
+                    googleDriveConfiguration.getRefreshToken(), googleDriveConfiguration.getAccessToken());
         }
         return client;
     }
@@ -69,6 +70,9 @@ public class GoogleDriveComponent extends AbstractApiComponent<GoogleDriveApiNam
 
     @Override
     public GoogleDriveConfiguration getConfiguration() {
+        if (configuration == null) {
+            configuration = new GoogleDriveConfiguration();
+        }
         return super.getConfiguration();
     }
 

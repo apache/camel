@@ -42,7 +42,7 @@ public final class URISupport {
     }
 
     /**
-     * Normalizes the URI so unsafe charachters is encoded
+     * Normalizes the URI so unsafe characters is encoded
      *
      * @param uri the input uri
      * @return as URI instance
@@ -300,7 +300,6 @@ public final class URISupport {
      * @return a query string with <tt>key1=value&key2=value2&...</tt>, or an empty string if there is no options.
      * @throws URISyntaxException is thrown if uri has invalid syntax.
      */
-    @SuppressWarnings("unchecked")
     public static String createQueryString(Map<String, String> options, String ampersand, boolean encode) throws URISyntaxException {
         try {
             if (options.size() > 0) {

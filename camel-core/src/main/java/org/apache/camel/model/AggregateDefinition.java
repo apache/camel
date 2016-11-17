@@ -32,7 +32,9 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.AggregationStrategyClause;
 import org.apache.camel.builder.ExpressionClause;
+import org.apache.camel.builder.PredicateClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.aggregate.AggregateController;
@@ -780,6 +782,28 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    public AggregationStrategyClause<AggregateDefinition> aggregationStrategy() {
+        AggregationStrategyClause<AggregateDefinition> clause = new AggregationStrategyClause<>(this);
+        setAggregationStrategy(clause);
+        return clause;
+    }
+
+    /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    public AggregationStrategyClause<AggregateDefinition> strategy() {
+        return aggregationStrategy();
+    }
+
+    /**
      * Sets the aggregate strategy to use
      *
      * @param aggregationStrategy  the aggregate strategy to use
@@ -869,6 +893,28 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         checkNoCompletedPredicate();
         setCompletionPredicate(new ExpressionSubElementDefinition(predicate));
         return this;
+    }
+
+    /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    public PredicateClause<AggregateDefinition> completionPredicate() {
+        PredicateClause<AggregateDefinition> clause = new PredicateClause<>(this);
+        completionPredicate(clause);
+        return clause;
+    }
+
+    /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    public PredicateClause<AggregateDefinition> completion() {
+        return completionPredicate();
     }
 
     /**

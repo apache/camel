@@ -15,7 +15,7 @@ Metrics Component
 The **metrics:** component allows to collect various metrics directly
 from Camel routes. Supported metric types
 are link:#MetricsComponent-counter[counter], link:#MetricsComponent-histogram[histogram],
-link:#MetricsComponent-meter[meter] and link:#MetricsComponent-timer[timer]. http://metrics.dropwizard.io[Metrics] provides
+link:#MetricsComponent-meter[meter], link:#MetricsComponent-timer[timer] and link:#MetricsComponent-gauge[gauge]. http://metrics.dropwizard.io[Metrics] provides
 simple way to measure behaviour of application. Configurable
 reporting backend is enabling different integration options for
 collecting and visualizing statistics. The component also provides
@@ -41,7 +41,7 @@ URI format
 
 [source]
 ----
-metrics:[ meter | counter | histogram | timer ]:metricname[?options]
+metrics:[ meter | counter | histogram | timer | gauge ]:metricname[?options]
 ----
 
 [[MetricsComponent-options]]
@@ -64,7 +64,7 @@ The Metrics component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The Metrics component supports 8 endpoint options which are listed below:
+The Metrics component supports 9 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -76,6 +76,7 @@ The Metrics component supports 8 endpoint options which are listed below:
 | decrement | producer |  | Long | Decrement value when using counter type
 | increment | producer |  | Long | Increment value when using counter type
 | mark | producer |  | Long | Mark when using meter type
+| subject | producer |  | Object | Subject value when using gauge type
 | value | producer |  | Long | Value value when using histogram type
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
@@ -144,7 +145,7 @@ class MyBean extends RouteBuilder {
 ----
 
 CAUTION: `MetricRegistry` uses internal thread(s) for reporting. There is no
-public API in version `3.0.1` for users to clean up on exit. Thus using
+public API in version DropWizard `3.0.1` for users to clean up on exit. Thus using
 Camel Metrics Component leads to Java classloader leak and my cause
 `OutOfMemoryErrors` in some cases.
 
@@ -154,9 +155,9 @@ Usage
 
 Each metric has type and name. Supported types are
 link:#MetricsComponent-counter[counter],
-link:#MetricsComponent-histogram[histogram], link:#MetricsComponent-meter[meter] and
-link:#MetricsComponent-timer[timer]. Metric name is simple string. If
-metric type is not provided then type meter is used by default.
+link:#MetricsComponent-histogram[histogram], link:#MetricsComponent-meter[meter],
+link:#MetricsComponent-timer[timer] and link:#MetricsComponent-gauge[gauge].
+Metric name is simple string. If metric type is not provided then type meter is used by default.
 
 [[MetricsComponent-Headers]]
 Headers
@@ -440,6 +441,58 @@ component URI.
 from("direct:in")
     .setHeader(MetricsConstants.HEADER_TIMER_ACTION, TimerAction.start)
     .to("metric:timer:simple.timer")
+    .to("direct:out");
+----
+
+[[MetricsComponent-gaugeMetrictypegauge]]
+[[MetricsComponent-gauge]]Metric type gauge
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[source]
+----
+metrics:gauge:metricname[?options]
+----
+
+[[MetricsComponent-Options.4]]
+Options
++++++++
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=====================================================
+|Name |Default |Description
+|subject  |- |Any object to be observed by the gauge
+|=====================================================
+
+If `subject` is not defined it's simply ignored, i.e. the gauge is not registered.
+
+[source,java]
+----
+// update gauge "simple.gauge" by a bean "mySubjectBean"
+from("direct:in")
+    .to("metric:gauge:simple.gauge?subject=#mySubjectBean")
+    .to("direct:out");
+----
+
+[[MetricsComponent-Headers.5]]
+Headers
++++++++
+
+Message headers can be used to override `subject` values specified in Metrics component URI.
+Note: if `CamelMetricsName` header is specified, then new gauge is registered in addition to
+default one specified in a URI.
+
+[width="100%",cols="10%,80%,10%",options="header",]
+|====================================================================
+|Name |Description |Expected type
+|CamelMetricsGaugeSubject  |Override subject value in URI |Object
+|====================================================================
+
+[source,java]
+----
+// update gauge simple.gauge by a String literal "myUpdatedSubject"
+from("direct:in")
+    .setHeader(MetricsConstants.HEADER_GAUGE_SUBJECT, constant("myUpdatedSubject"))
+    .to("metric:counter:simple.gauge?subject=#mySubjectBean")
     .to("direct:out");
 ----
 

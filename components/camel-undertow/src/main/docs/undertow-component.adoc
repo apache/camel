@@ -65,7 +65,7 @@ The Undertow component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Undertow component supports 17 endpoint options which are listed below:
+The Undertow component supports 18 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -78,6 +78,7 @@ The Undertow component supports 17 endpoint options which are listed below:
 | optionsEnabled | consumer | false | boolean | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| cookieHandler | producer |  | CookieHandler | Configure a cookie handler to maintain a HTTP session
 | keepAlive | producer | true | Boolean | Setting to ensure socket is not closed due to inactivity
 | options | producer |  | Map | Sets additional channel options. The options that can be used are defined in org.xnio.Options. To configure from endpoint uri then prefix each option with option. such as option.close-abort=true&option.send-buffer=8192
 | reuseAddresses | producer | true | Boolean | Setting to facilitate socket multiplexing

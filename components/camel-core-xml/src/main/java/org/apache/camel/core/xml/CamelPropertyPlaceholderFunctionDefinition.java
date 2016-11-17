@@ -28,7 +28,6 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "spring,configuration")
 @XmlRootElement(name = "propertiesFunction")
 public class CamelPropertyPlaceholderFunctionDefinition extends IdentifiedType {
-
     @XmlAttribute(required = true)
     private String ref;
 

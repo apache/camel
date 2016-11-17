@@ -19,7 +19,11 @@ package org.apache.camel.component.undertow;
 import java.net.ConnectException;
 
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class UndertowConsumerUnregisterTest extends BaseUndertowTest {
@@ -40,6 +44,40 @@ public class UndertowConsumerUnregisterTest extends BaseUndertowTest {
             // Expected because unregistering all consumers should shut down the Undertow server
             assertTrue(e.getExchange().getException() instanceof ConnectException);
         }
+    }
+
+    @Test
+    public void testUnregisterOneOfUndertowConsumers() throws Exception {
+        MockEndpoint mockFoo = getMockEndpoint("mock:foo");
+        mockFoo.expectedBodiesReceived("test");
+        MockEndpoint mockBar = getMockEndpoint("mock:bar");
+        mockBar.expectedBodiesReceived("test", "test");
+
+        Processor sender = new Processor() {
+            public void process(Exchange exchange) {
+                exchange.getIn().setBody("test");
+            }
+        };
+        Exchange ret = template.request("undertow:http://localhost:{{port}}/foo", sender);
+        Assert.assertEquals(200, ret.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        Assert.assertEquals("test", ret.getOut().getBody(String.class));
+        ret = template.request("undertow:http://localhost:{{port}}/bar", sender);
+        Assert.assertEquals(200, ret.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        Assert.assertEquals("test", ret.getOut().getBody(String.class));
+
+        UndertowComponent component = context.getComponent("undertow", UndertowComponent.class);
+        UndertowConsumer consumerFoo = (UndertowConsumer) context.getRoute("route-foo").getConsumer();
+        component.unregisterConsumer(consumerFoo);
+        
+        ret = template.request("undertow:http://localhost:{{port}}/foo", sender);
+        Assert.assertEquals(404, ret.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        Assert.assertEquals("No matching path found", ret.getOut().getBody(String.class));
+        ret = template.request("undertow:http://localhost:{{port}}/bar", sender);
+        Assert.assertEquals(200, ret.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        Assert.assertEquals("test", ret.getOut().getBody(String.class));
+
+        mockFoo.assertIsSatisfied();
+        mockBar.assertIsSatisfied();
     }
 
     @Override

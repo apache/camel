@@ -16,10 +16,11 @@
  */
 package org.apache.camel.spring.boot;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.support.TypeConverterSupport;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,11 @@ public class SpringTypeConverter extends TypeConverterSupport {
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
         // do not attempt to convert Camel types
         if (type.getCanonicalName().startsWith("org.apache")) {
+            return null;
+        }
+        
+        // do not attempt to convert List -> Map. Ognl expression may use this converter  as a fallback expecting null
+        if (type.isAssignableFrom(Map.class) && (value.getClass().isArray() || value instanceof Collection)) {
             return null;
         }
 

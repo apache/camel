@@ -41,6 +41,7 @@ import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesFunction;
+import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.component.properties.PropertiesResolver;
 import org.apache.camel.management.DefaultManagementAgent;
@@ -567,8 +568,21 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getCamelPropertyPlaceholder() != null) {
             CamelPropertyPlaceholderDefinition def = getCamelPropertyPlaceholder();
 
+            List<PropertiesLocation> locations = new ArrayList<>();
+
+            if (def.getLocation() != null) {
+                ObjectHelper.createIterable(def.getLocation()).forEach(
+                    location -> locations.add(new PropertiesLocation((String) location))
+                );
+            }
+            if (def.getLocations() != null) {
+                def.getLocations().forEach(
+                    definition -> locations.add(definition.toLocation())
+                );
+            }
+
             PropertiesComponent pc = new PropertiesComponent();
-            pc.setLocation(def.getLocation());
+            pc.setLocations(locations);
             pc.setEncoding(def.getEncoding());
 
             if (def.isCache() != null) {
@@ -598,6 +612,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             
             if (def.isFallbackToUnaugmentedProperty() != null) {
                 pc.setFallbackToUnaugmentedProperty(def.isFallbackToUnaugmentedProperty());
+            }
+            if (def.getDefaultFallbackEnabled() != null) {
+                pc.setDefaultFallbackEnabled(def.getDefaultFallbackEnabled());
             }
             
             pc.setPrefixToken(def.getPrefixToken());

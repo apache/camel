@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.properties.springboot;
 
+import java.util.List;
 import java.util.Properties;
+import org.apache.camel.component.properties.PropertiesLocation;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.component.properties.PropertiesResolver;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -32,11 +34,10 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public class PropertiesComponentConfiguration {
 
     /**
-     * A list of locations to load properties. You can use comma to separate
-     * multiple locations. This option will override any default locations and
-     * only use the locations from this option.
+     * A list of locations to load properties. This option will override any
+     * default locations and only use the locations from this option.
      */
-    private String[] locations;
+    private List<PropertiesLocation> locations;
     /**
      * A list of locations to load properties. You can use comma to separate
      * multiple locations. This option will override any default locations and
@@ -79,6 +80,11 @@ public class PropertiesComponentConfiguration {
      */
     private Boolean fallbackToUnaugmentedProperty;
     /**
+     * If false the component does not attempt to find a default for the key by
+     * looking after the colon separator.
+     */
+    private Boolean defaultFallbackEnabled;
+    /**
      * Whether to silently ignore if a location cannot be located such as a
      * properties file not found.
      */
@@ -110,11 +116,11 @@ public class PropertiesComponentConfiguration {
      */
     private Integer systemPropertiesMode;
 
-    public String[] getLocations() {
+    public List<PropertiesLocation> getLocations() {
         return locations;
     }
 
-    public void setLocations(String[] locations) {
+    public void setLocations(List<PropertiesLocation> locations) {
         this.locations = locations;
     }
 
@@ -181,6 +187,14 @@ public class PropertiesComponentConfiguration {
     public void setFallbackToUnaugmentedProperty(
             Boolean fallbackToUnaugmentedProperty) {
         this.fallbackToUnaugmentedProperty = fallbackToUnaugmentedProperty;
+    }
+
+    public Boolean getDefaultFallbackEnabled() {
+        return defaultFallbackEnabled;
+    }
+
+    public void setDefaultFallbackEnabled(Boolean defaultFallbackEnabled) {
+        this.defaultFallbackEnabled = defaultFallbackEnabled;
     }
 
     public Boolean getIgnoreMissingLocation() {
