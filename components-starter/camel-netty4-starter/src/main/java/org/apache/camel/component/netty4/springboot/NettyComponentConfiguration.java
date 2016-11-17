@@ -449,8 +449,9 @@ public class NettyComponentConfiguration {
         private EventLoopGroup bossGroup;
         /**
          * To use a explicit EventLoopGroup as the boss thread pool. For example
-         * to share a thread pool with multiple consumers. By default each
-         * consumer has their own boss pool with 1 core thread.
+         * to share a thread pool with multiple consumers or producers. By
+         * default each consumer or producer has their own worker pool with 2 x
+         * cpu count core threads.
          */
         private EventLoopGroup workerGroup;
         /**

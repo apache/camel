@@ -19,6 +19,7 @@ package org.apache.camel.http.common;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -129,6 +130,8 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     @UriParam(label = "consumer", defaultValue = "false",
             description = "Configure the consumer to work in async mode")
     private boolean async;
+    @UriParam(label = "producer", description = "Configure a cookie handler to maintain a HTTP session")
+    private CookieHandler cookieHandler;
 
     public HttpCommonEndpoint() {
     }
@@ -538,5 +541,16 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
      */
     public void setAsync(boolean async) {
         this.async = async;
+    }
+
+    public CookieHandler getCookieHandler() {
+        return cookieHandler;
+    }
+
+    /**
+     * Configure a cookie handler to maintain a HTTP session
+     */
+    public void setCookieHandler(CookieHandler cookieHandler) {
+        this.cookieHandler = cookieHandler;
     }
 }

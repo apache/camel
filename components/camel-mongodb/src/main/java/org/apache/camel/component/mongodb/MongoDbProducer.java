@@ -315,6 +315,8 @@ public class MongoDbProducer extends DefaultProducer {
                 ret = dbCol.find(new BasicDBObject());
             } else if (fieldFilter == null) {
                 ret = dbCol.find(query);
+            } else if (query != null) {
+                ret = dbCol.find(query).projection(fieldFilter);
             } else {
                 ret = dbCol.find(new BasicDBObject()).projection(fieldFilter);
             }
@@ -407,6 +409,9 @@ public class MongoDbProducer extends DefaultProducer {
                 } else {
                     result = dbCol.updateMany(updateCriteria, objNew, options);
                 }
+                if (result.isModifiedCountAvailable()) {
+                    exchange1.getOut().setHeader(MongoDbConstants.RECORDS_AFFECTED, result.getModifiedCount());
+                }
                 return result;
             } catch (InvalidPayloadException e) {
                 throw new CamelMongoDbException("Invalid payload for update", e);
@@ -421,6 +426,9 @@ public class MongoDbProducer extends DefaultProducer {
                 BasicDBObject removeObj = exchange1.getIn().getMandatoryBody(BasicDBObject.class);
 
                 DeleteResult result = dbCol.deleteMany(removeObj);
+                if (result.wasAcknowledged()) {
+                    exchange1.getOut().setHeader(MongoDbConstants.RECORDS_AFFECTED, result.getDeletedCount());
+                }
                 return result;
             } catch (InvalidPayloadException e) {
                 throw new CamelMongoDbException("Invalid payload for remove", e);
@@ -476,7 +484,7 @@ public class MongoDbProducer extends DefaultProducer {
         return exchange1 -> {
             try {
                 MongoCollection<BasicDBObject> dbCol = calculateCollection(exchange1);
-                String id = exchange1.getIn().getMandatoryBody(String.class);
+                Object id = exchange1.getIn().getMandatoryBody();
                 BasicDBObject o = new BasicDBObject("_id", id);
                 DBObject ret;
 

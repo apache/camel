@@ -27,7 +27,7 @@ public class StompComponent extends UriEndpointComponent {
     /**
      * To use the shared stomp configuration
      */
-    private StompConfiguration configuration;
+    private StompConfiguration configuration = new StompConfiguration();
 
     /**
      * The URI of the Stomp broker to connect to
@@ -69,15 +69,6 @@ public class StompComponent extends UriEndpointComponent {
         return endpoint;
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-
-        if (configuration == null) {
-            configuration = new StompConfiguration();
-        }
-    }
-
     public StompConfiguration getConfiguration() {
         return configuration;
     }
@@ -93,9 +84,6 @@ public class StompComponent extends UriEndpointComponent {
      * The URI of the Stomp broker to connect to
      */
     public void setBrokerURL(String brokerURL) {
-        if (configuration == null) {
-            configuration = new StompConfiguration();
-        }
         configuration.setBrokerURL(brokerURL);
     }
 
@@ -103,9 +91,6 @@ public class StompComponent extends UriEndpointComponent {
      * The username
      */
     public void setLogin(String login) {
-        if (configuration == null) {
-            configuration = new StompConfiguration();
-        }
         configuration.setLogin(login);
     }
 
@@ -113,9 +98,6 @@ public class StompComponent extends UriEndpointComponent {
      * The password
      */
     public void setPasscode(String passcode) {
-        if (configuration == null) {
-            configuration = new StompConfiguration();
-        }
         configuration.setPasscode(passcode);
     }
     
@@ -123,9 +105,6 @@ public class StompComponent extends UriEndpointComponent {
      * The virtual host
      */
     public void setHost(String host) {
-        if (configuration == null) {
-            configuration = new StompConfiguration();
-        }
         configuration.setHost(host);
     }
 }

@@ -1476,7 +1476,7 @@ public class JmsComponentConfiguration {
          * like in the case of InOnly. Like InOnly the producer will not wait
          * for a reply. A consumer with this flag will behave like InOnly. This
          * feature can be used to bridge InOut requests to another queue so that
-         * a route on the other queue will send it´s response directly back to
+         * a route on the other queue will send its response directly back to
          * the original JMSReplyTo.
          */
         private Boolean disableReplyTo;

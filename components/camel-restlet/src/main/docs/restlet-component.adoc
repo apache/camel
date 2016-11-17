@@ -102,7 +102,7 @@ The Restlet component supports 20 options which are listed below.
 
 
 // endpoint options: START
-The Restlet component supports 21 endpoint options which are listed below:
+The Restlet component supports 22 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -119,6 +119,7 @@ The Restlet component supports 21 endpoint options which are listed below:
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | connectTimeout | producer | 30000 | int | The Client will give up connection if the connection is timeout 0 for unlimited wait.
+| cookieHandler | producer |  | CookieHandler | Configure a cookie handler to maintain a HTTP session
 | socketTimeout | producer | 30000 | int | The Client socket receive timeout 0 for unlimited wait.
 | throwExceptionOnFailure | producer | true | boolean | Whether to throw exception on a producer failure. If this option is false then the http status code is set as a message header which can be checked if it has an error value.
 | autoCloseStream | producer (advanced) | false | boolean | Whether to auto close the stream representation as response from calling a REST service using the restlet producer. If the response is streaming and the option streamRepresentation is enabled then you may want to auto close the InputStream from the streaming response to ensure the input stream is closed when the Camel Exchange is done being routed. However if you need to read the stream outside a Camel route you may need to not auto close the stream.

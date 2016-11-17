@@ -34,4 +34,9 @@ class SystemTime implements Time {
             // Ignore
         }
     }
+
+    @Override
+    public long hiResClockMs() {
+        return 0;
+    }
 }

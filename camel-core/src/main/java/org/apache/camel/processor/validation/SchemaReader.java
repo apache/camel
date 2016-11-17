@@ -41,8 +41,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Reads the schema used in the processor {@link ValidatingProcessor}. Contains
- * the method {@link clearCachedSchema()} to force re-reading the schema.
+ * Reads the schema used in the processor {@link ValidatingProcessor}.
+ * A schema re-reading could be forced using {@link org.apache.camel.component.validator.ValidatorEndpoint#clearCachedSchema()}.
  */
 public class SchemaReader {
     

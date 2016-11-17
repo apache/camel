@@ -19,16 +19,22 @@ package org.apache.camel.karaf.commands.catalog.completers;
 import java.util.List;
 import java.util.Map;
 
-import jline.console.completer.StringsCompleter;
-import org.apache.camel.karaf.commands.completers.CamelCompleterSupport;
+import org.apache.camel.karaf.commands.internal.CamelControllerImpl;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
+import org.apache.karaf.shell.api.console.CommandLine;
+import org.apache.karaf.shell.api.console.Completer;
+import org.apache.karaf.shell.api.console.Session;
+import org.apache.karaf.shell.support.completers.StringsCompleter;
 
-public class LanguageListCompleter extends CamelCompleterSupport {
+@Service
+public class LanguageListCompleter extends CamelControllerImpl implements Completer {
 
     @Override
-    public int complete(String buffer, int cursor, List candidates) {
+    public int complete(Session session, CommandLine commandLine, List<String> candidates) {
         try {
             StringsCompleter delegate = new StringsCompleter();
-            List<Map<String, String>> dataFormats = camelController.listLanguagesCatalog(null);
+            List<Map<String, String>> dataFormats = listLanguagesCatalog(null);
+            String buffer = commandLine.getCursorArgument();
             for (Map<String, String> row : dataFormats) {
                 String name = row.get("name");
                 if (name != null) {
@@ -43,7 +49,7 @@ public class LanguageListCompleter extends CamelCompleterSupport {
                     }
                 }
             }
-            return delegate.complete(buffer, cursor, candidates);
+            return delegate.complete(session, commandLine, candidates);
         } catch (Exception e) {
             // nothing to do, no completion
         }

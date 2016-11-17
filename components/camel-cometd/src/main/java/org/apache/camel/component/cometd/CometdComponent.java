@@ -352,7 +352,8 @@ public class CometdComponent extends UriEndpointComponent {
      * a pre-configured {@link SSLContext}.
      */
     private static final class CometdComponentSslContextFactory extends SslContextFactory {
-        @Override
+        // to support jetty 9.2.
+        // TODO: remove this class when we have upgraded to jetty 9.3
         public void checkKeyStore() {
         }
     }

@@ -1050,7 +1050,11 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             // because the factory has already been instantiated
             try {
                 for (String component : components) {
-                    getComponentResolverReference(context, component);
+                    if (camelContext.getComponent(component) == null) {
+                        getComponentResolverReference(context, component);
+                    } else {
+                        LOG.debug("Not creating a service reference for component {} because a component already exists in the Camel Context", component);
+                    }
                 }
                 for (String language : languages) {
                     getLanguageResolverReference(context, language);

@@ -18,6 +18,8 @@ package org.apache.camel.component.cxf;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -49,6 +51,7 @@ import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -59,6 +62,7 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.feature.CXFMessageDataFormatFeature;
 import org.apache.camel.component.cxf.feature.PayLoadDataFormatFeature;
 import org.apache.camel.component.cxf.feature.RAWDataFormatFeature;
+import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -201,6 +205,8 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private String password;
     @UriParam(label = "advanced", prefix = "properties.", multiValue = true)
     private Map<String, Object> properties;
+    @UriParam(label = "producer")
+    private CookieHandler cookieHandler;
 
     public CxfEndpoint() {
         setExchangePattern(ExchangePattern.InOut);
@@ -1066,6 +1072,17 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         }
     }
 
+    public CookieHandler getCookieHandler() {
+        return cookieHandler;
+    }
+
+    /**
+     * Configure a cookie handler to maintain a HTTP session
+     */
+    public void setCookieHandler(CookieHandler cookieHandler) {
+        this.cookieHandler = cookieHandler;
+    }
+
     @Override
     protected void doStart() throws Exception {
         if (headerFilterStrategy == null) {
@@ -1436,5 +1453,21 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
      */
     public void setHostnameVerifier(HostnameVerifier hostnameVerifier) {
         this.hostnameVerifier = hostnameVerifier;
+    }
+
+    /**
+     * get the request uri for a given exchange.
+     */
+    URI getRequestUri(Exchange camelExchange) {
+        String uriString = camelExchange.getIn().getHeader(Exchange.DESTINATION_OVERRIDE_URL, String.class);
+        if (uriString == null) {
+            uriString = getAddress();
+        }
+        try {
+            return new URI(uriString);
+        } catch (URISyntaxException e) {
+            LOG.error("cannot determine request URI", e);
+            return null;
+        }
     }
 }

@@ -142,7 +142,16 @@ public enum FacebookMethodsType {
     GETCOMMENTLIKES_WITH_OPTIONS(ResponseList.class, "getCommentLikes", String.class, "commentId", Reading.class, FacebookConstants.READING_PROPERTY),
     LIKECOMMENT(boolean.class, "likeComment", String.class, "commentId"),
     UNLIKECOMMENT(Boolean.class, "unlikeComment", String.class, "commentId"),
-
+    
+    // ConversationMethods
+    GETCONVERSATIONS_WITH_OPTIONS(InboxResponseList.class, "getConversations", String.class, "pageId", Reading.class, FacebookConstants.READING_PROPERTY),
+    GETCONVERSATIONS_WITH_ID(InboxResponseList.class, "getConversations", String.class, "pageId"),
+    GETCONVERSATIONS_WITH_READING(InboxResponseList.class, "getConversations", Reading.class, FacebookConstants.READING_PROPERTY),
+    GETCONVERSATIONS(InboxResponseList.class, "getConversations"),
+    GETCONVERSATION(InboxResponseList.class, "getConversation", String.class, "conversationId"),
+    GETCONVERSATION_WITH_OPTIONS(InboxResponseList.class, "getConversation", String.class, "conversationId", Reading.class, FacebookConstants.READING_PROPERTY),
+    ANSWERCONVERSATION(String.class, "answerConversation", String.class, "conversationId", String.class, "conversation"),
+    
     // DomainMethods
     GETDOMAIN(Domain.class, "getDomain", String.class, "domainId"),
     GETDOMAINBYNAME(Domain.class, "getDomainByName", String.class, "domainName"),

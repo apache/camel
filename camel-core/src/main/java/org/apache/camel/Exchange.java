@@ -100,6 +100,7 @@ public interface Exchange {
     String CONTENT_ENCODING      = "Content-Encoding";
     String CONTENT_LENGTH        = "Content-Length";
     String CONTENT_TYPE          = "Content-Type";
+    String COOKIE_HANDLER        = "CamelCookieHandler";
     String CORRELATION_ID        = "CamelCorrelationId";
 
     String DATASET_INDEX             = "CamelDataSetIndex";

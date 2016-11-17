@@ -81,7 +81,7 @@ public final class BOMResolver {
             }
 
         } catch (Exception e) {
-            throw new IllegalStateException("Cannot initialize the version resolver");
+            throw new IllegalStateException("Cannot initialize the version resolver", e);
         }
 
     }
@@ -109,9 +109,10 @@ public final class BOMResolver {
         List<Artifact> neededArtifacts = new LinkedList<>();
         neededArtifacts.add(new DefaultArtifact("org.apache.camel:camel:pom:" + camelVersion).setFile(camelRoot("pom.xml")));
         neededArtifacts.add(new DefaultArtifact("org.apache.camel:camel-parent:pom:" + camelVersion).setFile(camelRoot("parent/pom.xml")));
-        neededArtifacts.add(new DefaultArtifact("org.apache.camel:camel-spring-boot-dm:pom:" + camelVersion).setFile(camelRoot("spring-boot-dm/pom.xml")));
-        neededArtifacts.add(new DefaultArtifact("org.apache.camel:camel-spring-boot-dependencies:pom:" + camelVersion).setFile(camelRoot("spring-boot-dm/camel-spring-boot-dependencies/pom.xml")));
-        Artifact camelSpringBootParent = new DefaultArtifact("org.apache.camel:camel-starter-parent:pom:" + camelVersion).setFile(camelRoot("spring-boot-dm/camel-starter-parent/pom.xml"));
+        neededArtifacts.add(new DefaultArtifact("org.apache.camel:spring-boot:pom:" + camelVersion).setFile(camelRoot("platforms/spring-boot/pom.xml")));
+        neededArtifacts.add(new DefaultArtifact("org.apache.camel:camel-spring-boot-dm:pom:" + camelVersion).setFile(camelRoot("platforms/spring-boot/spring-boot-dm/pom.xml")));
+        neededArtifacts.add(new DefaultArtifact("org.apache.camel:camel-spring-boot-dependencies:pom:" + camelVersion).setFile(camelRoot("platforms/spring-boot/spring-boot-dm/camel-spring-boot-dependencies/pom.xml")));
+        Artifact camelSpringBootParent = new DefaultArtifact("org.apache.camel:camel-starter-parent:pom:" + camelVersion).setFile(camelRoot("platforms/spring-boot/spring-boot-dm/camel-starter-parent/pom.xml"));
         neededArtifacts.add(camelSpringBootParent);
 
         RemoteRepository localRepoDist = new RemoteRepository.Builder("org.apache.camel.itest.springboot", "default", new File(LOCAL_REPO).toURI().toString()).build();

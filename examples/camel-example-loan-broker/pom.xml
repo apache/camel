@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>examples</artifactId>
-    <version>2.18.0-SNAPSHOT</version>
+    <version>2.19.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-example-loan-broker</artifactId>
@@ -168,6 +168,7 @@
         <configuration>
           <mainClass>${target.main.class}</mainClass>
           <includePluginDependencies>false</includePluginDependencies>
+          <classpathScope>runtime</classpathScope>
           <systemProperties>
             <property>
               <key>java.util.logging.config.file</key>

@@ -71,7 +71,7 @@ public class IgniteEventsTest extends AbstractIgniteTest {
         List<Integer> eventTypes = receivedEventTypes("mock:test1");
 
         assert_().that(eventTypes).containsAllOf(EventType.EVT_CACHE_STARTED, EventType.EVT_CACHE_ENTRY_CREATED, EventType.EVT_CACHE_OBJECT_PUT, EventType.EVT_CACHE_OBJECT_READ,
-                EventType.EVT_CACHE_OBJECT_REMOVED, EventType.EVT_CACHE_OBJECT_PUT, EventType.EVT_CACHE_OBJECT_EXPIRED, EventType.EVT_CACHE_OBJECT_READ).inOrder();
+                EventType.EVT_CACHE_OBJECT_REMOVED, EventType.EVT_CACHE_OBJECT_PUT, EventType.EVT_CACHE_OBJECT_EXPIRED).inOrder();
 
     }
 

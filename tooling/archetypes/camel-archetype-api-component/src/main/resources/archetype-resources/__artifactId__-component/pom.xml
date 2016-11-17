@@ -43,7 +43,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
-      <version>${camel-version}</version>
     </dependency>
     <dependency>
       <groupId>${groupId}</groupId>
@@ -55,14 +54,12 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>apt</artifactId>
-      <version>${camel-version}</version>
     </dependency>
 
     <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>spi-annotations</artifactId>
-      <version>${camel-version}</version>
       <scope>provided</scope>
     </dependency>
 
@@ -96,7 +93,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
-      <version>${camel-version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -140,7 +136,7 @@
             <Import-Package>
               ${componentPackage}.api;version=${project.version},
               ${componentPackage};version=${project.version},
-              org.apache.camel.*;version=${camel-version}
+              org.apache.camel.*;version=${camelVersion}
             </Import-Package>
             <Private-Package>${outPackage}</Private-Package>
             <Implementation-Title>Apache Camel</Implementation-Title>
@@ -239,7 +235,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-package-maven-plugin</artifactId>
-        <version>${camel-version}</version>
+        <version>${camelVersion}</version>
         <executions>
           <execution>
             <id>prepare</id>
@@ -296,7 +292,7 @@
         <plugin>
           <groupId>org.apache.camel</groupId>
           <artifactId>camel-api-component-maven-plugin</artifactId>
-          <version>${camel-version}</version>
+          <version>${camelVersion}</version>
           <configuration>
             <scheme>${schemeName}</scheme>
             <componentName>${componentName}</componentName>
@@ -314,7 +310,7 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-api-component-maven-plugin</artifactId>
-        <version>${camel-version}</version>
+        <version>${camelVersion}</version>
         <configuration>
           <scheme>${schemeName}</scheme>
           <componentName>${componentName}</componentName>

@@ -39,12 +39,11 @@ public class ChronicleEngineComponent extends UriEndpointComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         final ChronicleEngineConfiguration configuration = new ChronicleEngineConfiguration();
-        configuration.setCamelContext(getCamelContext());
-        configuration.setAddresses(ObjectHelper.before(remaining, "/"));
-        configuration.setPath(ObjectHelper.after(remaining, "/"));
-
         setProperties(configuration, parameters);
 
-        return new ChronicleEngineEndpoint(uri, this, configuration);
+        ChronicleEngineEndpoint answer = new ChronicleEngineEndpoint(uri, this, configuration);
+        answer.setAddresses(ObjectHelper.before(remaining, "/"));
+        answer.setPath(ObjectHelper.after(remaining, "/"));
+        return answer;
     }
 }

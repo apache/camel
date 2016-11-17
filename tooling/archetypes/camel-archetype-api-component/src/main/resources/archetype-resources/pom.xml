@@ -28,10 +28,26 @@
   <url>http://www.myorganization.org</url>
   <description>Parent project for Camel {$name} Component</description>
 
+  <properties>
+    <camelVersion>${camel-version}</camelVersion>
+  </properties>
+
   <modules>
     <module>${artifactId}-component</module>
     <module>${artifactId}-api</module>
   </modules>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-parent</artifactId>
+        <version>${camelVersion}</version>
+        <scope>import</scope>
+        <type>pom</type>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <build>
     <plugins>

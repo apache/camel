@@ -405,6 +405,21 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testEndpointPropertiesJmsWithDotInName() throws Exception {
+        Map<String, String> map = catalog.endpointProperties("jms:browse.me");
+        assertNotNull(map);
+        assertEquals(1, map.size());
+
+        assertEquals("browse.me", map.get("destinationName"));
+
+        map = catalog.endpointProperties("jms:browse.me");
+        assertNotNull(map);
+        assertEquals(1, map.size());
+
+        assertEquals("browse.me", map.get("destinationName"));
+    }
+
+    @Test
     public void testEndpointPropertiesJmsRequired() throws Exception {
         Map<String, String> map = catalog.endpointProperties("jms:foo");
         assertNotNull(map);

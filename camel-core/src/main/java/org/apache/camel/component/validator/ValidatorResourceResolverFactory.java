@@ -28,7 +28,7 @@ import org.apache.camel.CamelContext;
  * 
  * <pre>
  * {@code <camel:recipientList>} 
- * {@code      <camel:simple>}validator:${header.XSD_FILE}?resourceResolverFactory=#resourceResolverFactory{@code</camel:simple>}
+ * {@code      <camel:simple>validator:${header.XSD_FILE}?resourceResolverFactory=#resourceResolverFactory</camel:simple>}
  * {@code </camel:recipientList>}
  * </pre>
  * 

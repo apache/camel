@@ -19,6 +19,7 @@ package org.apache.camel.component.jetty;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.net.CookieStore;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -225,7 +226,7 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
                 }
             }
         }
-        
+
         if (getEndpoint().isConnectionClose()) {
             httpExchange.addRequestHeader("Connection", "close");
         }
@@ -244,6 +245,15 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
         if (LOG.isDebugEnabled()) {
             LOG.debug("Sending HTTP request to: {}", httpExchange.getUrl());
         }
+
+        if (getEndpoint().getCookieHandler() != null) {
+            // this will store the cookie in the cookie store
+            CookieStore cookieStore = getEndpoint().getCookieHandler().getCookieStore(exchange);
+            if (!client.getCookieStore().equals(cookieStore)) {
+                client.setCookieStore(cookieStore);
+            }
+        }
+
         httpExchange.send(client);
     }
 

@@ -20,6 +20,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Map;
+
+import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
@@ -27,9 +31,12 @@ import javax.servlet.http.Part;
 import org.apache.camel.Attachment;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.http.common.DefaultHttpBinding;
+import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.impl.DefaultAttachment;
 import org.eclipse.jetty.util.MultiPartInputStreamParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * To handle attachments with Jetty 9.
@@ -37,6 +44,7 @@ import org.eclipse.jetty.util.MultiPartInputStreamParser;
  * This implementation is needed to deal with attachments when using Jetty 9.
  */
 final class AttachmentHttpBinding extends DefaultHttpBinding {
+    private static final Logger LOG = LoggerFactory.getLogger(AttachmentHttpBinding.class);
 
     AttachmentHttpBinding() {
     }
@@ -61,6 +69,40 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
                 }
             } catch (Exception e) {
                 throw new RuntimeCamelException("Cannot populate attachments", e);
+            }
+        }
+    }
+
+    protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) throws Exception {
+        //we populate the http request parameters without checking the request method
+        Map<String, Object> headers = message.getHeaders();
+        Enumeration<?> names = request.getParameterNames();
+        while (names.hasMoreElements()) {
+            String name = (String)names.nextElement();
+            if (message.getAttachment(name) != null) {
+                DataHandler dh = message.getAttachment(name);
+                Object value = dh;
+                if (dh.getContentType() == null || dh.getContentType().startsWith("text/plain")) {
+                    value = request.getParameter(name);
+                }
+                if (getHeaderFilterStrategy() != null
+                    && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                    HttpHelper.appendHeader(headers, name, value);
+                }
+                continue;
+            }
+
+            // there may be multiple values for the same name
+            String[] values = request.getParameterValues(name);
+            LOG.trace("HTTP parameter {} = {}", name, values);
+
+            if (values != null) {
+                for (String value : values) {
+                    if (getHeaderFilterStrategy() != null
+                        && !getHeaderFilterStrategy().applyFilterToExternalHeaders(name, value, message.getExchange())) {
+                        HttpHelper.appendHeader(headers, name, value);
+                    }
+                }
             }
         }
     }

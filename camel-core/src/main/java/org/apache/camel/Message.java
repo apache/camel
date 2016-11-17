@@ -235,11 +235,23 @@ public interface Message {
 
     /**
      * Copies the contents of the other message into this message
+     * <p/>
+     * If you need to do a copy and then set a new body,
+     * then use {@link #copyFromWithNewBody(Message, Object)} method instead.
      *
      * @param message the other message
+     * @see #copyFromWithNewBody(Message, Object)
      */
     void copyFrom(Message message);
     
+    /**
+     * Copies the contents (except the body) of the other message into this message and uses the provided new body instead
+     *
+     * @param message the other message
+     * @param newBody the new body to use
+     */
+    void copyFromWithNewBody(Message message, Object newBody);
+
     /**
      * Copies the attachments of the other message into this message
      *

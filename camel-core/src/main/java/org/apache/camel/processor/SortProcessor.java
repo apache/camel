@@ -58,8 +58,7 @@ public class SortProcessor<T> extends ServiceSupport implements AsyncProcessor, 
 
             if (exchange.getPattern().isOutCapable()) {
                 Message out = exchange.getOut();
-                out.copyFrom(in);
-                out.setBody(list);
+                out.copyFromWithNewBody(in, list);
             } else {
                 in.setBody(list);
             }

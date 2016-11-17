@@ -14,13 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.servicenow;
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.servicenow.model.Incident;
 import org.junit.Test;
 
 public class ServiceNowTest extends ServiceNowTestSupport {
@@ -35,8 +37,8 @@ public class ServiceNowTest extends ServiceNowTestSupport {
                 new KVBuilder()
                     .put(ServiceNowConstants.RESOURCE, "table")
                     .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                    .put(ServiceNowConstants.SYSPARM_QUERY, "number=" + UUID.randomUUID().toString())
-                    .put(ServiceNowConstants.TABLE, "incident")
+                    .put(ServiceNowParams.SYSPARM_QUERY, "number=" + UUID.randomUUID().toString())
+                    .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
                     .build()
             );
         } catch (CamelExecutionException e) {
@@ -56,8 +58,8 @@ public class ServiceNowTest extends ServiceNowTestSupport {
                 new KVBuilder()
                     .put(ServiceNowConstants.RESOURCE, "table")
                     .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                    .put(ServiceNowConstants.SYSPARM_QUERY, "number=" + UUID.randomUUID().toString())
-                    .put(ServiceNowConstants.TABLE, "notExistingTable")
+                    .put(ServiceNowParams.SYSPARM_QUERY, "number=" + UUID.randomUUID().toString())
+                    .put(ServiceNowParams.PARAM_TABLE_NAME, "notExistingTable")
                     .build()
             );
         } catch (CamelExecutionException e) {
@@ -79,7 +81,7 @@ public class ServiceNowTest extends ServiceNowTestSupport {
                 new KVBuilder()
                     .put(ServiceNowConstants.RESOURCE, "table")
                     .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
-                    .put(ServiceNowConstants.TABLE, "incident")
+                    .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
                     .build()
             );
 
@@ -87,6 +89,71 @@ public class ServiceNowTest extends ServiceNowTestSupport {
         } catch (CamelExecutionException e) {
             assertTrue(e.getCause() instanceof IllegalArgumentException);
         }
+    }
+
+    @Test
+    public void testRequestResponseModels() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:servicenow");
+
+        mock.reset();
+        mock.expectedMessageCount(1);
+
+        Incident incident = new Incident();
+        incident.setDescription("my incident");
+        incident.setShortDescription("An incident");
+        incident.setSeverity(1);
+        incident.setImpact(1);
+
+        template().sendBodyAndHeaders(
+            "direct:servicenow",
+            incident,
+            new KVBuilder()
+                .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_TABLE)
+                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
+                .put(ServiceNowConstants.REQUEST_MODEL, Incident.class)
+                .put(ServiceNowConstants.RESPONSE_MODEL, JsonNode.class)
+                .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                .build()
+        );
+
+        mock.assertIsSatisfied();
+
+        Object body = mock.getExchanges().get(0).getIn().getBody();
+        assertNotNull(body);
+        assertTrue(body instanceof JsonNode);
+    }
+
+    @Test
+    public void testVersionedApiRequest() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:servicenow");
+
+        mock.reset();
+        mock.expectedMessageCount(1);
+
+        Incident incident = new Incident();
+        incident.setDescription("my incident");
+        incident.setShortDescription("An incident");
+        incident.setSeverity(1);
+        incident.setImpact(1);
+
+        template().sendBodyAndHeaders(
+            "direct:servicenow",
+            incident,
+            new KVBuilder()
+                .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_TABLE)
+                .put(ServiceNowConstants.API_VERSION, "v1")
+                .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
+                .put(ServiceNowConstants.REQUEST_MODEL, Incident.class)
+                .put(ServiceNowConstants.RESPONSE_MODEL, JsonNode.class)
+                .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
+                .build()
+        );
+
+        mock.assertIsSatisfied();
+
+        Object body = mock.getExchanges().get(0).getIn().getBody();
+        assertNotNull(body);
+        assertTrue(body instanceof JsonNode);
     }
 
     // *************************************************************************
@@ -100,10 +167,7 @@ public class ServiceNowTest extends ServiceNowTestSupport {
                 from("direct:servicenow")
                     .to("servicenow:{{env:SERVICENOW_INSTANCE}}"
                         + "?userName={{env:SERVICENOW_USERNAME}}"
-                        + "&password={{env:SERVICENOW_PASSWORD}}"
-                        //+ "&oauthClientId={{env:SERVICENOW_OAUTH2_CLIENT_ID}}"
-                        //+ "&oauthClientSecret={{env:SERVICENOW_OAUTH2_CLIENT_SECRET}}"
-                        + "&model.incident=org.apache.camel.component.servicenow.model.Incident")
+                        + "&password={{env:SERVICENOW_PASSWORD}}")
                     .to("log:org.apache.camel.component.servicenow?level=INFO&showAll=true")
                     .to("mock:servicenow");
             }

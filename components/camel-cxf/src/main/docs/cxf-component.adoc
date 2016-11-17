@@ -143,7 +143,7 @@ The CXF component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The CXF component supports 35 endpoint options which are listed below:
+The CXF component supports 36 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -156,6 +156,7 @@ The CXF component supports 35 endpoint options which are listed below:
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| cookieHandler | producer |  | CookieHandler | Configure a cookie handler to maintain a HTTP session
 | defaultOperationName | producer |  | String | This option will set the default operationName that will be used by the CxfProducer which invokes the remote service.
 | defaultOperationNamespace | producer |  | String | This option will set the default operationNamespace that will be used by the CxfProducer which invokes the remote service.
 | hostnameVerifier | producer |  | HostnameVerifier | The hostname verifier to be used. Use the notation to reference a HostnameVerifier from the registry.

@@ -32,6 +32,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
 import org.apache.camel.component.cxf.NullFaultListener;
+import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -85,6 +86,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private String modelRef;
     @UriParam(label = "consumer", defaultValue = "Default")
     private BindingStyle bindingStyle = BindingStyle.Default;
+    @UriParam(label = "consumer")
+    private String publishedEndpointUrl;
     @UriParam(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy;
     @UriParam(label = "advanced")
@@ -124,6 +127,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private boolean propagateContexts;
     @UriParam(label = "advanced")
     private CxfRsEndpointConfigurer cxfRsEndpointConfigurer;
+    @UriParam(label = "producer")
+    private CookieHandler cookieHandler;
 
     public CxfRsEndpoint() {
     }
@@ -318,6 +323,10 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
             factory.getFeatures().addAll(getFeatures());
         }
 
+        if (publishedEndpointUrl != null) {
+            factory.setPublishedEndpointUrl(publishedEndpointUrl);
+        }
+
         // we need to avoid flushing the setting from spring or blueprint
         if (!interceptorHolder.getInInterceptors().isEmpty()) {
             factory.setInInterceptors(interceptorHolder.getInInterceptors());
@@ -439,6 +448,17 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
     public String getAddress() {
         return resolvePropertyPlaceholders(address);
+    }
+
+    public String getPublishedEndpointUrl() {
+        return publishedEndpointUrl;
+    }
+
+    /**
+     * This option can override the endpointUrl that published from the WADL which can be accessed with resource address url plus ?_wadl
+     */
+    public void setPublishedEndpointUrl(String publishedEndpointUrl) {
+        this.publishedEndpointUrl = publishedEndpointUrl;
     }
 
     /**
@@ -782,5 +802,14 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         this.cxfRsEndpointConfigurer = configurer;
     }
 
+    public CookieHandler getCookieHandler() {
+        return cookieHandler;
+    }
 
+    /**
+     * Configure a cookie handler to maintain a HTTP session
+     */
+    public void setCookieHandler(CookieHandler cookieHandler) {
+        this.cookieHandler = cookieHandler;
+    }
 }

@@ -593,10 +593,21 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 log.debug("Took {} ({} millis) to store file: {} and FTP client returned: {}",
                         new Object[]{TimeUtils.printDuration(watch.taken()), watch.taken(), targetName, answer});
             }
-
+            
             // store client reply information after the operation
             exchange.getIn().setHeader(FtpConstants.FTP_REPLY_CODE, client.getReplyCode());
             exchange.getIn().setHeader(FtpConstants.FTP_REPLY_STRING, client.getReplyString());
+
+            // after storing file, we may set chmod on the file
+            String chmod = ((FtpConfiguration) endpoint.getConfiguration()).getChmod();
+            if (ObjectHelper.isNotEmpty(chmod)) {
+                log.debug("Setting chmod: {} on file: {}", chmod, targetName);
+                String command = "chmod " + chmod + " " + targetName;
+                log.trace("Client sendSiteCommand: {}", command);
+                boolean success = client.sendSiteCommand(command);
+                log.trace("Client sendSiteCommand successful: {}", success);
+            }
+            
 
             return answer;
 

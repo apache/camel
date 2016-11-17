@@ -49,8 +49,7 @@ public class JettyHttpEndpoint9 extends JettyHttpEndpoint implements AsyncEndpoi
                 this.binding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
             }
             this.binding.setHeaderFilterStrategy(getHeaderFilterStrategy());
-            // TODO: this option may not work with jetty9 afair
-            //this.binding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());
+            this.binding.setEagerCheckContentAvailable(isEagerCheckContentAvailable());
             this.binding.setMapHttpMessageBody(isMapHttpMessageBody());
             this.binding.setMapHttpMessageHeaders(isMapHttpMessageHeaders());
             this.binding.setMapHttpMessageFormUrlEncodedBody(isMapHttpMessageFormUrlEncodedBody());

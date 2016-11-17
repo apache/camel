@@ -22,13 +22,14 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
 
 @UriParams
-public class ServiceNowConfiguration {
+public class ServiceNowConfiguration implements Cloneable {
 
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .configure(
@@ -50,6 +51,8 @@ public class ServiceNowConfiguration {
     private String oauthTokenUrl;
     @UriParam(label = "security")
     private String apiUrl;
+    @UriParam(label = "advanced")
+    private String apiVersion;
     @UriParam
     private String resource;
     @UriParam
@@ -58,14 +61,46 @@ public class ServiceNowConfiguration {
     private Boolean excludeReferenceLink = false;
     @UriParam
     private Boolean suppressAutoSysField = false;
+    @UriParam
+    private Boolean includeScores = false;
+    @UriParam
+    private Boolean includeAggregates = false;
+    @UriParam
+    private Boolean includeAvailableBreakdowns = false;
+    @UriParam
+    private Boolean includeAvailableAggregates = false;
+    @UriParam
+    private Boolean includeScoreNotes = false;
+    @UriParam
+    private Boolean topLevelOnly;
+    @UriParam
+    private Boolean favorites;
+    @UriParam
+    private Boolean key;
+    @UriParam
+    private Boolean target;
+    @UriParam(defaultValue = "true", enums = "false,true,all")
+    private String display = "true";
+    @UriParam(defaultValue = "10")
+    private Integer perPage = 10;
+    @UriParam(enums = "value,change,changeperc,gap,gapperc,duedate,name,order,default,group,indicator_group,frequency,target,date,trend,bullet,direction")
+    private String sortBy;
+    @UriParam(enums = "asc,desc")
+    private String sortDir;
+    @UriParam
+    private Boolean suppressPaginationHeader = false;
     @UriParam(defaultValue = "false", enums = "false,true,all")
     private String displayValue = "false";
     @UriParam
     private Boolean inputDisplayValue = false;
-    @UriParam(prefix = "model.", multiValue = true, javaType = "java.lang.String")
-    private Map<String, Class<?>> models;
+    @UriParam(prefix = "request-model.", multiValue = true, javaType = "java.lang.String")
+    private Map<String, Class<?>> requestModels;
+    @UriParam(prefix = "response-model.", multiValue = true, javaType = "java.lang.String")
+    private Map<String, Class<?>> responseModels;
     @UriParam(label = "advanced")
     private ObjectMapper mapper = MAPPER;
+    @UriParam(defaultValue = "HELSINKI", enums = "FUJI,GENEVA,HELSINKI")
+    private ServiceNowRelease release = ServiceNowRelease.HELSINKI;
 
 
     public String getUserName() {
@@ -85,6 +120,17 @@ public class ServiceNowConfiguration {
 
     public boolean hasApiUrl() {
         return apiUrl != null;
+    }
+
+    public String getApiVersion() {
+        return apiVersion;
+    }
+
+    /**
+     * The ServiceNow REST API version, default latest
+     */
+    public void setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
     }
 
     /**
@@ -198,6 +244,169 @@ public class ServiceNowConfiguration {
         this.suppressAutoSysField = suppressAutoSysField;
     }
 
+    public Boolean getSuppressPaginationHeader() {
+        return suppressPaginationHeader;
+    }
+
+    /**
+     * Set this value to true to remove the Link header from the response. The
+     * Link header allows you to request additional pages of data when the number
+     * of records matching your query exceeds the query limit
+     */
+    public void setSuppressPaginationHeader(Boolean suppressPaginationHeader) {
+        this.suppressPaginationHeader = suppressPaginationHeader;
+    }
+
+    public Boolean getIncludeScores() {
+        return includeScores;
+    }
+
+    /**
+     * Set this parameter to true to return all scores for a scorecard. If a value
+     * is not specified, this parameter defaults to false and returns only the most
+     * recent score value.
+     */
+    public void setIncludeScores(Boolean includeScores) {
+        this.includeScores = includeScores;
+    }
+
+    public Boolean getIncludeAggregates() {
+        return includeAggregates;
+    }
+
+    /**
+     * Set this parameter to true to always return all available aggregates for
+     * an indicator, including when an aggregate has already been applied. If a
+     * value is not specified, this parameter defaults to false and returns no
+     * aggregates.
+     */
+    public void setIncludeAggregates(Boolean includeAggregates) {
+        this.includeAggregates = includeAggregates;
+    }
+
+    public Boolean getIncludeAvailableBreakdowns() {
+        return includeAvailableBreakdowns;
+    }
+
+    /**
+     * Set this parameter to true to return all available breakdowns for an indicator.
+     * If a value is not specified, this parameter defaults to false and returns
+     * no breakdowns.
+     */
+    public void setIncludeAvailableBreakdowns(Boolean includeAvailableBreakdowns) {
+        this.includeAvailableBreakdowns = includeAvailableBreakdowns;
+    }
+
+    public Boolean getIncludeAvailableAggregates() {
+        return includeAvailableAggregates;
+    }
+
+    /**
+     * Set this parameter to true to return all available aggregates for an indicator
+     * when no aggregate has been applied. If a value is not specified, this parameter
+     * defaults to false and returns no aggregates.
+     */
+    public void setIncludeAvailableAggregates(Boolean includeAvailableAggregates) {
+        this.includeAvailableAggregates = includeAvailableAggregates;
+    }
+
+    public Boolean getIncludeScoreNotes() {
+        return includeScoreNotes;
+    }
+
+    /**
+     * Set this parameter to true to return all notes associated with the score.
+     * The note element contains the note text as well as the author and timestamp
+     * when the note was added.
+     */
+    public void setIncludeScoreNotes(Boolean includeScoreNotes) {
+        this.includeScoreNotes = includeScoreNotes;
+    }
+
+    public Boolean getFavorites() {
+        return favorites;
+    }
+
+    /**
+     * Set this parameter to true to return only scorecards that are favorites of
+     * the querying user.
+     */
+    public void setFavorites(Boolean favorites) {
+        this.favorites = favorites;
+    }
+
+    public Boolean getKey() {
+        return key;
+    }
+
+    /**
+     * Set this parameter to true to return only scorecards for key indicators.
+     */
+    public void setKey(Boolean key) {
+        this.key = key;
+    }
+
+    public Boolean getTarget() {
+        return target;
+    }
+
+    /**
+     * Set this parameter to true to return only scorecards that have a target.
+     */
+    public void setTarget(Boolean target) {
+        this.target = target;
+    }
+
+    public String getDisplay() {
+        return display;
+    }
+
+    /**
+     * Set this parameter to true to return only scorecards where the indicator
+     * Display field is selected. Set this parameter to all to return scorecards
+     * with any Display field value. This parameter is true by default.
+     */
+    public void setDisplay(String display) {
+        this.display = display;
+    }
+
+    public Integer getPerPage() {
+        return perPage;
+    }
+
+    /**
+     * Enter the maximum number of scorecards each query can return. By default
+     * this value is 10, and the maximum is 100.
+     */
+    public void setPerPage(Integer perPage) {
+        this.perPage = perPage;
+    }
+
+    public String getSortBy() {
+        return sortBy;
+    }
+
+    /**
+     * Specify the value to use when sorting results. By default, queries sort
+     * records by value.
+     */
+    public void setSortBy(String sortBy) {
+        this.sortBy = sortBy;
+    }
+
+    public String getSortDir() {
+        return sortDir;
+    }
+
+    /**
+     * Specify the sort direction, ascending or descending. By default, queries
+     * sort records in descending order. Use sysparm_sortdir=asc to sort in
+     * ascending order.
+     */
+    public void setSortDir(String sortDir) {
+        this.sortDir = sortDir;
+    }
+
     public String getDisplayValue() {
         return displayValue;
     }
@@ -221,37 +430,8 @@ public class ServiceNowConfiguration {
         this.inputDisplayValue = inputDisplayValue;
     }
 
-    public Map<String, Class<?>> getModels() {
-        return models;
-    }
-
-    /**
-     * Defines the default model to use for a table
-     */
-    public void setModels(Map<String, Class<?>> models) {
-        this.models = models;
-    }
-
-    public void addModel(String name, Class<?> type) {
-        if (this.models == null) {
-            this.models = new HashMap<>();
-        }
-
-        this.models.put(name, type);
-    }
-
-    public Class<?> getModel(String name) {
-        return getModel(name, null);
-    }
-
-    public Class<?> getModel(String name, Class<?> defaultType) {
-        Class<?> model = defaultType;
-
-        if (this.models != null && this.models.containsKey(name)) {
-            model = this.models.get(name);
-        }
-
-        return model;
+    public Map<String, Class<?>> getRequestModels() {
+        return requestModels;
     }
 
     /**
@@ -267,5 +447,131 @@ public class ServiceNowConfiguration {
 
     public boolean hasMapper() {
         return mapper != null;
+    }
+
+    /**
+     * The ServiceNow release to target, default to Helsinki
+     *
+     * See https://docs.servicenow.com
+     */
+    public void setRelease(ServiceNowRelease release) {
+        this.release = release;
+    }
+
+    public ServiceNowRelease getRelease() {
+        return release;
+    }
+
+    public Boolean getTopLevelOnly() {
+        return topLevelOnly;
+    }
+
+    /**
+     * Gets only those categories whose parent is a catalog.
+     */
+    public void setTopLevelOnly(Boolean topLevelOnly) {
+        this.topLevelOnly = topLevelOnly;
+    }
+
+    // *************************************************
+    //
+    // *************************************************
+
+    public void setModels(Map<String, Class<?>> models) {
+        setRequestModels(models);
+        setResponseModels(models);
+    }
+
+    public void addModel(String name, Class<?> type) {
+        addRequestModel(name, type);
+        addResponseModel(name, type);
+    }
+
+    // *************************************************
+    // Request model
+    // *************************************************
+
+    /**
+     * Defines the request model
+     */
+    public void setRequestModels(Map<String, Class<?>> models) {
+        if (this.requestModels == null) {
+            this.requestModels = new HashMap<>();
+        }
+
+        this.requestModels.clear();
+        this.requestModels.putAll(models);
+    }
+
+    public void addRequestModel(String name, Class<?> type) {
+        if (this.requestModels == null) {
+            this.requestModels = new HashMap<>();
+        }
+
+        this.requestModels.put(name, type);
+    }
+
+    public Class<?> getRequestModel(String name) {
+        return getRequestModel(name, null);
+    }
+
+    public Class<?> getRequestModel(String name, Class<?> defaultType) {
+        Class<?> model = defaultType;
+
+        if (this.requestModels != null && this.requestModels.containsKey(name)) {
+            model = this.requestModels.get(name);
+        }
+
+        return model;
+    }
+
+    // *************************************************
+    // Response model
+    // *************************************************
+
+    /**
+     * Defines the response model
+     */
+    public void setResponseModels(Map<String, Class<?>> models) {
+        if (this.responseModels == null) {
+            this.responseModels = new HashMap<>();
+        }
+
+        this.responseModels.putAll(models);
+    }
+
+    public void addResponseModel(String name, Class<?> type) {
+        if (this.responseModels == null) {
+            this.responseModels = new HashMap<>();
+        }
+
+        this.responseModels.clear();
+        this.responseModels.put(name, type);
+    }
+
+    public Class<?> getResponseModel(String name) {
+        return getResponseModel(name, null);
+    }
+
+    public Class<?> getResponseModel(String name, Class<?> defaultType) {
+        Class<?> model = defaultType;
+
+        if (this.responseModels != null && this.responseModels.containsKey(name)) {
+            model = this.responseModels.get(name);
+        }
+
+        return model;
+    }
+
+    // *************************************************
+    //
+    // *************************************************
+
+    public ServiceNowConfiguration copy() {
+        try {
+            return (ServiceNowConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }

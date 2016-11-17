@@ -30,14 +30,12 @@ import org.slf4j.LoggerFactory;
 public class OAuthToken {
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuthToken.class);
 
-    private final String url;
     private final ServiceNowConfiguration configuration;
     private ClientAccessToken token;
     private String authString;
     private long expireAt;
 
-    public OAuthToken(String url, ServiceNowConfiguration configuration) {
-        this.url = url;
+    public OAuthToken(ServiceNowConfiguration configuration) {
         this.configuration = configuration;
         this.token = null;
         this.authString = null;
@@ -49,7 +47,7 @@ public class OAuthToken {
             LOGGER.debug("Generate OAuth token");
 
             token = OAuthClientUtils.getAccessToken(
-                WebClient.create(url),
+                WebClient.create(configuration.getOauthTokenUrl()),
                 new Consumer(
                     configuration.getOauthClientId(),
                     configuration.getOauthClientSecret()),
@@ -74,7 +72,7 @@ public class OAuthToken {
             LOGGER.debug("OAuth token is expired, refresh it");
 
             token = OAuthClientUtils.refreshAccessToken(
-                WebClient.create(url),
+                WebClient.create(configuration.getOauthTokenUrl()),
                 new Consumer(
                     configuration.getOauthClientId(),
                     configuration.getOauthClientSecret()),

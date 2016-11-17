@@ -966,9 +966,9 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
             // if only username or password was provided then fail
             if (cfUsername != null || cfPassword != null) {
                 if (cfUsername == null) {
-                    throw new IllegalArgumentException("Password must also be provided when using username/password as credentials.");
-                } else {
                     throw new IllegalArgumentException("Username must also be provided when using username/password as credentials.");
+                } else {
+                    throw new IllegalArgumentException("Password must also be provided when using username/password as credentials.");
                 }
             }
         }

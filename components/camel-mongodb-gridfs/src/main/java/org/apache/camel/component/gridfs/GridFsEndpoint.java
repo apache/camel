@@ -33,8 +33,10 @@ import org.apache.camel.spi.UriPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@UriEndpoint(scheme = "gridfs", title = "MongoDBGridFS", syntax = "gridfs:connectionBean", 
-            label = "database,nosql")
+/**
+ * Component for working with MongoDB GridFS.
+ */
+@UriEndpoint(scheme = "gridfs", title = "MongoDBGridFS", syntax = "gridfs:connectionBean", label = "database,nosql")
 public class GridFsEndpoint extends DefaultEndpoint {
     
     public enum QueryStrategy {

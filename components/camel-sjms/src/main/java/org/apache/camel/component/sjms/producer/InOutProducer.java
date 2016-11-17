@@ -139,6 +139,15 @@ public class InOutProducer extends SjmsProducer {
 
     @Override
     protected void doStart() throws Exception {
+
+        if (isEndpointTransacted()) {
+            throw new IllegalArgumentException("InOut exchange pattern is incompatible with transacted=true as it cuases a deadlock. Please use transacted=false or InOnly exchange pattern.");
+        }
+
+        if (getConnectionResource() == null) {
+            throw new IllegalArgumentException(String.format("ConnectionResource or ConnectionFactory must be configured for %s", this));
+        }
+
         if (ObjectHelper.isEmpty(getNamedReplyTo())) {
             log.debug("No reply to destination is defined.  Using temporary destinations.");
         } else {
@@ -168,37 +177,12 @@ public class InOutProducer extends SjmsProducer {
         }
     }
 
-    @Override
-    public MessageProducerResources doCreateProducerModel() throws Exception {
-        MessageProducerResources answer;
-        Connection conn = getConnectionResource().borrowConnection();
-        try {
-            Session session = conn.createSession(isEndpointTransacted(), getAcknowledgeMode());
-            Destination destination = getEndpoint().getDestinationCreationStrategy().createDestination(session, getDestinationName(), isTopic());
-            MessageProducer messageProducer = JmsObjectFactory.createMessageProducer(session, destination, isPersistent(), getTtl());
-
-            answer = new MessageProducerResources(session, messageProducer);
-
-        } catch (Exception e) {
-            log.error("Unable to create the MessageProducer", e);
-            throw e;
-        } finally {
-            getConnectionResource().returnConnection(conn);
-        }
-
-        return answer;
-    }
-
     /**
      * TODO time out is actually double as it waits for the producer and then
      * waits for the response. Use an atomic long to manage the countdown
      */
     @Override
-    public void sendMessage(final Exchange exchange, final AsyncCallback callback, final MessageProducerResources producer) throws Exception {
-        if (isEndpointTransacted()) {
-            exchange.getUnitOfWork().addSynchronization(new SessionTransactionSynchronization(producer.getSession(), getCommitStrategy()));
-        }
-
+    public void sendMessage(final Exchange exchange, final AsyncCallback callback, final MessageProducerResources producer, final ReleaseProducerCallback releaseProducerCallback) throws Exception {
         Message request = getEndpoint().getBinding().makeJmsMessage(exchange, producer.getSession());
 
         String correlationId = exchange.getIn().getHeader(JmsConstants.JMS_CORRELATION_ID, String.class);
@@ -221,7 +205,7 @@ public class InOutProducer extends SjmsProducer {
         // can move forward
         // without waiting on us to complete the exchange
         try {
-            getProducers().returnObject(producer);
+            releaseProducerCallback.release(producer);
         } catch (Exception exception) {
             // thrown if the pool is full. safe to ignore.
         }

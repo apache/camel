@@ -18,16 +18,22 @@ package org.apache.camel.karaf.commands.catalog;
 
 import org.apache.camel.commands.CamelCommand;
 import org.apache.camel.commands.CatalogComponentInfoCommand;
-import org.apache.camel.karaf.commands.CamelCommandSupport;
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
-import org.apache.felix.gogo.commands.Option;
+import org.apache.camel.karaf.commands.catalog.completers.ComponentListCompleter;
+import org.apache.camel.karaf.commands.internal.CamelControllerImpl;
+import org.apache.karaf.shell.api.action.Action;
+import org.apache.karaf.shell.api.action.Argument;
+import org.apache.karaf.shell.api.action.Command;
+import org.apache.karaf.shell.api.action.Completion;
+import org.apache.karaf.shell.api.action.Option;
+import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 @Command(scope = "camel", name = "catalog-component-info", description = "Show information about a Camel component from the Camel catalog")
-public class CatalogComponentInfo extends CamelCommandSupport {
+@Service
+public class CatalogComponentInfo extends CamelControllerImpl implements Action {
 
     @Argument(index = 0, name = "name", description = "The name of the Camel component.",
             required = true, multiValued = false)
+    @Completion(ComponentListCompleter.class)
     String name;
 
     @Option(name = "--verbose", aliases = "-v", description = "Verbose output which shows more information",
@@ -38,8 +44,8 @@ public class CatalogComponentInfo extends CamelCommandSupport {
             required = false, multiValued = false)
     String label;
 
-    protected Object doExecute() throws Exception {
+    public Object execute() throws Exception {
         CamelCommand command = new CatalogComponentInfoCommand(name, verbose, label);
-        return command.execute(camelController, System.out, System.err);
+        return command.execute(this, System.out, System.err);
     }
 }

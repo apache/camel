@@ -73,13 +73,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 	// CHECKSTYLE:OFF
 
     private static final String MODELS_CATALOG = "org/apache/camel/catalog/models.properties";
-    private static final String COMPONENTS_CATALOG = "org/apache/camel/catalog/components.properties";
-    private static final String DATA_FORMATS_CATALOG = "org/apache/camel/catalog/dataformats.properties";
-    private static final String LANGUAGE_CATALOG = "org/apache/camel/catalog/languages.properties";
     private static final String MODEL_DIR = "org/apache/camel/catalog/models";
-    private static final String COMPONENT_DIR = "org/apache/camel/catalog/components";
-    private static final String DATAFORMAT_DIR = "org/apache/camel/catalog/dataformats";
-    private static final String LANGUAGE_DIR = "org/apache/camel/catalog/languages";
     private static final String DOC_DIR = "org/apache/camel/catalog/docs";
     private static final String ARCHETYPES_CATALOG = "org/apache/camel/catalog/archetypes/archetype-catalog.xml";
     private static final String SCHEMAS_XML = "org/apache/camel/catalog/schemas";
@@ -100,6 +94,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
     private boolean caching;
     private SuggestionStrategy suggestionStrategy;
     private VersionManager versionManager = new DefaultVersionManager(this);
+    private RuntimeProvider runtimeProvider = new DefaultRuntimeProvider(this);
 
     /**
      * Creates the {@link CamelCatalog} without caching enabled.
@@ -117,10 +112,30 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     @Override
+    public RuntimeProvider getRuntimeProvider() {
+        return runtimeProvider;
+    }
+
+    @Override
+    public void setRuntimeProvider(RuntimeProvider runtimeProvider) {
+        this.runtimeProvider = runtimeProvider;
+        // inject CamelCatalog to the provider
+        this.runtimeProvider.setCamelCatalog(this);
+        // invalidate the cache
+        cache.remove("findComponentNames");
+        cache.remove("listComponentsAsJson");
+        cache.remove("findDataFormatNames");
+        cache.remove("listDataFormatsAsJson");
+        cache.remove("findLanguageNames");
+        cache.remove("listLanguagesAsJson");
+    }
+
+    @Override
     public void enableCache() {
         caching = true;
     }
 
+    @Override
     public boolean isCaching() {
         return caching;
     }
@@ -210,15 +225,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         }
 
         if (names == null) {
-            names = new ArrayList<String>();
-            InputStream is = versionManager.getResourceAsStream(COMPONENTS_CATALOG);
-            if (is != null) {
-                try {
-                    CatalogHelper.loadLines(is, names);
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
+            names = runtimeProvider.findComponentNames();
 
             // include third party components
             for (Map.Entry<String, String> entry : extraComponents.entrySet()) {
@@ -243,15 +250,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         }
 
         if (names == null) {
-            names = new ArrayList<String>();
-            InputStream is = versionManager.getResourceAsStream(DATA_FORMATS_CATALOG);
-            if (is != null) {
-                try {
-                    CatalogHelper.loadLines(is, names);
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
+            names = runtimeProvider.findDataFormatNames();
 
             // include third party data formats
             for (Map.Entry<String, String> entry : extraDataFormats.entrySet()) {
@@ -276,15 +275,8 @@ public class DefaultCamelCatalog implements CamelCatalog {
         }
 
         if (names == null) {
-            names = new ArrayList<String>();
-            InputStream is = versionManager.getResourceAsStream(LANGUAGE_CATALOG);
-            if (is != null) {
-                try {
-                    CatalogHelper.loadLines(is, names);
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
+            names = runtimeProvider.findLanguageNames();
+
             if (caching) {
                 cache.put("findLanguageNames", names);
             }
@@ -469,7 +461,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public String componentJSonSchema(String name) {
-        String file = COMPONENT_DIR + "/" + name + ".json";
+        String file = runtimeProvider.getComponentJSonSchemaDirectory() + "/" + name + ".json";
 
         String answer = null;
         if (caching) {
@@ -515,7 +507,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public String dataFormatJSonSchema(String name) {
-        String file = DATAFORMAT_DIR + "/" + name + ".json";
+        String file = runtimeProvider.getDataFormatJSonSchemaDirectory() + "/" + name + ".json";
 
         String answer = null;
         if (caching) {
@@ -566,7 +558,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
             name = "bean";
         }
 
-        String file = LANGUAGE_DIR + "/" + name + ".json";
+        String file = runtimeProvider.getLanguageJSonSchemaDirectory() + "/" + name + ".json";
 
         String answer = null;
         if (caching) {

@@ -4,9 +4,10 @@ ServiceNow Component
 
 *Available as of Camel 2.18*
 
-The ServiceNow component provides access to all of ServiceNow
-https://developer.servicenow.com/app.do#!/rest_api_doc?v=fuji[REST
-API]. 
+The ServiceNow component provides access to ServiceNow platform through their REST API.
+
+NOTE: From Camel 2.18.1 the component supports multiple version of ServiceNow platform with default to Helsinki. Supported version are <<ServiceNow-Fuji>> and <<ServiceNow-Helsinki>>
+
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -35,27 +36,58 @@ Options
 
 
 // component options: START
-The ServiceNow component has no options.
+The ServiceNow component supports 7 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2,1m,7",options="header"]
+|=======================================================================
+| Name | Java Type | Description
+| configuration | ServiceNowConfiguration | The ServiceNow default configuration
+| apiUrl | String | The ServiceNow REST API url
+| userName | String | ServiceNow user account name
+| password | String | ServiceNow account password
+| oauthClientId | String | OAuth2 ClientID
+| oauthClientSecret | String | OAuth2 ClientSecret
+| oauthTokenUrl | String | OAuth token Url
+|=======================================================================
+{% endraw %}
 // component options: END
 
 
-
-
 // endpoint options: START
-The ServiceNow component supports 16 endpoint options which are listed below:
+The ServiceNow component supports 33 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | instanceName | producer |  | String | *Required* The ServiceNow instance name
+| display | producer | true | String | Set this parameter to true to return only scorecards where the indicator Display field is selected. Set this parameter to all to return scorecards with any Display field value. This parameter is true by default.
 | displayValue | producer | false | String | Return the display value (true) actual value (false) or both (all) for reference fields (default: false)
 | excludeReferenceLink | producer |  | Boolean | True to exclude Table API links for reference fields (default: false)
+| favorites | producer |  | Boolean | Set this parameter to true to return only scorecards that are favorites of the querying user.
+| includeAggregates | producer |  | Boolean | Set this parameter to true to always return all available aggregates for an indicator including when an aggregate has already been applied. If a value is not specified this parameter defaults to false and returns no aggregates.
+| includeAvailableAggregates | producer |  | Boolean | Set this parameter to true to return all available aggregates for an indicator when no aggregate has been applied. If a value is not specified this parameter defaults to false and returns no aggregates.
+| includeAvailableBreakdowns | producer |  | Boolean | Set this parameter to true to return all available breakdowns for an indicator. If a value is not specified this parameter defaults to false and returns no breakdowns.
+| includeScoreNotes | producer |  | Boolean | Set this parameter to true to return all notes associated with the score. The note element contains the note text as well as the author and timestamp when the note was added.
+| includeScores | producer |  | Boolean | Set this parameter to true to return all scores for a scorecard. If a value is not specified this parameter defaults to false and returns only the most recent score value.
 | inputDisplayValue | producer |  | Boolean | True to set raw value of input fields (default: false)
-| models | producer |  | String | Defines the default model to use for a table
+| key | producer |  | Boolean | Set this parameter to true to return only scorecards for key indicators.
+| perPage | producer | 10 | Integer | Enter the maximum number of scorecards each query can return. By default this value is 10 and the maximum is 100.
+| release | producer | HELSINKI | ServiceNowRelease | The ServiceNow release to target default to Helsinki See https://docs.servicenow.com
+| requestModels | producer |  | String | Defines the request model
 | resource | producer |  | String | The default resource can be overridden by header CamelServiceNowResource
+| responseModels | producer |  | String | Defines the response model
+| sortBy | producer |  | String | Specify the value to use when sorting results. By default queries sort records by value.
+| sortDir | producer |  | String | Specify the sort direction ascending or descending. By default queries sort records in descending order. Use sysparm_sortdir=asc to sort in ascending order.
 | suppressAutoSysField | producer |  | Boolean | True to suppress auto generation of system fields (default: false)
+| suppressPaginationHeader | producer |  | Boolean | Set this value to true to remove the Link header from the response. The Link header allows you to request additional pages of data when the number of records matching your query exceeds the query limit
 | table | producer |  | String | The default table can be overridden by header CamelServiceNowTable
+| target | producer |  | Boolean | Set this parameter to true to return only scorecards that have a target.
+| topLevelOnly | producer |  | Boolean | Gets only those categories whose parent is a catalog.
+| apiVersion | advanced |  | String | The ServiceNow REST API version default latest
 | mapper | advanced |  | ObjectMapper | Sets Jackson's ObjectMapper to use for request/reply
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | apiUrl | security |  | String | The ServiceNow REST API url
@@ -74,67 +106,164 @@ The ServiceNow component supports 16 endpoint options which are listed below:
 Headers
 ^^^^^^^
 
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Name |Type |Description
+[width="100%",cols="10%,10%,10%,10%,60%",options="header",]
+|===
+|Name |Type |ServiceNow API Parameter |Endpoint option |Description
+|CamelServiceNowResource |String | - | - | The resource to access
+|CamelServiceNowAction |String | - | - | The action to perform
+|CamelServiceNowActionSubject | - | - | String |The subject to which the action should be applied
+|CamelServiceNowModel |Class | - | - | The data model
+|CamelServiceNowRequestModel |Class | - | - | The request data model
+|CamelServiceNowResponseModel |Class | - | - | The response data model
+|CamelServiceNowOffsetNext | - | - | - | -
+|CamelServiceNowOffsetPrev | - | - | - | -
+|CamelServiceNowOffsetFirst | - | - | - | -
+|CamelServiceNowOffsetLast | - | - | - | -
+|CamelServiceNowContentType | - | - | - | -
+|CamelServiceNowContentEncoding | - | - | - | -
+|CamelServiceNowContentMeta | - | - | - | -
+|CamelServiceNowSysId |String | sys_id | - | -
+|CamelServiceNowUserSysId |String | user_sysid | - | -
+|CamelServiceNowUserId |String | user_id | - | -
+|CamelServiceNowCartItemId |String | cart_item_id | - | -
+|CamelServiceNowFileName |String | file_name | - | -
+|CamelServiceNowTable |String | table_name | - | -
+|CamelServiceNowTableSysId |String | table_sys_id | - | -
+|CamelServiceNowEncryptionContext | String | encryption_context | - | -
+|CamelServiceNowCategory | String | sysparm_category  | - | -
+|CamelServiceNowType |String | sysparm_type | - | -
+|CamelServiceNowCatalog | String | sysparm_catalog | - | -
+|CamelServiceNowQuery |String | sysparm_query | - | -
+|CamelServiceNowDisplayValue |String | sysparm_display_value | displayValue  | -
+|CamelServiceNowInputDisplayValue |Boolean | sysparm_input_display_value | inputDisplayValue  | -
+|CamelServiceNowExcludeReferenceLink |Boolean | sysparm_exclude_reference_link | excludeReferenceLink  | -
+|CamelServiceNowFields |String | sysparm_fields | - | -
+|CamelServiceNowLimit |Integer | sysparm_limit | - | -
+|CamelServiceNowText | String | sysparm_text | - | -
+|CamelServiceNowOffset | Integer | sysparm_offset | - | -
+|CamelServiceNowView |String | sysparm_view | - | -
+|CamelServiceNowSuppressAutoSysField |Boolean | sysparm_suppress_auto_sys_field | suppressAutoSysField | -
+|CamelServiceNowSuppressPaginationHeader | Booleab | sysparm_suppress_pagination_header | suppressPaginationHeader | -
+|CamelServiceNowMinFields |String | sysparm_min_fields | - | -
+|CamelServiceNowMaxFields |String | sysparm_max_fields | - | -
+|CamelServiceNowSumFields |String | sysparm_sum_fields | - | -
+|CamelServiceNowAvgFields |String | sysparm_avg_fields | - | -
+|CamelServiceNowCount |Boolean | sysparm_count | - | -
+|CamelServiceGroupBy |String | sysparm_group_by | - | -
+|CamelServiceOrderBy |String | sysparm_order_by | - | -
+|CamelServiceHaving |String | sysparm_having | - | -
+|CamelServiceNowUUID |String | sysparm_uuid | - | -
+|CamelServiceNowBreakdown| String| sysparm_breakdown | - | -
+|CamelServiceNowIncludeScores| Boolean | sysparm_include_scores | includeScores | -
+|CamelServiceNowIncludeScoreNotes | Boolean | sysparm_include_score_notes | includeScoreNotes | -
+|CamelServiceNowIncludeAggregates | Boolean | sysparm_include_aggregates | includeAggregates | -
+|CamelServiceNowIncludeAvailableBreakdowns | Boolean | sysparm_include_available_breakdowns | includeAvailableBreakdowns | -
+|CamelServiceNowIncludeAvailableAggregates | Boolean | sysparm_include_available_aggregates | includeAvailableAggregates | -
+|CamelServiceNowFavorites | Boolean | sysparm_favorites | favorites | -
+|CamelServiceNowKey  | Boolean | sysparm_key | key | -
+|CamelServiceNowTarget | Boolean | sysparm_target | target | -
+|CamelServiceNowDisplay | String | sysparm_display | display | -
+|CamelServiceNowPerPage | Integer | sysparm_per_page | perPage | -
+|CamelServiceNowSortBy | String | sysparm_sortby | sortBy | -
+|CamelServiceNowSortDir | String | sysparm_sortdit | sortDir | -
+|CamelServiceNowContains | String | sysparm_contains | - | -
+|CamelServiceNowTags | String | sysparm_tags | - | -
+|CamelServiceNowPage | String | sysparm_page | - | -
+|CamelServiceNowElementsFilter | String | sysparm_elements_filter | - | -
+|CamelServiceNowBreakdownRelation | String | sysparm_breakdown_relation | - | -
+|CamelServiceNowDataSource | String | sysparm_data_source | - | -
+|CamelServiceNowTopLevelOnly | Boolean | sysparm_top_level_only | topLevelOnly | -
+|CamelServiceNowApiVersion | String | - | - | The REST API version
+|CamelServiceNowResponseMeta | Map | - | - | Meta data provided along with a response
+|===
 
-|CamelServiceNowResource |String |The resource to access TABLE, AGGREGATE, IMPORT
+[[ServiceNow-Fuji]]
+[cols="10%a,10%a,10%a,70%a", options="header"]
+.API Mapping
+|===
+| CamelServiceNowResource | CamelServiceNowAction | Method | API URI
+1.5+<.^|TABLE
+| RETRIEVE | GET | /api/now/v1/table/{table_name}/{sys_id}
+| CREATE | POST | /api/now/v1/table/{table_name}
+| MODIFY | PUT | /api/now/v1/table/{table_name}/{sys_id}
+| DELETE | DELETE | /api/now/v1/table/{table_name}/{sys_id}
+| UPDATE | PATCH | /api/now/v1/table/{table_name}/{sys_id}
 
-|CamelServiceNowTable |String |The table to access
+| AGGREGATE
+| RETRIEVE | GET | /api/now/v1/stats/{table_name}
 
-|CamelServiceNowAction |String |The action to perform RETRIEVE, CREATE, MODIFY, DELETE, UPDATE
+1.2+<.^|IMPORT
+| RETRIEVE | GET | /api/now/import/{table_name}/{sys_id}
+| CREATE | POST | /api/now/import/{table_name}
+|===
 
-|CamelServiceNowModel |Class |The data model
+NOTE: link:http://wiki.servicenow.com/index.php?title=REST_API#Available_APIs[Fuji REST API Documentation]
 
-|CamelServiceNowSysId |String |ServiceNow sysy_id
+[[ServiceNow-Helsinki]]
+[cols="10%a,10%a,10%a,10%a,60%a", options="header"]
+.API Mapping
+|===
+| CamelServiceNowResource | CamelServiceNowAction | CamelServiceNowActionSubject | Method | API URI
+1.5+<.^|TABLE
+| RETRIEVE | | GET | /api/now/v1/table/{table_name}/{sys_id}
+| CREATE | | POST | /api/now/v1/table/{table_name}
+| MODIFY | | PUT | /api/now/v1/table/{table_name}/{sys_id}
+| DELETE | | DELETE | /api/now/v1/table/{table_name}/{sys_id}
+| UPDATE | | PATCH | /api/now/v1/table/{table_name}/{sys_id}
 
-|CamelServiceNowQuery |String |An encoded query
+| AGGREGATE
+| RETRIEVE | | GET | /api/now/v1/stats/{table_name}
 
-|CamelServiceNowDisplayValue |String |Return the display value (true), actual value (false), or both (all) for
-reference fields (default: false)
+1.2+<.^|IMPORT
+| RETRIEVE | | GET | /api/now/import/{table_name}/{sys_id}
+| CREATE | | POST | /api/now/import/{table_name}
 
-|CamelServiceNowInputDisplayValue |Boolean |True to set raw value of input fields
+1.4+<.^|ATTACHMENT
+| RETRIEVE | | GET | /api/now/api/now/attachment/{sys_id}
+| CONTENT | | GET | /api/now/attachment/{sys_id}/file
+| UPLOAD | | POST | /api/now/api/now/attachment/file
+| DELETE | | DELETE | /api/now/attachment/{sys_id}
 
-|CamelServiceNowExcludeReferenceLink |Boolean |True to exclude Table API links for reference fields
+| SCORECARDS
+| RETRIEVE | PERFORMANCE_ANALYTICS | GET | /api/now/pa/scorecards
 
-|CamelServiceNowFields |String |Comma-separated field names to return in the response
+1.2+<.^|MISC
+| RETRIEVE | USER_ROLE_INHERITANCE | GET | /api/global/user_role_inheritance
+| CREATE | IDENTIFY_RECONCILE | POST | /api/now/identifyreconcile
 
-|CamelServiceNowMinFields |String |A comma-separated list of fields for which to calculate the minimum
-value
+1.2+<.^|SERVICE_CATALOG
+| RETRIEVE | | GET | /sn_sc/servicecatalog/catalogs/{sys_id}
+| RETRIEVE | CATEGORIES |  GET | /sn_sc/servicecatalog/catalogs/{sys_id}/categories
 
-|CamelServiceNowMaxFields |String |A comma-separated list of fields for which to calculate the maximum
-value
+1.5+<.^|SERVICE_CATALOG_ITEMS
+| RETRIEVE | | GET | /sn_sc/servicecatalog/items/{sys_id}
+| RETRIEVE | SUBMIT_GUIDE | POST | /sn_sc/servicecatalog/items/{sys_id}/submit_guide
+| RETRIEVE | CHECKOUT_GUIDE | POST | /sn_sc/servicecatalog/items/{sys_id}/checkout_guide
+| CREATE | SUBJECT_CART | POST | /sn_sc/servicecatalog/items/{sys_id}/add_to_cart
+| CREATE | SUBJECT_PRODUCER | POST | /sn_sc/servicecatalog/items/{sys_id}/submit_producer
 
-|CamelServiceNowSumFields |String |A comma-separated list of fields for which to calculate the sum of the
-values
+1.6+<.^|SERVICE_CATALOG_CARTS
+| RETRIEVE | | GET | /sn_sc/servicecatalog/cart
+| RETRIEVE | DELIVERY_ADDRESS | GET | /sn_sc/servicecatalog/cart/delivery_address/{user_id}
+| RETRIEVE | CHECKOUT | POST | /sn_sc/servicecatalog/cart/checkout
+| UPDATE | | POST | /sn_sc/servicecatalog/cart/{cart_item_id}
+| UPDATE | CHECKOUT | POST | /sn_sc/servicecatalog/cart/submit_order
+| DELETE | | DELETE | /sn_sc/servicecatalog/cart/{sys_id}/empty
 
-|CamelServiceNowLimit |Integer |Limit to be applied on pagination
+| SERVICE_CATALOG_CATEGORIES
+| RETRIEVE | | GET | /sn_sc/servicecatalog/categories/{sys_id}
 
-|CamelServiceNowView |String |UI view to determine fields returned in the response.
+|===
 
-|CamelServiceNowSuppressAutoSysField |Boolean |True to suppress auto generation of system fields
-
-|CamelServiceNowAvgFields |String |A comma-separated list of fields for which to calculate the average
-value
-
-|CamelServiceNowCount |Boolean |A boolean flag. You can set this parameter to *true* for the number of
-records returned by the query
-
-|CamelServiceGroupBy |String |The fields to group the returned data by
-
-|CamelServiceOrderBy |String |A list of values to order grouped results by
-
-|CamelServiceHaving |String |An additional query allowing you to filter the data based on an
-aggregate operation
-|=======================================================================
+NOTE: https://docs.servicenow.com/bundle/helsinki-servicenow-platform/page/integrate/inbound-rest/reference/r_RESTResources.html[Helsinki REST API Documentation]
 
 [[ServiceNow-Usageexamples]]
 Usage examples:
 ^^^^^^^^^^^^^^^
-
  
 {% raw %}
 [source,java]
+.Retrieve 10 Incidents
 -------------------------------------------------------------------------------------------------------------------
 context.addRoutes(new RouteBuilder() {
     public void configure() {
@@ -144,12 +273,17 @@ context.addRoutes(new RouteBuilder() {
                + "&password={{env:SERVICENOW_PASSWORD}}"
                + "&oauthClientId={{env:SERVICENOW_OAUTH2_CLIENT_ID}}"
                + "&oauthClientSecret={{env:SERVICENOW_OAUTH2_CLIENT_SECRET}}"
-               + "&model.incident=org.apache.camel.component.servicenow.model.Incident")
            .to("mock:servicenow");
     }
-}); Map<String, Object> headers = new HashMap<>();headers.put(ServiceNowConstants.RESOURCE, "table");
-headers.put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE);
-headers.put(ServiceNowConstants.SYSPARM_LIMIT, "10");
-headers.put(ServiceNowConstants.TABLE, "incident");template.sendBodyAndHeaders("direct:servicenow", null, headers);
+}); 
+
+FluentProducerTemplate.on(context)
+    .withHeader(ServiceNowConstants.RESOURCE, "table")
+    .withHeader(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
+    .withHeader(ServiceNowConstants.SYSPARM_LIMIT.getId(), "10")
+    .withHeader(ServiceNowConstants.TABLE, "incident")
+    .withHeader(ServiceNowConstants.MODEL, Incident.class)
+    .to("direct:servicenow")
+    .send();
 -------------------------------------------------------------------------------------------------------------------
 {% endraw %}

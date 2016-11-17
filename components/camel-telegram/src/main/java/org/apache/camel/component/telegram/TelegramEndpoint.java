@@ -27,7 +27,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
- * The Camel endpoint for a telegram bot.
+ * The telegram component provides access to the <a href="https://core.telegram.org/bots/api">Telegram Bot API</a>.
  */
 @UriEndpoint(scheme = "telegram", title = "Telegram", syntax = "telegram:type/authorizationToken", consumerClass = TelegramConsumer.class, label = "chat")
 public class TelegramEndpoint extends ScheduledPollEndpoint {
