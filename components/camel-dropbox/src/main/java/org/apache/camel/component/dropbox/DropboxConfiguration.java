@@ -1,18 +1,18 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+/*
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
  */
 package org.apache.camel.component.dropbox;
 
@@ -55,7 +55,7 @@ public class DropboxConfiguration {
     //id of the app
     @UriParam @Metadata(required = "true")
     private String clientIdentifier;
-    //reference to dropboxclient
+    //reference to dropbox client
     @UriParam
     private DbxClient client;
 
@@ -73,10 +73,9 @@ public class DropboxConfiguration {
     /**
      * Obtain a new instance of DbxClient and store it in configuration.
      */
-    public void createClient() throws DropboxException {
+    public void createClient() {
         DbxRequestConfig config = new DbxRequestConfig(clientIdentifier, Locale.getDefault().toString());
-        DbxClient client = new DbxClient(config, accessToken);
-        this.client = client;
+        this.client = new DbxClient(config, accessToken);
     }
 
     public String getAccessToken() {
@@ -128,7 +127,7 @@ public class DropboxConfiguration {
     }
 
     /**
-     * A space-separated list of substrings to search for. A file matches only if it contains all the substrings. If this option is not set, all files will be matched.
+     * A space-separated list of sub-strings to search for. A file matches only if it contains all the sub-strings. If this option is not set, all files will be matched.
      */
     public void setQuery(String query) {
         this.query = query;
