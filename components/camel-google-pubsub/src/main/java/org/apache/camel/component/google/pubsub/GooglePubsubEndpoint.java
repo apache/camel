@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,7 +33,7 @@ import org.apache.camel.spi.UriPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
- /**
+/**
  * Messaging client for Google Cloud Platform PubSub Service:
  * https://cloud.google.com/pubsub/
  *
@@ -91,15 +91,14 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
             log = LoggerFactory.getLogger(loggerId);
         }
 
-        GooglePubsubConnectionFactory cf = (null == connectionFactory)
-                ? getComponent().getConnectionFactory()
-                : connectionFactory;
+        // Default pubsub connection.
+        // With the publisher endpoints - the main publisher
+        // with the consumer endpoints  - the ack client
+        pubsub = getConnectionFactory().getDefaultClient();
 
-        pubsub = cf.getClient();
-
+        log.trace("Credential file location : {}", getConnectionFactory().getCredentialsFileLocation());
         log.trace("Project ID: {}", this.projectId);
         log.trace("Destination Name: {}", this.destinationName);
-        log.trace("From file : {}", cf.getCredentialsFileLocation());
     }
 
     public Producer createProducer() throws Exception {
@@ -177,8 +176,13 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
         return pubsub;
     }
 
+    /**
+     * ConnectionFactory to obtain connection to PubSub Service. If non provided the default will be used.
+     */
     public GooglePubsubConnectionFactory getConnectionFactory() {
-        return connectionFactory;
+        return (null == connectionFactory)
+                ? getComponent().getConnectionFactory()
+                : connectionFactory;
     }
 
     public void setConnectionFactory(GooglePubsubConnectionFactory connectionFactory) {
