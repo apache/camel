@@ -21,7 +21,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
+import org.apache.camel.component.dropbox.dto.DropboxFileDownloadResult;
 import org.apache.camel.component.dropbox.dto.DropboxResult;
+import org.apache.camel.component.dropbox.util.DropboxResultHeader;
+
+import java.io.OutputStream;
+import java.util.Map;
 
 public class DropboxScheduledPollGetConsumer extends DropboxScheduledPollConsumer {
 
@@ -37,9 +42,25 @@ public class DropboxScheduledPollGetConsumer extends DropboxScheduledPollConsume
     @Override
     protected int poll() throws Exception {
         Exchange exchange = endpoint.createExchange();
-        DropboxResult result = DropboxAPIFacade.getInstance(configuration.getClient())
+        DropboxFileDownloadResult result = DropboxAPIFacade.getInstance(configuration.getClient(), exchange)
                 .get(configuration.getRemotePath());
-        result.populateExchange(exchange);
+
+        Map<String, OutputStream> map = result.getEntries();
+        if (map.size() == 1) {
+            for (Map.Entry<String, OutputStream> entry : map.entrySet()) {
+                exchange.getIn().setHeader(DropboxResultHeader.DOWNLOADED_FILE.name(), entry.getKey());
+                exchange.getIn().setBody(entry.getValue());
+            }
+        } else {
+            StringBuilder pathsExtracted = new StringBuilder();
+            for (Map.Entry<String, OutputStream> entry : map.entrySet()) {
+                pathsExtracted.append(entry.getKey()).append("\n");
+            }
+            exchange.getIn().setHeader(DropboxResultHeader.DOWNLOADED_FILES.name(), pathsExtracted.toString());
+            exchange.getIn().setBody(map);
+        }
+
+
         LOG.info("consumer --> downloaded: " + result.toString());
 
         try {
