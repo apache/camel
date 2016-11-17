@@ -18,6 +18,9 @@ package org.apache.camel.component.dropbox.dto;
 
 import org.apache.camel.Exchange;
 
+import java.io.OutputStream;
+import java.util.Map;
+
 
 public abstract class DropboxResult {
 
@@ -29,11 +32,11 @@ public abstract class DropboxResult {
      */
     public abstract void populateExchange(Exchange exchange);
 
-    public Object getResultEntries()  {
-        return resultEntries;
-    }
+//    public Map<String, OutputStream> getResultEntries()  {
+//        return resultEntries;
+//    }
 
-    public void setResultEntries(Object resultEntries) {
+    public void setResultEntries(Map<String, OutputStream> resultEntries) {
         this.resultEntries = resultEntries;
     }
 
