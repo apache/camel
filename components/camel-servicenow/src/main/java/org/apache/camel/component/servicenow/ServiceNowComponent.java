@@ -29,21 +29,18 @@ import org.apache.camel.util.IntrospectionSupport;
  */
 public class ServiceNowComponent extends UriEndpointComponent {
 
-    private String userName;
-    private String password;
-    private String oauthClientId;
-    private String oauthClientSecret;
-    private String oauthTokenUrl;
-    private String apiUrl;
+    private ServiceNowConfiguration configuration;
 
     public ServiceNowComponent() {
         super(ServiceNowEndpoint.class);
+
+        this.configuration = new ServiceNowConfiguration();
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         final CamelContext context = getCamelContext();
-        final ServiceNowConfiguration configuration = new ServiceNowConfiguration();
+        final ServiceNowConfiguration configuration = this.configuration.copy();
 
         Map<String, Object> models = IntrospectionSupport.extractProperties(parameters, "model.");
         for (Map.Entry<String, Object> entry : models.entrySet()) {
@@ -52,97 +49,107 @@ public class ServiceNowComponent extends UriEndpointComponent {
                 EndpointHelper.resolveParameter(context, (String)entry.getValue(), Class.class));
         }
 
-        setProperties(configuration, parameters);
+        Map<String, Object> requestModels = IntrospectionSupport.extractProperties(parameters, "requestModel.");
+        for (Map.Entry<String, Object> entry : requestModels.entrySet()) {
+            configuration.addRequestModel(
+                entry.getKey(),
+                EndpointHelper.resolveParameter(context, (String)entry.getValue(), Class.class));
+        }
 
-        if (configuration.getUserName() == null) {
-            configuration.setUserName(userName);
+        Map<String, Object> responseModels = IntrospectionSupport.extractProperties(parameters, "responseModel.");
+        for (Map.Entry<String, Object> entry : requestModels.entrySet()) {
+            configuration.addResponseModel(
+                entry.getKey(),
+                EndpointHelper.resolveParameter(context, (String)entry.getValue(), Class.class));
         }
-        if (configuration.getPassword() == null) {
-            configuration.setPassword(password);
-        }
-        if (configuration.getOauthClientId() == null) {
-            configuration.setOauthClientId(oauthClientId);
-        }
-        if (configuration.getOauthClientSecret() == null) {
-            configuration.setOauthClientSecret(oauthClientSecret);
-        }
+
+        setProperties(configuration, parameters);
 
         String instanceName = getCamelContext().resolvePropertyPlaceholders(remaining);
         if (!configuration.hasApiUrl()) {
-            configuration.setApiUrl(apiUrl != null
-                ? apiUrl
-                : String.format("https://%s.service-now.com/api", instanceName)
-            );
+            configuration.setApiUrl(String.format("https://%s.service-now.com/api", instanceName));
         }
         if (!configuration.hasOautTokenUrl()) {
-            configuration.setOauthTokenUrl(oauthTokenUrl != null
-                ? oauthTokenUrl
-                : String.format("https://%s.service-now.com/oauth_token.do", instanceName)
-            );
+            configuration.setOauthTokenUrl(String.format("https://%s.service-now.com/oauth_token.do", instanceName));
         }
 
         return new ServiceNowEndpoint(uri, this, configuration, instanceName);
     }
 
+    public ServiceNowConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * The ServiceNow default configuration
+     */
+    public void setConfiguration(ServiceNowConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
     public String getApiUrl() {
-        return apiUrl;
+        return configuration.getApiUrl();
     }
 
     /**
      * The ServiceNow REST API url
      */
     public void setApiUrl(String apiUrl) {
-        this.apiUrl = apiUrl;
+        configuration.setApiUrl(apiUrl);
     }
 
     public String getUserName() {
-        return userName;
+        return configuration.getUserName();
     }
 
     /**
      * ServiceNow user account name
      */
     public void setUserName(String userName) {
-        this.userName = userName;
+        configuration.setUserName(userName);
     }
 
     public String getPassword() {
-        return password;
+        return configuration.getPassword();
     }
 
     /**
      * ServiceNow account password
      */
     public void setPassword(String password) {
-        this.password = password;
+        configuration.setPassword(password);
     }
 
     public String getOauthClientId() {
-        return oauthClientId;
+        return configuration.getOauthClientId();
     }
 
     /**
      * OAuth2 ClientID
      */
     public void setOauthClientId(String oauthClientId) {
-        this.oauthClientId = oauthClientId;
+        configuration.setOauthClientId(oauthClientId);
+    }
+
+    public String getOauthClientSecret() {
+        return configuration.getOauthClientSecret();
     }
 
     /**
      * OAuth2 ClientSecret
      */
     public void setOauthClientSecret(String oauthClientSecret) {
-        this.oauthClientSecret = oauthClientSecret;
+        configuration.setOauthClientSecret(oauthClientSecret);
     }
 
     public String getOauthTokenUrl() {
-        return oauthTokenUrl;
+        return configuration.getOauthTokenUrl();
     }
 
     /**
      * OAuth token Url
      */
     public void setOauthTokenUrl(String oauthTokenUrl) {
-        this.oauthTokenUrl = oauthTokenUrl;
+        configuration.setOauthTokenUrl(oauthTokenUrl);
     }
 }

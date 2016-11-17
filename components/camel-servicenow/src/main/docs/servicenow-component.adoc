@@ -36,7 +36,7 @@ Options
 
 
 // component options: START
-The ServiceNow component supports 6 options which are listed below.
+The ServiceNow component supports 7 options which are listed below.
 
 
 
@@ -44,6 +44,7 @@ The ServiceNow component supports 6 options which are listed below.
 [width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
+| configuration | ServiceNowConfiguration | The ServiceNow default configuration
 | apiUrl | String | The ServiceNow REST API url
 | userName | String | ServiceNow user account name
 | password | String | ServiceNow account password
@@ -56,7 +57,7 @@ The ServiceNow component supports 6 options which are listed below.
 
 
 // endpoint options: START
-The ServiceNow component supports 31 endpoint options which are listed below:
+The ServiceNow component supports 33 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -74,10 +75,11 @@ The ServiceNow component supports 31 endpoint options which are listed below:
 | includeScores | producer |  | Boolean | Set this parameter to true to return all scores for a scorecard. If a value is not specified this parameter defaults to false and returns only the most recent score value.
 | inputDisplayValue | producer |  | Boolean | True to set raw value of input fields (default: false)
 | key | producer |  | Boolean | Set this parameter to true to return only scorecards for key indicators.
-| models | producer |  | String | Defines the default model to use for a table
 | perPage | producer | 10 | Integer | Enter the maximum number of scorecards each query can return. By default this value is 10 and the maximum is 100.
 | release | producer | HELSINKI | ServiceNowRelease | The ServiceNow release to target default to Helsinki See https://docs.servicenow.com
+| requestModels | producer |  | String | Defines the request model
 | resource | producer |  | String | The default resource can be overridden by header CamelServiceNowResource
+| responseModels | producer |  | String | Defines the response model
 | sortBy | producer |  | String | Specify the value to use when sorting results. By default queries sort records by value.
 | sortDir | producer |  | String | Specify the sort direction ascending or descending. By default queries sort records in descending order. Use sysparm_sortdir=asc to sort in ascending order.
 | suppressAutoSysField | producer |  | Boolean | True to suppress auto generation of system fields (default: false)
@@ -85,6 +87,7 @@ The ServiceNow component supports 31 endpoint options which are listed below:
 | table | producer |  | String | The default table can be overridden by header CamelServiceNowTable
 | target | producer |  | Boolean | Set this parameter to true to return only scorecards that have a target.
 | topLevelOnly | producer |  | Boolean | Gets only those categories whose parent is a catalog.
+| apiVersion | advanced |  | String | The ServiceNow REST API version default latest
 | mapper | advanced |  | ObjectMapper | Sets Jackson's ObjectMapper to use for request/reply
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | apiUrl | security |  | String | The ServiceNow REST API url
@@ -110,6 +113,8 @@ Headers
 |CamelServiceNowAction |String | - | - | The action to perform
 |CamelServiceNowActionSubject | - | - | String |The subject to which the action should be applied
 |CamelServiceNowModel |Class | - | - | The data model
+|CamelServiceNowRequestModel |Class | - | - | The request data model
+|CamelServiceNowResponseModel |Class | - | - | The response data model
 |CamelServiceNowOffsetNext | - | - | - | -
 |CamelServiceNowOffsetPrev | - | - | - | -
 |CamelServiceNowOffsetFirst | - | - | - | -
@@ -168,6 +173,8 @@ Headers
 |CamelServiceNowBreakdownRelation | String | sysparm_breakdown_relation | - | -
 |CamelServiceNowDataSource | String | sysparm_data_source | - | -
 |CamelServiceNowTopLevelOnly | Boolean | sysparm_top_level_only | topLevelOnly | -
+|CamelServiceNowApiVersion | String | - | - | The REST API version
+|CamelServiceNowResponseMeta | Map | - | - | Meta data provided along with a response
 |===
 
 [[ServiceNow-Fuji]]

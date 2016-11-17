@@ -59,7 +59,10 @@ public class ServiceNowClient {
     }
 
     public ServiceNowClient path(Object path) {
-        client.path(path);
+        if (path != null) {
+            client.path(path);
+        }
+
         return this;
     }
 

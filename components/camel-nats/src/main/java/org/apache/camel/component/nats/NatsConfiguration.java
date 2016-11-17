@@ -57,6 +57,10 @@ public class NatsConfiguration {
     private String maxMessages;
     @UriParam(label = "consumer", defaultValue = "10")
     private int poolSize = 10;
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean flushConnection;
+    @UriParam(label = "common", defaultValue = "1000")
+    private int flushTimeout = 1000;
     @UriParam(label = "security")
     private boolean secure;
     @UriParam(label = "security")
@@ -217,6 +221,28 @@ public class NatsConfiguration {
 
     public void setPoolSize(int poolSize) {
         this.poolSize = poolSize;
+    }
+
+    public boolean isFlushConnection() {
+        return flushConnection;
+    }
+
+    /**
+     * Define if we want to flush connection or not
+     */
+    public void setFlushConnection(boolean flushConnection) {
+        this.flushConnection = flushConnection;
+    }
+
+    public int getFlushTimeout() {
+        return flushTimeout;
+    }
+
+    /**
+     * Set the flush timeout
+     */
+    public void setFlushTimeout(int flushTimeout) {
+        this.flushTimeout = flushTimeout;
     }
 
     /**

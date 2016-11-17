@@ -49,11 +49,13 @@ class HelsinkiServiceNowScorecardProcessor extends AbstractServiceNowProcessor {
      */
     private void retrievePerformanceAnalytics(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final Class<?> model = getModel(in);
+        final Class<?> responseModel = getResponseModel(in);
+        final String apiVersion = getApiVersion(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("now")
+            .path(apiVersion)
             .path("pa")
             .path("scorecards")
             .query(ServiceNowParams.SYSPARM_UUID, in)
@@ -79,6 +81,6 @@ class HelsinkiServiceNowScorecardProcessor extends AbstractServiceNowProcessor {
             .query(ServiceNowParams.SYSPARM_INCLUDE_SCORE_NOTES, in)
             .invoke(HttpMethod.GET);
 
-        setBodyAndHeaders(in, model, response);
+        setBodyAndHeaders(in, responseModel, response);
     }
 }

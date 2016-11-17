@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.servicenow.AbstractServiceNowProcessor;
 import org.apache.camel.component.servicenow.ServiceNowEndpoint;
-import org.apache.camel.component.servicenow.ServiceNowParams;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_CREATE;
@@ -45,19 +44,21 @@ class HelsinkiServiceNowImportSetProcessor extends AbstractServiceNowProcessor {
      */
     private void retrieveRecord(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final String tableName = in.getHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(), config.getTable(), String.class);
-        final Class<?> model = getModel(in, tableName);
-        final String sysId = in.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
+        final String tableName = getTableName(in);
+        final String apiVersion = getApiVersion(in);
+        final Class<?> responseModel = getResponseModel(in, tableName);
+        final String sysId = getSysID(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("now")
+            .path(apiVersion)
             .path("import")
             .path(ObjectHelper.notNull(tableName, "tableName"))
             .path(ObjectHelper.notNull(sysId, "sysId"))
             .invoke(HttpMethod.GET);
 
-        setBodyAndHeaders(in, model, response);
+        setBodyAndHeaders(in, responseModel, response);
     }
 
     /*
@@ -66,17 +67,20 @@ class HelsinkiServiceNowImportSetProcessor extends AbstractServiceNowProcessor {
      */
     private void createRecord(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
-        final String tableName = in.getHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(), config.getTable(), String.class);
-        final Class<?> model = getModel(in, tableName);
+        final String tableName = getTableName(in);
+        final String apiVersion = getApiVersion(in);
+        final Class<?> requestModel = getRequestModel(in, tableName);
+        final Class<?> responseModel = getResponseModel(in, tableName);
 
-        validateBody(in, model);
+        validateBody(in, requestModel);
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("now")
+            .path(apiVersion)
             .path("import")
             .path(tableName)
             .invoke(HttpMethod.POST, in.getMandatoryBody());
 
-        setBodyAndHeaders(in, model, response);
+        setBodyAndHeaders(in, responseModel, response);
     }
 }

@@ -78,6 +78,10 @@ public class NatsProducer extends DefaultProducer {
         
         LOG.debug("Closing Nats Connection");
         if (connection != null && !connection.isClosed()) {
+            if (getEndpoint().getNatsConfiguration().isFlushConnection()) {
+                LOG.debug("Flushing Nats Connection");
+                connection.flush(getEndpoint().getNatsConfiguration().getFlushTimeout());
+            }
             connection.close();
         }
     }

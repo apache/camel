@@ -26,7 +26,7 @@ import org.apache.camel.component.servicenow.ServiceNowRelease;
  */
 public class HelsinkiServiceNowProducer extends AbstractServiceNowProducer {
     public HelsinkiServiceNowProducer(ServiceNowEndpoint endpoint) throws Exception {
-        super(endpoint, ServiceNowRelease.HELSINKY);
+        super(endpoint, ServiceNowRelease.HELSINKI);
 
         bind(ServiceNowConstants.RESOURCE_TABLE, new HelsinkiServiceNowTableProcessor(endpoint));
         bind(ServiceNowConstants.RESOURCE_AGGREGATE, new HelsinkiServiceNowAggregateProcessor(endpoint));

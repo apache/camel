@@ -35,7 +35,7 @@ class FujiServiceNowAggregateProcessor extends FujiServiceNowProcessor {
     }
 
     @Override
-    protected void doProcess(Exchange exchange, Class<?> model, String action, String tableName, String sysId) throws Exception {
+    protected void doProcess(Exchange exchange, Class<?> requestModel, Class<?> responseModel, String action, String apiVersion, String tableName, String sysId) throws Exception {
         Response response;
         if (ObjectHelper.equal(ServiceNowConstants.ACTION_RETRIEVE, action, true)) {
             response = retrieveStats(exchange.getIn(), tableName);
@@ -43,13 +43,16 @@ class FujiServiceNowAggregateProcessor extends FujiServiceNowProcessor {
             throw new IllegalArgumentException("Unknown action " + action);
         }
 
-        setBodyAndHeaders(exchange.getIn(), model, response);
+        setBodyAndHeaders(exchange.getIn(), responseModel, response);
     }
 
     private Response retrieveStats(Message in, String tableName) throws Exception {
+        final String apiVersion = getApiVersion(in);
+
         return client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)
             .path("now")
+            .path(apiVersion)
             .path("stats")
             .path(tableName)
             .query(ServiceNowParams.SYSPARM_QUERY, in)

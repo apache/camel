@@ -18,6 +18,8 @@ package org.apache.camel.component.servicenow;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.ws.rs.core.HttpHeaders;
@@ -53,10 +55,10 @@ public abstract class AbstractServiceNowProcessor implements Processor {
         this.dispatchers = new ArrayList<>();
     }
 
-    protected AbstractServiceNowProcessor setBodyAndHeaders(Message message, Class<?> model, Response response) throws Exception {
+    protected AbstractServiceNowProcessor setBodyAndHeaders(Message message, Class<?> responseModel, Response response) throws Exception {
         if (response != null) {
-            setHeaders(message, model, response);
-            setBody(message, model, response);
+            setHeaders(message, responseModel, response);
+            setBody(message, responseModel, response);
         }
 
         return this;
@@ -78,7 +80,7 @@ public abstract class AbstractServiceNowProcessor implements Processor {
     // *********************************
 
 
-    protected AbstractServiceNowProcessor setHeaders(Message message, Class<?> model, Response response) throws Exception {
+    protected AbstractServiceNowProcessor setHeaders(Message message, Class<?> responseModel, Response response) throws Exception {
         List<String> links = response.getStringHeaders().get(HttpHeaders.LINK);
         if (links != null) {
             for (String link : links) {
@@ -88,8 +90,8 @@ public abstract class AbstractServiceNowProcessor implements Processor {
                 }
 
                 // Sanitize parts
-                String uri = ObjectHelper.between(parts[0], "<", ">");
-                String rel = StringHelper.removeQuotes(ObjectHelper.after(parts[1], "="));
+                String uri = StringHelper.between(parts[0], "<", ">");
+                String rel = StringHelper.removeQuotes(StringHelper.after(parts[1], "="));
 
                 Map<String, Object> query = URISupport.parseQuery(uri);
                 Object offset = query.get(ServiceNowParams.SYSPARM_OFFSET.getId());
@@ -126,8 +128,9 @@ public abstract class AbstractServiceNowProcessor implements Processor {
         copyHeader(response, HttpHeaders.CONTENT_TYPE, message, ServiceNowConstants.CONTENT_TYPE);
         copyHeader(response, HttpHeaders.CONTENT_ENCODING, message, ServiceNowConstants.CONTENT_ENCODING);
 
-        if (model != null) {
-            message.getHeaders().putIfAbsent(ServiceNowConstants.MODEL, model.getName());
+        if (responseModel != null) {
+            message.getHeaders().putIfAbsent(ServiceNowConstants.MODEL, responseModel.getName());
+            message.getHeaders().putIfAbsent(ServiceNowConstants.RESPONSE_MODEL, responseModel.getName());
         }
 
         return this;
@@ -140,11 +143,33 @@ public abstract class AbstractServiceNowProcessor implements Processor {
     protected AbstractServiceNowProcessor setBody(Message message, Class<?> model, Response response) throws Exception {
         if (message != null && response != null) {
             if (ObjectHelper.isNotEmpty(response.getHeaderString(HttpHeaders.CONTENT_TYPE))) {
-                JsonNode node = response.readEntity(JsonNode.class);
-                Object body = unwrap(node, model);
+                JsonNode root = response.readEntity(JsonNode.class);
+                Map<String, String> responseAttributes = null;
 
-                if (body != null) {
-                    message.setBody(body);
+                if (root != null) {
+                    Iterator<Map.Entry<String, JsonNode>> fields = root.fields();
+                    while(fields.hasNext()) {
+                        final Map.Entry<String, JsonNode> entry = fields.next();
+                        final String key = entry.getKey();
+                        final JsonNode node = entry.getValue();
+
+                        if (ObjectHelper.equal("result", key, true)) {
+                            Object body = unwrap(node, model);
+                            if (body != null) {
+                                message.setBody(body);
+                            }
+                        } else {
+                            if (responseAttributes == null) {
+                                responseAttributes = new HashMap<>();
+                            }
+
+                            responseAttributes.put(key, node.textValue());
+                        }
+                    }
+
+                    if (responseAttributes != null) {
+                        message.setHeader(ServiceNowConstants.RESPONSE_META, responseAttributes);
+                    }
                 }
             }
         }
@@ -167,25 +192,20 @@ public abstract class AbstractServiceNowProcessor implements Processor {
         return this;
     }
 
-    protected Object unwrap(JsonNode answer, Class<?> model) throws IOException {
-        Object result = null;
+    protected Object unwrap(JsonNode node, Class<?> model) throws IOException {
+        Object result;
 
-        if (answer != null) {
-            JsonNode node = answer.get("result");
-            if (node != null) {
-                if (node.isArray()) {
-                    if (model.isInstance(Map.class)) {
-                        // If the model is a Map, there's no need to use any
-                        // specific JavaType to instruct Jackson about the
-                        // expected element type
-                        result = mapper.treeToValue(node, List.class);
-                    } else {
-                        result = mapper.readValue(node.traverse(), javaTypeCache.get(model));
-                    }
-                } else {
-                    result = mapper.treeToValue(node, model);
-                }
+        if (node.isArray()) {
+            if (model.isInstance(Map.class)) {
+                // If the model is a Map, there's no need to use any
+                // specific JavaType to instruct Jackson about the
+                // expected element type
+                result = mapper.treeToValue(node, List.class);
+            } else {
+                result = mapper.readValue(node.traverse(), javaTypeCache.get(model));
             }
+        } else {
+            result = mapper.treeToValue(node, model);
         }
 
         return result;
@@ -219,6 +239,10 @@ public abstract class AbstractServiceNowProcessor implements Processor {
         return null;
     }
 
+    // *********************************
+    // Helpers
+    // *********************************
+
     protected Object getRequestParamFromHeader(ServiceNowParam sysParam, Message message) {
         return message.getHeader(
             sysParam.getHeader(),
@@ -241,15 +265,46 @@ public abstract class AbstractServiceNowProcessor implements Processor {
         }
     }
 
-    protected Class<?> getModel(Message message) {
-        return getModel(message, null);
+    protected Class<?> getRequestModel(Message message) {
+        return getRequestModel(message, null);
     }
 
-    protected Class<?> getModel(Message message, String modelName) {
-        return message.getHeader(
-            ServiceNowConstants.MODEL,
-            ObjectHelper.isEmpty(modelName) ? Map.class : config.getModel(modelName, Map.class),
-            Class.class);
+    protected Class<?> getRequestModel(Message message, String modelName) {
+        Class<?> model = message.getHeader(ServiceNowConstants.REQUEST_MODEL, Class.class);
+        if (model == null) {
+            model = message.getHeader(ServiceNowConstants.MODEL, Class.class);
+        }
+
+        return model != null
+            ? model
+            : ObjectHelper.isEmpty(modelName) ? Map.class : config.getRequestModel(modelName, Map.class);
+    }
+
+    protected Class<?> getResponseModel(Message message) {
+        return getRequestModel(message, null);
+    }
+
+    protected Class<?> getResponseModel(Message message, String modelName) {
+        Class<?> model = message.getHeader(ServiceNowConstants.RESPONSE_MODEL, Class.class);
+        if (model == null) {
+            model = message.getHeader(ServiceNowConstants.MODEL, Class.class);
+        }
+
+        return model != null
+            ? model
+            : ObjectHelper.isEmpty(modelName) ? Map.class : config.getResponseModel(modelName, Map.class);
+    }
+
+    protected String getApiVersion(Message message) {
+        return message.getHeader(ServiceNowConstants.API_VERSION, config.getApiVersion(), String.class);
+    }
+
+    protected String getTableName(Message message) {
+        return message.getHeader(ServiceNowParams.PARAM_TABLE_NAME.getHeader(), config.getTable(), String.class);
+    }
+
+    protected String getSysID(Message message) {
+        return message.getHeader(ServiceNowParams.PARAM_SYS_ID.getHeader(), String.class);
     }
 
     // *************************************************************************

@@ -14,30 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.nats;
+package org.apache.camel.component.netty4.http;
 
-import java.io.IOException;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.PooledByteBufAllocator;
 
-import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
+import org.junit.Assert;
 import org.junit.Test;
 
-@Ignore("Require a running Nats server")
-public class NatsConsumerTest extends CamelTestSupport {
-
-    @EndpointInject(uri = "mock:result")
-    protected MockEndpoint mockResultEndpoint;
+/**
+ * Tests https://issues.apache.org/jira/browse/CAMEL-10409
+ */
+public class NettyRequestManagementTest extends BaseNettyTest {
 
     @Test
-    public void testConsumer() throws InterruptedException, IOException {
-        mockResultEndpoint.expectedMessageCount(1);
-        mockResultEndpoint.expectedBodiesReceived("{Subject=test;Reply=null;Payload=<test>}");
-        template.requestBody("direct:send", "test");
+    public void testBufferManagement() {
+        Exchange exchange = template.send("direct:start", e -> e.getIn().setBody("World"));
+        Assert.assertEquals("Bye World", exchange.getIn().getBody(String.class));
+        exchange.getProperty("buffer", ByteBuf.class).release();
+    }
 
-        mockResultEndpoint.assertIsSatisfied();
+    private static void requestBuffer(Exchange exchange) {
+        exchange.setProperty("buffer", PooledByteBufAllocator.DEFAULT.directBuffer());
     }
 
     @Override
@@ -45,8 +45,12 @@ public class NatsConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:send").to("nats://localhost:4222?topic=test&flushConnection=true");
-                from("nats://localhost:4222?topic=test&flushConnection=true").to(mockResultEndpoint);
+                from("netty4-http:http://0.0.0.0:{{port}}/foo")
+                        .transform(body().prepend("Bye "));
+
+                from("direct:start")
+                        .to("netty4-http:http://localhost:{{port}}/foo?synchronous=true")
+                        .process(NettyRequestManagementTest::requestBuffer);
             }
         };
     }
