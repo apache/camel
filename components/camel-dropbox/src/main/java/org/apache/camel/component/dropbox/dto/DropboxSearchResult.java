@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.dropbox.dto;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.dropbox.core.DbxEntry;
@@ -24,25 +26,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 
 
-public class DropboxSearchResult extends DropboxResult {
+public class DropboxSearchResult {
 
-    /**
-     * Object payload contained in Exchange
-     * Exchange Header is populated with the remote paths found.
-     * Exchange Body is populated with the list of DbxEntry found.
-     * @param exchange
-     */
-    @Override
-    public void populateExchange(Exchange exchange) {
-        StringBuffer fileExtracted = new StringBuffer();
-        List<DbxEntry> entries = null;
-        if (resultEntries != null) {
-            entries = (List<DbxEntry>) resultEntries;
-            for (DbxEntry entry : entries) {
-                fileExtracted.append(entry.name + "-" + entry.path + "\n");
-            }
-        }
-        exchange.getIn().setHeader(DropboxResultHeader.FOUNDED_FILES.name(), fileExtracted.toString());
-        exchange.getIn().setBody(entries);
+    private final List<DbxEntry> found;
+
+    public DropboxSearchResult(List<DbxEntry> found) {
+        this.found = new ArrayList<DbxEntry>(found);
     }
+
+    public List<DbxEntry> getFound() {
+        return Collections.unmodifiableList(found);
+    }
+
 }
