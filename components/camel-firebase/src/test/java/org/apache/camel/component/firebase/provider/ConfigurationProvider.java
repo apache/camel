@@ -18,7 +18,7 @@ import static org.junit.Assert.assertNotNull;
 public class ConfigurationProvider {
 
     public static String createFirebaseConfigLink() throws URISyntaxException, UnsupportedEncodingException {
-        URL url = Thread.currentThread().getContextClassLoader().getResource("gil-sample-app-firebase-adminsdk-rcwg7-fea519a672.json");
+        URL url = Thread.currentThread().getContextClassLoader().getResource("firebase-admin-connection.json");
         assertNotNull(url);
         File f = new File(url.toURI());
         return URLEncoder.encode(f.getAbsolutePath(), "UTF-8");
