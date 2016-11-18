@@ -19,17 +19,12 @@ package org.apache.camel.test.blueprint;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Arrays;
 
 import org.apache.aries.util.io.IOUtils;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.util.FileUtil;
-import org.apache.felix.connect.felix.framework.util.Util;
 import org.junit.Test;
-import org.ops4j.io.FileUtils;
 import org.ops4j.pax.swissbox.tinybundles.core.TinyBundle;
 import org.ops4j.pax.swissbox.tinybundles.core.TinyBundles;
 
@@ -78,7 +73,7 @@ public class MainTest {
 
         // simulate `camel:run` which is run after packaging the artifact, so a "bundle" (location with
         // META-INF/MANIFEST.MF) is detected in target/classes
-        URLClassLoader loader = new URLClassLoader(new URL[] { tb.toURI().toURL() }, getClass().getClassLoader());
+        URLClassLoader loader = new URLClassLoader(new URL[] {tb.toURI().toURL()}, getClass().getClassLoader());
 
         Main main = new Main();
         main.setLoader(loader);
