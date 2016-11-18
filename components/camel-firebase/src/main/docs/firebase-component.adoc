@@ -1,0 +1,204 @@
+[[Firebase-FirebaseComponent]]
+Firebase Component
+~~~~~~~~~~~~~~~~~
+
+*Available as of Camel 2.18.x*
+
+The *firebase* component enables you to save, modify data in Google Firebase database
+and consume to all child of a specific reference.
+
+This component supports producer and event based consumer endpoints.
+
+The Firebase consumer is an event based consumer and can be used to listen
+and respond to five types of Firebase events: add, change, remove, move and cancel 
+
+Maven users will need to add the following dependency to
+their `pom.xml` for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-firebase</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+[[Ehcache-URIformat]]
+URI format
+^^^^^^^^^^
+
+[source,java]
+-----------------------------
+firebase://databaseUrl[?options]
+-----------------------------
+
+You can append query options to the URI in the following
+format, `?option=value&option=#beanRef&...`
+
+Do not forget to URL encode the parameters
+
+[[Firebase-Options]]
+Options
+^^^^^^^
+
+
+// component options: START
+The Firebase component has no options.
+// component options: END
+
+
+
+// endpoint options: START
+The Firebase component supports 9 endpoint options which are listed below:
+
+{% raw %}
+[width="100%",cols="2,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| databaseUrl | common |  | String | *Required* The Firebase database URL. Always uses https
+| async | common | async | boolean | If true the save or update request (set value in Firebase terms) is fired and the reply will be ignored else the routing thread will wait and the reply will be saved in the exchange message
+| keyName | common | firebaseKey | String | The Camel exchange header name in which the Firebase key is specified. Only needed in case you are saving or updating data
+| rootReference | common |  | String | *Required* The path in the database tree where the key value pairs are to be stored
+| serviceAccountFile | common |  | String | *Required* The path to the JSON file which provided the keys used to connect to Firebase. This file is typically generated when you create the database
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+|=======================================================================
+{% endraw %}
+// endpoint options: END
+
+
+[[Ehcache-MessageHeadersCamel]]
+Message Headers Camel 
+++++++++++++++++++++++
+
+ 
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|CamelEhcacheAction |`String` |The operation to be perfomed on the cache, valid options are:
+
+* CLEAR
+* PUT
+* PUT_ALL
+* PUT_IF_ABSENT
+* GET
+* GET_ALL
+* REMOVE
+* REMOVE_ALL
+* REPLACE
+
+|CamelEhcacheActionHasResult |Boolean |Set to true if the action has a result
+
+|CamelEhcacheActionSucceeded |`Boolean` |Set to true if the actionsuccedded
+
+|CamelEhcacheKey |Object |The cache key used for an action
+
+|CamelEhcacheKeys |Set<Object> |A list of keys, used in
+
+* PUT_ALL
+* GET_ALL
+* REMOVE_ALL
+
+|CamelEhcacheValue |Object |The value to put in the cache or the result of an operation
+
+|CamelEhcacheOldValue |Object |The old value associated to a key for actions like PUT_IF_ABSENT or the
+Object used for comparison for actions like REPLACE
+
+|CamelEhcacheEventType |EventType |The type of event received
+|=======================================================================
+
+[[Ehcache-Ehcachebasedidempotentrepositoryexample:]]
+Ehcache based idempotent repository example:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[source,java]
+------------------------------------------------------------------------------------------------
+CacheManager manager = CacheManagerBuilder.newCacheManager(new XmlConfiguration("ehcache.xml"));
+EhcacheIdempotentRepository repo = new EhcacheIdempotentRepository(manager, "idempotent-cache");
+ 
+from("direct:in")
+    .idempotentConsumer(header("messageId"), idempotentRepo)
+    .to("mock:out");
+------------------------------------------------------------------------------------------------
+
+ 
+
+[[Ehcache-Ehcachebasedaggregationrepositoryexample:]]
+Ehcache based aggregation repository example:
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------------------------
+public class EhcacheAggregationRepositoryRoutesTest extends CamelTestSupport {
+    private static final String ENDPOINT_MOCK = "mock:result";
+    private static final String ENDPOINT_DIRECT = "direct:one";
+    private static final int[] VALUES = generateRandomArrayOfInt(10, 0, 30);
+    private static final int SUM = IntStream.of(VALUES).reduce(0, (a, b) -> a + b);
+    private static final String CORRELATOR = "CORRELATOR";
+
+    @EndpointInject(uri = ENDPOINT_MOCK)
+    private MockEndpoint mock;
+
+    @Produce(uri = ENDPOINT_DIRECT)
+    private ProducerTemplate producer;
+
+    @Test
+    public void checkAggregationFromOneRoute() throws Exception {
+        mock.expectedMessageCount(VALUES.length);
+        mock.expectedBodiesReceived(SUM);
+
+        IntStream.of(VALUES).forEach(
+            i -> producer.sendBodyAndHeader(i, CORRELATOR, CORRELATOR)
+        );
+
+        mock.assertIsSatisfied();
+    }
+
+    private Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+        if (oldExchange == null) {
+            return newExchange;
+        } else {
+            Integer n = newExchange.getIn().getBody(Integer.class);
+            Integer o = oldExchange.getIn().getBody(Integer.class);
+            Integer v = (o == null ? 0 : o) + (n == null ? 0 : n);
+
+            oldExchange.getIn().setBody(v, Integer.class);
+
+            return oldExchange;
+        }
+    }
+
+    @Override
+    protected RoutesBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from(ENDPOINT_DIRECT)
+                    .routeId("AggregatingRouteOne")
+                    .aggregate(header(CORRELATOR))
+                    .aggregationRepository(createAggregateRepository())
+                    .aggregationStrategy(EhcacheAggregationRepositoryRoutesTest.this::aggregate)
+                    .completionSize(VALUES.length)
+                        .to("log:org.apache.camel.component.ehcache.processor.aggregate.level=INFO&showAll=true&mulltiline=true")
+                        .to(ENDPOINT_MOCK);
+            }
+        };
+    }
+
+    protected EhcacheAggregationRepository createAggregateRepository() throws Exception {
+        CacheManager cacheManager = CacheManagerBuilder.newCacheManager(new XmlConfiguration("ehcache.xml"));
+        cacheManager.init();
+
+        EhcacheAggregationRepository repository = new EhcacheAggregationRepository();
+        repository.setCacheManager(cacheManager);
+        repository.setCacheName("aggregate");
+
+        return repository;
+    }
+}
+---------------------------------------------------------------------------------------------------------------------------------

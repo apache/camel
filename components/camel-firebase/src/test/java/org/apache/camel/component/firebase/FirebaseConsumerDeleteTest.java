@@ -1,4 +1,26 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.firebase;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
+
+import static junit.framework.TestCase.fail;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -11,12 +33,8 @@ import org.apache.camel.component.firebase.provider.SampleInputProvider;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
-
-import static junit.framework.TestCase.fail;
 import static org.assertj.core.api.Assertions.assertThat;
+
 
 /**
  * Starts a route which listens to the remove event in Firebase. It then writes and deletes an entry in Firebase and
@@ -29,15 +47,13 @@ public class FirebaseConsumerDeleteTest {
     private final Condition wake = reentrantLock.newCondition();
 
     @Test
-    public void whenDelete_DeleteMessageShouldBeIntercepted() throws Exception {
+    public void whenDeleteDeleteMessageShouldBeIntercepted() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        boolean[] deleteMessageReceived = { false };
+        boolean[] deleteMessageReceived = {false};
         FirebaseConfig firebaseConfig = ConfigurationProvider.createDemoConfig();
+        createAndDeleteContent(firebaseConfig, false);
         setupRoute(context, deleteMessageReceived);
-        context.addStartupListener((context1, alreadyStarted) -> {
-            TimeUnit.SECONDS.sleep(5);
-            createAndDeleteContent(firebaseConfig);
-        });
+
         context.start();
         try {
             reentrantLock.lock();
@@ -49,16 +65,19 @@ public class FirebaseConsumerDeleteTest {
         context.stop();
     }
 
-    private void createAndDeleteContent(FirebaseConfig firebaseConfig) {
+    private void createAndDeleteContent(FirebaseConfig firebaseConfig, boolean delete) {
         final DatabaseReference rootReference = FirebaseDatabase.getInstance(firebaseConfig.getFirebaseApp())
                 .getReference(ConfigurationProvider.createRootReference()).child(SampleInputProvider.createDeleteKey());
         rootReference
                 .setValue("AETHELWULF 839-856", (databaseError, databaseReference) -> {
-                    databaseReference.removeValue();
+                    if (delete) {
+                        databaseReference.removeValue();
+                    }
                 });
     }
 
     private void setupRoute(CamelContext context, final boolean[] deleteMessageReceived) throws Exception {
+        boolean deleteFired[] = {false};
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 try {
@@ -74,6 +93,12 @@ public class FirebaseConsumerDeleteTest {
                                         wake.signal();
                                     } finally {
                                         reentrantLock.unlock();
+                                    }
+                                } else {
+                                    if (!deleteFired[0]) {
+                                        deleteFired[0] = true;
+                                        FirebaseConfig firebaseConfig = ConfigurationProvider.createDemoConfig();
+                                        createAndDeleteContent(firebaseConfig, true);
                                     }
                                 }
                             });
