@@ -24,10 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import javax.persistence.Entity;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
+import javax.persistence.*;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.PollingConsumerSupport;
@@ -49,6 +46,7 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
     private String query;
     private String namedQuery;
     private String nativeQuery;
+    private LockModeType lockModeType = LockModeType.PESSIMISTIC_WRITE;
     private Class<?> resultClass;
     private QueryFactory queryFactory;
     private Map<String, Object> parameters;
@@ -86,6 +84,14 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
 
     public void setNativeQuery(String nativeQuery) {
         this.nativeQuery = nativeQuery;
+    }
+
+    public LockModeType getLockModeType() {
+        return lockModeType;
+    }
+
+    public void setLockModeType(LockModeType lockModeType) {
+        this.lockModeType = lockModeType;
     }
 
     public Class<?> getResultClass() {
@@ -126,6 +132,11 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
 
                 Query query = getQueryFactory().createQuery(entityManager);
                 configureParameters(query);
+
+                if (getEndpoint().isConsumeLockEntity()) {
+                    query.setLockMode(getLockModeType());
+                }
+
                 LOG.trace("Created query {}", query);
 
                 Object answer;
