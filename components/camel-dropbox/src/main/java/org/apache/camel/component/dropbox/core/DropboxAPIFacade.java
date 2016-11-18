@@ -1,18 +1,18 @@
-/*
-  Licensed to the Apache Software Foundation (ASF) under one or more
-  contributor license agreements.  See the NOTICE file distributed with
-  this work for additional information regarding copyright ownership.
-  The ASF licenses this file to You under the Apache License, Version 2.0
-  (the "License"); you may not use this file except in compliance with
-  the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-  Unless required by applicable law or agreed to in writing, software
-  distributed under the License is distributed on an "AS IS" BASIS,
-  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  See the License for the specific language governing permissions and
-  limitations under the License.
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.camel.component.dropbox.core;
 
@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.*;
 
 import static org.apache.camel.component.dropbox.util.DropboxConstants.DROPBOX_FILE_SEPARATOR;
@@ -43,20 +42,18 @@ public final class DropboxAPIFacade {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxAPIFacade.class);
 
-    private DbxClient client;
+    private final DbxClient client;
+
     private final Exchange exchange;
 
-    private DropboxAPIFacade(Exchange exchange) {
-        this.exchange = exchange;
-    }
 
     /**
-     * Return a singleton instance of this class
      * @param client the DbxClient performing dropbox low level operations
      * @return the singleton instance of this class
      */
-    public static DropboxAPIFacade getInstance(DbxClient client, Exchange exchange) {
-        return new DropboxAPIFacade(exchange);
+    public DropboxAPIFacade(DbxClient client, Exchange exchange) {
+        this.client = client;
+        this.exchange = exchange;
     }
 
     /**
@@ -74,7 +71,7 @@ public final class DropboxAPIFacade {
         //in case the remote path is not specified, the remotePath = localPath
         String dropboxPath = remotePath == null ? localPath : remotePath;
 
-        DbxEntry entry;
+        DbxEntry entry = null;
         try {
             entry = client.getMetadata(dropboxPath);
         } catch (DbxException e) {
@@ -159,8 +156,7 @@ public final class DropboxAPIFacade {
             } else {
                 uploadMode = DbxWriteMode.add();
             }
-            uploadedFile = client.uploadFile(dropboxPath,
-                            uploadMode, inputFile.length(), inputStream);
+            uploadedFile = client.uploadFile(dropboxPath, uploadMode, inputFile.length(), inputStream);
             return uploadedFile;
         } finally {
             inputStream.close();
@@ -171,15 +167,16 @@ public final class DropboxAPIFacade {
      * Search inside a remote path including its sub directories.
      * The query param can be null.
      * @param remotePath  the remote path where starting the search from
-     * @param query a space-separated list of sub-strings to search for. A file matches only if it contains all the sub-strings
+     * @param query a space-separated list of substrings to search for. A file matches only if it contains all the substrings
      * @return a DropboxResult object containing all the files found.
      * @throws DropboxException
      */
     public DropboxSearchResult search(String remotePath, String query) throws DropboxException {
+        DbxEntry.WithChildren listing;
         if (query == null) {
             LOG.info("search no query");
             try {
-                DbxEntry.WithChildren listing = client.getMetadataWithChildren(remotePath);
+                listing = client.getMetadataWithChildren(remotePath);
                 return new DropboxSearchResult(listing.children);
             } catch (DbxException e) {
                 throw new DropboxException(remotePath + " does not exist or can't obtain metadata");
@@ -205,10 +202,10 @@ public final class DropboxAPIFacade {
     public DropboxDelResult del(String remotePath) throws DropboxException {
         try {
             client.delete(remotePath);
-            return new DropboxDelResult(remotePath);
         } catch (DbxException e) {
             throw new DropboxException(remotePath + " does not exist or can't obtain metadata");
         }
+        return new DropboxDelResult(remotePath);
     }
 
     /**
@@ -248,45 +245,43 @@ public final class DropboxAPIFacade {
     }
 
 
-    private Map<String, OutputStream> downloadFilesInFolder(String path) throws DropboxException {
+    private Map<String, Object> downloadFilesInFolder(String path) throws DropboxException {
         try {
             DbxEntry.WithChildren listing = client.getMetadataWithChildren(path);
-            if (listing.children == null) {
+            if (listing == null) {
+                return Collections.emptyMap();
+            } else if (listing.children == null) {
                 LOG.info("downloading a single file...");
-                Map.Entry<String, OutputStream> entry = downloadSingleFile(path);
-                if (entry != null) {
-                    return Collections.singletonMap(entry.getKey(), entry.getValue());
-                }
-            } else {
-                Map<String, OutputStream> result = new HashMap<String, OutputStream>();
-                for (DbxEntry entry : listing.children) {
-                    if (entry.isFile()) {
-                        try {
-                            Map.Entry<String, OutputStream> singleFile = downloadSingleFile(entry.path);
-                            result.put(singleFile.getKey(), singleFile.getValue());
-                        } catch (DropboxException e) {
-                            LOG.warn("can't download from " + entry.path);
-                        }
-                    } else {
-                        Map<String, OutputStream> filesInFolder = downloadFilesInFolder(entry.path);
-                        result.putAll(filesInFolder);
-                    }
-                }
-                return result;
+                Map.Entry<String, Object> entry = downloadSingleFile(path);
+                return Collections.singletonMap(entry.getKey(), entry.getValue());
             }
+            Map<String, Object> result = new HashMap<>();
+            for (DbxEntry entry : listing.children) {
+                if (entry.isFile()) {
+                    try {
+                        Map.Entry<String, Object> singleFile = downloadSingleFile(entry.path);
+                        result.put(singleFile.getKey(), singleFile.getValue());
+                    } catch (DropboxException e) {
+                        LOG.warn("can't download from " + entry.path);
+                    }
+                } else {
+                    Map<String, Object> filesInFolder = downloadFilesInFolder(entry.path);
+                    result.putAll(filesInFolder);
+                }
+            }
+            return result;
         } catch (DbxException e) {
-            throw new DropboxException(path + " does not exist or can't obtain metadata");
+            throw new DropboxException(e);
         }
-        return Collections.emptyMap();
     }
 
-    private Map.Entry<String, OutputStream> downloadSingleFile(String path) throws DropboxException {
+    private Map.Entry<String, Object> downloadSingleFile(String path) throws DropboxException {
         try {
             OutputStreamBuilder target = OutputStreamBuilder.withExchange(exchange);
             DbxEntry.File downloadedFile = client.getFile(path, null, target);
             if (downloadedFile != null) {
                 LOG.info("downloaded path:" + path);
-                return new AbstractMap.SimpleEntry<String, OutputStream>(path, target);
+                return new AbstractMap.SimpleEntry<>(path, target.build());
             } else {
                 return null;
             }
