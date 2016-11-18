@@ -45,7 +45,6 @@ public class FirebaseProducerTest {
         startRoute(true, String.class);
     }
 
-
     private void startRoute(final boolean async, final Class<?> expectedBodyClass) throws Exception {
         sampleInputProvider.copySampleFile();
         CamelContext context = new DefaultCamelContext();
