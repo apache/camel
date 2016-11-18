@@ -473,6 +473,7 @@
     <openjpa-version>2.4.1</openjpa-version>
     <openshift-java-client-version>2.7.0.Final</openshift-java-client-version>
     <openshift-client-version>1.4.27</openshift-client-version>
+    <openstack4j-version>3.0.2</openstack4j-version>
     <optaplanner-version>6.5.0.Final</optaplanner-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
@@ -1513,6 +1514,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-openshift</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-openstack</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
