@@ -175,6 +175,7 @@
         <include>org.apache.camel:camel-olingo2-api</include>
         <include>org.apache.camel:camel-olingo2</include>
         <include>org.apache.camel:camel-openshift</include>
+        <include>org.apache.camel:camel-openstack</include>
         <include>org.apache.camel:camel-optaplanner</include>
         <include>org.apache.camel:camel-paho</include>
         <include>org.apache.camel:camel-paxlogging</include>
@@ -437,6 +438,7 @@
         <include>org.apache.camel:camel-ognl-starter</include>
         <include>org.apache.camel:camel-olingo2-starter</include>
         <include>org.apache.camel:camel-openshift-starter</include>
+        <include>org.apache.camel:camel-openstack-starter</include>
         <include>org.apache.camel:camel-optaplanner-starter</include>
         <include>org.apache.camel:camel-paho-starter</include>
         <include>org.apache.camel:camel-pdf-starter</include>
