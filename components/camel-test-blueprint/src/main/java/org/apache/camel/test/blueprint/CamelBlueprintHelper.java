@@ -134,7 +134,7 @@ public final class CamelBlueprintHelper {
     }
 
     public static BundleContext createBundleContext(String name, String bundleFilter, TinyBundle bundle) throws Exception {
-        return createBundleContext(name, bundleFilter, bundle, null,null);
+        return createBundleContext(name, bundleFilter, bundle, null, null);
     }
 
     public static BundleContext createBundleContext(String name, String bundleFilter,
