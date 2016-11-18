@@ -37,6 +37,7 @@ public class Customer {
     private String name;
     @OneToOne(cascade = CascadeType.ALL)
     private Address address;
+    private int orders;
 
     public Long getId() {
         return id;
@@ -60,6 +61,14 @@ public class Customer {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public int getOrders() {
+        return orders;
+    }
+
+    public void setOrders(int orders) {
+        this.orders = orders;
     }
 
     @Override

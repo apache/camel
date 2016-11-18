@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.jpa;
 
-import java.util.List;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.Customer;
@@ -25,6 +23,10 @@ import org.apache.camel.spring.SpringRouteBuilder;
 import org.junit.Test;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class JpaPollingConsumerTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + Customer.class.getName() + " x";
@@ -64,6 +66,33 @@ public class JpaPollingConsumerTest extends AbstractJpaTest {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testPollingConsumerHandlesLockedEntity() throws Exception {
+        Customer customer = new Customer();
+        customer.setName("Donald Duck");
+        save(customer);
+
+        Customer customer2 = new Customer();
+        customer2.setName("Goofy");
+        save(customer2);
+
+        assertEntitiesInDatabase(2, Customer.class.getName());
+
+        MockEndpoint mock = getMockEndpoint("mock:result2");
+        mock.expectedBodiesReceived(
+            "orders: 1",
+            "orders: 2"
+        );
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("name", "Donald%");
+
+        template.asyncRequestBodyAndHeaders("direct:start2", "message", headers);
+        template.asyncRequestBodyAndHeaders("direct:start2", "message", headers);
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new SpringRouteBuilder() {
@@ -77,6 +106,19 @@ public class JpaPollingConsumerTest extends AbstractJpaTest {
                             return a;
                         })
                     .to("mock:result");
+
+                from("direct:start2")
+                    .transacted()
+                    .pollEnrich().simple("jpa://" + Customer.class.getName() + "?joinTransaction=true&consumeLockEntity=true&query=select c from Customer c where c.name like '${header.name}'")
+                    .aggregationStrategy((originalExchange, jpaExchange) -> {
+                        Customer customer = jpaExchange.getIn().getBody(Customer.class);
+                        customer.setOrders(customer.getOrders()+1);
+
+                        return jpaExchange;
+                    })
+                    .to("jpa://" + Customer.class.getName() + "?joinTransaction=true&usePassedInEntityManager=true")
+                    .setBody().simple("orders: ${body.orders}")
+                    .to("mock:result2");
             }
         };
     }
