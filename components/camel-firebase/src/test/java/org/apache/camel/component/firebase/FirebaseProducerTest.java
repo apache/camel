@@ -1,4 +1,26 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.firebase;
+
+import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.firebase.database.DatabaseReference;
 import org.apache.camel.CamelContext;
@@ -10,12 +32,6 @@ import org.apache.camel.component.firebase.provider.SampleInputProvider;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.net.URLEncoder;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -36,12 +52,12 @@ public class FirebaseProducerTest {
     }
 
     @Test
-    public void whenFirebaseSet_ShouldReceiveMessagesSync() throws Exception {
+    public void whenFirebaseSetShouldReceiveMessagesSync() throws Exception {
         startRoute(false, DatabaseReference.class);
     }
 
     @Test
-    public void whenFirebaseSet_ShouldReceiveMessagesAsync() throws Exception {
+    public void whenFirebaseSetShouldReceiveMessagesAsync() throws Exception {
         startRoute(true, String.class);
     }
 
@@ -67,22 +83,20 @@ public class FirebaseProducerTest {
                         .to("log:whenFirebaseSet?level=WARN")
                         .process(exchange1 -> {
                             assertThat(exchange1.getIn().getBody().getClass()).isEqualTo(expectedBodyClass);
-                            try{
+                            try {
                                 reentrantLock.lock();
                                 wake.signal();
-                            }
-                            finally {
+                            } finally {
                                 reentrantLock.unlock();
                             }
                         });
             }
         });
         context.start();
-        try{
+        try {
             reentrantLock.lock();
             wake.await();
-        }
-        finally {
+        } finally {
             reentrantLock.unlock();
         }
         context.stop();
