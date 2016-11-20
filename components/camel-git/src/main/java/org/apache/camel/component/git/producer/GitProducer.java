@@ -83,7 +83,7 @@ public class GitProducer extends DefaultProducer {
         }
 
         switch (operation) {
-        
+
         case GitOperation.CLONE_OPERATION:
             doClone(exchange, operation);
             break;
@@ -99,7 +99,7 @@ public class GitProducer extends DefaultProducer {
         case GitOperation.CHERRYPICK_OPERATION:
             doCherryPick(exchange, operation);
             break;
-            
+
         case GitOperation.REMOVE_OPERATION:
             doRemove(exchange, operation);
             break;
@@ -143,11 +143,11 @@ public class GitProducer extends DefaultProducer {
         case GitOperation.DELETE_TAG_OPERATION:
             doDeleteTag(exchange, operation);
             break;
-            
+
         case GitOperation.SHOW_BRANCHES:
             doShowBranches(exchange, operation);
             break;
-                
+
         default:
             throw new IllegalArgumentException("Unsupported operation " + operation);
         }
@@ -242,19 +242,24 @@ public class GitProducer extends DefaultProducer {
         } else {
             throw new IllegalArgumentException("Commit message must be specified to execute " + operation);
         }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME)) 
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME))
                 && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL))) {
             username = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME, String.class);
             email = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL, String.class);
         }
+        boolean allowEmpty = endpoint.isAllowEmpty();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_ALLOW_EMPTY))) {
+            allowEmpty = exchange.getIn().getHeader(GitConstants.GIT_ALLOW_EMPTY, Boolean.class);
+        }
+
         try {
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
             if (ObjectHelper.isNotEmpty(username) && ObjectHelper.isNotEmpty(email)) {
-                git.commit().setCommitter(username, email).setMessage(commitMessage).call();
+                git.commit().setAllowEmpty(allowEmpty).setCommitter(username, email).setMessage(commitMessage).call();
             } else {
-                git.commit().setMessage(commitMessage).call();
+                git.commit().setAllowEmpty(allowEmpty).setMessage(commitMessage).call();
             }
         } catch (Exception e) {
             LOG.error("There was an error in Git " + operation + " operation");
@@ -271,19 +276,24 @@ public class GitProducer extends DefaultProducer {
         } else {
             throw new IllegalArgumentException("Commit message must be specified to execute " + operation);
         }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME)) 
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME))
                 && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL))) {
             username = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME, String.class);
             email = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL, String.class);
         }
+        boolean allowEmpty = endpoint.isAllowEmpty();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_ALLOW_EMPTY))) {
+            allowEmpty = exchange.getIn().getHeader(GitConstants.GIT_ALLOW_EMPTY, Boolean.class);
+        }
+
         try {
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
             if (ObjectHelper.isNotEmpty(username) && ObjectHelper.isNotEmpty(email)) {
-                git.commit().setAll(true).setCommitter(username, email).setMessage(commitMessage).call();
+                git.commit().setAllowEmpty(allowEmpty).setAll(true).setCommitter(username, email).setMessage(commitMessage).call();
             } else {
-                git.commit().setAll(true).setMessage(commitMessage).call();
+                git.commit().setAllowEmpty(allowEmpty).setAll(true).setMessage(commitMessage).call();
             }
         } catch (Exception e) {
             LOG.error("There was an error in Git " + operation + " operation");
@@ -410,7 +420,7 @@ public class GitProducer extends DefaultProducer {
             throw e;
         }
     }
-    
+
     protected void doShowBranches(Exchange exchange, String operation) throws Exception {
         List<Ref> result = null;
         try {
@@ -421,7 +431,7 @@ public class GitProducer extends DefaultProducer {
         }
         exchange.getOut().setBody(result);
     }
-    
+
     protected void doCherryPick(Exchange exchange, String operation) throws Exception {
         CherryPickResult result = null;
         String commitId = null;
