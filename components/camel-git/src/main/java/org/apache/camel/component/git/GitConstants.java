@@ -28,4 +28,6 @@ public interface GitConstants {
     String GIT_COMMIT_EMAIL = "CamelGitCommitEmail";
     
     String GIT_COMMIT_ID = "CamelGitCommitId";
+
+    String GIT_ALLOW_EMPTY = "CamelGitAllowEmpty";
 }
