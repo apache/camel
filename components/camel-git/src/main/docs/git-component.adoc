@@ -40,7 +40,7 @@ The Git component has no options.
 
 
 // endpoint options: START
-The Git component supports 13 endpoint options which are listed below:
+The Git component supports 14 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -57,6 +57,7 @@ The Git component supports 13 endpoint options which are listed below:
 | type | consumer |  | GitType | The consumer type
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| allowEmpty | producer | true | boolean | The flag to manage empty git commits
 | operation | producer |  | String | The operation to do on the repository
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
@@ -85,6 +86,9 @@ Message Headers
 |CamelGitCommitEmail |`null` |String |Producer |The commit email in a commit operation
 
 |CamelGitCommitId |`null` |String |Producer |The commit id
+
+|CamelGitAlowEmpty |`null` |Boolean |Producer |The flag to manage empty git commits
+
 |=======================================================================
 
 [[Git-ProducerExample]]
