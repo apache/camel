@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.git.GitConstants;
 import org.apache.camel.component.git.GitEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jgit.api.CherryPickResult;
 import org.eclipse.jgit.api.Git;
@@ -335,7 +336,7 @@ public class GitProducer extends DefaultProducer {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
         }
-        exchange.getOut().setBody(status);
+        updateExchange(exchange, status);
     }
 
     protected void doLog(Exchange exchange, String operation) throws Exception {
@@ -349,7 +350,7 @@ public class GitProducer extends DefaultProducer {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
         }
-        exchange.getOut().setBody(revCommit);
+        updateExchange(exchange, revCommit);
     }
 
     protected void doPush(Exchange exchange, String operation) throws Exception {
@@ -371,7 +372,7 @@ public class GitProducer extends DefaultProducer {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
         }
-        exchange.getOut().setBody(result);
+        updateExchange(exchange, result);
     }
 
     protected void doPull(Exchange exchange, String operation) throws Exception {
@@ -393,7 +394,7 @@ public class GitProducer extends DefaultProducer {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
         }
-        exchange.getOut().setBody(result);
+        updateExchange(exchange, result);
     }
 
     protected void doCreateTag(Exchange exchange, String operation) throws Exception {
@@ -428,7 +429,7 @@ public class GitProducer extends DefaultProducer {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
         }
-        exchange.getOut().setBody(result);
+        updateExchange(exchange, result);
     }
 
     protected void doCherryPick(Exchange exchange, String operation) throws Exception {
@@ -452,7 +453,7 @@ public class GitProducer extends DefaultProducer {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
         }
-        exchange.getOut().setBody(result);
+        updateExchange(exchange, result);
     }
 
     private Repository getLocalRepository() throws IOException {
@@ -470,5 +471,10 @@ public class GitProducer extends DefaultProducer {
             throw e;
         }
         return repo;
+    }
+
+    private void updateExchange(Exchange exchange, Object body) {
+        exchange.getOut().setBody(body);
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
     }
 }

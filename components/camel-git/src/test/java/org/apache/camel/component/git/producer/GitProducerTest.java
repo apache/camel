@@ -30,6 +30,7 @@ import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullResult;
 import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
@@ -144,7 +145,7 @@ public class GitProducerTest extends GitTestSupport {
     public void commitTest() throws Exception {
 
         Repository repository = getTestRepository();
-
+        Git git = new Git(repository);
         File fileToAdd = new File(gitLocalRepo, filenameToAdd);
         fileToAdd.createNewFile();
 
@@ -166,13 +167,7 @@ public class GitProducerTest extends GitTestSupport {
                 exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessage);
             }
         });
-        Iterable<RevCommit> logs = new Git(repository).log().call();
-        int count = 0;
-        for (RevCommit rev : logs) {
-            assertEquals(rev.getShortMessage(), commitMessage);
-            count++;
-        }
-        assertEquals(count, 1);
+        validateGitLogs(git, commitMessage);
         repository.close();
     }
 
@@ -209,6 +204,24 @@ public class GitProducerTest extends GitTestSupport {
         template.requestBodyAndHeaders("direct:commit", "", headers);
         headers.remove(GitConstants.GIT_ALLOW_EMPTY);
         template.requestBodyAndHeaders("direct:commit-not-allow-empty", "", headers);
+    }
+
+    @Test
+    public void addAndStatusAndCommitTest() throws Exception {
+        // Initialize repository using JGit
+        Repository repository = getTestRepository();
+        File gitDir = new File(gitLocalRepo, ".git");
+        assertEquals(gitDir.exists(), true);
+        Git git = new Git(repository);
+        File fileToAdd = new File(gitLocalRepo, filenameToAdd);
+        fileToAdd.createNewFile();
+        // Checking camel route
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(GitConstants.GIT_FILE_NAME, filenameToAdd);
+        headers.put(GitConstants.GIT_COMMIT_MESSAGE, commitMessage);
+        template.requestBodyAndHeaders("direct:add-status-commit", "", headers);
+        validateGitLogs(git, commitMessage);
+        git.close();
     }
 
     @Test
@@ -1076,6 +1089,16 @@ public class GitProducerTest extends GitTestSupport {
         repository.close();
     }
 
+    private void validateGitLogs(Git git, String... messages) throws GitAPIException {
+        Iterable<RevCommit> logs = git.log().call();
+        int count = 0;
+        for (RevCommit rev : logs) {
+            assertEquals(rev.getShortMessage(), messages[count]);
+            count++;
+        }
+        assertEquals(messages.length, count);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -1092,6 +1115,9 @@ public class GitProducerTest extends GitTestSupport {
                 from("direct:commit-branch").to("git://" + gitLocalRepo + "?operation=commit&branchName=" + branchTest);
                 from("direct:commit-all").to("git://" + gitLocalRepo + "?operation=commit");
                 from("direct:commit-all-branch").to("git://" + gitLocalRepo + "?operation=commit&branchName=" + branchTest);
+                from("direct:add-status-commit").to("git://" + gitLocalRepo + "?operation=add").to("git://" + gitLocalRepo + "?operation=status").choice()
+                    .when(simple("${body.hasUncommittedChanges()}")).log("Commiting changes...").to("git://" + gitLocalRepo + "?operation=commit").otherwise()
+                    .log("Nothing to commit").end();
                 from("direct:create-branch").to("git://" + gitLocalRepo + "?operation=createBranch&branchName=" + branchTest);
                 from("direct:delete-branch").to("git://" + gitLocalRepo + "?operation=deleteBranch&branchName=" + branchTest);
                 from("direct:status").to("git://" + gitLocalRepo + "?operation=status");
