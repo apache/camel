@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.zendesk.enabled",
+      "description": "Enable zendesk component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

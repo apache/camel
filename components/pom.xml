@@ -288,6 +288,7 @@
     <module>camel-xmpp</module>
     <module>camel-xstream</module>
     <module>camel-yammer</module>
+    <module>camel-zendesk</module>
     <module>camel-zipfile</module>
     <module>camel-zipkin</module>
     <module>camel-zookeeper</module>

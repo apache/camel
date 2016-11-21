@@ -671,6 +671,9 @@ Number of Components: 223 in 177 JAR artifacts (13 deprecated)
 | link:camel-yammer/src/main/docs/yammer-component.adoc[Yammer] (camel-yammer) +
 `yammer:function` | 2.12 | The yammer component allows you to interact with the Yammer enterprise social network.
 
+| link:camel-zendesk/src/main/docs/zendesk-component.adoc[Zendesk] (camel-zendesk) +
+`zendesk:methodName` | 2.19 | The zendesk endpoint interacts with the Zendesk server.
+
 | link:camel-zookeeper/src/main/docs/zookeeper-component.adoc[ZooKeeper] (camel-zookeeper) +
 `zookeeper:serverUrls/path` | 2.9 | The zookeeper component allows interaction with a ZooKeeper cluster.
 
