@@ -74,4 +74,8 @@ public class GitTestSupport extends CamelTestSupport {
             .build();
         return repo;
     }
+
+    protected Git getGitTestRepository() throws IOException, IllegalStateException, GitAPIException {
+        return new Git(getTestRepository());
+    }
 }
