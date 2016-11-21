@@ -29,11 +29,14 @@ import org.apache.camel.component.git.GitTestSupport;
 import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullResult;
+import org.eclipse.jgit.api.RemoteAddCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.transport.RemoteConfig;
+import org.eclipse.jgit.transport.URIish;
 import org.junit.Test;
 
 public class GitProducerTest extends GitTestSupport {
@@ -1089,6 +1092,44 @@ public class GitProducerTest extends GitTestSupport {
         repository.close();
     }
 
+    @Test
+    public void remoteAddTest() throws Exception {
+        Repository repository = getTestRepository();
+        File gitDir = new File(gitLocalRepo, ".git");
+        assertEquals(gitDir.exists(), true);
+        Git git = new Git(repository);
+        List<RemoteConfig> remoteConfigList = git.remoteList().call();
+        assertTrue(remoteConfigList.size() == 0);
+        Object result = template.requestBody("direct:remoteAdd", "");
+        assertTrue(result instanceof RemoteConfig);
+        RemoteConfig remoteConfig = (RemoteConfig)result;
+        remoteConfigList = git.remoteList().call();
+        assertTrue(remoteConfigList.size() == 1);
+        assertEquals(remoteConfigList.get(0).getName(), remoteConfig.getName());
+        assertEquals(remoteConfigList.get(0).getURIs(), remoteConfig.getURIs());
+        git.close();
+    }
+
+    @Test
+    public void remoteListTest() throws Exception {
+        Repository repository = getTestRepository();
+        File gitDir = new File(gitLocalRepo, ".git");
+        assertEquals(gitDir.exists(), true);
+        Git git = new Git(repository);
+        RemoteAddCommand remoteAddCommand = git.remoteAdd();
+        remoteAddCommand.setName("origin");
+        remoteAddCommand.setUri(new URIish(remoteUriTest));
+        remoteAddCommand.call();
+        List<RemoteConfig> gitRemoteConfigs = git.remoteList().call();
+        Object result = template.requestBody("direct:remoteList", "");
+        assertTrue(result instanceof List);
+        List<RemoteConfig> remoteConfigs = (List<RemoteConfig>)result;
+        assertEquals(gitRemoteConfigs.size(), remoteConfigs.size());
+        assertEquals(gitRemoteConfigs.get(0).getName(), remoteConfigs.get(0).getName());
+        assertEquals(gitRemoteConfigs.get(0).getURIs(), remoteConfigs.get(0).getURIs());
+        git.close();
+    }
+
     private void validateGitLogs(Git git, String... messages) throws GitAPIException {
         Iterable<RevCommit> logs = git.log().call();
         int count = 0;
@@ -1130,6 +1171,8 @@ public class GitProducerTest extends GitTestSupport {
                 from("direct:cherrypick").to("git://" + gitLocalRepo + "?operation=cherryPick&branchName=" + branchTest);
                 from("direct:cherrypick-master").to("git://" + gitLocalRepo + "?operation=cherryPick&branchName=refs/heads/master");
                 from("direct:pull").to("git://" + gitLocalRepo + "?remoteName=origin&operation=pull");
+                from("direct:remoteAdd").to("git://" + gitLocalRepo + "?operation=remoteAdd&remotePath=https://github.com/oscerd/json-webserver-example.git&remoteName=origin");
+                from("direct:remoteList").to("git://" + gitLocalRepo + "?operation=remoteList");
             }
         };
     }
