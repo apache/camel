@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -34,11 +33,6 @@ public class RubyScriptTextTest extends CamelTestSupport {
     MockEndpoint resultEndpoint;
 
     final int messageCount = 500;
-
-    @Before
-    public void configEnv(){
-        System.setProperty("org.jruby.embed.localcontext.scope", "threadsafe");
-    }
 
     @Test
     public void parallelExecutionWithCachedScriptAndReusedScriptEngine() throws Exception {
