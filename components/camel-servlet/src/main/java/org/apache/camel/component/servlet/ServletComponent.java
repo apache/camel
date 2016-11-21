@@ -64,6 +64,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
         Boolean async = getAndRemoveParameter(parameters, "async", Boolean.class);
+        Boolean attachmentMultipartBinding = getAndRemoveParameter(parameters, "attachmentMultipartBinding", Boolean.class);
 
         if (lenientContextPath()) {
             // the uri must have a leading slash for the context-path matching to work with servlet, and it can be something people
@@ -116,6 +117,11 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         }
         if (httpMethodRestrict != null) {
             endpoint.setHttpMethodRestrict(httpMethodRestrict);
+        }
+        if (attachmentMultipartBinding != null) {
+            endpoint.setAttachmentMultipartBinding(attachmentMultipartBinding);
+        } else {
+            endpoint.setAttachmentMultipartBinding(isAttachmentMultipartBinding());
         }
 
         setProperties(endpoint, parameters);
@@ -187,7 +193,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
     /**
      * Whether to automatic bind multipart/form-data as attachments on the Camel {@link Exchange}.
      * <p/>
-     * This is turn off by default as this may require servet specific configuration to enable this when using Servlet's.
+     * This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.
      */
     public void setAttachmentMultipartBinding(boolean attachmentMultipartBinding) {
         this.attachmentMultipartBinding = attachmentMultipartBinding;
