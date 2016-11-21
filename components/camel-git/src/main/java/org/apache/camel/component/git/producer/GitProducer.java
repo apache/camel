@@ -19,7 +19,6 @@ package org.apache.camel.component.git.producer;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.git.GitConstants;
 import org.apache.camel.component.git.GitEndpoint;
@@ -243,7 +242,7 @@ public class GitProducer extends DefaultProducer {
             throw new IllegalArgumentException("Commit message must be specified to execute " + operation);
         }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME))
-                && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL))) {
+            && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL))) {
             username = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME, String.class);
             email = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL, String.class);
         }
@@ -277,7 +276,7 @@ public class GitProducer extends DefaultProducer {
             throw new IllegalArgumentException("Commit message must be specified to execute " + operation);
         }
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME))
-                && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL))) {
+            && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL))) {
             username = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME, String.class);
             email = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL, String.class);
         }
@@ -460,9 +459,12 @@ public class GitProducer extends DefaultProducer {
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
         Repository repo = null;
         try {
-            repo = builder.setGitDir(new File(endpoint.getLocalPath(), ".git")).readEnvironment() // scan environment GIT_* variables
-                    .findGitDir() // scan up the file system tree
-                    .build();
+            repo = builder.setGitDir(new File(endpoint.getLocalPath(), ".git")).readEnvironment() // scan
+                // environment
+                // GIT_*
+                // variables
+                .findGitDir() // scan up the file system tree
+                .build();
         } catch (IOException e) {
             LOG.error("There was an error, cannot open " + endpoint.getLocalPath() + " repository");
             throw e;

@@ -57,13 +57,13 @@ public class GitEndpoint extends DefaultEndpoint {
 
     @UriParam
     private String remotePath;
-    
+
     @UriParam
     private String remoteName;
 
-    @UriParam
-    // Set to true For backward compatibility , better to set to false (native git behavior)
-    @Metadata(defaultValue = "true", label = "producer")
+    // Set to true for backward compatibility , better to set to false (native git behavior)
+    @UriParam(defaultValue = "true")
+    @Metadata(label = "producer")
     private boolean allowEmpty = true;
 
     @UriParam(enums = "clone,init,add,remove,commit,commitAll,createBranch,deleteBranch,createTag,deleteTag,status,log,push,pull,showBranches,cherryPick", label = "producer")
@@ -183,7 +183,7 @@ public class GitEndpoint extends DefaultEndpoint {
     public void setTagName(String tagName) {
         this.tagName = tagName;
     }
-    
+
     /**
      * The remote repository name to use in particular operation like pull
      */
