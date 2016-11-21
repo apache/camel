@@ -245,7 +245,7 @@
     <hawtbuf-version>1.11</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
     <hawtdispatch-version>1.22</hawtdispatch-version>
-    <hazelcast-version>3.7.2</hazelcast-version>
+    <hazelcast-version>3.7.3</hazelcast-version>
     <hbase-version>1.2.1</hbase-version>
     <hessian-version>4.0.38</hessian-version>
     <hibernate-validator-version>5.3.2.Final</hibernate-validator-version>
@@ -269,7 +269,7 @@
     <ical4j-version>1.0.7</ical4j-version>
     <ignite-version>1.7.0</ignite-version>
     <ignite-version-range>[1.5.0-b1,1.6)</ignite-version-range>
-    <infinispan-version>8.2.4.Final</infinispan-version>
+    <infinispan-version>8.2.5.Final</infinispan-version>
     <influx-java-driver-version>2.3</influx-java-driver-version>
     <influx-java-driver-bundle-version>2.3_1</influx-java-driver-bundle-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
@@ -346,7 +346,8 @@
     <johnzon-version>0.9.5</johnzon-version>
     <josql-bundle-version>1.5_5</josql-bundle-version>
     <josql-version>1.5</josql-version>
-    <jruby-version>1.7.26</jruby-version>
+    <!-- Upgrade to 1.7.26 causes stability issues. See CAMEL-10477 -->
+    <jruby-version>1.7.18</jruby-version>
     <jsendnsca-version>1.3.1</jsendnsca-version>
     <jsmpp-version>2.3.0</jsmpp-version>
     <jsch-version>0.1.54</jsch-version>
@@ -614,7 +615,7 @@
     <vertx-version>3.3.3</vertx-version>
     <vysper-version>0.7</vysper-version>
     <weld1-version>1.1.28.Final</weld1-version>
-    <weld2-version>2.4.0.Final</weld2-version>
+    <weld2-version>2.4.1.Final</weld2-version>
     <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
     <wiremock-version>2.1.12</wiremock-version>
     <woodstox-version>4.4.1</woodstox-version>

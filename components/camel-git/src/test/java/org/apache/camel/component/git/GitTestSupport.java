@@ -40,7 +40,7 @@ public class GitTestSupport extends CamelTestSupport {
     public final String commitMessageBranch = "Test commit on a branch";
 
     public final String branchTest = "testBranch";
-    
+
     public final String tagTest = "testTag";
 
     @Override
@@ -58,7 +58,7 @@ public class GitTestSupport extends CamelTestSupport {
         File path = new File(gitLocalRepo);
         deleteDirectory(path);
     }
-      
+
     protected Repository getTestRepository() throws IOException, IllegalStateException, GitAPIException {
         File gitRepo = new File(gitLocalRepo, ".git");
         Git.init().setDirectory(new File(gitLocalRepo, "")).setBare(false).call();

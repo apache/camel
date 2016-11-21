@@ -72,7 +72,7 @@ public class KafkaConfiguration {
     //session.timeout.ms
     @UriParam(label = "consumer", defaultValue = "30000")
     private Integer sessionTimeoutMs = 30000;
-    @UriParam(label = "consumer", defaultValue = "2147483647")
+    @UriParam(label = "consumer", defaultValue = "500")
     private Integer maxPollRecords;
     @UriParam(label = "consumer", defaultValue = "5000")
     private Long pollTimeoutMs = 5000L;
@@ -1130,9 +1130,7 @@ public class KafkaConfiguration {
     }
 
     /**
-     * A unique string that identifies the consumer group this consumer belongs to.
-     * This property is required if the consumer uses either the group management functionality by using
-     * <code>subscribe(topic)</code> or the Kafka-based offset management strategy.
+     * The maximum number of records returned in a single call to poll()
      */
     public void setMaxPollRecords(Integer maxPollRecords) {
         this.maxPollRecords = maxPollRecords;

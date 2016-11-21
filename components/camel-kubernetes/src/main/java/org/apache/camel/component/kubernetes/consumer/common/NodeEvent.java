@@ -14,30 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.script.example;
+package org.apache.camel.component.kubernetes.consumer.common;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.spring.SpringCamelContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import io.fabric8.kubernetes.api.model.Node;
+import io.fabric8.kubernetes.client.Watcher.Action;
 
-/**
- * @version 
- */
-public class RubyFilterTest extends XPathFilterTest {
+public class NodeEvent {
+    private io.fabric8.kubernetes.client.Watcher.Action action;
 
-    @Override
-    public void testSendMatchingMessage() throws Exception {
-        super.testSendMatchingMessage();
+    private Node node;
+
+    public NodeEvent(Action action, Node node) {
+        this.action = action;
+        this.node = node;
     }
 
-    @Override
-    public void testSendNotMatchingMessage() throws Exception {
-        super.testSendNotMatchingMessage();
+    public io.fabric8.kubernetes.client.Watcher.Action getAction() {
+        return action;
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/builder/script/example/rubyFilter.xml"));
+    public void setAction(io.fabric8.kubernetes.client.Watcher.Action action) {
+        this.action = action;
     }
 
+    public Node getNode() {
+        return node;
+    }
+
+    public void setNode(Node node) {
+        this.node = node;
+    }
 }

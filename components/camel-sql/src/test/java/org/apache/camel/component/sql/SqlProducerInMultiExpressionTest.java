@@ -14,30 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder.script.example;
+package org.apache.camel.component.sql;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.spring.SpringCamelContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
-public class RubyFilterTest extends XPathFilterTest {
+public class SqlProducerInMultiExpressionTest extends SqlProducerInMultiTest {
 
     @Override
-    public void testSendMatchingMessage() throws Exception {
-        super.testSendMatchingMessage();
-    }
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                // required for the sql component
+                getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-    @Override
-    public void testSendNotMatchingMessage() throws Exception {
-        super.testSendNotMatchingMessage();
+                from("direct:query")
+                    .to("sql:classpath:sql/selectProjectsInMultiExpression.sql")
+                    .to("log:query")
+                    .to("mock:query");
+            }
+        };
     }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/builder/script/example/rubyFilter.xml"));
-    }
-
 }
