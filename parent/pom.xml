@@ -684,6 +684,7 @@
     <xstream-version>1.4.9</xstream-version>
     <xom-version>1.2.5</xom-version>
     <yammer-metrics-version>2.2.0</yammer-metrics-version>
+    <zendesk-client-version>0.5.3</zendesk-client-version>
     <zipkin-version>1.19.4</zipkin-version>
     <zipkin-reporter-version>0.6.12</zipkin-reporter-version>
     <zjsonpatch-version>0.3.0</zjsonpatch-version>
@@ -2035,6 +2036,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-zendesk</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-zipfile</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -3269,6 +3275,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-zendesk-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-zipfile-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -4148,6 +4159,19 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <version>${exec-maven-plugin-version}</version>
+      </dependency>
+
+      <!-- Optional Zendesk -->
+      <dependency>
+        <groupId>com.cloudbees.thirdparty</groupId>
+        <artifactId>zendesk-java-client</artifactId>
+        <version>${zendesk-client-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.cloudbees.thirdparty</groupId>
+        <artifactId>zendesk-java-client</artifactId>
+        <classifier>javadoc</classifier>
+        <version>${zendesk-client-version}</version>
       </dependency>
 
       <!-- Optional Jira -->
