@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -29,10 +30,14 @@ import org.apache.camel.component.git.GitTestSupport;
 import org.eclipse.jgit.api.CreateBranchCommand.SetupUpstreamMode;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.PullResult;
+import org.eclipse.jgit.api.RemoteAddCommand;
 import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.transport.RemoteConfig;
+import org.eclipse.jgit.transport.URIish;
 import org.junit.Test;
 
 public class GitProducerTest extends GitTestSupport {
@@ -144,7 +149,7 @@ public class GitProducerTest extends GitTestSupport {
     public void commitTest() throws Exception {
 
         Repository repository = getTestRepository();
-
+        Git git = new Git(repository);
         File fileToAdd = new File(gitLocalRepo, filenameToAdd);
         fileToAdd.createNewFile();
 
@@ -166,13 +171,7 @@ public class GitProducerTest extends GitTestSupport {
                 exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessage);
             }
         });
-        Iterable<RevCommit> logs = new Git(repository).log().call();
-        int count = 0;
-        for (RevCommit rev : logs) {
-            assertEquals(rev.getShortMessage(), commitMessage);
-            count++;
-        }
-        assertEquals(count, 1);
+        validateGitLogs(git, commitMessage);
         repository.close();
     }
 
@@ -209,6 +208,24 @@ public class GitProducerTest extends GitTestSupport {
         template.requestBodyAndHeaders("direct:commit", "", headers);
         headers.remove(GitConstants.GIT_ALLOW_EMPTY);
         template.requestBodyAndHeaders("direct:commit-not-allow-empty", "", headers);
+    }
+
+    @Test
+    public void addAndStatusAndCommitTest() throws Exception {
+        // Initialize repository using JGit
+        Repository repository = getTestRepository();
+        File gitDir = new File(gitLocalRepo, ".git");
+        assertEquals(gitDir.exists(), true);
+        Git git = new Git(repository);
+        File fileToAdd = new File(gitLocalRepo, filenameToAdd);
+        fileToAdd.createNewFile();
+        // Checking camel route
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(GitConstants.GIT_FILE_NAME, filenameToAdd);
+        headers.put(GitConstants.GIT_COMMIT_MESSAGE, commitMessage);
+        template.requestBodyAndHeaders("direct:add-status-commit", "", headers);
+        validateGitLogs(git, commitMessage);
+        git.close();
     }
 
     @Test
@@ -1076,6 +1093,54 @@ public class GitProducerTest extends GitTestSupport {
         repository.close();
     }
 
+    @Test
+    public void remoteAddTest() throws Exception {
+        Repository repository = getTestRepository();
+        File gitDir = new File(gitLocalRepo, ".git");
+        assertEquals(gitDir.exists(), true);
+        Git git = new Git(repository);
+        List<RemoteConfig> remoteConfigList = git.remoteList().call();
+        assertTrue(remoteConfigList.size() == 0);
+        Object result = template.requestBody("direct:remoteAdd", "");
+        assertTrue(result instanceof RemoteConfig);
+        RemoteConfig remoteConfig = (RemoteConfig)result;
+        remoteConfigList = git.remoteList().call();
+        assertTrue(remoteConfigList.size() == 1);
+        assertEquals(remoteConfigList.get(0).getName(), remoteConfig.getName());
+        assertEquals(remoteConfigList.get(0).getURIs(), remoteConfig.getURIs());
+        git.close();
+    }
+
+    @Test
+    public void remoteListTest() throws Exception {
+        Repository repository = getTestRepository();
+        File gitDir = new File(gitLocalRepo, ".git");
+        assertEquals(gitDir.exists(), true);
+        Git git = new Git(repository);
+        RemoteAddCommand remoteAddCommand = git.remoteAdd();
+        remoteAddCommand.setName("origin");
+        remoteAddCommand.setUri(new URIish(remoteUriTest));
+        remoteAddCommand.call();
+        List<RemoteConfig> gitRemoteConfigs = git.remoteList().call();
+        Object result = template.requestBody("direct:remoteList", "");
+        assertTrue(result instanceof List);
+        List<RemoteConfig> remoteConfigs = (List<RemoteConfig>)result;
+        assertEquals(gitRemoteConfigs.size(), remoteConfigs.size());
+        assertEquals(gitRemoteConfigs.get(0).getName(), remoteConfigs.get(0).getName());
+        assertEquals(gitRemoteConfigs.get(0).getURIs(), remoteConfigs.get(0).getURIs());
+        git.close();
+    }
+
+    private void validateGitLogs(Git git, String... messages) throws GitAPIException {
+        Iterable<RevCommit> logs = git.log().call();
+        int count = 0;
+        for (RevCommit rev : logs) {
+            assertEquals(rev.getShortMessage(), messages[count]);
+            count++;
+        }
+        assertEquals(messages.length, count);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -1092,6 +1157,9 @@ public class GitProducerTest extends GitTestSupport {
                 from("direct:commit-branch").to("git://" + gitLocalRepo + "?operation=commit&branchName=" + branchTest);
                 from("direct:commit-all").to("git://" + gitLocalRepo + "?operation=commit");
                 from("direct:commit-all-branch").to("git://" + gitLocalRepo + "?operation=commit&branchName=" + branchTest);
+                from("direct:add-status-commit").to("git://" + gitLocalRepo + "?operation=add").to("git://" + gitLocalRepo + "?operation=status").choice()
+                    .when(simple("${body.hasUncommittedChanges()}")).log("Commiting changes...").to("git://" + gitLocalRepo + "?operation=commit").otherwise()
+                    .log("Nothing to commit").end();
                 from("direct:create-branch").to("git://" + gitLocalRepo + "?operation=createBranch&branchName=" + branchTest);
                 from("direct:delete-branch").to("git://" + gitLocalRepo + "?operation=deleteBranch&branchName=" + branchTest);
                 from("direct:status").to("git://" + gitLocalRepo + "?operation=status");
@@ -1104,6 +1172,8 @@ public class GitProducerTest extends GitTestSupport {
                 from("direct:cherrypick").to("git://" + gitLocalRepo + "?operation=cherryPick&branchName=" + branchTest);
                 from("direct:cherrypick-master").to("git://" + gitLocalRepo + "?operation=cherryPick&branchName=refs/heads/master");
                 from("direct:pull").to("git://" + gitLocalRepo + "?remoteName=origin&operation=pull");
+                from("direct:remoteAdd").to("git://" + gitLocalRepo + "?operation=remoteAdd&remotePath=https://github.com/oscerd/json-webserver-example.git&remoteName=origin");
+                from("direct:remoteList").to("git://" + gitLocalRepo + "?operation=remoteList");
             }
         };
     }
