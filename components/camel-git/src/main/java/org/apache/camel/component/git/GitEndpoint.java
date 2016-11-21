@@ -57,9 +57,14 @@ public class GitEndpoint extends DefaultEndpoint {
 
     @UriParam
     private String remotePath;
-    
+
     @UriParam
     private String remoteName;
+
+    // Set to true for backward compatibility , better to set to false (native git behavior)
+    @UriParam(defaultValue = "true")
+    @Metadata(label = "producer")
+    private boolean allowEmpty = true;
 
     @UriParam(enums = "clone,init,add,remove,commit,commitAll,createBranch,deleteBranch,createTag,deleteTag,status,log,push,pull,showBranches,cherryPick", label = "producer")
     private String operation;
@@ -178,7 +183,7 @@ public class GitEndpoint extends DefaultEndpoint {
     public void setTagName(String tagName) {
         this.tagName = tagName;
     }
-    
+
     /**
      * The remote repository name to use in particular operation like pull
      */
@@ -190,4 +195,14 @@ public class GitEndpoint extends DefaultEndpoint {
         this.remoteName = remoteName;
     }
 
+    /**
+     * The flag to manage empty git commits
+     */
+    public boolean isAllowEmpty() {
+        return allowEmpty;
+    }
+
+    public void setAllowEmpty(boolean allowEmpty) {
+        this.allowEmpty = allowEmpty;
+    }
 }
