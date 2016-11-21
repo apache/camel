@@ -87,7 +87,7 @@ Message Headers
 
 |CamelGitCommitId |`null` |String |Producer |The commit id
 
-|CamelGitAlowEmpty |`null` |Boolean |Producer |The flag to manage empty git commits
+|CamelGitAllowEmpty |`null` |Boolean |Producer |The flag to manage empty git commits
 
 |=======================================================================
 
