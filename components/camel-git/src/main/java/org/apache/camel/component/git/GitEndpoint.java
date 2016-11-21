@@ -66,7 +66,7 @@ public class GitEndpoint extends DefaultEndpoint {
     @Metadata(label = "producer")
     private boolean allowEmpty = true;
 
-    @UriParam(enums = "clone,init,add,remove,commit,commitAll,createBranch,deleteBranch,createTag,deleteTag,status,log,push,pull,showBranches,cherryPick", label = "producer")
+    @UriParam(enums = "clone,init,add,remove,commit,commitAll,createBranch,deleteBranch,createTag,deleteTag,status,log,push,pull,showBranches,cherryPick,remoteAdd,remoteList", label = "producer")
     private String operation;
 
     public GitEndpoint(String uri, GitComponent component) {
