@@ -19,6 +19,7 @@ package org.apache.camel.component.git.producer;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.git.GitConstants;
 import org.apache.camel.component.git.GitEndpoint;
@@ -29,6 +30,7 @@ import org.eclipse.jgit.api.CherryPickResult;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.PullResult;
+import org.eclipse.jgit.api.RemoteAddCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
@@ -37,6 +39,8 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.PushResult;
+import org.eclipse.jgit.transport.RemoteConfig;
+import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -146,6 +150,14 @@ public class GitProducer extends DefaultProducer {
 
         case GitOperation.SHOW_BRANCHES:
             doShowBranches(exchange, operation);
+            break;
+
+        case GitOperation.REMOTE_ADD_OPERATION:
+            doRemoteAdd(exchange, operation);
+            break;
+
+        case GitOperation.REMOTE_LIST_OPERATION:
+            doRemoteList(exchange, operation);
             break;
 
         default:
@@ -449,6 +461,37 @@ public class GitProducer extends DefaultProducer {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
             result = git.cherryPick().include(commit).call();
+        } catch (Exception e) {
+            LOG.error("There was an error in Git " + operation + " operation");
+            throw e;
+        }
+        updateExchange(exchange, result);
+    }
+
+    protected void doRemoteAdd(Exchange exchange, String operation) throws Exception {
+        if (ObjectHelper.isEmpty(endpoint.getRemoteName())) {
+            throw new IllegalArgumentException("Remote Name must be specified to execute " + operation);
+        }
+        if (ObjectHelper.isEmpty(endpoint.getRemotePath())) {
+            throw new IllegalArgumentException("Remote Path must be specified to execute " + operation);
+        }
+        RemoteConfig result = null;
+        try {
+            RemoteAddCommand remoteAddCommand = git.remoteAdd();
+            remoteAddCommand.setUri(new URIish(endpoint.getRemotePath()));
+            remoteAddCommand.setName(endpoint.getRemoteName());
+            result = remoteAddCommand.call();
+        } catch (Exception e) {
+            LOG.error("There was an error in Git " + operation + " operation");
+            throw e;
+        }
+        updateExchange(exchange, result);
+    }
+
+    protected void doRemoteList(Exchange exchange, String operation) throws Exception {
+        List<RemoteConfig> result = null;
+        try {
+            result = git.remoteList().call();
         } catch (Exception e) {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
