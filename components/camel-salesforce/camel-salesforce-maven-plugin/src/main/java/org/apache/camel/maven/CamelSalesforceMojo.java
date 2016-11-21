@@ -82,7 +82,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 /**
  * Goal to generate DTOs for Salesforce SObjects
  */
-@Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+@Mojo(name = "generate", requiresProject = false, defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class CamelSalesforceMojo extends AbstractMojo {
 
     // default connect and call timeout
@@ -375,6 +375,9 @@ public class CamelSalesforceMojo extends AbstractMojo {
             // validate package name
             if (!packageName.matches(PACKAGE_NAME_PATTERN)) {
                 throw new MojoExecutionException("Invalid package name " + packageName);
+            }
+            if (outputDirectory.getAbsolutePath().contains("$")) {
+                outputDirectory = new File("generated-sources/camel-salesforce");
             }
             final File pkgDir = new File(outputDirectory, packageName.trim().replace('.', File.separatorChar));
             if (!pkgDir.exists()) {
