@@ -75,7 +75,9 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
                             csb.append("\\?");
                         }
                         String replace = csb.toString();
-                        query = matcher.replaceAll(replace);
+                        String foundEscaped = found.replace("$", "\\$").replace("{", "\\{").replace("}", "\\}");
+                        Matcher paramMatcher = Pattern.compile("\\:\\?in\\:" + foundEscaped, Pattern.MULTILINE).matcher(query);
+                        query = paramMatcher.replaceAll(replace);
                     }
                 }
             }
