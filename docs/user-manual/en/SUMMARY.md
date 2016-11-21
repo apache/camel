@@ -321,6 +321,7 @@
 	* [XMPP](xmpp-component.adoc)
 	* [XQuery](xquery-component.adoc)
 	* [Yammer](yammer-component.adoc)
+	* [Zendesk](zendesk-component.adoc)
 	* [ZooKeeper](zookeeper-component.adoc)
 	* [ZooKeeper Master](zookeeper-master-component.adoc)
 <!-- components: END -->
