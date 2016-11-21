@@ -31,16 +31,16 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public class GitRemoteProducerTest extends GitTestSupport {
-    
+
     @Ignore("Require a remote git repository")
     @Test
     public void pushTest() throws Exception {
 
         Repository repository = getTestRepository();
-        
+
         File fileToAdd = new File(gitLocalRepo, filenameToAdd);
         fileToAdd.createNewFile();
-        
+
         template.send("direct:add", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -49,10 +49,10 @@ public class GitRemoteProducerTest extends GitTestSupport {
         });
         File gitDir = new File(gitLocalRepo, ".git");
         assertEquals(gitDir.exists(), true);
-        
+
         Status status = new Git(repository).status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
-        
+
         template.send("direct:commit", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -61,22 +61,19 @@ public class GitRemoteProducerTest extends GitTestSupport {
         });
 
         Iterable<PushResult> result = template.requestBody("direct:push", "", Iterable.class);
-        
+
         repository.close();
     }
-   
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {            
+        return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:add")
-                        .to("git://" + gitLocalRepo + "?operation=add");
-                from("direct:commit")
-                        .to("git://" + gitLocalRepo + "?operation=commit");
-                from("direct:push")
-                        .to("git://" + gitLocalRepo + "?operation=push&remotePath=remoteURL&username=xxx&password=xxx");
-            } 
+                from("direct:add").to("git://" + gitLocalRepo + "?operation=add");
+                from("direct:commit").to("git://" + gitLocalRepo + "?operation=commit");
+                from("direct:push").to("git://" + gitLocalRepo + "?operation=push&remotePath=remoteURL&username=xxx&password=xxx");
+            }
         };
     }
 
