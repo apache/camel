@@ -22,9 +22,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.firebase.data.FirebaseMessage;
 import org.apache.camel.component.firebase.data.Operation;
-import org.apache.camel.component.firebase.exception.FirebaseException;
 import org.apache.camel.impl.DefaultConsumer;
 
 /**
@@ -87,7 +87,7 @@ public class FirebaseConsumer extends DefaultConsumer {
             // send message to next processor in the route
             getProcessor().process(exchange);
         } catch (Exception e) {
-            throw new FirebaseException("Message forwarding failed", e);
+            throw new RuntimeCamelException("Message forwarding failed", e);
         } finally {
             // log exception if an exception occurred and was not handled
             if (exchange.getException() != null) {
