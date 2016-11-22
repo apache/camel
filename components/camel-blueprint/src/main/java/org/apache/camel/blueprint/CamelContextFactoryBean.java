@@ -275,7 +275,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
             if (pc.getLocations() == null) {
                 String[] ids = parser.lookupPropertyPlaceholderIds();
                 for (int i = 0; i < ids.length; i++) {
-                    if (!ids[i].startsWith( "blueprint:")) {
+                    if (!ids[i].startsWith("blueprint:")) {
                         ids[i] = "blueprint:" + ids[i];
                     }
                 }
