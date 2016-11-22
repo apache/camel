@@ -25,11 +25,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import org.apache.camel.component.salesforce.api.TypeReferences;
 import org.apache.camel.component.salesforce.api.dto.Limits.LimitsDeserializer;
 
 /**
@@ -43,14 +43,11 @@ public final class Limits implements Serializable {
 
     public static final class LimitsDeserializer extends JsonDeserializer {
 
-        private static final TypeReference<Map<Operation, Usage>> USAGES_TYPE = new TypeReference<Map<Operation, Usage>>() {
-        };
-
         @Override
         public Object deserialize(final JsonParser parser, final DeserializationContext context)
                 throws IOException, JsonProcessingException {
 
-            final Map<Operation, Usage> usages = parser.readValueAs(USAGES_TYPE);
+            final Map<Operation, Usage> usages = parser.readValueAs(TypeReferences.USAGES_TYPE);
 
             return new Limits(usages);
         }

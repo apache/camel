@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
 import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.TypeReferences;
 import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
 import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
@@ -38,7 +39,6 @@ import org.apache.camel.component.salesforce.api.dto.RestResources;
 import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SearchResult;
-import org.apache.camel.component.salesforce.api.dto.Version;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.eclipse.jetty.util.StringUtil;
 
@@ -65,8 +65,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
         switch (operationName) {
         case GET_VERSIONS:
             // handle in built response types
-            exchange.setProperty(RESPONSE_TYPE, new TypeReference<List<Version>>() {
-            });
+            exchange.setProperty(RESPONSE_TYPE, TypeReferences.VERSION_LIST_TYPE);
             break;
 
         case GET_RESOURCES:
@@ -101,8 +100,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
 
         case SEARCH:
             // handle known response type
-            exchange.setProperty(RESPONSE_TYPE, new TypeReference<List<SearchResult>>() {
-            });
+            exchange.setProperty(RESPONSE_TYPE, TypeReferences.SEARCH_RESULT_TYPE);
             break;
 
         case LIMITS:
