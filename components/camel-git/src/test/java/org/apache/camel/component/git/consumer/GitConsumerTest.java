@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.git.consumer;
 
+import java.io.File;
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.git.GitTestSupport;
@@ -26,9 +29,6 @@ import org.eclipse.jgit.lib.ObjectIdRef;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.Test;
-
-import java.io.File;
-import java.util.List;
 
 public class GitConsumerTest extends GitTestSupport {
 
