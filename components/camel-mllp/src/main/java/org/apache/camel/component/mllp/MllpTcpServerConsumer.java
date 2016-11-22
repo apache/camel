@@ -324,7 +324,6 @@ public class MllpTcpServerConsumer extends DefaultConsumer {
      */
     class ClientSocketThread extends Thread {
         Socket clientSocket;
-        Hl7AcknowledgementGenerator acknowledgementGenerator = new Hl7AcknowledgementGenerator();
 
         Integer initialByte;
 
