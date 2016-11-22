@@ -103,6 +103,11 @@ public class JsonRestProcessor extends AbstractRestProcessor {
             exchange.setProperty(RESPONSE_TYPE, TypeReferences.SEARCH_RESULT_TYPE);
             break;
 
+        case RECENT:
+            // handle known response type
+            exchange.setProperty(RESPONSE_TYPE, TypeReferences.RECENT_ITEM_LIST_TYPE);
+            break;
+
         case LIMITS:
             // handle known response type
             exchange.setProperty(RESPONSE_CLASS, Limits.class);

@@ -23,6 +23,7 @@ import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -400,6 +401,18 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         }
 
         return instanceUrl + SERVICES_APEXREST + apexUrl;
+    }
+
+    @Override
+    public void recent(final Integer limit, final ResponseCallback responseCallback) {
+        final String param = Optional.ofNullable(limit).map(v -> "?limit=" + v).orElse("");
+
+        final Request get = getRequest(HttpMethod.GET, versionUrl() + "recent/" + param);
+
+        // requires authorization token
+        setAccessToken(get);
+
+        doHttpRequest(get, new DelegatingClientCallback(responseCallback));
     }
 
     @Override

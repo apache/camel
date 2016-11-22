@@ -56,6 +56,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String SOBJECT_SEARCH = "sObjectSearch";
     public static final String APEX_METHOD = "apexMethod";
     public static final String APEX_URL = "apexUrl";
+    public static final String LIMIT = "limit";
 
     // prefix for parameters in headers
     public static final String APEX_QUERY_PARAM_PREFIX = "apexQueryParam.";
@@ -172,6 +173,9 @@ public class SalesforceEndpointConfig implements Cloneable {
     // Streaming connection restart attempt maximum backoff interval
     @UriParam
     private long maxBackoff = DEFAULT_MAX_BACKOFF;
+
+    @UriParam
+    private Integer limit;
 
     public SalesforceEndpointConfig copy() {
         try {
@@ -563,6 +567,7 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(SOBJECT_SEARCH, sObjectSearch);
         valueMap.put(APEX_METHOD, apexMethod);
         valueMap.put(APEX_URL, apexUrl);
+        valueMap.put(LIMIT, limit);
         // apexQueryParams are handled explicitly in AbstractRestProcessor
 
         // add bulk API properties
@@ -607,5 +612,17 @@ public class SalesforceEndpointConfig implements Cloneable {
      */
     public void setInitialReplayIdMap(Map<String, Integer> initialReplayIdMap) {
         this.initialReplayIdMap = initialReplayIdMap;
+    }
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    /**
+     * Limit on number of returned records. Applicable to some of the API, check the Salesforce documentation.
+     * @param limit
+     */
+    public void setLimit(final Integer limit) {
+        this.limit = limit;
     }
 }
