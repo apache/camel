@@ -67,6 +67,7 @@ field
 * queryMore - Retrieves more results (in case of large number of
 results) using result link returned from the 'query' API
 * search - Runs a Salesforce SOSL query
+* limits - fetching organization API usage limits
 
 For example, the following producer endpoint uses the upsertSObject API,
 with the sObjectIdName parameter specifying 'Name' as the external id
@@ -186,6 +187,37 @@ Give the output from the processor to the Salesforce component:
                                         // for the salesforce component
         .to("salesforce:createSObject"); 
 -----------------------------------------------------------------------------------------------------
+
+[[Salesforce-LimitsAPI]]
+Using Salesforce Limits API
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+With `salesforce:limits` operation you can fetch of API limits from Salesforce and then act upon that data received.
+The result of `salesforce:limits` operation is mapped to `org.apache.camel.component.salesforce.api.dto.Limits`
+class and can be used in a custom processors or expressions.
+
+For instance, consider that you need to limit the API usage of Salesforce so that 10% of daily API requests is left for
+other routes. The body of output message contains an instance of
+`org.apache.camel.component.salesforce.api.dto.Limits` object that can be used in conjunction with
+link:content-based-router.html[Content Based Router] and link:content-based-router.html[Content Based Router] and 
+link:spel-language.html[Spring Expression Language (SpEL)] to choose when to perform queries.
+
+Notice how multiplying `1.0` with the integer value held in `body.dailyApiRequests.remaining` makes the expression
+evaluate as with floating point arithmetic, without it - it would end up making integral division which would result
+with either `0` (some API limits consumed) or `1` (no API limits consumed).
+
+[source,java]
+-----------------------------------------------------------------------------------------------------
+from("direct:querySalesforce")
+    .to("salesforce:limits")
+    .choice()
+    .when(spel("#{1.0 * body.dailyApiRequests.remaining / body.dailyApiRequests.max < 0.1}"))
+        .to("salesforce:query?...")
+    .otherwise()
+        .setBody(constant("Used up Salesforce API limits, leaving 10% for critical routes"))
+    .endChoice()
+-----------------------------------------------------------------------------------------------------
+
 
 [[Salesforce-CamelSalesforceMavenPlugin]]
 Camel Salesforce Maven Plugin
