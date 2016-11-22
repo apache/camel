@@ -31,6 +31,7 @@ import com.thoughtworks.xstream.XStream;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.SalesforceMultipleChoicesException;
+import org.apache.camel.component.salesforce.api.TypeReferences;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
@@ -100,8 +101,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
                 // return list of choices as error message for 300
                 if (statusCode == HttpStatus.MULTIPLE_CHOICES_300) {
                     if (PayloadFormat.JSON.equals(format)) {
-                        choices = objectMapper.readValue(responseContent, new TypeReference<List<String>>() {
-                        });
+                        choices = objectMapper.readValue(responseContent, TypeReferences.STRING_LIST_TYPE);
                     } else {
                         RestChoices restChoices = new RestChoices();
                         xStream.fromXML(responseContent, restChoices);
@@ -111,10 +111,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
                 } else {
                     final List<RestError> restErrors;
                     if (PayloadFormat.JSON.equals(format)) {
-                        restErrors = objectMapper.readValue(
-                                responseContent, new TypeReference<List<RestError>>() {
-                                }
-                        );
+                        restErrors = objectMapper.readValue(responseContent, TypeReferences.REST_ERROR_LIST_TYPE);
                     } else {
                         RestErrors errors = new RestErrors();
                         xStream.fromXML(responseContent, errors);
