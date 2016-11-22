@@ -22,6 +22,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -37,9 +38,9 @@ public class SalesforceEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceEndpoint.class);
 
-    @UriPath
+    @UriPath(label = "producer", description = "The operation to use")
     private final OperationName operationName;
-    @UriPath
+    @UriPath(label = "consumer", description = "The name of the topic to use")
     private final String topicName;
     @UriParam
     private final SalesforceEndpointConfig config;

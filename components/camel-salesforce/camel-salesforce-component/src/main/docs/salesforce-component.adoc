@@ -249,8 +249,8 @@ The Salesforce component supports 41 endpoint options which are listed below:
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| operationName | common |  | OperationName | 
-| topicName | common |  | String | 
+| operationName | producer |  | OperationName | The operation to use
+| topicName | consumer |  | String | The name of the topic to use
 | apexMethod | common |  | String | APEX method name
 | apexQueryParams | common |  | Map | Query params for APEX method
 | apexUrl | common |  | String | APEX method URL
