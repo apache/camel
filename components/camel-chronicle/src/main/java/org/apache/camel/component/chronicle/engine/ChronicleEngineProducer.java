@@ -147,7 +147,7 @@ public class ChronicleEngineProducer extends HeaderSelectorProducer {
                     message.getHeader(ChronicleEngineConstants.DEFAULT_VALUE))
             );
         } else {
-            QueueView.Excerpt<Object, Object> excerpt = queueView.get().get(index.longValue());
+            QueueView.Excerpt<Object, Object> excerpt = queueView.get().getExcerpt(index.longValue());
 
             message.setHeader(ChronicleEngineConstants.PATH, excerpt.topic());
             message.setBody(excerpt.message());
