@@ -22,7 +22,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.component.firebase.exception.DatabaseErrorException;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.slf4j.Logger;
@@ -43,35 +42,35 @@ public class FirebaseProducer extends DefaultAsyncProducer {
         rootReference = endpoint.getRootReference();
     }
 
-    /**
-     * Processes the message exchange.
-     * Similar to {@link Processor#process}, but the caller supports having the exchange asynchronously processed.
-     * <p/>
-     * If there was a failure processing then the caused {@link Exception} would be set on the {@link Exchange}.
-     *
-     * @param exchange the message exchange
-     * @param callback the {@link AsyncCallback} will be invoked when the processing of the exchange is completed.
-     *                 If the exchange is completed synchronously, then the callback is also invoked synchronously.
-     *                 The callback should therefore be careful of starting recursive loop.
-     * @return (doneSync) <tt>true</tt> to continue execute synchronously, <tt>false</tt> to continue being executed asynchronously
-     */
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         final Message in = exchange.getIn();
+        final Message out = exchange.getOut();
         String firebaseKey = (String) in.getHeader(endpoint.getKeyName());
         Object value = in.getBody();
         DatabaseReference ref = FirebaseDatabase
                 .getInstance(endpoint.getFirebaseApp())
                 .getReference(rootReference).child(firebaseKey);
+        final boolean reply = endpoint.isReply();
+        out.setHeaders(in.getHeaders());
+        if (reply) { // Wait for reply
+            processReply(exchange, callback, value, ref);
+        } else { // Fire and forget
+            ref.setValue(value);
+            out.setBody(in.getBody());
+            callback.done(true);
+        }
+        return !reply;
+    }
+
+    private void processReply(Exchange exchange, AsyncCallback callback, Object value, DatabaseReference ref) {
         ref.setValue(value, (DatabaseError databaseError, DatabaseReference databaseReference) -> {
             if (databaseError != null) {
                 exchange.setException(new DatabaseErrorException(databaseError));
-                exchange.getOut().setFault(true);
             } else {
                 exchange.getOut().setBody(databaseReference);
             }
-            callback.done(endpoint.isAsync());
+            callback.done(false);
         });
-        return endpoint.isAsync();
     }
 }

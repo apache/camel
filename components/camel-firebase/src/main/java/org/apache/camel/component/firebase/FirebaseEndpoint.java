@@ -52,10 +52,10 @@ public class FirebaseEndpoint extends DefaultEndpoint {
     @Metadata(required = "false")
     private String keyName = "firebaseKey";
 
-    @UriParam(defaultValue = "async", description = "If true, the save or update request (set value in Firebase terms) "
+    @UriParam(defaultValue = "reply", description = "If true, the save or update request (set value in Firebase terms) "
             + "is fired and the reply will be ignored, else the routing thread will wait and the reply will be saved in the exchange message")
     @Metadata(required = "false")
-    private boolean async;
+    private boolean reply;
 
     public FirebaseEndpoint(String uri, FirebaseComponent firebaseComponent, FirebaseConfig firebaseConfig) {
         super(uri, firebaseComponent);
@@ -64,7 +64,7 @@ public class FirebaseEndpoint extends DefaultEndpoint {
         this.setServiceAccountFile(firebaseConfig.getServiceAccountFile());
         this.databaseUrl = firebaseConfig.getDatabaseUrl();
         final String keyName = firebaseConfig.getKeyName();
-        this.setAsync(firebaseConfig.isAsync());
+        this.setReply(firebaseConfig.isAsync());
         if (keyName != null) {
             this.setKeyName(keyName);
         }
@@ -110,12 +110,12 @@ public class FirebaseEndpoint extends DefaultEndpoint {
         this.keyName = keyName;
     }
 
-    public boolean isAsync() {
-        return async;
+    public boolean isReply() {
+        return reply;
     }
 
-    public void setAsync(boolean async) {
-        this.async = async;
+    public void setReply(boolean reply) {
+        this.reply = reply;
     }
 
     public FirebaseApp getFirebaseApp() {
