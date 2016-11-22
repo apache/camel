@@ -108,13 +108,7 @@ public class GitProducerTest extends GitTestSupport {
         gitDir = new File(gitLocalRepo, ".git");
         assertEquals(gitDir.exists(), true);
         git.commit().setMessage(commitMessage).call();
-        Iterable<RevCommit> logs = git.log().call();
-        int count = 0;
-        for (RevCommit rev : logs) {
-            assertEquals(rev.getShortMessage(), commitMessage);
-            count++;
-        }
-        assertEquals(count, 1);
+        validateGitLogs(git, commitMessage);
         status = git.status().call();
         assertFalse(status.getAdded().contains(filenameToAdd));
         git.close();
@@ -134,13 +128,7 @@ public class GitProducerTest extends GitTestSupport {
         template.sendBodyAndHeader("direct:commit", "", GitConstants.GIT_COMMIT_MESSAGE, commitMessage);
 
         // Check
-        Iterable<RevCommit> logs = git.log().call();
-        int count = 0;
-        for (RevCommit rev : logs) {
-            assertEquals(rev.getShortMessage(), commitMessage);
-            count++;
-        }
-        assertEquals(count, 1);
+        validateGitLogs(git, commitMessage);
         git.close();
     }
 
@@ -161,13 +149,7 @@ public class GitProducerTest extends GitTestSupport {
         template.requestBodyAndHeader("direct:commit", "", GitConstants.GIT_COMMIT_MESSAGE, commitMessage);
 
         // Check that it has been commited twice
-        Iterable<RevCommit> logs = git.log().call();
-        int count = 0;
-        for (RevCommit rev : logs) {
-            assertEquals(rev.getShortMessage(), commitMessage);
-            count++;
-        }
-        assertEquals(count, 2);
+        validateGitLogs(git, commitMessage, commitMessage);
         git.close();
     }
 
@@ -222,13 +204,7 @@ public class GitProducerTest extends GitTestSupport {
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
-        Iterable<RevCommit> logs = git.log().call();
-        int count = 0;
-        for (RevCommit rev : logs) {
-            assertEquals(rev.getShortMessage(), commitMessage);
-            count++;
-        }
-        assertEquals(count, 1);
+        validateGitLogs(git, commitMessage);
         git.checkout().setCreateBranch(true).setName(branchTest).setUpstreamMode(SetupUpstreamMode.SET_UPSTREAM).call();
 
         // Test camel-git commit (with branch)
@@ -238,18 +214,7 @@ public class GitProducerTest extends GitTestSupport {
                 exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessageBranch);
             }
         });
-        logs = git.log().call();
-        count = 0;
-        for (RevCommit rev : logs) {
-            if (count == 0) {
-                assertEquals(rev.getShortMessage(), commitMessageBranch);
-            }
-            if (count == 1) {
-                assertEquals(rev.getShortMessage(), commitMessage);
-            }
-            count++;
-        }
-        assertEquals(count, 2);
+        validateGitLogs(git, commitMessageBranch, commitMessage);
         git.close();
     }
 
@@ -266,13 +231,7 @@ public class GitProducerTest extends GitTestSupport {
                 exchange.getIn().setHeader(GitConstants.GIT_COMMIT_MESSAGE, commitMessageAll);
             }
         });
-        Iterable<RevCommit> logs = git.log().call();
-        int count = 0;
-        for (RevCommit rev : logs) {
-            assertEquals(rev.getShortMessage(), commitMessageAll);
-            count++;
-        }
-        assertEquals(count, 1);
+        validateGitLogs(git, commitMessageAll);
         git.close();
     }
 
@@ -288,16 +247,8 @@ public class GitProducerTest extends GitTestSupport {
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
-        Iterable<RevCommit> logs = git.log().call();
-        int count = 0;
-        for (RevCommit rev : logs) {
-            assertEquals(rev.getShortMessage(), commitMessage);
-            count++;
-        }
-        assertEquals(count, 1);
-
+        validateGitLogs(git, commitMessage);
         git.checkout().setCreateBranch(true).setName(branchTest).setUpstreamMode(SetupUpstreamMode.SET_UPSTREAM).call();
-
         File fileToAdd1 = new File(gitLocalRepo, filenameBranchToAdd);
         fileToAdd1.createNewFile();
 
@@ -317,18 +268,7 @@ public class GitProducerTest extends GitTestSupport {
         });
 
         // Check
-        logs = git.log().call();
-        count = 0;
-        for (RevCommit rev : logs) {
-            if (count == 0) {
-                assertEquals(rev.getShortMessage(), commitMessageAll);
-            }
-            if (count == 1) {
-                assertEquals(rev.getShortMessage(), commitMessage);
-            }
-            count++;
-        }
-        assertEquals(count, 2);
+        validateGitLogs(git, commitMessageAll, commitMessage);
         git.close();
     }
 
@@ -344,30 +284,13 @@ public class GitProducerTest extends GitTestSupport {
         Status status = git.status().call();
         assertTrue(status.getAdded().contains(filenameToAdd));
         git.commit().setMessage(commitMessage).call();
-        Iterable<RevCommit> logs = git.log().call();
-        int count = 0;
-        for (RevCommit rev : logs) {
-            assertEquals(rev.getShortMessage(), commitMessage);
-            count++;
-        }
-        assertEquals(count, 1);
+        validateGitLogs(git, commitMessage);
         git.checkout().setCreateBranch(true).setName(branchTest).setUpstreamMode(SetupUpstreamMode.SET_UPSTREAM).call();
         File fileToAdd1 = new File(gitLocalRepo, filenameBranchToAdd);
         fileToAdd1.createNewFile();
         git.add().addFilepattern(filenameBranchToAdd).call();
         git.commit().setMessage(commitMessageAll).call();
-        logs = git.log().call();
-        count = 0;
-        for (RevCommit rev : logs) {
-            if (count == 0) {
-                assertEquals(rev.getShortMessage(), commitMessageAll);
-            }
-            if (count == 1) {
-                assertEquals(rev.getShortMessage(), commitMessage);
-            }
-            count++;
-        }
-        assertEquals(count, 2);
+        validateGitLogs(git, commitMessageAll, commitMessage);
 
         // Test camel-git remove
         template.send("direct:remove-on-branch", new Processor() {
@@ -691,31 +614,14 @@ public class GitProducerTest extends GitTestSupport {
         assertTrue(status.getAdded().contains(fileToAdd1Name));
         git.commit().setMessage("Test second commit").call();
         Iterable<RevCommit> logs = git.log().call();
-        int count = 0;
-        String id = "";
-        for (RevCommit rev : logs) {
-            if (count == 0) {
-                id = rev.getName();
-                assertEquals(rev.getShortMessage(), "Test second commit");
-            }
-            count++;
-        }
-        assertEquals(count, 2);
+        validateGitLogs(git, "Test second commit", commitMessage);
+        String id = logs.iterator().next().getName();
 
         // Test camel-git cherry-pick
         template.sendBodyAndHeader("direct:cherrypick", "", GitConstants.GIT_COMMIT_ID, id);
 
         // Check
-        git.checkout().setCreateBranch(false).setName(branchTest).call();
-        logs = git.log().call();
-        count = 0;
-        for (RevCommit rev : logs) {
-            if (count == 0) {
-                assertEquals(rev.getShortMessage(), "Test second commit");
-            }
-            count++;
-        }
-        assertEquals(count, 2);
+        validateGitLogs(git, "Test second commit", commitMessage);
         git.close();
     }
 
@@ -748,31 +654,15 @@ public class GitProducerTest extends GitTestSupport {
         assertTrue(status.getAdded().contains(fileToAdd1Name));
         git.commit().setMessage("Test second commit").call();
         Iterable<RevCommit> logs = git.log().call();
-        int count = 0;
-        String id = "";
-        for (RevCommit rev : logs) {
-            if (count == 0) {
-                id = rev.getName();
-                assertEquals(rev.getShortMessage(), "Test second commit");
-            }
-            count++;
-        }
-        assertEquals(count, 2);
+        validateGitLogs(git, "Test second commit", commitMessage);
+        String id = logs.iterator().next().getName();
 
         // Test camel-git cherry-pick (on master)
         template.sendBodyAndHeader("direct:cherrypick-master", "", GitConstants.GIT_COMMIT_ID, id);
 
         // Check
         git.checkout().setCreateBranch(false).setName("refs/heads/master").call();
-        logs = git.log().call();
-        count = 0;
-        for (RevCommit rev : logs) {
-            if (count == 0) {
-                assertEquals(rev.getShortMessage(), "Test second commit");
-            }
-            count++;
-        }
-        assertEquals(count, 2);
+        validateGitLogs(git, "Test second commit", commitMessage);
         git.close();
     }
 
@@ -812,16 +702,6 @@ public class GitProducerTest extends GitTestSupport {
         assertEquals(gitRemoteConfigs.get(0).getName(), remoteConfigs.get(0).getName());
         assertEquals(gitRemoteConfigs.get(0).getURIs(), remoteConfigs.get(0).getURIs());
         git.close();
-    }
-
-    private void validateGitLogs(Git git, String... messages) throws GitAPIException {
-        Iterable<RevCommit> logs = git.log().call();
-        int count = 0;
-        for (RevCommit rev : logs) {
-            assertEquals(rev.getShortMessage(), messages[count]);
-            count++;
-        }
-        assertEquals(messages.length, count);
     }
 
     @Override

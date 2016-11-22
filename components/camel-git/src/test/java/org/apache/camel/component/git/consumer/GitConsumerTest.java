@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,25 +16,19 @@
  */
 package org.apache.camel.component.git.consumer;
 
-import java.io.File;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.git.GitConstants;
 import org.apache.camel.component.git.GitTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.Status;
-import org.eclipse.jgit.internal.storage.file.RefDirectory;
 import org.eclipse.jgit.lib.ObjectIdRef;
 import org.eclipse.jgit.lib.Ref;
-import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.Test;
+
+import java.io.File;
+import java.util.List;
 
 public class GitConsumerTest extends GitTestSupport {
 
@@ -59,12 +53,7 @@ public class GitConsumerTest extends GitTestSupport {
         assertTrue(status.getAdded().contains(filenameBranchToAdd));
         git.commit().setMessage("Test test Commit").call();
         Iterable<RevCommit> logs = git.log().call();
-        int count = 0;
-        for (RevCommit rev : logs) {
-            count++;
-        }
-        assertEquals(count, 2);
-
+        validateGitLogs(git, "Test test Commit", commitMessage);
         // Test
         mockResultCommit.assertIsSatisfied();
 
@@ -133,7 +122,6 @@ public class GitConsumerTest extends GitTestSupport {
             }
         }
         assertEquals(branchCreated, true);
-
 
         // Test
         mockResultBranch.assertIsSatisfied();
