@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * Represents a Firebase endpoint.
  */
-@UriEndpoint(scheme = "firebase", title = "Firebase", syntax = "firebase:name", consumerClass = FirebaseConsumer.class, label = "Firebase")
+@UriEndpoint(scheme = "firebase", title = "Firebase", syntax = "firebase:databaseUrl", consumerClass = FirebaseConsumer.class, label = "cloud,messaging")
 public class FirebaseEndpoint extends DefaultEndpoint {
 
     private final FirebaseConfig firebaseConfig;
