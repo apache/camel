@@ -68,6 +68,7 @@ field
 results) using result link returned from the 'query' API
 * search - Runs a Salesforce SOSL query
 * limits - fetching organization API usage limits
+* recent - fetching recent items
 
 For example, the following producer endpoint uses the upsertSObject API,
 with the sObjectIdName parameter specifying 'Name' as the external id
@@ -218,6 +219,22 @@ from("direct:querySalesforce")
     .endChoice()
 -----------------------------------------------------------------------------------------------------
 
+[[Salesforce-RecentItems]]
+Using Salesforce Recent Items API
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To fetch the recent items use `salesforce:recent` operation. This operation returns an `java.util.List` of
+`org.apache.camel.component.salesforce.api.dto.RecentItem` objects (`List<RecentItem>`) that in turn contain
+the `Id`, `Name` and `Attributes` (with `type` and `url` properties). You can limit the number of returned items
+by specifying `limit` parameter set to maximum number of records to return. For example:
+
+[source,java]
+-----------------------------------------------------------------------------------------------------
+from("direct:fetchRecentItems")
+    to("salesforce:recent")
+        .split().body()
+            .log("${body.name} at ${body.attributes.url}");
+-----------------------------------------------------------------------------------------------------
 
 [[Salesforce-CamelSalesforceMavenPlugin]]
 Camel Salesforce Maven Plugin
@@ -275,7 +292,7 @@ The Salesforce component supports 16 options which are listed below.
 
 
 // endpoint options: START
-The Salesforce component supports 41 endpoint options which are listed below:
+The Salesforce component supports 42 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -297,6 +314,7 @@ The Salesforce component supports 41 endpoint options which are listed below:
 | initialReplayIdMap | common |  | Map | Replay IDs to start from per channel name.
 | instanceId | common |  | String | Salesforce1 Analytics report execution instance ID
 | jobId | common |  | String | Bulk API Job ID
+| limit | common |  | Integer | Limit on number of returned records. Applicable to some of the API check the Salesforce documentation.
 | maxBackoff | common |  | long | Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect.
 | notifyForFields | common |  | NotifyForFieldsEnum | Notify for fields options are ALL REFERENCED SELECT WHERE
 | notifyForOperationCreate | common |  | Boolean | Notify for create operation defaults to false (API version = 29.0)

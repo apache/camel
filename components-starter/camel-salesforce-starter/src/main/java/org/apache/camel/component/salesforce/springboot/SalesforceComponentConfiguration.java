@@ -394,6 +394,13 @@ public class SalesforceComponentConfiguration {
          * Replay IDs to start from per channel name.
          */
         private Map initialReplayIdMap;
+        /**
+         * Limit on number of returned records. Applicable to some of the API,
+         * check the Salesforce documentation.
+         * 
+         * @param limit
+         */
+        private Integer limit;
 
         public PayloadFormat getFormat() {
             return format;
@@ -675,6 +682,14 @@ public class SalesforceComponentConfiguration {
 
         public void setInitialReplayIdMap(Map initialReplayIdMap) {
             this.initialReplayIdMap = initialReplayIdMap;
+        }
+
+        public Integer getLimit() {
+            return limit;
+        }
+
+        public void setLimit(Integer limit) {
+            this.limit = limit;
         }
     }
 
