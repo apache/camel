@@ -55,15 +55,6 @@ public final class FirebaseMessage {
         return databaseError;
     }
 
-    @Override
-    public String toString() {
-        return "FirebaseMessage{"
-                + "operation=" + operation
-                + ", dataSnapshot=" + dataSnapshot
-                + ", previousChildName='" + previousChildName + '\''
-                + ", databaseError=" + databaseError + '}';
-    }
-
     public static class Builder {
         private final Operation operation;
 
