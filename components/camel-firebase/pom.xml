@@ -17,6 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <firebase.version>4.0.1</firebase.version>
+        <maven.test.skip>true</maven.test.skip>
     </properties>
 
     <dependencies>
@@ -61,5 +62,19 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <!-- Use this profile in case you want to run the tests -->
+        <!-- Make sure that the file firebase-admin-connection.json contains the right parameters -->
+        <profile>
+            <id>firebase-integration-test</id>
+            <properties>
+                <maven.test.skip>false</maven.test.skip>
+            </properties>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+        </profile>
+    </profiles>
 
 </project>
