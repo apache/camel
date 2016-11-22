@@ -22,6 +22,9 @@ import java.nio.file.Paths;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static java.util.stream.IntStream.range;
+import static junit.framework.TestCase.fail;
+
 import com.google.firebase.database.DatabaseReference;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
@@ -52,16 +55,28 @@ public class FirebaseProducerTest {
     }
 
     @Test
-    public void whenFirebaseSetShouldReceiveMessagesSync() throws Exception {
-        startRoute(false, DatabaseReference.class);
+    public void whenFirebaseSetShouldReceiveMessageAsDBReference() throws Exception {
+        startRoute(true, DatabaseReference.class);
     }
 
     @Test
-    public void whenFirebaseSetShouldReceiveMessagesAsync() throws Exception {
-        startRoute(true, String.class);
+    public void whenFirebaseSetShouldReceiveMessageAsDbString() throws Exception {
+        startRoute(false, String.class);
     }
 
-    private void startRoute(final boolean async, final Class<?> expectedBodyClass) throws Exception {
+    @Test
+    public void whenMultipleFirebaseSetShouldReceiveExpectedMessages() {
+        range(0, 10).forEach(i -> {
+            try {
+                startRoute(true, DatabaseReference.class);
+                startRoute(false, String.class);
+            } catch (Exception e) {
+                fail("Multiple test fails: " + e);
+            }
+        });
+    }
+
+    private void startRoute(final boolean reply, final Class<?> expectedBodyClass) throws Exception {
         sampleInputProvider.copySampleFile();
         CamelContext context = new DefaultCamelContext();
         context.addRoutes(new RouteBuilder() {
@@ -78,11 +93,14 @@ public class FirebaseProducerTest {
                             out.setHeader("firebaseKey", keyValue[0]);
                             out.setBody(keyValue[1].trim());
                         })
-                        .to(String.format("firebase://%s?rootReference=%s&serviceAccountFile=%s&async=%b",
-                                ConfigurationProvider.createDatabaseUrl(), rootReference, serviceAccountFile, async))
+                        .to(String.format("firebase://%s?rootReference=%s&serviceAccountFile=%s&reply=%b",
+                                ConfigurationProvider.createDatabaseUrl(), rootReference, serviceAccountFile, reply))
                         .to("log:whenFirebaseSet?level=WARN")
                         .process(exchange1 -> {
                             assertThat(exchange1.getIn().getBody().getClass()).isEqualTo(expectedBodyClass);
+                            if (reply) {
+                                assertThat(exchange1.getIn().getHeader("firebaseKey")).isNotNull();
+                            }
                             try {
                                 reentrantLock.lock();
                                 wake.signal();
