@@ -79,15 +79,15 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct://trust"/>
-            <to uri="cxfrs://bean://rsClientHttp?sslContextParameters=#mySslContext&amp;hostnameVerifier=#defaultHostnameVerifier&amp;synchronous=true"/>
+            <to uri="cxfrs://bean://rsClientHttp?sslContextParameters=#mySslContext&amp;hostnameVerifier=#defaultHostnameVerifier"/>
         </route>
         <route>
             <from uri="direct://wrongTrust"/>
-            <to uri="cxfrs://bean://rsClientHttp?sslContextParameters=#wrongSslContext&amp;hostnameVerifier=#defaultHostnameVerifier&amp;synchronous=true"/>
+            <to uri="cxfrs://bean://rsClientHttp?sslContextParameters=#wrongSslContext&amp;hostnameVerifier=#defaultHostnameVerifier"/>
         </route>
         <route>
             <from uri="direct://noTrust"/>
-            <to uri="cxfrs://bean://rsClientHttp?sslContextParameters=#wrongSslContext&amp;hostnameVerifier=#defaultHostnameVerifier&amp;synchronous=true"/>
+            <to uri="cxfrs://bean://rsClientHttp?sslContextParameters=#wrongSslContext&amp;hostnameVerifier=#defaultHostnameVerifier"/>
         </route>
     </camelContext>
 

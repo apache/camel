@@ -15,60 +15,57 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<!-- START SNIPPET: cxfRsExample -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:cxf="http://camel.apache.org/schema/cxf"
        xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
-
-  <!-- Defined the real JAXRS back end service  -->
   <jaxrs:server id="restService"
-		        address="http://localhost:${CXFTestSupport.port2}/CxfRsRouterTest/rest" 
+		        address="http://localhost:${CXFTestSupport.port1}/CxfRsAsyncProducerTest/" 
 		        staticSubresourceResolution="true">
     <jaxrs:serviceBeans>
       <ref bean="customerService"/>
     </jaxrs:serviceBeans>       
   </jaxrs:server>
   
-  <bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider"/>
-
   <bean id="customerService" class="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" />
-   
-  <!-- Defined the server endpoint to create the cxf-rs consumer --> 
-  <cxf:rsServer id="rsServer" address="http://localhost:${CXFTestSupport.port1}/CxfRsRouterTest/route"
-    serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" 
-    loggingFeatureEnabled="true" loggingSizeLimit="20" skipFaultLogging="true">
-    <cxf:providers>
-       <ref bean="jsonProvider"/>
-    </cxf:providers>
-  </cxf:rsServer>
 
-  <!-- Defined the client endpoint to create the cxf-rs producer -->
-  <cxf:rsClient id="rsClient" address="http://localhost:${CXFTestSupport.port2}/CxfRsRouterTest/rest"
+  <cxf:rsClient id="rsClientProxy" address="http://localhost:${CXFTestSupport.port1}/CxfRsAsyncProducerTest/"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"
-    loggingFeatureEnabled="true" skipFaultLogging="true">
-    <cxf:providers>
-       <ref bean="jsonProvider"/>
-    </cxf:providers>
-  </cxf:rsClient>
-  
-  <!-- The camel route context -->
+    loggingFeatureEnabled="true" />
+   
+  <cxf:rsClient id="rsClientHttp" address="http://localhost:${CXFTestSupport.port1}/CxfRsAsyncProducerTest/"/>
+
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <endpoint id="fromEndpoint" uri="jetty://http://localhost:${CxfRsAsyncProducerTest.jetty}/CxfRsAsyncProducerTest/testQuery"/>
     <route>
-       <!-- Just need to ignoreDeleteMethodMessageBody -->
-       <from uri="cxfrs://bean://rsServer"/>
-       <to uri="log:body?level=INFO"/>
-       <to uri="cxfrs://bean://rsClient?ignoreDeleteMethodMessageBody=true&amp;synchronous=true"/>
+       <from uri="direct://proxy"/>
+       <to uri="cxfrs://bean://rsClientProxy"/>
+    </route>
+    <route>
+       <from uri="direct://http"/>
+       <to uri="cxfrs://bean://rsClientHttp"/>
+    </route>
+    <route>
+       <from ref="fromEndpoint"/>
+       <process ref="myProcessor" />
     </route>
   </camelContext>
+
+  <bean id="myProcessor" class="org.apache.camel.component.cxf.jaxrs.CxfRsAsyncProducerTest$JettyProcessor"/>
+  <bean id ="testFeature" class="org.apache.camel.component.cxf.jaxrs.CxfRsAsyncProducerTest$TestFeature" />
+  
+  <util:list id="myFeatures" >
+     <ref bean="testFeature"/>
+  </util:list>
   
 </beans>
-<!-- START SNIPPET: cxfRsExample -->
