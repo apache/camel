@@ -21,11 +21,15 @@ import java.lang.reflect.Method;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.security.auth.Subject;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Variant;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -181,6 +185,18 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         }
 
         return answer;
+    }
+
+    public Entity<Object> bindCamelMessageToRequestEntity(Object body, Message camelMessage, Exchange camelExchange) throws Exception  {
+        if (body == null) {
+            return null;
+        }
+        String contentType = camelMessage.getHeader(Exchange.CONTENT_TYPE, String.class);
+        if (contentType == null) {
+            contentType = MediaType.WILDCARD;
+        }
+        String contentEncoding = camelMessage.getHeader(Exchange.CONTENT_ENCODING, String.class);
+        return  Entity.entity(body, new Variant(MediaType.valueOf(contentType), Locale.US, contentEncoding));
     }
 
     /**
