@@ -48,7 +48,7 @@ The Atmosphere Websocket component supports 7 options which are listed below.
 | Name | Java Type | Description
 | servletName | String | Default name of servlet to use. The default name is CamelServlet.
 | httpRegistry | HttpRegistry | To use a custom org.apache.camel.component.servlet.HttpRegistry.
-| attachmentMultipartBinding | boolean | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. This is turn off by default as this may require servet specific configuration to enable this when using Servlet's.
+| attachmentMultipartBinding | boolean | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.
 | httpBinding | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
 | httpConfiguration | HttpConfiguration | To use the shared HttpConfiguration as base configuration.
 | allowJavaSerializedObject | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
@@ -61,7 +61,7 @@ The Atmosphere Websocket component supports 7 options which are listed below.
 
 
 // endpoint options: START
-The Atmosphere Websocket component supports 35 endpoint options which are listed below:
+The Atmosphere Websocket component supports 36 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -84,6 +84,7 @@ The Atmosphere Websocket component supports 35 endpoint options which are listed
 | responseBufferSize | consumer |  | Integer | To use a custom buffer size on the javax.servlet.ServletResponse.
 | servletName | consumer | CamelServlet | String | Name of the servlet to use
 | traceEnabled | consumer | false | boolean | Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off.
+| attachmentMultipartBinding | consumer (advanced) | false | boolean | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | authMethodPriority | producer |  | String | Authentication method for proxy either as Basic Digest or NTLM.
