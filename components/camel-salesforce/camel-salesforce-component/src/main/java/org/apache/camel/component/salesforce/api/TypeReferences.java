@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import org.apache.camel.component.salesforce.api.dto.Limits.Operation;
 import org.apache.camel.component.salesforce.api.dto.Limits.Usage;
+import org.apache.camel.component.salesforce.api.dto.RecentItem;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.api.dto.SearchResult;
 import org.apache.camel.component.salesforce.api.dto.Version;
@@ -53,6 +54,9 @@ public final class TypeReferences {
     };
 
     public static final TypeReference<List<SearchResult>> SEARCH_RESULT_TYPE = new TypeReference<List<SearchResult>>() {
+    };
+
+    public static final TypeReference<List<RecentItem>> RECENT_ITEM_LIST_TYPE = new TypeReference<List<RecentItem>>() {
     };
 
     private TypeReferences() {

@@ -195,6 +195,18 @@ public interface RestClient {
                   ResponseCallback callback);
 
     /**
+     * Fetches recently viewed records.
+     *
+     * @param limit
+     *            optional limit that specifies the maximum number of records to be returned. If this parameter is not
+     *            specified, the default maximum number of records returned is the maximum number of entries in
+     *            RecentlyViewed, which is 200 records per object.
+     * @param responseCallback
+     *            {@link ResponseCallback} to handle response or exception
+     */
+    void recent(Integer limit, ResponseCallback responseCallback);
+
+    /**
      * Fetches Organization Limits.
      *
      * @param responseCallback {@link ResponseCallback} to handle response or exception

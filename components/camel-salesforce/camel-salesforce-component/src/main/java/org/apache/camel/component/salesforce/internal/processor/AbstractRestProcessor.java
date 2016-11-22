@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
+import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
@@ -151,6 +152,9 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                 break;
             case APEX_CALL:
                 processApexCall(exchange, callback);
+                break;
+            case RECENT:
+                processRecent(exchange, callback);
                 break;
             case LIMITS:
                 processLimits(exchange, callback);
@@ -562,6 +566,12 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
             return resolvedUrl;
         }
         return apexUrl;
+    }
+
+    private void processRecent(Exchange exchange, AsyncCallback callback) throws SalesforceException {
+        final Integer limit = getParameter(SalesforceEndpointConfig.LIMIT, exchange, true, true, Integer.class);
+
+        restClient.recent(limit, (response, exception) -> processResponse(exchange, response, exception, callback));
     }
 
     private void processLimits(Exchange exchange, AsyncCallback callback) {
