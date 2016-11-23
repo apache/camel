@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,6 +92,8 @@ public class KubernetesPodsProducer extends DefaultProducer {
 
     protected void doList(Exchange exchange, String operation) throws Exception {
         PodList podList = getEndpoint().getKubernetesClient().pods().list();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(podList.getItems());
     }
 
@@ -108,6 +111,8 @@ public class KubernetesPodsProducer extends DefaultProducer {
             pods.withLabel(entry.getKey(), entry.getValue());
         }
         PodList podList = pods.list();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(podList.getItems());
     }
 
@@ -130,6 +135,8 @@ public class KubernetesPodsProducer extends DefaultProducer {
         }
         pod = getEndpoint().getKubernetesClient().pods()
                 .inNamespace(namespaceName).withName(podName).get();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(pod);
     }
 
@@ -164,6 +171,8 @@ public class KubernetesPodsProducer extends DefaultProducer {
                 .withSpec(podSpec).build();
         pod = getEndpoint().getKubernetesClient().pods()
                 .inNamespace(namespaceName).create(podCreating);
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(pod);
     }
 
@@ -185,6 +194,8 @@ public class KubernetesPodsProducer extends DefaultProducer {
         }
         boolean podDeleted = getEndpoint().getKubernetesClient().pods()
                 .inNamespace(namespaceName).withName(podName).delete();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(podDeleted);
     }
 }
