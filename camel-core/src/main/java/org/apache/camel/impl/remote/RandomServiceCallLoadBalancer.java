@@ -29,7 +29,6 @@ public class RandomServiceCallLoadBalancer implements ServiceCallLoadBalancer<Se
         this.random = new Random();
     }
 
-    @SuppressWarnings("uncheked")
     @Override
     public ServiceCallServer chooseServer(List<ServiceCallServer> servers) {
         int size = servers.size();
