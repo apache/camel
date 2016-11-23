@@ -99,6 +99,7 @@
     <cdi-api-1.0-version>1.0-SP4</cdi-api-1.0-version>
     <cdi-api-1.1-version>1.1</cdi-api-1.1-version>
     <cdi-api-1.2-version>1.2</cdi-api-1.2-version>
+    <cdi-api-2.0-version>2.0-EDR2</cdi-api-2.0-version>
     <cglib-bundle-version>3.2.4_1</cglib-bundle-version>
     <cglib-version>3.2.4</cglib-version>
     <chronicle-bytes-version>1.7.22</chronicle-bytes-version>
@@ -616,6 +617,7 @@
     <vysper-version>0.7</vysper-version>
     <weld1-version>1.1.28.Final</weld1-version>
     <weld2-version>2.4.1.Final</weld2-version>
+    <weld3-version>3.0.0.Alpha17</weld3-version>
     <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
     <wiremock-version>2.1.12</wiremock-version>
     <woodstox-version>4.4.1</woodstox-version>

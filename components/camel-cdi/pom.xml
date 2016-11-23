@@ -263,6 +263,40 @@
     </profile>
 
     <profile>
+      <id>weld-2.0</id>
+
+      <dependencies>
+
+        <!-- provided dependencies -->
+
+        <dependency>
+          <groupId>javax.enterprise</groupId>
+          <artifactId>cdi-api</artifactId>
+          <version>${cdi-api-2.0-version}</version>
+          <scope>provided</scope>
+        </dependency>
+
+        <!-- test dependencies -->
+
+        <dependency>
+          <groupId>org.jboss.weld</groupId>
+          <artifactId>weld-core-impl</artifactId>
+          <version>${weld3-version}</version>
+          <scope>test</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.jboss.arquillian.container</groupId>
+          <artifactId>arquillian-weld-embedded</artifactId>
+          <version>${arquillian-weld-embedded-version}</version>
+          <scope>test</scope>
+        </dependency>
+
+      </dependencies>
+    </profile>
+
+
+    <profile>
       <id>owb-1.0</id>
 
       <build>
