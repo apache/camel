@@ -99,6 +99,10 @@ public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware
         map.putAll(namespaces);
     }
 
+    public Map<String, String> getNamespaces() {
+        return map;
+    }
+
     /**
      * toString() implementation that outputs the namespace mappings with the following format: "[me: {prefix -> value}, {prefix -> value}], [parent: {prefix -> value}, {prefix -> value}].
      * Recurses up the parent's chain.

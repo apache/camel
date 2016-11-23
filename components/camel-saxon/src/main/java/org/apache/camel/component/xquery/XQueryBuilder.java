@@ -367,6 +367,10 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         initialized.set(false);
     }
 
+    public Map<String, String> getNamespaces() {
+        return namespacePrefixes;
+    }
+
     public XQueryExpression getExpression() throws IOException, XPathException {
         return expression;
     }
