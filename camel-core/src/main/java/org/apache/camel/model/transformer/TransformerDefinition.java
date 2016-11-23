@@ -39,7 +39,20 @@ import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.EndpointHelper.isReferenceParameter;
 
 /**
- * Represents a Transformer.
+ * <p>Represents a {@link Transformer} which declaratively transforms message content
+ * according to the input type declared by {@link InputTypeDefinition} and/or output type
+ * declared by {@link OutputTypeDefinition}.</p>
+ * <p>If you specify from='java:com.example.ABC' and to='xml:XYZ', the transformer
+ * will be picked up when current message type is 'java:com.example.ABC' and expected
+ * message type is 'xml:XYZ'.
+ * If you specify from='java' to='xml', then it will be picked up for all of java
+ * to xml transformation.
+ * Also it's possible to specify scheme='xml' so that the transformer will be picked up
+ * for all of java to xml and xml to java transformation.</p>
+ * 
+ * {@see Transformer}
+ * {@see InputTypeDefinition}
+ * {@see OutputTypeDefinition}
  */
 @Metadata(label = "transformation")
 @XmlType(name = "transformer")
@@ -51,15 +64,12 @@ public abstract class TransformerDefinition {
     private String from;
     @XmlAttribute
     private String to;
-    @XmlTransient
-    private CamelContext camelContext;
 
     public Transformer createTransformer(CamelContext context) throws Exception {
-        this.camelContext = context;
-        return doCreateTransformer();
+        return doCreateTransformer(context);
     };
 
-    protected abstract Transformer doCreateTransformer() throws Exception;
+    protected abstract Transformer doCreateTransformer(CamelContext context) throws Exception;
 
     public String getScheme() {
         return scheme;
@@ -111,22 +121,6 @@ public abstract class TransformerDefinition {
      */
     public void setTo(Class<?> clazz) {
         this.to = "java:" + clazz.getName();
-    }
-
-    /**
-     * Get the CamelContext.
-     * @return
-     */
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    /**
-     * Set the CamelContext.
-     * @param camelContext CamelContext
-     */
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
     }
 
 }

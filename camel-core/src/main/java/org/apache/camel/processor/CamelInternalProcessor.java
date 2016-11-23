@@ -68,6 +68,7 @@ import org.slf4j.LoggerFactory;
  *     <li>Debugging</li>
  *     <li>Message History</li>
  *     <li>Stream Caching</li>
+ *     <li>{@link Transformer}</li>
  * </ul>
  * ... and more.
  * <p/>
@@ -875,7 +876,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             DataType to = contract.getInputType();
             if (to != null && !to.equals(from)) {
                 LOG.debug("Looking for transformer for INPUT: from='{}', to='{}'", from, to);
-                convertBody(exchange.getIn(), from, to);
+                doTransform(exchange.getIn(), from, to);
                 exchange.setProperty(Exchange.INPUT_TYPE, to);
             }
             return null;
@@ -888,12 +889,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             DataType to = contract.getOutputType();
             if (to != null && !to.equals(from)) {
                 LOG.debug("Looking for transformer for OUTPUT: from='{}', to='{}'", from, to);
-                convertBody(target, from, to);
+                doTransform(target, from, to);
                 exchange.setProperty(exchange.hasOut() ? Exchange.OUTPUT_TYPE : Exchange.INPUT_TYPE, to);
             }
         }
         
-        private static void convertBody(Message message, DataType from, DataType to) throws Exception {
+        private static void doTransform(Message message, DataType from, DataType to) throws Exception {
             CamelContext context = message.getExchange().getContext();
             // transform into 'from' type before performing declared transformation
             if (from != null && from.isJavaType() && from.getName() != null) {

@@ -74,7 +74,11 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.Transformer;
 
 /**
- * Represents a DataFormatTransformer.
+ * Represents a {@link DataFormatTransformer} which leverages {@link DataFormat} to perform
+ * transformation. One of the DataFormat 'ref' or DataFormat 'type' needs to be specified.
+ * 
+ * {@see TransformerDefinition}
+ * {@see DataFormatTransformer}
  */
 @Metadata(label = "transformation")
 @XmlType(name = "dataFormatTransformer")
@@ -125,8 +129,8 @@ public class DataFormatTransformerDefinition extends TransformerDefinition {
     private String ref;
 
     @Override
-    protected Transformer doCreateTransformer() {
-        return new DataFormatTransformer(getCamelContext())
+    protected Transformer doCreateTransformer(CamelContext context) {
+        return new DataFormatTransformer(context)
                 .setDataFormatType(dataFormatType)
                 .setDataFormatRef(ref)
                 .setModel(getScheme())

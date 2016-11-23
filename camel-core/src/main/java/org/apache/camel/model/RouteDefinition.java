@@ -634,12 +634,12 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
     /**
      * Declare an input type.
-     * @param name input type URN
+     * @param urn input type URN
      * @return the builder
      */
-    public RouteDefinition inputType(String name) {
+    public RouteDefinition inputType(String urn) {
         inputType = new InputTypeDefinition();
-        inputType.setUrn(name);
+        inputType.setUrn(urn);
         return this;
     }
 
@@ -656,17 +656,17 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
     /**
      * Declare an output type.
-     * @param name output type URN
+     * @param urn output type URN
      * @return the builder
      */
-    public RouteDefinition outputType(String name) {
+    public RouteDefinition outputType(String urn) {
         outputType = new OutputTypeDefinition();
-        outputType.setUrn(name);
+        outputType.setUrn(urn);
         return this;
     }
 
     /**
-     * Declare an output type.
+     * Declare an output type with Java class.
      * @param clazz Class object of the output type
      * @return the builder
      */

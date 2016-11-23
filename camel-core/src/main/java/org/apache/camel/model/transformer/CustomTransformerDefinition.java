@@ -40,7 +40,11 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents a BeanTransformer.
+ * Represents a CustomTransformer. One of the bean reference (ref) or fully qualified class name (type)
+ * of the custom {@link Transformer} needs to be specified.
+ * 
+ * {@see TransformerDefinition}
+ * {@see Transformer}
  */
 @Metadata(label = "transformation")
 @XmlType(name = "customTransformer")
@@ -52,13 +56,13 @@ public class CustomTransformerDefinition extends TransformerDefinition {
     private String type;
 
     @Override
-    protected Transformer doCreateTransformer() throws Exception {
+    protected Transformer doCreateTransformer(CamelContext context) throws Exception {
         if (ref == null && type == null) {
             throw new IllegalArgumentException("'ref' or 'type' must be specified for customTransformer");
         }
         Transformer transformer;
         if (ref != null) {
-            transformer = getCamelContext().getRegistry().lookupByNameAndType(ref, Transformer.class);
+            transformer = context.getRegistry().lookupByNameAndType(ref, Transformer.class);
             if (transformer == null) {
                 throw new IllegalArgumentException("Cannot find transformer with ref:" + ref);
             }
@@ -66,13 +70,14 @@ public class CustomTransformerDefinition extends TransformerDefinition {
                 throw new IllegalArgumentException(String.format("Transformer '%s' is already in use. Please check if duplicate transformer exists.", ref));
             }
         } else {
-            Class<Transformer> transformerClass = getCamelContext().getClassResolver().resolveMandatoryClass(type, Transformer.class);
+            Class<Transformer> transformerClass = context.getClassResolver().resolveMandatoryClass(type, Transformer.class);
             if (transformerClass == null) {
                 throw new IllegalArgumentException("Cannot find transformer class: " + type);
             }
-            transformer = transformerClass.newInstance();
+            transformer = context.getInjector().newInstance(transformerClass);
+
         }
-        transformer.setCamelContext(getCamelContext());
+        transformer.setCamelContext(context);
         return transformer.setModel(getScheme())
                           .setFrom(getFrom())
                           .setTo(getTo());

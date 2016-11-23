@@ -34,8 +34,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A <a href="http://camel.apache.org/transformer.html">Transformer</a>
- * leverages DataFormat to perform transformation.
+ * A {@link Transformer} implementation which leverages {@link DataFormat} to perform transformation.
+ * 
+ * {@see Transformer}
  */
 public class DataFormatTransformer extends Transformer {
     private static final Logger LOG = LoggerFactory.getLogger(DataFormatTransformer.class);
