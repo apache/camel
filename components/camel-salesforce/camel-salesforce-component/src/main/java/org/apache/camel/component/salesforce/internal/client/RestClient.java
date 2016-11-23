@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
 
 public interface RestClient {
 
@@ -212,4 +213,20 @@ public interface RestClient {
      * @param responseCallback {@link ResponseCallback} to handle response or exception
      */
     void limits(ResponseCallback responseCallback);
+
+    /**
+     * Submits, approves or rejects particular record.
+     *
+     * @param callback
+     *            {@link ResponseCallback} to handle response or exception
+     */
+    void approval(InputStream request, ResponseCallback callback);
+
+    /**
+     * Returns a list of all approval processes.
+     *
+     * @param callback
+     *            {@link ResponseCallback} to handle response or exception
+     */
+    void approvals(ResponseCallback callback);
 }

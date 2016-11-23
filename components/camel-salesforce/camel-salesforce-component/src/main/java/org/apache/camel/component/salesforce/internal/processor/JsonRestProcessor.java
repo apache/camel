@@ -20,6 +20,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -36,6 +38,9 @@ import org.apache.camel.component.salesforce.api.dto.Limits;
 import org.apache.camel.component.salesforce.api.dto.RestResources;
 import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
+import org.apache.camel.component.salesforce.api.dto.SearchResult;
+import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult;
+import org.apache.camel.component.salesforce.api.dto.approval.Approvals;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.eclipse.jetty.util.StringUtil;
 
@@ -110,6 +115,16 @@ public class JsonRestProcessor extends AbstractRestProcessor {
             exchange.setProperty(RESPONSE_CLASS, Limits.class);
             break;
 
+        case APPROVAL:
+            // handle known response type
+            exchange.setProperty(RESPONSE_CLASS, ApprovalResult.class);
+            break;
+
+        case APPROVALS:
+            // handle known response type
+            exchange.setProperty(RESPONSE_CLASS, Approvals.class);
+            break;
+
         default:
             // ignore, some operations do not require response class or type
         }
@@ -117,36 +132,41 @@ public class JsonRestProcessor extends AbstractRestProcessor {
 
     @Override
     protected InputStream getRequestStream(Exchange exchange) throws SalesforceException {
-        try {
-            InputStream request;
-            Message in = exchange.getIn();
-            request = in.getBody(InputStream.class);
-            if (request == null) {
-                AbstractDTOBase dto = in.getBody(AbstractDTOBase.class);
-                if (dto != null) {
-                    // marshall the DTO
-                    ByteArrayOutputStream out = new ByteArrayOutputStream();
-                    objectMapper.writeValue(out, dto);
-                    request = new ByteArrayInputStream(out.toByteArray());
+        InputStream request;
+        Message in = exchange.getIn();
+        request = in.getBody(InputStream.class);
+        if (request == null) {
+            AbstractDTOBase dto = in.getBody(AbstractDTOBase.class);
+            if (dto != null) {
+                // marshall the DTO
+                request = getRequestStream(dto);
+            } else {
+                // if all else fails, get body as String
+                final String body = in.getBody(String.class);
+                if (null == body) {
+                    String msg = "Unsupported request message body "
+                        + (in.getBody() == null ? null : in.getBody().getClass());
+                    throw new SalesforceException(msg, null);
                 } else {
-                    // if all else fails, get body as String
-                    final String body = in.getBody(String.class);
-                    if (null == body) {
-                        String msg = "Unsupported request message body "
-                            + (in.getBody() == null ? null : in.getBody().getClass());
-                        throw new SalesforceException(msg, null);
-                    } else {
-                        request = new ByteArrayInputStream(body.getBytes(StringUtil.__UTF8_CHARSET));
-                    }
+                    request = new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8));
                 }
             }
+        }
 
-            return request;
+        return request;
+    }
 
+    @Override
+    protected InputStream getRequestStream(final Object object) throws SalesforceException {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            objectMapper.writeValue(out, object);
         } catch (IOException e) {
-            String msg = "Error marshaling request: " + e.getMessage();
+            final String msg = "Error marshaling request: " + e.getMessage();
             throw new SalesforceException(msg, e);
         }
+
+        return new ByteArrayInputStream(out.toByteArray());
     }
 
     @Override

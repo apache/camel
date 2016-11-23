@@ -33,9 +33,11 @@ import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.SalesforceMultipleChoicesException;
 import org.apache.camel.component.salesforce.api.TypeReferences;
 import org.apache.camel.component.salesforce.api.dto.RestError;
+import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
+import org.apache.camel.component.salesforce.internal.client.RestClient.ResponseCallback;
 import org.apache.camel.component.salesforce.internal.dto.RestChoices;
 import org.apache.camel.component.salesforce.internal.dto.RestErrors;
 import org.apache.camel.util.ObjectHelper;
@@ -135,6 +137,27 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         // just report HTTP status info
         return new SalesforceException("Unexpected error: " + reason + ", with content: " + responseContent,
                 statusCode);
+    }
+
+    @Override
+    public void approval(final InputStream request, final ResponseCallback callback) {
+        final Request post = getRequest(HttpMethod.POST, versionUrl() + "process/approvals/");
+
+        // authorization
+        setAccessToken(post);
+
+        // input stream as entity content
+        post.content(new InputStreamContentProvider(request));
+        post.header(HttpHeader.CONTENT_TYPE, PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
+
+        doHttpRequest(post, new DelegatingClientCallback(callback));
+    }
+
+    @Override
+    public void approvals(final ResponseCallback callback) {
+        final Request get = getRequest(HttpMethod.GET, versionUrl() + "process/approvals/");
+
+        doHttpRequest(get, new DelegatingClientCallback(callback));
     }
 
     @Override
