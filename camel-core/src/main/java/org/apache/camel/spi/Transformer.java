@@ -29,8 +29,16 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <a href="http://camel.apache.org/transformer.html">Transformer</a>
- * represents Any to Any data transformation which leverages data format and endpoint
- * under the cover.
+ * performs message transformation according to the declared data type.
+ * There are two Exchange property indicates current message type, {@link Exchange.INPUT_TYPE}
+ * holds input message type and {@link Exchange.OUTPUT_TYPE} holds output message type. If the
+ * input type and/or output type declared by {@link InputTypeDefinition}
+ * and/or {@link OutputTypeDefinition} in the route definition is different from those property
+ * at runtime, camel internal processor look for a Transformer which transforms from
+ * the current message type to the expected message type.
+ *  
+ *  {@see InputTypeDefinition}
+ *  {@see OutputTypeDefinition}
  */
 public abstract class Transformer extends ServiceSupport implements CamelContextAware {
 

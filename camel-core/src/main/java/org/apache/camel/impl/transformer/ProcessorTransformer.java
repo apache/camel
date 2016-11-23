@@ -28,12 +28,14 @@ import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A <a href="http://camel.apache.org/transformer.html">Transformer</a>
- * leverages Processor to perform transformation.
+ * A {@link Transformer} implementation which leverages {@link Processor} to perform transformation.
+ * 
+ * {@see Transformer}
  */
 public class ProcessorTransformer extends Transformer {
     private static final Logger LOG = LoggerFactory.getLogger(ProcessorTransformer.class);
@@ -108,15 +110,11 @@ public class ProcessorTransformer extends Transformer {
 
     @Override
     protected void doStart() throws Exception {
-        if (this.processor instanceof ServiceSupport) {
-            ((ServiceSupport)this.processor).start();
-        }
+        ServiceHelper.startService(this.processor);
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (this.processor instanceof ServiceSupport) {
-            ((ServiceSupport)this.processor).stop();
-        }
+        ServiceHelper.stopService(this.processor);
     }
 }
