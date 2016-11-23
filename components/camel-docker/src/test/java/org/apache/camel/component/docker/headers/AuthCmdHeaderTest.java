@@ -28,7 +28,6 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
 
 /**
  * Validates Authentication Request headers are parsed properly

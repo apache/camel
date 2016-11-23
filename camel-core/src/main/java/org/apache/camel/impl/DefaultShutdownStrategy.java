@@ -41,7 +41,6 @@ import org.apache.camel.Service;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.Suspendable;
-import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.ShutdownAware;

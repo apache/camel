@@ -17,20 +17,17 @@
 package org.apache.camel.component.undertow;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.ByteBuffer;
-import java.nio.file.Path;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 
 import io.undertow.client.ClientExchange;

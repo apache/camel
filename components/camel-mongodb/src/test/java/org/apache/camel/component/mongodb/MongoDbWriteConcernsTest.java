@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.mongodb;
 
-import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
 
 import org.apache.camel.builder.RouteBuilder;

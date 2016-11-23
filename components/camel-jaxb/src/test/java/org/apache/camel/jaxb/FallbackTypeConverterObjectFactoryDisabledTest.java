@@ -16,14 +16,7 @@
  */
 package org.apache.camel.jaxb;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.Processor;
-import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxb.FallbackTypeConverter;
 import org.apache.camel.converter.jaxb.message.Message;

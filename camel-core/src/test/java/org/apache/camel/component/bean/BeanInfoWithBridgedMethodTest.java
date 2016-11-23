@@ -17,7 +17,6 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultExchange;
 
 /**

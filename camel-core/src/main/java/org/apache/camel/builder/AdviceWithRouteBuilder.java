@@ -23,7 +23,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.ToDefinition;
 import org.apache.camel.util.ObjectHelper;
 
 /**
