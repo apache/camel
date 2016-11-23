@@ -17,15 +17,10 @@
 package org.apache.camel.component.sjms.tx;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.FailedToCreateProducerException;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.CamelJmsTestHelper;
 import org.apache.camel.component.sjms.SjmsComponent;
-import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

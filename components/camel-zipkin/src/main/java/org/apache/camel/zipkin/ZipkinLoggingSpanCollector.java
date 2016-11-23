@@ -16,7 +16,6 @@
  */
 package org.apache.camel.zipkin;
 
-import com.github.kristofa.brave.IdConversion;
 import com.github.kristofa.brave.SpanCollector;
 import com.twitter.zipkin.gen.Span;
 import org.slf4j.Logger;

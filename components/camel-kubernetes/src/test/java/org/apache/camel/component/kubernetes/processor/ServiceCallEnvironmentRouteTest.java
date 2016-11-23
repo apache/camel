@@ -18,7 +18,6 @@ package org.apache.camel.component.kubernetes.processor;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.remote.KubernetesConfigurationDefinition;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;

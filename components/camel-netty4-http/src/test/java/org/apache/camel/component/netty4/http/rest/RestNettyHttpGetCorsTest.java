@@ -20,8 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty4.http.BaseNettyTest;
-import org.apache.camel.component.netty4.http.RestNettyHttpBinding;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.RestConfiguration;
 import org.junit.Test;
 

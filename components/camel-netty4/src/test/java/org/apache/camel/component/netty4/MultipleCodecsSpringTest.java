@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.netty4;
 
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;

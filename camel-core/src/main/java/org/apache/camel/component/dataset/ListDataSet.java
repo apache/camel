@@ -18,10 +18,6 @@ package org.apache.camel.component.dataset;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 
 /**
  * A DataSet that allows a list of static payloads to be used to create each message exchange
