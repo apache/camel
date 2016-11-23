@@ -193,8 +193,8 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
     int getAndIncrement(ProcessorDefinition<?> node);
 
     /**
-     * 
-     * @param contract
+     * Sets a {@link Contract} which declares input/output message type on the route.
+     * @param contract {@link Contract} for this route
      */
     void setContract(Contract contract);
 }

@@ -36,7 +36,13 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.Transformer;
 
 /**
- * Represents a EndpointTransformer.
+ * Represents an endpoint {@link Transformer} which leverages camel {@link Endpoint} to
+ * perform transformation. A {@link ProcessorTransformer} will be created internally
+ * with a {@link SendProcessor} which forwards the message to the specified Endpoint.
+ * One of the Endpoint 'ref' or 'uri' needs to be specified.
+ * 
+ * {@see TransformerDefinition}
+ * {@see ProcessorTransformer}
  */
 @Metadata(label = "transformation")
 @XmlType(name = "endpointTransformer")
@@ -49,11 +55,11 @@ public class EndpointTransformerDefinition extends TransformerDefinition {
     private String uri;
 
     @Override
-    protected Transformer doCreateTransformer() throws Exception {
-        Endpoint endpoint = uri != null ? getCamelContext().getEndpoint(uri)
-            : getCamelContext().getRegistry().lookupByNameAndType(ref, Endpoint.class);
+    protected Transformer doCreateTransformer(CamelContext context) throws Exception {
+        Endpoint endpoint = uri != null ? context.getEndpoint(uri)
+            : context.getRegistry().lookupByNameAndType(ref, Endpoint.class);
         SendProcessor processor = new SendProcessor(endpoint, ExchangePattern.InOut);
-        return new ProcessorTransformer(getCamelContext())
+        return new ProcessorTransformer(context)
             .setProcessor(processor)
             .setModel(getScheme())
             .setFrom(getFrom())

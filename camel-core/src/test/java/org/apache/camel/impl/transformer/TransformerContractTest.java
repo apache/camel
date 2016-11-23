@@ -37,8 +37,6 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class TransformerContractTest extends ContextTestSupport {
 
     @Override

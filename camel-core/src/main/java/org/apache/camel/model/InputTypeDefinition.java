@@ -26,6 +26,13 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * Set data type of the input message.
+ * Type name consists of two parts, 'scheme' and 'name' connected with ':'. For Java type 'name'
+ * is a fully qualified class name. For example {@code java:java.lang.String}, {@code json:ABCOrder}.
+ * It's also possible to specify only scheme part, so that it works like a wildcard. If only 'xml'
+ * is specified, all the XML message matches. It's handy to add only one transformer/validator
+ * for all the transformation from/to XML.
+ * 
+ * {@see OutputTypeDefinition}
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "inputType")
@@ -33,8 +40,6 @@ import org.apache.camel.spi.Metadata;
 public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeDefinition> {
     @XmlAttribute(required = true)
     private String urn;
-    @XmlTransient
-    private Class<?> clazz;
 
     public InputTypeDefinition() {
     }
@@ -44,9 +49,6 @@ public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeD
      * @return input type URN
      */
     public String getUrn() {
-        if (clazz != null) {
-            return "java:" + clazz.getName();
-        }
         return urn;
     }
 
@@ -63,7 +65,7 @@ public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeD
      * @param clazz Java Class
      */
     public void setJavaClass(Class<?> clazz) {
-        this.clazz = clazz;
+        this.urn = "java:" + clazz.getName();
     }
 
     @Override
