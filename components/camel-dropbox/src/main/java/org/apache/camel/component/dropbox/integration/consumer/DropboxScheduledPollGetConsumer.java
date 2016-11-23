@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.dropbox.integration.consumer;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.dropbox.DropboxConfiguration;
@@ -23,8 +25,6 @@ import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
 import org.apache.camel.component.dropbox.dto.DropboxFileDownloadResult;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
-
-import java.util.Map;
 
 public class DropboxScheduledPollGetConsumer extends DropboxScheduledPollConsumer {
 
