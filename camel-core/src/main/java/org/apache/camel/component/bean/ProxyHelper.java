@@ -40,7 +40,6 @@ public final class ProxyHelper {
      *
      * @deprecated use the same method name with binding as parameter
      */
-    @SuppressWarnings("unchecked")
     @Deprecated
     public static <T> T createProxyObject(Endpoint endpoint, Producer producer, ClassLoader classLoader, Class<T>[] interfaces, MethodInfoCache methodCache) {
         return createProxyObject(endpoint, true, producer, classLoader, interfaces, methodCache);

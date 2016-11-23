@@ -500,7 +500,6 @@ public enum HdfsFileType {
 
     public static long copyBytes(InputStream in, OutputStream out, int buffSize, boolean close) throws IOException {
         long numBytes = 0;
-        @SuppressWarnings("resource")
         PrintStream ps = out instanceof PrintStream ? (PrintStream) out : null;
         byte buf[] = new byte[buffSize];
         try {

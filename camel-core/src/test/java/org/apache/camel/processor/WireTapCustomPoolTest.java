@@ -59,7 +59,6 @@ public class WireTapCustomPoolTest extends ContextTestSupport {
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            @SuppressWarnings("deprecation")
             public void configure() {
                 // START SNIPPET: e1
                 // use a custom thread pool for sending tapped messages

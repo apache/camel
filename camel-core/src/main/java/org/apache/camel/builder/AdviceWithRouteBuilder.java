@@ -161,7 +161,6 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      * @return the builder
      * @see org.apache.camel.util.EndpointHelper#matchPattern(String, String)
      */
-    @SuppressWarnings("unchecked")
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveByToUri(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
         return new AdviceWithBuilder<T>(this, null, null, pattern, null);

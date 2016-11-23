@@ -101,7 +101,6 @@ public class IgniteCacheTest extends AbstractIgniteTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testQuery() {
         IgniteCache<String, String> cache = ignite().getOrCreateCache("testcache1");
         Set<String> keys = new HashSet<>();
