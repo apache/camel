@@ -97,9 +97,7 @@ final class CdiSpiHelper {
     @SafeVarargs
     static boolean hasAnnotation(AnnotatedType<?> type, Class<? extends Annotation>... annotations) {
         return Stream.of(annotations)
-            .filter(annotation -> hasAnnotation(type, annotation))
-            .findAny()
-            .isPresent();
+            .anyMatch(annotation -> hasAnnotation(type, annotation));
     }
 
     static boolean hasAnnotation(AnnotatedType<?> type, Class<? extends Annotation> annotation) {
@@ -195,7 +193,7 @@ final class CdiSpiHelper {
         }
 
         return annotations.stream()
-            .sorted((a1, a2) -> a1.annotationType().getName().compareTo(a2.annotationType().getName()))
+            .sorted(comparing(a -> a.annotationType().getName()))
             .map(CdiSpiHelper::createAnnotationId)
             .collect(joining(",", "[", "]"));
     }

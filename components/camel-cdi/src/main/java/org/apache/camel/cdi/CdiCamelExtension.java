@@ -208,7 +208,7 @@ public class CdiCamelExtension implements Extension {
             if (qualifiers.isEmpty()) {
                 eventQualifiers.add(ANY);
             } else if (qualifiers.size() == 1 && qualifiers.stream()
-                .filter(isAnnotationType(Named.class)).findAny().isPresent()) {
+                .anyMatch(isAnnotationType(Named.class))) {
                 eventQualifiers.add(DEFAULT);
             } else {
                 eventQualifiers.addAll(qualifiers);
@@ -333,22 +333,18 @@ public class CdiCamelExtension implements Extension {
                 .or(hasType(RouteContainer.class).or(hasType(RoutesBuilder.class))))
             .map(Bean::getQualifiers)
             .flatMap(Set::stream)
-            .filter(isEqual(DEFAULT))
-            .findAny()
-            .isPresent()
+            .anyMatch(isEqual(DEFAULT))
             // Or a bean with Camel annotations?
             || concat(camelBeans.stream().map(AnnotatedType::getFields),
                       camelBeans.stream().map(AnnotatedType::getMethods))
             .flatMap(Set::stream)
             .map(Annotated::getAnnotations)
             .flatMap(Set::stream)
-            .filter(isAnnotationType(Consume.class).and(a -> ((Consume) a).context().isEmpty())
+            .anyMatch(isAnnotationType(Consume.class).and(a -> ((Consume) a).context().isEmpty())
                 .or(isAnnotationType(BeanInject.class).and(a -> ((BeanInject) a).context().isEmpty()))
                 .or(isAnnotationType(EndpointInject.class).and(a -> ((EndpointInject) a).context().isEmpty()))
                 .or(isAnnotationType(Produce.class).and(a -> ((Produce) a).context().isEmpty()))
                 .or(isAnnotationType(PropertyInject.class).and(a -> ((PropertyInject) a).context().isEmpty())))
-            .findAny()
-            .isPresent()
             // Or an injection point for Camel primitives?
             || beans.stream()
             // Excluding internal components...
@@ -358,9 +354,7 @@ public class CdiCamelExtension implements Extension {
             .filter(ip -> getRawType(ip.getType()).getName().startsWith("org.apache.camel"))
             .map(InjectionPoint::getQualifiers)
             .flatMap(Set::stream)
-            .filter(isAnnotationType(Uri.class).or(isAnnotationType(Mock.class)).or(isEqual(DEFAULT)))
-            .findAny()
-            .isPresent();
+            .anyMatch(isAnnotationType(Uri.class).or(isAnnotationType(Mock.class)).or(isEqual(DEFAULT)));
     }
 
     private SyntheticBean<?> camelContextBean(BeanManager manager, Annotation... qualifiers) {
@@ -409,7 +403,7 @@ public class CdiCamelExtension implements Extension {
         // FIXME: This does not work with OpenWebBeans for bean whose bean type is an
         // interface as the Object methods does not get forwarded to the bean instances!
         eagerBeans.forEach(type -> getReferencesByType(manager, type.getJavaClass(), ANY).toString());
-        manager.getBeans(Object.class, ANY, STARTUP).stream()
+        manager.getBeans(Object.class, ANY, STARTUP)
             .forEach(bean -> getReference(manager, bean.getBeanClass(), bean).toString());
 
         // Start Camel contexts
