@@ -1218,13 +1218,23 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
      * Sets the properties that can be referenced in the camel context
+     * <p/>
+     * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
+     * which are used to configure global settings on CamelContext, such as a maximum debug logging length etc.
+     * For property placeholders use {@link #resolvePropertyPlaceholders(String)} method and see more details
+     * at the <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
      *
      * @param properties properties
      */
     void setProperties(Map<String, String> properties);
 
     /**
-     * Gets the properties that can be referenced in the camel context
+     * Gets the properties that can be referenced in the camel context.
+     * <p/>
+     * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
+     * which are used to configure global settings on CamelContext, such as a maximum debug logging length etc.
+     * For property placeholders use {@link #resolvePropertyPlaceholders(String)} method and see more details
+     * at the <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
      *
      * @return the properties
      */
@@ -1232,6 +1242,11 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
      * Gets the property value that can be referenced in the camel context
+     * <p/>
+     * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
+     * which are used to configure global settings on CamelContext, such as a maximum debug logging length etc.
+     * For property placeholders use {@link #resolvePropertyPlaceholders(String)} method and see more details
+     * at the <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
      *
      * @return the string value of property
      */
