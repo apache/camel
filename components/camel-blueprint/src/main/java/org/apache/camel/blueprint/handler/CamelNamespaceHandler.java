@@ -48,6 +48,7 @@ import org.apache.aries.blueprint.mutable.MutableBeanMetadata;
 import org.apache.aries.blueprint.mutable.MutablePassThroughMetadata;
 import org.apache.aries.blueprint.mutable.MutableRefMetadata;
 import org.apache.aries.blueprint.mutable.MutableReferenceMetadata;
+
 import org.apache.camel.BeanInject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -99,13 +100,17 @@ import org.apache.camel.util.blueprint.SecureRandomParametersFactoryBean;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.camel.util.jsse.SecureRandomParameters;
+
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.ComponentDefinitionException;
 import org.osgi.service.blueprint.reflect.BeanMetadata;
 import org.osgi.service.blueprint.reflect.ComponentMetadata;
 import org.osgi.service.blueprint.reflect.Metadata;
 import org.osgi.service.blueprint.reflect.RefMetadata;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -176,7 +181,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         return getClass().getClassLoader().getResource("camel-blueprint.xsd");
     }
 
-    @SuppressWarnings({"rawtypes"})
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public Set<Class> getManagedClasses() {
         return new HashSet<Class>(Arrays.asList(BlueprintCamelContext.class));
     }
@@ -300,7 +305,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
         MutablePassThroughMetadata regProcessorFactory = context.createMetadata(MutablePassThroughMetadata.class);
         regProcessorFactory.setId(".camelBlueprint.processor.registry.passThrough." + contextId);
-        regProcessorFactory.setObject(new PassThroughCallable<Object>(new CamelDependenciesFinder(contextId, context)));
+        regProcessorFactory.setObject(new PassThroughCallable<Object>(new CamelDependenciesFinder(ccfb, context)));
 
         MutableBeanMetadata regProcessor = context.createMetadata(MutableBeanMetadata.class);
         regProcessor.setId(".camelBlueprint.processor.registry." + contextId);
@@ -310,6 +315,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         regProcessor.setProcessor(true);
         regProcessor.addDependsOn(".camelBlueprint.processor.bean." + contextId);
         regProcessor.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
+        regProcessor.addProperty("blueprintBundleContext", createRef(context, "blueprintBundleContext"));
         context.getComponentDefinitionRegistry().registerComponentDefinition(regProcessor);
 
         // lets inject the namespaces into any namespace aware POJOs
@@ -967,12 +973,13 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
     public static class CamelDependenciesFinder implements ComponentDefinitionRegistryProcessor {
 
-        private final String camelContextName;
+        private final CamelContextFactoryBean camelContextFactoryBean;
         private final ParserContext context;
         private BlueprintContainer blueprintContainer;
+        private BundleContext blueprintBundleContext;
 
-        public CamelDependenciesFinder(String camelContextName, ParserContext context) {
-            this.camelContextName = camelContextName;
+        public CamelDependenciesFinder(CamelContextFactoryBean camelContextFactoryBean, ParserContext context) {
+            this.camelContextFactoryBean = camelContextFactoryBean;
             this.context = context;
         }
 
@@ -980,9 +987,15 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             this.blueprintContainer = blueprintContainer;
         }
 
+        public void setBlueprintBundleContext(BundleContext blueprintBundleContext) {
+            this.blueprintBundleContext = blueprintBundleContext;
+        }
+
+        @SuppressWarnings("deprecation")
         public void process(ComponentDefinitionRegistry componentDefinitionRegistry) {
-            CamelContextFactoryBean ccfb = (CamelContextFactoryBean) blueprintContainer.getComponentInstance(".camelBlueprint.factory." + camelContextName);
-            CamelContext camelContext = ccfb.getContext();
+            camelContextFactoryBean.setBlueprintContainer(blueprintContainer);
+            camelContextFactoryBean.setBundleContext(blueprintBundleContext);
+            CamelContext camelContext = camelContextFactoryBean.getContext();
 
             Set<String> components = new HashSet<String>();
             Set<String> languages = new HashSet<String>();
@@ -1010,20 +1023,20 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 }
             }
 
-            if (ccfb.getRestConfiguration() != null) {
+            if (camelContextFactoryBean.getRestConfiguration() != null) {
                 // rest configuration may refer to a component to use
-                String component = ccfb.getRestConfiguration().getComponent();
+                String component = camelContextFactoryBean.getRestConfiguration().getComponent();
                 if (component != null) {
                     components.add(component);
                 }
-                component = ccfb.getRestConfiguration().getApiComponent();
+                component = camelContextFactoryBean.getRestConfiguration().getApiComponent();
                 if (component != null) {
                     components.add(component);
                 }
 
                 // check what data formats are used in binding mode
-                RestBindingMode mode = ccfb.getRestConfiguration().getBindingMode();
-                String json = ccfb.getRestConfiguration().getJsonDataFormat();
+                RestBindingMode mode = camelContextFactoryBean.getRestConfiguration().getBindingMode();
+                String json = camelContextFactoryBean.getRestConfiguration().getJsonDataFormat();
                 if (json == null && mode != null) {
                     if (RestBindingMode.json.equals(mode) || RestBindingMode.json_xml.equals(mode)) {
                         // jackson is the default json data format
@@ -1033,7 +1046,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 if (json != null) {
                     dataformats.add(json);
                 }
-                String xml = ccfb.getRestConfiguration().getXmlDataFormat();
+                String xml = camelContextFactoryBean.getRestConfiguration().getXmlDataFormat();
                 if (xml == null && mode != null) {
                     if (RestBindingMode.xml.equals(mode) || RestBindingMode.json_xml.equals(mode)) {
                         // jaxb is the default xml data format
@@ -1189,5 +1202,4 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         }
 
     }
-
 }
