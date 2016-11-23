@@ -19,21 +19,16 @@ package org.apache.camel.util;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ModelHelper;
-import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 
 /**
  *
  */
-public class DumpModelAsXmlAggregateRouteTest extends ContextTestSupport {
+public class DumpModelAsXmlNamespaceTest extends ContextTestSupport {
 
     public void testDumpModelAsXml() throws Exception {
         String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
-
-        assertTrue(xml.contains("<correlationExpression>"));
-        assertTrue(xml.contains("<header>userId</header>"));
-        assertTrue(xml.contains("</correlationExpression>"));
     }
 
     @Override
@@ -42,11 +37,9 @@ public class DumpModelAsXmlAggregateRouteTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").routeId("myRoute")
-                    .to("log:input")
-                    .aggregate(header("userId"), new GroupedExchangeAggregationStrategy()).completionSize(3)
-                        .to("mock:aggregate")
-                    .end()
-                    .to("mock:result");
+                    .choice()
+                        .when(xpath("/foo:customer").namespace("foo", "http://foo.com")).to("mock:foo")
+                        .when(xpath("/bar:customer").namespace("bar", "http://bar.com")).to("mock:bar");
             }
         };
     }
