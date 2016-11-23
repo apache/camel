@@ -28,7 +28,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-@SuppressWarnings("unchecked")
 public class LumberjackDisconnectionTest extends CamelTestSupport {
     private static int port;
 

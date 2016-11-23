@@ -451,7 +451,6 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
             Class<?> type = field.getType();
 
             // Create format
-            @SuppressWarnings("unchecked")
             FormattingOptions formattingOptions = ConverterUtils.convert(keyValuePairField,
                     field.getType(),
                     field.getAnnotation(BindyConverter.class),
