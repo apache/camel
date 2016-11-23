@@ -62,7 +62,11 @@ public enum OperationName {
     GET_REPORT_RESULTS("getReportResults"),
 
     // limits API
-    LIMITS("limits");
+    LIMITS("limits"),
+
+    // Approval Processes and Process Rules API
+    APPROVAL("approval"),
+    APPROVALS("approvals");
 
     private final String value;
 
