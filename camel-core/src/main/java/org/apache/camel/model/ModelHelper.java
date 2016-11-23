@@ -19,14 +19,23 @@ package org.apache.camel.model;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Expression;
 import org.apache.camel.NamedNode;
+import org.apache.camel.model.language.ExpressionDefinition;
+import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.IOHelper;
+
+import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
 /**
  * Helper for the Camel {@link org.apache.camel.model model} classes.
@@ -53,6 +62,21 @@ public final class ModelHelper {
             jaxbContext = context.getModelJAXBContextFactory().newJAXBContext();
         }
 
+        final Map<String, String> namespaces = new LinkedHashMap<>();
+
+        // gather all namespaces from the routes or route which is stored on the expression nodes
+        if (definition instanceof RoutesDefinition) {
+            List<RouteDefinition> routes = ((RoutesDefinition) definition).getRoutes();
+            for (RouteDefinition route : routes) {
+                extractNamespaces(route, namespaces);
+            }
+        } else if (definition instanceof RouteDefinition) {
+            RouteDefinition route = (RouteDefinition) definition;
+            extractNamespaces(route, namespaces);
+        }
+
+        // TODO: add all namespaces to the root node so the xml output includes those
+
         Marshaller marshaller = jaxbContext.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         StringWriter buffer = new StringWriter();
@@ -71,6 +95,8 @@ public final class ModelHelper {
      * @throws javax.xml.bind.JAXBException is thrown if error unmarshalling from xml to model
      */
     public static <T extends NamedNode> T createModelFromXml(CamelContext context, String xml, Class<T> type) throws JAXBException {
+        // TODO: support injecting namespaces into each namespace aware node
+
         JAXBContext jaxbContext;
         if (context == null) {
             jaxbContext = createJAXBContext();
@@ -103,6 +129,8 @@ public final class ModelHelper {
      * @throws javax.xml.bind.JAXBException is thrown if error unmarshalling from xml to model
      */
     public static <T extends NamedNode> T createModelFromXml(CamelContext context, InputStream stream, Class<T> type) throws JAXBException {
+        // TODO: support injecting namespaces into each namespace aware node
+
         JAXBContext jaxbContext;
         if (context == null) {
             jaxbContext = createJAXBContext();
@@ -118,5 +146,35 @@ public final class ModelHelper {
     private static JAXBContext createJAXBContext() throws JAXBException {
         // must use classloader from CamelContext to have JAXB working
         return JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES, CamelContext.class.getClassLoader());
+    }
+
+    /**
+     * Extract all XML namespaces from the expressions in the route
+     *
+     * @param route       the route
+     * @param namespaces  the map of namespace to add new found XML namespaces
+     */
+    private static void extractNamespaces(RouteDefinition route, Map<String, String> namespaces) {
+        Iterator<ExpressionNode> it = filterTypeInOutputs(route.getOutputs(), ExpressionNode.class);
+        while (it.hasNext()) {
+            ExpressionNode en = it.next();
+            ExpressionDefinition ed = en.getExpression();
+
+            // java-dsl sets directly expression so try this first
+            NamespaceAware na = null;
+            Expression exp = ed.getExpressionValue();
+            if (exp != null && exp instanceof NamespaceAware) {
+                na = (NamespaceAware) exp;
+            } else if (ed instanceof NamespaceAware) {
+                na = (NamespaceAware) ed;
+            }
+
+            if (na != null) {
+                Map<String, String> map = na.getNamespaces();
+                if (map != null && !map.isEmpty()) {
+                    namespaces.putAll(map);
+                }
+            }
+        }
     }
 }
