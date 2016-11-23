@@ -29,7 +29,6 @@ public class EhcacheConsumer extends DefaultConsumer implements CacheEventListen
     private final EhcacheManager manager;
     private final Cache cache;
 
-    @SuppressWarnings("unchecked")
     public EhcacheConsumer(EhcacheEndpoint endpoint, EhcacheConfiguration configuration, Processor processor) throws Exception {
         super(endpoint, processor);
 

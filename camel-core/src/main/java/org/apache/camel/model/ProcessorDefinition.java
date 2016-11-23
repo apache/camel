@@ -666,7 +666,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the builder
      */
-    @SuppressWarnings("unchecked")
     public ServiceCallDefinition serviceCall() {
         ServiceCallDefinition answer = new ServiceCallDefinition();
         addOutput(answer);
@@ -2685,7 +2684,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the builder
      */
-    @SuppressWarnings("unchecked")
     public ProcessClause<ProcessorDefinition<Type>> process() {
         ProcessClause<ProcessorDefinition<Type>> clause = new ProcessClause<>(this);
         ProcessDefinition answer = new ProcessDefinition(clause);
@@ -3495,7 +3493,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
      */
-    @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri) {
         return pollEnrich(resourceUri, null);
     }
@@ -3516,7 +3513,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
      */
-    @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri, AggregationStrategy aggregationStrategy) {
         return pollEnrich(resourceUri, -1, aggregationStrategy);
     }
@@ -3539,7 +3535,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
      */
-    @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri, long timeout, AggregationStrategy aggregationStrategy) {
         return pollEnrich(resourceUri, timeout, aggregationStrategy, false);
     }
@@ -3562,7 +3557,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
      */
-    @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri, long timeout, String aggregationStrategyRef) {
         return pollEnrich(resourceUri, timeout, aggregationStrategyRef, false);
     }
@@ -3683,7 +3677,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
      */
-    @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri, long timeout) {
         return pollEnrich(resourceUri, timeout, (String) null);
     }

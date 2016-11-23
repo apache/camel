@@ -92,7 +92,6 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
         return url;
     }
 
-    @SuppressWarnings("unchecked")
     public List<?> queryForList(ResultSet rs) throws SQLException {
         ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
         RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<Map<String, Object>>(rowMapper);
