@@ -21,7 +21,6 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToCreateRouteException;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;

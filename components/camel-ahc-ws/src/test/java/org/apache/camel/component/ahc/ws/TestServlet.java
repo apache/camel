@@ -17,7 +17,6 @@
 package org.apache.camel.component.ahc.ws;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 import org.eclipse.jetty.websocket.api.Session;

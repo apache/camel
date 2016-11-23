@@ -21,10 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoIterable;
 
 import org.apache.camel.Exchange;

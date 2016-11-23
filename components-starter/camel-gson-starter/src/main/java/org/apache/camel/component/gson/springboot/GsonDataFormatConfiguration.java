@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.gson.springboot;
 
-import org.apache.camel.component.gson.GsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

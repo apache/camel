@@ -19,8 +19,6 @@ package org.apache.camel.component.dns.processor.remote;
 import org.apache.camel.component.dns.DnsConfiguration;
 import org.apache.camel.impl.remote.DefaultServiceCallServerListStrategy;
 import org.apache.camel.spi.ServiceCallServer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DnsServiceCallServerListStrategy extends DefaultServiceCallServerListStrategy<ServiceCallServer> {
     private final DnsConfiguration configuration;

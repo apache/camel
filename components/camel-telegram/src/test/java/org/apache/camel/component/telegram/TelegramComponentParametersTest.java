@@ -16,19 +16,8 @@
  */
 package org.apache.camel.component.telegram;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.RoutesBuilder;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
-import org.junit.Before;
 import org.junit.Test;
-
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
 
 /**
  * Tests the usage of defaults in the component configuration

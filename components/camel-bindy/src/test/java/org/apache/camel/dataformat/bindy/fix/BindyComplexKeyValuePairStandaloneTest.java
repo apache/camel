@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
-import org.apache.camel.dataformat.bindy.BindyKeyValuePairFactory;
 import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
 import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Header;
 import org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Order;

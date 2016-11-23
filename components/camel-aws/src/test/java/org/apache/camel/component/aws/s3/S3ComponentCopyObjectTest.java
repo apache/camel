@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws.s3;
 
-import java.util.Map;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
