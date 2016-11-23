@@ -25,7 +25,6 @@ import org.apache.camel.spi.ServiceCallServer;
 public class RoundRobinServiceCallLoadBalancer<S extends ServiceCallServer> implements ServiceCallLoadBalancer<S> {
     private int counter = -1;
 
-    @SuppressWarnings("uncheked")
     @Override
     public S chooseServer(List<S> servers) {
         int size = servers.size();
