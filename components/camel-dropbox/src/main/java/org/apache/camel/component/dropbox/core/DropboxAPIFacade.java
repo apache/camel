@@ -16,12 +16,21 @@
  */
 package org.apache.camel.component.dropbox.core;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.*;
+
 import com.dropbox.core.DbxClient;
 import com.dropbox.core.DbxEntry;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxWriteMode;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.dropbox.dto.*;
+import org.apache.camel.component.dropbox.dto.DropboxDelResult;
+import org.apache.camel.component.dropbox.dto.DropboxFileDownloadResult;
+import org.apache.camel.component.dropbox.dto.DropboxFileUploadResult;
+import org.apache.camel.component.dropbox.dto.DropboxMoveResult;
+import org.apache.camel.component.dropbox.dto.DropboxSearchResult;
 import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxResultCode;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
@@ -30,10 +39,6 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.*;
 
 import static org.apache.camel.component.dropbox.util.DropboxConstants.DROPBOX_FILE_SEPARATOR;
 
