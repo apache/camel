@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.dropbox.integration.producer;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
@@ -25,8 +27,6 @@ import org.apache.camel.component.dropbox.util.DropboxResultCode;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 public class DropboxPutProducer extends DropboxProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxPutProducer.class);
