@@ -16,14 +16,17 @@
 ## ------------------------------------------------------------------------
 package ${package};
 
-import org.apache.camel.spring.boot.FatJarRouter;
-import org.apache.camel.spring.boot.FatWarInitializer;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-public class MySpringBootRouterWarInitializer extends FatWarInitializer {
+@SpringBootApplication
+public class MySpringBootApplication {
 
-    @Override
-    protected Class<? extends FatJarRouter> routerClass() {
-        return MySpringBootRouter.class;
+    /**
+     * A main method to start this application.
+     */
+    public static void main(String[] args) {
+        SpringApplication.run(MySpringBootApplication.class, args);
     }
 
 }
