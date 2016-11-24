@@ -35,16 +35,4 @@ public class DropboxMoveResult {
     public String getNewPath() {
         return newPath;
     }
-
-    /*
-      Object payload contained in Exchange
-      Exchange Header and Body contains the mode path
-      @param exchange
-     */
-//    @Override
-//    public void populateExchange(Exchange exchange) {
-//        String movedPath = (String)resultEntries;
-//        exchange.getIn().setHeader(DropboxResultHeader.MOVED_PATH.name(), movedPath);
-//        exchange.getIn().setBody(movedPath);
-//    }
 }
