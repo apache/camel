@@ -1,31 +1,53 @@
-package org.apache.camel.component.windowsazure.servicebus;
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.azure.servicebus;
+
+import java.io.InputStream;
+import java.util.HashMap;
 
 import com.microsoft.windowsazure.Configuration;
 import com.microsoft.windowsazure.services.servicebus.ServiceBusConfiguration;
 import com.microsoft.windowsazure.services.servicebus.ServiceBusContract;
 import com.microsoft.windowsazure.services.servicebus.ServiceBusService;
 import com.microsoft.windowsazure.services.servicebus.models.BrokeredMessage;
-import org.apache.camel.*;
+import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
-import java.util.HashMap;
-
-/**
- * Created by alan on 14/10/16.
- */
 @UriEndpoint(scheme = "azure-sb", title = "Azure Service Bus", syntax = "azure-sb:", label = "cloud,messaging")
 public abstract class AbstractSbEndpoint extends DefaultEndpoint {
-    protected static final Logger LOG = LoggerFactory.getLogger(AbstractSbEndpoint.class);
 
-    protected ServiceBusContract client;
+    protected static final Logger LOG = LoggerFactory.getLogger(AbstractSbEndpoint.class);
 
     @UriParam
     protected SbConfiguration configuration;
+    protected ServiceBusContract client;
+
+    public AbstractSbEndpoint(String uri, SbComponent component, SbConfiguration configuration) {
+        super(uri, component);
+        this.configuration = configuration;
+    }
 
     public ServiceBusContract getClient() {
         if (client == null) {
@@ -57,14 +79,6 @@ public abstract class AbstractSbEndpoint extends DefaultEndpoint {
     public void setConfiguration(SbConfiguration configuration) {
         this.configuration = configuration;
     }
-
-
-    public AbstractSbEndpoint(String uri, SbComponent component, SbConfiguration configuration) {
-        super(uri, component);
-        this.configuration = configuration;
-    }
-
-
 
     public abstract Consumer createConsumer(Processor processor) throws Exception;
 

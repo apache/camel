@@ -1,4 +1,4 @@
-package org.apache.camel.component.windowsazure.servicebus.integration;
+package org.apache.camel.component.azure.servicebus.integration;
 
 import com.microsoft.windowsazure.Configuration;
 import com.microsoft.windowsazure.exception.ServiceException;
@@ -8,7 +8,7 @@ import com.microsoft.windowsazure.services.servicebus.ServiceBusService;
 import com.microsoft.windowsazure.services.servicebus.models.*;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.windowsazure.servicebus.Utilities;
+import org.apache.camel.component.azure.servicebus.Utilities;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Before;

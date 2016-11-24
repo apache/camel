@@ -1,4 +1,22 @@
-package org.apache.camel.component.windowsazure.servicebus;
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.azure.servicebus;
+
+import javax.xml.datatype.Duration;
 
 import com.microsoft.windowsazure.services.servicebus.ServiceBusContract;
 import com.microsoft.windowsazure.services.servicebus.implementation.EntityStatus;
@@ -6,138 +24,139 @@ import com.microsoft.windowsazure.services.servicebus.implementation.Partitionin
 import com.microsoft.windowsazure.services.servicebus.models.ReceiveMode;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-
-import javax.xml.datatype.Duration;
+import org.apache.camel.spi.UriPath;
 
 /**
  * azure-sb://<queue>?queueName=<queueName>&ServiceBusContract=<ServiceBusContract>
  *     &timeout=<timeout>&peek_lock=<peek_lock>
+ *
  * azure-sb://<topic>?topicName=<topicName>&subscriptionName=<subscriptionName>&ServiceBusContract=<ServiceBusContract>
  *     &timeout=<timeout>&peek_lock=<peek_lock>
+ *
  * azure-sb://<event>?eventName=<queueName>&ServiceBusContract=<ServiceBusContract>
  *     &timeout=<timeout>&peek_lock=<peek_lock>
+ *
  * azure-sb://<sasKeyName>:<sasKey>@<namespace>.<serviceBusRootUri>/<queue>?queueName=<queueName>
  *     &timeout=<timeout>&peek_lock=<peek_lock>
+ *
  * azure-sb://<sasKeyName>:<sasKey>@<namespace>.<serviceBusRootUri>/<topic>?topicName=<topicName>&subscriptionName=<subscriptionName>
  *     &timeout=<timeout>&peek_lock=<peek_lock>
+ *
  * azure-sb://<sasKeyName>:<sasKey>@<namespace>.<serviceBusRootUri>/<event>?eventName=<queueName>
  *     &timeout=<timeout>&peek_lock=<peek_lock>
- * Created by alan on 14/10/16.
  */
 @UriParams
 public class SbConfiguration {
     // common properties
-    @UriParam
-    private ServiceBusContract serviceBusContract;
-
-    //ServiceBusConfiguration
-    @UriParam
-    private String connectionString;
-    @UriParam
+    @UriPath(description = "placeholder")
     private String uri;
-    @UriParam
+    @UriParam(description = "placeholder")
+    private ServiceBusContract serviceBusContract;
+    @UriParam(description = "placeholder")
+    private String connectionString;
+    @UriParam(description = "placeholder")
     private String wrapUri;
-    @UriParam
+    @UriParam(description = "placeholder")
     private String wrapName;
-    @UriParam
+    @UriParam(description = "placeholder")
     private String wrapPassword;
-    @UriParam
+    @UriParam(description = "placeholder")
     private String sasKeyName;
-    @UriParam
+    @UriParam(description = "placeholder")
     private String sasKey;
-    @UriParam
+    @UriParam(description = "placeholder")
     private String profile;
-    @UriParam
+    @UriParam(description = "placeholder")
     private String namespace;
-    @UriParam
+    @UriParam(description = "placeholder")
     private String serviceBusRootUri;
-    @UriParam
+    @UriParam(description = "placeholder")
     private String wrapRootUri;
 
 
 
-    @UriParam
+    @UriParam(description = "placeholder")
     private EntityType entities;
     //common properties for topic, queue & event hub
-    @UriParam
+    @UriParam(description = "placeholder")
     private Duration autoDeleteOnIdle;
-    @UriParam
+    @UriParam(description = "placeholder")
     private Duration defaultMessageTimeToLive;
-    @UriParam
+    @UriParam(description = "placeholder")
     private Duration duplicateDetectionHistoryTimeWindow;
-    @UriParam
+    @UriParam(description = "placeholder")
     private Boolean enableBatchedOperations;
-    @UriParam
+    @UriParam(description = "placeholder")
     private Boolean isAnonymousAccessible;
-    @UriParam
+    @UriParam(description = "placeholder")
     private PartitioningPolicy partitioningPolicy;
-    @UriParam
+    @UriParam(description = "placeholder")
     private EntityStatus status;
-    @UriParam
+    @UriParam(description = "placeholder")
     private Boolean supportOrdering;
-    @UriParam
+    @UriParam(description = "placeholder")
     private String userMetadata;
-    @UriParam
+    @UriParam(description = "placeholder")
     private Boolean requiresDuplicateDetection;
-    @UriParam
+    @UriParam(description = "placeholder")
     private Long maxSizeInMegabytes;
 
 
     //queue properties
-    @UriParam
+    @UriParam(description = "placeholder")
     private String queueName;
-    @UriParam
+    @UriParam(description = "placeholder")
     private Boolean deadLetteringOnMessageExpiration;
-    @UriParam
+    @UriParam(description = "placeholder")
     private String forwardTo;
-    @UriParam
+    @UriParam(description = "placeholder")
     private Duration lockDuration;
-    @UriParam
+    @UriParam(description = "placeholder")
     private Integer maxDeliveryCount;
-    @UriParam
+    @UriParam(description = "placeholder")
     private Boolean requiresSession;
 
     //topic properties
-    @UriParam
+    @UriParam(description = "placeholder")
     private String topicPath;
-    @UriParam
+    @UriParam(description = "placeholder")
     private Boolean filteringMessageBeforePublishing;
 
     //subscription properties
-    @UriParam
+    @UriParam(description = "placeholder")
     private String subscriptionName;
-    @UriParam
+    @UriParam(description = "placeholder")
     private Boolean deadLetteringOnFilterEvaluationExceptions;
-    @UriParam
+    @UriParam(description = "placeholder")
     private String defaultRuleDescription;
-    @UriParam
+    @UriParam(description = "placeholder")
     private String ruleName;
 
-    @UriParam
+    @UriParam(description = "placeholder")
     private String ruleTag;
 
     //event hub properties
-    @UriParam
+    @UriParam(description = "placeholder")
     private String eventHubPath;
 
-    @UriParam
+    @UriParam(description = "placeholder")
     private Long defaultMessageRetention;
 
     // consumer properties
     private int concurrentConsumers;
 
     //ReceiveMessageOptions
-    @UriParam
+    @UriParam(description = "placeholder")
     private Integer timeout;
-    @UriParam
-    private boolean peekLock = false;
+    @UriParam(description = "placeholder")
+    private boolean peekLock;
 
     //AbstractListOptions
-    @UriParam
+    @UriParam(description = "placeholder")
     private Integer skip;
-    @UriParam
+    @UriParam(description = "placeholder")
     private Integer top;
-    @UriParam
+    @UriParam(description = "placeholder")
     private String filter;
     // producer properties
     // queue properties
@@ -273,7 +292,10 @@ public class SbConfiguration {
     }
 
     public ReceiveMode getReceiveMode() {
-        if (peekLock) return ReceiveMode.PEEK_LOCK;
+        if (peekLock) {
+            return ReceiveMode.PEEK_LOCK;
+        }
+
         return ReceiveMode.RECEIVE_AND_DELETE;
     }
 

@@ -1,4 +1,4 @@
-package org.apache.camel.component.windowsazure.servicebus;
+package org.apache.camel.component.azure.servicebus;
 
 import com.microsoft.windowsazure.services.servicebus.ServiceBusContract;
 import com.microsoft.windowsazure.services.servicebus.models.BrokeredMessage;

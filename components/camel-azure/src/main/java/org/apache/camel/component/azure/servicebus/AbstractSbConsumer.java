@@ -1,4 +1,22 @@
-package org.apache.camel.component.windowsazure.servicebus;
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.azure.servicebus;
+
+import java.util.Collection;
 
 import com.microsoft.windowsazure.exception.ServiceException;
 import com.microsoft.windowsazure.services.servicebus.ServiceBusContract;
@@ -14,18 +32,18 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-
-/**
- * Created by alan on 14/10/16.
- */
 public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractSbConsumer.class);
     private transient String sbConsumerToString;
     private Collection<String> attributeNames;
     private Collection<String> messageAttributeNames;
 
-//    private boolean shouldDelete(Exchange exchange) {
+    public AbstractSbConsumer(Endpoint endpoint, Processor processor) {
+        super(endpoint, processor);
+
+    }
+
+    //    private boolean shouldDelete(Exchange exchange) {
 //        return getConfiguration().isPeekLock();
 ////        return exchange.getProperty(Exchange.FILTER_MATCHED) != null
 ////                && getConfiguration().isPeekLock()
@@ -65,7 +83,7 @@ public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
 
     protected void processRollback(Exchange exchange) {
 
-        if (getConfiguration().isPeekLock()){
+        if (getConfiguration().isPeekLock()) {
             try {
                 getClient().unlockMessage(getLockBrokeredMessage(exchange));
                 System.out.println("$$$$$$ unlock message $$$$$$ LOCK_LOCATION: " + (String)exchange.getIn().getHeader(SbConstants.LOCK_LOCATION));
@@ -80,10 +98,6 @@ public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
         }
     }
 
-    public AbstractSbConsumer(Endpoint endpoint, Processor processor) {
-        super(endpoint, processor);
-
-    }
     /**
      * The polling method which is invoked periodically to poll this consumer
      *
@@ -93,7 +107,7 @@ public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
     @Override
     protected int poll() throws Exception {
         ReceiveMessageOptions opts = ReceiveMessageOptions.DEFAULT;
-        if (getConfiguration().isPeekLock()){
+        if (getConfiguration().isPeekLock()) {
             opts.setPeekLock();
         }
         if (null != getConfiguration().getTimeout()) {
@@ -102,7 +116,7 @@ public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
 
         BrokeredMessage message = pollBrokeredMessage(opts);
 
-        if(message != null && message.getMessageId() != null){
+        if (message != null && message.getMessageId() != null) {
             Exchange exchange = getEndpoint().createExchange(message);
 
             // add on completion to handle after work when the exchange is done
@@ -129,7 +143,7 @@ public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
                 }
             });
             return 1;
-        }else{
+        } else {
             return 0;
         }
 
