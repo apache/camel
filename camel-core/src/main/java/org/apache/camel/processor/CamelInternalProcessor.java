@@ -894,76 +894,96 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             }
         }
         
-        private static void doTransform(Message message, DataType from, DataType to) throws Exception {
-            CamelContext context = message.getExchange().getContext();
+        private void doTransform(Message message, DataType from, DataType to) throws Exception {
             // transform into 'from' type before performing declared transformation
-            if (from != null && from.isJavaType() && from.getName() != null) {
-                Class<?> fromJava = getClazz(from.getName(), context);
-                if (!fromJava.isAssignableFrom(message.getBody().getClass())) {
-                    LOG.debug("Converting to '{}'", fromJava.getName());
-                    Object fromBody = message.getMandatoryBody(fromJava);
-                    message.setBody(fromBody);
-                }
-            }
+            convertIfRequired(message, from);
             
-            Transformer transformer = context.resolveTransformer(from, to);
-            if (transformer != null) {
-                // Applying exactly matched transformer. Java-Java transformer is also allowed.
-                LOG.debug("Applying transformer: from='{}', to='{}', transformer='{}'", from, to, transformer);
-                transformer.transform(message, from, to);
+            if (applyExactlyMatchedTransformer(message, from, to)) {
+                // Found exactly matched transformer. Java-Java transformer is also allowed.
                 return;
             } else if (from == null || from.isJavaType()) {
-                if (to.isJavaType() && to.getName() != null) {
-                    // Java->Java transformation just relies on TypeConverter if no declared transformer
-                    // TODO for better performance it may be better to add TypeConveterTransformer
-                    // into transformer registry to avoid unnecessary scan in transformer registry
-                    LOG.debug("Converting to '{}'", to.getName());
-                    Object answer = message.getMandatoryBody(getClazz(to.getName(), context));
-                    message.setBody(answer);
+                if (convertIfRequired(message, to)) {
+                    // Java->Java transformation just relies on TypeConverter if no explicit transformer
                     return;
                 } else if (from == null) {
                     // {undefined}->Other transformation - assuming it's already in expected shape
                     return;
-                } else {
-                    // Java->Other transformation
-                    transformer = context.resolveTransformer(to.getModel());
-                    if (transformer != null) {
-                        LOG.debug("Applying transformer: from='{}', to='{}', transformer='{}'", from, to, transformer);
-                        transformer.transform(message, from, to);
-                        return;
-                    }
+                } else if (applyTransformerByToModel(message, from, to)) {
+                    // Java->Other transformation - found a transformer supports 'to' data model
+                    return;
                 }
             } else if (from != null) {
                 if (to.isJavaType()) {
-                    // Other->Java transformation
-                    transformer = context.resolveTransformer(from.getModel());
-                    if (transformer != null) {
-                        LOG.debug("Applying transformer: from='{}', to='{}', transformer='{}'", from, to, transformer);
-                        transformer.transform(message, from, to);
+                    if (applyTransformerByFromModel(message, from, to)) {
+                        // Other->Java transformation - found a transformer supprts 'from' data model
                         return;
                     }
-                } else {
-                    // Other->Other transformation - look for a transformer chain
-                    Transformer fromTransformer = context.resolveTransformer(from.getModel());
-                    Transformer toTransformer = context.resolveTransformer(to.getModel());
-                    if (fromTransformer != null && toTransformer != null) {
-                        LOG.debug("Applying transformer: from='{}', to='{}', transformer='{}'", from, to, transformer);
-                        fromTransformer.transform(message, from, new DataType(Object.class));
-                        LOG.debug("Applying transformer: from='{}', to='{}', transformer='{}'", from, to, transformer);
-                        toTransformer.transform(message, new DataType(Object.class), to);
-                        return;
-                    }
+                } else if (applyTransformerChain(message, from, to)) {
+                    // Other->Other transformation - found a transformer chain
+                    return;
                 }
             }
             
             throw new IllegalArgumentException("No Transformer found for [from='" + from + "', to='" + to + "']");
         }
         
-        private static Class<?> getClazz(String type, CamelContext context) throws Exception {
+        private boolean convertIfRequired(Message message, DataType type) throws Exception {
+            // TODO for better performance it may be better to add TypeConveterTransformer
+            // into transformer registry automatically to avoid unnecessary scan in transformer registry
+            CamelContext context = message.getExchange().getContext();
+            if (type != null && type.isJavaType() && type.getName() != null) {
+                Class<?> typeJava = getClazz(type.getName(), context);
+                if (!typeJava.isAssignableFrom(message.getBody().getClass())) {
+                    LOG.debug("Converting to '{}'", typeJava.getName());
+                    message.setBody(message.getMandatoryBody(typeJava));
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        private boolean applyTransformer(Transformer transformer, Message message, DataType from, DataType to) throws Exception {
+            if (transformer != null) {
+                LOG.debug("Applying transformer: from='{}', to='{}', transformer='{}'", from, to, transformer);
+                transformer.transform(message, from, to);
+                return true;
+            }
+            return false;
+        }
+        private boolean applyExactlyMatchedTransformer(Message message, DataType from, DataType to) throws Exception {
+            Transformer transformer = message.getExchange().getContext().resolveTransformer(from, to);
+            return applyTransformer(transformer, message, from, to);
+        }
+        
+        private boolean applyTransformerByToModel(Message message, DataType from, DataType to) throws Exception {
+            Transformer transformer = message.getExchange().getContext().resolveTransformer(to.getModel());
+            return applyTransformer(transformer, message, from, to);
+        }
+        
+        private boolean applyTransformerByFromModel(Message message, DataType from, DataType to) throws Exception {
+            Transformer transformer = message.getExchange().getContext().resolveTransformer(from.getModel());
+            return applyTransformer(transformer, message, from, to);
+        }
+        
+        private boolean applyTransformerChain(Message message, DataType from, DataType to) throws Exception {
+            CamelContext context = message.getExchange().getContext();
+            Transformer fromTransformer = context.resolveTransformer(from.getModel());
+            Transformer toTransformer = context.resolveTransformer(to.getModel());
+            if (fromTransformer != null && toTransformer != null) {
+                LOG.debug("Applying transformer 1/2: from='{}', to='{}', transformer='{}'", from, to, fromTransformer);
+                fromTransformer.transform(message, from, new DataType(Object.class));
+                LOG.debug("Applying transformer 2/2: from='{}', to='{}', transformer='{}'", from, to, toTransformer);
+                toTransformer.transform(message, new DataType(Object.class), to);
+                return true;
+            }
+            return false;
+        }
+        
+        private Class<?> getClazz(String type, CamelContext context) throws Exception {
             return context.getClassResolver().resolveMandatoryClass(type);
         }
         
-        private static DataType getCurrentType(Exchange exchange, String name) {
+        private DataType getCurrentType(Exchange exchange, String name) {
             Object prop = exchange.getProperty(name);
             if (prop instanceof DataType) {
                 return (DataType)prop;
