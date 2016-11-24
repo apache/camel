@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jackson.springboot;
 
+import org.apache.camel.component.jackson.JacksonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
