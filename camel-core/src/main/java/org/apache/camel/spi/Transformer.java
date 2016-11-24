@@ -16,16 +16,11 @@
  */
 package org.apache.camel.spi;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.ServiceSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * <a href="http://camel.apache.org/transformer.html">Transformer</a>

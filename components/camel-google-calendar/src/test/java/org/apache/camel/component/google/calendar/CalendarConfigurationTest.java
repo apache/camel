@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.google.calendar;
 
-import java.util.Random;
-
 import com.google.api.services.calendar.model.Calendar;
 
 import org.apache.camel.CamelContext;

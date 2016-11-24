@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.netty.ClientPipelineFactory;
-import org.apache.camel.component.netty.NettyComponent;
 import org.apache.camel.component.netty.NettyServerBootstrapFactory;
 import org.apache.camel.component.netty.ServerPipelineFactory;
 import org.apache.camel.component.netty.TextLineDelimiter;

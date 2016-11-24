@@ -16,27 +16,13 @@
  */
 package org.apache.camel.model.transformer;
 
-import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.namespace.QName;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.model.IdentifiedType;
-import org.apache.camel.model.OtherAttributesAware;
-import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.Transformer;
-import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.util.EndpointHelper.isReferenceParameter;
 
 /**
  * <p>Represents a {@link Transformer} which declaratively transforms message content

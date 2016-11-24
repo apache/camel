@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.util.Map;
 
 import org.apache.camel.component.salesforce.api.SalesforceException;
-import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
 
 public interface RestClient {
 

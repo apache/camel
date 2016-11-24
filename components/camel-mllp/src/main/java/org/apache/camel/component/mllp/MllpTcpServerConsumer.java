@@ -36,7 +36,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.mllp.impl.AcknowledgmentSynchronizationAdapter;
 import org.apache.camel.component.mllp.impl.MllpUtil;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.processor.mllp.Hl7AcknowledgementGenerator;
 import org.apache.camel.util.IOHelper;
 
 import static org.apache.camel.component.mllp.MllpConstants.MLLP_AUTO_ACKNOWLEDGE;

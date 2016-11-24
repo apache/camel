@@ -33,7 +33,6 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.spi.UriPath;
 
 /**
  * Represents approval request sent to submit, approve or reject record.

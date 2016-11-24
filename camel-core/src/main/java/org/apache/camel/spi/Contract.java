@@ -16,9 +16,6 @@
  */
 package org.apache.camel.spi;
 
-import java.util.Map;
-import javax.xml.namespace.QName;
-
 /**
  * A Contract which represents the input type and/or output type of the {@link Endpoint} or {@link Processor}.
  */

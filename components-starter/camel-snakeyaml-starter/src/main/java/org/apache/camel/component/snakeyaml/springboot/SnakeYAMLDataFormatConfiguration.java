@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.snakeyaml.springboot;
 
-import org.apache.camel.component.snakeyaml.SnakeYAMLDataFormat;
 import org.apache.camel.model.dataformat.YAMLLibrary;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
