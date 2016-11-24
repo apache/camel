@@ -16,28 +16,13 @@
  */
 package org.apache.camel.model.transformer;
 
-import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.namespace.QName;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.component.bean.BeanHolder;
-import org.apache.camel.component.bean.BeanProcessor;
-import org.apache.camel.component.bean.ConstantStaticTypeBeanHolder;
-import org.apache.camel.component.bean.ConstantTypeBeanHolder;
-import org.apache.camel.impl.transformer.ProcessorTransformer;
-import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.Transformer;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents a CustomTransformer. One of the bean reference (ref) or fully qualified class name (type)

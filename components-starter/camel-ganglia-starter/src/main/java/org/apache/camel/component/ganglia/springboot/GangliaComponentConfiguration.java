@@ -19,7 +19,6 @@ package org.apache.camel.component.ganglia.springboot;
 import info.ganglia.gmetric4j.gmetric.GMetric.UDPAddressingMode;
 import info.ganglia.gmetric4j.gmetric.GMetricSlope;
 import info.ganglia.gmetric4j.gmetric.GMetricType;
-import org.apache.camel.component.ganglia.GangliaComponent;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**

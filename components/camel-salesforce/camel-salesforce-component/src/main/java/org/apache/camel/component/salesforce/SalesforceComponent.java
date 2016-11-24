@@ -34,7 +34,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
-import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;

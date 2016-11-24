@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.salesforce;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +31,6 @@ import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum;
 import org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
