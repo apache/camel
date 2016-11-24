@@ -4,8 +4,8 @@ Firebase Component
 
 *Available as of Camel 2.19*
 
-The *firebase* component enables you to save, modify data in Google Firebase database
-and consume to all child of a specific reference.
+The *Firebase* component enables you to save, modify data in Google Firebase database.
+Furthermore it allows you to consume and process all child events mapped to a specific Firebase reference.
 
 This component supports producer and event based consumer endpoints.
 
