@@ -27,7 +27,10 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
 /**
- * Represents a Firebase endpoint.
+ * The Google Firebase component enables you to save and modify data in a Google Firebase database
+ * via the {@link FirebaseProducer} class.
+ * Furthermore it allows you to consume and process all child events mapped to a specific Firebase reference
+ * via the {@link FirebaseConsumer} class.
  */
 @UriEndpoint(scheme = "firebase", title = "Firebase", syntax = "firebase:databaseUrl", consumerClass = FirebaseConsumer.class, label = "cloud,messaging")
 public class FirebaseEndpoint extends DefaultEndpoint {
