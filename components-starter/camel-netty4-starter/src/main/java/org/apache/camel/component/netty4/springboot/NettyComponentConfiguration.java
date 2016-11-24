@@ -26,6 +26,7 @@ import io.netty.handler.ssl.SslHandler;
 import io.netty.util.concurrent.EventExecutorGroup;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.netty4.ClientInitializerFactory;
+import org.apache.camel.component.netty4.NettyComponent;
 import org.apache.camel.component.netty4.NettyServerBootstrapFactory;
 import org.apache.camel.component.netty4.ServerInitializerFactory;
 import org.apache.camel.component.netty4.TextLineDelimiter;

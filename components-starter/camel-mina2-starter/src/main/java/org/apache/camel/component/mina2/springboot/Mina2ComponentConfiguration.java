@@ -18,6 +18,7 @@ package org.apache.camel.component.mina2.springboot;
 
 import java.util.List;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.component.mina2.Mina2Component;
 import org.apache.camel.component.mina2.Mina2TextLineDelimiter;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;

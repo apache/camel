@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dataformat.bindy.kvp.springboot;
 
+import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
