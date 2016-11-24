@@ -109,6 +109,7 @@
     <module>camel-eventadmin</module>
     <module>camel-exec</module>
     <module>camel-facebook</module>
+    <module>camel-firebase</module>
     <module>camel-flatpack</module>
     <module>camel-flink</module>
     <module>camel-fop</module>
@@ -279,7 +280,6 @@
     <module>camel-zipfile</module>
     <module>camel-zipkin</module>
     <module>camel-zookeeper</module>
-    <module>camel-firebase</module>
   </modules>
 
 
