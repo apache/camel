@@ -2,7 +2,7 @@
 Firebase Component
 ~~~~~~~~~~~~~~~~~
 
-*Available as of Camel 2.19.x*
+*Available as of Camel 2.19*
 
 The *firebase* component enables you to save, modify data in Google Firebase database
 and consume to all child of a specific reference.
@@ -46,11 +46,13 @@ Options
 // endpoint options: START
 The Firebase component supports 9 endpoint options which are listed below:
 
+{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
+| databaseUrl | common |  | String | *Required* The Firebase database URL. Always uses https
 | keyName | common | firebaseKey | String | The Camel exchange header name in which the Firebase key is specified. Only needed in case you are saving or updating data
-| reply | common | false | boolean | If *false* the save or update request (*setValue* in Firebase terms) is fired and the reply will be ignored, otherwise the routing thread will wait and the reply will be saved in the body of the exchange message
+| reply | common | reply | boolean | If true the save or update request (set value in Firebase terms) is fired and the reply will be ignored else the routing thread will wait and the reply will be saved in the exchange message
 | rootReference | common |  | String | *Required* The path in the database tree where the key value pairs are to be stored
 | serviceAccountFile | common |  | String | *Required* The path to the JSON file which provided the keys used to connect to Firebase. This file is typically generated when you create the database
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
@@ -58,6 +60,7 @@ The Firebase component supports 9 endpoint options which are listed below:
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
+{% endraw %}
 // endpoint options: END
 
 
