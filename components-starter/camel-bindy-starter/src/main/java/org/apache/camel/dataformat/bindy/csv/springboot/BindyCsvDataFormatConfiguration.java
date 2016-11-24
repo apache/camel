@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dataformat.bindy.csv.springboot;
 
-import org.apache.camel.dataformat.bindy.csv.BindyCsvDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

@@ -17,18 +17,14 @@
 package org.apache.camel.impl.transformer;
 
 import java.io.InputStream;
-import java.io.OutputStream;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.transformer.DataFormatTransformerDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

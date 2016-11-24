@@ -21,7 +21,6 @@ import javax.jms.ExceptionListener;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.jms.ConsumerType;
 import org.apache.camel.component.jms.DefaultTaskExecutorType;
-import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsKeyFormatStrategy;
 import org.apache.camel.component.jms.JmsMessageType;
 import org.apache.camel.component.jms.JmsProviderMetadata;
