@@ -54,7 +54,7 @@ public final class DropboxAPIFacade {
 
     /**
      * @param client the DbxClient performing dropbox low level operations
-     * @return the singleton instance of this class
+     * @param exchange the current Exchange
      */
     public DropboxAPIFacade(DbxClient client, Exchange exchange) {
         this.client = client;
@@ -69,14 +69,14 @@ public final class DropboxAPIFacade {
      *             in case of "add" the new file will be renamed in case
      *             a file with the same name already exists on dropbox.
      *             in case of "force" the file already existing with the same name will be overridden.
-     * @return a DropboxResult object reporting for each remote path the result of the operation.
+     * @return a result object reporting for each remote path the result of the operation.
      * @throws DropboxException
      */
     public DropboxFileUploadResult put(String localPath, String remotePath, DropboxUploadMode mode) throws DropboxException {
         //in case the remote path is not specified, the remotePath = localPath
         String dropboxPath = remotePath == null ? localPath : remotePath;
 
-        DbxEntry entry = null;
+        DbxEntry entry;
         try {
             entry = client.getMetadata(dropboxPath);
         } catch (DbxException e) {
@@ -125,7 +125,7 @@ public final class DropboxAPIFacade {
                 throw new DropboxException(localPath + " doesn't contain any files");
             }
 
-            HashMap<String, DropboxResultCode> resultMap = new HashMap<String, DropboxResultCode>(listFiles.size());
+            HashMap<String, DropboxResultCode> resultMap = new HashMap<>(listFiles.size());
             for (File file : listFiles) {
                 String absPath = file.getAbsolutePath();
                 int indexRemainingPath = localPath.length();
@@ -173,7 +173,7 @@ public final class DropboxAPIFacade {
      * The query param can be null.
      * @param remotePath  the remote path where starting the search from
      * @param query a space-separated list of substrings to search for. A file matches only if it contains all the substrings
-     * @return a DropboxResult object containing all the files found.
+     * @return a result object containing all the files found.
      * @throws DropboxException
      */
     public DropboxSearchResult search(String remotePath, String query) throws DropboxException {
@@ -201,7 +201,7 @@ public final class DropboxAPIFacade {
      * Delete every files and subdirectories inside the remote directory.
      * In case the remotePath is a file, delete the file.
      * @param remotePath  the remote location to delete
-     * @return a DropboxResult object with the result of the delete operation.
+     * @return a result object with the result of the delete operation.
      * @throws DropboxException
      */
     public DropboxDelResult del(String remotePath) throws DropboxException {
@@ -217,7 +217,7 @@ public final class DropboxAPIFacade {
      * Rename a remote path with the new path location.
      * @param remotePath the existing remote path to be renamed
      * @param newRemotePath the new remote path substituting the old one
-     * @return a DropboxResult object with the result of the move operation.
+     * @return a result object with the result of the move operation.
      * @throws DropboxException
      */
     public DropboxMoveResult move(String remotePath, String newRemotePath) throws DropboxException {
@@ -232,7 +232,7 @@ public final class DropboxAPIFacade {
     /**
      * Get the content of every file inside the remote path.
      * @param remotePath the remote path where to download from
-     * @return a DropboxResult object with the content (ByteArrayOutputStream) of every files inside the remote path.
+     * @return a result object with the content (ByteArrayOutputStream) of every files inside the remote path.
      * @throws DropboxException
      */
     public DropboxFileDownloadResult get(String remotePath) throws DropboxException {
@@ -256,7 +256,7 @@ public final class DropboxAPIFacade {
             if (listing == null) {
                 return Collections.emptyMap();
             } else if (listing.children == null) {
-                LOG.info("downloading a single file...");
+                LOG.debug("downloading a single file...");
                 Map.Entry<String, Object> entry = downloadSingleFile(path);
                 return Collections.singletonMap(entry.getKey(), entry.getValue());
             }
@@ -267,7 +267,7 @@ public final class DropboxAPIFacade {
                         Map.Entry<String, Object> singleFile = downloadSingleFile(entry.path);
                         result.put(singleFile.getKey(), singleFile.getValue());
                     } catch (DropboxException e) {
-                        LOG.warn("can't download from " + entry.path);
+                        LOG.warn("Cannot download from path={}, reason={}. This exception is ignored.", entry.path, e.getMessage());
                     }
                 } else {
                     Map<String, Object> filesInFolder = downloadFilesInFolder(entry.path);
@@ -285,7 +285,7 @@ public final class DropboxAPIFacade {
             OutputStreamBuilder target = OutputStreamBuilder.withExchange(exchange);
             DbxEntry.File downloadedFile = client.getFile(path, null, target);
             if (downloadedFile != null) {
-                LOG.info("downloaded path:" + path);
+                LOG.debug("downloaded path={}", path);
                 return new AbstractMap.SimpleEntry<>(path, target.build());
             } else {
                 return null;
