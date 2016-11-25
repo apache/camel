@@ -57,7 +57,7 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <version>${assertj-core.version}</version>
+            <version>3.5.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

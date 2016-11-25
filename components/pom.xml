@@ -276,7 +276,6 @@
     <module>camel-zipfile</module>
     <module>camel-zipkin</module>
     <module>camel-zookeeper</module>
-    <module>camel-firebase</module>
   </modules>
 
 
