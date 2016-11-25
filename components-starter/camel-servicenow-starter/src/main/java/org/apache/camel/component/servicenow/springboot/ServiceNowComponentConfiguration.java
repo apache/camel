@@ -18,6 +18,7 @@ package org.apache.camel.component.servicenow.springboot;
 
 import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.component.servicenow.ServiceNowComponent;
 import org.apache.camel.component.servicenow.ServiceNowRelease;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
