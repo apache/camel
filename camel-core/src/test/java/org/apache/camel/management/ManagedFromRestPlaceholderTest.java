@@ -69,10 +69,10 @@ public class ManagedFromRestPlaceholderTest extends ManagementTestSupport {
         assertTrue(xml.contains("application/json"));
         assertTrue(xml.contains("</rests>"));
 
-        assertTrue(xml.contains("<param name=\"header_letter\" type=\"query\" description=\"header param description2\""
-                + " defaultValue=\"b\" required=\"false\" collectionFormat=\"multi\" dataType=\"string\">"));
-        assertTrue(xml.contains("<param name=\"header_count\" type=\"header\" description=\"header param description1\" "
-                + "defaultValue=\"1\" required=\"true\" dataType=\"integer\">"));
+        assertTrue(xml.contains("<param collectionFormat=\"multi\" dataType=\"string\" defaultValue=\"b\" description=\"header param description2\" "
+                + "name=\"header_letter\" required=\"false\" type=\"query\">"));
+        assertTrue(xml.contains("<param dataType=\"integer\" defaultValue=\"1\" description=\"header param description1\" "
+                + "name=\"header_count\" required=\"true\" type=\"header\">"));
         assertTrue(xml.contains("<value>1</value>"));
         assertTrue(xml.contains("<value>a</value>"));
 
