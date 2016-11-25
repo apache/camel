@@ -109,7 +109,7 @@ public final class DropboxAPIFacade {
             }
             return result;
         } else {       //verify uploading of a list of files inside a dir
-            LOG.info("uploading a dir...");
+            LOG.debug("Uploading a dir...");
             //check if dropbox folder exists
             if (entry != null && !entry.isFolder()) {
                 throw new DropboxException(dropboxPath + " exists on dropbox and is not a folder!");
@@ -135,7 +135,7 @@ public final class DropboxAPIFacade {
                 String remainingPath = absPath.substring(indexRemainingPath);
                 dropboxPath = dropboxPath + remainingPath;
                 try {
-                    LOG.info("uploading:" + fileLocalPath + "," + dropboxPath);
+                    LOG.debug("Uploading: {},{}", fileLocalPath, dropboxPath);
                     DbxEntry.File uploadedFile = putSingleFile(file, dropboxPath, mode);
                     if (uploadedFile == null) {
                         resultMap.put(dropboxPath, DropboxResultCode.KO);
@@ -179,7 +179,7 @@ public final class DropboxAPIFacade {
     public DropboxSearchResult search(String remotePath, String query) throws DropboxException {
         DbxEntry.WithChildren listing;
         if (query == null) {
-            LOG.info("search no query");
+            LOG.debug("Search no query");
             try {
                 listing = client.getMetadataWithChildren(remotePath);
                 return new DropboxSearchResult(listing.children);
@@ -187,7 +187,7 @@ public final class DropboxAPIFacade {
                 throw new DropboxException(remotePath + " does not exist or can't obtain metadata");
             }
         } else {
-            LOG.info("search by query:" + query);
+            LOG.debug("Search by query: {}", query);
             try {
                 List<DbxEntry> entries = client.searchFileAndFolderNames(remotePath, query);
                 return new DropboxSearchResult(entries);

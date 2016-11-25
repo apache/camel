@@ -57,7 +57,9 @@ public class DropboxPutProducer extends DropboxProducer {
             exchange.getIn().setBody(map);
         }
 
-        LOG.info("Uploaded: " + result.toString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Uploaded: {}", result.toString());
+        }
     }
 
 }

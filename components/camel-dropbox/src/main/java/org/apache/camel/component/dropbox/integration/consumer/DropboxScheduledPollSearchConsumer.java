@@ -50,7 +50,9 @@ public class DropboxScheduledPollSearchConsumer extends DropboxScheduledPollCons
         exchange.getIn().setHeader(DropboxResultHeader.FOUND_FILES.name(), fileExtracted.toString());
         exchange.getIn().setBody(result.getFound());
 
-        LOG.info("consumer --> downloaded: " + result.toString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Downloaded: {}", result.toString());
+        }
 
         try {
             // send message to next processor in the route

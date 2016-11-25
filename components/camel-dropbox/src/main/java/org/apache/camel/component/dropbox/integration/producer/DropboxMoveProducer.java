@@ -37,7 +37,7 @@ public class DropboxMoveProducer extends DropboxProducer {
         exchange.getIn().setHeader(DropboxResultHeader.MOVED_PATH.name(), result.getOldPath());
         exchange.getIn().setBody(result.getNewPath());
 
-        log.info("Moved from " + configuration.getRemotePath() + " to " + configuration.getNewRemotePath());
+        log.debug("Moved from {} to {}", configuration.getRemotePath(), configuration.getNewRemotePath());
     }
 
 }
