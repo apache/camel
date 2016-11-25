@@ -20,38 +20,41 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.component.mybatis.MyBatisComponent;
+import org.apache.derby.jdbc.EmbeddedDriver;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+
 
 /**
  * Bean that creates the database table
  */
-public class DatabaseBean implements CamelContextAware {
+public class DatabaseInitializationBean {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DatabaseBean.class);
-    private CamelContext camelContext;
+    private static final Logger LOG = LoggerFactory.getLogger(DatabaseInitializationBean.class);
 
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
+    String url;
 
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
+    Connection connection;
+
+    public DatabaseInitializationBean() {
     }
 
     public void create() throws Exception {
-        String sql = "create table ORDERS (\n"
-              + "  ORD_ID integer primary key,\n"
-              + "  ITEM varchar(10),\n"
-              + "  ITEM_COUNT varchar(5),\n"
-              + "  ITEM_DESC varchar(30),\n"
-              + "  ORD_DELETED boolean\n"
-              + ")";
+        LOG.info("Creating database tables ...");
+        if (connection == null) {
+            EmbeddedDriver driver = new EmbeddedDriver();
+            connection = driver.connect(url + ";create=true", null);
+        }
 
-        LOG.info("Creating table orders ...");
+        String sql = "create table ORDERS (\n"
+                + "  ORD_ID integer primary key,\n"
+                + "  ITEM varchar(10),\n"
+                + "  ITEM_COUNT varchar(5),\n"
+                + "  ITEM_DESC varchar(30),\n"
+                + "  ORD_DELETED boolean\n"
+                + ")";
 
         try {
             execute("drop table orders");
@@ -61,26 +64,35 @@ public class DatabaseBean implements CamelContextAware {
 
         execute(sql);
 
-        LOG.info("... created table orders");
+        LOG.info("Database tables created");
     }
 
-    public void destroy() throws Exception {
+    public void drop() throws Exception {
+        LOG.info("Dropping database tables ...");
+
         try {
             execute("drop table orders");
         } catch (Throwable e) {
             // ignore
         }
+        connection.close();
+
+        LOG.info("Database tables dropped");
     }
 
     private void execute(String sql) throws SQLException {
-        MyBatisComponent component = camelContext.getComponent("mybatis", MyBatisComponent.class);
-        Connection con = component.getSqlSessionFactory().getConfiguration().getEnvironment().getDataSource().getConnection();
-        Statement stm = con.createStatement();
+        Statement stm = connection.createStatement();
         stm.execute(sql);
         // must commit connection
-        con.commit();
+        connection.commit();
         stm.close();
-        con.close();
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 }
