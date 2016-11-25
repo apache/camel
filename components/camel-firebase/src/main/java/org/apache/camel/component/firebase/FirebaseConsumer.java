@@ -47,7 +47,36 @@ public class FirebaseConsumer extends DefaultConsumer {
         FirebaseDatabase
                 .getInstance(endpoint.getFirebaseApp())
                 .getReference(firebaseConfig.getRootReference())
-                .addChildEventListener(new FirebaseConsumerEventListener());
+                .addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        forwardMessage(new FirebaseMessage.Builder(Operation.CHILD_ADD, dataSnapshot)
+                                .setPreviousChildName(s).build());
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        forwardMessage(new FirebaseMessage.Builder(Operation.CHILD_CHANGED, dataSnapshot)
+                                .setPreviousChildName(s).build());
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                        forwardMessage(new FirebaseMessage.Builder(Operation.CHILD_REMOVED, dataSnapshot).build());
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                        forwardMessage(new FirebaseMessage.Builder(Operation.CHILD_MOVED, dataSnapshot)
+                                .setPreviousChildName(s).build());
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        forwardMessage(new FirebaseMessage.Builder(Operation.CANCELLED).setDatabaseError(databaseError)
+                                .build());
+                    }
+                });
     }
 
     private void forwardMessage(FirebaseMessage o) {
@@ -58,43 +87,12 @@ public class FirebaseConsumer extends DefaultConsumer {
             // send message to next processor in the route
             getProcessor().process(exchange);
         } catch (Exception e) {
-            exchange.setException(new RuntimeCamelException("Message forwarding failed", e));
+            throw new RuntimeCamelException("Message forwarding failed", e);
         } finally {
             // log exception if an exception occurred and was not handled
             if (exchange.getException() != null) {
                 getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
             }
-        }
-    }
-
-    private class FirebaseConsumerEventListener implements ChildEventListener {
-        @Override
-        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-            forwardMessage(new FirebaseMessage.Builder(Operation.CHILD_ADD, dataSnapshot)
-                    .setPreviousChildName(s).build());
-        }
-
-        @Override
-        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            forwardMessage(new FirebaseMessage.Builder(Operation.CHILD_CHANGED, dataSnapshot)
-                    .setPreviousChildName(s).build());
-        }
-
-        @Override
-        public void onChildRemoved(DataSnapshot dataSnapshot) {
-            forwardMessage(new FirebaseMessage.Builder(Operation.CHILD_REMOVED, dataSnapshot).build());
-        }
-
-        @Override
-        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            forwardMessage(new FirebaseMessage.Builder(Operation.CHILD_MOVED, dataSnapshot)
-                    .setPreviousChildName(s).build());
-        }
-
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-            forwardMessage(new FirebaseMessage.Builder(Operation.CANCELLED).setDatabaseError(databaseError)
-                    .build());
         }
     }
 }
