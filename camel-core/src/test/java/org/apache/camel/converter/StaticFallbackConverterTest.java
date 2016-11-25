@@ -26,7 +26,6 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
- * @version 
  */
 public class StaticFallbackConverterTest extends ContextTestSupport {
 

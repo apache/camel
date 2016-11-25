@@ -35,7 +35,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed WireTapProcessor")
 public class ManagedWireTapProcessor extends ManagedProcessor implements ManagedWireTapMBean {

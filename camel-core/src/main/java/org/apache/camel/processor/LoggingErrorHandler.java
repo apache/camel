@@ -24,7 +24,6 @@ import org.apache.camel.util.CamelLogger;
 /**
  * An {@link ErrorHandler} which uses commons-logging to dump the error
  *
- * @version
  * @deprecated use {@link DeadLetterChannel} using a log endpoint instead
  */
 @Deprecated

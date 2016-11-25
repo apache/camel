@@ -33,7 +33,6 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.LifecycleStrategySupport;
 
 /**
- * @version 
  */
 public class DummyLifecycleStrategy extends LifecycleStrategySupport {
 

@@ -36,7 +36,6 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.UnitOfWorkHelper;
 
 /**
- * @version 
  */
 public class XsltBuilderTest extends ContextTestSupport {
 

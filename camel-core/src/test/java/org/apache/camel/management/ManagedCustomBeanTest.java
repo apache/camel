@@ -27,7 +27,6 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class ManagedCustomBeanTest extends ManagementTestSupport {
 

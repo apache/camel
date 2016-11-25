@@ -41,7 +41,6 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version 
  */
 public class CamelPostProcessorHelperTest extends ContextTestSupport {
 

@@ -28,7 +28,6 @@ import java.lang.annotation.Target;
  *
  * @deprecated use {@link org.apache.camel.spi.Metadata}
  *
- * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

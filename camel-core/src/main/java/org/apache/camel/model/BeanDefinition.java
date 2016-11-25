@@ -39,7 +39,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Calls a java bean
  *
- * @version 
  */
 @Metadata(label = "eip,endpoint")
 @XmlRootElement(name = "bean")

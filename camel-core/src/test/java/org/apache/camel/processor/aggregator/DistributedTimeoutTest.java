@@ -25,7 +25,6 @@ import org.apache.camel.processor.aggregate.MemoryAggregationRepository;
 import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
 
 /**
- * @version
  */
 public class DistributedTimeoutTest extends AbstractDistributedTest {
 

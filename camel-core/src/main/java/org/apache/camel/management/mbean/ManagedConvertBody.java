@@ -23,7 +23,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.ConvertBodyProcessor;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed ConvertBody")
 public class ManagedConvertBody extends ManagedProcessor implements ManagedConvertBodyMBean {

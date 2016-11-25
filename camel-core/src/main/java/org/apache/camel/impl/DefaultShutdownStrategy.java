@@ -111,7 +111,6 @@ import org.slf4j.LoggerFactory;
  * This information can also be obtained from the {@link org.apache.camel.spi.InflightRepository}
  * at all time during runtime.
  *
- * @version
  */
 public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownStrategy, CamelContextAware {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultShutdownStrategy.class);

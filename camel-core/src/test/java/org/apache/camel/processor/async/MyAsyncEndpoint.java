@@ -24,7 +24,6 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 
 /**
- * @version 
  */
 public class MyAsyncEndpoint extends DefaultEndpoint {
 

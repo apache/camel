@@ -37,7 +37,6 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  * et al) for working with Camel and consuming {@link org.apache.camel.Message} instances in an
  * {@link Exchange} from an {@link Endpoint}.
  *
- * @version 
  */
 public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerTemplate {
 

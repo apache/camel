@@ -29,7 +29,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * BeanIO data format
  *
- * @version 
  */
 @Metadata(label = "dataformat,transformation,csv", title = "BeanIO")
 @XmlRootElement(name = "beanio")

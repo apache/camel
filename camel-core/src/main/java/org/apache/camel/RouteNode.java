@@ -21,7 +21,6 @@ import org.apache.camel.model.ProcessorDefinition;
 /**
  * Represents a model of a node in the runtime route path.
  *
- * @version 
  */
 public interface RouteNode {
 

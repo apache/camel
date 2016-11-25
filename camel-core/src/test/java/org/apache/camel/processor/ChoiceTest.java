@@ -22,7 +22,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
 /**
- * @version 
  */
 public class ChoiceTest extends ContextTestSupport {
     protected MockEndpoint x;

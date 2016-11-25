@@ -21,7 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BodyInPreCompleteAggregatingStrategy;
 
 /**
- * @version 
  */
 public class AggregatePreCompleteAwareStrategyTest extends ContextTestSupport {
 

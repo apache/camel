@@ -22,7 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * Wire tap unit test
  *
- * @version 
  */
 public class WireTapExpressionTest extends ContextTestSupport {
 

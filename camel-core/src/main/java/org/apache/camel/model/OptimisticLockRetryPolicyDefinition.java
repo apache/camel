@@ -27,7 +27,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * To configure optimistic locking
  *
- * @version
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "optimisticLockRetryPolicy")

@@ -61,7 +61,6 @@ import org.osgi.framework.BundleEvent;
  * thread-safe.
  * 
  * @ThreadSafe
- * @version 
  * @since 1.4
  */
 public interface BundleTrackerCustomizer {

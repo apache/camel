@@ -23,7 +23,6 @@ import org.w3c.dom.Document;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class ManagedRouteDumpStatsAsXmlTest extends ManagementTestSupport {
 

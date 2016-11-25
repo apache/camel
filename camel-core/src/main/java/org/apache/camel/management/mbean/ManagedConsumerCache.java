@@ -22,7 +22,6 @@ import org.apache.camel.api.management.mbean.ManagedConsumerCacheMBean;
 import org.apache.camel.impl.ConsumerCache;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed ConsumerCache")
 public class ManagedConsumerCache extends ManagedService implements ManagedConsumerCacheMBean {

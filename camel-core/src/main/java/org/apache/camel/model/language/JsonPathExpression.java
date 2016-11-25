@@ -31,7 +31,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * For JSonPath expressions and predicates
  *
- * @version 
  */
 @Metadata(label = "language,json", title = "JSonPath")
 @XmlRootElement(name = "jsonpath")

@@ -28,7 +28,6 @@ import org.apache.camel.TestSupport;
 import org.apache.camel.util.IOHelper;
 
 /**
- * @version 
  */
 public class JndiTest extends TestSupport {
     protected Context context;

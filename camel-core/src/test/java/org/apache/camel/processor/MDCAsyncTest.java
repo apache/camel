@@ -33,7 +33,6 @@ import org.slf4j.MDC;
 import static org.junit.Assert.assertNotEquals;
 
 /**
- * @version 
  */
 public class MDCAsyncTest extends ContextTestSupport {
 

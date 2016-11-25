@@ -33,7 +33,6 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * If the conversion fails an {@link org.apache.camel.InvalidPayloadException} is thrown.
  *
- * @version 
  */
 public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcessor, IdAware {
     private String id;

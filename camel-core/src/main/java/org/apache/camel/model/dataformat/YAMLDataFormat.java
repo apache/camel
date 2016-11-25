@@ -32,7 +32,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * YAML data format
  *
- * @version 
  */
 @Metadata(label = "dataformat,transformation,yaml", title = "YAML")
 @XmlRootElement(name = "yaml")

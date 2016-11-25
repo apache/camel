@@ -42,7 +42,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultMessage;
 
 /**
- * @version 
  */
 public class ObjectHelperTest extends TestCase {
 

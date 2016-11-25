@@ -25,7 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class ListDataSetProducerTest extends ContextTestSupport {
     protected ListDataSet dataSet = new ListDataSet();

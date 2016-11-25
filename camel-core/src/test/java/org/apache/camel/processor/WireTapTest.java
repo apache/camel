@@ -23,7 +23,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Wire tap unit test
  *
- * @version 
  */
 public class WireTapTest extends ContextTestSupport {
     protected MockEndpoint tap;

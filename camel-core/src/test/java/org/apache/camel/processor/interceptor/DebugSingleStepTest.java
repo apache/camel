@@ -29,7 +29,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Breakpoint;
 
 /**
- * @version 
  */
 public class DebugSingleStepTest extends ContextTestSupport {
 

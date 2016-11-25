@@ -23,7 +23,6 @@ import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.processor.SetBodyProcessor;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed SetBody")
 public class ManagedSetBody extends ManagedProcessor implements ManagedSetBodyMBean {

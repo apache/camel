@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
  * An {@link org.apache.camel.processor.ErrorHandler} used as a safe fallback when
  * processing by other error handlers such as the {@link org.apache.camel.model.OnExceptionDefinition}.
  *
- * @version
  */
 public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements ErrorHandler {
 

@@ -36,7 +36,6 @@ import org.apache.camel.util.TimeUtils;
  * such as starting and stopping using the {@link org.apache.camel.CamelContext#startRoute(String)}
  * and {@link org.apache.camel.CamelContext#stopRoute(String)} methods.
  *
- * @version 
  */
 public abstract class DefaultRoute extends ServiceSupport implements Route {
 

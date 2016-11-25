@@ -30,7 +30,6 @@ import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
- * @version 
  */
 public class AsyncEndpointPolicyTest extends ContextTestSupport {
 

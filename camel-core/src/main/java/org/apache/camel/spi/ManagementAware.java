@@ -28,7 +28,6 @@ package org.apache.camel.spi;
  * this interface. This interface is only if you need to be in full control of the MBean
  * and therefore can return a {@link javax.management.MBeanInfo} object.
  *
- * @version 
  * @deprecated will be removed in Camel 3.0. Instead use Spring JMX annotations,
  *             see this <a href="http://camel.apache.org/why-is-my-processor-not-showing-up-in-jconsole.html">FAQ entry</a>
  */

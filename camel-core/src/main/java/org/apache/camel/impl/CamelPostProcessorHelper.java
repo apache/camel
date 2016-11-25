@@ -55,7 +55,6 @@ import org.slf4j.LoggerFactory;
  * <a href="http://camel.apache.org/guice.html">Guice</a> and
  * <a href="http://camel.apache.org/blueprint.html">Blueprint</a> support.
  *
- * @version 
  */
 public class CamelPostProcessorHelper implements CamelContextAware {
     private static final Logger LOG = LoggerFactory.getLogger(CamelPostProcessorHelper.class);

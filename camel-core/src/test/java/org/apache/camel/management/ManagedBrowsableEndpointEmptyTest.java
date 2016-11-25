@@ -22,7 +22,6 @@ import javax.management.ObjectName;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class ManagedBrowsableEndpointEmptyTest extends ManagementTestSupport {
 

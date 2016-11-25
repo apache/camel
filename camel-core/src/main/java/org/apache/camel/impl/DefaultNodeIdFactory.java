@@ -26,7 +26,6 @@ import org.apache.camel.spi.NodeIdFactory;
 /**
  * Default id factory.
  *
- * @version 
  */
 public class DefaultNodeIdFactory implements NodeIdFactory {
 

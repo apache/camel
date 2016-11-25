@@ -28,7 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.RoutePolicySupport;
 
 /**
- * @version 
  */
 public class ManagedSuspendedServiceTest extends ManagementTestSupport {
 

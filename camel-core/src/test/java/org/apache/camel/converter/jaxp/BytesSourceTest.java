@@ -20,7 +20,6 @@ import org.apache.camel.BytesSource;
 import org.apache.camel.ContextTestSupport;
 
 /**
- * @version 
  */
 public class BytesSourceTest extends ContextTestSupport {
 

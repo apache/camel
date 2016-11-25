@@ -24,7 +24,6 @@ package org.apache.camel;
  * <p/>
  * For example to shutdown thread pools during shutdown and <b>not</b> at CamelContext termination.
  *
- * @version 
  */
 public interface ShutdownableService extends Service {
 

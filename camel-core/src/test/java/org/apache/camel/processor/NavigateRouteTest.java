@@ -25,7 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Unit test for navigating a route (runtime processors, not the model).
  *
- * @version 
  */
 public class NavigateRouteTest extends ContextTestSupport {
 

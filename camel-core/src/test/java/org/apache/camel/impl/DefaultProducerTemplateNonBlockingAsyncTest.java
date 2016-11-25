@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.junit.Assert;
 
 /**
- * @version
  */
 public class DefaultProducerTemplateNonBlockingAsyncTest extends DefaultProducerTemplateAsyncTest {
     @Override

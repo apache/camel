@@ -25,7 +25,6 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed Custom LoadBalancer")
 public class ManagedCustomLoadBalancer extends ManagedProcessor implements ManagedCustomLoadBalancerMBean {

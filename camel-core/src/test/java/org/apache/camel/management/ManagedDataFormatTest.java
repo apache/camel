@@ -24,7 +24,6 @@ import javax.management.openmbean.TabularData;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class ManagedDataFormatTest extends ManagementTestSupport {
 

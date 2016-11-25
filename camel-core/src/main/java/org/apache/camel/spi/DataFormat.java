@@ -29,7 +29,6 @@ import org.apache.camel.Message;
  * such as Java Serialization or using JAXB2 to encode/decode objects using XML
  * or using SOAP encoding.
  *
- * @version 
  */
 public interface DataFormat {
 

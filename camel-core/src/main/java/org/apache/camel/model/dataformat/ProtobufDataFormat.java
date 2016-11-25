@@ -30,7 +30,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * Google protobuf data format
  *
- * @version 
  */
 @Metadata(label = "dataformat,transformation", title = "Protobuf")
 @XmlRootElement(name = "protobuf")

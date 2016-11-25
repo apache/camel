@@ -23,7 +23,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.ExchangePatternProcessor;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed SetExchangePattern")
 public class ManagedSetExchangePattern extends ManagedProcessor implements ManagedSetExchangePatternMBean {

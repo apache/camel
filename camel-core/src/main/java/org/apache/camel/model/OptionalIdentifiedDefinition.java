@@ -29,7 +29,6 @@ import org.apache.camel.spi.NodeIdFactory;
 /**
  * Allows an element to have an optional ID specified
  *
- * @version 
  */
 @XmlType(name = "optionalIdentifiedDefinition")
 @XmlAccessorType(XmlAccessType.PROPERTY)

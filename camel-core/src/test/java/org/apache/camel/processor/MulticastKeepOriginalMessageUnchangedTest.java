@@ -21,7 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.toolbox.AggregationStrategies;
 
 /**
- * @version 
  */
 public class MulticastKeepOriginalMessageUnchangedTest extends ContextTestSupport {
 

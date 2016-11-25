@@ -26,7 +26,6 @@ import org.apache.camel.spi.PackageScanClassResolver;
  * <p/>
  * This implementation will load type converters up-front on startup.
  *
- * @version 
  */
 public class DefaultTypeConverter extends BaseTypeConverterRegistry {
 

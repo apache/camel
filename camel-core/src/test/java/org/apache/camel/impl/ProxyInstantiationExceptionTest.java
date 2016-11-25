@@ -22,7 +22,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ProxyInstantiationException;
 
 /**
- * @version 
  */
 public class ProxyInstantiationExceptionTest extends ContextTestSupport {
 

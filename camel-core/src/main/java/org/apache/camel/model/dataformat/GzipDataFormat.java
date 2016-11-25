@@ -26,7 +26,6 @@ import org.apache.camel.spi.RouteContext;
 /**
  * GZip compression data format
  *
- * @version 
  */
 @Metadata(label = "dataformat,transformation", title = "GZip")
 @XmlRootElement(name = "gzip")

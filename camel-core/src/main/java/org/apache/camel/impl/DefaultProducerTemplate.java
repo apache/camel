@@ -47,7 +47,6 @@ import org.apache.camel.util.concurrent.SynchronousExecutorService;
  * et al) for working with Camel and sending {@link Message} instances in an
  * {@link Exchange} to an {@link Endpoint}.
  *
- * @version 
  */
 public class DefaultProducerTemplate extends ServiceSupport implements ProducerTemplate {
     private final CamelContext camelContext;

@@ -23,7 +23,6 @@ import javax.management.ObjectName;
 import org.apache.camel.ServiceStatus;
 
 /**
- * @version 
  */
 public class ManagedUnregisterCamelContextTest extends ManagementTestSupport {
 

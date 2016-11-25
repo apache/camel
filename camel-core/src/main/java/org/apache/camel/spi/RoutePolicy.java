@@ -27,7 +27,6 @@ import org.apache.camel.Route;
  * <p/>
  * See also {@link Route} class javadoc about controlling the lifecycle of a {@link Route}
  *
- * @version
  * @see Route
  */
 public interface RoutePolicy {

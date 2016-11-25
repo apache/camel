@@ -27,7 +27,6 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 /**
  * Based on CAMEL-1546
  *
- * @version 
  */
 public class AggregatorExceptionInPredicateTest extends ContextTestSupport {
 

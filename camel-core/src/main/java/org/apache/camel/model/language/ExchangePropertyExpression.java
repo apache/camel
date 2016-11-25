@@ -25,7 +25,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * An expression which extracts the named exchange property
  *
- * @version 
  */
 @Metadata(label = "language,core", title = "ExchangeProperty")
 @XmlRootElement(name = "exchangeProperty")

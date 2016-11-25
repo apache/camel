@@ -29,7 +29,6 @@ package org.apache.camel;
  * For example the QuartzComponent leverages this to ensure the Quartz scheduler does not start until after all the
  * Camel routes and services have already been started.
  *
- * @version 
  */
 public interface StartupListener {
 

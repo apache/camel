@@ -22,7 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * Unit tests on the conditional skip support on InterceptSendToEndpoint.
  * 
- * @version
  */
 public class InterceptSendToEndpointConditionalSkip3Test extends ContextTestSupport {
 

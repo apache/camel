@@ -24,7 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version 
  */
 public class SetHeaderTest extends ContextTestSupport {
     protected String matchingBody = "<person name='James' city='London'/>";

@@ -25,7 +25,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * For Python expressions and predicates
  *
- * @version 
  */
 @Metadata(label = "language,script", title = "Python")
 @XmlRootElement(name = "python")

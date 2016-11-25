@@ -30,7 +30,6 @@ import org.apache.camel.util.IntrospectionSupport;
  * <p/>
  * This component is an extension to the {@link org.apache.camel.component.bean.BeanComponent}.
  *
- * @version 
  */
 public class ClassComponent extends BeanComponent {
 

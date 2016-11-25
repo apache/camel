@@ -31,7 +31,6 @@ import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spi.Registry;
 
 /**
- * @version
  */
 public class ManagedRefProducerTest extends ManagementTestSupport {
 

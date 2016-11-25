@@ -25,7 +25,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * For PHP expressions and predicates
  *
- * @version 
  */
 @Metadata(label = "language,script", title = "PHP")
 @XmlRootElement(name = "php")

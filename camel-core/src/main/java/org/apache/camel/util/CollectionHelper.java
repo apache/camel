@@ -31,7 +31,6 @@ import org.w3c.dom.NodeList;
 /**
  * A number of helper methods for working with collections
  *
- * @version 
  */
 public final class CollectionHelper {
 

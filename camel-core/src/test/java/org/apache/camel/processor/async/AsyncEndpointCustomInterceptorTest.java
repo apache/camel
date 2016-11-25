@@ -32,7 +32,6 @@ import org.apache.camel.spi.InterceptStrategy;
  * the most optimal solution but it runs. Camel will log a WARN so user can see the issue
  * and change his interceptor to comply.
  *
- * @version 
  */
 public class AsyncEndpointCustomInterceptorTest extends ContextTestSupport {
 

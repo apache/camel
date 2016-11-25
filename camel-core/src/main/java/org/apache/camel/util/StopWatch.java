@@ -23,7 +23,6 @@ import java.util.Date;
  * <p/>
  * This implementation is not thread safe and can only time one task at any given time.
  *
- * @version 
  */
 public final class StopWatch {
 

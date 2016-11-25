@@ -23,7 +23,6 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.processor.aggregate.ClosedCorrelationKeyException;
 
 /**
- * @version 
  */
 public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
 

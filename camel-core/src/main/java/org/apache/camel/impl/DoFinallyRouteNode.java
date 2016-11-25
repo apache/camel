@@ -24,7 +24,6 @@ import org.apache.camel.model.ProcessorDefinition;
 /**
  * {@link org.apache.camel.RouteNode} representing do finally.
  *
- * @version 
  */
 public class DoFinallyRouteNode implements RouteNode {
 

@@ -23,7 +23,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.StopProcessor;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed Stop")
 public class ManagedStop extends ManagedProcessor implements ManagedStopMBean {

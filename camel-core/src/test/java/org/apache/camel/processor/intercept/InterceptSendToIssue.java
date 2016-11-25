@@ -24,7 +24,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Based on an issue on the camel user forum.
  *
- * @version 
  */
 public class InterceptSendToIssue extends ContextTestSupport {
 

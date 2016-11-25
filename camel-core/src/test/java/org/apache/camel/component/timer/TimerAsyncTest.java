@@ -25,7 +25,6 @@ import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version
  */
 public class TimerAsyncTest extends ContextTestSupport {
 

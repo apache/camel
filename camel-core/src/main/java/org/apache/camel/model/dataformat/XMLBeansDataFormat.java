@@ -27,7 +27,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * XMLBeans data format
  *
- * @version 
  */
 @Metadata(label = "dataformat,transformation,xml", title = "XML Beans")
 @XmlRootElement(name = "xmlBeans")

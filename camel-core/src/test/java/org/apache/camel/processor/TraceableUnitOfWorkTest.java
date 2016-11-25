@@ -28,7 +28,6 @@ import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.spi.TracedRouteNodes;
 
 /**
- * @version 
  */
 public class TraceableUnitOfWorkTest extends ContextTestSupport {
 

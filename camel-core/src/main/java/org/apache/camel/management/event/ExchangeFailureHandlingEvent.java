@@ -21,7 +21,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.util.URISupport;
 
 /**
- * @version 
  */
 public class ExchangeFailureHandlingEvent extends AbstractExchangeEvent {
     private static final long serialVersionUID = -7554809462006009549L;

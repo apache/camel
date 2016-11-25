@@ -26,7 +26,6 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Java Object Serialization data format
  *
- * @version 
  */
 @Metadata(label = "dataformat,transformation,core", title = "Java Object Serialization")
 @XmlRootElement(name = "serialization")

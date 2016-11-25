@@ -38,7 +38,6 @@ import org.apache.camel.util.ExpressionToPredicateAdapter;
 /**
  * Catches exceptions as part of a try, catch, finally block
  *
- * @version 
  */
 @Metadata(label = "error")
 @XmlRootElement(name = "doCatch")

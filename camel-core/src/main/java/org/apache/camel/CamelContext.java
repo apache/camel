@@ -100,7 +100,6 @@ import org.apache.camel.util.LoadPropertiesException;
  * End users are advised to use suspend/resume. Using stop is for shutting down Camel and it's not guaranteed that
  * when it's being started again using the start method that Camel will operate consistently.
  *
- * @version 
  */
 public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 

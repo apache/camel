@@ -25,7 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Unit test based on user forum problem - CAMEL-1463.
  *
- * @version 
  */
 public class ChoiceNoErrorHandlerTest extends ContextTestSupport {
 

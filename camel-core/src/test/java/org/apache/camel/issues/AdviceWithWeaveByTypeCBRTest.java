@@ -22,7 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ChoiceDefinition;
 
 /**
- * @version
  */
 public class AdviceWithWeaveByTypeCBRTest extends ContextTestSupport {
 

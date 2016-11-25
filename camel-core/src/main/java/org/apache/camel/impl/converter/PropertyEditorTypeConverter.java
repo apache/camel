@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
  *
  * @deprecated should be removed as it can cause side-effects when using 3rd party property editors
  *
- * @version 
  */
 @Deprecated
 public class PropertyEditorTypeConverter implements TypeConverter {

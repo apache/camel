@@ -23,7 +23,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.CamelLogProcessor;
 
 /**
- * @version 
  */
 public class LogEndpointTest extends ContextTestSupport {
 

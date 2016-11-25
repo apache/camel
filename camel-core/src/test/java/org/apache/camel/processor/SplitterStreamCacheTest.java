@@ -25,7 +25,6 @@ import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version 
  */
 public class SplitterStreamCacheTest extends ContextTestSupport {
 

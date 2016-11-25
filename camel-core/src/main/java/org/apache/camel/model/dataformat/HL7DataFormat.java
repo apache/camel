@@ -30,7 +30,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * HL7 data format
  *
- * @version 
  */
 @Metadata(label = "dataformat,transformation,hl7", title = "HL7")
 @XmlRootElement(name = "hl7")

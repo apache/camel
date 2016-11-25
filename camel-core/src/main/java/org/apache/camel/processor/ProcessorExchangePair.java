@@ -23,7 +23,6 @@ import org.apache.camel.Producer;
 /**
  * Exchange pair to be executed by {@link org.apache.camel.processor.MulticastProcessor}.
  *
- * @version 
  */
 public interface ProcessorExchangePair {
 

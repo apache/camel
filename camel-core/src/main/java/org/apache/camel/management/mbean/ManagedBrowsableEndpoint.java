@@ -26,7 +26,6 @@ import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.util.MessageHelper;
 
 /**
- * @version
  */
 @ManagedResource(description = "Managed BrowsableEndpoint")
 public class ManagedBrowsableEndpoint extends ManagedEndpoint implements ManagedBrowsableEndpointMBean {

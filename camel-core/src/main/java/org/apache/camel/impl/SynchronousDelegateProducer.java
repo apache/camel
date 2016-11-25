@@ -31,7 +31,6 @@ import org.apache.camel.Producer;
  * existing asynchronous producer to behave synchronously by wrapping their
  * producer in this synchronous delegate.
  *
- * @version 
  */
 public class SynchronousDelegateProducer implements Producer {
 

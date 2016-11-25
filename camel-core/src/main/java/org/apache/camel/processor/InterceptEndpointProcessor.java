@@ -21,7 +21,6 @@ import org.apache.camel.Processor;
 /**
  * Endpoint intercept processor so we know the processor is supposed to intercept an endpoint.
  *
- * @version 
  */
 public class InterceptEndpointProcessor extends DelegateAsyncProcessor {
 

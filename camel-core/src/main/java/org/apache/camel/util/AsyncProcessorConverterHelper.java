@@ -32,7 +32,6 @@ import org.apache.camel.Service;
  * Processing will still occur synchronously but it will provide the required
  * notifications that the caller expects.
  *
- * @version 
  */
 public final class AsyncProcessorConverterHelper {
     

@@ -35,7 +35,6 @@ import static org.apache.camel.builder.ExpressionBuilder.*;
 import static org.apache.camel.builder.PredicateBuilder.contains;
 
 /**
- * @version 
  */
 public class ExpressionBuilderTest extends TestSupport {
     protected CamelContext camelContext = new DefaultCamelContext();

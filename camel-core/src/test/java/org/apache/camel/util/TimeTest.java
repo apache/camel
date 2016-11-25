@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 import junit.framework.TestCase;
 
 /**
- * @version 
  */
 public class TimeTest extends TestCase {
 

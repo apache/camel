@@ -25,7 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
 
 /**
- * @version
  */
 public class AggregateTimeoutTest extends ContextTestSupport {
 

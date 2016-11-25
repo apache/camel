@@ -24,7 +24,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.main.MainSupport;
 
 /**
- * @version 
  */
 public class MainSupportTest extends ContextTestSupport {
 

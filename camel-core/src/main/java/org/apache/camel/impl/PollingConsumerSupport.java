@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A useful base class for implementations of {@link PollingConsumer}
  * 
- * @version 
  */
 public abstract class PollingConsumerSupport extends ServiceSupport implements PollingConsumer {
     protected final Logger log = LoggerFactory.getLogger(getClass());

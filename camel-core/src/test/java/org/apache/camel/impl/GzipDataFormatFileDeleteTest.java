@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class GzipDataFormatFileDeleteTest extends ContextTestSupport {
 

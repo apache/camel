@@ -27,7 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.async.MyAsyncComponent;
 
 /**
- * @version 
  */
 public class AsyncLoopTest extends ContextTestSupport {
     

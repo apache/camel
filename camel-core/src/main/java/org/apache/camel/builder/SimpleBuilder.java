@@ -29,7 +29,6 @@ import org.apache.camel.util.ResourceHelper;
  * This builder is available in the Java DSL from the {@link RouteBuilder} which means that using
  * simple language for {@link Expression}s or {@link Predicate}s is very easy with the help of this builder.
  *
- * @version
  */
 public class SimpleBuilder implements Predicate, Expression {
 

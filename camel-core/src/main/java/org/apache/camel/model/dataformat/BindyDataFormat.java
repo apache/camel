@@ -32,7 +32,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Bindy data format
  *
- * @version 
  */
 @Metadata(label = "dataformat,transformation,csv", title = "Bindy")
 @XmlRootElement(name = "bindy")

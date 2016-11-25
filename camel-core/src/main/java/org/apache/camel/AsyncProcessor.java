@@ -24,7 +24,6 @@ package org.apache.camel;
  * {@link org.apache.camel.impl.converter.AsyncProcessorTypeConverter#convert AsyncProcessorTypeConverter.covert}
  * method.
  *
- * @version 
  */
 public interface AsyncProcessor extends Processor {
 

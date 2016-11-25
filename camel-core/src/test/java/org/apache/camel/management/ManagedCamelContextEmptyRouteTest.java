@@ -24,7 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StringHelper;
 
 /**
- * @version 
  */
 public class ManagedCamelContextEmptyRouteTest extends ManagementTestSupport {
 

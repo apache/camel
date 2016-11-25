@@ -27,7 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Extended test to see if mbeans is removed and stats are correct
  *
- * @version 
  */
 public class ManagedRouteNoAutoStartupTest extends ManagementTestSupport {
 

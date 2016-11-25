@@ -29,7 +29,6 @@ import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * @version 
  */
 public class ManagedCustomPolicyTest extends ManagementTestSupport {
 

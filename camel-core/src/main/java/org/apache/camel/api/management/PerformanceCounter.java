@@ -21,7 +21,6 @@ import org.apache.camel.Exchange;
 /**
  * A counter that gathers performance metrics when an {@link org.apache.camel.Exchange} is routed in Camel.
  *
- * @version 
  */
 public interface PerformanceCounter {
 

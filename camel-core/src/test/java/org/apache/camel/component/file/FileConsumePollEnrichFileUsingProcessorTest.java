@@ -26,7 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.FileUtil;
 
 /**
- * @version 
  */
 public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupport {
 

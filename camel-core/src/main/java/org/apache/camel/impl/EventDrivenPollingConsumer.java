@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
  * asynchronous consumer mechanism along with a {@link BlockingQueue} to allow
  * the caller to pull messages on demand.
  *
- * @version 
  */
 public class EventDrivenPollingConsumer extends PollingConsumerSupport implements Processor, IsSingleton {
     private static final Logger LOG = LoggerFactory.getLogger(EventDrivenPollingConsumer.class);

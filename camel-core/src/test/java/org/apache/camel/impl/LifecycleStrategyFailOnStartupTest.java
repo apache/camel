@@ -22,7 +22,6 @@ import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.util.jndi.JndiContext;
 
 /**
- * @version 
  */
 public class LifecycleStrategyFailOnStartupTest extends TestSupport {
 

@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
  * to register the object in JMX. The assembler is capable of using the Camel JMX annotations to
  * gather the list of JMX operations and attributes.
  *
- * @version 
  */
 public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultManagementMBeanAssembler.class);

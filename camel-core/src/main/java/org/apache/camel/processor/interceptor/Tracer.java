@@ -35,7 +35,6 @@ import org.apache.camel.util.CamelLogger;
 /**
  * An interceptor strategy for tracing routes
  *
- * @version 
  */
 public class Tracer implements InterceptStrategy, Service {
     private static final String JPA_TRACE_EVENT_MESSAGE = "org.apache.camel.processor.interceptor.jpa.JpaTraceEventMessage";

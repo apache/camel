@@ -21,7 +21,6 @@ import java.lang.reflect.Method;
 import org.apache.camel.TestSupport;
 
 /**
- * @version 
  */
 public class BeanMethodBeanTest extends TestSupport {
 

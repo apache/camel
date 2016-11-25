@@ -26,7 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
- * @version 
  */
 public class FutureConverterTest extends ContextTestSupport {
 

@@ -23,7 +23,6 @@ import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class SplitterThrowExceptionInExpressionTest extends ContextTestSupport {
 

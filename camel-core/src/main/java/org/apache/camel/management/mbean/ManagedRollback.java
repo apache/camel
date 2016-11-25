@@ -23,7 +23,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.RollbackProcessor;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed Rollback")
 public class ManagedRollback extends ManagedProcessor implements ManagedRollbackMBean {

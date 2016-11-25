@@ -21,7 +21,6 @@ import org.apache.camel.NamedNode;
 /**
  * Factory to generate unique ids for model nodes.
  *
- * @version 
  */
 public interface NodeIdFactory {
 

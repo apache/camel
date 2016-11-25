@@ -23,7 +23,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class AsyncProducerTest extends ContextTestSupport {
 

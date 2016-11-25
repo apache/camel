@@ -49,7 +49,6 @@ import org.slf4j.LoggerFactory;
 /**
  * The default implementation of the {@link Debugger}.
  *
- * @version 
  */
 public class DefaultDebugger implements Debugger, CamelContextAware {
 

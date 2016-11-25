@@ -25,7 +25,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * For Ruby expressions and predicates
  *
- * @version 
  */
 @Metadata(label = "language,script", title = "Ruby")
 @XmlRootElement(name = "ruby")

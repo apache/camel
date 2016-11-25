@@ -30,7 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultProducerTemplate;
 
 /**
- * @version 
  */
 public class SedaConcurrentTest extends ContextTestSupport {
 

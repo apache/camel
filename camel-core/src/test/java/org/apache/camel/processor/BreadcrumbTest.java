@@ -21,7 +21,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class BreadcrumbTest extends MDCTest {
 

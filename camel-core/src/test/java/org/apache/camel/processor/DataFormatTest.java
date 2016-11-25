@@ -27,7 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.util.ObjectHelper.equal;
 
 /**
- * @version 
  */
 public class DataFormatTest extends ContextTestSupport {
 

@@ -26,7 +26,6 @@ import org.apache.camel.processor.interceptor.Tracer;
  * Tests to ensure a consistent return value when using the different ways of
  * configuring the RecipientList pattern
  *
- * @version 
  */
 public class RecipientListReturnValueTest extends ContextTestSupport {
 

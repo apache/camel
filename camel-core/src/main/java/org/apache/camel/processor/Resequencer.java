@@ -31,7 +31,6 @@ import org.apache.camel.util.ExpressionComparator;
  * An implementation of the <a href="http://camel.apache.org/resequencer.html">Resequencer</a>
  * which can reorder messages within a batch.
  *
- * @version 
  */
 @SuppressWarnings("deprecation")
 public class Resequencer extends BatchProcessor implements Traceable {

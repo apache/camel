@@ -26,7 +26,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * A useful base class for {@link Predicate} implementations
  *
- * @version 
  */
 public abstract class BinaryPredicateSupport implements BinaryPredicate {
 

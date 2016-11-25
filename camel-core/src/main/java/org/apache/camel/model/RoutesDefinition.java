@@ -31,7 +31,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * A series of Camel routes
  *
- * @version 
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "routes")

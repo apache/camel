@@ -31,7 +31,6 @@ import org.apache.camel.model.RouteDefinition;
 /**
  * The context used to activate new routing rules
  *
- * @version 
  */
 public interface RouteContext extends RuntimeConfiguration, EndpointAware {
 

@@ -32,7 +32,6 @@ import java.util.regex.Pattern;
 /**
  * URI utilities.
  *
- * @version 
  */
 public final class URISupport {
 

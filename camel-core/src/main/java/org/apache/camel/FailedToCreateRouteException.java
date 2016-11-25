@@ -19,7 +19,6 @@ package org.apache.camel;
 /**
  * Exception when failing to create a {@link org.apache.camel.Route}.
  *
- * @version 
  */
 public class FailedToCreateRouteException extends CamelException {
     private static final long serialVersionUID = 1L;

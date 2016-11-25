@@ -24,7 +24,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.validation.PredicateValidationException;
 
 /**
- * @version 
  */
 public class ValidateSimpleTest extends ContextTestSupport {
 

@@ -21,7 +21,6 @@ import java.io.File;
 import junit.framework.TestCase;
 
 /**
- * @version 
  */
 public class FileUtilTest extends TestCase {
 

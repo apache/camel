@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
  * A {@link Processor} which converts the inbound exchange to a method
  * invocation on a POJO
  *
- * @version 
  */
 public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(BeanProcessor.class);

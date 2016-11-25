@@ -25,7 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * Tests mbeans is registered when adding a 2nd route after CamelContext has been started.
  *
- * @version 
  */
 public class ManagedRouteAddSecondRouteTest extends ManagementTestSupport {
 

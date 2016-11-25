@@ -27,7 +27,6 @@ import org.apache.camel.util.CamelLogger;
 /**
  * Default error handler
  *
- * @version
  */
 public class DefaultErrorHandler extends RedeliveryErrorHandler {
 

@@ -25,7 +25,6 @@ import org.apache.camel.Properties;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class DynamicRouterExchangePropertiesTest extends ContextTestSupport {
 

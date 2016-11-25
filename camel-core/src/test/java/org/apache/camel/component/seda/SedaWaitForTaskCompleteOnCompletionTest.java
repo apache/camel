@@ -24,7 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.SynchronizationAdapter;
 
 /**
- * @version 
  */
 public class SedaWaitForTaskCompleteOnCompletionTest extends ContextTestSupport {
     

@@ -25,7 +25,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 
 
 /**
- * @version 
  */
 public class XPathTransformRouteTest extends ContextTestSupport {
 

@@ -21,7 +21,6 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class LogProcessorTest extends ContextTestSupport {
 

@@ -24,7 +24,6 @@ import org.apache.camel.ServicePoolAware;
 import org.apache.camel.spi.ServicePool;
 
 /**
- * @version 
  */
 public class CamelContextSharedProducerServicePoolTest extends ContextTestSupport {
 

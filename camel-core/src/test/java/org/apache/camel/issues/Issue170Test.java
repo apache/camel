@@ -21,7 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version 
  */
 public class Issue170Test extends ContextTestSupport {
     protected String qOne = "seda:Q1";

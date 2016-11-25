@@ -22,7 +22,6 @@ import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.spi.IdempotentRepository;
 
 /**
- * @version 
  */
 public class IdempotentConsumerRepoExceptionTest extends ContextTestSupport {
 

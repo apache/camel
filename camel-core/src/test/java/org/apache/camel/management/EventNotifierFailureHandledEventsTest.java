@@ -38,7 +38,6 @@ import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.support.EventNotifierSupport;
 
 /**
- * @version 
  */
 public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
 

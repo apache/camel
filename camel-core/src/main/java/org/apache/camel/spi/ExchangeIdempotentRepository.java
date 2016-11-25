@@ -34,7 +34,6 @@ import org.apache.camel.Exchange;
  * This repository supports the operations to pass in the current exchange, which can be needed by some implementations
  * such as the JPA idempotent consumer.
  *
- * @version 
  */
 public interface ExchangeIdempotentRepository<E> extends IdempotentRepository<E> {
 

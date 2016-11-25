@@ -24,7 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * Unit test to verify that error handling using threads() also works as expected.
  *
- * @version 
  */
 public class AsyncDeadLetterChannelTest extends ContextTestSupport {
 

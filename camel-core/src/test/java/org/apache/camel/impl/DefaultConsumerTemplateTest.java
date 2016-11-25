@@ -25,7 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 
 /**
- * @version 
  */
 public class DefaultConsumerTemplateTest extends ContextTestSupport {
 

@@ -29,7 +29,6 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 
 /**
- * @version
  */
 public class LoadRestFromXmlTest extends ContextTestSupport {
 

@@ -27,7 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 
 /**
- * @version 
  */
 public class DefaultExchangeHolderTest extends ContextTestSupport {
 

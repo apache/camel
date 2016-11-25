@@ -31,7 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.ShutdownRoute.Default;
 
 /**
- * @version 
  */
 public class ShutdownNotDeferTest extends ContextTestSupport {
 

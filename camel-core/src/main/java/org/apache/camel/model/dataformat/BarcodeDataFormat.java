@@ -29,7 +29,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * Barcode data format
  *
- * @version 
  */
 @Metadata(label = "dataformat,transformation", title = "Barcode")
 @XmlRootElement(name = "barcode")

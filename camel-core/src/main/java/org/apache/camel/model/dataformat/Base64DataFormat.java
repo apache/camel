@@ -29,7 +29,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * Base64 data format
  *
- * @version 
  */
 @Metadata(label = "dataformat,transformation", title = "Base64")
 @XmlRootElement(name = "base64")

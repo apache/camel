@@ -32,7 +32,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * For expressions and predicates using the simple language
  *
- * @version 
  */
 @Metadata(label = "language,core,java", title = "Simple")
 @XmlRootElement(name = "simple")

@@ -40,7 +40,6 @@ import org.apache.camel.management.event.RouteStoppedEvent;
 import org.apache.camel.support.EventNotifierSupport;
 
 /**
- * @version 
  */
 public class MultipleEventNotifierEventsTest extends ContextTestSupport {
 

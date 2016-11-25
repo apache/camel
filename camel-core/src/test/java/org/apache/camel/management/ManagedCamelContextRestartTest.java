@@ -26,7 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.EventNotifierSupport;
 
 /**
- * @version 
  */
 public class ManagedCamelContextRestartTest extends ManagementTestSupport {
 

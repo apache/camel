@@ -35,7 +35,6 @@ import org.apache.camel.Producer;
  * {@link org.apache.camel.impl.DefaultEndpoint}, {@link org.apache.camel.impl.DefaultProducer}
  * and {@link org.apache.camel.impl.DefaultConsumer}.
  *
- * @version 
  */
 public class ProcessorEndpoint extends DefaultPollingEndpoint {
     private Processor processor;

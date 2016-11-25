@@ -24,7 +24,6 @@ import org.apache.camel.StaticService;
  * A shared {@link org.apache.camel.impl.DefaultPollingConsumerServicePool} which is used by
  * {@link org.apache.camel.CamelContext} by default.
  *
- * @version 
  */
 public class SharedPollingConsumerServicePool extends DefaultPollingConsumerServicePool implements ShutdownableService, StaticService, NonManagedService {
 

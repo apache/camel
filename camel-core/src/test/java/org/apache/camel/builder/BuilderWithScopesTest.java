@@ -30,7 +30,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.processor.DelegateProcessor;
 
 /**
- * @version 
  */
 public class BuilderWithScopesTest extends TestSupport {
 

@@ -24,7 +24,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.stream.InputStreamCache;
 
 /**
- * @version 
  */
 public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
     

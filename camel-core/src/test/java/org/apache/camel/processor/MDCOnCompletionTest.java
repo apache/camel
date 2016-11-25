@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 /**
- * @version 
  */
 public class MDCOnCompletionTest extends ContextTestSupport {
 

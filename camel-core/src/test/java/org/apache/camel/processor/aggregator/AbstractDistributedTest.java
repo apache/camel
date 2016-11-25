@@ -25,7 +25,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.ServiceHelper;
 
 /**
- * @version
  */
 public abstract class AbstractDistributedTest extends ContextTestSupport {
 

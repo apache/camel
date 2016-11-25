@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
  * Care should be taken to use a suitable underlying {@link java.util.Map} to avoid this class being a
  * memory leak.
  *
- * @version 
  */
 @ManagedResource(description = "File based idempotent repository")
 public class FileIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {

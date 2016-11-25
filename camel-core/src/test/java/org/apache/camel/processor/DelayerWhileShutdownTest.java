@@ -23,7 +23,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Delayer while shutting down so its interrupted and will also stop.
  *
- * @version 
  */
 public class DelayerWhileShutdownTest extends ContextTestSupport {
 

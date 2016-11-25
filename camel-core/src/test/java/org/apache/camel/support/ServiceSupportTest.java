@@ -19,7 +19,6 @@ package org.apache.camel.support;
 import org.apache.camel.TestSupport;
 
 /**
- * @version
  */
 public class ServiceSupportTest extends TestSupport {
 

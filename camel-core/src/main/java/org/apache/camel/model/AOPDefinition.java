@@ -33,7 +33,6 @@ import org.apache.camel.spi.RouteContext;
  *
  * @deprecated will be removed in the future. You can for example use {@link Processor} and
  * {@link org.apache.camel.spi.InterceptStrategy} to do AOP in Camel.
- * @version 
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "aop")

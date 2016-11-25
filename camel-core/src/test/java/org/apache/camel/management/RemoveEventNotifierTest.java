@@ -28,7 +28,6 @@ import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.EventNotifierSupport;
 
 /**
- * @version 
  */
 public class RemoveEventNotifierTest extends ContextTestSupport {
 

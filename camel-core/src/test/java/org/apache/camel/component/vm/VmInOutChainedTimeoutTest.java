@@ -22,7 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 
 /**
- * @version 
  */
 public class VmInOutChainedTimeoutTest extends AbstractVmTestSupport {
 

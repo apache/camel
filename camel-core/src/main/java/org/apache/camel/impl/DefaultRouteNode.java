@@ -27,7 +27,6 @@ import org.apache.camel.model.ProcessorDefinition;
 /**
  * A default implementation of the {@link org.apache.camel.RouteNode}
  *
- * @version 
  */
 public class DefaultRouteNode implements RouteNode {
 

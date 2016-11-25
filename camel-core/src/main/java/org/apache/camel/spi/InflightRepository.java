@@ -25,7 +25,6 @@ import org.apache.camel.StaticService;
 /**
  * A repository which tracks in flight {@link Exchange}s.
  *
- * @version 
  */
 public interface InflightRepository extends StaticService {
 

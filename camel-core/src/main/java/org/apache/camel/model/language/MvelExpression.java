@@ -25,7 +25,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * For MVEL expressions and predicates
  *
- * @version 
  */
 @Metadata(label = "language,java", title = "MVEL")
 @XmlRootElement(name = "mvel")

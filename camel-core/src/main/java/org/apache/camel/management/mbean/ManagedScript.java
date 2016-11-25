@@ -23,7 +23,6 @@ import org.apache.camel.model.ScriptDefinition;
 import org.apache.camel.processor.ScriptProcessor;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed Script")
 public class ManagedScript extends ManagedProcessor implements ManagedScriptMBean {

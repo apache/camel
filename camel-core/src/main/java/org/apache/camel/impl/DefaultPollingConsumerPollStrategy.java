@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A default implementation that will not retry on rollback.
  *
- * @version 
  */
 public class DefaultPollingConsumerPollStrategy implements PollingConsumerPollStrategy {
 

@@ -23,7 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.LifecycleStrategySupport;
 
 /**
- * @version 
  */
 public class MainVetoTest extends TestCase {
 

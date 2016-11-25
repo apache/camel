@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * Represents the different types of bindy data formats.
  *
- * @version 
  */
 @XmlType
 @XmlEnum

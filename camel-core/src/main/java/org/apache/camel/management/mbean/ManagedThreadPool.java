@@ -25,7 +25,6 @@ import org.apache.camel.api.management.mbean.ManagedThreadPoolMBean;
 import org.apache.camel.spi.ManagementStrategy;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed ThreadPool")
 public class ManagedThreadPool implements ManagedThreadPoolMBean {

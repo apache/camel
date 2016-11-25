@@ -29,7 +29,6 @@ import java.util.concurrent.TimeUnit;
  * <p/>
  * This implementation is very simple and does not support waiting for tasks to complete during shutdown.
  *
- * @version
  */
 public class SynchronousExecutorService extends AbstractExecutorService {
 

@@ -35,7 +35,6 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Controls the rate at which messages are passed to the next node in the route
  *
- * @version 
  */
 @Metadata(label = "eip,routing")
 @XmlRootElement(name = "throttle")

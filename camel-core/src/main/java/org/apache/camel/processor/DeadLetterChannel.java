@@ -30,7 +30,6 @@ import org.apache.camel.util.CamelLogger;
  * Channel</a> after attempting to redeliver the message using the
  * {@link RedeliveryPolicy}
  *
- * @version 
  */
 public class DeadLetterChannel extends RedeliveryErrorHandler {
 

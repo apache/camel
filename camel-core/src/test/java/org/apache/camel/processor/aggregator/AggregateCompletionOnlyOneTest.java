@@ -27,7 +27,6 @@ import org.apache.camel.processor.BodyInAggregatingStrategy;
 import org.apache.camel.spi.AggregationRepository;
 
 /**
- * @version 
  */
 public class AggregateCompletionOnlyOneTest extends ContextTestSupport {
 

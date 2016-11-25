@@ -21,7 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 
 /**
- * @version 
  */
 public class ClassComponentWithPropertiesLookupSetFromEndpointTest extends ContextTestSupport {
 

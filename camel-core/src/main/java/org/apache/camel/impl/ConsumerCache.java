@@ -38,7 +38,6 @@ import org.slf4j.LoggerFactory;
 /**
  * Cache containing created {@link org.apache.camel.Consumer}.
  *
- * @version 
  */
 public class ConsumerCache extends ServiceSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ConsumerCache.class);

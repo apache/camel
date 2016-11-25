@@ -29,7 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.ConsumerCache;
 
 /**
- * @version 
  */
 public class ManagedConsumerCacheTest extends ManagementTestSupport {
 

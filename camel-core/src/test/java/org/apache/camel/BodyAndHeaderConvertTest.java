@@ -31,7 +31,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
- * @version 
  */
 public class BodyAndHeaderConvertTest extends TestCase {
     protected Exchange exchange;

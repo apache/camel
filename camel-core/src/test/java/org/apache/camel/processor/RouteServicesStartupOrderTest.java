@@ -28,7 +28,6 @@ import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.support.ServiceSupport;
 
 /**
- * @version 
  */
 public class RouteServicesStartupOrderTest extends ContextTestSupport {
 

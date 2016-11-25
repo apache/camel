@@ -28,7 +28,6 @@ import org.apache.camel.spi.Breakpoint;
  * <p/>
  * Will be in active state.
  *
- * @version 
  */
 public abstract class BreakpointSupport implements Breakpoint {
 

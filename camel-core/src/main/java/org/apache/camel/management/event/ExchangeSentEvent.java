@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
  * Event for <b>after</b> an {@link Exchange} has been sent to an {@link Endpoint}.
  *
  * @see ExchangeSendingEvent
- * @version
  */
 public class ExchangeSentEvent extends AbstractExchangeEvent {
     private static final long serialVersionUID = -19248832613958123L;

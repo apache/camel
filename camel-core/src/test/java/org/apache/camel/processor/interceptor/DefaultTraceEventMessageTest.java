@@ -29,7 +29,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
- * @version 
  */
 public class DefaultTraceEventMessageTest extends ContextTestSupport {
 

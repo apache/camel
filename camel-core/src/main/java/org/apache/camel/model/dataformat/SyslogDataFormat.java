@@ -26,7 +26,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * Syslog data format
  *
- * @version 
  */
 @Metadata(label = "dataformat,transformation", title = "Syslog")
 @XmlRootElement(name = "syslog")

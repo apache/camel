@@ -19,7 +19,6 @@ package org.apache.camel.component.vm;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class VmUseSameQueueTest extends AbstractVmTestSupport {
 

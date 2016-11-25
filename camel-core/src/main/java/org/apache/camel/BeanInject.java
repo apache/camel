@@ -27,7 +27,6 @@ import java.lang.annotation.Target;
  *
  * If no name is specified then the lookup is anonymous and based on lookup up by the type.
  *
- * @version
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

@@ -28,7 +28,6 @@ import org.apache.camel.util.concurrent.ThreadHelper;
  * Unit test to ensure the {@link org.apache.camel.spi.ExecutorServiceStrategy} still
  * works to keep backwards compatibility.
  *
- * @version 
  */
 @SuppressWarnings("deprecation")
 public class DefaultExecutorServiceStrategyTest extends ContextTestSupport {

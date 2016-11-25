@@ -33,7 +33,6 @@ import org.slf4j.LoggerFactory;
  * Implementations can extend this base class and implement {@link org.apache.camel.SuspendableService}
  * in case they support suspend/resume.
  *
- * @version 
  */
 public abstract class ServiceSupport implements StatefulService {
     private static final Logger LOG = LoggerFactory.getLogger(ServiceSupport.class);

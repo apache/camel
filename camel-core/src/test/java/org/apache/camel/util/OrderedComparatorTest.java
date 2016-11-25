@@ -25,7 +25,6 @@ import junit.framework.TestCase;
 import org.apache.camel.Ordered;
 
 /**
- * @version 
  */
 public class OrderedComparatorTest extends TestCase {
 

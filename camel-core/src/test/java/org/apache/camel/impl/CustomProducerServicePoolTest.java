@@ -31,7 +31,6 @@ import org.apache.camel.spi.ServicePool;
 /**
  * Unit test for a custom ServicePool for producer.
  *
- * @version 
  */
 public class CustomProducerServicePoolTest extends ContextTestSupport {
 

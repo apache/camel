@@ -30,7 +30,6 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 
 /**
- * @version
  */
 public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSupport {
 

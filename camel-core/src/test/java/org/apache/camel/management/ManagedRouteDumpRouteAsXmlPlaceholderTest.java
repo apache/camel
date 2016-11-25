@@ -26,7 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.properties.PropertiesComponent;
 
 /**
- * @version 
  */
 public class ManagedRouteDumpRouteAsXmlPlaceholderTest extends ManagementTestSupport {
 

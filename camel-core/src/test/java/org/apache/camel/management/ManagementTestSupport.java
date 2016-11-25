@@ -23,7 +23,6 @@ import org.apache.camel.ContextTestSupport;
 /**
  * Base class for JMX tests.
  *
- * @version 
  */
 public abstract class ManagementTestSupport extends ContextTestSupport {
 

@@ -31,7 +31,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * To configure re-delivery for error handling
  *
- * @version 
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "redeliveryPolicy")

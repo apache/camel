@@ -27,7 +27,6 @@ import org.apache.camel.processor.interceptor.TraceInterceptor;
 import org.apache.camel.processor.interceptor.Tracer;
 
 /**
- * @version 
  */
 public class AsyncTraceHandlerTest extends ContextTestSupport {
 

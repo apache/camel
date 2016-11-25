@@ -33,7 +33,6 @@ import java.lang.annotation.Target;
  *
  * @see InOnly
  *
- * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

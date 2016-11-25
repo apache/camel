@@ -27,7 +27,6 @@ import org.apache.camel.Exchange;
  * Consider using the {@link LoadBalancerSupport} if you want to support
  * the asynchronous routing engine in Camel.
  *
- * @version 
  */
 public abstract class SimpleLoadBalancerSupport extends LoadBalancerSupport {
 

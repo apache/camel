@@ -26,7 +26,6 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 /**
  * Based on user forum issue
  *
- * @version 
  */
 public class AggregateLostGroupIssueTest extends ContextTestSupport {
 

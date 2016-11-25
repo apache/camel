@@ -28,7 +28,6 @@ import org.apache.camel.processor.interceptor.DefaultChannel;
 import org.apache.camel.processor.interceptor.StreamCaching;
 
 /**
- * @version 
  */
 public class ResequencerTest extends ContextTestSupport {
     protected Endpoint startEndpoint;

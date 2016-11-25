@@ -25,7 +25,6 @@ import org.apache.camel.processor.DeferServiceFactory;
 /**
  * A helper class for creating proxies which delegate to Camel
  *
- * @version 
  */
 public final class ProxyHelper {
 

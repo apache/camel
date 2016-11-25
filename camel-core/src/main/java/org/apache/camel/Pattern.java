@@ -44,7 +44,6 @@ import java.lang.annotation.Target;
  * @see ExchangePattern
  * @see Exchange#getPattern()
  *
- * @version 
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented

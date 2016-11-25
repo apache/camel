@@ -25,7 +25,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * For Groovy expressions and predicates
  *
- * @version 
  */
 @Metadata(label = "language,script", title = "Groovy")
 @XmlRootElement(name = "groovy")

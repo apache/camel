@@ -30,7 +30,6 @@ import javax.management.remote.JMXServiceURL;
  * Test that verifies JMX connector server can be connected by
  * a client.
  *
- * @version 
  */
 public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsingDefaultsTest {
 

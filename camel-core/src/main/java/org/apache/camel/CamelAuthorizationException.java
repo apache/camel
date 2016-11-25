@@ -22,7 +22,6 @@ package org.apache.camel;
  * in a Camel exchange.  Intended to be used when a user is denied an action and
  * Camel should not process the message as a result.
  *
- * @version 
  */
 public class CamelAuthorizationException extends CamelExchangeException {
     private static final long serialVersionUID = 1L;

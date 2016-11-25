@@ -27,7 +27,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
- * @version 
  */
 public class TraceFormatterTest extends ContextTestSupport {
 

@@ -21,7 +21,6 @@ import java.util.concurrent.ExecutorService;
 import junit.framework.TestCase;
 
 /**
- * @version 
  */
 public class SynchronousExecutorServiceTest extends TestCase {
 

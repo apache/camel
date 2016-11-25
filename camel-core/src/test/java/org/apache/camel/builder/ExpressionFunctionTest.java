@@ -23,7 +23,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.builder.ExpressionBuilder.messageExpression;
 
 /**
- * @version 
  */
 public class ExpressionFunctionTest extends ContextTestSupport {
 

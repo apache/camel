@@ -25,7 +25,6 @@ import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.XQueryExpression;
 
 /**
- * @version 
  */
 public class GenerateXmlTest extends XmlTestSupport {
 

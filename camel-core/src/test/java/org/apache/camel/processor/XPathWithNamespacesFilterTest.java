@@ -23,7 +23,6 @@ import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version 
  */
 public class XPathWithNamespacesFilterTest extends ContextTestSupport {
     protected Endpoint startEndpoint;

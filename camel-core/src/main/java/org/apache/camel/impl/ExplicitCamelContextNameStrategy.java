@@ -22,7 +22,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Strategy to used an explicit (fixed) name for {@link org.apache.camel.CamelContext}.
  *
- * @version 
  */
 public class ExplicitCamelContextNameStrategy implements CamelContextNameStrategy {
 

@@ -35,7 +35,6 @@ import org.apache.camel.util.ObjectHelper;
  * from the <tt>org.apache.camel.model.language</tt> package, to build the routes using the same
  * types as it would happen when using XML DSL.
  *
- * @version 
  */
 public final class Builder {
 

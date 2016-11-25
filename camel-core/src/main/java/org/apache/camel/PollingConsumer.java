@@ -28,7 +28,6 @@ package org.apache.camel;
  * For example if you consumed from a file endpoint, then the consumed file is only moved/delete when
  * you done the {@link Exchange}.
  *
- * @version 
  */
 public interface PollingConsumer extends Consumer {
 

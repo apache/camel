@@ -42,7 +42,6 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 /**
  * Some helper methods when working with {@link org.apache.camel.Message}.
  * 
- * @version
  */
 public final class MessageHelper {
 

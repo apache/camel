@@ -35,7 +35,6 @@ import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed Choice")
 public class ManagedChoice extends ManagedProcessor implements ManagedChoiceMBean {

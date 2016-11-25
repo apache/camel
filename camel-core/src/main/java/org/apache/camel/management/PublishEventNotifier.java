@@ -36,7 +36,6 @@ import org.apache.camel.util.URISupport;
  * sending notifications during start/shutdown of {@link CamelContext} which causes problems by
  * sending those events to Camel routes by this notifier.
  *
- * @version 
  */
 public class PublishEventNotifier extends EventNotifierSupport implements CamelContextAware {
 

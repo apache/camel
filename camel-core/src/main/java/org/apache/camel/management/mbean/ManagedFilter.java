@@ -23,7 +23,6 @@ import org.apache.camel.model.ExpressionNode;
 import org.apache.camel.processor.FilterProcessor;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed Filter")
 public class ManagedFilter extends ManagedProcessor implements ManagedFilterMBean {

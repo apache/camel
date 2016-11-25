@@ -19,7 +19,6 @@ package org.apache.camel.spi;
 /**
  * Represents a resolver for {@link FactoryFinder}
  *
- * @version 
  */
 public interface FactoryFinderResolver {
 

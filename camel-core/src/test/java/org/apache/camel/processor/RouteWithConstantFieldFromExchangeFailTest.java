@@ -21,7 +21,6 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * @version 
  */
 public class RouteWithConstantFieldFromExchangeFailTest extends ContextTestSupport {
 

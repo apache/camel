@@ -28,7 +28,6 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 
 /**
- * @version 
  */
 public class CamelContextAddRouteDefinitionsFromXmlTest extends ContextTestSupport {
 

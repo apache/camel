@@ -40,7 +40,6 @@ import org.apache.camel.Exchange;
  * that allowing configuring a {@link AggregationStrategy} will invoke the {@link org.apache.camel.Service#start()}
  * and {@link org.apache.camel.Service#stop()} to control the lifecycle aligned with the EIP itself.
  * 
- * @version 
  */
 public interface AggregationStrategy {
 

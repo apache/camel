@@ -27,7 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.MethodNotFoundException;
 
 /**
- * @version 
  */
 public class BeanLanguageInvalidOGNLTest extends ContextTestSupport {
 

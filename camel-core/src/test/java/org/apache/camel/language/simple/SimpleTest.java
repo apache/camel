@@ -42,7 +42,6 @@ import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.Language;
 
 /**
- * @version 
  */
 public class SimpleTest extends LanguageTestSupport {
 

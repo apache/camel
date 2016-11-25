@@ -51,7 +51,6 @@ import org.apache.camel.spi.UnitOfWork;
 /**
  * Some helper methods for working with {@link Exchange} objects
  *
- * @version 
  */
 public final class ExchangeHelper {
 

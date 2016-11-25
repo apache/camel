@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 /**
  * A logger for logging message throughput.
  *
- * @version 
  */
 public class ThroughputLogger extends ServiceSupport implements AsyncProcessor, IdAware {
     private static final Logger LOG = LoggerFactory.getLogger(ThroughputLogger.class);

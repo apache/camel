@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import junit.framework.TestCase;
 
 /**
- *  @version 
  */
 public class RedeliveryPolicyDelayPatternTest extends TestCase {
 

@@ -25,7 +25,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.RouteStartupOrder;
 
 /**
- * @version 
  */
 public class RouteShutdownReverseOrderTest extends ContextTestSupport {
 

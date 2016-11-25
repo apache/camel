@@ -21,7 +21,6 @@ import java.util.List;
 import org.apache.camel.Processor;
 
 /**
- * @version 
  */
 @Deprecated
 public class AOPProcessor extends TryProcessor {

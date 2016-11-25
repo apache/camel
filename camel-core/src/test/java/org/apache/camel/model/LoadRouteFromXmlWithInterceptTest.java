@@ -21,7 +21,6 @@ import java.io.InputStream;
 import org.apache.camel.ContextTestSupport;
 
 /**
- * @version 
  */
 public class LoadRouteFromXmlWithInterceptTest extends ContextTestSupport {
 

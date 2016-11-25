@@ -38,7 +38,6 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
- * @version 
  */
 public class DefaultCamelContextTest extends TestSupport {
 

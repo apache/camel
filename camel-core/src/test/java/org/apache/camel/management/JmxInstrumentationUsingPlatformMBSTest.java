@@ -27,7 +27,6 @@ import javax.management.ObjectName;
 /**
  * This test verifies the system property to un-select platform mbean server.
  * 
- * @version 
  */
 public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUsingPropertiesTest {
 

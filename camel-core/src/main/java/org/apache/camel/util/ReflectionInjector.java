@@ -24,7 +24,6 @@ import org.apache.camel.spi.Injector;
  * instantiate new objects using their zero argument constructor. For more
  * complex implementations try the Spring or Guice implementations.
  * 
- * @version 
  */
 public class ReflectionInjector implements Injector {
 

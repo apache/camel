@@ -28,7 +28,6 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 /**
  * Default implementation of {@link EndpointConfiguration}.
  *
- * @version 
  */
 public abstract class DefaultEndpointConfiguration implements EndpointConfiguration {
 

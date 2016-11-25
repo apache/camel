@@ -25,7 +25,6 @@ import org.apache.camel.processor.LogProcessor;
 import org.slf4j.Marker;
 
 /**
- * @version 
  */
 @ManagedResource(description = "Managed Log")
 public class ManagedLog extends ManagedProcessor implements ManagedLogMBean {

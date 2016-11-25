@@ -25,7 +25,6 @@ import org.apache.camel.spi.Metadata;
 /**
  * For EL expressions and predicates
  *
- * @version 
  */
 @Metadata(label = "language,script", title = "EL")
 @XmlRootElement(name = "el")

@@ -30,7 +30,6 @@ import org.apache.camel.impl.DefaultExchange;
 /**
  * Tests mbeans is registered when adding a 2nd route from within an existing route.
  *
- * @version
  */
 public class ManagedRouteAddFromRouteTest extends ManagementTestSupport {
 

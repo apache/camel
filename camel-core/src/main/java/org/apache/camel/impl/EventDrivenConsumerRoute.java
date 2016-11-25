@@ -39,7 +39,6 @@ import org.apache.camel.util.EndpointHelper;
  * such as starting and stopping using the {@link org.apache.camel.CamelContext#startRoute(String)}
  * and {@link org.apache.camel.CamelContext#stopRoute(String)} methods.
  *
- * @version 
  */
 public class EventDrivenConsumerRoute extends DefaultRoute {
     private final Processor processor;

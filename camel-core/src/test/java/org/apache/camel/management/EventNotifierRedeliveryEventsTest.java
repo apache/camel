@@ -34,7 +34,6 @@ import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.support.EventNotifierSupport;
 
 /**
- * @version 
  */
 public class EventNotifierRedeliveryEventsTest extends ContextTestSupport {
 

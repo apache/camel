@@ -26,7 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Unit test for useOriginalBody option on DeadLetterChannel
  *
- * @version 
  */
 public class OnExceptionUseOriginalBodyTest extends ContextTestSupport {
 

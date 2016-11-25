@@ -28,7 +28,6 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 
 /**
- * @version
  */
 public class FileIdempotentReadLockTest extends ContextTestSupport {
 

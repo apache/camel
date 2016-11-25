@@ -32,7 +32,6 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.FileUtil;
 
 /**
- * @version 
  */
 public class ManagedFileIdempotentConsumerTest extends ManagementTestSupport {
     protected Endpoint startEndpoint;

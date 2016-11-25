@@ -28,7 +28,6 @@ import org.apache.camel.TypeConversionException;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version 
  */
 public class DefaultExchangeTest extends ExchangeTestSupport {
 

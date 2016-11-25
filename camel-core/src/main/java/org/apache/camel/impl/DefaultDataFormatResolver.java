@@ -26,7 +26,6 @@ import org.apache.camel.util.ResolverHelper;
 /**
  * Default data format resolver
  *
- * @version
  */
 public class DefaultDataFormatResolver implements DataFormatResolver {
 
