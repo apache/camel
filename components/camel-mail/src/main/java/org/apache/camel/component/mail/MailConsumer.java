@@ -287,7 +287,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             try {
                 Message msg = folder.getMessage(i);
                 msgs.add(msg);
-            } catch (MessagingException e) {
+            } catch (Exception e) {
                 if (skipFailedMessage) {
                     LOG.debug("Skipping failed message at index " + i + " due " + e.getMessage(), e);
                 } else if (handleFailedMessage) {
@@ -367,7 +367,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                         LOG.debug("Skipping message as it was flagged as deleted: {}", MailUtils.dumpMessage(message));
                     }
                 }
-            } catch (MessagingException e) {
+            } catch (Exception e) {
                 if (skipFailedMessage) {
                     LOG.debug("Skipping failed message at index " + i + " due " + e.getMessage(), e);
                 } else if (handleFailedMessage) {
