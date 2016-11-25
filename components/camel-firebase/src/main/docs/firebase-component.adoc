@@ -43,10 +43,6 @@ Do not forget to URL encode the option values.
 Options
 ^^^^^^^
 
-// component options: START
-The Firebase component has no options.
-// component options: END
-
 // endpoint options: START
 The Firebase component supports 9 endpoint options which are listed below:
 
