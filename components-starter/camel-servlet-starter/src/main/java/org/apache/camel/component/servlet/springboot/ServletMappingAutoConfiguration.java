@@ -17,6 +17,8 @@
 package org.apache.camel.component.servlet.springboot;
 
 import org.apache.camel.component.servlet.CamelHttpTransportServlet;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -29,6 +31,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnProperty(name = "camel.component.servlet.mapping.enabled", matchIfMissing = true)
+@ConditionalOnBean(type = "org.apache.camel.spring.boot.CamelAutoConfiguration")
+@AutoConfigureAfter(name = "org.apache.camel.spring.boot.CamelAutoConfiguration")
 @ConditionalOnWebApplication
 @EnableConfigurationProperties(ServletMappingConfiguration.class)
 public class ServletMappingAutoConfiguration {
