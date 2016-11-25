@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -39,8 +39,8 @@ public class FirebaseComponent extends UriEndpointComponent {
 
         FirebaseConfig firebaseConfig = new FirebaseConfig.Builder(
                 String.format("https://%s", remaining),
-                getAndRemoveParameter(parameters, "rootReference", String.class),
-                getAndRemoveParameter(parameters, "serviceAccountFile", String.class))
+                (String) parameters.get("rootReference"),
+                (String) parameters.get("serviceAccountFile"))
                 .build();
 
         firebaseConfig.init();
