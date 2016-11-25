@@ -198,7 +198,6 @@
 	* [etcd](etcd-component.adoc)
 	* [Exec](exec-component.adoc)
 	* [Facebook](facebook-component.adoc)
-	* [Firebase](firebase-component.adoc)
 	* [Flatpack](flatpack-component.adoc)
 	* [FOP](fop-component.adoc)
 	* [Freemarker](freemarker-component.adoc)
