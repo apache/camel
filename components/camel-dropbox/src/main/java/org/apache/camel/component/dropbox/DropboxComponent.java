@@ -71,8 +71,7 @@ public class DropboxComponent extends UriEndpointComponent {
         // and then override from parameters
         setProperties(configuration, parameters);
 
-        Endpoint endpoint = new DropboxEndpoint(uri, this, configuration);
-        return endpoint;
+        return new DropboxEndpoint(uri, this, configuration);
     }
 
 }

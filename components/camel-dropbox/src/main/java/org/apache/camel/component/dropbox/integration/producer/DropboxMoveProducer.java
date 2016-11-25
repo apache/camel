@@ -20,19 +20,23 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
-import org.apache.camel.component.dropbox.dto.DropboxResult;
+import org.apache.camel.component.dropbox.dto.DropboxMoveResult;
+import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 
 public class DropboxMoveProducer extends DropboxProducer {
-    
+
     public DropboxMoveProducer(DropboxEndpoint endpoint, DropboxConfiguration configuration) {
         super(endpoint, configuration);
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        DropboxResult result = DropboxAPIFacade.getInstance(configuration.getClient())
+        DropboxMoveResult result = new DropboxAPIFacade(configuration.getClient(), exchange)
                 .move(configuration.getRemotePath(), configuration.getNewRemotePath());
-        result.populateExchange(exchange);
+
+        exchange.getIn().setHeader(DropboxResultHeader.MOVED_PATH.name(), result.getOldPath());
+        exchange.getIn().setBody(result.getNewPath());
+
         log.info("Moved from " + configuration.getRemotePath() + " to " + configuration.getNewRemotePath());
     }
 

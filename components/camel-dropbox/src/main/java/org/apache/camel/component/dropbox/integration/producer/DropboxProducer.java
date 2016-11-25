@@ -26,8 +26,8 @@ public abstract class DropboxProducer extends DefaultProducer {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxProducer.class);
 
-    protected DropboxEndpoint endpoint;
-    protected DropboxConfiguration configuration;
+    protected final DropboxEndpoint endpoint;
+    protected final DropboxConfiguration configuration;
 
     public DropboxProducer(DropboxEndpoint endpoint, DropboxConfiguration configuration) {
         super(endpoint);

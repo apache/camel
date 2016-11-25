@@ -26,8 +26,8 @@ import org.slf4j.LoggerFactory;
 
 public abstract class DropboxScheduledPollConsumer extends ScheduledPollConsumer {
     protected static final transient Logger LOG = LoggerFactory.getLogger(DropboxScheduledPollConsumer.class);
-    protected DropboxEndpoint endpoint;
-    protected DropboxConfiguration configuration;
+    protected final DropboxEndpoint endpoint;
+    protected final DropboxConfiguration configuration;
 
     public DropboxScheduledPollConsumer(DropboxEndpoint endpoint, Processor processor, DropboxConfiguration configuration) {
         super(endpoint, processor);
