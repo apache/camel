@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dataformat.xstream.springboot;
 
+import org.apache.camel.dataformat.xstream.JsonDataFormat;
 import org.apache.camel.model.dataformat.JsonLibrary;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
