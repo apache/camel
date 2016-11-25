@@ -98,6 +98,7 @@ import org.apache.camel.management.ManagementStrategyFactory;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
@@ -882,32 +883,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public synchronized RoutesDefinition loadRoutesDefinition(InputStream is) throws Exception {
-        // load routes using JAXB
-        if (jaxbContext == null) {
-            // must use classloader from CamelContext to have JAXB working
-            jaxbContext = getModelJAXBContextFactory().newJAXBContext();
-        }
-
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        Object result = unmarshaller.unmarshal(is);
-
-        if (result == null) {
-            throw new IOException("Cannot unmarshal to routes using JAXB from input stream: " + is);
-        }
-
-        // can either be routes or a single route
-        RoutesDefinition answer;
-        if (result instanceof RouteDefinition) {
-            RouteDefinition route = (RouteDefinition) result;
-            answer = new RoutesDefinition();
-            answer.getRoutes().add(route);
-        } else if (result instanceof RoutesDefinition) {
-            answer = (RoutesDefinition) result;
-        } else {
-            throw new IllegalArgumentException("Unmarshalled object is an unsupported type: " + ObjectHelper.className(result) + " -> " + result);
-        }
-
-        return answer;
+        return ModelHelper.loadRoutesDefinition(this, is);
     }
 
     public synchronized RestsDefinition loadRestsDefinition(InputStream is) throws Exception {
