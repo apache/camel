@@ -49,7 +49,7 @@ public abstract class DropboxScheduledPollConsumer extends ScheduledPollConsumer
             //create dropbox client
             configuration.createClient();
 
-            LOG.info("consumer dropbox client created");
+            LOG.debug("Consumer DropBox client created");
         }
 
         super.doStart();
@@ -65,7 +65,7 @@ public abstract class DropboxScheduledPollConsumer extends ScheduledPollConsumer
         if (configuration.getClient() == null) {
             configuration.setClient(null);
 
-            LOG.info("consumer dropbox client deleted");
+            LOG.debug("Consumer DropBox client deleted");
         }
         super.doStop();
     }

@@ -58,8 +58,9 @@ public class DropboxScheduledPollGetConsumer extends DropboxScheduledPollConsume
             exchange.getIn().setBody(map);
         }
 
-
-        LOG.info("consumer --> downloaded: " + result.toString());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Downloaded: {}", result.toString());
+        }
 
         try {
             // send message to next processor in the route
