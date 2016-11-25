@@ -168,9 +168,6 @@ Components
 | link:camel-facebook/src/main/docs/facebook-component.adoc[Facebook] (camel-facebook) +
 `facebook:methodName` | The Facebook component provides access to all of the Facebook APIs accessible using Facebook4J.
 
-| link:camel-firebase/src/main/docs/firebase-component.adoc[Firebase] (camel-firebase) +
-`firebase:databaseUrl` | The Google Firebasecomponent enables you to save and modify data in a Google Firebase database via the FirebaseProducer class.
-
 | link:camel-flatpack/src/main/docs/flatpack-component.adoc[Flatpack] (camel-flatpack) +
 `flatpack:type:resourceUri` | The flatpack component supports fixed width and delimited file parsing via the FlatPack library.
 
