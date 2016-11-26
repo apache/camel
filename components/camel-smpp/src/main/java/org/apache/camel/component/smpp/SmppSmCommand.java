@@ -80,8 +80,13 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
 
         String body = message.getBody(String.class);
 
+        Byte nliIdentifier = message.getHeader("CamelNLIdentifier", Byte.class);
+
         SmppSplitter splitter;
-        if (SmppUtils.is8Bit(alphabet)) {
+
+        if (null != nliIdentifier){
+            splitter = new SmppDefaultNLISplitter(body.length(), nliIdentifier); // nli splitter
+        }else if (SmppUtils.is8Bit(alphabet)) {
             splitter = new Smpp8BitSplitter(body.length());
         } else if (alphabet == Alphabet.ALPHA_UCS2) {
             splitter = new SmppUcs2Splitter(body.length());

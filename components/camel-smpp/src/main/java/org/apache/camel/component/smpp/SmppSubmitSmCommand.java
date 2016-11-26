@@ -45,7 +45,7 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
     public void execute(Exchange exchange) throws SmppException {
         SubmitSm[] submitSms = createSubmitSm(exchange);
         List<String> messageIDs = new ArrayList<String>(submitSms.length);
-        
+
         for (int i = 0; i < submitSms.length; i++) {
             SubmitSm submitSm = submitSms[i];
             String messageID;
@@ -90,15 +90,47 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
         message.setHeader(SmppConstants.SENT_MESSAGE_COUNT, messageIDs.size());
     }
 
+    protected SubmitSm[] createSubmitSm_Modified(Exchange exchange) {
+        byte[] shortMessage = getShortMessage(exchange.getIn());
+        SubmitSm template = createSubmitSmTemplate(exchange);
+        SmppSplitter splitter = createSplitter(exchange.getIn());
+        byte[][] segments = splitter.split(shortMessage);
+        // multipart message
+        //TODO (thanus, 28.10.14, TASK: DT-23) custom fix for UDHI (ESM class)
+        final ESMClass esmClass = exchange.getIn().getHeader(SmppConstants.ESM_CLASS, ESMClass.class);
+        if (esmClass != null) {
+           template.setEsmClass(esmClass.value());
+        } else {
+           if (segments.length > 1) {
+               template.setEsmClass(new ESMClass(MessageMode.DEFAULT,
+                       MessageType.DEFAULT,
+                       GSMSpecificFeature.UDHI).value());
+           }
+        }
+        SubmitSm[] submitSms = new SubmitSm[segments.length];
+        for (int i = 0; i < segments.length; i++) {
+           SubmitSm submitSm = SmppUtils.copySubmitSm(template);
+           submitSm.setShortMessage(segments[i]);
+           submitSms[i] = submitSm;
+        }
+        return submitSms;
+   }
+
     protected SubmitSm[] createSubmitSm(Exchange exchange) throws SmppException {
 
         SubmitSm template = createSubmitSmTemplate(exchange);
         byte[][] segments = splitBody(exchange.getIn());
 
-        // multipart message
-        if (segments.length > 1) {
-            template.setEsmClass(new ESMClass(MessageMode.DEFAULT, MessageType.DEFAULT, GSMSpecificFeature.UDHI).value());
+        final ESMClass esmClass = exchange.getIn().getHeader(SmppConstants.ESM_CLASS, ESMClass.class);
+        if (esmClass != null) {
+            template.setEsmClass(esmClass.value());
+        }else{
+            // multipart message
+            if (segments.length > 1) {
+                template.setEsmClass(new ESMClass(MessageMode.DEFAULT, MessageType.DEFAULT, GSMSpecificFeature.UDHI).value());
+            }
         }
+
 
         SubmitSm[] submitSms = new SubmitSm[segments.length];
         for (int i = 0; i < segments.length; i++) {
@@ -109,6 +141,25 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
 
         return submitSms;
     }
+     protected SubmitSm[] createSubmitSm_ORJ(Exchange exchange) throws SmppException {
+
+         SubmitSm template = createSubmitSmTemplate(exchange);
+         byte[][] segments = splitBody(exchange.getIn());
+
+         // multipart message
+         if (segments.length > 1) {
+             template.setEsmClass(new ESMClass(MessageMode.DEFAULT, MessageType.DEFAULT, GSMSpecificFeature.UDHI).value());
+         }
+
+         SubmitSm[] submitSms = new SubmitSm[segments.length];
+         for (int i = 0; i < segments.length; i++) {
+             SubmitSm submitSm = SmppUtils.copySubmitSm(template);
+             submitSm.setShortMessage(segments[i]);
+             submitSms[i] = submitSm;
+         }
+
+         return submitSms;
+     }
 
     @SuppressWarnings({"unchecked"})
     protected SubmitSm createSubmitSmTemplate(Exchange exchange) {

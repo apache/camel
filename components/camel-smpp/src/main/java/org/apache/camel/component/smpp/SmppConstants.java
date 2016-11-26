@@ -37,6 +37,7 @@ public interface SmppConstants {
     String ESME_ADDR = "CamelSmppEsmeAddr";
     String ESME_ADDR_NPI = "CamelSmppEsmeAddrNpi";
     String ESME_ADDR_TON = "CamelSmppEsmeAddrTon";
+    String ESM_CLASS = "CamelEsmClass";
     String FINAL_DATE = "CamelSmppFinalDate";
     String FINAL_STATUS = "CamelSmppStatus";
     String ID = "CamelSmppId";

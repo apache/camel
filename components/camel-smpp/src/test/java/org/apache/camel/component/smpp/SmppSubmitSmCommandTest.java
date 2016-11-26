@@ -158,6 +158,8 @@ public class SmppSubmitSmCommandTest {
                 (String) isNull(), (String) isNull(), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)), eq(ReplaceIfPresentFlag.DEFAULT.value()),
                 eq(DataCodings.newInstance((byte) 0)), eq((byte) 0), aryEq(firstSM)))
                 .andReturn("1");
+
+
         expect(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
                 eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()), eq((byte) 0), eq((byte) 1),
                 (String) isNull(), (String) isNull(), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS_FAILURE)), eq(ReplaceIfPresentFlag.DEFAULT.value()),

@@ -20,7 +20,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.18.1-SNAPSHOT</version>
+        <version>2.18.0</version>
     </parent>
 
     <artifactId>camel-smpp</artifactId>
@@ -32,7 +32,8 @@
       <camel.osgi.export.pkg>org.apache.camel.component.smpp.*</camel.osgi.export.pkg>
         <camel.osgi.export.service>
           org.apache.camel.spi.ComponentResolver;component=smpp,
-          org.apache.camel.spi.ComponentResolver;component=smpps
+          org.apache.camel.spi.ComponentResolver;component=smpps,
+
         </camel.osgi.export.service>
     </properties>
 
@@ -70,9 +71,9 @@
         </dependency>
         <dependency>
             <groupId>org.easymock</groupId>
-            <artifactId>easymock</artifactId>
+            <artifactId>easymockclassextension</artifactId>
             <scope>test</scope>
-        </dependency>  
+        </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
