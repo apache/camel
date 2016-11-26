@@ -142,9 +142,7 @@ public class CamelContinuationServlet extends CamelServlet {
                 // remember this id as expired
                 expiredExchanges.put(id, id);
                 log.warn("Continuation expired of exchangeId: {}", id);
-
                 consumer.getBinding().doWriteExceptionResponse(new TimeoutException(), response);
-
                 return;
             }
 
