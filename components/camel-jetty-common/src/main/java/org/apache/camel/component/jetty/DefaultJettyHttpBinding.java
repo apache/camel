@@ -21,25 +21,24 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.http.common.HttpConstants;
-import org.apache.camel.http.common.HttpHeaderFilterStrategy;
-import org.apache.camel.http.common.HttpHelper;
-import org.apache.camel.http.common.HttpOperationFailedException;
-import org.apache.camel.http.common.HttpProtocolHeaderFilterStrategy;
+import org.apache.camel.http.common.*;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletResponse;
+
 /**
  * @version 
  */
-public class DefaultJettyHttpBinding implements JettyHttpBinding {
+public class DefaultJettyHttpBinding extends DefaultHttpBinding implements JettyHttpBinding {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultJettyHttpBinding.class);
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
@@ -75,6 +74,17 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
                     populateResponse(exchange, httpExchange, in, getHeaderFilterStrategy(), responseCode);
                 }
             }
+        }
+    }
+
+    @Override
+    public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException {
+        // Handle continuation timeout
+        if (exception instanceof TimeoutException) {
+            response.setStatus(HttpServletResponse.SC_GATEWAY_TIMEOUT);
+            response.getWriter().write("Continuation timed out...");
+        } else {
+            super.doWriteExceptionResponse(exception, response);
         }
     }
 
