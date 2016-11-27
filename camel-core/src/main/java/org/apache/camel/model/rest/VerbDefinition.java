@@ -101,6 +101,9 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     @XmlAttribute
     private Boolean apiDocs;
 
+    @XmlTransient
+    private Boolean usedForGeneratingNodeId = Boolean.FALSE;
+
     @Override
     public String getLabel() {
         if (method != null) {
@@ -406,6 +409,11 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         }
     }
 
+    public Boolean getUsedForGeneratingNodeId() {
+        return usedForGeneratingNodeId;
+    }
 
-
+    public void setUsedForGeneratingNodeId(Boolean usedForGeneratingNodeId) {
+        this.usedForGeneratingNodeId = usedForGeneratingNodeId;
+    }
 }
