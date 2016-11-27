@@ -148,7 +148,7 @@ public abstract class AbstractServiceNowProcessor implements Processor {
 
                 if (root != null) {
                     Iterator<Map.Entry<String, JsonNode>> fields = root.fields();
-                    while(fields.hasNext()) {
+                    while (fields.hasNext()) {
                         final Map.Entry<String, JsonNode> entry = fields.next();
                         final String key = entry.getKey();
                         final JsonNode node = entry.getValue();
