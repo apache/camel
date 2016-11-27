@@ -46,6 +46,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.interceptor.HandleFault;
+import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
@@ -61,7 +62,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "route")
-@XmlType(propOrder = {"inputs", "outputs"})
+@XmlType(propOrder = {"inputs", "inputType", "outputType", "outputs"})
 @XmlAccessorType(XmlAccessType.PROPERTY)
 // must use XmlAccessType.PROPERTY as there is some custom logic needed to be executed in the setter methods
 public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
@@ -87,6 +88,8 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     private boolean contextScopedErrorHandler = true;
     private Boolean rest;
     private RestDefinition restDefinition;
+    private InputTypeDefinition inputType;
+    private OutputTypeDefinition outputType;
 
     public RouteDefinition() {
     }
@@ -629,6 +632,50 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return this;
     }
 
+    /**
+     * Declare an input type.
+     * @param urn input type URN
+     * @return the builder
+     */
+    public RouteDefinition inputType(String urn) {
+        inputType = new InputTypeDefinition();
+        inputType.setUrn(urn);
+        return this;
+    }
+
+    /**
+     * Declare an input type with Java class.
+     * @param clazz Class object of the input type
+     * @return the builder
+     */
+    public RouteDefinition inputType(Class clazz) {
+        inputType = new InputTypeDefinition();
+        inputType.setJavaClass(clazz);
+        return this;
+    }
+
+    /**
+     * Declare an output type.
+     * @param urn output type URN
+     * @return the builder
+     */
+    public RouteDefinition outputType(String urn) {
+        outputType = new OutputTypeDefinition();
+        outputType.setUrn(urn);
+        return this;
+    }
+
+    /**
+     * Declare an output type with Java class.
+     * @param clazz Class object of the output type
+     * @return the builder
+     */
+    public RouteDefinition outputType(Class clazz) {
+        outputType = new OutputTypeDefinition();
+        outputType.setJavaClass(clazz);
+        return this;
+    }
+
     // Properties
     // -----------------------------------------------------------------------
 
@@ -935,6 +982,24 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return true;
     }
 
+    @XmlElementRef(required = false)
+    public void setInputType(InputTypeDefinition inputType) {
+        this.inputType = inputType;
+    }
+
+    public InputTypeDefinition getInputType() {
+        return this.inputType;
+    }
+
+    @XmlElementRef(required = false)
+    public void setOutputType(OutputTypeDefinition outputType) {
+        this.outputType = outputType;
+    }
+
+    public OutputTypeDefinition getOutputType() {
+        return this.outputType;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
     protected RouteContext addRoutes(CamelContext camelContext, Collection<Route> routes, FromDefinition fromType) throws Exception {
@@ -1062,6 +1127,18 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
             throw new FailedToCreateRouteException(route.getId(), route.toString(), at, cause);
         }
 
+        // add data type contract
+        if (inputType != null || outputType != null) {
+            Contract contract = new Contract();
+            if (inputType != null) {
+                contract.setInputType(inputType.getUrn());
+            }
+            if (outputType != null) {
+                contract.setOutputType(outputType.getUrn());
+            }
+            routeContext.setContract(contract);
+        }
+
         List<ProcessorDefinition<?>> list = new ArrayList<ProcessorDefinition<?>>(outputs);
         for (ProcessorDefinition<?> output : list) {
             try {
@@ -1075,4 +1152,5 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         routeContext.commit();
         return routeContext;
     }
+
 }

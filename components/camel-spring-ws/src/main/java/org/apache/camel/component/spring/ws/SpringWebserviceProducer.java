@@ -20,27 +20,29 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.security.GeneralSecurityException;
+import java.util.Iterator;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.TypeConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ws.WebServiceMessage;
-import org.springframework.ws.client.core.SourceExtractor;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
 import org.springframework.ws.soap.SoapHeader;
+import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.addressing.client.ActionCallback;
 import org.springframework.ws.soap.addressing.core.EndpointReference;
@@ -55,7 +57,6 @@ import org.springframework.ws.transport.http.HttpUrlConnectionMessageSender;
 public class SpringWebserviceProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(SpringWebserviceProducer.class);
-    private static final SourceExtractor<Object> SOURCE_EXTRACTOR = new NoopSourceExtractor();
     private static final XmlConverter XML_CONVERTER = new XmlConverter();
 
     public SpringWebserviceProducer(Endpoint endpoint) {
@@ -83,18 +84,59 @@ public class SpringWebserviceProducer extends DefaultProducer {
         WebServiceMessageCallback callback = new DefaultWebserviceMessageCallback(soapActionHeader, wsAddressingActionHeader,
                 wsReplyToHeader, wsFaultToHeader, soapHeaderSource, getEndpoint().getConfiguration(), exchange);
 
-        Object body;
-        if (endpointUriHeader != null) {
-            body = getEndpoint().getConfiguration().getWebServiceTemplate().sendSourceAndReceive(endpointUriHeader, sourcePayload, callback, SOURCE_EXTRACTOR);
-        } else {
-            body = getEndpoint().getConfiguration().getWebServiceTemplate().sendSourceAndReceive(sourcePayload, callback, SOURCE_EXTRACTOR);
+        if (endpointUriHeader == null) {
+            endpointUriHeader = getEndpoint().getConfiguration().getWebServiceTemplate().getDefaultUri();
+        }
+        getEndpoint().getConfiguration().getWebServiceTemplate().sendAndReceive(endpointUriHeader, new WebServiceMessageCallback() {
+            @Override
+            public void doWithMessage(WebServiceMessage requestMessage) throws IOException, TransformerException {
+                XML_CONVERTER.toResult(sourcePayload, requestMessage.getPayloadResult());
+                callback.doWithMessage(requestMessage);
+            }
+        }, new WebServiceMessageCallback() {
+            @Override
+            public void doWithMessage(WebServiceMessage responseMessage) throws IOException, TransformerException {
+                SoapMessage soapMessage = (SoapMessage) responseMessage;
+                if (ExchangeHelper.isOutCapable(exchange)) {
+                    exchange.getOut().copyFromWithNewBody(exchange.getIn(), responseMessage.getPayloadSource());
+                    if (soapMessage.getSoapHeader() != null && getEndpoint().getConfiguration().isAllowResponseHeaderOverride()) {
+                        populateMessageHeaderFromResponse(exchange.getOut(), soapMessage.getSoapHeader());
+                    }
+                } else {
+                    exchange.getIn().setBody(responseMessage.getPayloadSource());
+                    if (soapMessage.getSoapHeader() != null && getEndpoint().getConfiguration().isAllowResponseHeaderOverride()) {
+                        populateMessageHeaderFromResponse(exchange.getIn(), soapMessage.getSoapHeader());
+                    }
+                }
+
+            }
+        });
+    }
+
+    /**
+     * Populates message headers from soapHeader response
+     * 
+     * @param message
+     *            Message
+     * @param soapHeader
+     *            SoapHeader
+     */
+    private void populateMessageHeaderFromResponse(Message message, SoapHeader soapHeader) {
+        message.setHeader(SpringWebserviceConstants.SPRING_WS_SOAP_HEADER, soapHeader.getSource());
+        // Set header values for the soap header attributes
+        Iterator<QName> attIter = soapHeader.getAllAttributes();
+        while (attIter.hasNext()) {
+            QName name = attIter.next();
+            message.getHeaders().put(name.getLocalPart(), soapHeader.getAttributeValue(name));
         }
 
-        if (ExchangeHelper.isOutCapable(exchange)) {
-            exchange.getOut().copyFrom(exchange.getIn());
-            exchange.getOut().setBody(body);
-        } else {
-            exchange.getIn().setBody(body);
+        // Set header values for the soap header elements
+        Iterator<SoapHeaderElement> elementIter = soapHeader.examineAllHeaderElements();
+        while (elementIter.hasNext()) {
+            SoapHeaderElement element = elementIter.next();
+            QName name = element.getName();
+            message.getHeaders().put(name.getLocalPart(), element);
+
         }
     }
 
@@ -260,13 +302,4 @@ public class SpringWebserviceProducer extends DefaultProducer {
         }
     }
 
-    /**
-     * A {@link SourceExtractor} that performs no conversion, instead conversion
-     * is handled by Camel's {@link TypeConverter} hierarchy.
-     */
-    private static class NoopSourceExtractor implements SourceExtractor<Object> {
-        public Object extractData(Source source) throws IOException, TransformerException {
-            return source;
-        }
-    }
 }

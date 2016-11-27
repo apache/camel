@@ -100,7 +100,6 @@ class GooglePubsubConsumer extends DefaultConsumer {
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public void run() {
             try {
                 if (localLog.isDebugEnabled()) {

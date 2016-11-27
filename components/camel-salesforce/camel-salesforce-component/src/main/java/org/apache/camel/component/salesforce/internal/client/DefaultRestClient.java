@@ -23,8 +23,8 @@ import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
 
@@ -135,6 +135,27 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         // just report HTTP status info
         return new SalesforceException("Unexpected error: " + reason + ", with content: " + responseContent,
                 statusCode);
+    }
+
+    @Override
+    public void approval(final InputStream request, final ResponseCallback callback) {
+        final Request post = getRequest(HttpMethod.POST, versionUrl() + "process/approvals/");
+
+        // authorization
+        setAccessToken(post);
+
+        // input stream as entity content
+        post.content(new InputStreamContentProvider(request));
+        post.header(HttpHeader.CONTENT_TYPE, PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
+
+        doHttpRequest(post, new DelegatingClientCallback(callback));
+    }
+
+    @Override
+    public void approvals(final ResponseCallback callback) {
+        final Request get = getRequest(HttpMethod.GET, versionUrl() + "process/approvals/");
+
+        doHttpRequest(get, new DelegatingClientCallback(callback));
     }
 
     @Override
@@ -400,6 +421,18 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         }
 
         return instanceUrl + SERVICES_APEXREST + apexUrl;
+    }
+
+    @Override
+    public void recent(final Integer limit, final ResponseCallback responseCallback) {
+        final String param = Optional.ofNullable(limit).map(v -> "?limit=" + v).orElse("");
+
+        final Request get = getRequest(HttpMethod.GET, versionUrl() + "recent/" + param);
+
+        // requires authorization token
+        setAccessToken(get);
+
+        doHttpRequest(get, new DelegatingClientCallback(responseCallback));
     }
 
     @Override

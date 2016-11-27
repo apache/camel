@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointAware;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.EndpointRequiredDefinition;
 import org.apache.camel.model.FromDefinition;

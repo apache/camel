@@ -73,7 +73,7 @@ public class JettyHttpComponent9 extends JettyHttpComponent {
                                                       JettyHttpEndpoint endpoint,
                                                       SslContextFactory sslcf) {
         try {
-            String hosto = endpoint.getHttpUri().getHost();
+            String host = endpoint.getHttpUri().getHost();
             int porto = endpoint.getPort();
             org.eclipse.jetty.server.HttpConfiguration httpConfig = new org.eclipse.jetty.server.HttpConfiguration();
             httpConfig.setSendServerVersion(endpoint.isSendServerVersion());
@@ -110,8 +110,8 @@ public class JettyHttpComponent9 extends JettyHttpComponent {
             connectionFactories.add(httpFactory);
             result.setConnectionFactories(connectionFactories);
             result.setPort(porto);
-            if (hosto != null) {
-                result.setHost(hosto);
+            if (host != null) {
+                result.setHost(host);
             }
             /*
             if (getSocketConnectorProperties() != null && !"https".equals(endpoint.getProtocol())) {

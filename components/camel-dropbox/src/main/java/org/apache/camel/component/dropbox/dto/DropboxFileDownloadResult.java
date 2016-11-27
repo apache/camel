@@ -16,44 +16,18 @@
  */
 package org.apache.camel.component.dropbox.dto;
 
-import java.io.ByteArrayOutputStream;
+import java.util.Collections;
 import java.util.Map;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.component.dropbox.util.DropboxResultHeader;
+public class DropboxFileDownloadResult {
 
-public class DropboxFileDownloadResult extends DropboxResult {
+    private final Map<String, Object> entries;
 
-    /**
-     * Object payload contained in Exchange
-     * In case of a single file Exchange Header is populated with the name of the remote path downloaded
-     * In case of a multiple files Exchange Header is populated with the name of the remote paths downloaded
-     * In case of a single file Exchange Body is populated with the ByteArrayOutputStream downloaded from dropbox.
-     * In case of multiple files Exchange Body is populated with a map containing as key the remote path
-     * and as value the linked ByteArrayOutputStream
-     * @param exchange
-     */
-    @Override
-    public void populateExchange(Exchange exchange) {
-        //in case we have only one baos put it directly in body
-        Map<String, ByteArrayOutputStream> map = (Map<String, ByteArrayOutputStream>)resultEntries;
-        if (map.size() == 1) {
-            //set info in exchange
-            String pathExtracted = null;
-            ByteArrayOutputStream baosExtracted = null;
-            for (Map.Entry<String, ByteArrayOutputStream> entry : map.entrySet()) {
-                pathExtracted = entry.getKey();
-                baosExtracted = entry.getValue();
-            }
-            exchange.getIn().setHeader(DropboxResultHeader.DOWNLOADED_FILE.name(), pathExtracted);
-            exchange.getIn().setBody(baosExtracted);
-        } else {
-            StringBuffer pathsExtracted = new StringBuffer();
-            for (Map.Entry<String, ByteArrayOutputStream> entry : map.entrySet()) {
-                pathsExtracted.append(entry.getKey() + "\n");
-            }
-            exchange.getIn().setHeader(DropboxResultHeader.DOWNLOADED_FILES.name(), pathsExtracted.toString());
-            exchange.getIn().setBody(map);
-        }
+    public DropboxFileDownloadResult(Map<String, Object> entries) {
+        this.entries = entries;
+    }
+
+    public Map<String, Object> getEntries() {
+        return Collections.unmodifiableMap(entries);
     }
 }

@@ -121,7 +121,6 @@ public class RouteboxDispatcher {
         return dispatchUri;
     }
 
-    @SuppressWarnings("deprecation")
     protected List<URI> getInnerContextConsumerList(CamelContext context) throws URISyntaxException {
         List<URI> consumerList = new ArrayList<URI>();
         List<RouteDefinition> routeDefinitions = context.getRouteDefinitions();

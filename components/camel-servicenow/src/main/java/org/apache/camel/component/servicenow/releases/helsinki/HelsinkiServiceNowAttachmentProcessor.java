@@ -59,7 +59,7 @@ public class HelsinkiServiceNowAttachmentProcessor extends AbstractServiceNowPro
     private void retrieveMeta(Exchange exchange) throws Exception {
         final Message in = exchange.getIn();
         final String tableName = getTableName(in);
-        final String apiVersion =getApiVersion(in);
+        final String apiVersion = getApiVersion(in);
         final Class<?> responseModel = getResponseModel(in, tableName);
         final String sysId = getSysID(in);
 

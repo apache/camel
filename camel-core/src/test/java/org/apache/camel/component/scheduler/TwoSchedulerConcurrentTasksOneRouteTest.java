@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.scheduler;
 
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.ContextTestSupport;

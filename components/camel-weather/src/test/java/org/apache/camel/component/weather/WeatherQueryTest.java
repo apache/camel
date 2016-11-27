@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.weather;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.camel.component.weather.geolocation.GeoLocation;
 import org.apache.camel.component.weather.geolocation.GeoLocationProvider;
 import org.junit.Before;

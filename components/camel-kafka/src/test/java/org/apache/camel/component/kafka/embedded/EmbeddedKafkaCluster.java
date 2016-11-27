@@ -30,7 +30,6 @@ import kafka.server.KafkaConfig;
 import kafka.server.KafkaServer;
 import kafka.utils.ZkUtils;
 import scala.Option;
-import scala.collection.Seq;
 import scala.collection.mutable.Buffer;
 
 public class EmbeddedKafkaCluster {

@@ -103,10 +103,10 @@ public class SalesforceComponentConfigurationIntegrationTest extends CamelTestSu
         assertCompletionOptions(configuration.completeEndpointPath(""),
             "getVersions", "getResources", "getGlobalObjects", "getBasicInfo", "getDescription", "getSObject", "createSObject",
             "updateSObject", "deleteSObject", "getSObjectWithId", "upsertSObject", "deleteSObjectWithId", "getBlobField",
-            "query", "queryMore", "queryAll", "search", "apexCall", "createJob", "getJob", "closeJob", "abortJob",
+            "query", "queryMore", "queryAll", "search", "apexCall", "recent", "createJob", "getJob", "closeJob", "abortJob",
             "createBatch", "getBatch", "getAllBatches", "getRequest", "getResults", "createBatchQuery", "getQueryResultIds",
             "getQueryResult", "getRecentReports", "getReportDescription", "executeSyncReport", "executeAsyncReport",
-            "getReportInstances", "getReportResults", "[PushTopicName]"
+            "getReportInstances", "getReportResults", "limits", "approval", "approvals", "[PushTopicName]"
         );
 
         // get filtered operation names

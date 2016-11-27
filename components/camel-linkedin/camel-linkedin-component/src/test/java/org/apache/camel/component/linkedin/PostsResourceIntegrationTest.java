@@ -24,8 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.linkedin.internal.LinkedInApiCollection;
-import org.apache.camel.component.linkedin.internal.PostsResourceApiMethod;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;

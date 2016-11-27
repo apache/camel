@@ -359,7 +359,6 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         }
     }
 
-    @SuppressWarnings("deprecation")
     public String getRouteModelAsXml(String routeId, String camelContextName) throws Exception {
         CamelContext context = this.getLocalCamelContext(camelContextName);
         if (context == null) {
@@ -399,7 +398,6 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         return null;
     }
 
-    @SuppressWarnings("deprecation")
     public String getRestModelAsXml(String camelContextName) throws Exception {
         CamelContext context = this.getLocalCamelContext(camelContextName);
         if (context == null) {
