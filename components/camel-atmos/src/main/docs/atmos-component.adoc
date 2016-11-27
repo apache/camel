@@ -4,7 +4,7 @@ Atmos Component
 
 *Available as of Camel 2.15*
 
-*Camel-Gora* is an http://camel.apache.org/[Apache Camel] component that
+*Camel-Atmos* is an http://camel.apache.org/[Apache Camel] component that
 allows you to work with ViPR object data services using the
 https://github.com/emcvipr/dataservices-sdk-java[Atmos Client].
 
@@ -70,3 +70,67 @@ link:download.html[the download page for the latest versions]).
   <!-- use the same version as your Camel core version -->
 </dependency>
 ----------------------------------------------------------
+
+[[Atmos-Integrations]]
+
+Integrations
+^^^^^^^^^^^^
+
+When you look at atmos integrations, there is one type of consumer, 
+GetConsumer, which is a type of ScheduledPollConsumer. 
+
+* `Get`
+
+Whereas there are 4 types of producers which are 
+
+* `Get` 
+* `Del` 
+* `Move`
+* `Put`
+
+[[Atmos-Examples]]
+Examples
+^^^^^^^^ 
+
+These example are taken from tests:
+
+[source,java]
+-------------------------------
+from("atmos:foo/get?remotePath=/path").to("mock:test");
+-------------------------------
+
+Here, this is a consumer example.
+`remotePath` represents the path from where the data will
+be read and passes the camel exchange to regarding producer
+Underneath, this component uses atmos client API for this and
+every other operations.
+
+[source,java]
+-------------------------------
+from("direct:start")
+.to("atmos://get?remotePath=/dummy/dummy.txt")
+.to("mock:result");
+-------------------------------
+
+Here, this a producer sample.
+`remotePath` represents the path where the operations occur
+on ViPR object data service. In producers, operations(`Get`,`Del`,
+`Move`,`Put`) run on ViPR object data services and results are set 
+on headers of camel exchange.
+
+Regarding the operations, the following headers are set on camel
+exhange
+
+[source,java]
+-------------------------------
+DOWNLOADED_FILE, DOWNLOADED_FILES, UPLOADED_FILE, UPLOADED_FILES, FOUND_FILES, DELETED_PATH, MOVED_PATH;
+-------------------------------
+
+[[Atmos-SeeAlso]]
+See Also
+^^^^^^^^
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]
