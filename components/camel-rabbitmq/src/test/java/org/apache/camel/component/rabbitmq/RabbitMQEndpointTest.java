@@ -198,7 +198,7 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         assertEquals(ConnectionFactory.DEFAULT_FRAME_MAX, connectionFactory.getRequestedFrameMax());
         assertEquals(ConnectionFactory.DEFAULT_HEARTBEAT, connectionFactory.getRequestedHeartbeat());
         assertFalse(connectionFactory.isSSL());
-        assertFalse(connectionFactory.isAutomaticRecoveryEnabled());
+        assertTrue(connectionFactory.isAutomaticRecoveryEnabled());
         assertEquals(5000, connectionFactory.getNetworkRecoveryInterval());
         assertTrue(connectionFactory.isTopologyRecoveryEnabled());
     }
