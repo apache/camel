@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.jpa;
 
-import java.util.List;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.Customer;
@@ -26,7 +24,11 @@ import org.junit.Test;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 
-public class JpaPollingConsumerTest extends AbstractJpaTest {
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + Customer.class.getName() + " x";
 
     protected void save(final Customer customer) {
@@ -46,10 +48,11 @@ public class JpaPollingConsumerTest extends AbstractJpaTest {
     }
 
     @Test
-    public void testPollingConsumer() throws Exception {
+    public void testPollingConsumerHandlesLockedEntity() throws Exception {
         Customer customer = new Customer();
         customer.setName("Donald Duck");
         save(customer);
+
         Customer customer2 = new Customer();
         customer2.setName("Goofy");
         save(customer2);
@@ -57,9 +60,16 @@ public class JpaPollingConsumerTest extends AbstractJpaTest {
         assertEntitiesInDatabase(2, Customer.class.getName());
 
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello Donald Duck how are you today?");
+        mock.expectedBodiesReceived(
+            "orders: 1",
+            "orders: 2"
+        );
 
-        template.sendBodyAndHeader("direct:start", "Hello NAME how are you today?", "name", "Donald%");
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("name", "Donald%");
+
+        template.asyncRequestBodyAndHeaders("direct:start", "message", headers);
+        template.asyncRequestBodyAndHeaders("direct:start", "message", headers);
 
         assertMockEndpointsSatisfied();
     }
@@ -69,13 +79,16 @@ public class JpaPollingConsumerTest extends AbstractJpaTest {
         return new SpringRouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .pollEnrich().simple("jpa://" + Customer.class.getName() + "?query=select c from Customer c where c.name like '${header.name}'")
-                        .aggregationStrategy((a, b) -> {
-                            String name = b.getIn().getBody(Customer.class).getName();
-                            String phrase = a.getIn().getBody(String.class).replace("NAME", name);
-                            a.getIn().setBody(phrase);
-                            return a;
-                        })
+                    .transacted()
+                    .pollEnrich().simple("jpa://" + Customer.class.getName() + "?joinTransaction=true&consumeLockEntity=true&query=select c from Customer c where c.name like '${header.name}'")
+                    .aggregationStrategy((originalExchange, jpaExchange) -> {
+                        Customer customer = jpaExchange.getIn().getBody(Customer.class);
+                        customer.setOrderCount(customer.getOrderCount()+1);
+
+                        return jpaExchange;
+                    })
+                    .to("jpa://" + Customer.class.getName() + "?joinTransaction=true&usePassedInEntityManager=true")
+                    .setBody().simple("orders: ${body.orderCount}")
                     .to("mock:result");
             }
         };
