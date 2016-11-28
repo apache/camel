@@ -38,7 +38,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootApplication
 @ContextConfiguration(classes = {ServletMappingAutoConfiguration.class, CamelAutoConfiguration.class})
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Ignore("TODO: test fails")
 public class ServletMappingAutoConfigurationTest {
 
     @Autowired
