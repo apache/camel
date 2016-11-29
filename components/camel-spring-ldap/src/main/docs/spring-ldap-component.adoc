@@ -120,7 +120,7 @@ http://docs.oracle.com/javase/6/docs/api/javax/naming/directory/ModificationItem
 Function-Driven
 ++++++++++++++++
 
-The message body must have entries with the keys *`function`* and *`request`*. The *`function`* value must be of type `org.apache.camel.component.springldap.LdapOperationsFunction<Q, S>`. The *`request`* value must be the same type as the `Q` type parameter in the *`function`* and it must encapsulate the parameters expected by the LdapTemplate method being invoked within the *`function`*. The `S` type parameter represents the response type as returned by the LdapTemplate method being invoked.
+The message body must have entries with the keys *`function`* and *`request`*. The *`function`* value must be of type `java.util.function.BiFunction<L, Q, S>`. The `L` type parameter must be of type `org.springframework.ldap.core.LdapOperations`. The *`request`* value must be the same type as the `Q` type parameter in the *`function`* and it must encapsulate the parameters expected by the LdapTemplate method being invoked within the *`function`*. The `S` type parameter represents the response type as returned by the LdapTemplate method being invoked.
 This operation allows dynamic invocation of LdapTemplate methods that are not covered by the operations mentioned above.
 
 *Key definitions*

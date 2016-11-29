@@ -17,6 +17,7 @@
 package org.apache.camel.component.springldap;
 
 import java.util.Map;
+import java.util.function.BiFunction;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
@@ -114,7 +115,7 @@ public class SpringLdapProducer extends DefaultProducer {
             ldapTemplate.modifyAttributes(dn, modificationItems);
             break;
         case FUNCTION_DRIVEN:
-            LdapOperationsFunction<Object, ?> ldapOperationFunction = (LdapOperationsFunction<Object, ?>)body.get(FUNCTION);
+            BiFunction<LdapOperations, Object, ?> ldapOperationFunction = (BiFunction<LdapOperations, Object, ?>)body.get(FUNCTION);
             Object ldapOperationRequest = body.get(REQUEST);
             exchange.getIn().setBody(ldapOperationFunction.apply(ldapTemplate, ldapOperationRequest));
             break;
