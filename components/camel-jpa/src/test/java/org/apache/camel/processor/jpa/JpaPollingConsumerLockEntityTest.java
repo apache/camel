@@ -16,6 +16,10 @@
  */
 package org.apache.camel.processor.jpa;
 
+import java.util.HashMap;
+import java.util.Map;
+import javax.persistence.OptimisticLockException;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -24,10 +28,6 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.junit.Before;
 import org.junit.Test;
-
-import javax.persistence.OptimisticLockException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + Customer.class.getName() + " x";
@@ -94,7 +94,7 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
                     @Override
                     public Exchange aggregate(Exchange originalExchange, Exchange jpaExchange) {
                         Customer customer = jpaExchange.getIn().getBody(Customer.class);
-                        customer.setOrderCount(customer.getOrderCount()+1);
+                        customer.setOrderCount(customer.getOrderCount() + 1);
 
                         return jpaExchange;
                     }
