@@ -22,6 +22,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
+import javax.persistence.Version;
 
 /**
  * @version 
@@ -38,6 +39,9 @@ public class Customer {
     @OneToOne(cascade = CascadeType.ALL)
     private Address address;
     private int orderCount;
+
+    @Version
+    private Long version;
 
     public Long getId() {
         return id;
@@ -74,7 +78,7 @@ public class Customer {
     @Override
     public String toString() {
         // OpenJPA warns about fields being accessed directly in methods if NOT using the corresponding getters.
-        return "Customer[id: " + getId() + ", name: " + getName() + ", address: " + getAddress() + "]";
+        return "Customer[id: " + getId() + ", version: " + version + ", name: " + getName() + ", address: " + getAddress() + "]";
     }
 
 }
