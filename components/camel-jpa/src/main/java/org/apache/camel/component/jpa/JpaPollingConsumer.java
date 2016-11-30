@@ -29,6 +29,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.LockModeType;
+import javax.persistence.PersistenceException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.PollingConsumerSupport;
@@ -144,21 +145,32 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
                 LOG.trace("Created query {}", query);
 
                 Object answer;
-                List<?> results = query.getResultList();
 
-                if (results != null && results.size() == 1) {
-                    // we only have 1 entity so return that
-                    answer = results.get(0);
-                } else {
-                    // we have more data so return a list
-                    answer = results;
+                try {
+                    List<?> results = query.getResultList();
+
+                    if (results != null && results.size() == 1) {
+                        // we only have 1 entity so return that
+                        answer = results.get(0);
+                    } else {
+                        // we have more data so return a list
+                        answer = results;
+                    }
+
+                    // commit
+                    LOG.debug("Flushing EntityManager");
+                    entityManager.flush();
+
+                    // must clear after flush
+                    entityManager.clear();
+
+                } catch (PersistenceException e) {
+                    LOG.info("Disposing EntityManager {} on {} due to coming transaction rollback", entityManager, this);
+
+                    entityManager.close();
+
+                    throw e;
                 }
-
-                // commit
-                LOG.debug("Flushing EntityManager");
-                entityManager.flush();
-                // must clear after flush
-                entityManager.clear();
 
                 return answer;
             }
