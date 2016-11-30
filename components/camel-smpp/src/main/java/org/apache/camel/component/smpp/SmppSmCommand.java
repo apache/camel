@@ -76,11 +76,19 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
     }
 
     protected SmppSplitter createSplitter(Message message) {
-        Alphabet alphabet = determineAlphabet(message);
-
-        String body = message.getBody(String.class);
 
         SmppSplitter splitter;
+        // use the splitter if provided via header
+        if (message.getHeaders().containsKey(SmppConstants.DATA_SPLITTER)){
+            splitter = message.getHeader(SmppConstants.DATA_SPLITTER, SmppSplitter.class);
+            if (null != splitter){
+                return splitter;
+            }
+            logger.warn("Invalid splitter given. Must be instance of SmppSplitter");
+        }
+        Alphabet alphabet = determineAlphabet(message);
+        String body = message.getBody(String.class);
+
         if (SmppUtils.is8Bit(alphabet)) {
             splitter = new Smpp8BitSplitter(body.length());
         } else if (alphabet == Alphabet.ALPHA_UCS2) {
