@@ -25,7 +25,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.examples.SendEmail;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.openjpa.persistence.util.SourceCode;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.context.ApplicationContext;
