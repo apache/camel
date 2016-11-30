@@ -76,17 +76,30 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
     }
 
     protected SmppSplitter createSplitter(Message message) {
-        Alphabet alphabet = determineAlphabet(message);
 
-        String body = message.getBody(String.class);
 
-        Byte nliIdentifier = message.getHeader("CamelNLIdentifier", Byte.class);
+//        Byte nliIdentifier = message.getHeader("CamelNLIdentifier", Byte.class);
 
         SmppSplitter splitter;
 
-        if (null != nliIdentifier){
-            splitter = new SmppDefaultNLISplitter(body.length(), nliIdentifier); // nli splitter
-        }else if (SmppUtils.is8Bit(alphabet)) {
+        if (message.getHeaders().containsKey("CamelSmppSplitter")){
+            splitter = message.getHeader("CamelSmppSplitter", SmppSplitter.class);
+            logger.debug("privided splitter: {}", splitter);
+            return splitter;
+        }
+
+        Alphabet alphabet = determineAlphabet(message);
+
+
+
+//        if (null != nliIdentifier){
+//            splitter = new SmppDefaultNLISplitter(message.getBody(Byte[].class).length, nliIdentifier); // nli splitter
+//            return splitter;
+//        }
+
+        String body = message.getBody(String.class);
+
+        if (SmppUtils.is8Bit(alphabet)) {
             splitter = new Smpp8BitSplitter(body.length());
         } else if (alphabet == Alphabet.ALPHA_UCS2) {
             splitter = new SmppUcs2Splitter(body.length());

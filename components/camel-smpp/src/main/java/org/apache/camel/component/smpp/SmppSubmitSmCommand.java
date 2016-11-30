@@ -120,7 +120,7 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
 
         SubmitSm template = createSubmitSmTemplate(exchange);
         byte[][] segments = splitBody(exchange.getIn());
-
+        // custom esm class
         final ESMClass esmClass = exchange.getIn().getHeader(SmppConstants.ESM_CLASS, ESMClass.class);
         if (esmClass != null) {
             template.setEsmClass(esmClass.value());

@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
  * Created by engin on 22/11/2016.
  */
 
+
 public class SmppNLISplitter extends SmppSplitter {
 
     /**
@@ -16,7 +17,6 @@ public class SmppNLISplitter extends SmppSplitter {
      * contains the length of the header must not be counted.
      */
     protected static final int UDHIE_HEADER_LENGTH = 0x08;
-
     /**
      * The real length of the UDH header.
      * <p/>
