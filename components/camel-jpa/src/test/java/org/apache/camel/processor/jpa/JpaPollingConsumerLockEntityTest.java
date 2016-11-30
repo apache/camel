@@ -16,50 +16,42 @@
  */
 package org.apache.camel.processor.jpa;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.Customer;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spring.SpringRouteBuilder;
+import org.junit.Before;
 import org.junit.Test;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 
+import javax.persistence.OptimisticLockException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + Customer.class.getName() + " x";
 
-    protected void save(final Customer customer) {
-        transactionTemplate.execute(new TransactionCallback<Object>() {
-            public Object doInTransaction(TransactionStatus status) {
-                entityManager.joinTransaction();
-                entityManager.persist(customer);
-                entityManager.flush();
-                return null;
-            }
-        });
-    }
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
 
-    protected void assertEntitiesInDatabase(int count, String entity) {
-        List<?> results = entityManager.createQuery("select o from " + entity + " o").getResultList();
-        assertEquals(count, results.size());
-    }
-
-    @Test
-    public void testPollingConsumerHandlesLockedEntity() throws Exception {
         Customer customer = new Customer();
         customer.setName("Donald Duck");
-        save(customer);
+        saveEntityInDB(customer);
 
         Customer customer2 = new Customer();
         customer2.setName("Goofy");
-        save(customer2);
+        saveEntityInDB(customer2);
 
-        assertEntitiesInDatabase(2, Customer.class.getName());
+        assertEntityInDB(2, Customer.class);
+    }
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
+    @Test
+    public void testPollingConsumerWithLock() throws Exception {
+
+        MockEndpoint mock = getMockEndpoint("mock:locked");
         mock.expectedBodiesReceived(
             "orders: 1",
             "orders: 2"
@@ -68,8 +60,27 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
         Map<String, Object> headers = new HashMap<>();
         headers.put("name", "Donald%");
 
-        template.asyncRequestBodyAndHeaders("direct:start", "message", headers);
-        template.asyncRequestBodyAndHeaders("direct:start", "message", headers);
+        template.asyncRequestBodyAndHeaders("direct:locked", "message", headers);
+        template.asyncRequestBodyAndHeaders("direct:locked", "message", headers);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testPollingConsumerWithoutLock() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:not-locked");
+        MockEndpoint errMock = getMockEndpoint("mock:error");
+
+        mock.expectedBodiesReceived("orders: 1");
+
+        errMock.expectedMessageCount(1);
+        errMock.message(0).body().isInstanceOf(OptimisticLockException.class);
+
+        Map<String, Object> headers = new HashMap<>();
+        headers.put("name", "Donald%");
+
+        template.asyncRequestBodyAndHeaders("direct:not-locked", "message", headers);
+        template.asyncRequestBodyAndHeaders("direct:not-locked", "message", headers);
 
         assertMockEndpointsSatisfied();
     }
@@ -78,18 +89,39 @@ public class JpaPollingConsumerLockEntityTest extends AbstractJpaTest {
     protected RouteBuilder createRouteBuilder() {
         return new SpringRouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .transacted()
-                    .pollEnrich().simple("jpa://" + Customer.class.getName() + "?joinTransaction=true&consumeLockEntity=true&query=select c from Customer c where c.name like '${header.name}'")
-                    .aggregationStrategy((originalExchange, jpaExchange) -> {
+
+                AggregationStrategy enrichStrategy = new AggregationStrategy() {
+                    @Override
+                    public Exchange aggregate(Exchange originalExchange, Exchange jpaExchange) {
                         Customer customer = jpaExchange.getIn().getBody(Customer.class);
                         customer.setOrderCount(customer.getOrderCount()+1);
 
                         return jpaExchange;
-                    })
-                    .to("jpa://" + Customer.class.getName() + "?joinTransaction=true&usePassedInEntityManager=true")
+                    }
+                };
+
+                onException(Exception.class)
+                    .setBody().simple("${exception}")
+                    .to("mock:error")
+                    .handled(true);
+
+                from("direct:locked")
+                    .onException(OptimisticLockException.class)
+                        .redeliveryDelay(60)
+                        .maximumRedeliveries(2)
+                    .end()
+                    .pollEnrich().simple("jpa://" + Customer.class.getName() + "?lockModeType=OPTIMISTIC_FORCE_INCREMENT&query=select c from Customer c where c.name like '${header.name}'")
+                    .aggregationStrategy(enrichStrategy)
+                    .to("jpa://" + Customer.class.getName())
                     .setBody().simple("orders: ${body.orderCount}")
-                    .to("mock:result");
+                    .to("mock:locked");
+
+                from("direct:not-locked")
+                    .pollEnrich().simple("jpa://" + Customer.class.getName() + "?query=select c from Customer c where c.name like '${header.name}'")
+                    .aggregationStrategy(enrichStrategy)
+                    .to("jpa://" + Customer.class.getName())
+                    .setBody().simple("orders: ${body.orderCount}")
+                    .to("mock:not-locked");
             }
         };
     }
