@@ -99,7 +99,7 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
         if (null != esmClass) {
             template.setEsmClass(esmClass.value());
             // multipart message
-        }else if (segments.length > 1) {
+        } else if (segments.length > 1) {
             template.setEsmClass(new ESMClass(MessageMode.DEFAULT, MessageType.DEFAULT, GSMSpecificFeature.UDHI).value());
         }
 
