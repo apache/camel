@@ -41,11 +41,11 @@ public class ExchangeAckTransaction extends PubsubAcknowledgement implements Syn
         Integer deadline = 0;
         Object configuredDeadline = exchange.getIn().getHeader(GooglePubsubConstants.ACK_DEADLINE);
 
-        if ( configuredDeadline != null && Integer.class.isInstance(configuredDeadline) ) {
+        if (configuredDeadline != null && Integer.class.isInstance(configuredDeadline)) {
             deadline = (Integer) configuredDeadline;
         }
 
-        if ( configuredDeadline != null && String.class.isInstance(configuredDeadline) ) {
+        if (configuredDeadline != null && String.class.isInstance(configuredDeadline)) {
             try {
                 deadline = Integer.valueOf((String) configuredDeadline);
             } catch (Exception e) {

@@ -65,7 +65,7 @@ public class GooglePubsubConnectionFactory {
 
     public Pubsub getMultiThreadClient(int parallelThreads) throws Exception {
 
-        PoolingHttpClientConnectionManager cm=new PoolingHttpClientConnectionManager();
+        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
         cm.setDefaultMaxPerRoute(parallelThreads);
         cm.setMaxTotal(parallelThreads);
         CloseableHttpClient httpClient = HttpClients.createMinimal(cm);
