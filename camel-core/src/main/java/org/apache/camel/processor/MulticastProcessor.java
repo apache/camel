@@ -531,7 +531,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 }
             } catch (Throwable e) {
                 // wrap in exception to explain where it failed
-                subExchange.setException(new CamelExchangeException("Parallel processing failed for number " + aggregated.get(), subExchange, e));
+                CamelExchangeException cex = new CamelExchangeException("Parallel processing failed for number " + aggregated.get(), subExchange, e);
+                subExchange.setException(cex);
+                LOG.debug(cex.getMessage(), cex);
             } finally {
                 aggregated.incrementAndGet();
             }
