@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.camel.spring.boot.health.CamelHealthAutoConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -98,17 +99,20 @@ public class SpringTypeConverterTest {
 
         @Override
         public String toString() {
-            return "Person{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                '}';
+            return "Person{"
+                + "name='" + name + '\''
+                + ", age=" + age
+                + '}';
         }
     }
 
     @Configuration
     @EnableAutoConfiguration(
         exclude = {
-            CamelAutoConfiguration.class, TypeConversionConfiguration.class, WebMvcAutoConfiguration.class
+            CamelAutoConfiguration.class,
+            TypeConversionConfiguration.class,
+            WebMvcAutoConfiguration.class,
+            CamelHealthAutoConfiguration.class
         }
     )
     public static class SpringTypeConversionConfiguration {
