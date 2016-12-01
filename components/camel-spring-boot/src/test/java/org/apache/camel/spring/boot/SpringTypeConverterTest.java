@@ -98,17 +98,19 @@ public class SpringTypeConverterTest {
 
         @Override
         public String toString() {
-            return "Person{" +
-                "name='" + name + '\'' +
-                ", age=" + age +
-                '}';
+            return "Person{"
+                + "name='" + name + '\''
+                + ", age=" + age
+                + '}';
         }
     }
 
     @Configuration
     @EnableAutoConfiguration(
         exclude = {
-            CamelAutoConfiguration.class, TypeConversionConfiguration.class, WebMvcAutoConfiguration.class
+            CamelAutoConfiguration.class, 
+            TypeConversionConfiguration.class, 
+            WebMvcAutoConfiguration.class
         }
     )
     public static class SpringTypeConversionConfiguration {
