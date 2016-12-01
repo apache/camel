@@ -28,11 +28,11 @@ import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.concurrent.TimeoutException;
 import javax.activation.DataHandler;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -334,23 +334,28 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException {
-        // 500 for internal server error
-        response.setStatus(500);
-
-        if (isTransferException()) {
-            // transfer the exception as a serialized java object
-            HttpHelper.writeObjectToServletResponse(response, exception);
-        } else {
-            // write stacktrace as plain text
+        if (exception instanceof TimeoutException) {
+            response.setStatus(HttpServletResponse.SC_GATEWAY_TIMEOUT);
             response.setContentType("text/plain");
-            PrintWriter pw = response.getWriter();
-            exception.printStackTrace(pw);
-            pw.flush();
+            response.getWriter().write("Timeout error");
+        } else {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+            if (isTransferException()) {
+                // transfer the exception as a serialized java object
+                HttpHelper.writeObjectToServletResponse(response, exception);
+            } else {
+                // write stacktrace as plain text
+                response.setContentType("text/plain");
+                PrintWriter pw = response.getWriter();
+                exception.printStackTrace(pw);
+                pw.flush();
+            }
         }
     }
 
     public void doWriteFaultResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
-        message.setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
+        message.setHeader(Exchange.HTTP_RESPONSE_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         doWriteResponse(message, response, exchange);
     }
 

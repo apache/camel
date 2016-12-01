@@ -19,7 +19,6 @@ package org.apache.camel.karaf.commands;
 import org.apache.camel.commands.RouteInfoCommand;
 import org.apache.camel.commands.StringEscape;
 import org.apache.karaf.shell.api.action.Command;
-import org.apache.karaf.shell.api.action.lifecycle.Reference;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 
 @Command(scope = "camel", name = "route-info", description = "Display information about a Camel route.")

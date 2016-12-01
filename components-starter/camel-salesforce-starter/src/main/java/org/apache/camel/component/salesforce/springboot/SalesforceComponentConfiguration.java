@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.salesforce.springboot;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata;
+import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
+import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.Action;
 import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum;
@@ -299,6 +302,13 @@ public class SalesforceComponentConfiguration {
          */
         private Map apexQueryParams;
         /**
+         * The approval request for Approval API.
+         * 
+         * @param approval
+         */
+        @NestedConfigurationProperty
+        private ApprovalRequest approval;
+        /**
          * Bulk API content type, one of XML, CSV, ZIP_XML, ZIP_CSV
          */
         private ContentType contentType;
@@ -394,6 +404,61 @@ public class SalesforceComponentConfiguration {
          * Replay IDs to start from per channel name.
          */
         private Map initialReplayIdMap;
+        /**
+         * Limit on number of returned records. Applicable to some of the API,
+         * check the Salesforce documentation.
+         * 
+         * @param limit
+         */
+        private Integer limit;
+        /**
+         * Represents the kind of action to take: Submit, Approve, or Reject.
+         * 
+         * @param actionType
+         */
+        private Action approvalActionType;
+        /**
+         * The comment to add to the history step associated with this request.
+         * 
+         * @param comments
+         */
+        private String approvalComments;
+        /**
+         * The ID of the submitter who’s requesting the approval record.
+         * 
+         * @param contextActorId
+         */
+        private String approvalContextActorId;
+        /**
+         * The ID of the item that is being acted upon.
+         * 
+         * @param contextId
+         */
+        private String approvalContextId;
+        /**
+         * If the process requires specification of the next approval, the ID of
+         * the user to be assigned the next request.
+         * 
+         * @param nextApproverIds
+         */
+        private List approvalNextApproverIds;
+        /**
+         * The developer name or ID of the process definition.
+         * 
+         * @param processDefinitionNameOrId
+         */
+        private String approvalProcessDefinitionNameOrId;
+        /**
+         * Determines whether to evaluate the entry criteria for the process
+         * (true) or not (false) if the process definition name or ID isn’t
+         * null. If the process definition name or ID isn’t specified, this
+         * argument is ignored, and standard evaluation is followed based on
+         * process order. By default, the entry criteria isn’t skipped if it’s
+         * not set by this request.
+         * 
+         * @param skipEntryCriteria
+         */
+        private Boolean approvalSkipEntryCriteria;
 
         public PayloadFormat getFormat() {
             return format;
@@ -505,6 +570,14 @@ public class SalesforceComponentConfiguration {
 
         public void setApexQueryParams(Map apexQueryParams) {
             this.apexQueryParams = apexQueryParams;
+        }
+
+        public ApprovalRequest getApproval() {
+            return approval;
+        }
+
+        public void setApproval(ApprovalRequest approval) {
+            this.approval = approval;
         }
 
         public ContentType getContentType() {
@@ -675,6 +748,72 @@ public class SalesforceComponentConfiguration {
 
         public void setInitialReplayIdMap(Map initialReplayIdMap) {
             this.initialReplayIdMap = initialReplayIdMap;
+        }
+
+        public Integer getLimit() {
+            return limit;
+        }
+
+        public void setLimit(Integer limit) {
+            this.limit = limit;
+        }
+
+        public Action getApprovalActionType() {
+            return approvalActionType;
+        }
+
+        public void setApprovalActionType(Action approvalActionType) {
+            this.approvalActionType = approvalActionType;
+        }
+
+        public String getApprovalComments() {
+            return approvalComments;
+        }
+
+        public void setApprovalComments(String approvalComments) {
+            this.approvalComments = approvalComments;
+        }
+
+        public String getApprovalContextActorId() {
+            return approvalContextActorId;
+        }
+
+        public void setApprovalContextActorId(String approvalContextActorId) {
+            this.approvalContextActorId = approvalContextActorId;
+        }
+
+        public String getApprovalContextId() {
+            return approvalContextId;
+        }
+
+        public void setApprovalContextId(String approvalContextId) {
+            this.approvalContextId = approvalContextId;
+        }
+
+        public List getApprovalNextApproverIds() {
+            return approvalNextApproverIds;
+        }
+
+        public void setApprovalNextApproverIds(List approvalNextApproverIds) {
+            this.approvalNextApproverIds = approvalNextApproverIds;
+        }
+
+        public String getApprovalProcessDefinitionNameOrId() {
+            return approvalProcessDefinitionNameOrId;
+        }
+
+        public void setApprovalProcessDefinitionNameOrId(
+                String approvalProcessDefinitionNameOrId) {
+            this.approvalProcessDefinitionNameOrId = approvalProcessDefinitionNameOrId;
+        }
+
+        public Boolean getApprovalSkipEntryCriteria() {
+            return approvalSkipEntryCriteria;
+        }
+
+        public void setApprovalSkipEntryCriteria(
+                Boolean approvalSkipEntryCriteria) {
+            this.approvalSkipEntryCriteria = approvalSkipEntryCriteria;
         }
     }
 

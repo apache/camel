@@ -91,7 +91,7 @@ public class BaseNettyTest extends CamelTestSupport {
         if (!events.isEmpty()) {
             String message = "Leaks detected while running tests: " + events;
             // Just write the message into log to help debug
-            for(LogEvent event: events) {
+            for (LogEvent event : events) {
                 LOG.info(event.getMessage().getFormattedMessage());
             }
             LogCaptureAppender.reset();

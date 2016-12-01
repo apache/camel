@@ -31,9 +31,11 @@ import static org.apache.camel.component.lumberjack.io.LumberjackConstants.VERSI
  */
 final class LumberjackSessionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(LumberjackSessionHandler.class);
+    private static final int ACK_UNSET = -1;
 
     private volatile int version = -1;
     private volatile int windowSize = 1;
+    private volatile int nextAck = ACK_UNSET;
 
     void versionRead(int version) {
         if (this.version == -1) {
@@ -50,10 +52,15 @@ final class LumberjackSessionHandler {
     void windowSizeRead(int windowSize) {
         LOG.debug("Lumberjack window size is {}", windowSize);
         this.windowSize = windowSize;
+        nextAck = ACK_UNSET;
     }
 
     void notifyMessageProcessed(ChannelHandlerContext ctx, int sequenceNumber) {
-        if (sequenceNumber == windowSize) {
+        if (nextAck == ACK_UNSET) {
+            nextAck = sequenceNumber + windowSize - 1;
+        }
+
+        if (sequenceNumber == nextAck) {
             LOG.debug("Sequence number is {}. Sending ACK", sequenceNumber);
             ByteBuf response = ctx.alloc().heapBuffer(FRAME_ACKNOWLEDGE_LENGTH, FRAME_ACKNOWLEDGE_LENGTH);
             response.writeByte(version);

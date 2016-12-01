@@ -47,9 +47,7 @@ final class CdiCamelEnvironment {
         try {
             getClassLoader(CdiCamelExtension.class).loadClass("org.apache.camel.core.osgi.OsgiCamelContextHelper");
             return true;
-        } catch (ClassNotFoundException cause) {
-            return false;
-        } catch (NoClassDefFoundError cause) {
+        } catch (ClassNotFoundException | NoClassDefFoundError cause) {
             return false;
         }
     }

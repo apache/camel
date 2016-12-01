@@ -23,8 +23,6 @@ import java.util.Map;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.DefaultDBEncoder;
-import com.mongodb.WriteResult;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.IOConverter;
 import org.bson.BSONObject;

@@ -23,6 +23,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 public class GitTestSupport extends CamelTestSupport {
@@ -74,4 +75,19 @@ public class GitTestSupport extends CamelTestSupport {
             .build();
         return repo;
     }
+
+    protected Git getGitTestRepository() throws IOException, IllegalStateException, GitAPIException {
+        return new Git(getTestRepository());
+    }
+
+    protected void validateGitLogs(Git git, String... messages) throws GitAPIException {
+        Iterable<RevCommit> logs = git.log().call();
+        int count = 0;
+        for (RevCommit rev : logs) {
+            assertEquals(messages[count], rev.getShortMessage());
+            count++;
+        }
+        assertEquals(messages.length, count);
+    }
+
 }

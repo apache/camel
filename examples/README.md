@@ -119,6 +119,11 @@ All examples have been sort by type/category
 * [camel-example-cxf-proxy](camel-example-cxf-proxy/README.md)
 * [camel-example-cxf-tomcat](camel-example-cxf-tomcat/README.md)
 
+##### Input/Output type contract
+* [camel-example-transformer-blueprint](camel-example-transformer-blueprint/README.md)
+* [camel-example-transformer-cdi](camel-example-transformer-cdi/README.md)
+* [camel-example-transformer-demo](camel-example-transformer-demo/README.md)
+
 ### Documentation
 
 They are described in detail here <http://camel.apache.org/examples.html>

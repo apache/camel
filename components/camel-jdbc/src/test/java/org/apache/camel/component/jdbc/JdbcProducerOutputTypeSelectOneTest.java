@@ -28,7 +28,6 @@ public class JdbcProducerOutputTypeSelectOneTest extends AbstractJdbcTestSupport
     @EndpointInject(uri = "mock:result")
     private MockEndpoint mock;
 
-    @SuppressWarnings({"unchecked"})
     @Test
     public void testOutputTypeSelectOne() throws Exception {
         mock.expectedMessageCount(1);

@@ -31,6 +31,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,6 +106,8 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
             rcList = getEndpoint().getKubernetesClient()
                     .replicationControllers().list();
         }
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(rcList.getItems());
     }
 
@@ -138,6 +141,8 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
             }
             rcList = replicationControllers.list();
         }
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(rcList.getItems());
         
     }
@@ -162,6 +167,8 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
         }
         rc = getEndpoint().getKubernetesClient().replicationControllers()
                 .inNamespace(namespaceName).withName(rcName).get();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(rc);
     }
 
@@ -199,6 +206,8 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
                 .endMetadata().withSpec(rcSpec).build();
         rc = getEndpoint().getKubernetesClient().replicationControllers()
                 .inNamespace(namespaceName).create(rcCreating);
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(rc);
     }
 
@@ -222,6 +231,8 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
         boolean rcDeleted = getEndpoint().getKubernetesClient()
                 .replicationControllers().inNamespace(namespaceName)
                 .withName(rcName).delete();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(rcDeleted);
     }
     
@@ -253,6 +264,7 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
                 .replicationControllers().inNamespace(namespaceName)
                 .withName(rcName).scale(replicasNumber, true);
         
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(rcScaled.getStatus().getReplicas());
     }
 }

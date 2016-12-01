@@ -36,11 +36,13 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.remote.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatResolver;
+import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
@@ -69,6 +71,7 @@ import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
@@ -1217,14 +1220,55 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void setDataFormatResolver(DataFormatResolver dataFormatResolver);
 
     /**
+     * Sets the transformers that can be referenced in the routes.
+     *
+     * @param transformers the transformers
+     */
+    void setTransformers(List<TransformerDefinition> transformers);
+
+    /**
+     * Gets the transformers that can be referenced in the routes.
+     *
+     * @return the transformers available
+     */
+    List<TransformerDefinition> getTransformers();
+
+    /**
+     * Resolve a transformer given a scheme
+     *
+     * @param model data model name.
+     * @return the resolved transformer, or <tt>null</tt> if not found
+     */
+    Transformer resolveTransformer(String model);
+
+    /**
+     * Resolve a transformer given from/to data type.
+     *
+     * @param from from data type
+     * @param to to data type
+     * @return the resolved data format, or <tt>null</tt> if not found
+     */
+    Transformer resolveTransformer(DataType from, DataType to);
+
+    /**
      * Sets the properties that can be referenced in the camel context
+     * <p/>
+     * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
+     * which are used to configure global settings on CamelContext, such as a maximum debug logging length etc.
+     * For property placeholders use {@link #resolvePropertyPlaceholders(String)} method and see more details
+     * at the <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
      *
      * @param properties properties
      */
     void setProperties(Map<String, String> properties);
 
     /**
-     * Gets the properties that can be referenced in the camel context
+     * Gets the properties that can be referenced in the camel context.
+     * <p/>
+     * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
+     * which are used to configure global settings on CamelContext, such as a maximum debug logging length etc.
+     * For property placeholders use {@link #resolvePropertyPlaceholders(String)} method and see more details
+     * at the <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
      *
      * @return the properties
      */
@@ -1232,6 +1276,11 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
      * Gets the property value that can be referenced in the camel context
+     * <p/>
+     * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
+     * which are used to configure global settings on CamelContext, such as a maximum debug logging length etc.
+     * For property placeholders use {@link #resolvePropertyPlaceholders(String)} method and see more details
+     * at the <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
      *
      * @return the string value of property
      */

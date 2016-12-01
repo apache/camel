@@ -72,7 +72,7 @@ public class AcknowledgmentSynchronizationAdapter extends SynchronizationAdapter
         }
 
         // Find the acknowledgement body
-        // TODO:  Enhance this to say whether or not the acknowlment is missing or just of an uncovertable type
+        // TODO:  Enhance this to say whether or not the acknowledgment is missing or just of an unconvertible type
         byte[] acknowledgementMessageBytes = exchange.getProperty(MLLP_ACKNOWLEDGEMENT, byte[].class);
         String acknowledgementMessageType = null;
         if (null == acknowledgementMessageBytes) {

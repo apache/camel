@@ -283,6 +283,24 @@ public class XmlConverter {
     }
 
     /**
+     * Converts the given Document to into text
+     * @param document The document to convert
+     * @param outputOptions The {@link OutputKeys} properties to control various aspects of the XML output
+     * @return The string representation of the document
+     * @throws TransformerException
+     */
+    public String toStringFromDocument(Document document, Properties outputOptions) throws TransformerException {
+        if (document == null) {
+            return null;
+        }
+
+        DOMSource source = new DOMSource(document);
+        StringWriter buffer = new StringWriter();
+        toResult(source, new StreamResult(buffer), outputOptions);
+        return buffer.toString();
+    }
+
+    /**
      * Converts the source instance to a {@link DOMSource} or returns null if the conversion is not
      * supported (making it easy to derive from this class to add new kinds of conversion).
      * @deprecated will be removed in Camel 3.0. Use the method which has 2 parameters.

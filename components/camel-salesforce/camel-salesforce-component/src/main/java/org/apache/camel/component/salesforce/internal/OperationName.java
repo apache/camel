@@ -37,6 +37,7 @@ public enum OperationName {
     QUERY_ALL("queryAll"),
     SEARCH("search"),
     APEX_CALL("apexCall"),
+    RECENT("recent"),
 
     // bulk API
     CREATE_JOB("createJob"),
@@ -61,7 +62,11 @@ public enum OperationName {
     GET_REPORT_RESULTS("getReportResults"),
 
     // limits API
-    LIMITS("limits");
+    LIMITS("limits"),
+
+    // Approval Processes and Process Rules API
+    APPROVAL("approval"),
+    APPROVALS("approvals");
 
     private final String value;
 

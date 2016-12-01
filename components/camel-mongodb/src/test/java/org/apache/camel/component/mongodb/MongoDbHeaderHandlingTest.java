@@ -18,7 +18,6 @@ package org.apache.camel.component.mongodb;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import com.mongodb.WriteResult;
 import com.mongodb.client.result.UpdateResult;
 
 import org.apache.camel.Exchange;

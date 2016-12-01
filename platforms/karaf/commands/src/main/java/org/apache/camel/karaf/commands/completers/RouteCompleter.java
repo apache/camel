@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.karaf.commands.internal.CamelControllerImpl;
-import org.apache.karaf.shell.api.action.Action;
 import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.apache.karaf.shell.api.console.CommandLine;
 import org.apache.karaf.shell.api.console.Completer;

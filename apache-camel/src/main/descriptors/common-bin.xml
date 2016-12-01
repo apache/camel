@@ -16,7 +16,6 @@
     limitations under the License.
 -->
 <component>
-  <!--<id>common-bin</id>-->
 
   <dependencySets>
     <dependencySet>
@@ -264,8 +263,19 @@
         <include>org.apache.camel:camel-zipkin</include>
         <include>org.apache.camel:camel-zipkin-starter</include>
         <include>org.apache.camel:camel-zookeeper</include>
+      </includes>
+    </dependencySet>
+
+    <dependencySet>
+      <outputDirectory>/lib/tooling</outputDirectory>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <includes>
         <include>org.apache.camel:camel-catalog</include>
         <include>org.apache.camel:camel-catalog-lucene</include>
+        <include>org.apache.camel:camel-catalog-maven</include>
+        <include>org.apache.camel:camel-catalog-provider-karaf</include>
+        <include>org.apache.camel:camel-catalog-provider-springboot</include>
         <include>org.apache.camel:camel-commands-core</include>
         <include>org.apache.camel:camel-commands-jolokia</include>
         <include>org.apache.camel:camel-commands-spring-boot</include>

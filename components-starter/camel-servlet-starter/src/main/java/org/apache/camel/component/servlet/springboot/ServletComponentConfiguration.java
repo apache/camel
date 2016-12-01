@@ -43,8 +43,11 @@ public class ServletComponentConfiguration {
     private HttpRegistry httpRegistry;
     /**
      * Whether to automatic bind multipart/form-data as attachments on the Camel
-     * Exchange. This is turn off by default as this may require servlet
-     * specific configuration to enable this when using Servlet's.
+     * Exchange. The options attachmentMultipartBinding=true and
+     * disableStreamCache=false cannot work together. Remove disableStreamCache
+     * to use AttachmentMultipartBinding. This is turn off by default as this
+     * may require servlet specific configuration to enable this when using
+     * Servlet's.
      */
     private Boolean attachmentMultipartBinding;
     /**

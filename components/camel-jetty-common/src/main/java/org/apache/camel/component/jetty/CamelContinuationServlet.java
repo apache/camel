@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeoutException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -141,7 +142,7 @@ public class CamelContinuationServlet extends CamelServlet {
                 // remember this id as expired
                 expiredExchanges.put(id, id);
                 log.warn("Continuation expired of exchangeId: {}", id);
-                response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+                consumer.getBinding().doWriteExceptionResponse(new TimeoutException(), response);
                 return;
             }
 

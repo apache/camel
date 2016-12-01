@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.sql;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

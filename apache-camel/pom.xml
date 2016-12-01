@@ -1100,6 +1100,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-bonita-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-boon-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -1221,6 +1226,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-dozer-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-drill-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -2127,6 +2137,18 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-catalog-lucene</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-catalog-maven</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-catalog-provider-karaf</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-catalog-provider-springboot</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>

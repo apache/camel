@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.netty4;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import io.netty.util.ResourceLeakDetector;
 import io.netty.util.internal.logging.InternalLoggerFactory;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * This test ensures LogCaptureAppender is configured properly

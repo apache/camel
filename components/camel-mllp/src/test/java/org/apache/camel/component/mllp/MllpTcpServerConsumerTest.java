@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.mllp;
 
-import java.net.BindException;
-import java.net.ServerSocket;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;

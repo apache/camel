@@ -16,19 +16,14 @@
  */
 package org.apache.camel.component.seda;
 
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.camel.spi.Synchronization;
-import org.apache.camel.spi.SynchronizationVetoable;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
 

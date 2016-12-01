@@ -14,27 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dropbox.dto;
 
-import org.apache.camel.Exchange;
-
-
-public abstract class DropboxResult {
-
-    protected Object resultEntries;
-
-    /**
-     * Populate the camel exchange with the results from dropbox method invocations.
-     * @param exchange
-     */
-    public abstract void populateExchange(Exchange exchange);
-
-    public Object getResultEntries()  {
-        return resultEntries;
-    }
-
-    public void setResultEntries(Object resultEntries) {
-        this.resultEntries = resultEntries;
-    }
-
-}
+/**
+ * The JAXB POJOs for the
+ * <a href="http://camel.apache.org/transformer.html">Transformers</a> used to transform message contents
+ * according to declared data types inside <a href="http://camel.apache.org/components.html">components</a>
+ */
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+package org.apache.camel.model.transformer;
