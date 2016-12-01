@@ -28,10 +28,10 @@ import org.slf4j.LoggerFactory;
 
 public abstract class PubsubAcknowledgement {
 
+    protected Logger logger;
+    
     private final String subscriptionFullName;
     private final GooglePubsubEndpoint endpoint;
-
-    protected Logger logger;
 
     public PubsubAcknowledgement(GooglePubsubEndpoint endpoint) {
         super();
