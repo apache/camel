@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.spark.enabled",
+      "description": "Enable spark component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

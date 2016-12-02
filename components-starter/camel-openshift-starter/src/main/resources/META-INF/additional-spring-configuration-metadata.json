@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.openshift.enabled",
+      "description": "Enable openshift component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

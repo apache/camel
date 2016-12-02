@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.coap.enabled",
+      "description": "Enable coap component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

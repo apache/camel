@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.xmlrpc.enabled",
+      "description": "Enable xmlrpc component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.xmlrpc.enabled",
+      "description": "Enable xmlrpc dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.language.javascript.enabled",
+      "description": "Enable javascript language",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.language.python.enabled",
+      "description": "Enable python language",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.language.php.enabled",
+      "description": "Enable php language",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.language.ruby.enabled",
+      "description": "Enable ruby language",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

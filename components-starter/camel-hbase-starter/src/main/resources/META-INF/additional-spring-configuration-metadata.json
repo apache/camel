@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.hbase.enabled",
+      "description": "Enable hbase component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}
