@@ -506,7 +506,7 @@
     <restlet-joda-time-version>2.3</restlet-joda-time-version>
     <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
     <rhino-version>1.7R2</rhino-version>
-    <ribbon-version>2.2.0</ribbon-version>
+    <ribbon-version>2.2.2</ribbon-version>
     <roaster-version>2.19.3.Final</roaster-version>
     <rome-bundle-version>1.0_3</rome-bundle-version>
     <rome-version>1.0</rome-version>
