@@ -4156,6 +4156,17 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return answer;
     }
 
+    public DataFormat createDataFormat(String name) {
+        DataFormat answer = dataFormatResolver.createDataFormat(name, this);
+
+        // inject CamelContext if aware
+        if (answer != null && answer instanceof CamelContextAware) {
+            ((CamelContextAware) answer).setCamelContext(this);
+        }
+
+        return answer;
+    }
+
     public DataFormatDefinition resolveDataFormatDefinition(String name) {
         // lookup type and create the data format from it
         DataFormatDefinition type = lookup(this, name, DataFormatDefinition.class);

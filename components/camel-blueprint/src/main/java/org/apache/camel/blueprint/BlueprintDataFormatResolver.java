@@ -19,13 +19,13 @@ package org.apache.camel.blueprint;
 import org.apache.camel.CamelContext;
 import org.apache.camel.core.osgi.OsgiDataFormatResolver;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatFactory;
 import org.apache.camel.spi.DataFormatResolver;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BlueprintDataFormatResolver extends OsgiDataFormatResolver {
-
     private static final Logger LOG = LoggerFactory.getLogger(BlueprintDataFormatResolver.class);
 
     public BlueprintDataFormatResolver(BundleContext bundleContext) {
@@ -34,16 +34,29 @@ public class BlueprintDataFormatResolver extends OsgiDataFormatResolver {
 
     @Override
     public DataFormat resolveDataFormat(String name, CamelContext context) {
-        try {
-            Object bean = context.getRegistry().lookupByName(".camelBlueprint.dataformatResolver." + name);
-            if (bean instanceof DataFormatResolver) {
-                LOG.debug("Found dataformat resolver: {} in registry: {}", name, bean);
-                return ((DataFormatResolver) bean).resolveDataFormat(name, context);
-            }
-        } catch (Exception e) {
-            LOG.trace("Ignored error looking up bean: " + name + " due: " + e.getMessage(), e);
+        DataFormat dataFormat = null;
+
+        DataFormatResolver resolver = context.getRegistry().lookupByNameAndType(".camelBlueprint.dataformatResolver." + name, DataFormatResolver.class);
+        if (resolver != null) {
+            LOG.debug("Found dataformat resolver: {} in registry: {}", name, resolver);
+            dataFormat = resolver.resolveDataFormat(name, context);
         }
-        return super.resolveDataFormat(name, context);
+
+        if (dataFormat == null) {
+            dataFormat = super.resolveDataFormat(name, context);
+        }
+
+        return dataFormat;
     }
 
+    @Override
+    public DataFormat createDataFormat(String name, CamelContext context) {
+        DataFormatFactory factory = context.getRegistry().lookupByNameAndType(".camelBlueprint.dataformatFactory." + name, DataFormatFactory.class);
+        if (factory  != null) {
+            LOG.debug("Found dataformat factory: {} in registry: {}", name, factory);
+            return factory.newInstance();
+        }
+
+        return super.createDataFormat(name, context);
+    }
 }
