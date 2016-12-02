@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.cxfrs.enabled",
+      "description": "Enable cxfrs component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.cxf.enabled",
+      "description": "Enable cxf component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

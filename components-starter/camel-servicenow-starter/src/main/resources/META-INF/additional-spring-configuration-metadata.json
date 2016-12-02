@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.servicenow.enabled",
+      "description": "Enable servicenow component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

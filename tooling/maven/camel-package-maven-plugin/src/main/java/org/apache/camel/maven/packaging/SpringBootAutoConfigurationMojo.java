@@ -16,9 +16,11 @@
  */
 package org.apache.camel.maven.packaging;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Modifier;
@@ -40,6 +42,8 @@ import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.ComponentOptionModel;
 import org.apache.camel.maven.packaging.model.DataFormatModel;
@@ -65,14 +69,21 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.PropertySource;
 import org.jboss.forge.roaster.model.util.Strings;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.condition.ConditionMessage;
+import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
+import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ConditionContext;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.type.AnnotatedTypeMetadata;
 
 import static org.apache.camel.maven.packaging.JSonSchemaHelper.getSafeValue;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
@@ -207,7 +218,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 if (hasOptions) {
                     createComponentConfigurationSource(pkg, model, overrideComponentName);
                 }
-                createComponentAutoConfigurationSource(pkg, model, aliases, hasOptions);
+                createComponentAutoConfigurationSource(pkg, model, aliases, hasOptions, overrideComponentName);
                 createComponentSpringFactorySource(pkg, model);
             }
         }
@@ -248,16 +259,16 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 int pos = model.getJavaType().lastIndexOf(".");
                 String pkg = model.getJavaType().substring(0, pos) + ".springboot";
 
-                String overrideDataformatName = null;
+                String overrideDataFormatName = null;
                 if (aliases.size() > 1) {
                     // determine component name when there are multiple ones
-                    overrideDataformatName = model.getArtifactId().replace("camel-", "");
+                    overrideDataFormatName = model.getArtifactId().replace("camel-", "");
                 }
 
                 if (hasOptions) {
-                    createDataFormatConfigurationSource(pkg, model, overrideDataformatName);
+                    createDataFormatConfigurationSource(pkg, model, overrideDataFormatName);
                 }
-                createDataFormatAutoConfigurationSource(pkg, model, aliases, hasOptions);
+                createDataFormatAutoConfigurationSource(pkg, model, aliases, hasOptions, overrideDataFormatName);
                 createDataFormatSpringFactorySource(pkg, model);
             }
         }
@@ -308,7 +319,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 if (hasOptions) {
                     createLanguageConfigurationSource(pkg, model, overrideLanguageName);
                 }
-                createLanguageAutoConfigurationSource(pkg, model, aliases, hasOptions);
+                createLanguageAutoConfigurationSource(pkg, model, aliases, hasOptions, overrideLanguageName);
                 createLanguageSpringFactorySource(pkg, model);
             }
         }
@@ -765,12 +776,15 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         writeSourceIfChanged(javaClass, fileName);
     }
 
-    private void createComponentAutoConfigurationSource(String packageName, ComponentModel model, List<String> componentAliases, boolean hasOptions) throws MojoFailureException {
+    private void createComponentAutoConfigurationSource(
+            String packageName, ComponentModel model, List<String> componentAliases, boolean hasOptions, String overrideComponentName) throws MojoFailureException {
+
         final JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
 
         int pos = model.getJavaType().lastIndexOf(".");
         String name = model.getJavaType().substring(pos + 1);
         name = name.replace("Component", "ComponentAutoConfiguration");
+
         javaClass.setPackage(packageName).setName(name);
 
         String doc = "Generated by camel-package-maven-plugin - do not edit this file!";
@@ -778,6 +792,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
         javaClass.addAnnotation(Configuration.class);
         javaClass.addAnnotation(ConditionalOnBean.class).setStringValue("type", "org.apache.camel.spring.boot.CamelAutoConfiguration");
+        javaClass.addAnnotation(Conditional.class).setLiteralValue(name + ".Condition.class");
         javaClass.addAnnotation(AutoConfigureAfter.class).setStringValue("name", "org.apache.camel.spring.boot.CamelAutoConfiguration");
 
         String configurationName = name.replace("ComponentAutoConfiguration", "ComponentConfiguration");
@@ -817,19 +832,32 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         method.addAnnotation(ConditionalOnClass.class).setLiteralValue("value", "CamelContext.class");
         method.addAnnotation(ConditionalOnMissingBean.class).setLiteralValue("value", model.getShortJavaType() + ".class");
 
+        // Generate Condition
+        javaClass.addNestedType(createConditionType(
+            javaClass,
+            "camel.component",
+            (overrideComponentName != null ? overrideComponentName : model.getScheme()).toLowerCase(Locale.US)
+        ));
+
         sortImports(javaClass);
 
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
-
         writeSourceIfChanged(javaClass, fileName);
+        writeAdditionalSpringMetaData(
+            "camel",
+            "component",
+            (overrideComponentName != null ? overrideComponentName : model.getScheme()).toLowerCase(Locale.US));
     }
 
-    private void createDataFormatAutoConfigurationSource(String packageName, DataFormatModel model, List<String> dataFormatAliases, boolean hasOptions) throws MojoFailureException {
+    private void createDataFormatAutoConfigurationSource(
+            String packageName, DataFormatModel model, List<String> dataFormatAliases, boolean hasOptions, String overrideDataFormatName) throws MojoFailureException {
+
         final JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
 
         int pos = model.getJavaType().lastIndexOf(".");
         String name = model.getJavaType().substring(pos + 1);
-        name = name.replace("DataFormat", "DataFormatAutoConfiguration");
+        name = name.replace("DataFormat", "DataFormatAutoConfiguration");        
+
         javaClass.setPackage(packageName).setName(name);
 
         String doc = "Generated by camel-package-maven-plugin - do not edit this file!";
@@ -837,6 +865,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
         javaClass.addAnnotation(Configuration.class);
         javaClass.addAnnotation(ConditionalOnBean.class).setStringValue("type", "org.apache.camel.spring.boot.CamelAutoConfiguration");
+        javaClass.addAnnotation(Conditional.class).setLiteralValue(name + ".Condition.class");
         javaClass.addAnnotation(AutoConfigureAfter.class).setStringValue("name", "org.apache.camel.spring.boot.CamelAutoConfiguration");
 
         String configurationName = name.replace("DataFormatAutoConfiguration", "DataFormatConfiguration");
@@ -869,7 +898,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             method.addParameter(configurationName, "configuration");
         }
 
-
         // Determine all the aliases
         // adding the '-dataformat' suffix to prevent collision with component names
         String[] springBeanAliases = dataFormatAliases.stream().map(alias -> alias + "-dataformat").toArray(size -> new String[size]);
@@ -878,19 +906,32 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         method.addAnnotation(ConditionalOnClass.class).setLiteralValue("value", "CamelContext.class");
         method.addAnnotation(ConditionalOnMissingBean.class).setLiteralValue("value", model.getShortJavaType() + ".class");
 
+        // Generate Condition
+        javaClass.addNestedType(createConditionType(
+            javaClass,
+            "camel.dataformat",
+            (overrideDataFormatName != null ? overrideDataFormatName : model.getName()).toLowerCase(Locale.US)
+        ));
+
         sortImports(javaClass);
 
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
-
         writeSourceIfChanged(javaClass, fileName);
+        writeAdditionalSpringMetaData(
+            "camel",
+            "dataformat",
+            (overrideDataFormatName != null ? overrideDataFormatName : model.getName()).toLowerCase(Locale.US));
     }
 
-    private void createLanguageAutoConfigurationSource(String packageName, LanguageModel model, List<String> languageAliases, boolean hasOptions) throws MojoFailureException {
+    private void createLanguageAutoConfigurationSource(
+            String packageName, LanguageModel model, List<String> languageAliases, boolean hasOptions, String overrideLanguageName) throws MojoFailureException {
+
         final JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
 
         int pos = model.getJavaType().lastIndexOf(".");
         String name = model.getJavaType().substring(pos + 1);
         name = name.replace("Language", "LanguageAutoConfiguration");
+
         javaClass.setPackage(packageName).setName(name);
 
         String doc = "Generated by camel-package-maven-plugin - do not edit this file!";
@@ -898,6 +939,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
         javaClass.addAnnotation(Configuration.class);
         javaClass.addAnnotation(ConditionalOnBean.class).setStringValue("type", "org.apache.camel.spring.boot.CamelAutoConfiguration");
+        javaClass.addAnnotation(Conditional.class).setLiteralValue(name + ".Condition.class");
         javaClass.addAnnotation(AutoConfigureAfter.class).setStringValue("name", "org.apache.camel.spring.boot.CamelAutoConfiguration");
 
         String configurationName = name.replace("LanguageAutoConfiguration", "LanguageConfiguration");
@@ -927,7 +969,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         method.addParameter("CamelContext", "camelContext");
         method.addParameter(configurationName, "configuration");
 
-
         // Determine all the aliases
         // adding the '-language' suffix to prevent collision with component names
         String[] springBeanAliases = languageAliases.stream().map(alias -> alias + "-language").toArray(size -> new String[size]);
@@ -936,11 +977,21 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         method.addAnnotation(ConditionalOnClass.class).setLiteralValue("value", "CamelContext.class");
         method.addAnnotation(ConditionalOnMissingBean.class).setLiteralValue("value", model.getShortJavaType() + ".class");
 
+        // Generate Condition
+        javaClass.addNestedType(createConditionType(
+            javaClass,
+            "camel.language",
+            (overrideLanguageName != null ? overrideLanguageName : model.getName()).toLowerCase(Locale.US)
+        ));
+
         sortImports(javaClass);
 
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
-
         writeSourceIfChanged(javaClass, fileName);
+        writeAdditionalSpringMetaData(
+            "camel",
+            "language",
+            (overrideLanguageName != null ? overrideLanguageName : model.getName()).toLowerCase(Locale.US));
     }
 
     private void createComponentSpringFactorySource(String packageName, ComponentModel model) throws MojoFailureException {
@@ -1442,6 +1493,52 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
     }
 
+    private void writeAdditionalSpringMetaData(String prefix, String type, String name) throws MojoFailureException {
+        String fullQualifiedName = prefix + "." + type + "." + name + "." + "enabled";
+        String fileName = "META-INF/additional-spring-configuration-metadata.json";
+        File target = new File(SpringBootHelper.starterResourceDir(baseDir, project.getArtifactId()), fileName);
+
+        deleteFileOnMainArtifact(target);
+
+        try {
+            Gson gson = new GsonBuilder().setPrettyPrinting().create();
+            Map<String, Object> map = null;
+            List<Map<String, Object>> properties = null;
+
+            if (target.exists()) {
+                BufferedReader br = new BufferedReader(new FileReader(target));
+                map = gson.fromJson(br, Map.class);
+
+                properties = (List<Map<String, Object>>)map.get("properties");
+                if (properties != null && properties.stream().anyMatch(m -> fullQualifiedName.equals(m.get("name")))) {
+                    getLog().debug("No changes to existing file: " + target);
+                    return;
+                }
+            }
+
+            Map<String, Object> meta = new HashMap();
+            meta.put("name", fullQualifiedName);
+            meta.put("type", "java.lang.Boolean");
+            meta.put("defaultValue", true);
+            meta.put("description", "Enable " + name + " " + type);
+
+            if (properties == null) {
+                properties = new ArrayList<>(1);
+            }
+
+            if (map == null) {
+                map = new HashMap();
+            }
+
+            properties.add(meta);
+            map.put("properties", properties);
+
+            FileUtils.write(target, gson.toJson(map));
+        } catch (Exception e) {
+            throw new MojoFailureException("IOError with file " + target, e);
+        }
+    }
+
     private void deleteFileOnMainArtifact(File starterFile) {
         if (!DELETE_FILES_ON_MAIN_ARTIFACTS) {
             return;
@@ -1455,6 +1552,49 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 throw new IllegalStateException("Cannot delete file " + mainArtifactFile);
             }
         }
+    }
+
+    private JavaClassSource createConditionType(JavaClassSource parentClass, String prefix, String type) {
+        parentClass.addImport(ConditionMessage.class);
+        parentClass.addImport(ConditionContext.class);
+        parentClass.addImport(ConditionOutcome.class);
+        parentClass.addImport(RelaxedPropertyResolver.class);
+        parentClass.addImport(AnnotatedTypeMetadata.class);
+        parentClass.addImport(SpringBootCondition.class);
+
+        JavaClassSource condition = Roaster.create(JavaClassSource.class);
+        condition.setName("Condition");
+        condition.extendSuperType(SpringBootCondition.class);
+        condition.setPublic();
+        condition.setStatic(true);
+
+        String fullQualifiedType = prefix.endsWith(".") ? prefix +  type : prefix + "." + type;
+
+        MethodSource<JavaClassSource> isEnabled = condition.addMethod();
+        isEnabled.setName("isEnabled");
+        isEnabled.setPrivate();
+        isEnabled.addParameter(ConditionContext.class, "context");
+        isEnabled.addParameter(String.class, "prefix");
+        isEnabled.addParameter(boolean.class, "defaultValue");
+        isEnabled.setReturnType(boolean.class);
+        isEnabled.setBody(new StringBuilder()
+            .append("RelaxedPropertyResolver resolver = new RelaxedPropertyResolver(context.getEnvironment(), prefix);\n")
+            .append("return resolver.getProperty(\"enabled\", Boolean.class, defaultValue);")
+            .toString()
+        );
+
+        MethodSource<JavaClassSource> matchMethod = condition.getMethod("getMatchOutcome", ConditionContext.class, AnnotatedTypeMetadata.class);
+        matchMethod.setBody(new StringBuilder()
+            .append("boolean groupEnabled = isEnabled(conditionContext, \"").append(prefix).append(".\", true);\n")
+            .append("ConditionMessage.Builder message = ConditionMessage.forCondition(\"").append(fullQualifiedType).append("\");\n")
+            .append("if (isEnabled(conditionContext, \"").append(fullQualifiedType).append(".\", groupEnabled)) {\n")
+            .append("    return ConditionOutcome.match(message.because(\"enabled\"));\n")
+            .append("}\n")
+            .append("return ConditionOutcome.noMatch(message.because(\"not enabled\"));\n")
+            .toString()
+        );
+
+        return condition;
     }
 
 }

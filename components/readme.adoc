@@ -372,7 +372,7 @@ Components
 | link:camel-netty-http/src/main/docs/netty-http-component.adoc[Netty HTTP] (camel-netty-http) +
 `netty-http:protocol:host:port/path` | *deprecated* Netty HTTP server and client using the Netty 3.x library.
 
-| link:camel-netty4/src/main/docs/netty4-component.adoc[Netty4] (camel-netty4) +
+| link:null/src/main/docs/netty4-component.adoc[Netty4] (null) +
 `netty4:protocol:host:port` | Socket level networking using TCP or UDP with the Netty 4.x library.
 
 | link:camel-netty4-http/src/main/docs/netty4-http-component.adoc[Netty4 HTTP] (camel-netty4-http) +
@@ -477,7 +477,7 @@ Components
 | link:camel-spring-batch/src/main/docs/spring-batch-component.adoc[Spring Batch] (camel-spring-batch) +
 `spring-batch:jobName` | The spring-batch component allows to send messages to Spring Batch for further processing.
 
-| link:camel-spring/src/main/docs/spring-event-component.adoc[Spring Event] (camel-spring) +
+| link:null/src/main/docs/spring-event-component.adoc[Spring Event] (null) +
 `spring-event:name` | The spring-event component allows to listen for Spring Application Events.
 
 | link:camel-spring-integration/src/main/docs/spring-integration-component.adoc[Spring Integration] (camel-spring-integration) +

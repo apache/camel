@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.jt400.enabled",
+      "description": "Enable jt400 component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

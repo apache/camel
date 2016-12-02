@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.disruptor.enabled",
+      "description": "Enable disruptor component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.disruptor-vm.enabled",
+      "description": "Enable disruptor-vm component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}
