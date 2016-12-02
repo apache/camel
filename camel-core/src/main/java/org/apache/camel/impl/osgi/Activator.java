@@ -345,7 +345,18 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             this.dataformats = dataformats;
         }
 
+        @Override
         public DataFormat resolveDataFormat(String name, CamelContext context) {
+            DataFormat dataFormat = createInstance(name, dataformats.get(name), context);
+            if (dataFormat == null) {
+                dataFormat = createDataFormat(name, context);
+            }
+
+            return dataFormat;
+        }
+
+        @Override
+        public DataFormat createDataFormat(String name, CamelContext context) {
             return createInstance(name, dataformats.get(name), context);
         }
 
@@ -353,6 +364,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             return null;
         }
 
+        @Override
         public void register() {
             doRegister(DataFormatResolver.class, "dataformat", dataformats.keySet());
         }

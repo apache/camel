@@ -19,6 +19,7 @@ package org.apache.camel.util;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatFactory;
 import org.apache.camel.spi.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,8 @@ public final class ResolverHelper {
     public static final String COMPONENT_FALLBACK_SUFFIX = "-component";
 
     public static final String DATA_FORMAT_FALLBACK_SUFFIX = "-dataformat";
+
+    public static final String DATA_FORMAT_FACTORY_FALLBACK_SUFFIX = "-dataformat-factory";
 
     public static final String LANGUAGE_FALLBACK_SUFFIX = "-language";
 
@@ -83,6 +86,22 @@ public final class ResolverHelper {
 
         if (bean != null) {
             LOG.debug("Found DataFormat with incompatible class: {}", bean.getClass().getName());
+        }
+        return null;
+    }
+
+    public static DataFormatFactory lookupDataFormatFactoryInRegistryWithFallback(CamelContext context, String name) {
+        return lookupDataFormatFactoryInRegistryWithFallback(context, name, EXCEPTION_HANDLER);
+    }
+
+    public static DataFormatFactory lookupDataFormatFactoryInRegistryWithFallback(CamelContext context, String name, LookupExceptionHandler exceptionHandler) {
+        Object bean = lookupInRegistry(context, DataFormatFactory.class, false, exceptionHandler, name, name + DATA_FORMAT_FACTORY_FALLBACK_SUFFIX);
+        if (bean instanceof DataFormatFactory) {
+            return (DataFormatFactory) bean;
+        }
+
+        if (bean != null) {
+            LOG.debug("Found DataFormatFactory with incompatible class: {}", bean.getClass().getName());
         }
         return null;
     }

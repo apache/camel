@@ -885,29 +885,30 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addImport("org.apache.camel.CamelContextAware");
         javaClass.addImport(model.getJavaType());
         javaClass.addImport("org.apache.camel.CamelContext");
+        javaClass.addImport("org.apache.camel.RuntimeCamelException");
+        javaClass.addImport("org.apache.camel.spi.DataFormat");
+        javaClass.addImport("org.apache.camel.spi.DataFormatFactory");
 
         String body = createDataFormatBody(model.getShortJavaType(), hasOptions);
-        String methodName = "configure" + model.getShortJavaType();
+        String methodName = "configure" + model.getShortJavaType() + "Factory";
 
         MethodSource<JavaClassSource> method = javaClass.addMethod()
                 .setName(methodName)
                 .setPublic()
                 .setBody(body)
-                .setReturnType(model.getShortJavaType())
-                .addThrows(Exception.class);
+                .setReturnType("org.apache.camel.spi.DataFormatFactory");
 
-        method.addParameter("CamelContext", "camelContext");
+        method.addParameter("CamelContext", "camelContext").setFinal(true);
 
         if (hasOptions) {
-            method.addParameter(configurationName, "configuration");
+            method.addParameter(configurationName, "configuration").setFinal(true);
         }
 
         // Determine all the aliases
         // adding the '-dataformat' suffix to prevent collision with component names
-        String[] springBeanAliases = dataFormatAliases.stream().map(alias -> alias + "-dataformat").toArray(size -> new String[size]);
+        String[] springBeanAliases = dataFormatAliases.stream().map(alias -> alias + "-dataformat-factory").toArray(size -> new String[size]);
 
         method.addAnnotation(Bean.class).setStringArrayValue("name", springBeanAliases);
-        method.addAnnotation(Scope.class).setStringValue("prototype");
         method.addAnnotation(ConditionalOnClass.class).setLiteralValue("value", "CamelContext.class");
         method.addAnnotation(ConditionalOnMissingBean.class).setLiteralValue("value", model.getShortJavaType() + ".class");
 
@@ -1059,22 +1060,29 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
     private static String createDataFormatBody(String shortJavaType, boolean hasOptions) {
         StringBuilder sb = new StringBuilder();
-        sb.append(shortJavaType).append(" dataformat = new ").append(shortJavaType).append("();").append("\n");
-        sb.append("if (CamelContextAware.class.isAssignableFrom(").append(shortJavaType).append(".class)) {\n");
-        sb.append("    CamelContextAware contextAware = CamelContextAware.class.cast(dataformat);\n");
-        sb.append("    if (contextAware != null) {\n");
-        sb.append("        contextAware.setCamelContext(camelContext);\n");
-        sb.append("    }\n");
-        sb.append("}\n");
+        sb.append("return new DataFormatFactory() {\n");
+        sb.append("    public DataFormat newInstance() {\n");
+        sb.append("        ").append(shortJavaType).append(" dataformat = new ").append(shortJavaType).append("();").append("\n");
+        sb.append("        if (CamelContextAware.class.isAssignableFrom(").append(shortJavaType).append(".class)) {\n");
+        sb.append("            CamelContextAware contextAware = CamelContextAware.class.cast(dataformat);\n");
+        sb.append("            if (contextAware != null) {\n");
+        sb.append("                contextAware.setCamelContext(camelContext);\n");
+        sb.append("            }\n");
+        sb.append("        }\n");
         if (hasOptions) {
             sb.append("\n");
-            sb.append("Map<String, Object> parameters = new HashMap<>();\n");
-            sb.append("IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
-            sb.append("\n");
-            sb.append("IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), dataformat, parameters);\n");
+            sb.append("        try {\n");
+            sb.append("            Map<String, Object> parameters = new HashMap<>();\n");
+            sb.append("            IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
+            sb.append("            IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), dataformat, parameters);\n");
+            sb.append("        } catch (Exception e) {\n");
+            sb.append("            throw new RuntimeCamelException(e);\n");
+            sb.append("        }\n");
         }
         sb.append("\n");
-        sb.append("return dataformat;");
+        sb.append("        return dataformat;\n");
+        sb.append("    }\n");
+        sb.append("};\n");
         return sb.toString();
     }
 

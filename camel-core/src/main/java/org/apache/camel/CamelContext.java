@@ -1206,6 +1206,14 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     DataFormat resolveDataFormat(String name);
 
     /**
+     * Creates the given data format given its name.
+     *
+     * @param name the data format name or a reference to a data format factory in the {@link Registry}
+     * @return the resolved data format, or <tt>null</tt> if not found
+     */
+    DataFormat createDataFormat(String name);
+
+    /**
      * Resolve a data format definition given its name
      *
      * @param name the data format definition name or a reference to it in the {@link Registry}
