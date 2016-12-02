@@ -482,10 +482,12 @@ String value
 String value
 
 |in |For matching if in a set of values, each element must be separated by
-comma.
+comma. If you want to include an empty value, then it must be defined using double comma, eg ',,bronze,silver,gold', which
+is a set of four values with an empty value and then the three medals.
 
 |not in |For matching if not in a set of values, each element must be separated
-by comma.
+by comma. If you want to include an empty value, then it must be defined using double comma, eg ',,bronze,silver,gold', which
+is a set of four values with an empty value and then the three medals.
 
 |is |For matching if the left hand side type is an instanceof the value.
 
