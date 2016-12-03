@@ -14,40 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.openstack;
+package org.apache.camel.component.openstack.keystone.producer;
 
-import static org.mockito.Mockito.when;
+import org.apache.camel.component.openstack.common.AbstractOpenstackEndpoint;
+import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultMessage;
-
-import org.junit.Before;
-import org.junit.runner.RunWith;
-
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.openstack4j.api.OSClient;
 
-import java.io.IOException;
 
-@RunWith(MockitoJUnitRunner.class)
-public abstract class AbstractProducerTestSupport {
+public abstract class AbstractKeystoneProducer extends AbstractOpenstackProducer {
 
-	@Mock
-	protected OSClient.OSClientV3 client;
+	OSClient.OSClientV3 osV3Client;
 
-	@Mock
-	protected Exchange exchange;
-
-	protected Message msg;
-
-	protected Producer producer;
-
-	@Before
-	public void before() throws IOException {
-		msg  = new DefaultMessage();
-		when(exchange.getIn()).thenReturn(msg);
+	public AbstractKeystoneProducer(AbstractOpenstackEndpoint endpoint, OSClient.OSClientV3 client) {
+		super(endpoint, client);
+		osV3Client = client;
 	}
 }
