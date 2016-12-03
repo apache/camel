@@ -36,13 +36,8 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-openstack</artifactId>
       <version>${project.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
+    <!--START OF GENERATED CODE-->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core-starter</artifactId>
@@ -51,5 +46,6 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-boot-starter</artifactId>
     </dependency>
+    <!--END OF GENERATED CODE-->
   </dependencies>
 </project>

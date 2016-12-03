@@ -36,6 +36,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.openstack4j.api.Builders;
 import org.openstack4j.model.common.ActionResponse;
+import org.openstack4j.model.network.IPVersionType;
 import org.openstack4j.model.network.Subnet;
 
 import java.util.ArrayList;
@@ -71,6 +72,7 @@ public class SubnetProducerTest extends NeutronProducerTestSupport {
 		msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.CREATE);
 		msg.setHeader(NeutronConstants.NAME, dummySubnet.getName());
 		msg.setHeader(NeutronConstants.NETWORK_ID , dummySubnet.getNetworkId());
+		msg.setHeader(NeutronConstants.IP_VERSION, IPVersionType.V4);
 
 		producer.process(exchange);
 

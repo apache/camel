@@ -16,11 +16,13 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.apache.camel.component.openstack.swift.springboot.SwiftComponentAutoConfiguration,\
 org.apache.camel.component.openstack.glance.springboot.GlanceComponentAutoConfiguration,\
 org.apache.camel.component.openstack.neutron.springboot.NeutronComponentAutoConfiguration,\
 org.apache.camel.component.openstack.nova.springboot.NovaComponentAutoConfiguration,\
 org.apache.camel.component.openstack.cinder.springboot.CinderComponentAutoConfiguration,\
 org.apache.camel.component.openstack.keystone.springboot.KeystoneComponentAutoConfiguration
+
 
 
 

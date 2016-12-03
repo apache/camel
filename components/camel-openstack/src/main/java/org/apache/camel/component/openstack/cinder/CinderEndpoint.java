@@ -83,7 +83,7 @@ public class CinderEndpoint extends AbstractOpenstackEndpoint {
 	}
 
 	/**
-	 * OpenStack Nova subsystem
+	 * OpenStack Cinder subsystem
 	 */
 	public void setSubsystem(String subsystem) {
 		this.subsystem = subsystem;

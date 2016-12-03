@@ -94,7 +94,6 @@ public class DomainProducer extends AbstractKeystoneProducer {
 		checkFailure(response, msg, "Delete domain" + id);
 	}
 
-	//TODO:
 	private Domain messageToDomain(Message message) {
 		Domain domain = message.getBody(Domain.class);
 		if(domain == null) {

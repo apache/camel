@@ -26,10 +26,9 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-
 import org.openstack4j.core.transport.Config;
 
-@UriEndpoint(scheme = "openstack-neutron", title = "OpenStack-Neutron", syntax = "openstack-neutron:host", label = "cloud")
+@UriEndpoint(scheme = "openstack-neutron", title = "OpenStack-Neutron", syntax = "openstack-neutron:host", label = "cloud, virtualization")
 public class NeutronEndpoint extends AbstractOpenstackEndpoint {
 
 	@UriPath
@@ -89,7 +88,7 @@ public class NeutronEndpoint extends AbstractOpenstackEndpoint {
 	}
 
 	/**
-	 * OpenStack Nova subsystem
+	 * OpenStack Neutron subsystem
 	 */
 	public void setSubsystem(String subsystem) {
 		this.subsystem = subsystem;

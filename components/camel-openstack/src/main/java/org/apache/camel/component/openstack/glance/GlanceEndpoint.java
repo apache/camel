@@ -22,10 +22,9 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-
 import org.openstack4j.core.transport.Config;
 
-@UriEndpoint(scheme = "openstack-glance", title = "OpenStack-Glance", syntax = "openstack-glance:host", label = "cloud")
+@UriEndpoint(scheme = "openstack-glance", title = "OpenStack-Glance", syntax = "openstack-glance:host", label = "cloud, virtualization")
 public class GlanceEndpoint extends AbstractOpenstackEndpoint {
 
 	@UriPath
