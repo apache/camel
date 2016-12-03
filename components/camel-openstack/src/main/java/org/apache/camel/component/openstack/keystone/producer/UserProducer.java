@@ -57,7 +57,7 @@ public class UserProducer extends AbstractKeystoneProducer {
 				doDelete(exchange);
 				break;
 			default:
-				throw new IllegalArgumentException("Unsuproutered operation " + operation);
+				throw new IllegalArgumentException("Unsupported operation " + operation);
 		}
 	}
 

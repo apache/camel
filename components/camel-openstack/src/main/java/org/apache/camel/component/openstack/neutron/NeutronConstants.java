@@ -38,6 +38,9 @@ public final class  NeutronConstants extends OpenstackConstants{
 	//subnet
 	public static final String ENABLE_DHCP = "enableDHCP";
 	public static final String GATEWAY = "gateway";
+	public static final String IP_VERSION = "ipVersion";
+	public static final String CIDR = "cidr";
+	public static final String SUBNET_POOL = "subnetPools";
 
 	//port
 	public static final String DEVICE_ID = "deviceId";

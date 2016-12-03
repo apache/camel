@@ -26,8 +26,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
+import org.openstack4j.model.network.IPVersionType;
 import org.openstack4j.model.network.Subnet;
 import org.openstack4j.model.network.builder.SubnetBuilder;
+import org.openstack4j.openstack.networking.domain.NeutronPool;
 
 import java.util.List;
 import java.util.Map;
@@ -86,7 +88,6 @@ public class SubnetProducer extends AbstractOpenstackProducer {
 	}
 
 
-	//TODO: more headers
 	private Subnet messageToSubnet(Message message) {
 		Subnet subnet = message.getBody(Subnet.class);
 		if(subnet == null) {
@@ -95,6 +96,20 @@ public class SubnetProducer extends AbstractOpenstackProducer {
 
 			ObjectHelper.notEmpty(message.getHeader(NeutronConstants.NAME, String.class), "Name");
 			builder.name(message.getHeader(NeutronConstants.NAME, String.class));
+
+			ObjectHelper.notEmpty(message.getHeader(NeutronConstants.NETWORK_ID, String.class), "Network ID");
+				builder.networkId(message.getHeader(NeutronConstants.NETWORK_ID, String.class));
+
+			ObjectHelper.notNull(message.getHeader(NeutronConstants.IP_VERSION, IPVersionType.class), "IP version");
+			builder.ipVersion(message.getHeader(NeutronConstants.IP_VERSION, IPVersionType.class));
+
+			if(headers.containsKey(NeutronConstants.CIDR))
+				builder.cidr(message.getHeader(NeutronConstants.CIDR, String.class));
+
+			if(headers.containsKey(NeutronConstants.SUBNET_POOL)) {
+				final NeutronPool pool =  message.getHeader(NeutronConstants.SUBNET_POOL, NeutronPool.class);
+				builder.addPool(pool.getStart(), pool.getEnd());
+			}
 
 			if(headers.containsKey(NeutronConstants.NETWORK_ID))
 				builder.networkId(message.getHeader(NeutronConstants.NETWORK_ID, String.class));
