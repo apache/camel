@@ -24,10 +24,9 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-
 import org.openstack4j.core.transport.Config;
 
-@UriEndpoint(scheme = "openstack-swift", title = "OpenStack-Swift", syntax = "openstack-swift:host", label = "cloud")
+@UriEndpoint(scheme = "openstack-swift", title = "OpenStack-Swift", syntax = "openstack-swift:host", label = "cloud, virtualization")
 public class SwiftEndpoint extends AbstractOpenstackEndpoint {
 
 	@UriPath
@@ -84,7 +83,7 @@ public class SwiftEndpoint extends AbstractOpenstackEndpoint {
 	}
 
 	/**
-	 * OpenStack Nova subsystem
+	 * OpenStack Swift subsystem
 	 */
 	public void setSubsystem(String subsystem) {
 		this.subsystem = subsystem;

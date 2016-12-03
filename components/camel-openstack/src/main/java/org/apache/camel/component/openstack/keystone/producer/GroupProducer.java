@@ -66,7 +66,7 @@ public class GroupProducer extends AbstractKeystoneProducer {
 				doRemoveUserFromGroup(exchange);
 				break;
 			default:
-				throw new IllegalArgumentException("Unsupgrouped operation " + operation);
+				throw new IllegalArgumentException("Unsupported operation " + operation);
 		}
 	}
 

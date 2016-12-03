@@ -1,1 +1,1 @@
-class=org.apache.camel.component.openstack
+class=org.apache.camel.component.openstack.swift.SwiftComponent

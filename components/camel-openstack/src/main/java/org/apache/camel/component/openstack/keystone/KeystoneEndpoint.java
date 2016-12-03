@@ -89,7 +89,7 @@ public class KeystoneEndpoint extends AbstractOpenstackEndpoint {
 	}
 
 	/**
-	 * OpenStack Nova subsystem
+	 * OpenStack Keystone subsystem
 	 */
 	public void setSubsystem(String subsystem) {
 		this.subsystem = subsystem;

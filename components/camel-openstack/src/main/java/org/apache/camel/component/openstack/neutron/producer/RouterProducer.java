@@ -126,7 +126,6 @@ public class RouterProducer extends AbstractOpenstackProducer {
 		msg.setBody(routerInterface);
 	}
 
-	//TODO: more headers?
 	private Router messageToRouter(Message message) {
 		Router router = message.getBody(Router.class);
 
