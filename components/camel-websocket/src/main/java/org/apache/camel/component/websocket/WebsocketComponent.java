@@ -393,10 +393,7 @@ public class WebsocketComponent extends UriEndpointComponent {
             }
 
             if (resources[0].equals("classpath")) {
-                // Does not work when deployed as a bundle
-                // context.setBaseResource(new JettyClassPathResource(getCamelContext().getClassResolver(), resources[1]));
-                URL url = this.getCamelContext().getClassResolver().loadResourceAsURL(resources[1]);
-                context.setBaseResource(Resource.newResource(url));
+                context.setBaseResource(new JettyClassPathResource(getCamelContext().getClassResolver(), resources[1]));
             } else if (resources[0].equals("file")) {
                 context.setBaseResource(Resource.newResource(resources[1]));
             }
