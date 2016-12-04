@@ -40,6 +40,9 @@ import org.apache.camel.component.twitter.producer.UserProducer;
 import twitter4j.User;
 
 public final class TwitterHelper {
+    private static final Pattern TWITTER_SCHEMA_PATTERN = Pattern.compile("twitter:(//)*");
+    private static final Pattern TWITTER_OPTIONS_PATTERN = Pattern.compile("\\?.*");
+
     private TwitterHelper() {
     }
 
@@ -151,11 +154,8 @@ public final class TwitterHelper {
     }
 
     private static String[] splitUri(String uri) {
-        Pattern p1 = Pattern.compile("twitter:(//)*");
-        Pattern p2 = Pattern.compile("\\?.*");
-
-        uri = p1.matcher(uri).replaceAll("");
-        uri = p2.matcher(uri).replaceAll("");
+        uri = TWITTER_SCHEMA_PATTERN.matcher(uri).replaceAll("");
+        uri = TWITTER_OPTIONS_PATTERN.matcher(uri).replaceAll("");
 
         return uri.split("/");
     }

@@ -36,7 +36,7 @@ import org.apache.camel.util.URISupport;
 
 public class SparkComponent extends UriEndpointComponent implements RestConsumerFactory, RestApiConsumerFactory {
 
-    private final Pattern pattern = Pattern.compile("\\{(.*?)\\}");
+    private static final Pattern pattern = Pattern.compile("\\{(.*?)\\}");
 
     private int port = 4567;
     private String ipAddress;
