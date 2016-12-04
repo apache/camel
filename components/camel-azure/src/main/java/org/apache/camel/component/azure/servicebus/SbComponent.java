@@ -63,14 +63,12 @@ public class SbComponent extends UriEndpointComponent {
         }
 
         if (remaining.contains("/")) {
-            String[] parts = remaining.split("/");
-            if (parts.length != 2) {
-                throw new IllegalArgumentException("1.Endpoint must be in format <sasKeyName>:<sasKey>@<namespace>.<serviceBusRootUri>/<entities>.");
-            }
-            configuration.setEntities(toEntityType(parts[1]));
-
             if (remaining.contains("@")) {
-                String[] siteParts = parts[0].split("@");
+                String[] siteParts = remaining.split("@");
+                String[] parts = siteParts[1].split("/");
+                if (parts.length != 2) {
+                    throw new IllegalArgumentException("1.Endpoint must be in format <sasKeyName>:<sasKey>@<namespace>.<serviceBusRootUri>/<entities>.");
+                }
                 if (siteParts.length != 2) {
                     throw new IllegalArgumentException("2.Endpoint must be in format <sasKeyName>:<sasKey>@<namespace>.<serviceBusRootUri>.");
                 }
@@ -78,15 +76,16 @@ public class SbComponent extends UriEndpointComponent {
                 if (sasParts.length != 2) {
                     throw new IllegalArgumentException("3.Endpoint must be in format <sasKeyName>:<sasKey>@<namespace>.<serviceBusRootUri>.");
                 }
+                configuration.setEntities(toEntityType(parts[1]));
 
                 configuration.setSasKeyName(sasParts[0]);
                 configuration.setSasKey(sasParts[1]);
-                String[] domainParts = siteParts[1].split("\\.");
+                String[] domainParts = parts[0].split("\\.");
                 if (domainParts.length < 2) {
                     throw new IllegalArgumentException("4.Endpoint must be in format <sasKeyName>:<sasKey>@<namespace>.<serviceBusRootUri>.");
                 }
                 configuration.setNamespace(domainParts[0]);
-                configuration.setServiceBusRootUri(siteParts[1].substring(domainParts[0].length()));
+                configuration.setServiceBusRootUri(parts[0].substring(domainParts[0].length()));
 
             } else {
                 throw new IllegalArgumentException("5.Endpoint must be in format <sasKeyName>:<sasKey>@<namespace>.<serviceBusRootUri>.");

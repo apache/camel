@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>camel-azure</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <version>2.18.0-SNAPSHOT</version>
 
     <name>Camel :: Azure</name>
@@ -20,6 +20,12 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <camel.osgi.export.pkg>org.apache.camel.component.azure.*</camel.osgi.export.pkg>
+        <camel.osgi.export.service>
+          org.apache.camel.spi.ComponentResolver;component=azure-sb,
+          org.apache.camel.spi.ComponentResolver;component=azure-storage-queue
+        </camel.osgi.export.service>
     </properties>
 
     <dependencies>
