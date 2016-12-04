@@ -28,7 +28,7 @@ import static org.apache.camel.component.dropbox.util.DropboxConstants.DROPBOX_F
 
 public final class DropboxConfigurationValidator {
 
-    private static final Pattern pattern = Pattern.compile("/*?(\\S+)/*?", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PATTERN = Pattern.compile("/*?(\\S+)/*?", Pattern.CASE_INSENSITIVE);
 
     private DropboxConfigurationValidator() { }
 
@@ -117,7 +117,7 @@ public final class DropboxConfigurationValidator {
     }
 
     private static void validatePathInUnix(String path) throws DropboxException {
-        Matcher matcher = pattern.matcher(path);
+        Matcher matcher = PATTERN.matcher(path);
         if (!matcher.matches()) {
             throw new DropboxException(path + " is not a valid path, must be in UNIX form!");
         }

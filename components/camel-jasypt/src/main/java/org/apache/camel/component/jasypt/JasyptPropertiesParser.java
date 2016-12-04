@@ -39,7 +39,7 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
     public static final String JASYPT_SUFFIX_TOKEN = ")";
 
     private static final String JASYPT_REGEX = JASYPT_PREFIX_TOKEN.replace("(", "\\(") + "(.+?)" + JASYPT_SUFFIX_TOKEN.replace(")", "\\)");
-    private static final Pattern pattern = Pattern.compile(JASYPT_REGEX);
+    private static final Pattern PATTERN = Pattern.compile(JASYPT_REGEX);
 
     private StringEncryptor encryptor;
     private String password;
@@ -53,7 +53,7 @@ public class JasyptPropertiesParser extends DefaultPropertiesParser {
         log.trace(format("Parsing property '%s=%s'", key, value));
         if (value != null) {
             initEncryptor();
-            Matcher matcher = pattern.matcher(value);
+            Matcher matcher = PATTERN.matcher(value);
             while (matcher.find()) {
                 log.trace(format("Decrypting part '%s'", matcher.group(0)));
                 String decrypted = encryptor.decrypt(matcher.group(1));
