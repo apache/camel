@@ -29,7 +29,7 @@ To run the example on the karaf container
 
 #### Step 2: Deploy
 
-    feature:repo-add feature:repo-add mvn:org.apache.camel/camel-example-transformer-blueprint/${version}/xml/features
+    feature:repo-add mvn:org.apache.camel/camel-example-transformer-blueprint/${version}/xml/features
     feature:install camel-example-transformer-blueprint
 
 #### Step 3: Check the output
