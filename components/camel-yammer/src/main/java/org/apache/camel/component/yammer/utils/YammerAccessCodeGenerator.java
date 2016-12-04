@@ -24,11 +24,9 @@ import org.scribe.model.Token;
 import org.scribe.model.Verifier;
 import org.scribe.oauth.OAuthService;
 
-
 /**
  * Use this to get an access token from yammer. You will need the 
  * consumer key and secret key for your app registered with yammer to do this.
- *
  */
 public final class YammerAccessCodeGenerator {
 
