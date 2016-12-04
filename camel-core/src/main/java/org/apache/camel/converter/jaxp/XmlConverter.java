@@ -46,6 +46,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
@@ -86,6 +87,7 @@ public class XmlConverter {
     public static final String DOCUMENT_BUILDER_FACTORY_FEATURE = "org.apache.camel.xmlconverter.documentBuilderFactory.feature";
     public static String defaultCharset = ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
 
+    private static final String JDK_FALLBACK_TRANSFORMER_FACTORY = "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
     private static final Logger LOG = LoggerFactory.getLogger(XmlConverter.class);
 
     private volatile DocumentBuilderFactory documentBuilderFactory;
@@ -1170,7 +1172,23 @@ public class XmlConverter {
     }
 
     public TransformerFactory createTransformerFactory() {
-        TransformerFactory factory = TransformerFactory.newInstance();
+        TransformerFactory factory;
+        TransformerFactoryConfigurationError cause;
+        try {
+            factory = TransformerFactory.newInstance();
+        } catch (TransformerFactoryConfigurationError e) {
+            cause = e;
+            // try fallback from the JDK
+            try {
+                LOG.debug("Cannot create/load TransformerFactory due: {}. Will attempt to use JDK fallback TransformerFactory: {}", e.getMessage(), JDK_FALLBACK_TRANSFORMER_FACTORY);
+                factory = TransformerFactory.newInstance(JDK_FALLBACK_TRANSFORMER_FACTORY, null);
+            } catch (Throwable t) {
+                // okay we cannot load fallback then throw original exception
+                throw cause;
+            }
+        }
+        LOG.debug("Created TransformerFactory: {}", factory);
+
         // Enable the Security feature by default
         try {
             factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
