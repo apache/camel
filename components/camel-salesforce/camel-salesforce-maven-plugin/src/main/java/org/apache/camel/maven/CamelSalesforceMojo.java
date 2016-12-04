@@ -82,7 +82,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 /**
  * Goal to generate DTOs for Salesforce SObjects
  */
-@Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
+@Mojo(name = "generate", requiresProject = false, defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class CamelSalesforceMojo extends AbstractMojo {
 
     // default connect and call timeout
@@ -90,6 +90,9 @@ public class CamelSalesforceMojo extends AbstractMojo {
 
     private static final String JAVA_EXT = ".java";
     private static final String PACKAGE_NAME_PATTERN = "(\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*\\.)+\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
+
+    private static final Pattern MATCH_EVERYTHING_PATTERN = Pattern.compile(".*");
+    private static final Pattern MATCH_NOTHING_PATTERN = Pattern.compile("^$");
 
     private static final String SOBJECT_POJO_VM = "/sobject-pojo.vm";
     private static final String SOBJECT_POJO_OPTIONAL_VM = "/sobject-pojo-optional.vm";
@@ -376,6 +379,9 @@ public class CamelSalesforceMojo extends AbstractMojo {
             if (!packageName.matches(PACKAGE_NAME_PATTERN)) {
                 throw new MojoExecutionException("Invalid package name " + packageName);
             }
+            if (outputDirectory.getAbsolutePath().contains("$")) {
+                outputDirectory = new File("generated-sources/camel-salesforce");
+            }
             final File pkgDir = new File(outputDirectory, packageName.trim().replace('.', File.separatorChar));
             if (!pkgDir.exists()) {
                 if (!pkgDir.mkdirs()) {
@@ -445,10 +451,10 @@ public class CamelSalesforceMojo extends AbstractMojo {
             incPattern = Pattern.compile(includePattern.trim());
         } else if (includedNames.isEmpty()) {
             // include everything by default if no include names are set
-            incPattern = Pattern.compile(".*");
+            incPattern = MATCH_EVERYTHING_PATTERN;
         } else {
             // include nothing by default if include names are set
-            incPattern = Pattern.compile("^$");
+            incPattern = MATCH_NOTHING_PATTERN;
         }
 
         // check whether a pattern is in effect
@@ -457,7 +463,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
             excPattern = Pattern.compile(excludePattern.trim());
         } else {
             // exclude nothing by default
-            excPattern = Pattern.compile("^$");
+            excPattern = MATCH_NOTHING_PATTERN;
         }
 
         final Set<String> acceptedNames = new HashSet<String>();

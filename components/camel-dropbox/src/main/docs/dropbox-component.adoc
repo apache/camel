@@ -70,7 +70,7 @@ In order to work with Dropbox API you need to obtain an *accessToken*
 and a *clientIdentifier.* +
 You can refer to the
 https://www.dropbox.com/developers/core/start/java[Dropbox
-documentation] that expalins how to get them.  
+documentation] that explains how to get them.  
 
 // component options: START
 The Dropbox component has no options.
@@ -89,7 +89,7 @@ The Dropbox component supports 13 endpoint options which are listed below:
 | clientIdentifier | common |  | String | *Required* Name of the app registered to make API requests
 | localPath | common |  | String | Folder or file to upload on Dropbox from the local filesystem.
 | newRemotePath | common |  | String | Destination file or folder
-| query | common |  | String | A space-separated list of substrings to search for. A file matches only if it contains all the substrings. If this option is not set all files will be matched.
+| query | common |  | String | A space-separated list of sub-strings to search for. A file matches only if it contains all the sub-strings. If this option is not set all files will be matched.
 | remotePath | common |  | String | Original file or folder to move
 | uploadMode | common |  | DropboxUploadMode | Which mode to upload. in case of add the new file will be renamed if a file with the same name already exists on dropbox. in case of force if a file with the same name already exists on dropbox this will be overwritten.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
@@ -354,8 +354,8 @@ Below are listed the options for this operation:
 
 |`remotePath` |`true` |Folder on Dropbox where to search in.
 
-|`query` |`false` |A space-separated list of substrings to search for. A file matches only
-if it contains all the substrings. If this option is not set, all files
+|`query` |`false` |A space-separated list of sub-strings to search for. A file matches only
+if it contains all the sub-strings. If this option is not set, all files
 will be matched.
 |=======================================================================
 

@@ -64,6 +64,7 @@ import org.apache.camel.model.remote.KubernetesConfigurationDefinition;
 import org.apache.camel.model.remote.RibbonConfigurationDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.transformer.TransformersDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.Registry;
@@ -182,6 +183,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private List<CamelEndpointFactoryBean> endpoints;
     @XmlElement(name = "dataFormats")
     private DataFormatsDefinition dataFormats;
+    @XmlElement(name = "transformers")
+    private TransformersDefinition transformers;
     @XmlElement(name = "redeliveryPolicyProfile")
     private List<CamelRedeliveryPolicyFactoryBean> redeliveryPolicies;
     @XmlElement(name = "onException")
@@ -872,6 +875,17 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public DataFormatsDefinition getDataFormats() {
         return dataFormats;
+    }
+
+    /**
+     * Configuration of transformers.
+     */
+    public void setTransformers(TransformersDefinition transformers) {
+        this.transformers = transformers;
+    }
+
+    public TransformersDefinition getTransformers() {
+        return transformers;
     }
 
     /**

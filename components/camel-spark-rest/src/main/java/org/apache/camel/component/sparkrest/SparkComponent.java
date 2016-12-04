@@ -36,7 +36,7 @@ import org.apache.camel.util.URISupport;
 
 public class SparkComponent extends UriEndpointComponent implements RestConsumerFactory, RestApiConsumerFactory {
 
-    private final Pattern pattern = Pattern.compile("\\{(.*?)\\}");
+    private static final Pattern PATTERN = Pattern.compile("\\{(.*?)\\}");
 
     private int port = 4567;
     private String ipAddress;
@@ -299,7 +299,7 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
 
         if (ObjectHelper.isNotEmpty(path)) {
             // spark-rest uses :name syntax instead of {name} so we need to replace those
-            Matcher matcher = pattern.matcher(path);
+            Matcher matcher = PATTERN.matcher(path);
             path = matcher.replaceAll(":$1");
         }
 

@@ -24,11 +24,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.git.GitConstants;
 import org.apache.camel.component.git.GitEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jgit.api.CherryPickResult;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand.ListMode;
 import org.eclipse.jgit.api.PullResult;
+import org.eclipse.jgit.api.RemoteAddCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Ref;
@@ -37,6 +39,8 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 import org.eclipse.jgit.transport.PushResult;
+import org.eclipse.jgit.transport.RemoteConfig;
+import org.eclipse.jgit.transport.URIish;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +87,7 @@ public class GitProducer extends DefaultProducer {
         }
 
         switch (operation) {
-        
+
         case GitOperation.CLONE_OPERATION:
             doClone(exchange, operation);
             break;
@@ -99,7 +103,7 @@ public class GitProducer extends DefaultProducer {
         case GitOperation.CHERRYPICK_OPERATION:
             doCherryPick(exchange, operation);
             break;
-            
+
         case GitOperation.REMOVE_OPERATION:
             doRemove(exchange, operation);
             break;
@@ -143,11 +147,19 @@ public class GitProducer extends DefaultProducer {
         case GitOperation.DELETE_TAG_OPERATION:
             doDeleteTag(exchange, operation);
             break;
-            
+
         case GitOperation.SHOW_BRANCHES:
             doShowBranches(exchange, operation);
             break;
-                
+
+        case GitOperation.REMOTE_ADD_OPERATION:
+            doRemoteAdd(exchange, operation);
+            break;
+
+        case GitOperation.REMOTE_LIST_OPERATION:
+            doRemoteList(exchange, operation);
+            break;
+
         default:
             throw new IllegalArgumentException("Unsupported operation " + operation);
         }
@@ -242,19 +254,24 @@ public class GitProducer extends DefaultProducer {
         } else {
             throw new IllegalArgumentException("Commit message must be specified to execute " + operation);
         }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME)) 
-                && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL))) {
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME))
+            && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL))) {
             username = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME, String.class);
             email = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL, String.class);
         }
+        boolean allowEmpty = endpoint.isAllowEmpty();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_ALLOW_EMPTY))) {
+            allowEmpty = exchange.getIn().getHeader(GitConstants.GIT_ALLOW_EMPTY, Boolean.class);
+        }
+
         try {
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
             if (ObjectHelper.isNotEmpty(username) && ObjectHelper.isNotEmpty(email)) {
-                git.commit().setCommitter(username, email).setMessage(commitMessage).call();
+                git.commit().setAllowEmpty(allowEmpty).setCommitter(username, email).setMessage(commitMessage).call();
             } else {
-                git.commit().setMessage(commitMessage).call();
+                git.commit().setAllowEmpty(allowEmpty).setMessage(commitMessage).call();
             }
         } catch (Exception e) {
             LOG.error("There was an error in Git " + operation + " operation");
@@ -271,19 +288,24 @@ public class GitProducer extends DefaultProducer {
         } else {
             throw new IllegalArgumentException("Commit message must be specified to execute " + operation);
         }
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME)) 
-                && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL))) {
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME))
+            && ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL))) {
             username = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_USERNAME, String.class);
             email = exchange.getIn().getHeader(GitConstants.GIT_COMMIT_EMAIL, String.class);
         }
+        boolean allowEmpty = endpoint.isAllowEmpty();
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(GitConstants.GIT_ALLOW_EMPTY))) {
+            allowEmpty = exchange.getIn().getHeader(GitConstants.GIT_ALLOW_EMPTY, Boolean.class);
+        }
+
         try {
             if (ObjectHelper.isNotEmpty(endpoint.getBranchName())) {
                 git.checkout().setCreateBranch(false).setName(endpoint.getBranchName()).call();
             }
             if (ObjectHelper.isNotEmpty(username) && ObjectHelper.isNotEmpty(email)) {
-                git.commit().setAll(true).setCommitter(username, email).setMessage(commitMessage).call();
+                git.commit().setAllowEmpty(allowEmpty).setAll(true).setCommitter(username, email).setMessage(commitMessage).call();
             } else {
-                git.commit().setAll(true).setMessage(commitMessage).call();
+                git.commit().setAllowEmpty(allowEmpty).setAll(true).setMessage(commitMessage).call();
             }
         } catch (Exception e) {
             LOG.error("There was an error in Git " + operation + " operation");
@@ -326,7 +348,7 @@ public class GitProducer extends DefaultProducer {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
         }
-        exchange.getOut().setBody(status);
+        updateExchange(exchange, status);
     }
 
     protected void doLog(Exchange exchange, String operation) throws Exception {
@@ -340,7 +362,7 @@ public class GitProducer extends DefaultProducer {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
         }
-        exchange.getOut().setBody(revCommit);
+        updateExchange(exchange, revCommit);
     }
 
     protected void doPush(Exchange exchange, String operation) throws Exception {
@@ -362,7 +384,7 @@ public class GitProducer extends DefaultProducer {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
         }
-        exchange.getOut().setBody(result);
+        updateExchange(exchange, result);
     }
 
     protected void doPull(Exchange exchange, String operation) throws Exception {
@@ -384,7 +406,7 @@ public class GitProducer extends DefaultProducer {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
         }
-        exchange.getOut().setBody(result);
+        updateExchange(exchange, result);
     }
 
     protected void doCreateTag(Exchange exchange, String operation) throws Exception {
@@ -410,7 +432,7 @@ public class GitProducer extends DefaultProducer {
             throw e;
         }
     }
-    
+
     protected void doShowBranches(Exchange exchange, String operation) throws Exception {
         List<Ref> result = null;
         try {
@@ -419,9 +441,9 @@ public class GitProducer extends DefaultProducer {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
         }
-        exchange.getOut().setBody(result);
+        updateExchange(exchange, result);
     }
-    
+
     protected void doCherryPick(Exchange exchange, String operation) throws Exception {
         CherryPickResult result = null;
         String commitId = null;
@@ -443,20 +465,59 @@ public class GitProducer extends DefaultProducer {
             LOG.error("There was an error in Git " + operation + " operation");
             throw e;
         }
-        exchange.getOut().setBody(result);
+        updateExchange(exchange, result);
+    }
+
+    protected void doRemoteAdd(Exchange exchange, String operation) throws Exception {
+        if (ObjectHelper.isEmpty(endpoint.getRemoteName())) {
+            throw new IllegalArgumentException("Remote Name must be specified to execute " + operation);
+        }
+        if (ObjectHelper.isEmpty(endpoint.getRemotePath())) {
+            throw new IllegalArgumentException("Remote Path must be specified to execute " + operation);
+        }
+        RemoteConfig result = null;
+        try {
+            RemoteAddCommand remoteAddCommand = git.remoteAdd();
+            remoteAddCommand.setUri(new URIish(endpoint.getRemotePath()));
+            remoteAddCommand.setName(endpoint.getRemoteName());
+            result = remoteAddCommand.call();
+        } catch (Exception e) {
+            LOG.error("There was an error in Git " + operation + " operation");
+            throw e;
+        }
+        updateExchange(exchange, result);
+    }
+
+    protected void doRemoteList(Exchange exchange, String operation) throws Exception {
+        List<RemoteConfig> result = null;
+        try {
+            result = git.remoteList().call();
+        } catch (Exception e) {
+            LOG.error("There was an error in Git " + operation + " operation");
+            throw e;
+        }
+        updateExchange(exchange, result);
     }
 
     private Repository getLocalRepository() throws IOException {
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
         Repository repo = null;
         try {
-            repo = builder.setGitDir(new File(endpoint.getLocalPath(), ".git")).readEnvironment() // scan environment GIT_* variables
-                    .findGitDir() // scan up the file system tree
-                    .build();
+            repo = builder.setGitDir(new File(endpoint.getLocalPath(), ".git")).readEnvironment() // scan
+                // environment
+                // GIT_*
+                // variables
+                .findGitDir() // scan up the file system tree
+                .build();
         } catch (IOException e) {
             LOG.error("There was an error, cannot open " + endpoint.getLocalPath() + " repository");
             throw e;
         }
         return repo;
+    }
+
+    private void updateExchange(Exchange exchange, Object body) {
+        exchange.getOut().setBody(body);
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
     }
 }

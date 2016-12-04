@@ -16,7 +16,6 @@
  */
 package org.apache.camel.language.tokenizer;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.Namespaces;
 

@@ -23,6 +23,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Repository;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 public class GitTestSupport extends CamelTestSupport {
@@ -40,8 +41,10 @@ public class GitTestSupport extends CamelTestSupport {
     public final String commitMessageBranch = "Test commit on a branch";
 
     public final String branchTest = "testBranch";
-    
+
     public final String tagTest = "testTag";
+
+    public final String remoteUriTest = "https://github.com/oscerd/json-webserver-example.git";
 
     @Override
     public void setUp() throws Exception {
@@ -58,16 +61,33 @@ public class GitTestSupport extends CamelTestSupport {
         File path = new File(gitLocalRepo);
         deleteDirectory(path);
     }
-      
+
     protected Repository getTestRepository() throws IOException, IllegalStateException, GitAPIException {
         File gitRepo = new File(gitLocalRepo, ".git");
         Git.init().setDirectory(new File(gitLocalRepo, "")).setBare(false).call();
         // now open the resulting repository with a FileRepositoryBuilder
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
-        Repository repo = builder.setGitDir(gitRepo)
-                .readEnvironment() // scan environment GIT_* variables
-                .findGitDir() // scan up the file system tree
-                .build();
+        Repository repo = builder.setGitDir(gitRepo).readEnvironment() // scan
+                                                                       // environment
+                                                                       // GIT_*
+                                                                       // variables
+            .findGitDir() // scan up the file system tree
+            .build();
         return repo;
     }
+
+    protected Git getGitTestRepository() throws IOException, IllegalStateException, GitAPIException {
+        return new Git(getTestRepository());
+    }
+
+    protected void validateGitLogs(Git git, String... messages) throws GitAPIException {
+        Iterable<RevCommit> logs = git.log().call();
+        int count = 0;
+        for (RevCommit rev : logs) {
+            assertEquals(messages[count], rev.getShortMessage());
+            count++;
+        }
+        assertEquals(messages.length, count);
+    }
+
 }

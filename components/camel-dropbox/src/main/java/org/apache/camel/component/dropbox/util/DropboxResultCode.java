@@ -17,6 +17,6 @@
 package org.apache.camel.component.dropbox.util;
 
 public enum DropboxResultCode {
-    OK, KO;
+    OK, KO
 }
 

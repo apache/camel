@@ -14,27 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dropbox.dto;
+package org.apache.camel.component.sql;
 
-import org.apache.camel.Exchange;
+import org.apache.camel.builder.RouteBuilder;
 
+public class SqlProducerInMultiQueryEndpointTest extends SqlProducerInMultiTest {
 
-public abstract class DropboxResult {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                // required for the sql component
+                getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-    protected Object resultEntries;
-
-    /**
-     * Populate the camel exchange with the results from dropbox method invocations.
-     * @param exchange
-     */
-    public abstract void populateExchange(Exchange exchange);
-
-    public Object getResultEntries()  {
-        return resultEntries;
+                from("direct:query")
+                    .to("sql:select * from projects where project in (:#in:names) and license in (:#in:licenses) order by id")
+                    .to("log:query")
+                    .to("mock:query");
+            }
+        };
     }
-
-    public void setResultEntries(Object resultEntries) {
-        this.resultEntries = resultEntries;
-    }
-
 }

@@ -56,7 +56,6 @@ public class ThrowExceptionProcessor extends ServiceSupport implements AsyncProc
         AsyncProcessorHelper.process(this, exchange);
     }
 
-    @SuppressWarnings("unchecked")
     public boolean process(Exchange exchange, AsyncCallback callback) {
         Exception cause = exception;
 

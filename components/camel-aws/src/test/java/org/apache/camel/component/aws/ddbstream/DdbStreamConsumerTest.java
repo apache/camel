@@ -173,6 +173,7 @@ public class DdbStreamConsumerTest {
 
         private final Map<String, String> shardIterators;
         private final Map<String, Collection<Record>> answers;
+        private final Pattern shardIteratorPattern = Pattern.compile("shard_iterator_d_0*(\\d+)");
 
         GetRecordsAnswer(Map<String, String> shardIterators, Map<String, Collection<Record>> answers) {
             this.shardIterators = shardIterators;
@@ -186,7 +187,7 @@ public class DdbStreamConsumerTest {
             // A null 'nextShardIterator' indicates that the shard has finished
             // and we should move onto the next shard.
             String nextShardIterator = shardIterators.get(shardIterator);
-            Matcher m = Pattern.compile("shard_iterator_d_0*(\\d+)").matcher(shardIterator);
+            Matcher m = shardIteratorPattern.matcher(shardIterator);
             Collection<Record> ans = answers.get(shardIterator);
             if (nextShardIterator == null && m.matches()) { // last shard iterates forever.
                 Integer num = Integer.parseInt(m.group(1));

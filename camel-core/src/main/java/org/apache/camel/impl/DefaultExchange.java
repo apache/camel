@@ -128,7 +128,6 @@ public final class DefaultExchange implements Exchange {
         return exchange;
     }
 
-    @SuppressWarnings("unchecked")
     private static Map<String, Object> safeCopyHeaders(Map<String, Object> headers) {
         if (headers == null) {
             return null;

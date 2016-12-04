@@ -18,7 +18,6 @@ package org.apache.camel.component.hazelcast.seda;
 
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.spi.UriPath;
 
 /**
  * Hazelcast SEDA Component configuration.

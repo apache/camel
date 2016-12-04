@@ -176,6 +176,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         consumer.setQuery(getQuery());
         consumer.setNamedQuery(getNamedQuery());
         consumer.setNativeQuery(getNativeQuery());
+        consumer.setLockModeType(getLockModeType());
         consumer.setParameters(getParameters());
         consumer.setResultClass(getResultClass());
         return consumer;

@@ -14,16 +14,8 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------
-package ${package};
-
-import org.apache.camel.spring.boot.FatJarRouter;
-import org.apache.camel.spring.boot.FatWarInitializer;
-
-public class MySpringBootRouterWarInitializer extends FatWarInitializer {
-
-    @Override
-    protected Class<? extends FatJarRouter> routerClass() {
-        return MySpringBootRouter.class;
-    }
-
-}
+CustomTransformerDefinition
+DataFormatTransformerDefinition
+EndpointTransformerDefinition
+TransformerDefinition
+TransformersDefinition

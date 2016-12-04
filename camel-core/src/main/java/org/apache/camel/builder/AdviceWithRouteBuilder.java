@@ -23,7 +23,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.InterceptSendToMockEndpointStrategy;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.ToDefinition;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -161,7 +160,6 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
      * @return the builder
      * @see org.apache.camel.util.EndpointHelper#matchPattern(String, String)
      */
-    @SuppressWarnings("unchecked")
     public <T extends ProcessorDefinition<?>> AdviceWithBuilder<T> weaveByToUri(String pattern) {
         ObjectHelper.notNull(originalRoute, "originalRoute", this);
         return new AdviceWithBuilder<T>(this, null, null, pattern, null);

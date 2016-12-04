@@ -64,6 +64,7 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.PropertySource;
 import org.jboss.forge.roaster.model.util.Strings;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -776,7 +777,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.getJavaDoc().setFullText(doc);
 
         javaClass.addAnnotation(Configuration.class);
-        javaClass.addAnnotation(ConditionalOnBean.class).setStringValue("type", "org.apache.camel.springboot.CamelAutoConfiguration");
+        javaClass.addAnnotation(ConditionalOnBean.class).setStringValue("type", "org.apache.camel.spring.boot.CamelAutoConfiguration");
+        javaClass.addAnnotation(AutoConfigureAfter.class).setStringValue("name", "org.apache.camel.spring.boot.CamelAutoConfiguration");
 
         String configurationName = name.replace("ComponentAutoConfiguration", "ComponentConfiguration");
         if (hasOptions) {
@@ -834,7 +836,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.getJavaDoc().setFullText(doc);
 
         javaClass.addAnnotation(Configuration.class);
-        javaClass.addAnnotation(ConditionalOnBean.class).setStringValue("type", "org.apache.camel.springboot.CamelAutoConfiguration");
+        javaClass.addAnnotation(ConditionalOnBean.class).setStringValue("type", "org.apache.camel.spring.boot.CamelAutoConfiguration");
+        javaClass.addAnnotation(AutoConfigureAfter.class).setStringValue("name", "org.apache.camel.spring.boot.CamelAutoConfiguration");
 
         String configurationName = name.replace("DataFormatAutoConfiguration", "DataFormatConfiguration");
         if (hasOptions) {
@@ -894,7 +897,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.getJavaDoc().setFullText(doc);
 
         javaClass.addAnnotation(Configuration.class);
-        javaClass.addAnnotation(ConditionalOnBean.class).setStringValue("type", "org.apache.camel.springboot.CamelAutoConfiguration");
+        javaClass.addAnnotation(ConditionalOnBean.class).setStringValue("type", "org.apache.camel.spring.boot.CamelAutoConfiguration");
+        javaClass.addAnnotation(AutoConfigureAfter.class).setStringValue("name", "org.apache.camel.spring.boot.CamelAutoConfiguration");
 
         String configurationName = name.replace("LanguageAutoConfiguration", "LanguageConfiguration");
         if (hasOptions) {

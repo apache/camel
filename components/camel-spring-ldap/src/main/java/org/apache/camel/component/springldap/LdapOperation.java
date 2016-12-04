@@ -16,10 +16,17 @@
  */
 package org.apache.camel.component.springldap;
 
+import java.util.function.BiFunction;
+
+import org.springframework.ldap.core.LdapOperations;
+
 /**
  * The list of supported LDAP operations. Currently supported operations are
- * search, bind, and unbind. Modify is currently not supported.
+ * search, bind, and unbind, authenticate and modify_attributes. The
+ * function_driven operation expects a request {@link Object} along with an
+ * instance of {@link BiFunction} that can be used to invoke any
+ * method on the {@link LdapOperations} instance
  */
 public enum LdapOperation {
-    SEARCH, BIND, UNBIND
+    SEARCH, BIND, UNBIND, AUTHENTICATE, MODIFY_ATTRIBUTES, FUNCTION_DRIVEN
 }

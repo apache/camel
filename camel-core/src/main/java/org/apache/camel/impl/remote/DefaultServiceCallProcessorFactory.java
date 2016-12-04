@@ -45,7 +45,6 @@ public abstract class DefaultServiceCallProcessorFactory<C, S extends ServiceCal
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Processor createProcessor(RouteContext routeContext, ProcessorDefinition<?> definition) throws Exception {
         return definition instanceof ServiceCallDefinition
             ? createProcessor(routeContext, (ServiceCallDefinition) definition, createConfiguration(routeContext))

@@ -28,9 +28,9 @@ import org.slf4j.LoggerFactory;
 
 public abstract class PubsubAcknowledgement {
 
-    private Logger logger;
+    protected Logger logger;
+    
     private final String subscriptionFullName;
-
     private final GooglePubsubEndpoint endpoint;
 
     public PubsubAcknowledgement(GooglePubsubEndpoint endpoint) {
@@ -61,11 +61,11 @@ public abstract class PubsubAcknowledgement {
         }
     }
 
-    void resetAckDeadline(List<String> ackIdList) {
+    void resetAckDeadline(List<String> ackIdList, Integer seconds) {
 
         ModifyAckDeadlineRequest nackRequest = new ModifyAckDeadlineRequest()
                 .setAckIds(ackIdList)
-                .setAckDeadlineSeconds(0);
+                .setAckDeadlineSeconds(seconds);
 
         try {
             endpoint.getPubsub()

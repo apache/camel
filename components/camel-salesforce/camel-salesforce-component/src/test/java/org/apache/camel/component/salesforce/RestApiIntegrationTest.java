@@ -306,8 +306,17 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     private void doTestCreateUpdateDeleteWithId(String suffix) throws Exception {
+        template().request("direct:deleteLineItems", null);
+
+        Line_Item__c lineItem = new Line_Item__c();
+        lineItem.setName("1");
+        CreateSObjectResult result = template().requestBody("direct:createLineItem",
+                lineItem, CreateSObjectResult.class);
+        assertNotNull(result);
+        assertTrue(result.getSuccess());
+
         // get line item with Name 1
-        Line_Item__c lineItem = template().requestBody("direct:getSObjectWithId" + suffix, TEST_LINE_ITEM_ID,
+        lineItem = template().requestBody("direct:getSObjectWithId" + suffix, TEST_LINE_ITEM_ID,
                 Line_Item__c.class);
         assertNotNull(lineItem);
         LOG.debug("GetWithId: {}", lineItem);
@@ -319,7 +328,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         // update line item with Name NEW_LINE_ITEM_ID
         lineItem.setName(NEW_LINE_ITEM_ID);
 
-        CreateSObjectResult result = template().requestBodyAndHeader("direct:upsertSObject" + suffix,
+        result = template().requestBodyAndHeader("direct:upsertSObject" + suffix,
                 lineItem, SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE, NEW_LINE_ITEM_ID,
                 CreateSObjectResult.class);
         assertNotNull(result);
@@ -529,7 +538,8 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         // get test merchandise
         // note that the header value overrides sObjectFields in endpoint
         Merchandise__c merchandise = template().requestBodyAndHeader("direct:getSObject" + suffix, testId,
-                "sObjectFields", "Name,Description__c,Price__c,Total_Inventory__c", Merchandise__c.class);
+                "sObjectFields", "Name,Description__c,Price__c,Total_Inventory__c",
+                Merchandise__c.class);
         assertNotNull(merchandise);
         assertNotNull(merchandise.getName());
         assertNotNull(merchandise.getPrice__c());
@@ -715,6 +725,14 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
                         .to("salesforce:getSObjectWithId?format=XML&sObjectName=Line_Item__c&sObjectIdName=Name");
 
                 // testUpsertSObject
+                from("direct:deleteLineItems")
+                        .to("salesforce:query?sObjectQuery=SELECT Id FROM Line_Item__C&sObjectClass=" + QueryRecordsLine_Item__c.class.getName())
+                        .transform(simple("${body.records}")).split(body()).transform(simple("${body.id}"))
+                        .to("salesforce:deleteSObject?sObjectName=Line_Item__c");
+
+                from("direct:createLineItem")
+                        .to("salesforce:createSObject?sObjectName=Line_Item__c");
+
                 from("direct:upsertSObject")
                         .to("salesforce:upsertSObject?sObjectName=Line_Item__c&sObjectIdName=Name");
 

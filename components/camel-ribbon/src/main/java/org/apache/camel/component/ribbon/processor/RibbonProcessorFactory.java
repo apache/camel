@@ -41,7 +41,6 @@ public class RibbonProcessorFactory extends DefaultServiceCallProcessorFactory<R
 
 
     @Override
-    @SuppressWarnings("unchecked")
     protected Processor createProcessor(RouteContext routeContext, ServiceCallDefinition definition, RibbonConfiguration cfg) throws Exception {
         String name = definition.getName();
         String uri = definition.getUri();

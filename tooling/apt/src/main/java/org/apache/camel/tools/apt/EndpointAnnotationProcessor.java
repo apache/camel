@@ -182,29 +182,33 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
         writeHtmlDocumentationAndFieldInjections(writer, roundEnv, componentModel, classElement, "", uriEndpoint.excludeProperties());
 
-        // This code is not my fault, it seems to honestly be the hacky way to find a class name in APT :)
-        TypeMirror consumerType = null;
-        try {
-            uriEndpoint.consumerClass();
-        } catch (MirroredTypeException mte) {
-            consumerType = mte.getTypeMirror();
-        }
+        // only if its a consuemr capable component
+        if (uriEndpoint.consumerOnly() || !uriEndpoint.producerOnly()) {
+            // This code is not my fault, it seems to honestly be the hacky way to find a class name in APT :)
+            TypeMirror consumerType = null;
+            try {
+                uriEndpoint.consumerClass();
+            } catch (MirroredTypeException mte) {
+                consumerType = mte.getTypeMirror();
+            }
 
-        boolean found = false;
-        String consumerClassName = null;
-        String consumerPrefix = getOrElse(uriEndpoint.consumerPrefix(), "");
-        if (consumerType != null) {
-            consumerClassName = consumerType.toString();
-            TypeElement consumerElement = findTypeElement(processingEnv, roundEnv, consumerClassName);
-            if (consumerElement != null) {
-                writer.println("<h2>" + scheme + " consumer" + "</h2>");
-                writeHtmlDocumentationAndFieldInjections(writer, roundEnv, componentModel, consumerElement, consumerPrefix, uriEndpoint.excludeProperties());
-                found = true;
+            boolean found = false;
+            String consumerClassName = null;
+            String consumerPrefix = getOrElse(uriEndpoint.consumerPrefix(), "");
+            if (consumerType != null) {
+                consumerClassName = consumerType.toString();
+                TypeElement consumerElement = findTypeElement(processingEnv, roundEnv, consumerClassName);
+                if (consumerElement != null) {
+                    writer.println("<h2>" + scheme + " consumer" + "</h2>");
+                    writeHtmlDocumentationAndFieldInjections(writer, roundEnv, componentModel, consumerElement, consumerPrefix, uriEndpoint.excludeProperties());
+                    found = true;
+                }
+            }
+            if (!found && consumerClassName != null) {
+                warning(processingEnv, "APT cannot find consumer class " + consumerClassName);
             }
         }
-        if (!found && consumerClassName != null) {
-            warning(processingEnv, "APT could not find consumer class " + consumerClassName);
-        }
+
         writer.println("</body>");
         writer.println("</html>");
     }

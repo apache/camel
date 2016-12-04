@@ -24,7 +24,6 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.zipkin.ZipkinLoggingSpanCollector;
 import org.apache.camel.zipkin.ZipkinTracer;
 import org.junit.Test;
 

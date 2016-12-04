@@ -38,7 +38,7 @@ public class PropertiesRouteFromTest extends ContextTestSupport {
         // use a routes definition to dump the routes
         String xml = ModelHelper.dumpModelAsXml(context, context.getRouteDefinition("foo"));
         assertTrue(xml.contains("<from uri=\"{{cool.start}}\"/>"));
-        assertTrue(xml.contains("<to uri=\"{{cool.end}}\""));
+        assertTrue(xml.contains("<to id=\"to1\" uri=\"{{cool.end}}\"/>"));
     }
 
     @Override

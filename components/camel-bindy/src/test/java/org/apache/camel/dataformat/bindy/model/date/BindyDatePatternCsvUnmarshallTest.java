@@ -19,7 +19,6 @@ package org.apache.camel.dataformat.bindy.model.date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Collection;
 import java.util.Date;
 
 import org.apache.camel.EndpointInject;
@@ -34,7 +33,6 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.FormatFactories;
 import org.apache.camel.dataformat.bindy.csv.BindyCsvDataFormat;
 import org.apache.camel.dataformat.bindy.format.factories.AbstractFormatFactory;
-import org.apache.camel.dataformat.bindy.format.factories.FormatFactoryInterface;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;

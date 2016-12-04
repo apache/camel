@@ -304,10 +304,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
                 completion.submit(new Callable<Exchange>() {
                     public Exchange call() throws Exception {
-                        // only start the aggregation task when the task is being executed to avoid staring
-                        // the aggregation task to early and pile up too many threads
+                        // start the aggregation task at this stage only in order not to pile up too many threads
                         if (aggregationTaskSubmitted.compareAndSet(false, true)) {
-                            // but only submit the task once
+                            // but only submit the aggregation task once
                             aggregateExecutorService.submit(aggregateOnTheFlyTask);
                         }
 
@@ -532,7 +531,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 }
             } catch (Throwable e) {
                 // wrap in exception to explain where it failed
-                subExchange.setException(new CamelExchangeException("Parallel processing failed for number " + aggregated.get(), subExchange, e));
+                CamelExchangeException cex = new CamelExchangeException("Parallel processing failed for number " + aggregated.get(), subExchange, e);
+                subExchange.setException(cex);
+                LOG.debug(cex.getMessage(), cex);
             } finally {
                 aggregated.incrementAndGet();
             }

@@ -26,7 +26,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.commands.AbstractLocalCamelController;
 import org.apache.karaf.shell.api.action.lifecycle.Reference;
-import org.apache.karaf.shell.api.action.lifecycle.Service;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;

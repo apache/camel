@@ -166,4 +166,51 @@
         </dependencies>
     </dependencyManagement>
 
+    <profiles>
+        <profile>
+            <id>nochecks</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+
+        <profile>
+            <id>fastinstall</id>
+            <activation>
+                <property>
+                    <name>fastinstall</name>
+                </property>
+            </activation>
+            <properties>
+                <maven.test.skip.exec>true</maven.test.skip.exec>
+                <assembly.skipAssembly>true</assembly.skipAssembly>
+                <noassembly>true</noassembly>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>sourcecheck</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-checkstyle-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>dependencycheck</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>

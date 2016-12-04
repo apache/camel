@@ -18,7 +18,6 @@ package org.apache.camel.component.undertow;
 
 import java.util.Map;
 
-import io.undertow.server.handlers.form.FormData;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;

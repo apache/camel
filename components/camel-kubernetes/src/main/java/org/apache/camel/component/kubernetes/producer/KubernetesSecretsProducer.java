@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -117,6 +118,8 @@ public class KubernetesSecretsProducer extends DefaultProducer {
             }
             secretsList = secrets.list();
         }
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(secretsList.getItems());
     }
 
@@ -139,6 +142,8 @@ public class KubernetesSecretsProducer extends DefaultProducer {
         }
         secret = getEndpoint().getKubernetesClient().secrets()
                 .inNamespace(namespaceName).withName(secretName).get();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(secret);
     }
 
@@ -163,6 +168,8 @@ public class KubernetesSecretsProducer extends DefaultProducer {
                 KubernetesConstants.KUBERNETES_SECRETS_LABELS, Map.class);
         secret = getEndpoint().getKubernetesClient().secrets()
                 .inNamespace(namespaceName).create(secretToCreate);
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(secret);
     }
 
@@ -184,6 +191,8 @@ public class KubernetesSecretsProducer extends DefaultProducer {
         }
         boolean secretDeleted = getEndpoint().getKubernetesClient().secrets()
                 .inNamespace(namespaceName).withName(secretName).delete();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(secretDeleted);
     }
 }

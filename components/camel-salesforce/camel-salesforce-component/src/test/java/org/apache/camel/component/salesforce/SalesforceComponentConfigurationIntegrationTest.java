@@ -16,20 +16,26 @@
  */
 package org.apache.camel.component.salesforce;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.SortedMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.apache.camel.component.salesforce.dto.generated.Document;
 import org.apache.camel.component.salesforce.dto.generated.Line_Item__c;
+import org.apache.camel.component.salesforce.dto.generated.MSPTest;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.apache.camel.component.salesforce.dto.generated.QueryRecordsLine_Item__c;
+import org.apache.camel.component.salesforce.dto.generated.Tasks__c;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.impl.ParameterConfiguration;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,10 +43,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Lets test the use of the ComponentConfiguration on the Salesforce endpoint
  */
-@Ignore("Must run manually with a user supplied test-salesforce-login.properties")
-public class SalesforceComponentConfigurationTest extends CamelTestSupport {
+public class SalesforceComponentConfigurationIntegrationTest extends CamelTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SalesforceComponentConfigurationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SalesforceComponentConfigurationIntegrationTest.class);
 
     protected String componentName = "salesforce123";
     protected boolean verbose = true;
@@ -96,18 +101,19 @@ public class SalesforceComponentConfigurationTest extends CamelTestSupport {
 
         // get operation names
         assertCompletionOptions(configuration.completeEndpointPath(""),
-            "getVersions", "getResources", "getGlobalObjects", "getBasicInfo", "getDescription", "getSObject",
-            "createSObject", "updateSObject", "deleteSObject", "getSObjectWithId", "upsertSObject",
-            "deleteSObjectWithId", "getBlobField", "query", "queryMore", "search", "createJob", "getJob",
-            "closeJob", "abortJob", "createBatch", "getBatch", "getAllBatches", "getRequest", "getResults",
-            "createBatchQuery", "getQueryResultIds", "getQueryResult", "[PushTopicName]"
+            "getVersions", "getResources", "getGlobalObjects", "getBasicInfo", "getDescription", "getSObject", "createSObject",
+            "updateSObject", "deleteSObject", "getSObjectWithId", "upsertSObject", "deleteSObjectWithId", "getBlobField",
+            "query", "queryMore", "queryAll", "search", "apexCall", "recent", "createJob", "getJob", "closeJob", "abortJob",
+            "createBatch", "getBatch", "getAllBatches", "getRequest", "getResults", "createBatchQuery", "getQueryResultIds",
+            "getQueryResult", "getRecentReports", "getReportDescription", "executeSyncReport", "executeAsyncReport",
+            "getReportInstances", "getReportResults", "limits", "approval", "approvals", "[PushTopicName]"
         );
 
         // get filtered operation names
         assertCompletionOptions(configuration.completeEndpointPath("get"),
-            "getVersions", "getResources", "getGlobalObjects", "getBasicInfo", "getDescription", "getSObject",
-            "getSObjectWithId", "getBlobField", "getJob", "getBatch", "getAllBatches", "getRequest", "getResults",
-            "getQueryResultIds", "getQueryResult"
+            "getVersions", "getResources", "getGlobalObjects", "getBasicInfo", "getDescription", "getSObject", "getSObjectWithId",
+            "getBlobField", "getJob", "getBatch", "getAllBatches", "getRequest", "getResults", "getQueryResultIds",
+            "getQueryResult", "getRecentReports", "getReportDescription", "getReportInstances", "getReportResults"
         );
 
 /* TODO support parameter completion
@@ -147,20 +153,23 @@ public class SalesforceComponentConfigurationTest extends CamelTestSupport {
 
         // get sObjectName values, from scanned DTO packages
         assertCompletionOptions(configuration.completeEndpointPath("getSObject?sObjectName="),
-            "Document", "Line_Item__c", "Merchandise__c");
+            "Account", "Tasks__c", "Line_Item__c", "Merchandise__c", "Document", "MSPTest");
 
         // get sObjectFields values, from scanned DTO
         assertCompletionOptions(
             configuration.completeEndpointPath("getSObject?sObjectName=Merchandise__c&sObjectFields="),
-            "attributes", "Id", "OwnerId", "IsDeleted", "Name", "CreatedDate", "CreatedById",
-            "LastModifiedDate", "LastModifiedById", "SystemModstamp", "LastActivityDate",
-            "Description__c", "Price__c", "Total_Inventory__c");
+            "Description__c", "Price__c", "Total_Inventory__c", "attributes", "Id",
+            "OwnerId", "IsDeleted", "Name", "CreatedDate", "CreatedById", "LastModifiedDate", "LastModifiedById",
+            "SystemModstamp", "LastActivityDate", "LastViewedDate", "LastReferencedDate");
 
         // get sObjectClass values, from scanned DTO packages
         assertCompletionOptions(configuration.completeEndpointPath("getSObject?sObjectClass="),
-            Document.class.getName(),
+            Account.class.getName(),
+            Tasks__c.class.getName(),
             Line_Item__c.class.getName(),
             Merchandise__c.class.getName(),
+            Document.class.getName(),
+            MSPTest.class.getName(),
             QueryRecordsLine_Item__c.class.getName());
     }
 

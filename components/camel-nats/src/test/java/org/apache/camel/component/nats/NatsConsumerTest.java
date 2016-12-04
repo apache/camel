@@ -45,8 +45,8 @@ public class NatsConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:send").to("nats://localhost:4222?topic=test");
-                from("nats://localhost:4222?topic=test").to(mockResultEndpoint);
+                from("direct:send").to("nats://localhost:4222?topic=test&flushConnection=true");
+                from("nats://localhost:4222?topic=test&flushConnection=true").to(mockResultEndpoint);
             }
         };
     }

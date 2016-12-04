@@ -78,9 +78,6 @@ final class SyntheticAnnotated implements Annotated {
 
     @Override
     public boolean isAnnotationPresent(Class<? extends Annotation> type) {
-        return annotations.stream()
-            .filter(isAnnotationType(type))
-            .findAny()
-            .isPresent();
+        return annotations.stream().anyMatch(isAnnotationType(type));
     }
 }

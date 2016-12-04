@@ -37,7 +37,27 @@ public class ExchangeAckTransaction extends PubsubAcknowledgement implements Syn
 
     @Override
     public void onFailure(Exchange exchange) {
-        resetAckDeadline(getAckIdList(exchange));
+
+        Integer deadline = 0;
+        Object configuredDeadline = exchange.getIn().getHeader(GooglePubsubConstants.ACK_DEADLINE);
+
+        if (configuredDeadline != null && Integer.class.isInstance(configuredDeadline)) {
+            deadline = (Integer) configuredDeadline;
+        }
+
+        if (configuredDeadline != null && String.class.isInstance(configuredDeadline)) {
+            try {
+                deadline = Integer.valueOf((String) configuredDeadline);
+            } catch (Exception e) {
+                logger.warn("Unable to parse ACK Deadline header value", e);
+            }
+        }
+
+        if (deadline != 0) {
+            logger.trace(" Exchange {} : Ack deadline : {}", exchange.getExchangeId(), deadline);
+        }
+
+        resetAckDeadline(getAckIdList(exchange), deadline);
     }
 
     private List<String> getAckIdList(Exchange exchange) {

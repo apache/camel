@@ -73,8 +73,10 @@ public class NatsConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         super.doStop();
 
-        LOG.debug("Flushing Messages before stopping");
-        connection.flush();
+        if (getEndpoint().getNatsConfiguration().isFlushConnection()) {
+            LOG.debug("Flushing Messages before stopping");
+            connection.flush(getEndpoint().getNatsConfiguration().getFlushTimeout());
+        }
         
         try {
             sid.unsubscribe();
