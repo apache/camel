@@ -167,11 +167,11 @@ public class MllpServerResource extends ExternalResource {
     }
 
     public boolean sendApplicationRejectAcknowledgement(String hl7Message) {
-        return evaluatePatten(hl7Message, this.sendApplicationErrorAcknowledgementPattern);
+        return evaluatePattern(hl7Message, this.sendApplicationErrorAcknowledgementPattern);
     }
 
     public boolean sendApplicationErrorAcknowledgement(String hl7Message) {
-        return evaluatePatten(hl7Message, this.sendApplicationRejectAcknowledgementPattern);
+        return evaluatePattern(hl7Message, this.sendApplicationRejectAcknowledgementPattern);
     }
 
     public boolean sendApplicationRejectAcknowledgement(int messageCount) {
@@ -221,7 +221,7 @@ public class MllpServerResource extends ExternalResource {
         }
     }
 
-    private boolean evaluatePatten(String hl7Message, Pattern pattern) {
+    private boolean evaluatePattern(String hl7Message, Pattern pattern) {
         boolean retValue = false;
 
         if (null != pattern && pattern.matcher(hl7Message).matches()) {

@@ -91,6 +91,9 @@ public class CamelSalesforceMojo extends AbstractMojo {
     private static final String JAVA_EXT = ".java";
     private static final String PACKAGE_NAME_PATTERN = "(\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*\\.)+\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
+    private static final Pattern MATCH_EVERYTHING_PATTERN = Pattern.compile(".*");
+    private static final Pattern MATCH_NOTHING_PATTERN = Pattern.compile("^$");
+
     private static final String SOBJECT_POJO_VM = "/sobject-pojo.vm";
     private static final String SOBJECT_POJO_OPTIONAL_VM = "/sobject-pojo-optional.vm";
     private static final String SOBJECT_QUERY_RECORDS_VM = "/sobject-query-records.vm";
@@ -448,10 +451,10 @@ public class CamelSalesforceMojo extends AbstractMojo {
             incPattern = Pattern.compile(includePattern.trim());
         } else if (includedNames.isEmpty()) {
             // include everything by default if no include names are set
-            incPattern = Pattern.compile(".*");
+            incPattern = MATCH_EVERYTHING_PATTERN;
         } else {
             // include nothing by default if include names are set
-            incPattern = Pattern.compile("^$");
+            incPattern = MATCH_NOTHING_PATTERN;
         }
 
         // check whether a pattern is in effect
@@ -460,7 +463,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
             excPattern = Pattern.compile(excludePattern.trim());
         } else {
             // exclude nothing by default
-            excPattern = Pattern.compile("^$");
+            excPattern = MATCH_NOTHING_PATTERN;
         }
 
         final Set<String> acceptedNames = new HashSet<String>();

@@ -38,6 +38,9 @@ import org.slf4j.LoggerFactory;
 public class SplunkEndpoint extends ScheduledPollEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(SplunkEndpoint.class);
 
+    private static final Pattern SPLUNK_SCHEMA_PATTERN = Pattern.compile("splunk:(//)*");
+    private static final Pattern SPLUNK_OPTIONS_PATTER = Pattern.compile("\\?.*");
+
     private Service service;
     @UriParam
     private SplunkConfiguration configuration;
@@ -91,11 +94,8 @@ public class SplunkEndpoint extends ScheduledPollEndpoint {
     }
 
     private static String[] splitUri(String uri) {
-        Pattern p1 = Pattern.compile("splunk:(//)*");
-        Pattern p2 = Pattern.compile("\\?.*");
-
-        uri = p1.matcher(uri).replaceAll("");
-        uri = p2.matcher(uri).replaceAll("");
+        uri = SPLUNK_SCHEMA_PATTERN.matcher(uri).replaceAll("");
+        uri = SPLUNK_OPTIONS_PATTER.matcher(uri).replaceAll("");
 
         return uri.split("/");
     }
