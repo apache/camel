@@ -217,7 +217,7 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
                             + "          be sufficient to access Salesforce from March 4, 2017. You need\n"
                             + "          to connect with TLS version 1.1 or newer.\n"
                             + "          This Java Virtual Machine is configured, or it supports: \n"
-                            + "          " + supportedProtocolsString.substring(1, supportedProtocolsString.length() - 2)
+                            + "          " + supportedProtocolsString.substring(1, supportedProtocolsString.length() - 1) + "\n"
                             + "          For details see:\n"
                             + "            https://help.salesforce.com/HTViewSolution?id=000221207\n"
                             + "-----------------------------------------------------------------------\n");
