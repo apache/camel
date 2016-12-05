@@ -21,7 +21,7 @@ import java.io.InputStream;
 
 import org.w3c.dom.Element;
 
-import org.apache.camel.parser.CamelXmlHelper;
+import org.apache.camel.parser.helper.CamelXmlHelper;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

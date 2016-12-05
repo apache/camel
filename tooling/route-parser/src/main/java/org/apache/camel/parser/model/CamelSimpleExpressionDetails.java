@@ -16,7 +16,10 @@
  */
 package org.apache.camel.parser.model;
 
-public class CamelSimpleDetails {
+/**
+ * Details about a parsed and discovered Camel simple expression.
+ */
+public class CamelSimpleExpressionDetails {
 
     private String fileName;
     private String lineNumber;

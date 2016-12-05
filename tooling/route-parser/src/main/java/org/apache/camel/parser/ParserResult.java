@@ -16,6 +16,9 @@
  */
 package org.apache.camel.parser;
 
+/**
+ * Result of parsing Camel RouteBuilder or XML routes from the source code.
+ */
 public class ParserResult {
 
     private final String node;
@@ -34,30 +37,31 @@ public class ParserResult {
         this.parsed = parsed;
     }
 
+    /**
+     * Character based position in the source code (not line based).
+     */
     public int getPosition() {
         return position;
     }
 
-    public void setPosition(int position) {
-        this.position = position;
-    }
-
+    /**
+     * The element such as a Camel endpoint uri
+     */
     public String getElement() {
         return element;
     }
 
-    public void setElement(String element) {
-        this.element = element;
-    }
-
+    /**
+     * Whether the element was successfully parsed. If the parser cannot parse
+     * the element for whatever reason this will return <tt>false</tt>.
+     */
     public boolean isParsed() {
         return parsed;
     }
 
-    public void setParsed(boolean parsed) {
-        this.parsed = parsed;
-    }
-
+    /**
+     * The node which is typically a Camel EIP name such as <tt>to</tt>, <tt>wireTap</tt> etc.
+     */
     public String getNode() {
         return node;
     }

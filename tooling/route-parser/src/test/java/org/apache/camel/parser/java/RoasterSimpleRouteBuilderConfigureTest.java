@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.List;
 
-import org.apache.camel.parser.CamelJavaParserHelper;
+import org.apache.camel.parser.helper.CamelJavaParserHelper;
 import org.apache.camel.parser.ParserResult;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;

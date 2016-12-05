@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,8 +22,9 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.parser.helper.CamelJavaParserHelper;
 import org.apache.camel.parser.model.CamelEndpointDetails;
-import org.apache.camel.parser.model.CamelSimpleDetails;
+import org.apache.camel.parser.model.CamelSimpleExpressionDetails;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Expression;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.MemberValuePair;
@@ -45,11 +46,29 @@ public final class RouteBuilderParser {
     private RouteBuilderParser() {
     }
 
+    /**
+     * Parses the java source class to discover Camel endpoints.
+     *
+     * @param clazz                   the java source class
+     * @param baseDir                 the base of the source code
+     * @param fullyQualifiedFileName  the fully qualified source code file name
+     * @param endpoints               list to add discovered and parsed endpoints
+     */
     public static void parseRouteBuilderEndpoints(JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
                                                   List<CamelEndpointDetails> endpoints) {
         parseRouteBuilderEndpoints(clazz, baseDir, fullyQualifiedFileName, endpoints, null, false);
     }
 
+    /**
+     * Parses the java source class to discover Camel endpoints.
+     *
+     * @param clazz                        the java source class
+     * @param baseDir                      the base of the source code
+     * @param fullyQualifiedFileName       the fully qualified source code file name
+     * @param endpoints                    list to add discovered and parsed endpoints
+     * @param unparsable                   list of unparsable nodes
+     * @param includeInlinedRouteBuilders  whether to include inlined route builders in the parsing
+     */
     public static void parseRouteBuilderEndpoints(JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
                                                   List<CamelEndpointDetails> endpoints, List<String> unparsable, boolean includeInlinedRouteBuilders) {
 
@@ -209,17 +228,16 @@ public final class RouteBuilderParser {
         }
     }
 
-    private static CamelEndpointDetails findEndpointByUri(List<CamelEndpointDetails> endpoints, String uri) {
-        for (CamelEndpointDetails detail : endpoints) {
-            if (uri.equals(detail.getEndpointUri())) {
-                return detail;
-            }
-        }
-        return null;
-    }
-
+    /**
+     * Parses the java source class to discover Camel simple expressions.
+     *
+     * @param clazz                   the java source class
+     * @param baseDir                 the base of the source code
+     * @param fullyQualifiedFileName  the fully qualified source code file name
+     * @param simpleExpressions       list to add discovered and parsed simple expressions
+     */
     public static void parseRouteBuilderSimpleExpressions(JavaClassSource clazz, String baseDir, String fullyQualifiedFileName,
-                                                          List<CamelSimpleDetails> simpleExpressions) {
+                                                          List<CamelSimpleExpressionDetails> simpleExpressions) {
 
         MethodSource<JavaClassSource> method = CamelJavaParserHelper.findConfigureMethod(clazz);
         if (method != null) {
@@ -231,7 +249,7 @@ public final class RouteBuilderParser {
                         fileName = fileName.substring(baseDir.length() + 1);
                     }
 
-                    CamelSimpleDetails details = new CamelSimpleDetails();
+                    CamelSimpleExpressionDetails details = new CamelSimpleExpressionDetails();
                     details.setFileName(fileName);
                     details.setClassName(clazz.getQualifiedName());
                     details.setMethodName("configure");
@@ -245,6 +263,15 @@ public final class RouteBuilderParser {
                 }
             }
         }
+    }
+
+    private static CamelEndpointDetails findEndpointByUri(List<CamelEndpointDetails> endpoints, String uri) {
+        for (CamelEndpointDetails detail : endpoints) {
+            if (uri.equals(detail.getEndpointUri())) {
+                return detail;
+            }
+        }
+        return null;
     }
 
     private static int findLineNumber(String fullyQualifiedFileName, int position) {
