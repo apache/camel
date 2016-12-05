@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class DefaultComponent extends ServiceSupport implements Component {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultComponent.class);
+    private static final Pattern RAW_PATTERN = Pattern.compile("RAW(.*&&.*)");
 
     private CamelContext camelContext;
 
@@ -189,8 +190,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     protected void validateURI(String uri, String path, Map<String, Object> parameters) {
         // check for uri containing double && markers without include by RAW
         if (uri.contains("&&")) {
-            Pattern pattern = Pattern.compile("RAW(.*&&.*)");
-            Matcher m = pattern.matcher(uri);
+            Matcher m = RAW_PATTERN.matcher(uri);
             // we should skip the RAW part
             if (!m.find()) {
                 throw new ResolveEndpointFailedException(uri, "Invalid uri syntax: Double && marker found. "
