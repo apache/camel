@@ -52,8 +52,8 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
 
             LOG.debug("Prepare on startup by deleting orphaned lock files from: {}", dir);
 
-            Pattern excludePattern = endpoint.getExclude() != null ? Pattern.compile(endpoint.getExclude()) : null;
-            Pattern includePattern = endpoint.getInclude() != null ? Pattern.compile(endpoint.getInclude()) : null;
+            Pattern excludePattern = endpoint.getExcludePattern();
+            Pattern includePattern = endpoint.getIncludePattern();
             String endpointPath = endpoint.getConfiguration().getDirectory();
 
             StopWatch watch = new StopWatch();
