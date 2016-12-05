@@ -46,13 +46,13 @@ public class RoasterEndpointInjectTest {
         LOG.info("{}", details);
 
         Assert.assertEquals("timer:foo?period=4999", details.get(0).getEndpointUri());
-        Assert.assertEquals("27", details.get(0).getLineNumber());
+        Assert.assertEquals("28", details.get(0).getLineNumber());
 
         Assert.assertEquals("log:a", details.get(1).getEndpointUri());
-        Assert.assertEquals("31", details.get(1).getLineNumber());
+        Assert.assertEquals("32", details.get(1).getLineNumber());
 
         Assert.assertEquals("netty4-http:http:someserver:80/hello", details.get(2).getEndpointUri());
-        Assert.assertEquals("35", details.get(2).getLineNumber());
+        Assert.assertEquals("36", details.get(2).getLineNumber());
 
         List<ParserResult> list = CamelJavaParserHelper.parseCamelConsumerUris(method, true, true);
         for (ParserResult result : list) {
