@@ -66,6 +66,10 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
             this.part = part;
         }
 
+        public String getSubmittedFileName() {
+            return part.getSubmittedFileName();
+        }
+
         @Override
         public OutputStream getOutputStream() throws IOException {
             return null;
