@@ -26,8 +26,8 @@
     <version>2.19.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>route-parser</artifactId>
-  <name>Camel :: Tooling :: Route Parser</name>
+  <artifactId>camel-route-parser</artifactId>
+  <name>Camel :: Tooling :: Camel Route Parser</name>
   <description>Java and XML source code parser for Camel routes</description>
 
   <dependencies>
