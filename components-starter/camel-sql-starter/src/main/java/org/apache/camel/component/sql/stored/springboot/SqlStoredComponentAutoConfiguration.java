@@ -34,6 +34,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
@@ -46,6 +47,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 @EnableConfigurationProperties(SqlStoredComponentConfiguration.class)
 public class SqlStoredComponentAutoConfiguration {
 
+    @Lazy
     @Bean(name = "sql-stored-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SqlStoredComponent.class)

@@ -34,6 +34,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
@@ -46,6 +47,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 @EnableConfigurationProperties(SshComponentConfiguration.class)
 public class SshComponentAutoConfiguration {
 
+    @Lazy
     @Bean(name = "ssh-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(SshComponent.class)
