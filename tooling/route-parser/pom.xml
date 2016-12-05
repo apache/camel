@@ -30,9 +30,6 @@
   <name>Camel :: Tooling :: Route Parser</name>
   <description>Java and XML source code parser for Camel routes</description>
 
-  <properties>
-  </properties>
-
   <dependencies>
 
     <!-- the roaster-jdt is set as provided as different runtimes may have it out of the box -->
@@ -43,6 +40,7 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- only test scopes for camel as we have no runtime dependency on camel -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>

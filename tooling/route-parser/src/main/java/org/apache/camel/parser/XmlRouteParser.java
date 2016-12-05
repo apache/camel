@@ -19,11 +19,12 @@ package org.apache.camel.parser;
 import java.io.InputStream;
 import java.util.List;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
 import org.apache.camel.parser.helper.CamelJavaParserHelper;
 import org.apache.camel.parser.helper.CamelXmlHelper;
 import org.apache.camel.parser.helper.XmlLineNumberParser;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
 
 import org.apache.camel.parser.model.CamelEndpointDetails;
 import org.apache.camel.parser.model.CamelSimpleExpressionDetails;

@@ -19,8 +19,8 @@ package org.apache.camel.parser.java;
 import java.io.File;
 import java.util.List;
 
-import org.apache.camel.parser.helper.CamelJavaParserHelper;
 import org.apache.camel.parser.ParserResult;
+import org.apache.camel.parser.helper.CamelJavaParserHelper;
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
