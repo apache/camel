@@ -592,7 +592,7 @@ public final class CamelJavaParserHelper {
                     Long num2 = val2 != null ? Long.valueOf(val2) : 0;
                     answer = "" + (num1 + num2);
                 } else {
-                    answer = val1 != null ? val1 : val2;
+                    answer = (val1 != null ? val1 : "") + (val2 != null ? val2 : "");
                 }
 
                 if (!answer.isEmpty()) {
