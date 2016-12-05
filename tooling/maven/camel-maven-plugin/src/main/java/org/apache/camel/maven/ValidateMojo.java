@@ -162,6 +162,7 @@ public class ValidateMojo extends AbstractExecMojo {
      */
     private boolean downloadVersion;
 
+    // CHECKSTYLE:OFF
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         CamelCatalog catalog = new DefaultCamelCatalog();
@@ -384,10 +385,12 @@ public class ValidateMojo extends AbstractExecMojo {
         String endpointSummary;
         if (endpointErrors == 0) {
             int ok = endpoints.size() - endpointErrors - incapableErrors - unknownComponents;
-            endpointSummary = String.format("Endpoint validation success: (%s = passed, %s = invalid, %s = incapable, %s = unknown components)", ok, endpointErrors, incapableErrors, unknownComponents);
+            endpointSummary = String.format("Endpoint validation success: (%s = passed, %s = invalid, %s = incapable, %s = unknown components)",
+                    ok, endpointErrors, incapableErrors, unknownComponents);
         } else {
             int ok = endpoints.size() - endpointErrors - incapableErrors - unknownComponents;
-            endpointSummary = String.format("Endpoint validation error: (%s = passed, %s = invalid, %s = incapable, %s = unknown components)", ok, endpointErrors, incapableErrors, unknownComponents);
+            endpointSummary = String.format("Endpoint validation error: (%s = passed, %s = invalid, %s = incapable, %s = unknown components)",
+                    ok, endpointErrors, incapableErrors, unknownComponents);
         }
 
         if (endpointErrors > 0) {
@@ -484,6 +487,7 @@ public class ValidateMojo extends AbstractExecMojo {
             getLog().info(simpleSummary);
         }
     }
+    // CHECKSTYLE:ON
 
     private static String findCamelVersion(MavenProject project) {
         Dependency candidate = null;
