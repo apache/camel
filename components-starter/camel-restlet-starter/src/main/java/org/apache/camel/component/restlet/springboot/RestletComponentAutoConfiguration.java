@@ -34,6 +34,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
@@ -46,6 +47,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 @EnableConfigurationProperties(RestletComponentConfiguration.class)
 public class RestletComponentAutoConfiguration {
 
+    @Lazy
     @Bean(name = "restlet-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(RestletComponent.class)
