@@ -22,14 +22,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jboss.forge.roaster.model.util.Strings;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class CamelXmlHelper {
+import org.jboss.forge.roaster.model.util.Strings;
+
+public final class CamelXmlHelper {
+
+    private CamelXmlHelper() {
+        // utility class
+    }
 
     public static String getSafeAttribute(Node node, String key) {
         if (node != null) {
@@ -254,7 +259,7 @@ public class CamelXmlHelper {
     }
 
     private static boolean equal(Object a, Object b) {
-        return a == b?true:a != null && b != null && a.equals(b);
+        return a == b ? true : a != null && b != null && a.equals(b);
     }
 
 }

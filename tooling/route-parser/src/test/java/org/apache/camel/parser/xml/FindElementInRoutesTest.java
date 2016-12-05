@@ -19,11 +19,12 @@ package org.apache.camel.parser.xml;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import org.w3c.dom.Element;
+
 import org.apache.camel.parser.CamelXmlHelper;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Element;
 
 import static org.junit.Assert.assertNotNull;
 

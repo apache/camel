@@ -111,18 +111,33 @@ public class CamelEndpointDetails {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         CamelEndpointDetails that = (CamelEndpointDetails) o;
 
-        if (!fileName.equals(that.fileName)) return false;
-        if (lineNumber != null ? !lineNumber.equals(that.lineNumber) : that.lineNumber != null) return false;
-        if (lineNumberEnd != null ? !lineNumberEnd.equals(that.lineNumberEnd) : that.lineNumberEnd != null) return false;
-        if (!className.equals(that.className)) return false;
-        if (methodName != null ? !methodName.equals(that.methodName) : that.methodName != null) return false;
-        if (endpointInstance != null ? !endpointInstance.equals(that.endpointInstance) : that.endpointInstance != null)
+        if (!fileName.equals(that.fileName)) {
             return false;
+        }
+        if (lineNumber != null ? !lineNumber.equals(that.lineNumber) : that.lineNumber != null) {
+            return false;
+        }
+        if (lineNumberEnd != null ? !lineNumberEnd.equals(that.lineNumberEnd) : that.lineNumberEnd != null) {
+            return false;
+        }
+        if (!className.equals(that.className)) {
+            return false;
+        }
+        if (methodName != null ? !methodName.equals(that.methodName) : that.methodName != null) {
+            return false;
+        }
+        if (endpointInstance != null ? !endpointInstance.equals(that.endpointInstance) : that.endpointInstance != null) {
+            return false;
+        }
         return endpointUri.equals(that.endpointUri);
 
     }
@@ -141,17 +156,17 @@ public class CamelEndpointDetails {
 
     @Override
     public String toString() {
-        return "CamelEndpointDetails[" +
-                "fileName='" + fileName + '\'' +
-                ", lineNumber='" + lineNumber + '\'' +
-                ", lineNumberEnd='" + lineNumberEnd + '\'' +
-                ", className='" + className + '\'' +
-                ", methodName='" + methodName + '\'' +
-                ", endpointComponentName='" + endpointComponentName + '\'' +
-                ", endpointInstance='" + endpointInstance + '\'' +
-                ", endpointUri='" + endpointUri + '\'' +
-                ", consumerOnly=" + consumerOnly +
-                ", producerOnly=" + producerOnly +
-                ']';
+        return "CamelEndpointDetails["
+                + "fileName='" + fileName + '\''
+                + ", lineNumber='" + lineNumber + '\''
+                + ", lineNumberEnd='" + lineNumberEnd + '\''
+                + ", className='" + className + '\''
+                + ", methodName='" + methodName + '\''
+                + ", endpointComponentName='" + endpointComponentName + '\''
+                + ", endpointInstance='" + endpointInstance + '\''
+                + ", endpointUri='" + endpointUri + '\''
+                + ", consumerOnly=" + consumerOnly
+                + ", producerOnly=" + producerOnly
+                + ']';
     }
 }
