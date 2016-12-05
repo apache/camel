@@ -20,6 +20,9 @@ import java.util.regex.PatternSyntaxException;
 
 public final class EndpointHelper {
 
+    private EndpointHelper() {
+    }
+
     /**
      * Matches the name with the given pattern.
      * <p/>
