@@ -35,6 +35,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
@@ -48,6 +49,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 public class CsvDataFormatAutoConfiguration {
 
     @Bean(name = "csv-dataformat")
+    @Scope("prototype")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(CsvDataFormat.class)
     public CsvDataFormat configureCsvDataFormat(CamelContext camelContext,

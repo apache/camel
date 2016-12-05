@@ -83,6 +83,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 import static org.apache.camel.maven.packaging.JSonSchemaHelper.getSafeValue;
@@ -903,6 +904,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         String[] springBeanAliases = dataFormatAliases.stream().map(alias -> alias + "-dataformat").toArray(size -> new String[size]);
 
         method.addAnnotation(Bean.class).setStringArrayValue("name", springBeanAliases);
+        method.addAnnotation(Scope.class).setStringValue("prototype");
         method.addAnnotation(ConditionalOnClass.class).setLiteralValue("value", "CamelContext.class");
         method.addAnnotation(ConditionalOnMissingBean.class).setLiteralValue("value", model.getShortJavaType() + ".class");
 
@@ -974,6 +976,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         String[] springBeanAliases = languageAliases.stream().map(alias -> alias + "-language").toArray(size -> new String[size]);
 
         method.addAnnotation(Bean.class).setStringArrayValue("name", springBeanAliases);
+        method.addAnnotation(Scope.class).setStringValue("prototype");
         method.addAnnotation(ConditionalOnClass.class).setLiteralValue("value", "CamelContext.class");
         method.addAnnotation(ConditionalOnMissingBean.class).setLiteralValue("value", model.getShortJavaType() + ".class");
 
