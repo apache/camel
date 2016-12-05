@@ -52,6 +52,9 @@ public final class XmlLineNumberParser {
     public static final String LINE_NUMBER_END = "lineNumberEnd";
     public static final String COLUMN_NUMBER_END = "colNumberEnd";
 
+    private XmlLineNumberParser() {
+    }
+
     /**
      * Parses the XML.
      *

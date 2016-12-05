@@ -28,7 +28,10 @@ import org.jboss.forge.roaster.model.util.Strings;
 
 import static org.apache.camel.parser.CamelXmlHelper.getSafeAttribute;
 
-public class XmlRouteParser {
+public final class XmlRouteParser {
+
+    private XmlRouteParser() {
+    }
 
     public static void parseXmlRouteEndpoints(InputStream xml, String baseDir, String fullyQualifiedFileName,
                                               List<CamelEndpointDetails> endpoints) throws Exception {

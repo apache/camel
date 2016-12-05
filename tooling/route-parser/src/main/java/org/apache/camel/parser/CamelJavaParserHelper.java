@@ -58,7 +58,11 @@ import org.jboss.forge.roaster.model.util.Strings;
  * <p/>
  * This implementation is lower level details. For a higher level parser see {@link RouteBuilderParser}.
  */
-public class CamelJavaParserHelper {
+public final class CamelJavaParserHelper {
+
+    private CamelJavaParserHelper() {
+        // utility class
+    }
 
     public static MethodSource<JavaClassSource> findConfigureMethod(JavaClassSource clazz) {
         MethodSource<JavaClassSource> method = clazz.getMethod("configure");
@@ -584,11 +588,11 @@ public class CamelJavaParserHelper {
                 // if numeric then we plus the values, otherwise we string concat
                 boolean numeric = isNumericOperator(clazz, block, ie.getLeftOperand()) && isNumericOperator(clazz, block, ie.getRightOperand());
                 if (numeric) {
-                    Long num1 = (val1 != null ? Long.valueOf(val1) : 0);
-                    Long num2 = (val2 != null ? Long.valueOf(val2) : 0);
+                    Long num1 = val1 != null ? Long.valueOf(val1) : 0;
+                    Long num2 = val2 != null ? Long.valueOf(val2) : 0;
                     answer = "" + (num1 + num2);
                 } else {
-                    answer = (val1 != null ? val1 : "") + (val2 != null ? val2 : "");
+                    answer = val1 != null ? val1 : val2;
                 }
 
                 if (!answer.isEmpty()) {
@@ -598,7 +602,7 @@ public class CamelJavaParserHelper {
                         for (Object ext : extended) {
                             String val3 = getLiteralValue(clazz, block, (Expression) ext);
                             if (numeric) {
-                                Long num3 = (val3 != null ? Long.valueOf(val3) : 0);
+                                Long num3 = val3 != null ? Long.valueOf(val3) : 0;
                                 Long num = Long.valueOf(answer);
                                 answer = "" + (num + num3);
                             } else {
