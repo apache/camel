@@ -20,7 +20,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.parser.CamelJavaParserHelper;
+import org.apache.camel.parser.helper.CamelJavaParserHelper;
 import org.apache.camel.parser.ParserResult;
 import org.apache.camel.parser.RouteBuilderParser;
 import org.apache.camel.parser.model.CamelEndpointDetails;

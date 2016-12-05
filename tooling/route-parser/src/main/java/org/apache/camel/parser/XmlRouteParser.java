@@ -19,20 +19,36 @@ package org.apache.camel.parser;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.camel.parser.helper.CamelJavaParserHelper;
+import org.apache.camel.parser.helper.CamelXmlHelper;
+import org.apache.camel.parser.helper.XmlLineNumberParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
 import org.apache.camel.parser.model.CamelEndpointDetails;
-import org.apache.camel.parser.model.CamelSimpleDetails;
+import org.apache.camel.parser.model.CamelSimpleExpressionDetails;
 import org.jboss.forge.roaster.model.util.Strings;
 
-import static org.apache.camel.parser.CamelXmlHelper.getSafeAttribute;
+import static org.apache.camel.parser.helper.CamelXmlHelper.getSafeAttribute;
 
+/**
+ * A Camel XML parser that parses Camel XML routes source code.
+ * <p/>
+ * This implementation is higher level details, and uses the lower level parser {@link CamelJavaParserHelper}.
+ */
 public final class XmlRouteParser {
 
     private XmlRouteParser() {
     }
 
+    /**
+     * Parses the XML source to discover Camel endpoints.
+     *
+     * @param xml                     the xml file as input stream
+     * @param baseDir                 the base of the source code
+     * @param fullyQualifiedFileName  the fully qualified source code file name
+     * @param endpoints               list to add discovered and parsed endpoints
+     */
     public static void parseXmlRouteEndpoints(InputStream xml, String baseDir, String fullyQualifiedFileName,
                                               List<CamelEndpointDetails> endpoints) throws Exception {
 
@@ -87,8 +103,16 @@ public final class XmlRouteParser {
         }
     }
 
+    /**
+     * Parses the XML source to discover Camel endpoints.
+     *
+     * @param xml                     the xml file as input stream
+     * @param baseDir                 the base of the source code
+     * @param fullyQualifiedFileName  the fully qualified source code file name
+     * @param simpleExpressions       list to add discovered and parsed simple expressions
+     */
     public static void parseXmlRouteSimpleExpressions(InputStream xml, String baseDir, String fullyQualifiedFileName,
-                                                      List<CamelSimpleDetails> simpleExpressions) throws Exception {
+                                                      List<CamelSimpleExpressionDetails> simpleExpressions) throws Exception {
 
         // find all the simple expressions
         // try parse it as dom
@@ -111,7 +135,7 @@ public final class XmlRouteParser {
                     fileName = fileName.substring(baseDir.length() + 1);
                 }
 
-                CamelSimpleDetails detail = new CamelSimpleDetails();
+                CamelSimpleExpressionDetails detail = new CamelSimpleExpressionDetails();
                 detail.setFileName(fileName);
                 detail.setLineNumber(lineNumber);
                 detail.setLineNumberEnd(lineNumberEnd);

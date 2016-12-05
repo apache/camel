@@ -16,6 +16,9 @@
  */
 package org.apache.camel.parser.model;
 
+/**
+ * Details about a parsed and discovered Camel endpoint.
+ */
 public class CamelEndpointDetails {
 
     private String fileName;

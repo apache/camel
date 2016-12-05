@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.parser;
+package org.apache.camel.parser.helper;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -30,6 +30,9 @@ import org.w3c.dom.NodeList;
 
 import org.jboss.forge.roaster.model.util.Strings;
 
+/**
+ * Various XML helper methods used for parsing XML routes.
+ */
 public final class CamelXmlHelper {
 
     private CamelXmlHelper() {
@@ -176,7 +179,7 @@ public final class CamelXmlHelper {
     }
 
     private static Document loadCamelXmlFileAsDom(InputStream resourceInputStream) throws Exception {
-        // TODO:
+        // must enforce the namespace to be http://camel.apache.org/schema/spring which is what the camel-core JAXB model uses
         Document root = XmlLineNumberParser.parseXml(resourceInputStream, "camelContext,routes,rests", "http://camel.apache.org/schema/spring");
         return root;
     }

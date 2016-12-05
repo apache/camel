@@ -14,12 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.parser;
+package org.apache.camel.parser.helper;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.camel.parser.ParserResult;
+import org.apache.camel.parser.RouteBuilderParser;
+import org.apache.camel.parser.roaster.AnonymousMethodSource;
+import org.apache.camel.parser.roaster.StatementFieldSource;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ASTNode;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Block;
