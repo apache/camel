@@ -143,6 +143,7 @@ public class Hl7AcknowledgementGenerator implements Processor {
         acknowledgement.write(SEGMENT_DELIMITER);
 
         // Terminate the message
+        acknowledgement.write(SEGMENT_DELIMITER);
         acknowledgement.write(MESSAGE_TERMINATOR);
 
         return acknowledgement.toByteArray();

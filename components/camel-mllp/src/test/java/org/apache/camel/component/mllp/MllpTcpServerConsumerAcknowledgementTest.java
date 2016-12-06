@@ -101,7 +101,8 @@ public class MllpTcpServerConsumerAcknowledgementTest extends CamelTestSupport {
 
         final String expectedAcknowledgement =
                 "MSH|^~\\&|^org^sys||APP_A|FAC_A|||ACK^A04^ADT_A04|||2.6" + '\r'
-                        + "MSA|AA|" + '\r' + '\n';
+                        + "MSA|AA|" + '\r'
+                        + '\r' + '\n';
 
         result.expectedBodiesReceived(testMessage);
         result.expectedHeaderReceived(MLLP_SENDING_APPLICATION, "APP_A");
@@ -141,7 +142,7 @@ public class MllpTcpServerConsumerAcknowledgementTest extends CamelTestSupport {
 
         final String expectedAcknowledgement =
                 "MSH|^~\\&|^org^sys||APP_A|FAC_A|||ACK^A04^ADT_A04|||2.6" + '\r'
-                        + "MSA|AA|"
+                        + "MSA|AA|" + '\r'
                         + '\r' + '\n';
 
         result.expectedBodiesReceived(testMessage);

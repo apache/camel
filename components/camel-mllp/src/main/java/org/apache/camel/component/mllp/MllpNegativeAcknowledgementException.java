@@ -17,14 +17,16 @@
 package org.apache.camel.component.mllp;
 
 /**
- * Raised when a MLLP Producer does not receive a HL7 acknowledgement within the configured timespan
+ * Abstract base for all MLLP Negative Acknowledgements
  */
-public class MllpAcknowledgementTimoutException extends MllpTimeoutException {
-    public MllpAcknowledgementTimoutException(String message, byte[] hl7Message) {
-        super(message, hl7Message);
+public abstract class MllpNegativeAcknowledgementException extends MllpAcknowledgementException {
+    public MllpNegativeAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement) {
+        super(message, hl7Message, hl7Acknowledgement);
     }
 
-    public MllpAcknowledgementTimoutException(String message, byte[] hl7Message, Throwable cause) {
-        super(message, hl7Message, cause);
+    public MllpNegativeAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
+        super(message, hl7Message, hl7Acknowledgement, cause);
     }
+
+    public abstract String getAcknowledgmentType();
 }
