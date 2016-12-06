@@ -1,0 +1,154 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.direct.enabled",
+      "description": "Enable direct component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.vm.enabled",
+      "description": "Enable vm component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.direct-vm.enabled",
+      "description": "Enable direct-vm component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.seda.enabled",
+      "description": "Enable seda component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.stub.enabled",
+      "description": "Enable stub component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.log.enabled",
+      "description": "Enable log component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.scheduler.enabled",
+      "description": "Enable scheduler component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.xslt.enabled",
+      "description": "Enable xslt component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.rest.enabled",
+      "description": "Enable rest component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.validator.enabled",
+      "description": "Enable validator component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.properties.enabled",
+      "description": "Enable properties component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.string.enabled",
+      "description": "Enable string dataformat",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.zip.enabled",
+      "description": "Enable zip dataformat",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.serialization.enabled",
+      "description": "Enable serialization dataformat",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.gzip.enabled",
+      "description": "Enable gzip dataformat",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.language.constant.enabled",
+      "description": "Enable constant language",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.language.simple.enabled",
+      "description": "Enable simple language",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.language.bean.enabled",
+      "description": "Enable bean language",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.language.ref.enabled",
+      "description": "Enable ref language",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.language.header.enabled",
+      "description": "Enable header language",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.language.xpath.enabled",
+      "description": "Enable xpath language",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.language.file.enabled",
+      "description": "Enable file language",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.language.exchangeproperty.enabled",
+      "description": "Enable exchangeproperty language",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.language.tokenize.enabled",
+      "description": "Enable tokenize language",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.language.xtokenize.enabled",
+      "description": "Enable xtokenize language",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

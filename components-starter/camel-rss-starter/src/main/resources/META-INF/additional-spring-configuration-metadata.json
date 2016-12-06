@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.rss.enabled",
+      "description": "Enable rss dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

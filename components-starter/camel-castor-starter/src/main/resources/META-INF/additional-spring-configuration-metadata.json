@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.castor.enabled",
+      "description": "Enable castor dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

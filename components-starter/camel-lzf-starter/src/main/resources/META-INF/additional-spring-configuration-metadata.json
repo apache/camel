@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.lzf.enabled",
+      "description": "Enable lzf dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

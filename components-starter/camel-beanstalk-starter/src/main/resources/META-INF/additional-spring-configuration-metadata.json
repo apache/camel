@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.beanstalk.enabled",
+      "description": "Enable beanstalk component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

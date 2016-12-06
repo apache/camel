@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.flatpack.enabled",
+      "description": "Enable flatpack dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

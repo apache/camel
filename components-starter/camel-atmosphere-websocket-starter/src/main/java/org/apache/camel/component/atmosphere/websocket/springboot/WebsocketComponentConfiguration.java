@@ -42,8 +42,8 @@ public class WebsocketComponentConfiguration {
     private HttpRegistry httpRegistry;
     /**
      * Whether to automatic bind multipart/form-data as attachments on the Camel
-     * Exchange. This is turn off by default as this may require servet specific
-     * configuration to enable this when using Servlet's.
+     * Exchange. This is turn off by default as this may require servlet
+     * specific configuration to enable this when using Servlet's.
      */
     private Boolean attachmentMultipartBinding;
     /**
