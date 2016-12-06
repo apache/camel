@@ -51,7 +51,8 @@ public class CamelCatalogSwaggerTest {
         swagger.setScanAllResources(false);
         swagger.setPrettyPrint(true);
         swagger.setSupportSwaggerUi(true);
-        swagger.setDescription("Camel Catalog REST Api");
+        swagger.setTitle("Camel Catalog REST Api");
+        swagger.setDescription("REST Api for the Camel Catalog");
         swagger.setVersion(catalog.getCatalogVersion());
         swagger.setContact("Apache Camel");
         sf.getFeatures().add(swagger);
