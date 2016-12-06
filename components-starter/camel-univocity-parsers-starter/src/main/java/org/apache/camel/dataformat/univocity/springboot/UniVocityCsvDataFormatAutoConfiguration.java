@@ -33,6 +33,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
@@ -44,6 +45,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 public class UniVocityCsvDataFormatAutoConfiguration {
 
     @Bean(name = "univocity-csv-dataformat")
+    @Scope("prototype")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(UniVocityCsvDataFormat.class)
     public UniVocityCsvDataFormat configureUniVocityCsvDataFormat(

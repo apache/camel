@@ -33,6 +33,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
@@ -44,6 +45,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 public class PythonLanguageAutoConfiguration {
 
     @Bean(name = "python-language")
+    @Scope("prototype")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(PythonLanguage.class)
     public PythonLanguage configurePythonLanguage(CamelContext camelContext,

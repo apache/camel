@@ -33,6 +33,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
@@ -44,6 +45,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 public class JacksonDataFormatAutoConfiguration {
 
     @Bean(name = "json-jackson-dataformat")
+    @Scope("prototype")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(JacksonDataFormat.class)
     public JacksonDataFormat configureJacksonDataFormat(
