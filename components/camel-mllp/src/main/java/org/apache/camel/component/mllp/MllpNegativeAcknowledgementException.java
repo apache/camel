@@ -17,24 +17,16 @@
 package org.apache.camel.component.mllp;
 
 /**
- * Raised when a MLLP Producer or consumer encounters a corrupt MLLP Frame while attempting
- * to read or write a MLLP payload.
+ * Abstract base for all MLLP Negative Acknowledgements
  */
-public class MllpCorruptFrameException extends MllpException {
-    public MllpCorruptFrameException(String message) {
-        super(message);
+public abstract class MllpNegativeAcknowledgementException extends MllpAcknowledgementException {
+    public MllpNegativeAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement) {
+        super(message, hl7Message, hl7Acknowledgement);
     }
 
-    public MllpCorruptFrameException(String message, byte[] mllpPayload) {
-        super(message, mllpPayload);
+    public MllpNegativeAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
+        super(message, hl7Message, hl7Acknowledgement, cause);
     }
 
-    public MllpCorruptFrameException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public MllpCorruptFrameException(String message, byte[] mllpPayload, Throwable cause) {
-        super(message, mllpPayload, cause);
-    }
-
+    public abstract String getAcknowledgmentType();
 }

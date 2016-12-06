@@ -20,26 +20,25 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
-import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_ACKNOWLEDGEMENT;
+import static org.apache.camel.component.mllp.MllpConstants.MLLP_ACKNOWLEDGEMENT_EXCEPTION;
 import static org.apache.camel.component.mllp.MllpConstants.MLLP_EVENT_TYPE;
 import static org.apache.camel.component.mllp.MllpConstants.MLLP_RECEIVING_APPLICATION;
-import static org.apache.camel.component.mllp.MllpConstants.MLLP_RECEIVING_FACILITY;
 import static org.apache.camel.component.mllp.MllpConstants.MLLP_SENDING_APPLICATION;
 import static org.apache.camel.component.mllp.MllpConstants.MLLP_SENDING_FACILITY;
 import static org.apache.camel.component.mllp.MllpConstants.MLLP_TRIGGER_EVENT;
 import static org.apache.camel.component.mllp.MllpConstants.MLLP_VERSION_ID;
-import static org.apache.camel.test.mllp.Hl7MessageGenerator.generateMessage;
 
 public class MllpTcpServerConsumerAcknowledgementTest extends CamelTestSupport {
     @Rule
@@ -47,6 +46,12 @@ public class MllpTcpServerConsumerAcknowledgementTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock://result")
     MockEndpoint result;
+
+    @EndpointInject(uri = "mock://on-complete-only")
+    MockEndpoint complete;
+
+    @EndpointInject(uri = "mock://on-failure-only")
+    MockEndpoint failure;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -60,7 +65,6 @@ public class MllpTcpServerConsumerAcknowledgementTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
-
         mllpClient.setMllpHost("localhost");
         mllpClient.setMllpPort(AvailablePortFinder.getNextAvailable());
 
@@ -73,27 +77,34 @@ public class MllpTcpServerConsumerAcknowledgementTest extends CamelTestSupport {
                 String routeId = "mllp-test-receiver-route";
 
                 onCompletion()
-                        .toF("log:%s?level=INFO&showAll=true", routeId)
-                        .log(LoggingLevel.INFO, routeId, "Test route complete");
-
+                        .onCompleteOnly()
+                        .log(LoggingLevel.INFO, routeId, "Test route complete")
+                        .to("mock://on-complete-only");
+                onCompletion()
+                        .onFailureOnly()
+                        .log(LoggingLevel.INFO, routeId, "Test route complete")
+                        .to("mock://on-failure-only");
                 fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d",
                         mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout)
                         .routeId(routeId)
                         .to(result);
-
             }
         };
     }
 
     @Test
     public void testReceiveSingleMessage() throws Exception {
-        final String testMessage = "MSH|^~\\&|APP_A|FAC_A|^org^sys||||ADT^A04^ADT_A04|||2.6" + '\r'
-                + "PID|1||1100832^^^^PI||TEST^FIG||98765432|U||R|435 MAIN STREET^^LONGMONT^CO^80503||123-456-7890|||S" + '\r'
-                + '\r' + '\n';
+        final String testMessage =
+                "MSH|^~\\&|APP_A|FAC_A|^org^sys||||ADT^A04^ADT_A04|||2.6" + '\r'
+                        + "PID|1||1100832^^^^PI||TEST^FIG||98765432|U||R|435 MAIN STREET^^LONGMONT^CO^80503||123-456-7890|||S" + '\r'
+                        + '\r' + '\n';
 
-        final String expectedAcknowledgement = "MSH|^~\\&|^org^sys||APP_A|FAC_A|||ACK^A04^ADT_A04|||2.6" + '\r' + "MSA|AA|" + '\r' + '\n';
+        final String expectedAcknowledgement =
+                "MSH|^~\\&|^org^sys||APP_A|FAC_A|||ACK^A04^ADT_A04|||2.6" + '\r'
+                        + "MSA|AA|" + '\r'
+                        + '\r' + '\n';
 
-        result.expectedMessageCount(1);
+        result.expectedBodiesReceived(testMessage);
         result.expectedHeaderReceived(MLLP_SENDING_APPLICATION, "APP_A");
         result.expectedHeaderReceived(MLLP_SENDING_FACILITY, "FAC_A");
         result.expectedHeaderReceived(MLLP_RECEIVING_APPLICATION, "^org^sys");
@@ -101,14 +112,71 @@ public class MllpTcpServerConsumerAcknowledgementTest extends CamelTestSupport {
         result.expectedHeaderReceived(MLLP_TRIGGER_EVENT, "A04");
         result.expectedHeaderReceived(MLLP_VERSION_ID, "2.6");
 
+        complete.expectedBodiesReceived(testMessage);
+        complete.expectedHeaderReceived(MLLP_SENDING_APPLICATION, "APP_A");
+        complete.expectedHeaderReceived(MLLP_SENDING_FACILITY, "FAC_A");
+        complete.expectedHeaderReceived(MLLP_RECEIVING_APPLICATION, "^org^sys");
+        complete.expectedHeaderReceived(MLLP_EVENT_TYPE, "ADT");
+        complete.expectedHeaderReceived(MLLP_TRIGGER_EVENT, "A04");
+        complete.expectedHeaderReceived(MLLP_VERSION_ID, "2.6");
+        complete.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, "AA");
+        complete.expectedHeaderReceived(MLLP_ACKNOWLEDGEMENT, expectedAcknowledgement);
+
+        failure.expectedMessageCount(0);
+
         mllpClient.connect();
 
         String acknowledgement = mllpClient.sendMessageAndWaitForAcknowledgement(testMessage, 10000);
 
-        assertEquals("Unexpected Acknowledgement", expectedAcknowledgement, acknowledgement);
-
         assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+
+        assertEquals("Unexpected Acknowledgement", expectedAcknowledgement, acknowledgement);
     }
 
+    @Test
+    public void testAcknowledgementDeliveryFailure() throws Exception {
+        final String testMessage =
+                "MSH|^~\\&|APP_A|FAC_A|^org^sys||||ADT^A04^ADT_A04|||2.6" + '\r'
+                        + "PID|1||1100832^^^^PI||TEST^FIG||98765432|U||R|435 MAIN STREET^^LONGMONT^CO^80503||123-456-7890|||S" + '\r'
+                        + '\r' + '\n';
+
+        final String expectedAcknowledgement =
+                "MSH|^~\\&|^org^sys||APP_A|FAC_A|||ACK^A04^ADT_A04|||2.6" + '\r'
+                        + "MSA|AA|" + '\r'
+                        + '\r' + '\n';
+
+        result.expectedBodiesReceived(testMessage);
+        result.expectedHeaderReceived(MLLP_SENDING_APPLICATION, "APP_A");
+        result.expectedHeaderReceived(MLLP_SENDING_FACILITY, "FAC_A");
+        result.expectedHeaderReceived(MLLP_RECEIVING_APPLICATION, "^org^sys");
+        result.expectedHeaderReceived(MLLP_EVENT_TYPE, "ADT");
+        result.expectedHeaderReceived(MLLP_TRIGGER_EVENT, "A04");
+        result.expectedHeaderReceived(MLLP_VERSION_ID, "2.6");
+
+        complete.expectedMessageCount(0);
+
+        failure.expectedBodiesReceived(testMessage);
+        failure.expectedHeaderReceived(MLLP_SENDING_APPLICATION, "APP_A");
+        failure.expectedHeaderReceived(MLLP_SENDING_FACILITY, "FAC_A");
+        failure.expectedHeaderReceived(MLLP_RECEIVING_APPLICATION, "^org^sys");
+        failure.expectedHeaderReceived(MLLP_EVENT_TYPE, "ADT");
+        failure.expectedHeaderReceived(MLLP_TRIGGER_EVENT, "A04");
+        failure.expectedHeaderReceived(MLLP_VERSION_ID, "2.6");
+        failure.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, "AA");
+        failure.expectedHeaderReceived(MLLP_ACKNOWLEDGEMENT, expectedAcknowledgement);
+
+        boolean disconnectAfterSend = true;
+        mllpClient.setDisconnectMethod(MllpClientResource.DisconnectMethod.RESET);
+        mllpClient.connect();
+
+        mllpClient.sendFramedData(testMessage, disconnectAfterSend);
+
+        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+
+        Exchange failureExchange = failure.getExchanges().get(0);
+        Object failureException = failureExchange.getProperty(MLLP_ACKNOWLEDGEMENT_EXCEPTION);
+        assertNotNull("OnFailureOnly exchange should have a " + MLLP_ACKNOWLEDGEMENT_EXCEPTION + " property", failureException);
+        assertIsInstanceOf(Exception.class, failureException);
+    }
 }
 
