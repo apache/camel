@@ -51,6 +51,7 @@ public class CamelCatalogRest {
 
     @GET
     @Path("/catalogVersion")
+    @Produces("text/plain")
     @ApiOperation(value = "The version of this Camel Catalog")
     public String getCatalogVersion() {
         return catalog.getCatalogVersion();

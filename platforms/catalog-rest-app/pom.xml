@@ -24,30 +24,16 @@
     <version>2.19.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-catalog-rest</artifactId>
+  <artifactId>camel-catalog-rest-app</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Platforms :: Catalog :: REST</name>
-  <description>Camel Catalog REST</description>
+  <name>Camel :: Platforms :: Catalog :: REST App</name>
+  <description>Camel Catalog REST standalone application</description>
 
   <dependencies>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-catalog</artifactId>
-    </dependency>
-
-    <!-- REST api -->
-    <dependency>
-      <groupId>javax.ws.rs</groupId>
-      <artifactId>javax.ws.rs-api</artifactId>
-      <version>${javax.ws.rs-api-version}</version>
-    </dependency>
-
-    <!-- swagger annotations -->
-    <dependency>
-      <groupId>io.swagger</groupId>
-      <artifactId>swagger-annotations</artifactId>
-      <version>${swagger-java-version}</version>
+      <artifactId>camel-catalog-rest</artifactId>
     </dependency>
 
     <!-- cxf -->
@@ -55,31 +41,26 @@
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-core</artifactId>
       <version>${cxf-version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-frontend-jaxrs</artifactId>
       <version>${cxf-version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-http</artifactId>
       <version>${cxf-version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-http-jetty</artifactId>
       <version>${cxf-version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
       <version>${cxf-version}</version>
-      <scope>test</scope>
     </dependency>
 
     <!-- to support json -->
@@ -87,38 +68,21 @@
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-rs-extension-providers</artifactId>
       <version>${cxf-version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.jaxrs</groupId>
       <artifactId>jackson-jaxrs-json-provider</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <scope>test</scope>
     </dependency>
 
-    <!-- testing -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-
-    <!-- swagger ui for testing -->
+    <!-- swagger ui -->
     <dependency>
       <groupId>org.webjars</groupId>
       <artifactId>swagger-ui</artifactId>
       <version>${swagger-ui-version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
@@ -127,37 +91,35 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- use rest assured for REST/JSon testing -->
-    <dependency>
-      <groupId>io.rest-assured</groupId>
-      <artifactId>rest-assured</artifactId>
-      <version>${rest-assured-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest-core</artifactId>
-      <version>1.3</version>
-      <scope>test</scope>
-    </dependency>
-
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
-      <scope>test</scope>
     </dependency>
 
   </dependencies>
+
+  <build>
+    <plugins>
+
+      <!-- to start the application using mvn compile exec:java -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <configuration>
+          <mainClass>org.apache.camel.catalog.rest.CamelCatalogRestMain</mainClass>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
 
  </project>
