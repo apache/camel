@@ -23,12 +23,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 
 /**
  * A REST based {@link CamelCatalog} service as a JAX-RS resource class.
  */
+@Api(value = "/camel-catalog", description = "Camel Catalog REST API")
 @Path("/camel-catalog")
 public class CamelCatalogRest {
 
@@ -50,6 +53,7 @@ public class CamelCatalogRest {
      */
     @GET
     @Path("/catalogVersion")
+    @ApiOperation(value = "The version of this Camel Catalog")
     public String getCatalogVersion() {
         return catalog.getCatalogVersion();
     }

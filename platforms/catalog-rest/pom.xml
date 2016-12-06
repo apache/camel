@@ -43,6 +43,23 @@
       <version>${javax.ws.rs-api-version}</version>
     </dependency>
 
+    <!-- swagger -->
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-core</artifactId>
+      <version>${swagger-java-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-annotations</artifactId>
+      <version>${swagger-java-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-jaxrs</artifactId>
+      <version>${swagger-java-version}</version>
+    </dependency>
+
     <!-- cxf -->
     <dependency>
       <groupId>org.apache.cxf</groupId>
@@ -65,6 +82,12 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-http-jetty</artifactId>
+      <version>${cxf-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
       <version>${cxf-version}</version>
       <scope>test</scope>
     </dependency>
