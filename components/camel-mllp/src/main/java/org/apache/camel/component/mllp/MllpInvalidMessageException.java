@@ -16,20 +16,15 @@
  */
 package org.apache.camel.component.mllp;
 
-import org.apache.camel.EndpointInject;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
-import org.junit.Ignore;
-
-@Ignore(value = "Not Yet Implemented")
-// TODO: Implement this
-public class MllpTcpServerProducerBlueprintTest extends CamelBlueprintTestSupport {
-    @EndpointInject(uri = "mock://target")
-    MockEndpoint target;
-
-    @Override
-    protected String getBlueprintDescriptor() {
-        return "OSGI-INF/blueprint/mllp-tcp-server-producer.xml";
+/**
+ * Raised when a MLLP Consumer receives an invalid HL7 Message.
+ */
+public class MllpInvalidMessageException extends MllpException {
+    public MllpInvalidMessageException(String message, byte[] hl7Message) {
+        super(message, hl7Message);
     }
 
+    public MllpInvalidMessageException(String message, byte[] hl7Message, Throwable cause) {
+        super(message, hl7Message, cause);
+    }
 }
