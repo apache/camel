@@ -32,6 +32,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
@@ -42,6 +43,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 @Conditional(ElsqlComponentAutoConfiguration.Condition.class)
 public class ElsqlComponentAutoConfiguration {
 
+    @Lazy
     @Bean(name = "elsql-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(ElsqlComponent.class)

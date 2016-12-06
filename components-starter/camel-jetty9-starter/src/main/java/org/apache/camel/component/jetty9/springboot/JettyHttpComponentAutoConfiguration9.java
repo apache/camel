@@ -32,6 +32,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
@@ -42,6 +43,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 @Conditional(JettyHttpComponentAutoConfiguration9.Condition.class)
 public class JettyHttpComponentAutoConfiguration9 {
 
+    @Lazy
     @Bean(name = "jetty-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(JettyHttpComponent9.class)
