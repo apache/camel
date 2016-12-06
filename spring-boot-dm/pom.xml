@@ -36,7 +36,7 @@
 
     <properties>
         <!-- Spring-Boot target version -->
-        <spring-boot-version>1.4.1.RELEASE</spring-boot-version>
+        <spring-boot-version>1.4.2.RELEASE</spring-boot-version>
 
         <!-- The following dependencies should be aligned with the ones in standard camel parent -->
         <avro-version>1.8.1</avro-version>

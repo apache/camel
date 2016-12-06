@@ -91,6 +91,12 @@
       <artifactId>commons-io</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>${gson-version}</version>
+    </dependency>
+
     <!-- roaster to create java source for Spring Boot auto configuration support -->
     <dependency>
       <groupId>org.jboss.forge.roaster</groupId>
