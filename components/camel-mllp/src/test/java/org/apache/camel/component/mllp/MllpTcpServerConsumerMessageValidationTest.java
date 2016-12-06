@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.mllp;
 
-import java.net.BindException;
-import java.net.ServerSocket;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
@@ -32,6 +28,7 @@ import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
 import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceException;
 import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceTimeoutException;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -41,7 +38,7 @@ import static org.apache.camel.component.mllp.MllpEndpoint.END_OF_BLOCK;
 import static org.apache.camel.component.mllp.MllpEndpoint.START_OF_BLOCK;
 import static org.apache.camel.test.mllp.Hl7MessageGenerator.generateMessage;
 
-public class MllpTcpServerConsumerTest extends CamelTestSupport {
+public class MllpTcpServerConsumerMessageValidationTest extends CamelTestSupport {
     @Rule
     public MllpClientResource mllpClient = new MllpClientResource();
 
@@ -50,6 +47,9 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock://timeout-ex")
     MockEndpoint timeout;
+
+    @EndpointInject(uri = "mock://invalid-ex")
+    MockEndpoint invalid;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -78,7 +78,10 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
                 onException(MllpTimeoutException.class)
                         .to(timeout);
 
-                fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d",
+                onException(MllpInvalidMessageException.class)
+                        .to(invalid);
+
+                fromF("mllp://%s:%d?validatePayload=true&autoAck=true&connectTimeout=%d&receiveTimeout=%d",
                         mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout)
                         .routeId(routeId)
                         .log(LoggingLevel.INFO, routeId, "Test route received message")
@@ -91,7 +94,9 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
     @Test
     public void testReceiveSingleMessage() throws Exception {
         result.expectedMessageCount(1);
+        result.setAssertPeriod(1000);
         timeout.expectedMessageCount(0);
+        invalid.expectedMessageCount(0);
 
         mllpClient.connect();
 
@@ -103,7 +108,9 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
     @Test
     public void testReceiveSingleMessageWithDelayAfterConnection() throws Exception {
         result.expectedMinimumMessageCount(1);
+        result.setAssertPeriod(1000);
         timeout.expectedMessageCount(0);
+        invalid.expectedMessageCount(0);
 
         mllpClient.connect();
 
@@ -117,7 +124,9 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
     public void testReceiveMultipleMessages() throws Exception {
         int sendMessageCount = 5;
         result.expectedMinimumMessageCount(5);
+        result.setAssertPeriod(1000);
         timeout.expectedMessageCount(0);
+        invalid.expectedMessageCount(0);
 
         mllpClient.connect();
 
@@ -131,7 +140,10 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
     @Test
     public void testOpenMllpEnvelopeWithReset() throws Exception {
         result.expectedMessageCount(4);
+        result.setAssertPeriod(1000);
         timeout.expectedMessageCount(1);
+        invalid.expectedMessageCount(0);
+
         NotifyBuilder notify1 = new NotifyBuilder(context).whenDone(2).create();
         NotifyBuilder notify2 = new NotifyBuilder(context).whenDone(5).create();
 
@@ -181,7 +193,9 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
     @Test
     public void testMessageReadTimeout() throws Exception {
         result.expectedMessageCount(0);
+        result.setAssertPeriod(1000);
         timeout.expectedMessageCount(1);
+        invalid.expectedMessageCount(0);
 
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
 
@@ -197,8 +211,10 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
 
     @Test
     public void testInvalidMessage() throws Exception {
-        result.expectedMessageCount(1);
+        result.expectedMessageCount(0);
+        result.setAssertPeriod(1000);
         timeout.expectedMessageCount(0);
+        invalid.expectedMessageCount(1);
 
         mllpClient.sendFramedData("INVALID PAYLOAD");
 
@@ -209,8 +225,10 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
     public void testNthInvalidMessage() throws Exception {
         int messageCount = 10;
 
-        result.expectedMessageCount(messageCount);
+        result.expectedMessageCount(messageCount - 1);
+        result.setAssertPeriod(1000);
         timeout.expectedMessageCount(0);
+        invalid.expectedMessageCount(1);
 
         for (int i = 0; i < messageCount; ++i) {
             if (i == messageCount / 2) {
@@ -225,13 +243,15 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
             }
         }
 
-        assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
+        assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testMessageContainingEmbeddedStartOfBlock() throws Exception {
-        result.expectedMessageCount(1);
+        result.expectedMessageCount(0);
+        result.setAssertPeriod(1000);
         timeout.expectedMessageCount(0);
+        invalid.expectedMessageCount(1);
 
         mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage().replaceFirst("EVN", "EVN" + START_OF_BLOCK));
 
@@ -242,8 +262,10 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
     public void testNthMessageContainingEmbeddedStartOfBlock() throws Exception {
         int messageCount = 10;
 
-        result.expectedMessageCount(messageCount);
+        result.expectedMessageCount(messageCount - 1);
+        result.setAssertPeriod(1000);
         timeout.expectedMessageCount(0);
+        invalid.expectedMessageCount(1);
 
         for (int i = 0; i < messageCount; ++i) {
             String message = (i == (messageCount/2))
@@ -260,8 +282,10 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
 
     @Test
     public void testMessageContainingEmbeddedEndOfBlock() throws Exception {
-        result.expectedMessageCount(1);
+        result.expectedMessageCount(0);
+        result.setAssertPeriod(1000);
         timeout.expectedMessageCount(0);
+        invalid.expectedMessageCount(1);
 
         mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage().replaceFirst("EVN", "EVN" + END_OF_BLOCK));
 
@@ -272,8 +296,10 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
     public void testInvalidMessageContainingEmbeddedEndOfBlock() throws Exception {
         int messageCount = 10;
 
-        result.expectedMessageCount(messageCount);
+        result.expectedMessageCount(messageCount - 1);
+        result.setAssertPeriod(1000);
         timeout.expectedMessageCount(0);
+        invalid.expectedMessageCount(1);
 
         for (int i = 0; i < messageCount; ++i) {
             String message = (i == (messageCount/2))

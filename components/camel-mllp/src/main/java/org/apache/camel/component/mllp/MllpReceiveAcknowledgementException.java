@@ -19,22 +19,39 @@ package org.apache.camel.component.mllp;
 /**
  * Raised when a MLLP Consumer cannot deliver the MLLP Acknowledgement
  */
-public class MllpAcknowledgementDeliveryException extends MllpAcknowledgementException {
-    static final String EXCEPTION_MESSAGE = "HL7 Acknowledgment Delivery Failed";
+public class MllpReceiveAcknowledgementException extends MllpAcknowledgementException {
+    static final String EXCEPTION_MESSAGE = "HL7 Acknowledgment Receipt Failed";
 
-    public MllpAcknowledgementDeliveryException(byte[] hl7Message, byte[] hl7Acknowledgement) {
+    public MllpReceiveAcknowledgementException(byte[] hl7Message) {
+        super(EXCEPTION_MESSAGE, hl7Message);
+    }
+
+
+    public MllpReceiveAcknowledgementException(byte[] hl7Message, byte[] hl7Acknowledgement) {
         super(EXCEPTION_MESSAGE, hl7Message, hl7Acknowledgement);
     }
 
-    public MllpAcknowledgementDeliveryException(byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
+    public MllpReceiveAcknowledgementException(byte[] hl7Message, Throwable cause) {
+        super(EXCEPTION_MESSAGE, hl7Message, cause);
+    }
+
+
+    public MllpReceiveAcknowledgementException(byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
         super(EXCEPTION_MESSAGE, hl7Message, hl7Acknowledgement, cause);
     }
 
-    public MllpAcknowledgementDeliveryException(String message, byte[] hl7Message, byte[] hl7Acknowledgement) {
+    public MllpReceiveAcknowledgementException(String message, byte[] hl7Message) {
+        super(message, hl7Message);
+    }
+
+    public MllpReceiveAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement) {
         super(message, hl7Message, hl7Acknowledgement);
     }
 
-    public MllpAcknowledgementDeliveryException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
+    public MllpReceiveAcknowledgementException(String message, byte[] hl7Message, Throwable cause) {
+        super(message, hl7Message, cause);
+    }
+    public MllpReceiveAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
         super(message, hl7Message, hl7Acknowledgement, cause);
     }
 }
