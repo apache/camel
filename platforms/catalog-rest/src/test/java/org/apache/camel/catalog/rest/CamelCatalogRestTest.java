@@ -21,6 +21,7 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,10 +64,20 @@ public class CamelCatalogRestTest {
     @Test
     public void testFindComponentLabels() throws Exception {
         given().
-            baseUri("http://localhost:" + port).
+           baseUri("http://localhost:" + port).
             when().
                 get("/camel-catalog/findComponentLabels").
             then().
                 body("$", hasItems("bigdata", "messaging"));
+    }
+
+    @Test
+    public void testComponentJSonSchema() throws Exception {
+        given().
+            baseUri("http://localhost:" + port).
+            when().
+                get("/camel-catalog/componentJSonSchema/quartz2").
+            then().
+                body("component.description", Matchers.is("Provides a scheduled delivery of messages using the Quartz 2.x scheduler."));
     }
 }

@@ -43,20 +43,10 @@
       <version>${javax.ws.rs-api-version}</version>
     </dependency>
 
-    <!-- swagger -->
-    <dependency>
-      <groupId>io.swagger</groupId>
-      <artifactId>swagger-core</artifactId>
-      <version>${swagger-java-version}</version>
-    </dependency>
+    <!-- swagger annotations -->
     <dependency>
       <groupId>io.swagger</groupId>
       <artifactId>swagger-annotations</artifactId>
-      <version>${swagger-java-version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.swagger</groupId>
-      <artifactId>swagger-jaxrs</artifactId>
       <version>${swagger-java-version}</version>
     </dependency>
 
@@ -118,6 +108,21 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+
+    <!-- swagger ui for testing -->
+    <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>swagger-ui</artifactId>
+      <version>${swagger-ui-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-webapp</artifactId>
+      <version>${jetty9-version}</version>
       <scope>test</scope>
     </dependency>
 

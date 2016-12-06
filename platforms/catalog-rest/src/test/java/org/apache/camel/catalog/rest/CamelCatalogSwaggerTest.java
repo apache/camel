@@ -50,6 +50,10 @@ public class CamelCatalogSwaggerTest {
         swagger.setBasePath("/");
         swagger.setScanAllResources(false);
         swagger.setPrettyPrint(true);
+        swagger.setSupportSwaggerUi(true);
+        swagger.setDescription("Camel Catalog REST Api");
+        swagger.setVersion(catalog.getCatalogVersion());
+        swagger.setContact("Apache Camel");
         sf.getFeatures().add(swagger);
 
         // to use jackson for json
@@ -76,5 +80,7 @@ public class CamelCatalogSwaggerTest {
                 get("/swagger.json").
             then().
                 body("paths./camel-catalog/catalogVersion.get.summary", Matchers.is("The version of this Camel Catalog"));
+
+        // System.out.println("Swagger UI: http://localhost:9000/api-docs?url=/swagger.json");
     }
 }

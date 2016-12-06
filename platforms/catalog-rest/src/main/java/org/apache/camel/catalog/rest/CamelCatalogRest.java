@@ -25,6 +25,7 @@ import javax.ws.rs.Produces;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 
@@ -48,9 +49,6 @@ public class CamelCatalogRest {
         this.catalog = catalog;
     }
 
-    /**
-     * The version of this Camel Catalog
-     */
     @GET
     @Path("/catalogVersion")
     @ApiOperation(value = "The version of this Camel Catalog")
@@ -58,203 +56,174 @@ public class CamelCatalogRest {
         return catalog.getCatalogVersion();
     }
 
-    /**
-     * Find all the component names from the Camel catalog
-     */
     @GET
     @Path("/findComponentNames")
     @Produces("application/json")
+    @ApiOperation(value = "Find all the component names from the Camel catalog")
     public List<String> findComponentNames() {
         return catalog.findComponentNames();
     }
 
-    /**
-     * Find all the data format names from the Camel catalog
-     */
     @GET
     @Path("/findDataFormatNames")
     @Produces("application/json")
+    @ApiOperation(value = "Find all the data format names from the Camel catalog")
     public List<String> findDataFormatNames() {
         return catalog.findDataFormatNames();
     }
 
-    /**
-     * Find all the language names from the Camel catalog
-     */
     @GET
     @Path("/findLanguageNames")
     @Produces("application/json")
+    @ApiOperation(value = "Find all the language names from the Camel catalog")
     public List<String> findLanguageNames() {
         return catalog.findLanguageNames();
 
     }
 
-    /**
-     * Find all the model names from the Camel catalog
-     */
     @GET
     @Path("/findModelNames")
     @Produces("application/json")
+    @ApiOperation(value = "Find all the model (EIP) names from the Camel catalog")
     public List<String> findModelNames() {
         return catalog.findModelNames();
     }
 
-    /**
-     * Find all the component names from the Camel catalog that matches the label
-     */
     @GET
     @Path("/findComponentNames/{filter}")
     @Produces("application/json")
-    public List<String> findComponentNames(@PathParam("filter") String filter) {
+    @ApiOperation(value = "Find all the component names from the Camel catalog that matches the label")
+    public List<String> findComponentNames(@ApiParam("Filter used to only return component names that matches by their labels")
+                                           @PathParam("filter") String filter) {
         return catalog.findComponentNames(filter);
     }
 
-    /**
-     * Find all the data format names from the Camel catalog that matches the label
-     */
     @GET
     @Path("/findDataFormatNames/{filter}")
     @Produces("application/json")
-    public List<String> findDataFormatNames(@PathParam("filter") String filter) {
+    @ApiOperation(value = "Find all the data format names from the Camel catalog that matches the label")
+    public List<String> findDataFormatNames(@ApiParam("Filter used to only return data format names that matches by their labels")
+                                            @PathParam("filter") String filter) {
         return catalog.findDataFormatNames(filter);
     }
 
-    /**
-     * Find all the language names from the Camel catalog that matches the label
-     */
     @GET
     @Path("/findLanguageNames/{filter}")
     @Produces("application/json")
-    public List<String> findLanguageNames(@PathParam("filter") String filter) {
+    @ApiOperation(value = "Find all the language names from the Camel catalog that matches the label")
+    public List<String> findLanguageNames(@ApiParam("Filter used to only return language names that matches by their labels")
+                                          @PathParam("filter") String filter) {
         return catalog.findLanguageNames(filter);
     }
 
-    /**
-     * Find all the model names from the Camel catalog that matches the label
-     */
     @GET
     @Path("/findModelNames/{filter}")
     @Produces("application/json")
-    public List<String> findModelNames(@PathParam("filter") String filter) {
+    @ApiOperation(value = "Find all the model (EIP) names from the Camel catalog that matches the label")
+    public List<String> findModelNames(@ApiParam("Filter used to only return model (EIP) names that matches by their labels")
+                                       @PathParam("filter") String filter) {
         return catalog.findModelNames(filter);
     }
 
-    /**
-     * Returns the component information as JSon format.
-     */
     @GET
     @Path("/componentJSonSchema/{name}")
     @Produces("application/json")
-    public String componentJSonSchema(@PathParam("name") String name) {
+    @ApiOperation(value = "Returns the component information as JSon format")
+    public String componentJSonSchema(@ApiParam("The name of the component")
+                                      @PathParam("name") String name) {
         return catalog.componentJSonSchema(name);
     }
 
-    /**
-     * Returns the data format information as JSon format.
-     */
     @GET
     @Path("/dataFormatJSonSchema/{name}")
     @Produces("application/json")
-    public String dataFormatJSonSchema(@PathParam("name") String name) {
+    @ApiOperation(value = "Returns the data format information as JSon format")
+    public String dataFormatJSonSchema(@ApiParam("The name of the data format")
+                                       @PathParam("name") String name) {
         return catalog.dataFormatJSonSchema(name);
     }
 
-    /**
-     * Returns the language information as JSon format.
-     */
     @GET
     @Path("/languageJSonSchema/{name}")
     @Produces("application/json")
-    public String languageJSonSchema(@PathParam("name") String name) {
+    @ApiOperation(value = "Returns the language information as JSon format")
+    public String languageJSonSchema(@ApiParam("The name of the language")
+                                     @PathParam("name") String name) {
         return catalog.languageJSonSchema(name);
     }
 
-    /**
-     * Returns the model information as JSon format.
-     */
     @GET
     @Path("/modelJSonSchema/{name}")
     @Produces("application/json")
-    public String modelJSonSchema(@PathParam("name") String name) {
+    @ApiOperation(value = "Returns the model (EIP) information as JSon format")
+    public String modelJSonSchema(@ApiParam("The name of the model (EIP)")
+                                  @PathParam("name") String name) {
         return catalog.modelJSonSchema(name);
     }
 
-    /**
-     * Returns the component documentation as Ascii doc format.
-     */
     @GET
     @Path("/componentAsciiDoc/{name}")
     @Produces("text/plain")
-    public String componentAsciiDoc(@PathParam("name") String name) {
+    @ApiOperation(value = "Returns the component documentation as Ascii doc format")
+    public String componentAsciiDoc(@ApiParam("The name of the component")
+                                    @PathParam("name") String name) {
         return catalog.componentAsciiDoc(name);
     }
 
-    /**
-     * Returns the data format documentation as Ascii doc format.
-     */
     @GET
     @Path("/dataFormatAsciiDoc/{name}")
     @Produces("text/plain")
-    public String dataFormatAsciiDoc(@PathParam("name") String name) {
+    @ApiOperation(value = "Returns the data format documentation as Ascii doc format")
+    public String dataFormatAsciiDoc(@ApiParam("The name of the data format")
+                                     @PathParam("name") String name) {
         return catalog.dataFormatAsciiDoc(name);
     }
 
-    /**
-     * Returns the language documentation as Ascii doc format.
-     */
     @GET
     @Path("/languageAsciiDoc/{name}")
     @Produces("text/plain")
-    public String languageAsciiDoc(@PathParam("name") String name) {
+    @ApiOperation(value = "Returns the language documentation as Ascii doc format")
+    public String languageAsciiDoc(@ApiParam("The name of the language")
+                                   @PathParam("name") String name) {
         return catalog.languageAsciiDoc(name);
     }
 
-    /**
-     * Find all the unique label names all the components are using.
-     */
     @GET
     @Path("/findComponentLabels")
     @Produces("application/json")
+    @ApiOperation(value = "Find all the unique label names all the components are using")
     public Set<String> findComponentLabels() {
         return catalog.findComponentLabels();
     }
 
-    /**
-     * Find all the unique label names all the data formats are using.
-     */
     @GET
     @Path("/findDataFormatLabels")
     @Produces("application/json")
+    @ApiOperation(value = "Find all the unique label names all the data formats are using")
     public Set<String> findDataFormatLabels() {
         return catalog.findDataFormatLabels();
     }
 
-    /**
-     * Find all the unique label names all the data formats are using.
-     */
     @GET
     @Path("/findLanguageLabels")
     @Produces("application/json")
+    @ApiOperation(value = "Find all the unique label names all the languages are using")
     public Set<String> findLanguageLabels() {
         return catalog.findLanguageLabels();
     }
 
-    /**
-     * Find all the unique label names all the models are using.
-     */
     @GET
     @Path("/findModelLabels")
     @Produces("application/json")
+    @ApiOperation(value = "Find all the unique label names all the models (EIP) are using.")
     public Set<String> findModelLabels() {
         return catalog.findModelLabels();
     }
 
-    /**
-     * Returns the Apache Camel Maven Archetype catalog in XML format.
-     */
     @GET
     @Path("/archetypeCatalogAsXml")
     @Produces("application/xml")
+    @ApiOperation(value = "Returns the Apache Camel Maven Archetype catalog in XML format")
     public String archetypeCatalogAsXml() {
         return catalog.archetypeCatalogAsXml();
     }
@@ -265,6 +234,7 @@ public class CamelCatalogRest {
     @GET
     @Path("/springSchemaAsXml")
     @Produces("application/xml")
+    @ApiOperation(value = "Returns the Camel Spring XML schema")
     public String springSchemaAsXml() {
         return catalog.springSchemaAsXml();
     }
@@ -275,56 +245,47 @@ public class CamelCatalogRest {
     @GET
     @Path("/blueprintSchemaAsXml")
     @Produces("application/xml")
+    @ApiOperation(value = "Returns the Camel Blueprint XML schema")
     public String blueprintSchemaAsXml() {
         return catalog.blueprintSchemaAsXml();
     }
 
-    /**
-     * Lists all the components summary details in JSon
-     */
     @GET
     @Path("/listComponentsAsJson")
     @Produces("application/json")
+    @ApiOperation(value = "Lists all the components summary details in JSon")
     public String listComponentsAsJson() {
         return catalog.listComponentsAsJson();
     }
 
-    /**
-     * Lists all the data formats summary details in JSon
-     */
     @GET
     @Path("/listDataFormatsAsJson")
     @Produces("application/json")
+    @ApiOperation(value = "Lists all the data formats summary details in JSon")
     public String listDataFormatsAsJson() {
         return catalog.listDataFormatsAsJson();
     }
 
-    /**
-     * Lists all the languages summary details in JSon
-     */
     @GET
     @Path("/listLanguagesAsJson")
     @Produces("application/json")
+    @ApiOperation(value = "Lists all the languages summary details in JSon")
     public String listLanguagesAsJson() {
         return catalog.listLanguagesAsJson();
     }
 
-    /**
-     * Lists all the models (EIPs) summary details in JSon
-     */
     @GET
     @Path("/listModelsAsJson")
     @Produces("application/json")
+    @ApiOperation(value = "Lists all the models (EIP) summary details in JSon")
     public String listModelsAsJson() {
         return catalog.listModelsAsJson();
     }
 
-    /**
-     * Reports a summary what the catalog contains in JSon
-     */
     @GET
     @Path("/summaryAsJson")
     @Produces("application/json")
+    @ApiOperation(value = "Reports a summary what the catalog contains in JSon")
     public String summaryAsJson() {
         return catalog.summaryAsJson();
     }
