@@ -79,7 +79,6 @@ public class CamelCatalogRest {
     @ApiOperation(value = "Find all the language names from the Camel catalog")
     public List<String> findLanguageNames() {
         return catalog.findLanguageNames();
-
     }
 
     @GET
