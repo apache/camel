@@ -240,7 +240,7 @@ public interface CamelCatalog {
     Set<String> findDataFormatLabels();
 
     /**
-     * Find all the unique label names all the data formats are using.
+     * Find all the unique label names all the languages are using.
      *
      * @return a set of all the labels.
      */
