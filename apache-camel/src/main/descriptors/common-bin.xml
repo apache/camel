@@ -276,6 +276,7 @@
         <include>org.apache.camel:camel-catalog-maven</include>
         <include>org.apache.camel:camel-catalog-provider-karaf</include>
         <include>org.apache.camel:camel-catalog-provider-springboot</include>
+        <include>org.apache.camel:camel-catalog-rest</include>
         <include>org.apache.camel:camel-commands-core</include>
         <include>org.apache.camel:camel-commands-jolokia</include>
         <include>org.apache.camel:camel-commands-spring-boot</include>
