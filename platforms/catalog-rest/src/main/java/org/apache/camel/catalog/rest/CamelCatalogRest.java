@@ -229,9 +229,6 @@ public class CamelCatalogRest {
         return catalog.archetypeCatalogAsXml();
     }
 
-    /**
-     * Returns the Camel Spring XML schema
-     */
     @GET
     @Path("/springSchemaAsXml")
     @Produces("application/xml")
@@ -240,9 +237,6 @@ public class CamelCatalogRest {
         return catalog.springSchemaAsXml();
     }
 
-    /**
-     * Returns the Camel Blueprint XML schema
-     */
     @GET
     @Path("/blueprintSchemaAsXml")
     @Produces("application/xml")
