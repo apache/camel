@@ -1206,7 +1206,7 @@ public class BeanInfo {
         }
 
         // sort the methods by name A..Z
-        Collections.sort(methods, new Comparator<MethodInfo>() {
+        methods.sort(new Comparator<MethodInfo>() {
             public int compare(MethodInfo o1, MethodInfo o2) {
                 return o1.getMethod().getName().compareTo(o2.getMethod().getName());
             }

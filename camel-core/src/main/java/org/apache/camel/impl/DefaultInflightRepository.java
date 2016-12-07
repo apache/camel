@@ -123,7 +123,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         }
 
         if (sortByLongestDuration) {
-            Collections.sort(values, new Comparator<Exchange>() {
+            values.sort(new Comparator<Exchange>() {
                 @Override
                 public int compare(Exchange e1, Exchange e2) {
                     long d1 = getExchangeDuration(e1);
@@ -133,7 +133,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
             });
         } else {
             // else sort by exchange id
-            Collections.sort(values, new Comparator<Exchange>() {
+            values.sort(new Comparator<Exchange>() {
                 @Override
                 public int compare(Exchange e1, Exchange e2) {
                     return e1.getExchangeId().compareTo(e2.getExchangeId());
