@@ -499,7 +499,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                     processors.add(processor);
                 }
             }
-            Collections.sort(processors, new OrderProcessorMBeans());
+            processors.sort(new OrderProcessorMBeans());
 
             // loop the routes, and append the processor stats if needed
             sb.append("  <routeStats>\n");

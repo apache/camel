@@ -150,7 +150,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         // sort files using file comparator if provided
         if (endpoint.getSorter() != null) {
-            Collections.sort(files, endpoint.getSorter());
+            files.sort(endpoint.getSorter());
         }
 
         // sort using build in sorters so we can use expressions
@@ -164,7 +164,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         }
         // sort files using exchange comparator if provided
         if (endpoint.getSortBy() != null) {
-            Collections.sort(exchanges, endpoint.getSortBy());
+            exchanges.sort(endpoint.getSortBy());
         }
         if (endpoint.isShuffle()) {
             Collections.shuffle(exchanges);

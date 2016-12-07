@@ -69,7 +69,7 @@ public class FileConsumerDirectoryFilterTest extends ContextTestSupport {
         assertEquals(4, names.size());
         // copy to list so its easier to index
         List<String> list = new ArrayList<String>(names);
-        Collections.sort(list);
+        list.sort(null);
 
         assertEquals("okDir", list.get(0));
         // windows or unix paths
