@@ -20,13 +20,18 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 import org.openstack4j.api.OSClient;
 import org.openstack4j.api.client.IOSClientBuilder;
+import org.openstack4j.core.transport.Config;
 import org.openstack4j.model.common.Identifier;
 import org.openstack4j.openstack.OSFactory;
 
 public abstract class AbstractOpenstackEndpoint extends DefaultEndpoint {
+
+	public static final String v2 = "v2";
+	public static final String v3 = "v3";
 
 	protected abstract String getHost();
 
@@ -40,20 +45,22 @@ public abstract class AbstractOpenstackEndpoint extends DefaultEndpoint {
 
 	protected abstract String getOperation();
 
+	protected abstract Config getConfig();
+
+	protected abstract String getApiVersion();
+
 	public AbstractOpenstackEndpoint(String endpointUri, Component component) {
 		super(endpointUri, component);
 	}
 
-	protected OSClient.OSClientV3 createClient() {
+	protected OSClient createClient() {
 
-		//client sholud reAuthenticate itself when token expires
-		IOSClientBuilder.V3 builder = OSFactory.builderV3()
-				.endpoint(getHost());
+		//client should reAuthenticate itself when token expires
+		if(v2.equals(getApiVersion())) {
+			return createV2Client();
+		}
 
-		builder.credentials(getUsername(), getPassword(), Identifier.byId(getDomain()));
-
-		builder.scopeToProject(Identifier.byId(getProject()));
-		return builder.authenticate();
+		return createV3Client();
 	}
 
 	@Override
@@ -64,5 +71,35 @@ public abstract class AbstractOpenstackEndpoint extends DefaultEndpoint {
 	@Override
 	public boolean isSingleton() {
 		return false;
+	}
+
+	private OSClient.OSClientV3 createV3Client() {
+		IOSClientBuilder.V3 builder = OSFactory.builderV3()
+				.endpoint(getHost());
+
+		builder.credentials(getUsername(), getPassword(), Identifier.byId(getDomain()));
+
+		builder.scopeToProject(Identifier.byId(getProject()));
+
+		if(getConfig() != null) {
+			builder.withConfig(getConfig());
+		}
+
+		return builder.authenticate();
+	}
+
+	private OSClient.OSClientV2 createV2Client() {
+		IOSClientBuilder.V2 builder = OSFactory.builderV2()
+				.endpoint(getHost());
+
+		builder.credentials(getUsername(), getPassword());
+
+		builder.tenantId(getProject());
+
+		if(getConfig() != null) {
+			builder.withConfig(getConfig());
+		}
+
+		return builder.authenticate();
 	}
 }

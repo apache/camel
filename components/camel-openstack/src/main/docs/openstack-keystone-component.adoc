@@ -1,6 +1,6 @@
 [[OpenStack-keystone-Component]]
 Openstack Keystone Component
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Available as of Camel 2.19*
 
@@ -49,7 +49,7 @@ The OpenStack-Keystone component has no options.
 // component options: END
 
 // endpoint options: START
-The OpenStack-Keystone component supports 7 endpoint options which are listed below:
+The OpenStack-Keystone component supports 8 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -62,6 +62,7 @@ The OpenStack-Keystone component supports 7 endpoint options which are listed be
 | project | common |  | String | *Required* The project ID
 | subsystem | common |  | String | *Required* OpenStack Nova subsystem
 | username | common |  | String | *Required* OpenStack username
+| config | common | | org.openstack4j.core.transport.Config | Openstack client configuration
 |=======================================================================
 {% endraw %}
 // endpoint options: END
@@ -163,7 +164,7 @@ Message headers evaluated by the Group producer
 If you need more precise group settings you can create new object of the type *org.openstack4j.model.identity.v3.Group* and send in the message body.
 
 projects
-~~~~~~~
+~~~~~~~~
 
 [[openstack-keystone-OperationsYouCanPerformWithProjectProducer]]
 Operations you can perform with the Project producer
@@ -249,7 +250,7 @@ users
 
 [[openstack-keystone-OperationsYouCanPerformWithUserProducer]]
 Operations you can perform with the User producer
-+++++++++++++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -267,7 +268,7 @@ Operations you can perform with the User producer
 
 [[openstack-keystone-MessageHeadersEvaluatedByTheUserProducer]]
 Message headers evaluated by the User producer
-++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================

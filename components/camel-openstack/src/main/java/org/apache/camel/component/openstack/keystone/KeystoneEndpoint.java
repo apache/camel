@@ -28,6 +28,8 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
+import org.openstack4j.core.transport.Config;
+
 @UriEndpoint(scheme = "openstack-keystone", title = "OpenStack-Keystone", syntax = "openstack-keystone:host", label = "cloud, virtualization")
 public class KeystoneEndpoint extends AbstractOpenstackEndpoint {
 
@@ -56,6 +58,9 @@ public class KeystoneEndpoint extends AbstractOpenstackEndpoint {
 	@UriParam
 	@Metadata(required = "true")
 	private String password;
+
+	@UriParam
+	private Config config;
 
 	public KeystoneEndpoint(String uri, KeystoneComponent component) {
 		super(uri, component);
@@ -160,5 +165,21 @@ public class KeystoneEndpoint extends AbstractOpenstackEndpoint {
 	 */
 	public void setHost(String host) {
 		this.host = host;
+	}
+
+	public Config getConfig() {
+		return config;
+	}
+
+	/**
+	 *OpenStack configuration
+	 */
+	public void setConfig(Config config) {
+		this.config = config;
+	}
+
+	// v2 API is not supported (is deprecated)
+	public String getApiVersion() {
+		return v3;
 	}
 }

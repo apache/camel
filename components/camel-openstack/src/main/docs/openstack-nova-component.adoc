@@ -47,7 +47,7 @@ The OpenStack-Nova component has no options.
 // component options: END
 
 // endpoint options: START
-The OpenStack-Nova component supports 7 endpoint options which are listed below:
+The OpenStack-Nova component supports 9 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -60,6 +60,8 @@ The OpenStack-Nova component supports 7 endpoint options which are listed below:
 | project | common |  | String | *Required* The project ID
 | subsystem | common |  | String | *Required* OpenStack Nova subsystem
 | username | common |  | String | *Required* OpenStack username
+| config | common | | org.openstack4j.core.transport.Config | Openstack client configuration
+| apiVersion | common | v3 | String | The OpenStack API version. Possible values: v2, v3
 |=======================================================================
 {% endraw %}
 // endpoint options: END
