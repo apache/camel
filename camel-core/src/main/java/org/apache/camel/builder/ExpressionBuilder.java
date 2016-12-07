@@ -1677,7 +1677,7 @@ public final class ExpressionBuilder {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 List<?> list = expression.evaluate(exchange, List.class);
-                Collections.sort(list, comparator);
+                list.sort(comparator);
                 return list;
             }
 
