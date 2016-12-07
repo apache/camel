@@ -1622,6 +1622,7 @@
     <bundle>mvn:org.apache.camel/camel-spring-batch/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-javaconfig' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>camel-spring-javaconfig is not supported in Karaf and this feature is removed from Camel 2.19 onwards</details>
     <feature version='${project.version}'>camel-spring</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.cglib/${cglib-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring-javaconfig/${project.version}</bundle>
