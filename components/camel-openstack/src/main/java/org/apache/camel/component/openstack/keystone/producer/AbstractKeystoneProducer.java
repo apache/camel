@@ -26,8 +26,11 @@ public abstract class AbstractKeystoneProducer extends AbstractOpenstackProducer
 
 	OSClient.OSClientV3 osV3Client;
 
-	public AbstractKeystoneProducer(AbstractOpenstackEndpoint endpoint, OSClient.OSClientV3 client) {
+	public AbstractKeystoneProducer(AbstractOpenstackEndpoint endpoint, OSClient client) {
 		super(endpoint, client);
-		osV3Client = client;
+		if(!(client instanceof OSClient.OSClientV3)) {
+			throw new IllegalArgumentException("Only Identity API v3 is supported");
+		}
+		osV3Client = (OSClient.OSClientV3) client;
 	}
 }

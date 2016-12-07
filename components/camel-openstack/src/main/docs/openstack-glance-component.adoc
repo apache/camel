@@ -1,6 +1,6 @@
 [[OpenStack-glance-Component]]
 Openstack Glance Component
-~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *Available as of Camel 2.19*
 
@@ -47,7 +47,7 @@ The OpenStack-Glance component has no options.
 // component options: END
 
 // endpoint options: START
-The OpenStack-Glance component supports 7 endpoint options which are listed below:
+The OpenStack-Glance component supports 9 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -59,6 +59,8 @@ The OpenStack-Glance component supports 7 endpoint options which are listed belo
 | password | common |  | String | *Required* OpenStack password
 | project | common |  | String | *Required* The project ID
 | username | common |  | String | *Required* OpenStack username
+| config | common | | org.openstack4j.core.transport.Config | Openstack client configuration
+| apiVersion | common | v3 | String | The OpenStack API version. Possible values: v2, v3
 |=======================================================================
 {% endraw %}
 // endpoint options: END
