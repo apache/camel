@@ -25,6 +25,8 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
+import org.openstack4j.core.transport.Config;
+
 @UriEndpoint(scheme = "openstack-cinder", title = "OpenStack-Cinder", syntax = "openstack-cinder:host", label = "cloud, virtualization")
 public class CinderEndpoint extends AbstractOpenstackEndpoint {
 
@@ -54,9 +56,14 @@ public class CinderEndpoint extends AbstractOpenstackEndpoint {
 	@Metadata(required = "true")
 	private String password;
 
+	@UriParam
+	private Config config;
+
+	@UriParam(defaultValue = v3, enums = "v2, v3")
+	private String apiVersion = v3;
+
 	public CinderEndpoint(String uri, CinderComponent component) {
 		super(uri, component);
-
 	}
 
 	@Override
@@ -152,6 +159,28 @@ public class CinderEndpoint extends AbstractOpenstackEndpoint {
 	 */
 	public void setHost(String host) {
 		this.host = host;
+	}
+
+	public Config getConfig() {
+		return config;
+	}
+
+	/**
+	 * OpenStack configuration
+	 */
+	public void setConfig(Config config) {
+		this.config = config;
+	}
+
+	public String getApiVersion() {
+		return apiVersion;
+	}
+
+	/**
+	 * OpenStack API version
+	 */
+	public void setApiVersion(String apiVersion) {
+		this.apiVersion = apiVersion;
 	}
 }
 

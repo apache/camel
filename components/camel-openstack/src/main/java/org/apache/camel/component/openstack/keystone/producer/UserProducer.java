@@ -33,7 +33,7 @@ import java.util.Map;
 
 public class UserProducer extends AbstractKeystoneProducer {
 
-	public UserProducer(KeystoneEndpoint endpoint, OSClient.OSClientV3 client) {
+	public UserProducer(KeystoneEndpoint endpoint, OSClient client) {
 		super(endpoint, client);
 	}
 

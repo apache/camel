@@ -33,7 +33,7 @@ import java.util.Map;
 
 public class ProjectProducer extends AbstractKeystoneProducer {
 
-	public ProjectProducer(KeystoneEndpoint endpoint, OSClient.OSClientV3 client) {
+	public ProjectProducer(KeystoneEndpoint endpoint, OSClient client) {
 		super(endpoint, client);
 	}
 
