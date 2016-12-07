@@ -16,27 +16,25 @@
  */
 package org.apache.camel.component.jackson;
 
+import java.util.LinkedHashMap;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class JacksonMarshalUnmarshalTypeHeaderTest extends CamelTestSupport {
+public class JacksonMarshalUnmarshalTypeHeaderNotAllowedTest extends CamelTestSupport {
 
     @Test
     public void testUnmarshalPojo() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:reversePojo");
         mock.expectedMessageCount(1);
-        mock.message(0).body().isInstanceOf(TestPojo.class);
+        mock.message(0).body().isInstanceOf(LinkedHashMap.class);
 
         String json = "{\"name\":\"Camel\"}";
         template.sendBodyAndHeader("direct:backPojo", json, JacksonConstants.UNMARSHAL_TYPE, TestPojo.class.getName());
 
         assertMockEndpointsSatisfied();
-
-        TestPojo pojo = mock.getReceivedExchanges().get(0).getIn().getBody(TestPojo.class);
-        assertNotNull(pojo);
-        assertEquals("Camel", pojo.getName());
     }
 
     @Override
@@ -46,7 +44,6 @@ public class JacksonMarshalUnmarshalTypeHeaderTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 JacksonDataFormat format = new JacksonDataFormat();
-                format.setAllowJacksonUnmarshallType(true);
 
                 from("direct:backPojo").unmarshal(format).to("mock:reversePojo");
 
