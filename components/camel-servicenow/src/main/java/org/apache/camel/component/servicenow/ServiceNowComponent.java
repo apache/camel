@@ -57,7 +57,7 @@ public class ServiceNowComponent extends UriEndpointComponent {
         }
 
         Map<String, Object> responseModels = IntrospectionSupport.extractProperties(parameters, "responseModel.");
-        for (Map.Entry<String, Object> entry : requestModels.entrySet()) {
+        for (Map.Entry<String, Object> entry : responseModels.entrySet()) {
             configuration.addResponseModel(
                 entry.getKey(),
                 EndpointHelper.resolveParameter(context, (String)entry.getValue(), Class.class));
