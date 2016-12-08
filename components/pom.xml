@@ -326,6 +326,7 @@
           <includeTest>true</includeTest>
           <includeXml>true</includeXml>
           <ignoreLenientProperties>false</ignoreLenientProperties>
+          <excludes>.*custom-exchange-formatter-context\.xml</excludes>
         </configuration>
       </plugin>
 
