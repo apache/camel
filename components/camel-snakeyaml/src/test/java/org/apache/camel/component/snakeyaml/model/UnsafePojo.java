@@ -17,13 +17,13 @@
 
 package org.apache.camel.component.snakeyaml.model;
 
-public class TestPojo {
+public class UnsafePojo {
     private String name;
 
-    public TestPojo() {
+    public UnsafePojo() {
     }
 
-    public TestPojo(String name) {
+    public UnsafePojo(String name) {
         this.name = name;
     }
 
@@ -44,7 +44,7 @@ public class TestPojo {
             return false;
         }
 
-        TestPojo pojo = (TestPojo) o;
+        UnsafePojo pojo = (UnsafePojo) o;
 
         return name != null ? name.equals(pojo.name) : pojo.name == null;
     }
@@ -56,7 +56,7 @@ public class TestPojo {
 
     @Override
     public String toString() {
-        return "TestPojo {"
+        return "UnsafePojo {"
             + "name='" + name + '\''
             + '}';
     }
