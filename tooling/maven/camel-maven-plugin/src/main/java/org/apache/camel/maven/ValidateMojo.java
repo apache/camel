@@ -188,7 +188,7 @@ public class ValidateMojo extends AbstractExecMojo {
             }
         }
 
-        // if using the same version as the fabric8-camel-maven-plugin we must still load it
+        // if using the same version as the camel-maven-plugin we must still load it
         if (catalog.getLoadedVersion() == null) {
             catalog.loadVersion(catalog.getCatalogVersion());
         }
@@ -196,7 +196,7 @@ public class ValidateMojo extends AbstractExecMojo {
         if (catalog.getLoadedVersion() != null) {
             getLog().info("Using Camel version: " + catalog.getLoadedVersion());
         } else {
-            // force load version from the fabric8-camel-maven-plugin
+            // force load version from the camel-maven-plugin
             getLog().info("Using Camel version: " + catalog.getCatalogVersion());
         }
 

@@ -93,10 +93,6 @@ You can enable this in the configuration using:
       </configuration>
     </plugin>
 
-## Fabric8 Camel Maven Plugin
-
-This maven plugin makes it possible to run some of the [Forge](forge.md) commands from Maven command line.
-
 
 == camel:validate
 
