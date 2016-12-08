@@ -324,6 +324,7 @@
         <configuration>
           <failOnError>false</failOnError>
           <includeTest>true</includeTest>
+          <includeXml>true</includeXml>
           <ignoreLenientProperties>false</ignoreLenientProperties>
         </configuration>
       </plugin>
