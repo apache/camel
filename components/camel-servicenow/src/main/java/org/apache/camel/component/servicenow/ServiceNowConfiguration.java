@@ -23,7 +23,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
@@ -39,9 +38,9 @@ public class ServiceNowConfiguration implements Cloneable {
             JsonInclude.Include.NON_NULL
         );
 
-    @UriParam(label = "security", secret = true) @Metadata(required = "true")
+    @UriParam(label = "security", secret = true)
     private String userName;
-    @UriParam(label = "security", secret = true) @Metadata(required = "true")
+    @UriParam(label = "security", secret = true)
     private String password;
     @UriParam(label = "security", secret = true)
     private String oauthClientId;
@@ -93,6 +92,8 @@ public class ServiceNowConfiguration implements Cloneable {
     private String displayValue = "false";
     @UriParam
     private Boolean inputDisplayValue = false;
+    @UriParam(prefix = "model.", multiValue = true, javaType = "java.lang.String", description = "Defines both request and response models")
+    private transient Map<String, Class<?>> models; // field not in use as its a shortcut for both requestModels/responseModels
     @UriParam(prefix = "request-model.", multiValue = true, javaType = "java.lang.String")
     private Map<String, Class<?>> requestModels;
     @UriParam(prefix = "response-model.", multiValue = true, javaType = "java.lang.String")

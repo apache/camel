@@ -57,7 +57,7 @@ The ServiceNow component supports 7 options which are listed below.
 
 
 // endpoint options: START
-The ServiceNow component supports 33 endpoint options which are listed below:
+The ServiceNow component supports 34 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -75,6 +75,7 @@ The ServiceNow component supports 33 endpoint options which are listed below:
 | includeScores | producer |  | Boolean | Set this parameter to true to return all scores for a scorecard. If a value is not specified this parameter defaults to false and returns only the most recent score value.
 | inputDisplayValue | producer |  | Boolean | True to set raw value of input fields (default: false)
 | key | producer |  | Boolean | Set this parameter to true to return only scorecards for key indicators.
+| models | producer |  | String | Defines both request and response models
 | perPage | producer | 10 | Integer | Enter the maximum number of scorecards each query can return. By default this value is 10 and the maximum is 100.
 | release | producer | HELSINKI | ServiceNowRelease | The ServiceNow release to target default to Helsinki See https://docs.servicenow.com
 | requestModels | producer |  | String | Defines the request model
@@ -94,8 +95,8 @@ The ServiceNow component supports 33 endpoint options which are listed below:
 | oauthClientId | security |  | String | OAuth2 ClientID
 | oauthClientSecret | security |  | String | OAuth2 ClientSecret
 | oauthTokenUrl | security |  | String | OAuth token Url
-| password | security |  | String | *Required* ServiceNow account password MUST be provided
-| userName | security |  | String | *Required* ServiceNow user account name MUST be provided
+| password | security |  | String | ServiceNow account password MUST be provided
+| userName | security |  | String | ServiceNow user account name MUST be provided
 |=======================================================================
 {% endraw %}
 // endpoint options: END
