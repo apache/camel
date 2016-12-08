@@ -17,7 +17,6 @@
 package org.apache.camel.component.bean;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
