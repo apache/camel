@@ -122,6 +122,12 @@ public class GsonDataFormatConfiguration {
      * org.apache.camel.xstream.permissions.
      */
     private String permissions;
+    /**
+     * If enabled then Jackson is allowed to attempt to use the
+     * CamelJacksonUnmarshalType header during the unmarshalling. This should
+     * only be enabled when desired to be used.
+     */
+    private Boolean allowUnmarshallType = false;
 
     public String getObjectMapper() {
         return objectMapper;
@@ -241,5 +247,13 @@ public class GsonDataFormatConfiguration {
 
     public void setPermissions(String permissions) {
         this.permissions = permissions;
+    }
+
+    public Boolean getAllowUnmarshallType() {
+        return allowUnmarshallType;
+    }
+
+    public void setAllowUnmarshallType(Boolean allowUnmarshallType) {
+        this.allowUnmarshallType = allowUnmarshallType;
     }
 }
