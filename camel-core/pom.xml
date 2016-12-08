@@ -309,12 +309,6 @@
         </configuration>
       </plugin>
 
-      <!--<classesDirectory>${project.build.outputDirectory}</classesDirectory>-->
-      <!--<classesDirectory>${project.build}/generated/camel/components</classesDirectory>-->
-      <!--<classesDirectory>${project.build}/generated/camel/dataformats</classesDirectory>-->
-      <!--<classesDirectory>${project.build}/generated/camel/languages</classesDirectory>-->
-      <!--<classesDirectory>${project.build}/generated/camel/models</classesDirectory>-->
-
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
