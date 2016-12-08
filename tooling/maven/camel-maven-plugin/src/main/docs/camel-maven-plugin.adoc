@@ -215,7 +215,6 @@ The maven plugin supports the following options which can be configured from the
 | ignoreIncapable | true | Whether to ignore incapable of parsing the endpoint uri or simple expression.
 | ignoreLenientProperties | true |  Whether to ignore components that uses lenient properties. When this is true, then the uri validation is stricter but would fail on properties that are not part of the component but in the uri because of using lenient properties. For example using the HTTP components to provide query parameters in the endpoint uri.
 | showAll | false | Whether to show all endpoints and simple expressions (both invalid and valid).
-| downloadVersion | true | Whether to allow downloading Camel catalog version from the internet. This is needed if the project uses a different Camel version than this plugin is using by default..
 |========================================
 
 
