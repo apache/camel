@@ -298,6 +298,7 @@ public class ValidateMojo extends AbstractExecMojo {
         int unknownComponents = 0;
         int incapableErrors = 0;
         for (CamelEndpointDetails detail : endpoints) {
+            getLog().debug("Validating endpoint: " + detail.getEndpointUri());
             EndpointValidationResult result = catalog.validateEndpointProperties(detail.getEndpointUri(), ignoreLenientProperties);
 
             boolean ok = result.isSuccess();
@@ -399,6 +400,7 @@ public class ValidateMojo extends AbstractExecMojo {
 
         int simpleErrors = 0;
         for (CamelSimpleExpressionDetails detail : simpleExpressions) {
+            getLog().debug("Validating simple expression: " + detail.getSimple());
             SimpleValidationResult result = catalog.validateSimpleExpression(detail.getSimple());
             if (!result.isSuccess()) {
                 simpleErrors++;
