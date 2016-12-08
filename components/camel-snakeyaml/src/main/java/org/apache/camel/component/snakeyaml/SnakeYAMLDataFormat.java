@@ -21,10 +21,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.lang.ref.WeakReference;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -38,18 +42,17 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.BaseConstructor;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
+import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
-
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using <a href="http://www.snakeyaml.org">SnakeYAML</a> to marshal to and from YAML.
  */
-public class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
-
-    private ThreadLocal<WeakReference<Yaml>> yamlCache;
+public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+    private final ThreadLocal<WeakReference<Yaml>> yamlCache;
     private BaseConstructor constructor;
     private Representer representer;
     private DumperOptions dumperOptions;
@@ -57,19 +60,25 @@ public class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, D
     private ClassLoader classLoader;
     private Class<?> unmarshalType;
     private List<TypeDescription> typeDescriptions;
-    private Map<Class<?>, Tag> classTags;
+    private ConcurrentMap<Class<?>, Tag> classTags;
     private boolean useApplicationContextClassLoader;
     private boolean prettyFlow;
+    private boolean allowAnyType;
+    private List<TypeFilter> typeFilters;
 
     public SnakeYAMLDataFormat() {
-        this(Object.class);
+        this(null);
     }
 
     public SnakeYAMLDataFormat(Class<?> type) {
-        this.unmarshalType = type;
         this.yamlCache = new ThreadLocal<>();
         this.useApplicationContextClassLoader = true;
         this.prettyFlow = false;
+        this.allowAnyType = false;
+
+        if (type != null) {
+            setUnmarshalType(type);
+        }
     }
 
     @Override
@@ -79,15 +88,16 @@ public class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, D
 
     @Override
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
-        try (final OutputStreamWriter osw = new OutputStreamWriter(stream, IOHelper.getCharsetName(exchange))) {
+        try (OutputStreamWriter osw = new OutputStreamWriter(stream, IOHelper.getCharsetName(exchange))) {
             getYaml(exchange.getContext()).dump(graph, osw);
         }
     }
 
     @Override
     public Object unmarshal(final Exchange exchange, final InputStream stream) throws Exception {
-        try (final InputStreamReader isr = new InputStreamReader(stream, IOHelper.getCharsetName(exchange))) {
-            return getYaml(exchange.getContext()).loadAs(isr, unmarshalType);
+        try (InputStreamReader isr = new InputStreamReader(stream, IOHelper.getCharsetName(exchange))) {
+            Class<?> unmarshalObjectType = unmarshalType != null ? unmarshalType : Object.class;
+            return getYaml(exchange.getContext()).loadAs(isr, unmarshalObjectType);
         }
     }
 
@@ -105,17 +115,26 @@ public class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, D
             DumperOptions yamlDumperOptions = this.dumperOptions;
             Resolver yamlResolver = this.resolver;
             ClassLoader yamlClassLoader = this.classLoader;
+            Collection<TypeFilter> yamlTypeFilters = this.typeFilters;
 
             if (yamlClassLoader == null && useApplicationContextClassLoader) {
                 yamlClassLoader = context.getApplicationContextClassLoader();
             }
 
             if (yamlConstructor == null) {
-                yamlConstructor = yamlClassLoader == null
-                    ? new Constructor()
-                    : new CustomClassLoaderConstructor(yamlClassLoader);
+                if (allowAnyType) {
+                    yamlTypeFilters = Collections.singletonList(TypeFilters.allowAll());
+                }
 
-                if (typeDescriptions != null) {
+                if (yamlTypeFilters != null) {
+                    yamlConstructor = yamlClassLoader != null
+                        ? typeFilterConstructor(yamlClassLoader, yamlTypeFilters)
+                        : typeFilterConstructor(yamlTypeFilters);
+                } else {
+                    yamlConstructor = new SafeConstructor();
+                }
+
+                if (typeDescriptions != null && yamlConstructor instanceof Constructor) {
                     for (TypeDescription typeDescription : typeDescriptions) {
                         ((Constructor)yamlConstructor).addTypeDescription(typeDescription);
                     }
@@ -219,6 +238,7 @@ public class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, D
      */
     public void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
+        addTypeFilters(TypeFilters.types(unmarshalType));
     }
 
     public List<TypeDescription> getTypeDescriptions() {
@@ -229,22 +249,24 @@ public class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, D
      * Make YAML aware how to parse a custom Class.
      */
     public void setTypeDescriptions(List<TypeDescription> typeDescriptions) {
-        this.typeDescriptions = typeDescriptions;
+        this.typeDescriptions = new CopyOnWriteArrayList<>(typeDescriptions);
+    }
+
+    public void addTypeDescriptions(Collection<TypeDescription> typeDescriptions) {
+        if (this.typeDescriptions == null) {
+            this.typeDescriptions = new CopyOnWriteArrayList<>();
+        }
+
+        this.typeDescriptions.addAll(typeDescriptions);
     }
 
     public void addTypeDescriptions(TypeDescription... typeDescriptions) {
-        if (this.typeDescriptions == null) {
-            this.typeDescriptions = new LinkedList<>();
-        }
-
-        for (TypeDescription typeDescription : typeDescriptions) {
-            this.typeDescriptions.add(typeDescription);
-        }
+        addTypeDescriptions(Arrays.asList(typeDescriptions));
     }
 
     public void addTypeDescription(Class<?> type, Tag tag) {
         if (this.typeDescriptions == null) {
-            this.typeDescriptions = new LinkedList<>();
+            this.typeDescriptions = new CopyOnWriteArrayList<>();
         }
 
         this.typeDescriptions.add(new TypeDescription(type, tag));
@@ -258,12 +280,13 @@ public class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, D
      * Define a tag for the <code>Class</code> to serialize.
      */
     public void setClassTags(Map<Class<?>, Tag> classTags) {
-        this.classTags = classTags;
+        this.classTags = new ConcurrentHashMap<>();
+        this.classTags.putAll(classTags);
     }
 
     public void addClassTags(Class<?> type, Tag tag) {
         if (this.classTags == null) {
-            this.classTags = new LinkedHashMap<>();
+            this.classTags = new ConcurrentHashMap<>();
         }
 
         this.classTags.put(type, tag);
@@ -300,5 +323,77 @@ public class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, D
     public void addTag(Class<?> type, Tag tag) {
         addClassTags(type, tag);
         addTypeDescription(type, tag);
+    }
+
+    public List<TypeFilter> getTypeFilters() {
+        return typeFilters;
+    }
+
+    /**
+     * Set the types SnakeYAML is allowed to un-marshall
+     */
+    public void setTypeFilters(List<TypeFilter> typeFilters) {
+        this.typeFilters = new CopyOnWriteArrayList<>(typeFilters);
+    }
+
+    public void setTypeFilterDefinitions(List<String> typeFilterDefinitions) {
+        this.typeFilters = new CopyOnWriteArrayList<>();
+
+        for (String definition : typeFilterDefinitions) {
+            TypeFilters.valueOf(definition).ifPresent(this.typeFilters::add);
+        }
+    }
+
+    public void addTypeFilters(Collection<TypeFilter> typeFilters) {
+        if (this.typeFilters == null) {
+            this.typeFilters = new CopyOnWriteArrayList<>();
+        }
+
+        this.typeFilters.addAll(typeFilters);
+    }
+
+    public void addTypeFilters(TypeFilter... typeFilters) {
+        addTypeFilters(Arrays.asList(typeFilters));
+    }
+
+    public boolean isAllowAnyType() {
+        return allowAnyType;
+    }
+
+    /**
+     * Allow any class to be un-marshaled, same as setTypeFilters(TypeFilters.allowAll())
+     */
+    public void setAllowAnyType(boolean allowAnyType) {
+        this.allowAnyType = allowAnyType;
+    }
+
+    // ***************************
+    // Constructors
+    // ***************************
+
+    private static Constructor typeFilterConstructor(final Collection<TypeFilter> typeFilters) {
+        return new Constructor() {
+            @Override
+            protected Class<?> getClassForName(String name) throws ClassNotFoundException {
+                if (typeFilters.stream().noneMatch(f -> f.test(name))) {
+                    throw new IllegalArgumentException("Type " + name + " is not allowed");
+                }
+
+                return super.getClassForName(name);
+            }
+        };
+    }
+
+    private static Constructor typeFilterConstructor(final ClassLoader classLoader, final Collection<TypeFilter> typeFilters) {
+        return new CustomClassLoaderConstructor(classLoader) {
+            @Override
+            protected Class<?> getClassForName(String name) throws ClassNotFoundException {
+                if (typeFilters.stream().noneMatch(f -> f.test(name))) {
+                    throw new IllegalArgumentException("Type " + name + " is not allowed");
+                }
+
+                return super.getClassForName(name);
+            }
+        };
     }
 }

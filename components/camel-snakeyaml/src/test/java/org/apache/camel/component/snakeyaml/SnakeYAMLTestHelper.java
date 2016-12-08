@@ -28,9 +28,9 @@ import org.yaml.snakeyaml.nodes.Tag;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public final class SnakeYAMLMarshalTestHelper  {
+public final class SnakeYAMLTestHelper {
 
-    protected SnakeYAMLMarshalTestHelper() {
+    protected SnakeYAMLTestHelper() {
     }
 
     public static TestPojo createTestPojo() {
@@ -44,22 +44,27 @@ public final class SnakeYAMLMarshalTestHelper  {
         return map;
     }
 
-    public static SnakeYAMLDataFormat createDataFormat(Class<?> type) {
-        return type == null ? new SnakeYAMLDataFormat() : new SnakeYAMLDataFormat(type);
+    public static SnakeYAMLDataFormat createDataFormat(final Class<?> type) {
+        SnakeYAMLDataFormat format = new SnakeYAMLDataFormat();
+        if (type != null) {
+            format.setUnmarshalType(type);
+        }
+
+        return format;
     }
 
     public static SnakeYAMLDataFormat createPrettyFlowDataFormat(Class<?> type, boolean prettyFlow) {
-        SnakeYAMLDataFormat df = type == null ? new SnakeYAMLDataFormat() : new SnakeYAMLDataFormat(type);
-        df.setPrettyFlow(prettyFlow);
+        SnakeYAMLDataFormat format = createDataFormat(type);
+        format.setPrettyFlow(prettyFlow);
 
-        return df;
+        return format;
     }
 
     public static SnakeYAMLDataFormat createClassTagDataFormat(Class<?> type, Tag tag) {
-        SnakeYAMLDataFormat df = new SnakeYAMLDataFormat(type);
-        df.addTag(type, tag);
+        SnakeYAMLDataFormat format = createDataFormat(type);
+        format.addTag(type, tag);
 
-        return df;
+        return format;
     }
 
     public static void marshalAndUnmarshal(
@@ -78,6 +83,7 @@ public final class SnakeYAMLMarshalTestHelper  {
         assertEquals(expected, result.trim());
 
         template.sendBody(directBack, result);
+
 
         mock.assertIsSatisfied();
     }

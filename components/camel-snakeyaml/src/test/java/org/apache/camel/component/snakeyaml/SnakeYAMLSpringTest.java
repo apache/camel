@@ -23,17 +23,18 @@ import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.annotation.DirtiesContext;
 
-public class SnakeYAMLSpringMarshalTest extends CamelSpringTestSupport {
-
+@DirtiesContext
+public class SnakeYAMLSpringTest extends CamelSpringTestSupport {
     @Test
     public void testMarshalAndUnmarshalMap() throws Exception {
         Map<String, String> in = new HashMap<>();
         in.put("name", "Camel");
 
-        SnakeYAMLMarshalTestHelper.marshalAndUnmarshal(
+        SnakeYAMLTestHelper.marshalAndUnmarshal(
             context(),
-            SnakeYAMLMarshalTestHelper.createTestMap(),
+            SnakeYAMLTestHelper.createTestMap(),
             "mock:reverse",
             "direct:in",
             "direct:back",
@@ -43,9 +44,9 @@ public class SnakeYAMLSpringMarshalTest extends CamelSpringTestSupport {
 
     @Test
     public void testMarshalAndUnmarshalPojo() throws Exception {
-        SnakeYAMLMarshalTestHelper.marshalAndUnmarshal(
+        SnakeYAMLTestHelper.marshalAndUnmarshal(
             context(),
-            SnakeYAMLMarshalTestHelper.createTestPojo(),
+            SnakeYAMLTestHelper.createTestPojo(),
             "mock:reversePojo",
             "direct:inPojo",
             "direct:backPojo",
@@ -55,9 +56,9 @@ public class SnakeYAMLSpringMarshalTest extends CamelSpringTestSupport {
 
     @Test
     public void testMarshalAndUnmarshalPojoWithPrettyFlow() throws Exception {
-        SnakeYAMLMarshalTestHelper.marshalAndUnmarshal(
+        SnakeYAMLTestHelper.marshalAndUnmarshal(
             context(),
-            SnakeYAMLMarshalTestHelper.createTestPojo(),
+            SnakeYAMLTestHelper.createTestPojo(),
             "mock:reversePojoWithPrettyFlow",
             "direct:inPojoWithPrettyFlow",
             "direct:backPojoWithPrettyFlow",
@@ -67,7 +68,6 @@ public class SnakeYAMLSpringMarshalTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/snakeyaml/SnakeYAMLSpringMarshalTest.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/snakeyaml/SnakeYAMLSpringTest.xml");
     }
-
 }

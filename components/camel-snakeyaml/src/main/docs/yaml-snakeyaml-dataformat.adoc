@@ -14,34 +14,12 @@ Every library requires adding the special camel component (see
 "Dependency..." paragraphs further down). By default Camel uses the
 SnakeYAML library.
 
-[[YAMLDataFormat-UsingYAMLdataformatwiththeSnakeYAMLlibrary]]
-Using YAML data format with the SnakeYAML library
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-[source,java]
-------------------------------------------------------------
-// lets turn Object messages into yaml then send to MQSeries
-from("activemq:My.Queue")
-  .marshal().yaml()
-  .to("mqseries:Another.Queue");
-------------------------------------------------------------
-
-[source,java]
-------------------------------------------------------------
-// lets turn Object messages into yaml then send to MQSeries
-from("activemq:My.Queue")
-  .marshal().yaml(YAMLLibrary.SnakeYAML)
-  .to("mqseries:Another.Queue");
-------------------------------------------------------------
-
 [[YAML-Options]]
 YAML Options
 ^^^^^^^^^^^^
 
-
-
 // dataformat options: START
-The YAML SnakeYAML dataformat supports 8 options which are listed below.
+The YAML SnakeYAML dataformat supports 10 options which are listed below.
 
 
 
@@ -57,11 +35,48 @@ The YAML SnakeYAML dataformat supports 8 options which are listed below.
 | resolver |  | String | Resolver to detect implicit type
 | useApplicationContextClassLoader | true | Boolean | Use ApplicationContextClassLoader as custom ClassLoader
 | prettyFlow | false | Boolean | Force the emitter to produce a pretty YAML document when using the flow style.
+| allowAnyType | false | Boolean | Allow any class to be un-marshaled
+| typeFilter |  | List | Set the types SnakeYAML is allowed to un-marshall
 |=======================================================================
 {% endraw %}
 // dataformat options: END
 
+WARNING: SnakeYAML can load any class from YAML definition which may lead to security breach so by default, SnakeYAML DataForma restrict the object it can load to standard Java objects like List or Long. If you want to load custom POJOs you need to add theirs type to SnakeYAML DataFormat type filter list. If your source is trusted, you can set the property allowAnyType to true so SnakeYAML DataForma won't perform any filter on the types.
 
+[[YAMLDataFormat-UsingYAMLdataformatwiththeSnakeYAMLlibrary]]
+Using YAML data format with the SnakeYAML library
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- Turn Object messages into yaml then send to MQSeries
++
+[source,java]
+------------------------------------------------------------
+from("activemq:My.Queue")
+  .marshal().yaml()
+  .to("mqseries:Another.Queue");
+------------------------------------------------------------
++
+[source,java]
+------------------------------------------------------------
+from("activemq:My.Queue")
+  .marshal().yaml(YAMLLibrary.SnakeYAML)
+  .to("mqseries:Another.Queue");
+------------------------------------------------------------
+
+- Restrict classes to be loaded from YAML
++
+[source,java]
+------------------------------------------------------------
+// Creat a SnakeYAMLDataFormat instance
+SnakeYAMLDataFormat yaml = new SnakeYAMLDataFormat();
+
+// Restrict classes to be loaded from YAML
+yaml.addTypeFilters(TypeFilters.types(MyPojo.class, MyOtherPojo.class));
+
+from("activemq:My.Queue")
+  .unmarshal(yaml)
+  .to("mqseries:Another.Queue");
+------------------------------------------------------------
 
 [[YAMLDataFormat-UsingYAMLinSpringDSL]]
 Using YAML in Spring DSL
@@ -72,56 +87,50 @@ declare the data formats first. This is done in the *DataFormats* XML
 tag.
 
 [source,xml]
-----------------------------------------------------------------------------------------------------------------------------------
-        <dataFormats>
-            <!-- here we define a YAML data format with the id snak and that it should use the TestPojo as the class type when
-                 doing unmarshal. The unmarshalTypeName is optional, if not provided Camel will use a Object.class as the type -->
-            <yaml id="snake" library="SnakeYAML" unmarshalTypeName="org.apache.camel.component.yaml.model.TestPojo"/>
-        </dataFormats>
-----------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+<dataFormats>
+  <!--
+    here we define a YAML data format with the id snake and that it should use
+    the TestPojo as the class type when doing unmarshal. The unmarshalTypeName
+    is optional
+  -->
+  <yaml
+    id="snake"
+    library="SnakeYAML"
+    unmarshalTypeName="org.apache.camel.component.yaml.model.TestPojo"/>
 
-And then you can refer to this id in the route:
+  <!--
+    here we define a YAML data format with the id snake-safe which restricts the
+    classes to be loaded from YAML to TestPojo and those belonging to package
+    com.mycompany
+  -->
+  <yaml id="snake-safe">
+    <typeFilter value="org.apache.camel.component.yaml.model.TestPojo"/>
+    <typeFilter value="com.mycompany\..*" type="regexp"/>
+  </yaml>
+</dataFormats>
+--------------------------------------------------------------------------------
+
+And then you can refer to those ids in the route:
 
 [source,xml]
 -------------------------------------
-       <route>
-            <from uri="direct:back"/>
-            <unmarshal ref="snake"/>
-            <to uri="mock:reverse"/>
-        </route>
+  <route>
+    <from uri="direct:unmarshal"/>
+    <unmarshal>
+      <custom ref="snake"/>
+    </unmarshal>
+    <to uri="mock:unmarshal"/>
+  </route>
+  <route>
+    <from uri="direct:unmarshal-safe"/>
+    <unmarshal>
+      <custom ref="snake-safe"/>
+    </unmarshal>
+    <to uri="mock:unmarshal-safe"/>
+  </route>
 -------------------------------------
 
- 
-
-[[YAMLDataFormat-OptionsforSnakeYAMLDataFormat]]
-Options for SnakeYAML Data Format
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-[width="100%",cols="<25%,<25%,<25%,<25%",options="header",]
-|=======================================================================
-|Name |Type |Default |Description
-|unmarshalType |`Class` |`Object.class` |Class of the object to be created
-
-|classLoader |ClassLoader |null |The classloader to use to
-instantiate objects
-
-|constructor |String |null |A reference to an 
-org.yaml.snakeyaml.constructor.BaseConstructor instance in the registry
-
-|representer |String |null |A reference to an 
-org.yaml.snakeyaml.representer.Representer instance in the registry
-
-|dumperOptions |String |null |A reference to an 
-org.yaml.snakeyaml.DumperOptions instance in the registry
-
-|resolver |String |null |A reference to an 
-org.yaml.snakeyaml.resolver.Resolver instance in the registry
-
-|useApplicationContextClassLoader | Boolean |true  |To use CamelContext's ApplicationContextClassLoader if no custom class loader is set and
-ApplicationContextClassLoader is provided
-
-|prettyFlow | Boolean |false  |Force the emitter to produce a pretty YAML document when using the flow style
-|=======================================================================
 
 [[YAMLDataFormat-DependenciesforSnakeYAML]]
 Dependencies for SnakeYAML
