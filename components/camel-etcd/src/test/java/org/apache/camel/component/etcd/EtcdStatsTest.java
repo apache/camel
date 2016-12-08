@@ -64,11 +64,11 @@ public class EtcdStatsTest extends EtcdTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // CONSUMER
-                from("etcd:stats/leader?consumer.delay=50&consumer.initialDelay=0")
+                from("etcd:stats/leader?delay=50&initialDelay=0")
                     .to("mock:stats-leader-consumer");
-                from("etcd:stats/self?consumer.delay=50&consumer.initialDelay=0")
+                from("etcd:stats/self?delay=50&initialDelay=0")
                     .to("mock:stats-self-consumer");
-                from("etcd:stats/store?consumer.delay=50&consumer.initialDelay=0")
+                from("etcd:stats/store?delay=50&initialDelay=0")
                     .to("mock:stats-store-consumer");
 
                 // PRODUCER
