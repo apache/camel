@@ -68,7 +68,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
     private String enableFeatures;
     private String disableFeatures;
     private boolean enableJacksonTypeConverter;
-    private boolean allowJacksonUnmarshallType;
+    private boolean allowUnmarshallType;
 
     /**
      * Use the default Jackson {@link ObjectMapper} and {@link Map}
@@ -161,7 +161,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
         // is there a header with the unmarshal type?
         Class<?> clazz = unmarshalType;
         String type = null;
-        if (allowJacksonUnmarshallType) {
+        if (allowUnmarshallType) {
             type = exchange.getIn().getHeader(JacksonConstants.UNMARSHAL_TYPE, String.class);
         }
         if (type == null && isAllowJmsType()) {
@@ -328,8 +328,8 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
         this.enableJacksonTypeConverter = enableJacksonTypeConverter;
     }
     
-    public boolean isAllowJacksonUnmarshallType() {
-        return allowJacksonUnmarshallType;
+    public boolean isAllowUnmarshallType() {
+        return allowUnmarshallType;
     }
 
     /**
@@ -337,8 +337,8 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
      * <p/>
      * This should only be enabled when desired to be used.
      */
-    public void setAllowJacksonUnmarshallType(boolean allowJacksonUnmarshallType) {
-        this.allowJacksonUnmarshallType = allowJacksonUnmarshallType;
+    public void setAllowUnmarshallType(boolean allowJacksonUnmarshallType) {
+        this.allowUnmarshallType = allowJacksonUnmarshallType;
     }
 
     public String getEnableFeatures() {
