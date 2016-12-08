@@ -27,20 +27,20 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.yaml.snakeyaml.nodes.Tag;
 
-import static org.apache.camel.component.snakeyaml.SnakeYAMLMarshalTestHelper.createClassTagDataFormat;
-import static org.apache.camel.component.snakeyaml.SnakeYAMLMarshalTestHelper.createDataFormat;
-import static org.apache.camel.component.snakeyaml.SnakeYAMLMarshalTestHelper.createPrettyFlowDataFormat;
-import static org.apache.camel.component.snakeyaml.SnakeYAMLMarshalTestHelper.createTestMap;
-import static org.apache.camel.component.snakeyaml.SnakeYAMLMarshalTestHelper.createTestPojo;
+import static org.apache.camel.component.snakeyaml.SnakeYAMLTestHelper.createClassTagDataFormat;
+import static org.apache.camel.component.snakeyaml.SnakeYAMLTestHelper.createDataFormat;
+import static org.apache.camel.component.snakeyaml.SnakeYAMLTestHelper.createPrettyFlowDataFormat;
+import static org.apache.camel.component.snakeyaml.SnakeYAMLTestHelper.createTestMap;
+import static org.apache.camel.component.snakeyaml.SnakeYAMLTestHelper.createTestPojo;
 
 @RunWith(Parameterized.class)
-public class SnakeYAMLMarshalTest extends CamelTestSupport {
+public class SnakeYAMLTest extends CamelTestSupport {
 
     private final SnakeYAMLDataFormat format;
     private final Object body;
     private final String expected;
 
-    public SnakeYAMLMarshalTest(SnakeYAMLDataFormat format, Object body, String expected) {
+    public SnakeYAMLTest(SnakeYAMLDataFormat format, Object body, String expected) {
         this.format = format;
         this.body = body;
         this.expected = expected;
@@ -74,7 +74,7 @@ public class SnakeYAMLMarshalTest extends CamelTestSupport {
 
     @Test
     public void testMarshalAndUnmarshal() throws Exception {
-        SnakeYAMLMarshalTestHelper.marshalAndUnmarshal(
+        SnakeYAMLTestHelper.marshalAndUnmarshal(
             context(),
             body,
             "mock:reverse",
