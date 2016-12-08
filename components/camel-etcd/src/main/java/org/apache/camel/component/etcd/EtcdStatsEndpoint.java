@@ -21,7 +21,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 
-public class EtcdStatsEndpoint extends AbstractEtcdEndpoint {
+public class EtcdStatsEndpoint extends AbstractEtcdPollingEndpoint {
 
     public EtcdStatsEndpoint(
         String uri, EtcdComponent component, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {

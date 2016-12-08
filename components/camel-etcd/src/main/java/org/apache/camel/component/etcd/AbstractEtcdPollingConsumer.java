@@ -30,7 +30,7 @@ public abstract class AbstractEtcdPollingConsumer extends ScheduledPollConsumer 
 
     private EtcdClient client;
 
-    protected AbstractEtcdPollingConsumer(AbstractEtcdEndpoint endpoint, Processor processor, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
+    protected AbstractEtcdPollingConsumer(AbstractEtcdPollingEndpoint endpoint, Processor processor, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
         super(endpoint, processor);
 
         this.configuration = configuration;
