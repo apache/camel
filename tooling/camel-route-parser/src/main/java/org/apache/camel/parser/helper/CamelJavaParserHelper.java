@@ -311,9 +311,11 @@ public final class CamelJavaParserHelper {
             if (!Strings.isBlank(uri)) {
                 int position = ((Expression) arg).getStartPosition();
 
-                // if the node is fromF or toF, then replace all %s with {{%s}} as we cannot parse that value
+                // if the node is fromF or toF, then replace all %X with {{%X}} as we cannot parse that value
                 if ("fromF".equals(node) || "toF".equals(node)) {
                     uri = uri.replaceAll("\\%s", "\\{\\{\\%s\\}\\}");
+                    uri = uri.replaceAll("\\%d", "\\{\\{\\%d\\}\\}");
+                    uri = uri.replaceAll("\\%b", "\\{\\{\\%b\\}\\}");
                 }
 
                 uris.add(new ParserResult(node, position, uri));

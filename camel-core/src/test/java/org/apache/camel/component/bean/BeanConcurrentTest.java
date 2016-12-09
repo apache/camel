@@ -50,7 +50,7 @@ public class BeanConcurrentTest extends ContextTestSupport {
             String body = mock.getReceivedExchanges().get(i).getIn().getBody(String.class);
             list.add(body);
         }
-        Collections.sort(list);
+        list.sort(null);
 
         // and they should be unique and no lost messages
         assertEquals(1000, list.size());

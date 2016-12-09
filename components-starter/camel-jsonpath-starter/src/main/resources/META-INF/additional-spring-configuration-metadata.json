@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.language.jsonpath.enabled",
+      "description": "Enable jsonpath language",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -14,20 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.karaf;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
+package org.apache.camel.spring.boot;
 
-@RunWith(PaxExam.class)
-public class CamelSpringJavaconfigTest extends BaseKarafTest {
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
-    public static final String COMPONENT = extractName(CamelSpringJavaconfigTest.class);
+@ConfigurationProperties(prefix = "camel.dataformat")
+public class DataFormatConfigurationProperties {
+    private boolean enabled = true;
 
-    @Test
-    public void test() throws Exception {
-        installCamelFeature(COMPONENT);
+    public boolean isEnabled() {
+        return enabled;
     }
 
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 }

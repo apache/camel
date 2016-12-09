@@ -23,6 +23,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -178,6 +179,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
     @UriParam(label = "consumer,advanced")
     protected ExceptionHandler onCompletionExceptionHandler;
+
+    private Pattern includePattern;
+    private Pattern excludePattern;
 
     public GenericFileEndpoint() {
     }
@@ -336,7 +340,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * Is used to include files, if filename matches the regex pattern (matching is case in-senstive).
+     * Is used to include files, if filename matches the regex pattern (matching is case in-sensitive).
      * <p/>
      * Notice if you use symbols such as plus sign and others you would need to configure
      * this using the RAW() syntax if configuring this as an endpoint uri.
@@ -344,6 +348,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setInclude(String include) {
         this.include = include;
+        this.includePattern = Pattern.compile(include, Pattern.CASE_INSENSITIVE);
+    }
+
+    public Pattern getIncludePattern() {
+        return includePattern;
     }
 
     public String getExclude() {
@@ -359,6 +368,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setExclude(String exclude) {
         this.exclude = exclude;
+        this.excludePattern = Pattern.compile(exclude, Pattern.CASE_INSENSITIVE);
+    }
+
+    public Pattern getExcludePattern() {
+        return this.excludePattern;
     }
 
     public String getAntInclude() {

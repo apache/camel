@@ -311,12 +311,6 @@
         </configuration>
       </plugin>
 
-      <!--<classesDirectory>${project.build.outputDirectory}</classesDirectory>-->
-      <!--<classesDirectory>${project.build}/generated/camel/components</classesDirectory>-->
-      <!--<classesDirectory>${project.build}/generated/camel/dataformats</classesDirectory>-->
-      <!--<classesDirectory>${project.build}/generated/camel/languages</classesDirectory>-->
-      <!--<classesDirectory>${project.build}/generated/camel/models</classesDirectory>-->
-
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
@@ -460,8 +454,25 @@
     </plugins>
   </reporting>
 
-
   <profiles>
+    <profile>
+      <id>validate</id>
+      <build>
+        <plugins>
+          <!-- to validate Camel endpoints: mvn camel:validate -Pvalidate -->
+          <plugin>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-maven-plugin</artifactId>
+            <version>${project.version}</version>
+            <configuration>
+              <failOnError>true</failOnError>
+              <includeTest>true</includeTest>
+              <ignoreLenientProperties>false</ignoreLenientProperties>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <profile>
       <id>release</id>
       <build>

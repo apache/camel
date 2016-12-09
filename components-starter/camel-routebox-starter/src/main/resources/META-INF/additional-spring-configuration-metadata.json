@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.routebox.enabled",
+      "description": "Enable routebox component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

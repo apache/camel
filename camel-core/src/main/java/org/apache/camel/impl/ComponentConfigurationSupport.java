@@ -123,7 +123,7 @@ public abstract class ComponentConfigurationSupport implements ComponentConfigur
                 queryParams.add(key + "=" + UnsafeUriCharactersEncoder.encode(value.toString()));
             }
         }
-        Collections.sort(queryParams);
+        queryParams.sort(null);
         StringBuilder builder = new StringBuilder();
         String base = getBaseUri();
         if (base != null) {

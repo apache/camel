@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.sap-netweaver.enabled",
+      "description": "Enable sap-netweaver component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

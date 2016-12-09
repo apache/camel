@@ -866,4 +866,16 @@ public class CamelCatalogTest {
         assertTrue(doc.contains("JSonPath language"));
     }
 
+    @Test
+    public void testValidateEndpointTwitterSpecial() throws Exception {
+        String uri = "twitter://search?{{%s}}&keywords=java";
+
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess());
+
+        uri = "twitter://search?{{%s}}";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess());
+    }
+
 }
