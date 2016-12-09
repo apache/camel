@@ -24,17 +24,19 @@ import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400ConnectionPool;
 import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
-import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
+/**
+ * The jt400 component allows you to exchanges messages with an AS/400 system using data queues or program call.
+ */
 @UriEndpoint(scheme = "jt400", title = "JT400", syntax = "jt400:userID:password/systemName/objectPath.type", consumerClass = Jt400DataQueueConsumer.class, label = "messaging")
-public class Jt400Endpoint extends DefaultPollingEndpoint {
+public class Jt400Endpoint extends ScheduledPollEndpoint {
 
     public static final String KEY = "KEY";
     public static final String SENDER_INFORMATION = "SENDER_INFORMATION";
@@ -45,7 +47,7 @@ public class Jt400Endpoint extends DefaultPollingEndpoint {
     /**
      * Creates a new AS/400 data queue endpoint using a default connection pool
      * provided by the component.
-     * 
+     *
      * @throws NullPointerException if {@code component} is null
      */
     protected Jt400Endpoint(String endpointUri, Jt400Component component) throws CamelException {
@@ -67,13 +69,6 @@ public class Jt400Endpoint extends DefaultPollingEndpoint {
     }
 
     @Override
-    public PollingConsumer createPollingConsumer() throws Exception {
-        Jt400DataQueueConsumer answer = new Jt400DataQueueConsumer(this);
-        configurePollingConsumer(answer);
-        return answer;
-    }
-
-    @Override
     public Producer createProducer() throws Exception {
         if (Jt400Type.DTAQ == configuration.getType()) {
             return new Jt400DataQueueProducer(this);
@@ -85,7 +80,7 @@ public class Jt400Endpoint extends DefaultPollingEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         if (Jt400Type.DTAQ == configuration.getType()) {
-            Consumer consumer = new Jt400DataQueueConsumer(this);
+            Consumer consumer = new Jt400DataQueueConsumer(this, processor);
             configureConsumer(consumer);
             return consumer;
         } else {
@@ -102,16 +97,16 @@ public class Jt400Endpoint extends DefaultPollingEndpoint {
      * Obtains an {@code AS400} object that connects to this endpoint. Since
      * these objects represent limited resources, clients have the
      * responsibility of {@link #releaseSystem(AS400) releasing them} when done.
-     * 
+     *
      * @return an {@code AS400} object that connects to this endpoint
      */
     protected AS400 getSystem() {
         return configuration.getConnection();
     }
-    
+
     /**
      * Releases a previously obtained {@code AS400} object from use.
-     * 
+     *
      * @param system a previously obtained {@code AS400} object
      */
     protected void releaseSystem(AS400 system) {
@@ -121,7 +116,7 @@ public class Jt400Endpoint extends DefaultPollingEndpoint {
     /**
      * Returns the fully qualified integrated file system path name of the data
      * queue of this endpoint.
-     * 
+     *
      * @return the fully qualified integrated file system path name of the data
      *         queue of this endpoint
      */
@@ -255,6 +250,14 @@ public class Jt400Endpoint extends DefaultPollingEndpoint {
 
     public boolean isSecured() {
         return configuration.isSecured();
+    }
+
+    public int getReadTimeout() {
+        return configuration.getReadTimeout();
+    }
+
+    public void setReadTimeout(int readTimeout) {
+        configuration.setReadTimeout(readTimeout);
     }
 
 }

@@ -88,10 +88,10 @@ public class Jt400Configuration {
 
     @UriParam
     private int ccsid = DEFAULT_SYSTEM_CCSID;
-    
+
     @UriParam(defaultValue = "text")
     private Format format = Format.text;
-    
+
     @UriParam
     private boolean guiAvailable;
 
@@ -113,17 +113,20 @@ public class Jt400Configuration {
     @UriParam
     private Integer[] outputFieldsLengthArray;
 
+    @UriParam(label = "consumer", defaultValue = "30000")
+    private int readTimeout = 30000;
+
     public Jt400Configuration(String endpointUri, AS400ConnectionPool connectionPool) throws URISyntaxException {
         ObjectHelper.notNull(endpointUri, "endpointUri", this);
         ObjectHelper.notNull(connectionPool, "connectionPool", this);
-        
+
         URI uri = new URI(endpointUri);
         String[] credentials = uri.getUserInfo().split(":");
         systemName = uri.getHost();
         userID = credentials[0];
         password = credentials[1];
         objectPath = uri.getPath();
-        
+
         this.connectionPool = connectionPool;
     }
 
@@ -184,7 +187,7 @@ public class Jt400Configuration {
     }
 
     // Options
-    
+
     /**
      * Returns the CCSID to use for the connection with the AS/400 system.
      * Returns -1 if the CCSID to use is the default system CCSID.
@@ -192,21 +195,21 @@ public class Jt400Configuration {
     public int getCssid() {
         return ccsid;
     }
-    
+
     /**
      * Sets the CCSID to use for the connection with the AS/400 system.
      */
     public void setCcsid(int ccsid) {
         this.ccsid = (ccsid < 0) ? DEFAULT_SYSTEM_CCSID : ccsid;
     }
-    
+
     /**
      * Returns the data format for sending messages.
      */
     public Format getFormat() {
         return format;
     }
-    
+
     /**
      * Sets the data format for sending messages.
      */
@@ -214,7 +217,7 @@ public class Jt400Configuration {
         ObjectHelper.notNull(format, "format", this);
         this.format = format;
     }
-    
+
     /**
      * Returns whether AS/400 prompting is enabled in the environment running
      * Camel.
@@ -222,7 +225,7 @@ public class Jt400Configuration {
     public boolean isGuiAvailable() {
         return guiAvailable;
     }
-    
+
     /**
      * Sets whether AS/400 prompting is enabled in the environment running
      * Camel.
@@ -301,6 +304,17 @@ public class Jt400Configuration {
         this.outputFieldsLengthArray = outputFieldsLengthArray;
     }
 
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    /**
+     * Timeout in millis the consumer will wait while trying to read a new message of the data queue.
+     */
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+    }
+
     public void setOutputFieldsIdx(String outputFieldsIdx) {
         if (outputFieldsIdx != null) {
             String[] outputArray = outputFieldsIdx.split(",");
@@ -324,13 +338,13 @@ public class Jt400Configuration {
     }
 
     // AS400 connections
-    
+
     /**
      * Obtains an {@code AS400} object that connects to this endpoint. Since
      * these objects represent limited resources, clients have the
      * responsibility of {@link #releaseConnection(AS400) releasing them} when
      * done.
-     * 
+     *
      * @return an {@code AS400} object that connects to this endpoint
      */
     public AS400 getConnection() {
@@ -361,10 +375,10 @@ public class Jt400Configuration {
             throw new RuntimeCamelException("Unable to set the CSSID to use with " + system, e);
         }
     }
-    
+
     /**
      * Releases a previously obtained {@code AS400} object from use.
-     * 
+     *
      * @param connection a previously obtained {@code AS400} object to release
      */
     public void releaseConnection(AS400 connection) {
