@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jackson;
 
-import java.util.LinkedHashMap;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -29,7 +27,6 @@ public class JacksonMarshalUnmarshalTypeHeaderNotAllowedTest extends CamelTestSu
     public void testUnmarshalPojo() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:reversePojo");
         mock.expectedMessageCount(1);
-        mock.message(0).body().isInstanceOf(LinkedHashMap.class);
 
         String json = "{\"name\":\"Camel\"}";
         template.sendBodyAndHeader("direct:backPojo", json, JacksonConstants.UNMARSHAL_TYPE, TestPojo.class.getName());
