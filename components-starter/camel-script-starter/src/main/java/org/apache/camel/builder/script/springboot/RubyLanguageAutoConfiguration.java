@@ -55,8 +55,12 @@ public class RubyLanguageAutoConfiguration {
     public RubyLanguage configureRubyLanguage(CamelContext camelContext,
             RubyLanguageConfiguration configuration) throws Exception {
         RubyLanguage language = new RubyLanguage();
-        if (language instanceof CamelContextAware) {
-            ((CamelContextAware) language).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(RubyLanguage.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(language);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

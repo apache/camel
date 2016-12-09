@@ -55,8 +55,12 @@ public class OgnlLanguageAutoConfiguration {
     public OgnlLanguage configureOgnlLanguage(CamelContext camelContext,
             OgnlLanguageConfiguration configuration) throws Exception {
         OgnlLanguage language = new OgnlLanguage();
-        if (language instanceof CamelContextAware) {
-            ((CamelContextAware) language).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(OgnlLanguage.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(language);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

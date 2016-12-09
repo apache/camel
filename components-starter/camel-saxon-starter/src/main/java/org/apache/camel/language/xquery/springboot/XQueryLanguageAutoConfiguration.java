@@ -55,8 +55,12 @@ public class XQueryLanguageAutoConfiguration {
     public XQueryLanguage configureXQueryLanguage(CamelContext camelContext,
             XQueryLanguageConfiguration configuration) throws Exception {
         XQueryLanguage language = new XQueryLanguage();
-        if (language instanceof CamelContextAware) {
-            ((CamelContextAware) language).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(XQueryLanguage.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(language);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

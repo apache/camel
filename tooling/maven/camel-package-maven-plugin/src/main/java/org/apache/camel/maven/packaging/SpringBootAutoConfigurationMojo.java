@@ -67,6 +67,7 @@ import org.jboss.forge.roaster.model.source.Import;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.PropertySource;
+import org.jboss.forge.roaster.model.util.Formatter;
 import org.jboss.forge.roaster.model.util.Strings;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionMessage;
@@ -240,7 +241,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
             List<DataFormatModel> allModels = new LinkedList<>();
             for (String dataFormatName : dataFormatNames) {
-                String json = loadDataFormaatJson(jsonFiles, dataFormatName);
+                String json = loadDataFormatJson(jsonFiles, dataFormatName);
                 if (json != null) {
                     DataFormatModel model = generateDataFormatModel(dataFormatName, json);
                     allModels.add(model);
@@ -1059,8 +1060,11 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     private static String createDataFormatBody(String shortJavaType, boolean hasOptions) {
         StringBuilder sb = new StringBuilder();
         sb.append(shortJavaType).append(" dataformat = new ").append(shortJavaType).append("();").append("\n");
-        sb.append("if (dataformat instanceof CamelContextAware) {\n");
-        sb.append("    ((CamelContextAware) dataformat).setCamelContext(camelContext);\n");
+        sb.append("if (CamelContextAware.class.isAssignableFrom(").append(shortJavaType).append(".class)) {\n");
+        sb.append("    CamelContextAware contextAware = CamelContextAware.class.cast(dataformat);\n");
+        sb.append("    if (contextAware != null) {\n");
+        sb.append("        contextAware.setCamelContext(camelContext);\n");
+        sb.append("    }\n");
         sb.append("}\n");
         if (hasOptions) {
             sb.append("\n");
@@ -1077,8 +1081,11 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     private static String createLanguageBody(String shortJavaType, boolean hasOptions) {
         StringBuilder sb = new StringBuilder();
         sb.append(shortJavaType).append(" language = new ").append(shortJavaType).append("();").append("\n");
-        sb.append("if (language instanceof CamelContextAware) {\n");
-        sb.append("    ((CamelContextAware) language).setCamelContext(camelContext);\n");
+        sb.append("if (CamelContextAware.class.isAssignableFrom(").append(shortJavaType).append(".class)) {\n");
+        sb.append("    CamelContextAware contextAware = CamelContextAware.class.cast(language);\n");
+        sb.append("    if (contextAware != null) {\n");
+        sb.append("        contextAware.setCamelContext(camelContext);\n");
+        sb.append("    }\n");
         sb.append("}\n");
         if (hasOptions) {
             sb.append("\n");
@@ -1138,7 +1145,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     }
 
     private static String sourceToString(JavaClassSource javaClass) {
-        String code = javaClass.toString();
+        String code = Formatter.format(javaClass);
         // convert tabs to 4 spaces
         code = code.replaceAll("\\t", "    ");
         return code;
@@ -1161,7 +1168,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         return null;
     }
 
-    private static String loadDataFormaatJson(Set<File> jsonFiles, String dataFormatName) {
+    private static String loadDataFormatJson(Set<File> jsonFiles, String dataFormatName) {
         try {
             for (File file : jsonFiles) {
                 if (file.getName().equals(dataFormatName + ".json")) {

@@ -56,8 +56,12 @@ public class BeanIODataFormatAutoConfiguration {
             CamelContext camelContext,
             BeanIODataFormatConfiguration configuration) throws Exception {
         BeanIODataFormat dataformat = new BeanIODataFormat();
-        if (dataformat instanceof CamelContextAware) {
-            ((CamelContextAware) dataformat).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(BeanIODataFormat.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(dataformat);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

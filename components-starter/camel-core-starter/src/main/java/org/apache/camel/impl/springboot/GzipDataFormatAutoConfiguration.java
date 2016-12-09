@@ -55,8 +55,12 @@ public class GzipDataFormatAutoConfiguration {
     public GzipDataFormat configureGzipDataFormat(CamelContext camelContext,
             GzipDataFormatConfiguration configuration) throws Exception {
         GzipDataFormat dataformat = new GzipDataFormat();
-        if (dataformat instanceof CamelContextAware) {
-            ((CamelContextAware) dataformat).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(GzipDataFormat.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(dataformat);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

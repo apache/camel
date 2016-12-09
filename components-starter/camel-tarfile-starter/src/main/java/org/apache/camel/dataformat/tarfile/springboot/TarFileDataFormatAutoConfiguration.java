@@ -56,8 +56,12 @@ public class TarFileDataFormatAutoConfiguration {
             CamelContext camelContext,
             TarFileDataFormatConfiguration configuration) throws Exception {
         TarFileDataFormat dataformat = new TarFileDataFormat();
-        if (dataformat instanceof CamelContextAware) {
-            ((CamelContextAware) dataformat).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(TarFileDataFormat.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(dataformat);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

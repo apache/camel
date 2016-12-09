@@ -55,8 +55,12 @@ public class JXPathLanguageAutoConfiguration {
     public JXPathLanguage configureJXPathLanguage(CamelContext camelContext,
             JXPathLanguageConfiguration configuration) throws Exception {
         JXPathLanguage language = new JXPathLanguage();
-        if (language instanceof CamelContextAware) {
-            ((CamelContextAware) language).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(JXPathLanguage.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(language);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

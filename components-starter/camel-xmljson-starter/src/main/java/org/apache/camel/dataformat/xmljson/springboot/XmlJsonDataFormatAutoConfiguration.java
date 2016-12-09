@@ -56,8 +56,12 @@ public class XmlJsonDataFormatAutoConfiguration {
             CamelContext camelContext,
             XmlJsonDataFormatConfiguration configuration) throws Exception {
         XmlJsonDataFormat dataformat = new XmlJsonDataFormat();
-        if (dataformat instanceof CamelContextAware) {
-            ((CamelContextAware) dataformat).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(XmlJsonDataFormat.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(dataformat);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

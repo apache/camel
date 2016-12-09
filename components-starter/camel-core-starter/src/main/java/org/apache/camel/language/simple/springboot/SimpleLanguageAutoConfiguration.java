@@ -55,8 +55,12 @@ public class SimpleLanguageAutoConfiguration {
     public SimpleLanguage configureSimpleLanguage(CamelContext camelContext,
             SimpleLanguageConfiguration configuration) throws Exception {
         SimpleLanguage language = new SimpleLanguage();
-        if (language instanceof CamelContextAware) {
-            ((CamelContextAware) language).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(SimpleLanguage.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(language);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

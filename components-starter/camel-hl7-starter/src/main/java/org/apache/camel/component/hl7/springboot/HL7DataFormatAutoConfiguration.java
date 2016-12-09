@@ -55,8 +55,12 @@ public class HL7DataFormatAutoConfiguration {
     public HL7DataFormat configureHL7DataFormat(CamelContext camelContext,
             HL7DataFormatConfiguration configuration) throws Exception {
         HL7DataFormat dataformat = new HL7DataFormat();
-        if (dataformat instanceof CamelContextAware) {
-            ((CamelContextAware) dataformat).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(HL7DataFormat.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(dataformat);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

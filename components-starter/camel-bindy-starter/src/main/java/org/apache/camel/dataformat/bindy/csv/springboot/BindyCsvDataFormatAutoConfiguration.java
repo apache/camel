@@ -56,8 +56,12 @@ public class BindyCsvDataFormatAutoConfiguration {
             CamelContext camelContext,
             BindyCsvDataFormatConfiguration configuration) throws Exception {
         BindyCsvDataFormat dataformat = new BindyCsvDataFormat();
-        if (dataformat instanceof CamelContextAware) {
-            ((CamelContextAware) dataformat).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(BindyCsvDataFormat.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(dataformat);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

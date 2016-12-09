@@ -55,8 +55,12 @@ public class SqlLanguageAutoConfiguration {
     public SqlLanguage configureSqlLanguage(CamelContext camelContext,
             SqlLanguageConfiguration configuration) throws Exception {
         SqlLanguage language = new SqlLanguage();
-        if (language instanceof CamelContextAware) {
-            ((CamelContextAware) language).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(SqlLanguage.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(language);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

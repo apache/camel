@@ -55,8 +55,12 @@ public class GroovyLanguageAutoConfiguration {
     public GroovyLanguage configureGroovyLanguage(CamelContext camelContext,
             GroovyLanguageConfiguration configuration) throws Exception {
         GroovyLanguage language = new GroovyLanguage();
-        if (language instanceof CamelContextAware) {
-            ((CamelContextAware) language).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(GroovyLanguage.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(language);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

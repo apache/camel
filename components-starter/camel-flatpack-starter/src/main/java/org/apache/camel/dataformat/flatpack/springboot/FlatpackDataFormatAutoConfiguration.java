@@ -56,8 +56,12 @@ public class FlatpackDataFormatAutoConfiguration {
             CamelContext camelContext,
             FlatpackDataFormatConfiguration configuration) throws Exception {
         FlatpackDataFormat dataformat = new FlatpackDataFormat();
-        if (dataformat instanceof CamelContextAware) {
-            ((CamelContextAware) dataformat).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(FlatpackDataFormat.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(dataformat);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

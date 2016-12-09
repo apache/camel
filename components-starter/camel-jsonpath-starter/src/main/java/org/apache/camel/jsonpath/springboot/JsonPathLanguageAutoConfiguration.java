@@ -56,8 +56,12 @@ public class JsonPathLanguageAutoConfiguration {
             CamelContext camelContext,
             JsonPathLanguageConfiguration configuration) throws Exception {
         JsonPathLanguage language = new JsonPathLanguage();
-        if (language instanceof CamelContextAware) {
-            ((CamelContextAware) language).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(JsonPathLanguage.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(language);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

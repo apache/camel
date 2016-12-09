@@ -55,8 +55,12 @@ public class RssDataFormatAutoConfiguration {
     public RssDataFormat configureRssDataFormat(CamelContext camelContext,
             RssDataFormatConfiguration configuration) throws Exception {
         RssDataFormat dataformat = new RssDataFormat();
-        if (dataformat instanceof CamelContextAware) {
-            ((CamelContextAware) dataformat).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(RssDataFormat.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(dataformat);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

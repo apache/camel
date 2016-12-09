@@ -55,8 +55,12 @@ public class CsvDataFormatAutoConfiguration {
     public CsvDataFormat configureCsvDataFormat(CamelContext camelContext,
             CsvDataFormatConfiguration configuration) throws Exception {
         CsvDataFormat dataformat = new CsvDataFormat();
-        if (dataformat instanceof CamelContextAware) {
-            ((CamelContextAware) dataformat).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(CsvDataFormat.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(dataformat);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

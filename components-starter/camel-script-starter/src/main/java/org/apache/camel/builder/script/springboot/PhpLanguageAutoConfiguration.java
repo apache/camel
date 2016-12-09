@@ -55,8 +55,12 @@ public class PhpLanguageAutoConfiguration {
     public PhpLanguage configurePhpLanguage(CamelContext camelContext,
             PhpLanguageConfiguration configuration) throws Exception {
         PhpLanguage language = new PhpLanguage();
-        if (language instanceof CamelContextAware) {
-            ((CamelContextAware) language).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(PhpLanguage.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(language);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

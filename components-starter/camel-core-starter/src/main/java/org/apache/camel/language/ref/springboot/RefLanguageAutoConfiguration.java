@@ -55,8 +55,12 @@ public class RefLanguageAutoConfiguration {
     public RefLanguage configureRefLanguage(CamelContext camelContext,
             RefLanguageConfiguration configuration) throws Exception {
         RefLanguage language = new RefLanguage();
-        if (language instanceof CamelContextAware) {
-            ((CamelContextAware) language).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(RefLanguage.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(language);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

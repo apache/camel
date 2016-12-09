@@ -55,8 +55,12 @@ public class FileLanguageAutoConfiguration {
     public FileLanguage configureFileLanguage(CamelContext camelContext,
             FileLanguageConfiguration configuration) throws Exception {
         FileLanguage language = new FileLanguage();
-        if (language instanceof CamelContextAware) {
-            ((CamelContextAware) language).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(FileLanguage.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(language);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,
