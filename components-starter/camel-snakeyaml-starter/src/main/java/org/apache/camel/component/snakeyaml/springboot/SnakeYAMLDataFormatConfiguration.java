@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.snakeyaml.springboot;
 
+import java.util.List;
 import org.apache.camel.component.snakeyaml.SnakeYAMLDataFormat;
 import org.apache.camel.model.dataformat.YAMLLibrary;
+import org.apache.camel.model.dataformat.YAMLTypeFilterDefinition;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -61,6 +63,14 @@ public class SnakeYAMLDataFormatConfiguration {
      * style.
      */
     private Boolean prettyFlow = false;
+    /**
+     * Allow any class to be un-marshaled
+     */
+    private Boolean allowAnyType = false;
+    /**
+     * Set the types SnakeYAML is allowed to un-marshall
+     */
+    private List<YAMLTypeFilterDefinition> typeFilter;
 
     public YAMLLibrary getLibrary() {
         return library;
@@ -125,5 +135,21 @@ public class SnakeYAMLDataFormatConfiguration {
 
     public void setPrettyFlow(Boolean prettyFlow) {
         this.prettyFlow = prettyFlow;
+    }
+
+    public Boolean getAllowAnyType() {
+        return allowAnyType;
+    }
+
+    public void setAllowAnyType(Boolean allowAnyType) {
+        this.allowAnyType = allowAnyType;
+    }
+
+    public List<YAMLTypeFilterDefinition> getTypeFilter() {
+        return typeFilter;
+    }
+
+    public void setTypeFilter(List<YAMLTypeFilterDefinition> typeFilter) {
+        this.typeFilter = typeFilter;
     }
 }
