@@ -51,7 +51,7 @@ import org.yaml.snakeyaml.resolver.Resolver;
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using <a href="http://www.snakeyaml.org">SnakeYAML</a> to marshal to and from YAML.
  */
-public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+public class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private final ThreadLocal<WeakReference<Yaml>> yamlCache;
     private BaseConstructor constructor;
     private Representer representer;
@@ -77,7 +77,9 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
         this.allowAnyType = false;
 
         if (type != null) {
-            setUnmarshalType(type);
+            this.unmarshalType = type;
+            this.typeFilters = new CopyOnWriteArrayList<>();
+            this.typeFilters.add(TypeFilters.types(type));
         }
     }
 
