@@ -108,7 +108,8 @@ public class SalesforceComponentConfigurationIntegrationTest extends CamelTestSu
             "query", "queryMore", "queryAll", "search", "apexCall", "recent", "createJob", "getJob", "closeJob", "abortJob",
             "createBatch", "getBatch", "getAllBatches", "getRequest", "getResults", "createBatchQuery", "getQueryResultIds",
             "getQueryResult", "getRecentReports", "getReportDescription", "executeSyncReport", "executeAsyncReport",
-            "getReportInstances", "getReportResults", "limits", "approval", "approvals", "composite-tree", "[PushTopicName]"
+            "getReportInstances", "getReportResults", "limits", "approval", "approvals", "composite-batch", "composite-tree",
+            "[PushTopicName]"
         );
 
         // get filtered operation names

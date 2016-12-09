@@ -69,7 +69,8 @@ public enum OperationName {
     APPROVALS("approvals"),
 
     // Composite API
-    COMPOSITE_TREE("composite-tree");
+    COMPOSITE_TREE("composite-tree"),
+    COMPOSITE_BATCH("composite-batch");
 
     private final String value;
 

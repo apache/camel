@@ -99,6 +99,7 @@ public class SalesforceProducer extends DefaultAsyncProducer {
     private boolean isCompositeOperation(OperationName operationName) {
         switch (operationName) {
         case COMPOSITE_TREE:
+        case COMPOSITE_BATCH:
             return true;
         default:
             return false;
