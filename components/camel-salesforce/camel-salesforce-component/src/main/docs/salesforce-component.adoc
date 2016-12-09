@@ -72,6 +72,7 @@ results) using result link returned from the 'query' API
 * approval - submit a record or records (batch) for approval process
 * approvals - fetch a list of all approval processes
 * composite-tree - create up to 200 records with parent-child relationships (up to 5 levels) in one go
+* composite-batch - submit a composition of requests in batch
 
 For example, the following producer endpoint uses the upsertSObject API,
 with the sObjectIdName parameter specifying 'Name' as the external id
@@ -374,6 +375,65 @@ final List<SObjectNode> withErrors = result.get(true);
 final List<SObjectNode> succeeded = result.get(false);
 
 final String firstId = succeeded.get(0).getId();
+-----------------------------------------------------------------------------------------------------
+
+[[Salesforce-CompositeAPI-Batch]]
+Using Salesforce Composite API to submit multiple requests in a batch
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+The Composite API batch operation (`composite-batch`) allows you to accumulate multiple requests in a batch and then
+submit them in one go, saving the round trip cost of multiple individual requests. Each response is then received in a
+list of responses with the order perserved, so that the n-th requests response is in the n-th place of the response.
+
+NOTE: The results can vary from API to API so the result of the request is given as a `java.lang.Object`. In most cases
+the result will be a `java.util.Map` with string keys and values or other `java.util.Map` as value. Requests made in
+JSON format hold some type information (i.e. it is known what values are strings and what values are numbers), so in
+general those will be more type friendly. Note that the responses will vary between XML and JSON, this is due to the
+responses from Salesforce API being different. So be careful if you switch between formats without changing the response
+handling code.
+
+Lets look at an example:
+
+[source,java]
+-----------------------------------------------------------------------------------------------------
+final String acountId = ...
+final SObjectBatch batch = new SObjectBatch("38.0");
+
+final Account updates = new Account();
+updates.setName("NewName");
+batch.addUpdate("Account", accountId, updates);
+
+final Account newAccount = new Account();
+newAccount.setName("Account created from Composite batch API");
+batch.addCreate(newAccount);
+
+batch.addGet("Account", accountId, "Name", "BillingPostalCode");
+
+batch.addDelete("Account", accountId);
+
+final SObjectBatchResponse response = template.requestBody("salesforce:composite-batch?format=JSON", batch, SObjectBatchResponse.class);
+
+boolean hasErrors = response.hasErrors(); // if any of the requests has resulted in either 4xx or 5xx HTTP status
+final List<SObjectBatchResult> results = response.getResults(); // results of three operations sent in batch
+
+final SObjectBatchResult updateResult = results.get(0); // update result
+final int updateStatus = updateResult.getStatusCode(); // probably 204
+final Object updateResultData = updateResult.getResult(); // probably null
+
+final SObjectBatchResult createResult = results.get(1); // create result
+@SuppressWarnings("unchecked")
+final Map<String, Object> createData = (Map<String, Object>) createResult.getResult();
+final String newAccountId = createData.get("id"); // id of the new account, this is for JSON, for XML it would be createData.get("Result").get("id")
+
+final SObjectBatchResult retrieveResult = results.get(2); // retrieve result
+@SuppressWarnings("unchecked")
+final Map<String, Object> retrieveData = (Map<String, Object>) retrieveResult.getResult();
+final String accountName = retrieveData.get("Name"); // Name of the retrieved account, this is for JSON, for XML it would be createData.get("Account").get("Name")
+final String accountBillingPostalCode = retrieveData.get("BillingPostalCode"); // Name of the retrieved account, this is for JSON, for XML it would be createData.get("Account").get("BillingPostalCode")
+
+final SObjectBatchResult deleteResult = results.get(3); // delete result
+final int updateStatus = deleteResult.getStatusCode(); // probably 204
+final Object updateResultData = deleteResult.getResult(); // probably null
+
 -----------------------------------------------------------------------------------------------------
 
 [[Salesforce-CamelSalesforceMavenPlugin]]
