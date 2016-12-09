@@ -51,7 +51,7 @@ import org.yaml.snakeyaml.resolver.Resolver;
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using <a href="http://www.snakeyaml.org">SnakeYAML</a> to marshal to and from YAML.
  */
-public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+public class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private final ThreadLocal<WeakReference<Yaml>> yamlCache;
     private BaseConstructor constructor;
     private Representer representer;
@@ -77,7 +77,9 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
         this.allowAnyType = false;
 
         if (type != null) {
-            setUnmarshalType(type);
+            this.unmarshalType = type;
+            this.typeFilters = new CopyOnWriteArrayList<>();
+            this.typeFilters.add(TypeFilters.types(type));
         }
     }
 
@@ -236,7 +238,7 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     /**
      * Class of the object to be created
      */
-    public void setUnmarshalType(Class<?> unmarshalType) {
+    public final void setUnmarshalType(Class<?> unmarshalType) {
         this.unmarshalType = unmarshalType;
         addTypeFilters(TypeFilters.types(unmarshalType));
     }
@@ -344,7 +346,7 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
         }
     }
 
-    public void addTypeFilters(Collection<TypeFilter> typeFilters) {
+    public final void addTypeFilters(Collection<TypeFilter> typeFilters) {
         if (this.typeFilters == null) {
             this.typeFilters = new CopyOnWriteArrayList<>();
         }
@@ -352,7 +354,7 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
         this.typeFilters.addAll(typeFilters);
     }
 
-    public void addTypeFilters(TypeFilter... typeFilters) {
+    public final void addTypeFilters(TypeFilter... typeFilters) {
         addTypeFilters(Arrays.asList(typeFilters));
     }
 

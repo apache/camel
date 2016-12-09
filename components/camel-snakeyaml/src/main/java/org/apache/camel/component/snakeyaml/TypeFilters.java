@@ -27,7 +27,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.ObjectHelper;
 
 public final class TypeFilters {
     private TypeFilters() {
@@ -75,11 +75,11 @@ public final class TypeFilters {
     // ***************************
 
     public static Optional<TypeFilter> valueOf(String definition) {
-        String type = StringHelper.before(definition, ":");
+        String type = ObjectHelper.before(definition, ":");
         if (type == null || "type".equals(type)) {
-            return StringHelper.after(definition, ":", TypeName::new);
+            return ObjectHelper.after(definition, ":", TypeName::new);
         } else if ("regexp".equals(type)) {
-            return StringHelper.after(definition, ":", RegExp::new);
+            return ObjectHelper.after(definition, ":", RegExp::new);
         }
 
         return Optional.empty();
