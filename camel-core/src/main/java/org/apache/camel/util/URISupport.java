@@ -583,7 +583,7 @@ public final class URISupport {
         } else {
             // reorder parameters a..z
             List<String> keys = new ArrayList<String>(parameters.keySet());
-            Collections.sort(keys);
+            keys.sort(null);
 
             Map<String, Object> sorted = new LinkedHashMap<String, Object>(parameters.size());
             for (String key : keys) {

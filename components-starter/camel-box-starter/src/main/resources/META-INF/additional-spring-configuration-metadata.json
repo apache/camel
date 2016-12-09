@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.box.enabled",
+      "description": "Enable box component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.xmlsecurity.enabled",
+      "description": "Enable xmlsecurity component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.securexml.enabled",
+      "description": "Enable securexml dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

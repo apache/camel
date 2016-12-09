@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.jpa.enabled",
+      "description": "Enable jpa component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.exec.enabled",
+      "description": "Enable exec component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

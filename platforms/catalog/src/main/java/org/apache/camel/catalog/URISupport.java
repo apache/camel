@@ -230,7 +230,12 @@ public final class URISupport {
                 // the & denote parameter is ended
                 if (ch == '&') {
                     // parameter is ended, as we hit & separator
-                    addParameter(key.toString(), value.toString(), rc, useRaw || isRaw);
+                    String aKey = key.toString();
+                    // the key may be a placeholder of options which we then do not know what is
+                    boolean validKey = !aKey.startsWith("{{") && !aKey.endsWith("}}");
+                    if (validKey) {
+                        addParameter(aKey, value.toString(), rc, useRaw || isRaw);
+                    }
                     key.setLength(0);
                     value.setLength(0);
                     isKey = true;
@@ -249,7 +254,12 @@ public final class URISupport {
 
             // any left over parameters, then add that
             if (key.length() > 0) {
-                addParameter(key.toString(), value.toString(), rc, useRaw || isRaw);
+                String aKey = key.toString();
+                // the key may be a placeholder of options which we then do not know what is
+                boolean validKey = !aKey.startsWith("{{") && !aKey.endsWith("}}");
+                if (validKey) {
+                    addParameter(aKey, value.toString(), rc, useRaw || isRaw);
+                }
             }
 
             return rc;

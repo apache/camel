@@ -400,9 +400,9 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("mock:result");
+                from("direct:start").delay(10).to("mock:result");
 
-                from("direct:foo").transform(constant("Bye World")).id("myTransform");
+                from("direct:foo").delay(10).transform(constant("Bye World")).id("myTransform");
             }
         };
     }

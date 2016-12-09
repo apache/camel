@@ -49,8 +49,6 @@ import org.jboss.forge.roaster.model.source.JavaClassSource;
  * Parses the source code and validates the Camel routes has valid endpoint uris and simple expressions.
  *
  * @goal validate
- * @requiresDependencyResolution compile+runtime
- * @execute phase="process-test-classes"
  */
 public class ValidateMojo extends AbstractExecMojo {
 
@@ -188,7 +186,7 @@ public class ValidateMojo extends AbstractExecMojo {
             }
         }
 
-        // if using the same version as the fabric8-camel-maven-plugin we must still load it
+        // if using the same version as the camel-maven-plugin we must still load it
         if (catalog.getLoadedVersion() == null) {
             catalog.loadVersion(catalog.getCatalogVersion());
         }
@@ -196,7 +194,7 @@ public class ValidateMojo extends AbstractExecMojo {
         if (catalog.getLoadedVersion() != null) {
             getLog().info("Using Camel version: " + catalog.getLoadedVersion());
         } else {
-            // force load version from the fabric8-camel-maven-plugin
+            // force load version from the camel-maven-plugin
             getLog().info("Using Camel version: " + catalog.getCatalogVersion());
         }
 
@@ -300,6 +298,7 @@ public class ValidateMojo extends AbstractExecMojo {
         int unknownComponents = 0;
         int incapableErrors = 0;
         for (CamelEndpointDetails detail : endpoints) {
+            getLog().debug("Validating endpoint: " + detail.getEndpointUri());
             EndpointValidationResult result = catalog.validateEndpointProperties(detail.getEndpointUri(), ignoreLenientProperties);
 
             boolean ok = result.isSuccess();
@@ -401,6 +400,7 @@ public class ValidateMojo extends AbstractExecMojo {
 
         int simpleErrors = 0;
         for (CamelSimpleExpressionDetails detail : simpleExpressions) {
+            getLog().debug("Validating simple expression: " + detail.getSimple());
             SimpleValidationResult result = catalog.validateSimpleExpression(detail.getSimple());
             if (!result.isSuccess()) {
                 simpleErrors++;

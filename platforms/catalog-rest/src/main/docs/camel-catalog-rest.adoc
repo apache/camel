@@ -1,0 +1,45 @@
+= Camel Catalog REST Api
+
+The camel-catalog-rest is a tiny REST API of the Camel Catalog. The API is implemented as a JAX-RS resource class
+with Swagger Annotations to offer Swagger documentation.
+
+== Dependencies
+
+The camel-catalog-rest dependencies has been kept low and neutral so any JAX-RS server can be used to
+host the Camel Catalog REST API.
+
+```
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-catalog</artifactId>
+    </dependency>
+
+    <!-- REST api -->
+    <dependency>
+      <groupId>javax.ws.rs</groupId>
+      <artifactId>javax.ws.rs-api</artifactId>
+      <version>${javax.ws.rs-api-version}</version>
+    </dependency>
+
+    <!-- swagger annotations -->
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-annotations</artifactId>
+      <version>${swagger-java-version}</version>
+    </dependency>
+```
+
+== Trying the CamelCatalog REST Api
+
+You can try the rest api by running the `camel-rest-app` application
+
+```
+   cd camel-rest-app
+   mvn compile exec:java
+```
+
+Then a little standalone application with CXF and embedded Jetty starts up the Camel Catalog REST API service
+which you can access using the urls the application logs to the console.
+
+The application has built in Swagger UI which you can use to try the api.
+

@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.language.ognl.enabled",
+      "description": "Enable ognl language",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

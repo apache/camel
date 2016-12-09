@@ -129,7 +129,7 @@ public final class MappedEndpointConfiguration extends DefaultEndpointConfigurat
             }
         }
 
-        Collections.sort(queryParams);
+        queryParams.sort(null);
         String q = "";
         for (String entry : queryParams) {
             q += q.length() == 0 ? "" : "&";
