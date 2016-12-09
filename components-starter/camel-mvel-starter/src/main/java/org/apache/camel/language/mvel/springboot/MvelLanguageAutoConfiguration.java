@@ -55,8 +55,12 @@ public class MvelLanguageAutoConfiguration {
     public MvelLanguage configureMvelLanguage(CamelContext camelContext,
             MvelLanguageConfiguration configuration) throws Exception {
         MvelLanguage language = new MvelLanguage();
-        if (language instanceof CamelContextAware) {
-            ((CamelContextAware) language).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(MvelLanguage.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(language);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

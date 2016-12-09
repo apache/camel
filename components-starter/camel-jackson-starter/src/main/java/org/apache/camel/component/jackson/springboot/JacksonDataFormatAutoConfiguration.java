@@ -56,8 +56,12 @@ public class JacksonDataFormatAutoConfiguration {
             CamelContext camelContext,
             JacksonDataFormatConfiguration configuration) throws Exception {
         JacksonDataFormat dataformat = new JacksonDataFormat();
-        if (dataformat instanceof CamelContextAware) {
-            ((CamelContextAware) dataformat).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(JacksonDataFormat.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(dataformat);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

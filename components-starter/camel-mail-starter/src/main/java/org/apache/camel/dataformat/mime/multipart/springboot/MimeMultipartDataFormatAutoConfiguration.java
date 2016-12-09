@@ -57,8 +57,13 @@ public class MimeMultipartDataFormatAutoConfiguration {
             MimeMultipartDataFormatConfiguration configuration)
             throws Exception {
         MimeMultipartDataFormat dataformat = new MimeMultipartDataFormat();
-        if (dataformat instanceof CamelContextAware) {
-            ((CamelContextAware) dataformat).setCamelContext(camelContext);
+        if (CamelContextAware.class
+                .isAssignableFrom(MimeMultipartDataFormat.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(dataformat);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

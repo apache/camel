@@ -57,8 +57,13 @@ public class ExchangePropertyLanguageAutoConfiguration {
             ExchangePropertyLanguageConfiguration configuration)
             throws Exception {
         ExchangePropertyLanguage language = new ExchangePropertyLanguage();
-        if (language instanceof CamelContextAware) {
-            ((CamelContextAware) language).setCamelContext(camelContext);
+        if (CamelContextAware.class
+                .isAssignableFrom(ExchangePropertyLanguage.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(language);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

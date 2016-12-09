@@ -55,8 +55,12 @@ public class ZipDataFormatAutoConfiguration {
     public ZipDataFormat configureZipDataFormat(CamelContext camelContext,
             ZipDataFormatConfiguration configuration) throws Exception {
         ZipDataFormat dataformat = new ZipDataFormat();
-        if (dataformat instanceof CamelContextAware) {
-            ((CamelContextAware) dataformat).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(ZipDataFormat.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(dataformat);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

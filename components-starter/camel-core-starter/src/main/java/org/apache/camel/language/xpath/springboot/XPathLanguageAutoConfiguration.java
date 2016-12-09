@@ -55,8 +55,12 @@ public class XPathLanguageAutoConfiguration {
     public XPathLanguage configureXPathLanguage(CamelContext camelContext,
             XPathLanguageConfiguration configuration) throws Exception {
         XPathLanguage language = new XPathLanguage();
-        if (language instanceof CamelContextAware) {
-            ((CamelContextAware) language).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(XPathLanguage.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(language);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

@@ -55,8 +55,12 @@ public class HeaderLanguageAutoConfiguration {
     public HeaderLanguage configureHeaderLanguage(CamelContext camelContext,
             HeaderLanguageConfiguration configuration) throws Exception {
         HeaderLanguage language = new HeaderLanguage();
-        if (language instanceof CamelContextAware) {
-            ((CamelContextAware) language).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(HeaderLanguage.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(language);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

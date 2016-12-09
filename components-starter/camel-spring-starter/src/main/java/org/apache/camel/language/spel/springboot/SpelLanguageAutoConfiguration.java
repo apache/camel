@@ -55,8 +55,12 @@ public class SpelLanguageAutoConfiguration {
     public SpelLanguage configureSpelLanguage(CamelContext camelContext,
             SpelLanguageConfiguration configuration) throws Exception {
         SpelLanguage language = new SpelLanguage();
-        if (language instanceof CamelContextAware) {
-            ((CamelContextAware) language).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(SpelLanguage.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(language);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

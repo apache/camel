@@ -57,8 +57,13 @@ public class SerializationDataFormatAutoConfiguration {
             SerializationDataFormatConfiguration configuration)
             throws Exception {
         SerializationDataFormat dataformat = new SerializationDataFormat();
-        if (dataformat instanceof CamelContextAware) {
-            ((CamelContextAware) dataformat).setCamelContext(camelContext);
+        if (CamelContextAware.class
+                .isAssignableFrom(SerializationDataFormat.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(dataformat);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

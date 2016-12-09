@@ -55,8 +55,12 @@ public class JuelLanguageAutoConfiguration {
     public JuelLanguage configureJuelLanguage(CamelContext camelContext,
             JuelLanguageConfiguration configuration) throws Exception {
         JuelLanguage language = new JuelLanguage();
-        if (language instanceof CamelContextAware) {
-            ((CamelContextAware) language).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(JuelLanguage.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(language);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

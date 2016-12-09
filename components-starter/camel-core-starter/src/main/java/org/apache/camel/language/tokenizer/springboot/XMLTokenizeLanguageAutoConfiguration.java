@@ -56,8 +56,12 @@ public class XMLTokenizeLanguageAutoConfiguration {
             CamelContext camelContext,
             XMLTokenizeLanguageConfiguration configuration) throws Exception {
         XMLTokenizeLanguage language = new XMLTokenizeLanguage();
-        if (language instanceof CamelContextAware) {
-            ((CamelContextAware) language).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(XMLTokenizeLanguage.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(language);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

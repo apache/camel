@@ -56,8 +56,12 @@ public class XmlBeansDataFormatAutoConfiguration {
             CamelContext camelContext,
             XmlBeansDataFormatConfiguration configuration) throws Exception {
         XmlBeansDataFormat dataformat = new XmlBeansDataFormat();
-        if (dataformat instanceof CamelContextAware) {
-            ((CamelContextAware) dataformat).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(XmlBeansDataFormat.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(dataformat);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

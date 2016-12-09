@@ -55,8 +55,12 @@ public class BeanLanguageAutoConfiguration {
     public BeanLanguage configureBeanLanguage(CamelContext camelContext,
             BeanLanguageConfiguration configuration) throws Exception {
         BeanLanguage language = new BeanLanguage();
-        if (language instanceof CamelContextAware) {
-            ((CamelContextAware) language).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(BeanLanguage.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(language);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

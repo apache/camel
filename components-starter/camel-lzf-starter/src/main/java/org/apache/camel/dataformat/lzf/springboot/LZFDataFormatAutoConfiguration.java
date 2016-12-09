@@ -55,8 +55,12 @@ public class LZFDataFormatAutoConfiguration {
     public LZFDataFormat configureLZFDataFormat(CamelContext camelContext,
             LZFDataFormatConfiguration configuration) throws Exception {
         LZFDataFormat dataformat = new LZFDataFormat();
-        if (dataformat instanceof CamelContextAware) {
-            ((CamelContextAware) dataformat).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(LZFDataFormat.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(dataformat);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

@@ -56,8 +56,13 @@ public class UniVocityCsvDataFormatAutoConfiguration {
             CamelContext camelContext,
             UniVocityCsvDataFormatConfiguration configuration) throws Exception {
         UniVocityCsvDataFormat dataformat = new UniVocityCsvDataFormat();
-        if (dataformat instanceof CamelContextAware) {
-            ((CamelContextAware) dataformat).setCamelContext(camelContext);
+        if (CamelContextAware.class
+                .isAssignableFrom(UniVocityCsvDataFormat.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(dataformat);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

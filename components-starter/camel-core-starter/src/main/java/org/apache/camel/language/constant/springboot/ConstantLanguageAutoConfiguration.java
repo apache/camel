@@ -56,8 +56,12 @@ public class ConstantLanguageAutoConfiguration {
             CamelContext camelContext,
             ConstantLanguageConfiguration configuration) throws Exception {
         ConstantLanguage language = new ConstantLanguage();
-        if (language instanceof CamelContextAware) {
-            ((CamelContextAware) language).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(ConstantLanguage.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(language);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

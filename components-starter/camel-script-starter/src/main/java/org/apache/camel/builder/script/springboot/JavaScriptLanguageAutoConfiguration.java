@@ -56,8 +56,12 @@ public class JavaScriptLanguageAutoConfiguration {
             CamelContext camelContext,
             JavaScriptLanguageConfiguration configuration) throws Exception {
         JavaScriptLanguage language = new JavaScriptLanguage();
-        if (language instanceof CamelContextAware) {
-            ((CamelContextAware) language).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(JavaScriptLanguage.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(language);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,

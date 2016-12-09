@@ -56,8 +56,12 @@ public class Base64DataFormatAutoConfiguration {
             CamelContext camelContext,
             Base64DataFormatConfiguration configuration) throws Exception {
         Base64DataFormat dataformat = new Base64DataFormat();
-        if (dataformat instanceof CamelContextAware) {
-            ((CamelContextAware) dataformat).setCamelContext(camelContext);
+        if (CamelContextAware.class.isAssignableFrom(Base64DataFormat.class)) {
+            CamelContextAware contextAware = CamelContextAware.class
+                    .cast(dataformat);
+            if (contextAware != null) {
+                contextAware.setCamelContext(camelContext);
+            }
         }
         Map<String, Object> parameters = new HashMap<>();
         IntrospectionSupport.getProperties(configuration, parameters, null,
