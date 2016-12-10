@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.snakeyaml;
 
-import java.util.function.Predicate;
-
 public interface TypeFilter {
     boolean test(String type);
 }
