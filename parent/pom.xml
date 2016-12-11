@@ -314,7 +314,7 @@
     <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
     <jboss-xnio-version>3.4.2.Final</jboss-xnio-version>
     <jcache-bundle-version>1.0.0_1</jcache-bundle-version>
-    <jclouds-version>1.9.2</jclouds-version>
+    <jclouds-version>2.0.0</jclouds-version>
     <!-- jclouds must use this guava version -->
     <jclouds-google-guava-version>16.0.1</jclouds-google-guava-version>
     <jclouds-google-guava-version-range>[16.0,17.0)</jclouds-google-guava-version-range>
