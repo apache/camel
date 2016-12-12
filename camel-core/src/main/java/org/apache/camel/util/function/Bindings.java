@@ -14,29 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.util.function;
 
-import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
-/**
- * Represents a server that host a service for the Service Call EIP.
- *
- * @see ServiceCallLoadBalancer
- * @see ServiceCallServerListStrategy
- */
-public interface ServiceCallServer {
-    /**
-     * Gets the IP or hostname of the server hosting the service
-     */
-    String getIp();
+public final class Bindings {
+    private Bindings() {
+    }
 
-    /**
-     * Gets the port number of the server hosting the service
-     */
-    int getPort();
+    public static <T1, T2> Consumer<T2> bind(T1 v1, BiConsumer<T1, T2> consumer) {
+        return v2 -> consumer.accept(v1, v2);
+    }
 
-    /**
-     * Gets a key/value metadata associated with the service
-     */
-    Map<String, String> getMetadata();
+    public static <T1, T2, R> Function<T2, R> bind(T1 v1, BiFunction<T1, T2, R> function) {
+        return v2 -> function.apply(v1, v2);
+    }
 }
