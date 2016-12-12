@@ -135,11 +135,12 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         // turn off stream caching if in attachment mode
         if (endpoint.isAttachmentMultipartBinding()) {
             if (disableStreamCache == null) {
-                // disableStreamCache not explict configured so we can automatic change it
+                // disableStreamCache not explicit configured so we can automatic change it
                 LOG.info("Disabling stream caching as attachmentMultipartBinding is enabled");
                 endpoint.setDisableStreamCache(true);
             } else if (!disableStreamCache) {
-                throw new IllegalArgumentException("The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding");
+                throw new IllegalArgumentException("The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together."
+                        + " Remove disableStreamCache to use AttachmentMultipartBinding");
             }
         }
 
