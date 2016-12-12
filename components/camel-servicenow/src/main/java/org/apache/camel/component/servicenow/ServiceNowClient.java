@@ -29,8 +29,10 @@ import org.apache.camel.Message;
 import org.apache.camel.component.servicenow.auth.AuthenticationRequestFilter;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.cxf.configuration.jsse.TLSClientParameters;
+import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 
 public final class ServiceNowClient {
     private final ServiceNowConfiguration configuration;
@@ -50,6 +52,8 @@ public final class ServiceNowClient {
 
         configureRequestContext(camelContext, configuration, client);
         configureTls(camelContext, configuration, client);
+        configureHttpClientPolicy(camelContext, configuration, client);
+        configureProxyAuthorizationPolicy(camelContext, configuration, client);
     }
 
     public ServiceNowClient types(MediaType type) {
@@ -172,6 +176,47 @@ public final class ServiceNowClient {
             tlsClientParams.setSSLSocketFactory(sslContext.getSocketFactory());
 
             conduit.setTlsClientParameters(tlsClientParams);
+        }
+    }
+
+    private static void configureHttpClientPolicy(
+            CamelContext context, ServiceNowConfiguration configuration, WebClient client) throws Exception {
+
+        HTTPClientPolicy httpPolicy = configuration.getHttpClientPolicy();
+        if (httpPolicy == null) {
+            String host = configuration.getProxyHost();
+            Integer port = configuration.getProxyPort();
+
+            if (host != null && port != null) {
+                httpPolicy = new HTTPClientPolicy();
+                httpPolicy.setProxyServer(host);
+                httpPolicy.setProxyServerPort(port);
+            }
+        }
+
+        if (httpPolicy != null) {
+            WebClient.getConfig(client).getHttpConduit().setClient(httpPolicy);
+        }
+    }
+
+    private static void configureProxyAuthorizationPolicy(
+            CamelContext context, ServiceNowConfiguration configuration, WebClient client) throws Exception {
+
+        ProxyAuthorizationPolicy proxyPolicy = configuration.getProxyAuthorizationPolicy();
+        if (proxyPolicy == null) {
+            String username = configuration.getProxyUserName();
+            String password = configuration.getProxyPassword();
+
+            if (username != null && password != null) {
+                proxyPolicy = new ProxyAuthorizationPolicy();
+                proxyPolicy.setAuthorizationType("Basic");
+                proxyPolicy.setUserName(username);
+                proxyPolicy.setPassword(password);
+            }
+        }
+
+        if (proxyPolicy != null) {
+            WebClient.getConfig(client).getHttpConduit().setProxyAuthorization(proxyPolicy);
         }
     }
 }
