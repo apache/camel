@@ -214,6 +214,15 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         this.nettyHttpBinding = nettyHttpBinding;
     }
 
+    @Override
+    public NettyHttpConfiguration getConfiguration() {
+        return (NettyHttpConfiguration) super.getConfiguration();
+    }
+
+    public void setConfiguration(NettyHttpConfiguration configuration) {
+        super.setConfiguration(configuration);
+    }
+
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
