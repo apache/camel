@@ -57,7 +57,7 @@ The ServiceNow component supports 7 options which are listed below.
 
 
 // endpoint options: START
-The ServiceNow component supports 34 endpoint options which are listed below:
+The ServiceNow component supports 37 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -89,13 +89,16 @@ The ServiceNow component supports 34 endpoint options which are listed below:
 | target | producer |  | Boolean | Set this parameter to true to return only scorecards that have a target.
 | topLevelOnly | producer |  | Boolean | Gets only those categories whose parent is a catalog.
 | apiVersion | advanced |  | String | The ServiceNow REST API version default latest
+| httpClientPolicy | advanced |  | HTTPClientPolicy | To configure http-client
 | mapper | advanced |  | ObjectMapper | Sets Jackson's ObjectMapper to use for request/reply
+| proxyAuthorizationPolicy | advanced |  | ProxyAuthorizationPolicy | To configure proxy authentication
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | apiUrl | security |  | String | The ServiceNow REST API url
 | oauthClientId | security |  | String | OAuth2 ClientID
 | oauthClientSecret | security |  | String | OAuth2 ClientSecret
 | oauthTokenUrl | security |  | String | OAuth token Url
 | password | security |  | String | ServiceNow account password MUST be provided
+| sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters. See http://camel.apache.org/camel-configuration-utilities.html
 | userName | security |  | String | ServiceNow user account name MUST be provided
 |=======================================================================
 {% endraw %}

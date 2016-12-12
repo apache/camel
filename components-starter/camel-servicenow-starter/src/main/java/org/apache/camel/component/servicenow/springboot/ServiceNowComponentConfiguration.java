@@ -20,6 +20,9 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.servicenow.ServiceNowComponent;
 import org.apache.camel.component.servicenow.ServiceNowRelease;
+import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -268,6 +271,22 @@ public class ServiceNowComponentConfiguration {
          * Gets only those categories whose parent is a catalog.
          */
         private Boolean topLevelOnly;
+        /**
+         * To configure security using SSLContextParameters. See
+         * http://camel.apache.org/camel-configuration-utilities.html
+         */
+        @NestedConfigurationProperty
+        private SSLContextParameters sslContextParameters;
+        /**
+         * To configure http-client
+         */
+        @NestedConfigurationProperty
+        private HTTPClientPolicy httpClientPolicy;
+        /**
+         * To configure proxy authentication
+         */
+        @NestedConfigurationProperty
+        private ProxyAuthorizationPolicy proxyAuthorizationPolicy;
         private Map models;
         /**
          * Defines the response model
@@ -514,6 +533,32 @@ public class ServiceNowComponentConfiguration {
 
         public void setTopLevelOnly(Boolean topLevelOnly) {
             this.topLevelOnly = topLevelOnly;
+        }
+
+        public SSLContextParameters getSslContextParameters() {
+            return sslContextParameters;
+        }
+
+        public void setSslContextParameters(
+                SSLContextParameters sslContextParameters) {
+            this.sslContextParameters = sslContextParameters;
+        }
+
+        public HTTPClientPolicy getHttpClientPolicy() {
+            return httpClientPolicy;
+        }
+
+        public void setHttpClientPolicy(HTTPClientPolicy httpClientPolicy) {
+            this.httpClientPolicy = httpClientPolicy;
+        }
+
+        public ProxyAuthorizationPolicy getProxyAuthorizationPolicy() {
+            return proxyAuthorizationPolicy;
+        }
+
+        public void setProxyAuthorizationPolicy(
+                ProxyAuthorizationPolicy proxyAuthorizationPolicy) {
+            this.proxyAuthorizationPolicy = proxyAuthorizationPolicy;
         }
 
         public Map getModels() {
