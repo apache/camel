@@ -18,20 +18,25 @@ package org.apache.camel.component.servicenow;
 
 import java.util.Arrays;
 import java.util.Map;
+import javax.net.ssl.SSLContext;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Message;
 import org.apache.camel.component.servicenow.auth.AuthenticationRequestFilter;
+import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.cxf.configuration.jsse.TLSClientParameters;
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.apache.cxf.transport.http.HTTPConduit;
 
-public class ServiceNowClient {
+public final class ServiceNowClient {
     private final ServiceNowConfiguration configuration;
     private final WebClient client;
 
-    public ServiceNowClient(ServiceNowConfiguration configuration) throws Exception {
+    ServiceNowClient(CamelContext camelContext, ServiceNowConfiguration configuration) throws Exception {
         this.configuration = configuration;
         this.client = WebClient.create(
             configuration.getApiUrl(),
@@ -43,9 +48,8 @@ public class ServiceNowClient {
             true
         );
 
-        WebClient.getConfig(client)
-            .getRequestContext()
-            .put("org.apache.cxf.http.header.split", true);
+        configureRequestContext(camelContext, configuration, client);
+        configureTls(camelContext, configuration, client);
     }
 
     public ServiceNowClient types(MediaType type) {
@@ -139,5 +143,35 @@ public class ServiceNowClient {
         client.resetQuery();
 
         return this;
+    }
+
+    // *******************************
+    // Helpers
+    // *******************************
+
+    private static void configureRequestContext(
+            CamelContext context, ServiceNowConfiguration configuration, WebClient client) throws Exception {
+
+        WebClient.getConfig(client)
+            .getRequestContext()
+            .put("org.apache.cxf.http.header.split", true);
+    }
+
+    private static void configureTls(
+        CamelContext camelContext, ServiceNowConfiguration configuration, WebClient client) throws Exception{
+
+        SSLContextParameters sslContextParams = configuration.getSslContextParameters();
+        if (sslContextParams != null) {
+            HTTPConduit conduit = WebClient.getConfig(client).getHttpConduit();
+            TLSClientParameters tlsClientParams = conduit.getTlsClientParameters();
+            if (tlsClientParams == null) {
+                tlsClientParams = new TLSClientParameters();
+            }
+
+            SSLContext sslContext = sslContextParams.createSSLContext(camelContext);
+            tlsClientParams.setSSLSocketFactory(sslContext.getSocketFactory());
+
+            conduit.setTlsClientParameters(tlsClientParams);
+        }
     }
 }
