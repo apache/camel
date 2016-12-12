@@ -111,6 +111,14 @@ public class ServiceNowConfiguration implements Cloneable {
     private HTTPClientPolicy httpClientPolicy;
     @UriParam(label = "advanced")
     private ProxyAuthorizationPolicy proxyAuthorizationPolicy;
+    @UriParam(label = "proxy")
+    private String proxyHost;
+    @UriParam(label = "proxy")
+    private Integer proxyPort;
+    @UriParam(label = "proxy,security")
+    private String proxyUserName;
+    @UriParam(label = "proxy,security")
+    private String proxyPassword;
 
     public String getUserName() {
         return userName;
@@ -513,6 +521,50 @@ public class ServiceNowConfiguration implements Cloneable {
      */
     public void setProxyAuthorizationPolicy(ProxyAuthorizationPolicy proxyAuthorizationPolicy) {
         this.proxyAuthorizationPolicy = proxyAuthorizationPolicy;
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    /**
+     * The proxy host name
+     */
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    /**
+     * The proxy port number
+     */
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+
+    public String getProxyUserName() {
+        return proxyUserName;
+    }
+
+    /**
+     * Username for proxy authentication
+     */
+    public void setProxyUserName(String proxyUserName) {
+        this.proxyUserName = proxyUserName;
+    }
+
+    public String getProxyPassword() {
+        return proxyPassword;
+    }
+
+    /**
+     * Password for proxy authentication
+     */
+    public void setProxyPassword(String proxyPassword) {
+        this.proxyPassword = proxyPassword;
     }
 
     // *************************************************
