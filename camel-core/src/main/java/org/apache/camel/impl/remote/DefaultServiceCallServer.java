@@ -16,16 +16,28 @@
  */
 package org.apache.camel.impl.remote;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.spi.ServiceCallServer;
 
 public class DefaultServiceCallServer implements ServiceCallServer {
 
     private final String ip;
     private final int port;
+    private final Map<String, String> meta;
 
     public DefaultServiceCallServer(String ip, int port) {
         this.ip = ip;
         this.port = port;
+        this.meta = Collections.emptyMap();
+    }
+
+    public DefaultServiceCallServer(String ip, int port, Map<String, String> meta) {
+        this.ip = ip;
+        this.port = port;
+        this.meta = Collections.unmodifiableMap(new HashMap<>(meta));
     }
 
     @Override
@@ -36,6 +48,11 @@ public class DefaultServiceCallServer implements ServiceCallServer {
     @Override
     public int getPort() {
         return port;
+    }
+
+    @Override
+    public Map<String, String> getMetadata() {
+        return this.meta;
     }
 
     @Override

@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.etcd.processor.remote;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,7 +30,7 @@ import org.apache.camel.component.etcd.EtcdTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
+@Ignore("An etcd server is needed for this test ")
 public class EtcdServiceCallServerListStrategyTest extends EtcdTestSupport {
     private static final ObjectMapper MAPPER = EtcdHelper.createObjectMapper();
     private static final EtcdConfiguration CONFIGURATION = new EtcdConfiguration(null);
@@ -71,8 +71,21 @@ public class EtcdServiceCallServerListStrategyTest extends EtcdTestSupport {
         EtcdServiceCallServerListStrategy strategy = EtcdServiceCallServerListStrategies.onDemand(CONFIGURATION);
         strategy.start();
 
-        assertEquals(3, strategy.getUpdatedListOfServers("serviceType-1").size());
-        assertEquals(2, strategy.getUpdatedListOfServers("serviceType-2").size());
+        List<EtcdServiceCallServer> type1 = strategy.getUpdatedListOfServers("serviceType-1");
+        assertEquals(3, type1.size());
+        for (EtcdServiceCallServer server : type1) {
+            assertNotNull(server.getMetadata());
+            assertTrue(server.getMetadata().containsKey("service_name"));
+            assertTrue(server.getMetadata().containsKey("port_delta"));
+        }
+
+        List<EtcdServiceCallServer> type2 = strategy.getUpdatedListOfServers("serviceType-2");
+        assertEquals(2, type2.size());
+        for (EtcdServiceCallServer server : type2) {
+            assertNotNull(server.getMetadata());
+            assertTrue(server.getMetadata().containsKey("service_name"));
+            assertTrue(server.getMetadata().containsKey("port_delta"));
+        }
 
         strategy.stop();
     }
@@ -100,10 +113,15 @@ public class EtcdServiceCallServerListStrategyTest extends EtcdTestSupport {
     private void addServer(EtcdClient client, String name) throws Exception {
         int port = PORT.incrementAndGet();
 
+        Map<String, String> tags = new HashMap<>();
+        tags.put("service_name", name);
+        tags.put("port_delta", Integer.toString(port));
+
         Map<String, Object> server = new HashMap<>();
         server.put("name", name);
         server.put("address", "127.0.0.1");
         server.put("port", 8000 + port);
+        server.put("tags", tags);
 
         client.put(CONFIGURATION.getServicePath() + "service-" + port, MAPPER.writeValueAsString(server)).send().get();
     }
