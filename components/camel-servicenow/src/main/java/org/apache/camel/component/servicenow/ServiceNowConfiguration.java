@@ -26,6 +26,9 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 
 @UriParams
 public class ServiceNowConfiguration implements Cloneable {
@@ -102,7 +105,12 @@ public class ServiceNowConfiguration implements Cloneable {
     private ObjectMapper mapper = MAPPER;
     @UriParam(defaultValue = "HELSINKI", enums = "FUJI,GENEVA,HELSINKI")
     private ServiceNowRelease release = ServiceNowRelease.HELSINKI;
-
+    @UriParam(label = "security")
+    private SSLContextParameters sslContextParameters;
+    @UriParam(label = "advanced")
+    private HTTPClientPolicy httpClientPolicy;
+    @UriParam(label = "advanced")
+    private ProxyAuthorizationPolicy proxyAuthorizationPolicy;
 
     public String getUserName() {
         return userName;
@@ -472,6 +480,39 @@ public class ServiceNowConfiguration implements Cloneable {
      */
     public void setTopLevelOnly(Boolean topLevelOnly) {
         this.topLevelOnly = topLevelOnly;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * To configure security using SSLContextParameters. See http://camel.apache.org/camel-configuration-utilities.html
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
+    public HTTPClientPolicy getHttpClientPolicy() {
+        return httpClientPolicy;
+    }
+
+    /**
+     * To configure http-client
+     */
+    public void setHttpClientPolicy(HTTPClientPolicy httpClientPolicy) {
+        this.httpClientPolicy = httpClientPolicy;
+    }
+
+    public ProxyAuthorizationPolicy getProxyAuthorizationPolicy() {
+        return proxyAuthorizationPolicy;
+    }
+
+    /**
+     * To configure proxy authentication
+     */
+    public void setProxyAuthorizationPolicy(ProxyAuthorizationPolicy proxyAuthorizationPolicy) {
+        this.proxyAuthorizationPolicy = proxyAuthorizationPolicy;
     }
 
     // *************************************************
