@@ -17,7 +17,9 @@
 package org.apache.camel.component.hazelcast;
 
 import java.io.InputStream;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.config.XmlConfigBuilder;
@@ -38,7 +40,10 @@ import org.apache.camel.component.hazelcast.seda.HazelcastSedaEndpoint;
 import org.apache.camel.component.hazelcast.set.HazelcastSetEndpoint;
 import org.apache.camel.component.hazelcast.topic.HazelcastTopicEndpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_CONFIGU_PARAM;
 import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_CONFIGU_URI_PARAM;
@@ -47,18 +52,19 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_
 import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 
 public class HazelcastComponent extends UriEndpointComponent {
+    private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastComponent.class);
 
-    private final HazelcastComponentHelper helper = new HazelcastComponentHelper();
-
+    private final Set<HazelcastInstance> customHazelcastInstances;
     private HazelcastInstance hazelcastInstance;
-    private transient boolean createOwnInstance;
 
     public HazelcastComponent() {
         super(HazelcastDefaultEndpoint.class);
+        this.customHazelcastInstances = new LinkedHashSet<>();
     }
 
     public HazelcastComponent(final CamelContext context) {
         super(context, HazelcastDefaultEndpoint.class);
+        this.customHazelcastInstances = new LinkedHashSet<>();
     }
 
     @Override
@@ -73,7 +79,7 @@ public class HazelcastComponent extends UriEndpointComponent {
             operation = getAndRemoveOrResolveReferenceParameter(parameters, "defaultOperation", Object.class);
         }
         if (operation != null) {
-            defaultOperation = helper.extractOperationNumber(operation, -1);
+            defaultOperation = HazelcastComponentHelper.extractOperationNumber(operation, -1);
         }
        
         HazelcastDefaultEndpoint endpoint = null;
@@ -182,9 +188,12 @@ public class HazelcastComponent extends UriEndpointComponent {
 
     @Override
     public void doStop() throws Exception {
-        if (createOwnInstance && hazelcastInstance != null) {
+        for (HazelcastInstance hazelcastInstance : customHazelcastInstances) {
             hazelcastInstance.getLifecycleService().shutdown();
         }
+
+        customHazelcastInstances.clear();
+
         super.doStop();
     }
 
@@ -226,23 +235,29 @@ public class HazelcastComponent extends UriEndpointComponent {
                     config = new XmlConfigBuilder(is).build();
                 }
             }
-        }
 
-        if (config == null) {
-            config = new XmlConfigBuilder().build();
-            // Disable the version check
-            config.getProperties().setProperty("hazelcast.version.check.enabled", "false");
-            config.getProperties().setProperty("hazelcast.phone.home.enabled", "false");
-        }
+            if (hazelcastInstance == null && config == null) {
+                config = new XmlConfigBuilder().build();
+                // Disable the version check
+                config.getProperties().setProperty("hazelcast.version.check.enabled", "false");
+                config.getProperties().setProperty("hazelcast.phone.home.enabled", "false");
 
-        // Now create onw instance component
-        if (hzInstance == null) {
-            if (hazelcastInstance == null) {
-                createOwnInstance = true;
-                hazelcastInstance = Hazelcast.newHazelcastInstance(config);
+                hzInstance = Hazelcast.newHazelcastInstance(config);
+            } else if (config != null) {
+                if (ObjectHelper.isNotEmpty(config.getInstanceName())) {
+                    hzInstance = Hazelcast.getOrCreateHazelcastInstance(config);
+                } else {
+                    hzInstance = Hazelcast.newHazelcastInstance(config);
+                }
             }
-            hzInstance = hazelcastInstance;
+
+            if (hzInstance != null) {
+                if (this.customHazelcastInstances.add(hzInstance)) {
+                    LOGGER.debug("Add managed HZ instance {}", hzInstance.getName());
+                }
+            }
         }
-        return hzInstance;
+
+        return hzInstance == null ? hazelcastInstance : hzInstance;
     }
 }
