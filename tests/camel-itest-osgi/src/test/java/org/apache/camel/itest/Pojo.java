@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.karaf.bean;
+package org.apache.camel.itest;
 
 public class Pojo {
     private int id;
