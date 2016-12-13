@@ -40,8 +40,8 @@ public class DnsServiceCallServerListStrategiesTest {
 
         for (ServiceCallServer server : servers) {
             assertFalse(server.getMetadata().isEmpty());
-            assertNotNull(server.getMetadata().get("dns.priority"));
-            assertNotNull(server.getMetadata().get("dns.weight"));
+            assertNotNull(server.getMetadata().get("priority"));
+            assertNotNull(server.getMetadata().get("weight"));
         }
     }
 }
