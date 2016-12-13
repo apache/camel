@@ -14,13 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.karaf.converters;
+package org.apache.camel.itest;
+
+import java.net.URL;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.jackson.JacksonConstants;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.itest.karaf.BaseKarafTest;
-import org.apache.camel.itest.karaf.bean.Pojo;
+import org.apache.camel.test.karaf.AbstractFeatureTest;
+import org.apache.camel.test.karaf.CamelKarafTestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,33 +31,36 @@ import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
-import static org.junit.Assert.assertNotNull;
-
 @RunWith(PaxExam.class)
-public class CamelJacksonFallbackConverterTest extends BaseKarafTest {
-
-    @Configuration
-    public static Option[] configure() {
-        return BaseKarafTest.configure("camel-jackson");
-    }
+public class CamelJacksonFallbackConverterTest extends AbstractFeatureTest {
 
     @Test
     public void test() throws Exception {
-        CamelContext context = getOsgiService(bundleContext, CamelContext.class, "(camel.context.name=myCamel)", SERVICE_TIMEOUT);
-        assertNotNull("Cannot find CamelContext with name myCamel", context);
+        // install the camel blueprint xml file we use in this test
+        URL url = ObjectHelper.loadResourceAsURL("org/apache/camel/itest/CamelJacksonFallbackConverterTest.xml", CamelJacksonFallbackConverterTest.class.getClassLoader());
+        installBlueprintAsBundle("CamelJacksonFallbackConverterTest", url, true);
+
+        // lookup Camel from OSGi
+        CamelContext camel = getOsgiService(bundleContext, CamelContext.class);
 
         // enable Jackson json type converter
-        context.getProperties().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
+        camel.getProperties().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
         // allow Jackson json to convert to pojo types also (by default jackson only converts to String and other simple types)
-        context.getProperties().put(JacksonConstants.TYPE_CONVERTER_TO_POJO, "true");
+        camel.getProperties().put(JacksonConstants.TYPE_CONVERTER_TO_POJO, "true");
 
-        // test type conversion
         final Pojo pojo = new Pojo(1337, "Constantine");
-        final DefaultExchange exchange = new DefaultExchange(context);
-        final String string = context.getTypeConverter().mandatoryConvertTo(String.class, exchange, pojo);
-        final Pojo copy = context.getTypeConverter().mandatoryConvertTo(Pojo.class, exchange, string);
+
+        final DefaultExchange exchange = new DefaultExchange(camel);
+        final String string = camel.getTypeConverter().mandatoryConvertTo(String.class, exchange, pojo);
+        LOG.info("POJO -> String: {}", string);
+        final Pojo copy = camel.getTypeConverter().mandatoryConvertTo(Pojo.class, exchange, string);
+        LOG.info("String -> POJO: {}", copy);
         Assert.assertEquals(pojo, copy);
     }
 
+    @Configuration
+    public Option[] configure() {
+        return CamelKarafTestSupport.configure("camel-test-karaf", "camel-jackson");
+    }
 
 }
