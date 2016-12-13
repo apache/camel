@@ -186,6 +186,9 @@ public final class NettyHttpHelper {
     public static String createURL(Exchange exchange, NettyHttpEndpoint endpoint) throws URISyntaxException {
         // rest producer may provide an override url to be used which we should discard if using (hence the remove)
         String uri = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_URI);
+        if (uri == null && !(endpoint.getConfiguration().isBridgeEndpoint())) {
+            uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
+        }
         if (uri == null) {
             uri = endpoint.getEndpointUri();
         }

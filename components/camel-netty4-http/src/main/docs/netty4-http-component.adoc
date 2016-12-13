@@ -218,6 +218,11 @@ request.
 |=======================================================================
 |Name |Type |Description
 
+|`CamelHttpUri` |`String` |(Since Camel 2.19.0) URI to call. Will override existing URI set directly on
+the endpoint.  This uri is the uri of the http server to call. Its not the same as the Camel endpoint uri,
+where you can configure endpoint options such as security etc. This header does not support that, its only
+the uri of the http server.
+
 |`CamelHttpMethod` |`String` |Allow to control what HTTP method to use such as GET, POST, TRACE etc.
 The type can also be a `io.netty.handler.codec.http.HttpMethod`
 instance.
