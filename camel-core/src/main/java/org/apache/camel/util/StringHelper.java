@@ -78,14 +78,33 @@ public final class StringHelper {
      * @param s the string
      * @param maxLength the maximum length of the returned string
      * @return s if the length of s is less than maxLength or the first maxLength characters of s
+     * @deprecated use {@link #limitLength(String, int)}
      */
+    @Deprecated
     public static String limitLenght(String s, int maxLength) {
+        return limitLength(s, maxLength);
+    }
+
+    /**
+     * Limits the length of a string
+     *
+     * @param s the string
+     * @param maxLength the maximum length of the returned string
+     * @return s if the length of s is less than maxLength or the first maxLength characters of s
+     */
+    public static String limitLength(String s, int maxLength) {
         if (ObjectHelper.isEmpty(s)) {
             return s;
         }
         return s.length() <= maxLength ? s : s.substring(0, maxLength);
     }
 
+    /**
+     * Removes all quotes (single and double) from the string
+     *
+     * @param s  the string
+     * @return the string without quotes (single and double)
+     */
     public static String removeQuotes(String s) {
         if (ObjectHelper.isEmpty(s)) {
             return s;
@@ -96,6 +115,12 @@ public final class StringHelper {
         return s;
     }
 
+    /**
+     * Removes all leading and ending quotes (single and double) from the string
+     *
+     * @param s  the string
+     * @return the string without leading and ending quotes (single and double)
+     */
     public static String removeLeadingAndEndingQuotes(String s) {
         if (ObjectHelper.isEmpty(s)) {
             return s;
@@ -113,6 +138,12 @@ public final class StringHelper {
         return s;
     }
 
+    /**
+     * Whether the string starts and ends with either single or double quotes.
+     *
+     * @param s the string
+     * @return <tt>true</tt> if the string starts and ends with either single or double quotes.
+     */
     public static boolean isQuoted(String s) {
         if (ObjectHelper.isEmpty(s)) {
             return false;
@@ -308,6 +339,7 @@ public final class StringHelper {
         return value;
     }
 
+    // TODO: add javadoc
     public static String[] splitOnCharacter(String value, String needle, int count) {
         String rc[] = new String[count];
         rc[0] = value;
@@ -342,6 +374,12 @@ public final class StringHelper {
         return text;
     }
 
+    /**
+     * Capitalize the string (upper case first character)
+     *
+     * @param text  the string
+     * @return the string capitalized (upper case first character)
+     */
     public static String capitalize(String text) {
         if (text == null) {
             return null;
