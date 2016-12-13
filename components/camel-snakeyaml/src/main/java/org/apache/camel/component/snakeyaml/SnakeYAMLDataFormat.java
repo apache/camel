@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -51,12 +52,12 @@ import org.yaml.snakeyaml.resolver.Resolver;
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using <a href="http://www.snakeyaml.org">SnakeYAML</a> to marshal to and from YAML.
  */
-public class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private final ThreadLocal<WeakReference<Yaml>> yamlCache;
-    private BaseConstructor constructor;
-    private Representer representer;
-    private DumperOptions dumperOptions;
-    private Resolver resolver;
+    private Function<CamelContext, BaseConstructor> constructor;
+    private Function<CamelContext, Representer> representer;
+    private Function<CamelContext, DumperOptions> dumperOptions;
+    private Function<CamelContext, Resolver> resolver;
     private ClassLoader classLoader;
     private Class<?> unmarshalType;
     private List<TypeDescription> typeDescriptions;
@@ -75,6 +76,10 @@ public class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, D
         this.useApplicationContextClassLoader = true;
         this.prettyFlow = false;
         this.allowAnyType = false;
+        this.constructor = this::defaultConstructor;
+        this.representer = this::defaultRepresenter;
+        this.dumperOptions = this::defaultDumperOptions;
+        this.resolver = this::defaultResolver;
 
         if (type != null) {
             this.unmarshalType = type;
@@ -103,69 +108,6 @@ public class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, D
         }
     }
 
-    protected Yaml getYaml(CamelContext context) {
-        Yaml yaml = null;
-        WeakReference<Yaml> ref = yamlCache.get();
-
-        if (ref != null) {
-            yaml = ref.get();
-        }
-
-        if (yaml == null) {
-            BaseConstructor yamlConstructor = this.constructor;
-            Representer yamlRepresenter = this.representer;
-            DumperOptions yamlDumperOptions = this.dumperOptions;
-            Resolver yamlResolver = this.resolver;
-            ClassLoader yamlClassLoader = this.classLoader;
-            Collection<TypeFilter> yamlTypeFilters = this.typeFilters;
-
-            if (yamlClassLoader == null && useApplicationContextClassLoader) {
-                yamlClassLoader = context.getApplicationContextClassLoader();
-            }
-
-            if (yamlConstructor == null) {
-                if (allowAnyType) {
-                    yamlTypeFilters = Collections.singletonList(TypeFilters.allowAll());
-                }
-
-                if (yamlTypeFilters != null) {
-                    yamlConstructor = yamlClassLoader != null
-                        ? typeFilterConstructor(yamlClassLoader, yamlTypeFilters)
-                        : typeFilterConstructor(yamlTypeFilters);
-                } else {
-                    yamlConstructor = new SafeConstructor();
-                }
-
-                if (typeDescriptions != null && yamlConstructor instanceof Constructor) {
-                    for (TypeDescription typeDescription : typeDescriptions) {
-                        ((Constructor)yamlConstructor).addTypeDescription(typeDescription);
-                    }
-                }
-            }
-            if (yamlRepresenter == null) {
-                yamlRepresenter = new Representer();
-
-                if (classTags != null) {
-                    for (Map.Entry<Class<?>, Tag> entry : classTags.entrySet()) {
-                        yamlRepresenter.addClassTag(entry.getKey(), entry.getValue());
-                    }
-                }
-            }
-            if (yamlDumperOptions == null) {
-                yamlDumperOptions = new DumperOptions();
-                yamlDumperOptions.setPrettyFlow(prettyFlow);
-            }
-            if (yamlResolver == null) {
-                yamlResolver = new Resolver();
-            }
-
-            yaml = new Yaml(yamlConstructor, yamlRepresenter, yamlDumperOptions, yamlResolver);
-            yamlCache.set(new WeakReference<>(yaml));
-        }
-
-        return yaml;
-    }
-
     @Override
     protected void doStart() throws Exception {
         // noop
@@ -176,47 +118,69 @@ public class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, D
         // noop
     }
 
-    public BaseConstructor getConstructor() {
+    protected Yaml getYaml(CamelContext context) {
+        Yaml yaml = null;
+        WeakReference<Yaml> ref = yamlCache.get();
+
+        if (ref != null) {
+            yaml = ref.get();
+        }
+
+        if (yaml == null) {
+            yaml = new Yaml(
+                this.constructor.apply(context),
+                this.representer.apply(context),
+                this.dumperOptions.apply(context),
+                this.resolver.apply(context)
+            );
+
+            yamlCache.set(new WeakReference<>(yaml));
+        }
+
+        return yaml;
+    }
+
+    public Function<CamelContext, BaseConstructor> getConstructor() {
         return constructor;
     }
 
     /**
      * BaseConstructor to construct incoming documents.
      */
-    public void setConstructor(BaseConstructor constructor) {
+    public void setConstructor(Function<CamelContext, BaseConstructor> constructor) {
         this.constructor = constructor;
     }
 
-    public Representer getRepresenter() {
+    public Function<CamelContext, Representer> getRepresenter() {
         return representer;
     }
 
     /**
      * Representer to emit outgoing objects.
      */
-    public void setRepresenter(Representer representer) {
+    public void setRepresenter(Function<CamelContext, Representer> representer) {
         this.representer = representer;
     }
 
-    public DumperOptions getDumperOptions() {
+    public Function<CamelContext, DumperOptions> getDumperOptions() {
         return dumperOptions;
     }
 
     /**
      * DumperOptions to configure outgoing objects.
      */
-    public void setDumperOptions(DumperOptions dumperOptions) {
+    public void setDumperOptions(Function<CamelContext, DumperOptions> dumperOptions) {
         this.dumperOptions = dumperOptions;
     }
 
-    public Resolver getResolver() {
+    public Function<CamelContext, Resolver> getResolver() {
         return resolver;
     }
 
     /**
      * Resolver to detect implicit type
      */
-    public void setResolver(Resolver resolver) {
+    public void setResolver(Function<CamelContext, Resolver> resolver) {
         this.resolver = resolver;
     }
 
@@ -367,6 +331,63 @@ public class SnakeYAMLDataFormat extends ServiceSupport implements DataFormat, D
      */
     public void setAllowAnyType(boolean allowAnyType) {
         this.allowAnyType = allowAnyType;
+    }
+
+    // ***************************
+    // Defaults
+    // ***************************
+
+    private BaseConstructor defaultConstructor(CamelContext context) {
+        ClassLoader yamlClassLoader = this.classLoader;
+        Collection<TypeFilter> yamlTypeFilters = this.typeFilters;
+
+        if (yamlClassLoader == null && useApplicationContextClassLoader) {
+            yamlClassLoader = context.getApplicationContextClassLoader();
+        }
+
+        if (allowAnyType) {
+            yamlTypeFilters = Collections.singletonList(TypeFilters.allowAll());
+        }
+
+        BaseConstructor yamlConstructor;
+        if (yamlTypeFilters != null) {
+            yamlConstructor = yamlClassLoader != null
+                ? typeFilterConstructor(yamlClassLoader, yamlTypeFilters)
+                : typeFilterConstructor(yamlTypeFilters);
+        } else {
+            yamlConstructor = new SafeConstructor();
+        }
+
+        if (typeDescriptions != null && yamlConstructor instanceof Constructor) {
+            for (TypeDescription typeDescription : typeDescriptions) {
+                ((Constructor)yamlConstructor).addTypeDescription(typeDescription);
+            }
+        }
+
+        return yamlConstructor;
+    }
+
+    private Representer defaultRepresenter(CamelContext context) {
+        Representer yamlRepresenter = new Representer();
+
+        if (classTags != null) {
+            for (Map.Entry<Class<?>, Tag> entry : classTags.entrySet()) {
+                yamlRepresenter.addClassTag(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return yamlRepresenter;
+    }
+
+    private DumperOptions defaultDumperOptions(CamelContext context) {
+        DumperOptions yamlDumperOptions = new DumperOptions();
+        yamlDumperOptions.setPrettyFlow(prettyFlow);
+
+        return yamlDumperOptions;
+    }
+
+    private Resolver defaultResolver(CamelContext context) {
+        return new Resolver();
     }
 
     // ***************************
