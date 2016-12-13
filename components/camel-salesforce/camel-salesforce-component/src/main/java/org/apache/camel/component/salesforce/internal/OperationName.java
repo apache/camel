@@ -66,7 +66,10 @@ public enum OperationName {
 
     // Approval Processes and Process Rules API
     APPROVAL("approval"),
-    APPROVALS("approvals");
+    APPROVALS("approvals"),
+
+    // Composite API
+    COMPOSITE_TREE("composite-tree");
 
     private final String value;
 
