@@ -156,6 +156,7 @@ import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
@@ -283,7 +284,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private Date startDate;
     private ModelJAXBContextFactory modelJAXBContextFactory;
     private List<TransformerDefinition> transformers = new ArrayList<TransformerDefinition>();
-    private Map<TransformerKey, Transformer> transformerRegistry = new HashMap<TransformerKey, Transformer>();
+    private TransformerRegistry<TransformerKey> transformerRegistry;
     private ReloadStrategy reloadStrategy;
 
     /**
@@ -297,6 +298,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // create endpoint registry at first since end users may access endpoints before CamelContext is started
         this.endpoints = new DefaultEndpointRegistry(this);
+        this.transformerRegistry = new DefaultTransformerRegistry(this);
 
         // add the defer service startup listener
         this.startupListeners.add(deferStartupListener);
@@ -3124,6 +3126,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             log.info("Using ReloadStrategy: {}", reloadStrategy);
             addService(reloadStrategy, true, true);
         }
+        addService(transformerRegistry, true, true);
 
         if (runtimeEndpointRegistry != null) {
             if (runtimeEndpointRegistry instanceof EventNotifier) {
