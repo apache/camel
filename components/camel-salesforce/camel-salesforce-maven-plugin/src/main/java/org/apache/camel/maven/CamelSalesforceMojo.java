@@ -895,9 +895,17 @@ public class CamelSalesforceMojo extends AbstractMojo {
         public boolean isPrimitiveOrBoxed(final Object object) {
             final Class<?> clazz = object.getClass();
 
-            return clazz.isPrimitive() || Boolean.class.equals(clazz) || Byte.class.equals(clazz)
-                || Character.class.equals(clazz) || Short.class.equals(clazz) || Integer.class.equals(clazz)
-                || Long.class.equals(clazz) || Double.class.equals(clazz) || Float.class.equals(clazz);
+            final boolean isWholeNumberWrapper = Byte.class.equals(clazz) || Short.class.equals(clazz)
+                || Integer.class.equals(clazz) || Long.class.equals(clazz);
+
+            final boolean isFloatingPointWrapper = Double.class.equals(clazz) || Float.class.equals(clazz);
+
+            final boolean isWrapper = isWholeNumberWrapper || isFloatingPointWrapper || Boolean.class.equals(clazz)
+                || Character.class.equals(clazz);
+
+            final boolean isPrimitive = clazz.isPrimitive();
+
+            return isPrimitive || isWrapper;
         }
 
         public void start(final String initial) {
