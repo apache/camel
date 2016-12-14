@@ -68,8 +68,9 @@ public class KafkaConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
         LOG.info("Starting Kafka consumer");
+        super.doStart();
+
         executor = endpoint.createExecutor();
         for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
             executor.submit(new KafkaFetchRecords(endpoint.getConfiguration().getTopic(), i + "", getProps()));
@@ -78,17 +79,18 @@ public class KafkaConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
         LOG.info("Stopping Kafka consumer");
 
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
-                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(executor);
             } else {
                 executor.shutdownNow();
             }
         }
         executor = null;
+
+        super.doStop();
     }
 
     class KafkaFetchRecords implements Runnable {
@@ -117,7 +119,7 @@ public class KafkaConsumer extends DefaultConsumer {
         @SuppressWarnings("unchecked")
         public void run() {
             try {
-                LOG.debug("Subscribing {} to topic {}", threadId, topicName);
+                LOG.info("Subscribing {} to topic {}", threadId, topicName);
                 consumer.subscribe(Arrays.asList(topicName.split(",")));
 
                 if (endpoint.getConfiguration().isSeekToBeginning()) {
@@ -126,7 +128,7 @@ public class KafkaConsumer extends DefaultConsumer {
                     consumer.poll(100);
                     consumer.seekToBeginning(consumer.assignment());
                 }
-                while (isRunAllowed() && !isSuspendingOrSuspended()) {
+                while (isRunAllowed() && !isStoppingOrStopped() && !isSuspendingOrSuspended()) {
                     ConsumerRecords<Object, Object> allRecords = consumer.poll(pollTimeoutMs);
                     for (TopicPartition partition : allRecords.partitions()) {
                         List<ConsumerRecord<Object, Object>> partitionRecords = allRecords
@@ -151,10 +153,11 @@ public class KafkaConsumer extends DefaultConsumer {
                         }
                     }
                 }
-                LOG.debug("Unsubscribing {} from topic {}", threadId, topicName);
+                LOG.info("Unsubscribing {} from topic {}", threadId, topicName);
                 consumer.unsubscribe();
             } catch (InterruptException e) {
                 getExceptionHandler().handleException("Interrupted while consuming " + threadId + " from kafka topic", e);
+                LOG.info("Unsubscribing {} from topic {}", threadId, topicName);
                 consumer.unsubscribe();
                 Thread.currentThread().interrupt();
             } catch (Exception e) {

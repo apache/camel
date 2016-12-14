@@ -573,7 +573,7 @@ public final class MessageHelper {
             // the sanitizeUri takes a very long time for very long string and the format cuts this to
             // 78 characters, anyway. Cut this to 100 characters. This will give enough space for removing
             // characters in the sanitizeUri method and will be reasonably fast
-            label =  URISupport.sanitizeUri(StringHelper.limitLenght(history.getNode().getLabel(), 100));            
+            label =  URISupport.sanitizeUri(StringHelper.limitLength(history.getNode().getLabel(), 100));
             elapsed = history.getElapsed();
 
             sb.append(String.format(MESSAGE_HISTORY_OUTPUT, routeId, id, label, elapsed));
