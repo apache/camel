@@ -109,7 +109,7 @@ public abstract class AbstractSbEndpoint extends DefaultEndpoint {
         message.setHeaders(new HashMap<String, Object>(msg.getProperties()));
         message.setHeader(SbConstants.BROKER_PROPERTIES, msg.getBrokerProperties()); //BrokerProperties included every msg properties
         message.setHeader(SbConstants.MESSAGE_ID, msg.getMessageId());
-        message.setHeader(SbConstants.CONTENT_TYPE, msg.getContentType());
+        message.setHeader(SbConstants.CONTENT_TYPE, SbConstants.DEFAULT_CONTENT_TYPE);  // FIXME: just passing through a content_type is dangerous
         message.setHeader(SbConstants.CORRELATION_ID, msg.getCorrelationId());
         message.setHeader(SbConstants.DATE, msg.getDate());
         message.setHeader(SbConstants.DELIVERY_COUNT, msg.getDeliveryCount());

@@ -40,6 +40,8 @@ public final class SbConstants {
     public static final String TO = "CamelAzureTo";
     public static final String VIA_PARTITION_KEY = "CamelAzureViaPartitionKey";
 
+    public static final String DEFAULT_CONTENT_TYPE = "application/json";
+
     private SbConstants() {
     }
 }

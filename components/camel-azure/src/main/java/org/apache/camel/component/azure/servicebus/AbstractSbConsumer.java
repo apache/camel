@@ -22,7 +22,6 @@ import com.microsoft.windowsazure.exception.ServiceException;
 import com.microsoft.windowsazure.services.servicebus.ServiceBusContract;
 import com.microsoft.windowsazure.services.servicebus.models.BrokeredMessage;
 import com.microsoft.windowsazure.services.servicebus.models.ReceiveMessageOptions;
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -65,8 +64,8 @@ public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
             if (getConfiguration().isPeekLock()) {
                 BrokeredMessage delMsg = getLockBrokeredMessage(exchange);
                 getClient().deleteMessage(delMsg);
-                System.out.println("$$$$$$ delete message $$$$$$ LOCK_LOCATION: " + (String)exchange.getIn().getHeader(SbConstants.LOCK_LOCATION));
-                System.out.println("$$$$$$ delete message $$$$$$ LOCK_TOKEN: " + (String)exchange.getIn().getHeader(SbConstants.LOCK_TOKEN));
+                LOG.debug("delete message - LOCK_LOCATION: " + exchange.getIn().getHeader(SbConstants.LOCK_LOCATION, String.class));
+                LOG.debug("delete message - LOCK_TOKEN: " + exchange.getIn().getHeader(SbConstants.LOCK_TOKEN, String.class));
 
             }
         } catch (ServiceException e) {
@@ -86,8 +85,8 @@ public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
         if (getConfiguration().isPeekLock()) {
             try {
                 getClient().unlockMessage(getLockBrokeredMessage(exchange));
-                System.out.println("$$$$$$ unlock message $$$$$$ LOCK_LOCATION: " + (String)exchange.getIn().getHeader(SbConstants.LOCK_LOCATION));
-                System.out.println("$$$$$$ unlock message $$$$$$ LOCK_TOKEN: " + (String)exchange.getIn().getHeader(SbConstants.LOCK_TOKEN));
+                System.out.println("unlock message - LOCK_LOCATION: " + exchange.getIn().getHeader(SbConstants.LOCK_LOCATION, String.class));
+                System.out.println("unlock message - LOCK_TOKEN: " + exchange.getIn().getHeader(SbConstants.LOCK_TOKEN, String.class));
             } catch (ServiceException e) {
                 // do nothing. Because it will be unlock after timeout anyway.
             }
@@ -107,9 +106,11 @@ public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
     @Override
     protected int poll() throws Exception {
         ReceiveMessageOptions opts = ReceiveMessageOptions.DEFAULT;
+
         if (getConfiguration().isPeekLock()) {
             opts.setPeekLock();
         }
+
         if (null != getConfiguration().getTimeout()) {
             opts.setTimeout(getConfiguration().getTimeout());
         }
@@ -135,13 +136,9 @@ public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
                 }
             });
 
-            LOG.trace("Processing exchange [{}]...", exchange);
-            getAsyncProcessor().process(exchange, new AsyncCallback() {
-                @Override
-                public void done(boolean doneSync) {
-                    LOG.trace("Processing exchange [{}] done.", exchange);
-                }
-            });
+            LOG.debug("Processing exchange [{}]...", exchange);
+            getAsyncProcessor().process(exchange, doneSync -> LOG.debug("Processing exchange [{}] done.", exchange));
+
             return 1;
         } else {
             return 0;
@@ -156,11 +153,11 @@ public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
     public AbstractSbEndpoint getEndpoint() {
         return (AbstractSbEndpoint) super.getEndpoint();
     }
+
     @Override
     public String toString() {
-        if (sbConsumerToString == null) {
-            sbConsumerToString = "AbstractSbConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
-        }
-        return sbConsumerToString;
+        return sbConsumerToString == null
+                ? sbConsumerToString = "AbstractSbConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]"
+                : sbConsumerToString;
     }
 }

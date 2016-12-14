@@ -44,7 +44,7 @@
         <dependency>
             <groupId>com.microsoft.azure</groupId>
             <artifactId>azure-servicebus</artifactId>
-            <version>0.9.5</version>
+            <version>0.9.7</version>
         </dependency>
         <!-- support camel documentation -->
         <dependency>

@@ -50,7 +50,8 @@ public abstract class AbstractSbProducer extends DefaultProducer {
                 brokeredMessage.setMessageId((String)value);
                 break;
             case SbConstants.CONTENT_TYPE:
-                brokeredMessage.setContentType((String)value);
+                // FIXME: just passing through a content_type is dangerous
+                brokeredMessage.setContentType(SbConstants.DEFAULT_CONTENT_TYPE);
                 break;
             case SbConstants.CORRELATION_ID:
                 brokeredMessage.setCorrelationId((String)value);
@@ -84,9 +85,6 @@ public abstract class AbstractSbProducer extends DefaultProducer {
                 break;
             case SbConstants.VIA_PARTITION_KEY:
                 brokeredMessage.setViaPartitionKey((String) value);
-                break;
-            default:
-                brokeredMessage.setProperty(key, value);
                 break;
             }
         }
@@ -133,5 +131,4 @@ public abstract class AbstractSbProducer extends DefaultProducer {
         }
         return sbProducerToString;
     }
-
 }
