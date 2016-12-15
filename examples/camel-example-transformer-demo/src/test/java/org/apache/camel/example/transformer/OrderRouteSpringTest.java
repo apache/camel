@@ -16,11 +16,7 @@
  */
 package org.apache.camel.example.transformer;
 
-import java.net.URL;
-import java.util.List;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -33,15 +29,12 @@ import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
 import org.apache.camel.test.spring.CamelSpringRunner;
 import org.apache.camel.test.spring.MockEndpointsAndSkip;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(CamelSpringRunner.class)
 @ContextConfiguration(value = "/META-INF/spring/camel-context.xml", loader = CamelSpringDelegatingTestContextLoader.class)

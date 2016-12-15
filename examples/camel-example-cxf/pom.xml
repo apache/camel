@@ -30,21 +30,6 @@
   <name>Camel :: Example :: CXF</name>
   <description>An example which demonstrates the use of the Camel CXF component</description>
 
-  <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.example.*
-    </camel.osgi.export.pkg>
-    <camel.osgi.import.additional>
-      org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool
-    </camel.osgi.import.additional>
-    <camel.osgi.private.pkg>
-      org.apache.hello_world_soap_http,
-      org.apache.hello_world_soap_http.types
-    </camel.osgi.private.pkg>
-    <!-- to avoid importing a bunch of cxf packages -->
-    <camel.osgi.dynamic>*</camel.osgi.dynamic>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>

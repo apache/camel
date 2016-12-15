@@ -26,16 +26,11 @@
   </parent>
 
   <artifactId>camel-example-transformer-demo</artifactId>
-  <packaging>bundle</packaging>
   <name>Camel :: Example :: Transformer :: Demo</name>
-  <description>An example demonstrating declarative transformation along data type declaration using Spring DSL
-  </description>
-  <properties>
-    <camel.osgi.export.pkg>org.apache.camel.example.transformer.*</camel.osgi.export.pkg>
-  </properties>
+  <description>An example demonstrating declarative transformation along data type declaration using Spring DSL</description>
+  <packaging>jar</packaging>
 
   <dependencies>
-    <!-- START SNIPPET: e1 -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
@@ -56,7 +51,7 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jaxb</artifactId>
     </dependency>
-    
+
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -78,51 +73,16 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-        <groupId>xmlunit</groupId>
-        <artifactId>xmlunit</artifactId>
-        <scope>test</scope>
-        <version>1.6</version>
+      <groupId>xmlunit</groupId>
+      <artifactId>xmlunit</artifactId>
+      <scope>test</scope>
+      <version>1.6</version>
     </dependency>
 
   </dependencies>
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-artifacts</id>
-            <phase>package</phase>
-            <goals>
-              <goal>attach-artifact</goal>
-            </goals>
-            <configuration>
-              <artifacts>
-                <artifact>
-                  <file>target/classes/features.xml</file>
-                  <type>xml</type>
-                  <classifier>features</classifier>
-                </artifact>
-              </artifacts>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>${camel.osgi.export.pkg}</Export-Package>
-            <Import-Package>*</Import-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-
 
       <!-- Allows the example to be run via 'mvn compile exec:java' -->
       <plugin>
