@@ -36,7 +36,7 @@ JacksonXML Options
 
 
 // dataformat options: START
-The JacksonXML dataformat supports 13 options which are listed below.
+The JacksonXML dataformat supports 14 options which are listed below.
 
 
 
@@ -57,6 +57,7 @@ The JacksonXML dataformat supports 13 options which are listed below.
 | moduleRefs |  | String | To use custom Jackson modules referred from the Camel registry. Multiple modules can be separated by comma.
 | enableFeatures |  | String | Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature com.fasterxml.jackson.databind.DeserializationFeature or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma
 | disableFeatures |  | String | Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature com.fasterxml.jackson.databind.DeserializationFeature or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma
+| allowUnmarshallType | false | Boolean | If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used.
 |=======================================================================
 {% endraw %}
 // dataformat options: END
