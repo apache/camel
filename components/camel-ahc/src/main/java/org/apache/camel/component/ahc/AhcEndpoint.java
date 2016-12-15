@@ -66,8 +66,10 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "advanced")
     private AsyncHttpClientConfig clientConfig;
-    @UriParam(label = "advanced", prefix = "asyncHttpClientConfig.", multiValue = true)
+    @UriParam(label = "advanced", prefix = "clientConfig.", multiValue = true)
     private Map<String, Object> clientConfigOptions;
+    @UriParam(label = "advanced,security", prefix = "clientConfig.realm.", multiValue = true)
+    private Map<String, Object> clientConfigRealmOptions;
     @UriParam(label = "producer", defaultValue = "false")
     private boolean connectionClose;
 
@@ -235,6 +237,17 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
      */
     public void setClientConfigOptions(Map<String, Object> clientConfigOptions) {
         this.clientConfigOptions = clientConfigOptions;
+    }
+
+    public Map<String, Object> getClientConfigRealmOptions() {
+        return clientConfigRealmOptions;
+    }
+
+    /**
+     * To configure the AsyncHttpClientConfig Realm using the key/values from the Map.
+     */
+    public void setClientConfigRealmOptions(Map<String, Object> clientConfigRealmOptions) {
+        this.clientConfigRealmOptions = clientConfigRealmOptions;
     }
 
     public boolean isConnectionClose() {
