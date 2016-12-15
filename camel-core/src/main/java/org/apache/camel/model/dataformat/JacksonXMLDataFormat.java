@@ -66,6 +66,8 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     private String enableFeatures;
     @XmlAttribute
     private String disableFeatures;
+    @XmlAttribute
+    private Boolean allowUnmarshallType;
 
     public JacksonXMLDataFormat() {
         super("jacksonxml");
@@ -243,6 +245,19 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
     public void setDisableFeatures(String disableFeatures) {
         this.disableFeatures = disableFeatures;
     }
+    
+    public Boolean getAllowUnmarshallType() {
+        return allowUnmarshallType;
+    }
+
+    /**
+     * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling.
+     * <p/>
+     * This should only be enabled when desired to be used.
+     */
+    public void setAllowUnmarshallType(Boolean allowUnmarshallType) {
+        this.allowUnmarshallType = allowUnmarshallType;
+    }
 
     @Override
     public String getDataFormatName() {
@@ -307,6 +322,9 @@ public class JacksonXMLDataFormat extends DataFormatDefinition {
         }
         if (disableFeatures != null) {
             setProperty(camelContext, dataFormat, "disableFeatures", disableFeatures);
+        }
+        if (allowUnmarshallType != null) {
+            setProperty(camelContext, dataFormat, "allowUnmarshallType", allowUnmarshallType);
         }
     }
 

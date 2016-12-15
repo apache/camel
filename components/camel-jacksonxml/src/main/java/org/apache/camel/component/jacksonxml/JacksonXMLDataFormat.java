@@ -68,6 +68,7 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
     private String enableFeatures;
     private String disableFeatures;
     private boolean enableJacksonTypeConverter;
+    private boolean allowUnmarshallType;
 
     /**
      * Use the default Jackson {@link XmlMapper} and {@link Map}
@@ -159,7 +160,10 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
 
         // is there a header with the unmarshal type?
         Class<?> clazz = unmarshalType;
-        String type = exchange.getIn().getHeader(JacksonXMLConstants.UNMARSHAL_TYPE, String.class);
+        String type = null;
+        if (allowUnmarshallType) {
+            type = exchange.getIn().getHeader(JacksonXMLConstants.UNMARSHAL_TYPE, String.class);
+        }
         if (type == null && isAllowJmsType()) {
             type = exchange.getIn().getHeader("JMSType", String.class);
         }
@@ -322,6 +326,19 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
      */
     public void setEnableJacksonTypeConverter(boolean enableJacksonTypeConverter) {
         this.enableJacksonTypeConverter = enableJacksonTypeConverter;
+    }
+    
+    public boolean isAllowUnmarshallType() {
+        return allowUnmarshallType;
+    }
+
+    /**
+     * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling.
+     * <p/>
+     * This should only be enabled when desired to be used.
+     */
+    public void setAllowUnmarshallType(boolean allowJacksonUnmarshallType) {
+        this.allowUnmarshallType = allowJacksonUnmarshallType;
     }
 
     public String getEnableFeatures() {
