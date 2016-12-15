@@ -17,6 +17,7 @@
 package org.apache.camel.component.ahc;
 
 import java.net.URI;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -70,7 +71,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
         setProperties(endpoint, parameters);
 
         if (IntrospectionSupport.hasProperties(parameters, CLIENT_CONFIG_PREFIX)) {
-            DefaultAsyncHttpClientConfig.Builder builder = endpoint.getClientConfig() == null 
+            DefaultAsyncHttpClientConfig.Builder builder = endpoint.getClientConfig() == null
                     ? new DefaultAsyncHttpClientConfig.Builder() : AhcComponent.cloneConfig(endpoint.getClientConfig());
             
             if (endpoint.getClient() != null) {
@@ -94,6 +95,9 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
                 // set and validate additional parameters on client config
                 Map<String, Object> realmParams = IntrospectionSupport.extractProperties(parameters, CLIENT_REALM_CONFIG_PREFIX);
 
+                // copy the parameters for the endpoint to have
+                endpoint.setClientConfigRealmOptions(new LinkedHashMap<>(realmParams));
+
                 Object principal = realmParams.remove("principal");
                 Object password = realmParams.remove("password");
 
@@ -111,6 +115,10 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
             
             // set and validate additional parameters on client config
             Map<String, Object> clientParams = IntrospectionSupport.extractProperties(parameters, CLIENT_CONFIG_PREFIX);
+
+            // copy the parameters for the endpoint to have
+            endpoint.setClientConfigOptions(new LinkedHashMap<>(clientParams));
+
             setProperties(builder, clientParams);
             validateParameters(uri, clientParams, null);
 
