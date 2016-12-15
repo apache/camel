@@ -28,8 +28,7 @@
   <artifactId>camel-example-transformer-blueprint</artifactId>
   <packaging>bundle</packaging>
   <name>Camel :: Example :: Transformer :: Blueprint</name>
-  <description>An example demonstrating declarative transformation along data type declaration using Blueprint DSL
-  </description>
+  <description>An example demonstrating declarative transformation along data type declaration using Blueprint DSL</description>
 
   <dependencies>
     <!-- START SNIPPET: e1 -->
@@ -41,19 +40,22 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-blueprint</artifactId>
     </dependency>
-    
+
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-slf4j-impl</artifactId>
+      <scope>runtime</scope>
     </dependency>
 
     <!-- for testing -->
@@ -63,10 +65,10 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-        <groupId>xmlunit</groupId>
-        <artifactId>xmlunit</artifactId>
-        <scope>test</scope>
-        <version>1.6</version>
+      <groupId>xmlunit</groupId>
+      <artifactId>xmlunit</artifactId>
+      <scope>test</scope>
+      <version>1.6</version>
     </dependency>
 
   </dependencies>
@@ -95,6 +97,7 @@
           </execution>
         </executions>
       </plugin>
+
       <plugin>
         <groupId>org.apache.felix</groupId>
         <artifactId>maven-bundle-plugin</artifactId>
