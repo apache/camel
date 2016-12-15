@@ -84,12 +84,6 @@
       <artifactId>swagger-ui</artifactId>
       <version>${swagger-ui-version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-webapp</artifactId>
-      <version>${jetty9-version}</version>
-      <scope>test</scope>
-    </dependency>
 
     <!-- logging -->
     <dependency>
