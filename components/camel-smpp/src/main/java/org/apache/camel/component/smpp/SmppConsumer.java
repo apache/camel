@@ -127,15 +127,9 @@ public class SmppConsumer extends DefaultConsumer {
     private void closeSession() {
         if (session != null) {
             session.removeSessionStateListener(this.internalSessionStateListener);
-            // remove this hack after http://code.google.com/p/jsmpp/issues/detail?id=93 is fixed
-            try {
-                Thread.sleep(1000);
-                session.unbindAndClose();
-                // clear session as we closed it successfully
-                session = null;
-            } catch (Exception e) {
-                LOG.warn("Cannot close session due " + e.getMessage());
-            }
+            session.unbindAndClose();
+            // clear session as we closed it successfully
+            session = null;
         }
     }
 
