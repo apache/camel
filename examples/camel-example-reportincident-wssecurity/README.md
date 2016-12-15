@@ -26,7 +26,7 @@ Remarks:
 
 ### Run
 
-To run the example on Apache ServiceMix 4.x or Apache Karaf 2.x
+To run the example on Apache Karaf 4.x
 
 #### Step 1: launch the server
 
