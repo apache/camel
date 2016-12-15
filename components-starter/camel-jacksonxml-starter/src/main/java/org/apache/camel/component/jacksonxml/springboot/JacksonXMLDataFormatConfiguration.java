@@ -101,6 +101,12 @@ public class JacksonXMLDataFormatConfiguration {
      * separated by comma
      */
     private String disableFeatures;
+    /**
+     * If enabled then Jackson is allowed to attempt to use the
+     * CamelJacksonUnmarshalType header during the unmarshalling. This should
+     * only be enabled when desired to be used.
+     */
+    private Boolean allowUnmarshallType = false;
 
     public String getXmlMapper() {
         return xmlMapper;
@@ -204,5 +210,13 @@ public class JacksonXMLDataFormatConfiguration {
 
     public void setDisableFeatures(String disableFeatures) {
         this.disableFeatures = disableFeatures;
+    }
+
+    public Boolean getAllowUnmarshallType() {
+        return allowUnmarshallType;
+    }
+
+    public void setAllowUnmarshallType(Boolean allowUnmarshallType) {
+        this.allowUnmarshallType = allowUnmarshallType;
     }
 }
