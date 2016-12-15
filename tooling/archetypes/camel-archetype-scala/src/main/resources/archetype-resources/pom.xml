@@ -25,7 +25,6 @@
   <version>${version}</version>
 
   <name>A Camel Scala Route</name>
-  <url>http://www.myorganization.org</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -34,6 +33,7 @@
 
   <dependencyManagement>
     <dependencies>
+      <!-- Camel BOM -->
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
@@ -45,6 +45,7 @@
   </dependencyManagement>
 
   <dependencies>
+
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
