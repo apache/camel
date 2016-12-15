@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -41,7 +42,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
     private static final Logger LOG = LoggerFactory.getLogger(AhcComponent.class);
     
     private static final String CLIENT_CONFIG_PREFIX = "clientConfig.";
-    private static final String CLIENT_REALM_CONFIG_PREFIX = "realm.";
+    private static final String CLIENT_REALM_CONFIG_PREFIX = "clientConfig.realm.";
 
     private AsyncHttpClient client;
     private AsyncHttpClientConfig clientConfig;
@@ -92,7 +93,18 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
 
                 // set and validate additional parameters on client config
                 Map<String, Object> realmParams = IntrospectionSupport.extractProperties(parameters, CLIENT_REALM_CONFIG_PREFIX);
-                realmBuilder = new Realm.Builder(realmParams.get("realm.principal").toString(), realmParams.get("realm.password").toString());
+
+                Object principal = realmParams.remove("principal");
+                Object password = realmParams.remove("password");
+
+                if (ObjectHelper.isEmpty(principal)) {
+                    throw new IllegalArgumentException(CLIENT_REALM_CONFIG_PREFIX + ".principal must be configured");
+                }
+                if (password == null) {
+                    password = "";
+                }
+
+                realmBuilder = new Realm.Builder(principal.toString(), password.toString());
                 setProperties(realmBuilder, realmParams);
                 validateParameters(uri, realmParams, null);
             }
