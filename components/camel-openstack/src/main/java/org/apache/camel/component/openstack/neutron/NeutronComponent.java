@@ -16,18 +16,19 @@
  */
 package org.apache.camel.component.openstack.neutron;
 
+import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
-import java.util.Map;
-
 public class NeutronComponent extends DefaultComponent {
 
-	@Override protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-		NeutronEndpoint endpoint = new NeutronEndpoint(uri, this);
-		setProperties(endpoint, parameters);
-		endpoint.setHost(remaining);
-		return endpoint;
-	}
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        NeutronEndpoint endpoint = new NeutronEndpoint(uri, this);
+        setProperties(endpoint, parameters);
+        endpoint.setHost(remaining);
+        return endpoint;
+    }
 }
 

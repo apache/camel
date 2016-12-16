@@ -18,25 +18,24 @@ package org.apache.camel.component.openstack.swift;
 
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 
-public final class SwiftConstants extends OpenstackConstants{
+public final class SwiftConstants extends OpenstackConstants {
 
-	public static final String SWIFT_SUBSYSTEM_OBJECTS = "objects";
-	public static final String SWIFT_SUBSYSTEM_CONTAINERS = "containers";
+    public static final String SWIFT_SUBSYSTEM_OBJECTS = "objects";
+    public static final String SWIFT_SUBSYSTEM_CONTAINERS = "containers";
 
-	public static final String CONTAINER_NAME = "containerName";
-	public static final String OBJECT_NAME = "objectName";
+    public static final String CONTAINER_NAME = "containerName";
+    public static final String OBJECT_NAME = "objectName";
 
-	public static final String LIMIT = "limit";
-	public static final String MARKER = "marker";
-	public static final String END_MARKER = "end_marker";
-	public static final String DELIMITER = "delimiter";
-	public static final String PATH = "path";
+    public static final String LIMIT = "limit";
+    public static final String MARKER = "marker";
+    public static final String END_MARKER = "end_marker";
+    public static final String DELIMITER = "delimiter";
+    public static final String PATH = "path";
 
-	public static final String GET_METADATA = "getMetadata";
-	public static final String CREATE_UPDATE_METADATA = "createUpdateMetadata";
-	public static final String DELETE_METADATA = "deleteMetadata";
+    public static final String GET_METADATA = "getMetadata";
+    public static final String CREATE_UPDATE_METADATA = "createUpdateMetadata";
+    public static final String DELETE_METADATA = "deleteMetadata";
 
-
-
+    private SwiftConstants() { }
 
 }

@@ -18,19 +18,18 @@ package org.apache.camel.component.openstack.keystone.producer;
 
 import org.apache.camel.component.openstack.common.AbstractOpenstackEndpoint;
 import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
-
 import org.openstack4j.api.OSClient;
 
 
 public abstract class AbstractKeystoneProducer extends AbstractOpenstackProducer {
 
-	OSClient.OSClientV3 osV3Client;
+    OSClient.OSClientV3 osV3Client;
 
-	public AbstractKeystoneProducer(AbstractOpenstackEndpoint endpoint, OSClient client) {
-		super(endpoint, client);
-		if(!(client instanceof OSClient.OSClientV3)) {
-			throw new IllegalArgumentException("Only Identity API v3 is supported");
-		}
-		osV3Client = (OSClient.OSClientV3) client;
-	}
+    public AbstractKeystoneProducer(AbstractOpenstackEndpoint endpoint, OSClient client) {
+        super(endpoint, client);
+        if (!(client instanceof OSClient.OSClientV3)) {
+            throw new IllegalArgumentException("Only Identity API V3 is supported");
+        }
+        osV3Client = (OSClient.OSClientV3) client;
+    }
 }

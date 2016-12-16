@@ -16,18 +16,19 @@
  */
 package org.apache.camel.component.openstack.keystone;
 
+import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
-import java.util.Map;
-
 public class KeystoneComponent extends DefaultComponent {
 
-	@Override protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-		KeystoneEndpoint endpoint = new KeystoneEndpoint(uri, this);
-		setProperties(endpoint, parameters);
-		endpoint.setHost(remaining);
-		return endpoint;
-	}
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        KeystoneEndpoint endpoint = new KeystoneEndpoint(uri, this);
+        setProperties(endpoint, parameters);
+        endpoint.setHost(remaining);
+        return endpoint;
+    }
 }
 

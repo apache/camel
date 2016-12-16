@@ -16,20 +16,14 @@
  */
 package org.apache.camel.component.openstack.glance;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.UUID;
 
 import org.apache.camel.component.openstack.AbstractProducerTestSupport;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -41,197 +35,200 @@ import org.openstack4j.model.image.DiskFormat;
 import org.openstack4j.model.image.Image;
 import org.openstack4j.openstack.image.domain.GlanceImage;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.UUID;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class GlanceProducerTest extends AbstractProducerTestSupport {
 
-	@Mock
-	private GlanceEndpoint endpoint;
+    @Mock
+    private GlanceEndpoint endpoint;
 
-	@Mock
-	private ImageService imageService;
+    @Mock
+    private ImageService imageService;
 
-	private Image dummyImage;
+    private Image dummyImage;
 
-	@Spy
-	private Image osImage = Builders.image().build();
+    @Spy
+    private Image osImage = Builders.image().build();
 
-	@Before
-	public void setUp() {
-		producer = new GlanceProducer(endpoint, client);
-		when(client.images()).thenReturn(imageService);
-		dummyImage = createImage();
+    @Before
+    public void setUp() {
+        producer = new GlanceProducer(endpoint, client);
+        when(client.images()).thenReturn(imageService);
+        dummyImage = createImage();
 
-		when(imageService.get(anyString())).thenReturn(osImage);
-		when(imageService.create(any(org.openstack4j.model.image.Image.class), any(Payload.class))).thenReturn(osImage);
-		when(imageService.reserve(any(org.openstack4j.model.image.Image.class))).thenReturn(osImage);
-		when(imageService.upload(anyString(), any(Payload.class), any(GlanceImage.class))).thenReturn(osImage);
+        when(imageService.get(anyString())).thenReturn(osImage);
+        when(imageService.create(any(org.openstack4j.model.image.Image.class), any(Payload.class))).thenReturn(osImage);
+        when(imageService.reserve(any(org.openstack4j.model.image.Image.class))).thenReturn(osImage);
+        when(imageService.upload(anyString(), any(Payload.class), any(GlanceImage.class))).thenReturn(osImage);
 
-		when(osImage.getContainerFormat()).thenReturn(ContainerFormat.BARE);
-		when(osImage.getDiskFormat()).thenReturn(DiskFormat.ISO);
-		when(osImage.getName()).thenReturn(dummyImage.getName());
-		when(osImage.getChecksum()).thenReturn(dummyImage.getChecksum());
-		when(osImage.getMinDisk()).thenReturn(dummyImage.getMinDisk());
-		when(osImage.getMinRam()).thenReturn(dummyImage.getMinRam());
-		when(osImage.getOwner()).thenReturn(dummyImage.getOwner());
-		when(osImage.getId()).thenReturn(UUID.randomUUID().toString());
-	}
+        when(osImage.getContainerFormat()).thenReturn(ContainerFormat.BARE);
+        when(osImage.getDiskFormat()).thenReturn(DiskFormat.ISO);
+        when(osImage.getName()).thenReturn(dummyImage.getName());
+        when(osImage.getChecksum()).thenReturn(dummyImage.getChecksum());
+        when(osImage.getMinDisk()).thenReturn(dummyImage.getMinDisk());
+        when(osImage.getMinRam()).thenReturn(dummyImage.getMinRam());
+        when(osImage.getOwner()).thenReturn(dummyImage.getOwner());
+        when(osImage.getId()).thenReturn(UUID.randomUUID().toString());
+    }
 
-	@Test
-	public void reserveTest() throws Exception {
-		when(endpoint.getOperation()).thenReturn(GlanceConstants.RESERVE);
-		msg.setBody(dummyImage);
-		producer.process(exchange);
-		ArgumentCaptor<Image> captor = ArgumentCaptor.forClass(Image.class);
-		verify(imageService).reserve(captor.capture());
-		assertEquals(dummyImage, captor.getValue());
+    @Test
+    public void reserveTest() throws Exception {
+        when(endpoint.getOperation()).thenReturn(GlanceConstants.RESERVE);
+        msg.setBody(dummyImage);
+        producer.process(exchange);
+        ArgumentCaptor<Image> captor = ArgumentCaptor.forClass(Image.class);
+        verify(imageService).reserve(captor.capture());
+        assertEquals(dummyImage, captor.getValue());
 
-		Image result = msg.getBody(Image.class);
-		assertNotNull(result.getId());
-		assertEqualsImages(dummyImage, result);
-	}
+        Image result = msg.getBody(Image.class);
+        assertNotNull(result.getId());
+        assertEqualsImages(dummyImage, result);
+    }
 
-	@Test
-	public void reserveWithHeadersTest() throws Exception {
-		when(endpoint.getOperation()).thenReturn(GlanceConstants.RESERVE);
-		msg.setHeader(GlanceConstants.NAME, dummyImage.getName());
-		msg.setHeader(GlanceConstants.CONTAINER_FORMAT, dummyImage.getContainerFormat());
-		msg.setHeader(GlanceConstants.DISK_FORMAT, dummyImage.getDiskFormat());
-		msg.setHeader(GlanceConstants.CHECKSUM, dummyImage.getChecksum());
-		msg.setHeader(GlanceConstants.MIN_DISK, dummyImage.getMinDisk());
-		msg.setHeader(GlanceConstants.MIN_RAM, dummyImage.getMinRam());
-		msg.setHeader(GlanceConstants.OWNER, dummyImage.getOwner());
+    @Test
+    public void reserveWithHeadersTest() throws Exception {
+        when(endpoint.getOperation()).thenReturn(GlanceConstants.RESERVE);
+        msg.setHeader(GlanceConstants.NAME, dummyImage.getName());
+        msg.setHeader(GlanceConstants.CONTAINER_FORMAT, dummyImage.getContainerFormat());
+        msg.setHeader(GlanceConstants.DISK_FORMAT, dummyImage.getDiskFormat());
+        msg.setHeader(GlanceConstants.CHECKSUM, dummyImage.getChecksum());
+        msg.setHeader(GlanceConstants.MIN_DISK, dummyImage.getMinDisk());
+        msg.setHeader(GlanceConstants.MIN_RAM, dummyImage.getMinRam());
+        msg.setHeader(GlanceConstants.OWNER, dummyImage.getOwner());
 
-		producer.process(exchange);
-		final ArgumentCaptor<Image> captor = ArgumentCaptor.forClass(Image.class);
-		verify(imageService).reserve(captor.capture());
-		assertEqualsImages(dummyImage, captor.getValue());
+        producer.process(exchange);
+        final ArgumentCaptor<Image> captor = ArgumentCaptor.forClass(Image.class);
+        verify(imageService).reserve(captor.capture());
+        assertEqualsImages(dummyImage, captor.getValue());
 
-		final Image result = msg.getBody(Image.class);
-		assertNotNull(result.getId());
-		assertEqualsImages(dummyImage, result);
-	}
+        final Image result = msg.getBody(Image.class);
+        assertNotNull(result.getId());
+        assertEqualsImages(dummyImage, result);
+    }
 
-	@Test
-	public void createTest() throws Exception {
-		msg.setHeader(GlanceConstants.OPERATION, GlanceConstants.CREATE);
-		msg.setHeader(GlanceConstants.NAME, dummyImage.getName());
-		msg.setHeader(GlanceConstants.OWNER, dummyImage.getOwner());
-		msg.setHeader(GlanceConstants.MIN_DISK, dummyImage.getMinDisk());
-		msg.setHeader(GlanceConstants.MIN_RAM, dummyImage.getMinRam());
-		msg.setHeader(GlanceConstants.CHECKSUM, dummyImage.getChecksum());
-		msg.setHeader(GlanceConstants.DISK_FORMAT, dummyImage.getDiskFormat());
-		msg.setHeader(GlanceConstants.CONTAINER_FORMAT, dummyImage.getContainerFormat());
+    @Test
+    public void createTest() throws Exception {
+        msg.setHeader(GlanceConstants.OPERATION, GlanceConstants.CREATE);
+        msg.setHeader(GlanceConstants.NAME, dummyImage.getName());
+        msg.setHeader(GlanceConstants.OWNER, dummyImage.getOwner());
+        msg.setHeader(GlanceConstants.MIN_DISK, dummyImage.getMinDisk());
+        msg.setHeader(GlanceConstants.MIN_RAM, dummyImage.getMinRam());
+        msg.setHeader(GlanceConstants.CHECKSUM, dummyImage.getChecksum());
+        msg.setHeader(GlanceConstants.DISK_FORMAT, dummyImage.getDiskFormat());
+        msg.setHeader(GlanceConstants.CONTAINER_FORMAT, dummyImage.getContainerFormat());
 
-		final InputStream is = new FileInputStream(File.createTempFile("image", ".iso"));
-		msg.setBody(is);
-		producer.process(exchange);
+        final InputStream is = new FileInputStream(File.createTempFile("image", ".iso"));
+        msg.setBody(is);
+        producer.process(exchange);
 
-		final ArgumentCaptor<Payload> payloadCaptor = ArgumentCaptor.forClass(Payload.class);
-		final ArgumentCaptor<org.openstack4j.model.image.Image> imageCaptor = ArgumentCaptor.forClass(org.openstack4j.model.image.Image.class);
-		verify(imageService).create(imageCaptor.capture(), payloadCaptor.capture());
-		assertEquals(is, payloadCaptor.getValue().open());
+        final ArgumentCaptor<Payload> payloadCaptor = ArgumentCaptor.forClass(Payload.class);
+        final ArgumentCaptor<org.openstack4j.model.image.Image> imageCaptor = ArgumentCaptor.forClass(org.openstack4j.model.image.Image.class);
+        verify(imageService).create(imageCaptor.capture(), payloadCaptor.capture());
+        assertEquals(is, payloadCaptor.getValue().open());
 
-		final Image result = msg.getBody(Image.class);
-		assertNotNull(result.getId());
-		assertEqualsImages(dummyImage, result);
-	}
+        final Image result = msg.getBody(Image.class);
+        assertNotNull(result.getId());
+        assertEqualsImages(dummyImage, result);
+    }
 
-	@Test
-	public void uploadWithoutUpdatingTest() throws Exception {
-		msg.setHeader(GlanceConstants.OPERATION, GlanceConstants.UPLOAD);
-		final String id = "id";
-		msg.setHeader(GlanceConstants.ID, id);
+    @Test
+    public void uploadWithoutUpdatingTest() throws Exception {
+        msg.setHeader(GlanceConstants.OPERATION, GlanceConstants.UPLOAD);
+        final String id = "id";
+        msg.setHeader(GlanceConstants.ID, id);
 
-		final File file = File.createTempFile("image", ".iso");
-		msg.setBody(file);
-		producer.process(exchange);
+        final File file = File.createTempFile("image", ".iso");
+        msg.setBody(file);
+        producer.process(exchange);
 
-		final ArgumentCaptor<Payload> payloadCaptor = ArgumentCaptor.forClass(Payload.class);
-		final ArgumentCaptor<String> imageIdCaptor = ArgumentCaptor.forClass(String.class);
-		final ArgumentCaptor<org.openstack4j.model.image.Image> imageCaptor = ArgumentCaptor.forClass(org.openstack4j.model.image.Image.class);
-		verify(imageService).upload(imageIdCaptor.capture(), payloadCaptor.capture(), imageCaptor.capture());
-		assertEquals(file, payloadCaptor.getValue().getRaw());
-		assertEquals(id, imageIdCaptor.getValue());
-		assertNull(imageCaptor.getValue());
+        final ArgumentCaptor<Payload> payloadCaptor = ArgumentCaptor.forClass(Payload.class);
+        final ArgumentCaptor<String> imageIdCaptor = ArgumentCaptor.forClass(String.class);
+        final ArgumentCaptor<org.openstack4j.model.image.Image> imageCaptor = ArgumentCaptor.forClass(org.openstack4j.model.image.Image.class);
+        verify(imageService).upload(imageIdCaptor.capture(), payloadCaptor.capture(), imageCaptor.capture());
+        assertEquals(file, payloadCaptor.getValue().getRaw());
+        assertEquals(id, imageIdCaptor.getValue());
+        assertNull(imageCaptor.getValue());
 
-		final Image result = msg.getBody(Image.class);
-		assertNotNull(result.getId());
-		assertEqualsImages(dummyImage, result);
-	}
+        final Image result = msg.getBody(Image.class);
+        assertNotNull(result.getId());
+        assertEqualsImages(dummyImage, result);
+    }
 
-	@Test
-	public void uploadWithUpdatingTest() throws Exception {
-		final String newName = "newName";
-		dummyImage.setName(newName);
-		when(osImage.getName()).thenReturn(newName);
-		msg.setHeader(GlanceConstants.OPERATION, GlanceConstants.UPLOAD);
-		final String id = "id";
-		msg.setHeader(GlanceConstants.ID, id);
-		msg.setHeader(GlanceConstants.NAME, dummyImage.getName());
-		msg.setHeader(GlanceConstants.OWNER, dummyImage.getOwner());
-		msg.setHeader(GlanceConstants.MIN_DISK, dummyImage.getMinDisk());
-		msg.setHeader(GlanceConstants.MIN_RAM, dummyImage.getMinRam());
-		msg.setHeader(GlanceConstants.CHECKSUM, dummyImage.getChecksum());
-		msg.setHeader(GlanceConstants.DISK_FORMAT, dummyImage.getDiskFormat());
-		msg.setHeader(GlanceConstants.CONTAINER_FORMAT, dummyImage.getContainerFormat());
+    @Test
+    public void uploadWithUpdatingTest() throws Exception {
+        final String newName = "newName";
+        dummyImage.setName(newName);
+        when(osImage.getName()).thenReturn(newName);
+        msg.setHeader(GlanceConstants.OPERATION, GlanceConstants.UPLOAD);
+        final String id = "id";
+        msg.setHeader(GlanceConstants.ID, id);
+        msg.setHeader(GlanceConstants.NAME, dummyImage.getName());
+        msg.setHeader(GlanceConstants.OWNER, dummyImage.getOwner());
+        msg.setHeader(GlanceConstants.MIN_DISK, dummyImage.getMinDisk());
+        msg.setHeader(GlanceConstants.MIN_RAM, dummyImage.getMinRam());
+        msg.setHeader(GlanceConstants.CHECKSUM, dummyImage.getChecksum());
+        msg.setHeader(GlanceConstants.DISK_FORMAT, dummyImage.getDiskFormat());
+        msg.setHeader(GlanceConstants.CONTAINER_FORMAT, dummyImage.getContainerFormat());
 
-		final File file = File.createTempFile("image", ".iso");
-		msg.setBody(file);
-		producer.process(exchange);
+        final File file = File.createTempFile("image", ".iso");
+        msg.setBody(file);
+        producer.process(exchange);
 
-		ArgumentCaptor<Payload> payloadCaptor = ArgumentCaptor.forClass(Payload.class);
-		ArgumentCaptor<String> imageIdCaptor = ArgumentCaptor.forClass(String.class);
-		ArgumentCaptor<org.openstack4j.model.image.Image> imageCaptor = ArgumentCaptor.forClass(org.openstack4j.model.image.Image.class);
-		verify(imageService).upload(imageIdCaptor.capture(), payloadCaptor.capture(), imageCaptor.capture());
-		assertEquals(id, imageIdCaptor.getValue());
-		assertEquals(file, payloadCaptor.getValue().getRaw());
-		assertEquals(newName, imageCaptor.getValue().getName());
+        ArgumentCaptor<Payload> payloadCaptor = ArgumentCaptor.forClass(Payload.class);
+        ArgumentCaptor<String> imageIdCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<org.openstack4j.model.image.Image> imageCaptor = ArgumentCaptor.forClass(org.openstack4j.model.image.Image.class);
+        verify(imageService).upload(imageIdCaptor.capture(), payloadCaptor.capture(), imageCaptor.capture());
+        assertEquals(id, imageIdCaptor.getValue());
+        assertEquals(file, payloadCaptor.getValue().getRaw());
+        assertEquals(newName, imageCaptor.getValue().getName());
 
-		final Image result = msg.getBody(Image.class);
-		assertNotNull(result.getId());
-		assertEqualsImages(dummyImage, result);
-	}
+        final Image result = msg.getBody(Image.class);
+        assertNotNull(result.getId());
+        assertEqualsImages(dummyImage, result);
+    }
 
-	@Test
-	public void updateTest() throws Exception {
-		msg.setHeader(GlanceConstants.OPERATION, GlanceConstants.UPDATE);
-		when(imageService.update(any(Image.class))).thenReturn(osImage);
-		final String newName = "newName";
-		when(osImage.getName()).thenReturn(newName);
-		dummyImage.setName(newName);
+    @Test
+    public void updateTest() throws Exception {
+        msg.setHeader(GlanceConstants.OPERATION, GlanceConstants.UPDATE);
+        when(imageService.update(any(Image.class))).thenReturn(osImage);
+        final String newName = "newName";
+        when(osImage.getName()).thenReturn(newName);
+        dummyImage.setName(newName);
 
-		msg.setBody(dummyImage);
-		producer.process(exchange);
+        msg.setBody(dummyImage);
+        producer.process(exchange);
 
-		final ArgumentCaptor<org.openstack4j.model.image.Image> imageCaptor = ArgumentCaptor.forClass(org.openstack4j.model.image.Image.class);
-		verify(imageService).update(imageCaptor.capture());
+        final ArgumentCaptor<org.openstack4j.model.image.Image> imageCaptor = ArgumentCaptor.forClass(org.openstack4j.model.image.Image.class);
+        verify(imageService).update(imageCaptor.capture());
 
-		assertEquals(dummyImage, imageCaptor.getValue());
-		assertEqualsImages(dummyImage, msg.getBody(Image.class));
-	}
+        assertEquals(dummyImage, imageCaptor.getValue());
+        assertEqualsImages(dummyImage, msg.getBody(Image.class));
+    }
 
-	private Image createImage() {
-		return Builders.image()
-				.name("Image Name")
-				.diskFormat(DiskFormat.ISO)
-				.containerFormat(ContainerFormat.BARE)
-				.checksum("checksum")
-				.minDisk(10L)
-				.minRam(5L)
-				.owner("owner").build();
-	}
+    private Image createImage() {
+        return Builders.image()
+                .name("Image Name")
+                .diskFormat(DiskFormat.ISO)
+                .containerFormat(ContainerFormat.BARE)
+                .checksum("checksum")
+                .minDisk(10L)
+                .minRam(5L)
+                .owner("owner").build();
+    }
 
-	private void assertEqualsImages(Image original, Image newImage) {
-		assertEquals(original.getContainerFormat(), newImage.getContainerFormat());
-		assertEquals(original.getDiskFormat(), newImage.getDiskFormat());
-		assertEquals(original.getChecksum(), newImage.getChecksum());
-		assertEquals(original.getMinDisk(), newImage.getMinDisk());
-		assertEquals(original.getMinRam(), newImage.getMinRam());
-		assertEquals(original.getOwner(), newImage.getOwner());
-		assertEquals(original.getName(), newImage.getName());
-	}
+    private void assertEqualsImages(Image original, Image newImage) {
+        assertEquals(original.getContainerFormat(), newImage.getContainerFormat());
+        assertEquals(original.getDiskFormat(), newImage.getDiskFormat());
+        assertEquals(original.getChecksum(), newImage.getChecksum());
+        assertEquals(original.getMinDisk(), newImage.getMinDisk());
+        assertEquals(original.getMinRam(), newImage.getMinRam());
+        assertEquals(original.getOwner(), newImage.getOwner());
+        assertEquals(original.getName(), newImage.getName());
+    }
 }

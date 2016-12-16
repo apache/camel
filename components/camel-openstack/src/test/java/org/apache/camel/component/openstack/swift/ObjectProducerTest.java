@@ -16,30 +16,6 @@
  */
 package org.apache.camel.component.openstack.swift;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import org.apache.camel.component.openstack.swift.producer.ObjectProducer;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.openstack4j.model.common.ActionResponse;
-import org.openstack4j.model.common.Payload;
-import org.openstack4j.model.common.Payloads;
-import org.openstack4j.model.storage.object.SwiftObject;
-import org.openstack4j.model.storage.object.options.ObjectLocation;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,144 +24,164 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.camel.component.openstack.swift.producer.ObjectProducer;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.openstack4j.model.common.ActionResponse;
+import org.openstack4j.model.common.Payload;
+import org.openstack4j.model.common.Payloads;
+import org.openstack4j.model.storage.object.SwiftObject;
+import org.openstack4j.model.storage.object.options.ObjectLocation;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 public class ObjectProducerTest extends SwiftProducerTestSupport {
 
-	private static final String CONTAINER_NAME = "containerName";
-	private static final String OBJECT_NAME = "objectName";
-	private static final String ETAG = UUID.randomUUID().toString();
+    private static final String CONTAINER_NAME = "containerName";
+    private static final String OBJECT_NAME = "objectName";
+    private static final String ETAG = UUID.randomUUID().toString();
 
-	@Mock
-	private SwiftObject mockOsObject;
+    @Mock
+    private SwiftObject mockOsObject;
 
-	@Before
-	public void setUp() {
-		producer = new ObjectProducer(endpoint, client);
+    @Before
+    public void setUp() {
+        producer = new ObjectProducer(endpoint, client);
 
-		when(mockOsObject.getETag()).thenReturn(ETAG);
-	}
+        when(mockOsObject.getETag()).thenReturn(ETAG);
+    }
 
-	@Test
-	public void createTest() throws Exception {
-		when(objectService.put(anyString(), anyString(), any(Payload.class))).thenReturn(ETAG);
-		msg.setHeader(SwiftConstants.OPERATION, SwiftConstants.CREATE);
-		msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
-		msg.setHeader(SwiftConstants.OBJECT_NAME, OBJECT_NAME);
-		final Payload payload = getTmpPayload();
-		msg.setBody(payload);
+    @Test
+    public void createTest() throws Exception {
+        when(objectService.put(anyString(), anyString(), any(Payload.class))).thenReturn(ETAG);
+        msg.setHeader(SwiftConstants.OPERATION, SwiftConstants.CREATE);
+        msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
+        msg.setHeader(SwiftConstants.OBJECT_NAME, OBJECT_NAME);
+        final Payload payload = getTmpPayload();
+        msg.setBody(payload);
 
-		producer.process(exchange);
+        producer.process(exchange);
 
-		ArgumentCaptor<String> containerNameCaptor = ArgumentCaptor.forClass(String.class);
-		ArgumentCaptor<String> objectNameCaptor = ArgumentCaptor.forClass(String.class);
-		ArgumentCaptor<Payload> payloadArgumentCaptor = ArgumentCaptor.forClass(Payload.class);
-		verify(objectService).put(containerNameCaptor.capture(), objectNameCaptor.capture(), payloadArgumentCaptor.capture());
-		assertEquals(CONTAINER_NAME, containerNameCaptor.getValue());
-		assertEquals(OBJECT_NAME, objectNameCaptor.getValue());
-		assertEquals(payload, payloadArgumentCaptor.getValue());
+        ArgumentCaptor<String> containerNameCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> objectNameCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Payload> payloadArgumentCaptor = ArgumentCaptor.forClass(Payload.class);
+        verify(objectService).put(containerNameCaptor.capture(), objectNameCaptor.capture(), payloadArgumentCaptor.capture());
+        assertEquals(CONTAINER_NAME, containerNameCaptor.getValue());
+        assertEquals(OBJECT_NAME, objectNameCaptor.getValue());
+        assertEquals(payload, payloadArgumentCaptor.getValue());
 
-		assertEquals(ETAG, msg.getBody(String.class));
-	}
+        assertEquals(ETAG, msg.getBody(String.class));
+    }
 
-	@Test
-	public void getTest() throws Exception {
-		when(objectService.get(CONTAINER_NAME, OBJECT_NAME)).thenReturn(mockOsObject);
-		when(endpoint.getOperation()).thenReturn(SwiftConstants.GET);
+    @Test
+    public void getTest() throws Exception {
+        when(objectService.get(CONTAINER_NAME, OBJECT_NAME)).thenReturn(mockOsObject);
+        when(endpoint.getOperation()).thenReturn(SwiftConstants.GET);
 
-		msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
-		msg.setHeader(SwiftConstants.OBJECT_NAME, OBJECT_NAME);
+        msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
+        msg.setHeader(SwiftConstants.OBJECT_NAME, OBJECT_NAME);
 
-		producer.process(exchange);
+        producer.process(exchange);
 
-		assertEquals(ETAG, msg.getBody(SwiftObject.class).getETag());
-	}
+        assertEquals(ETAG, msg.getBody(SwiftObject.class).getETag());
+    }
 
-	@Test
-	public void getAllFromContainerTest() throws Exception {
-		List<SwiftObject> objectsList = new ArrayList<>();
-		objectsList.add(mockOsObject);
-		doReturn(objectsList).when(objectService).list(CONTAINER_NAME);
+    @Test
+    public void getAllFromContainerTest() throws Exception {
+        List<SwiftObject> objectsList = new ArrayList<>();
+        objectsList.add(mockOsObject);
+        doReturn(objectsList).when(objectService).list(CONTAINER_NAME);
 
-		when(endpoint.getOperation()).thenReturn(SwiftConstants.GET_ALL);
+        when(endpoint.getOperation()).thenReturn(SwiftConstants.GET_ALL);
 
-		msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
+        msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
 
-		producer.process(exchange);
-		assertEquals(mockOsObject, msg.getBody(List.class).get(0));
-	}
-
-
-	@Test
-	public void deleteObjectTest() throws Exception {
-		final String failMessage = "fail";
-		when(objectService.delete(anyString(), anyString())).thenReturn(ActionResponse.actionSuccess());
-		msg.setHeader(SwiftConstants.OPERATION, SwiftConstants.DELETE);
-		msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
-		msg.setHeader(SwiftConstants.OBJECT_NAME, OBJECT_NAME);
-
-		producer.process(exchange);
-
-		ArgumentCaptor<String> containerNameCaptor = ArgumentCaptor.forClass(String.class);
-		ArgumentCaptor<String> objectNameCaptor = ArgumentCaptor.forClass(String.class);
-		verify(objectService).delete(containerNameCaptor.capture(), objectNameCaptor.capture());
-		assertEquals(CONTAINER_NAME, containerNameCaptor.getValue());
-		assertEquals(OBJECT_NAME, objectNameCaptor.getValue());
-
-		assertFalse(msg.isFault());
-	}
+        producer.process(exchange);
+        assertEquals(mockOsObject, msg.getBody(List.class).get(0));
+    }
 
 
-	@Test
-	public void deleteObjectFailTest() throws Exception {
-		final String failMessage = "fail";
-		when(objectService.delete(anyString(), anyString())).thenReturn(ActionResponse.actionFailed(failMessage, 401));
-		msg.setHeader(SwiftConstants.OPERATION, SwiftConstants.DELETE);
-		msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
-		msg.setHeader(SwiftConstants.OBJECT_NAME, OBJECT_NAME);
+    @Test
+    public void deleteObjectTest() throws Exception {
+        final String failMessage = "fail";
+        when(objectService.delete(anyString(), anyString())).thenReturn(ActionResponse.actionSuccess());
+        msg.setHeader(SwiftConstants.OPERATION, SwiftConstants.DELETE);
+        msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
+        msg.setHeader(SwiftConstants.OBJECT_NAME, OBJECT_NAME);
 
-		producer.process(exchange);
+        producer.process(exchange);
 
-		assertTrue(msg.isFault());
-		assertTrue(msg.getBody(String.class).contains(failMessage));
-	}
+        ArgumentCaptor<String> containerNameCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> objectNameCaptor = ArgumentCaptor.forClass(String.class);
+        verify(objectService).delete(containerNameCaptor.capture(), objectNameCaptor.capture());
+        assertEquals(CONTAINER_NAME, containerNameCaptor.getValue());
+        assertEquals(OBJECT_NAME, objectNameCaptor.getValue());
 
-	@Test
-	public void updateMetadataTest() throws Exception {
-		final Map<String, String> md = new HashMap<>();
-		md.put("key", "val");
-
-		msg.setHeader(SwiftConstants.OPERATION, SwiftConstants.CREATE_UPDATE_METADATA);
-		msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
-		msg.setHeader(SwiftConstants.OBJECT_NAME, OBJECT_NAME);
-		msg.setBody(md);
-
-		producer.process(exchange);
-
-		ArgumentCaptor<ObjectLocation> locationCaptor = ArgumentCaptor.forClass(ObjectLocation.class);
-		ArgumentCaptor<Map> dataCaptor = ArgumentCaptor.forClass(Map.class);
-		verify(objectService).updateMetadata(locationCaptor.capture(), dataCaptor.capture());
-		ObjectLocation location = locationCaptor.getValue();
-		assertEquals(CONTAINER_NAME, location.getContainerName());
-		assertEquals(OBJECT_NAME, location.getObjectName());
-		assertEquals(md, dataCaptor.getValue());
-	}
-
-	@Test
-	public void getMetadataTest() throws Exception {
-		final Map<String, String> md = new HashMap<>();
-		md.put("key", "val");
-
-		when(objectService.getMetadata(CONTAINER_NAME, OBJECT_NAME)).thenReturn(md);
-		msg.setHeader(SwiftConstants.OPERATION, SwiftConstants.GET_METADATA);
-		msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
-		msg.setHeader(SwiftConstants.OBJECT_NAME, OBJECT_NAME);
-
-		producer.process(exchange);
-
-		assertEquals(md, msg.getBody(Map.class));
-	}
+        assertFalse(msg.isFault());
+    }
 
 
-	private Payload getTmpPayload() throws IOException {
-		return Payloads.create(File.createTempFile("payloadPreffix", ".txt"));
-	}
+    @Test
+    public void deleteObjectFailTest() throws Exception {
+        final String failMessage = "fail";
+        when(objectService.delete(anyString(), anyString())).thenReturn(ActionResponse.actionFailed(failMessage, 401));
+        msg.setHeader(SwiftConstants.OPERATION, SwiftConstants.DELETE);
+        msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
+        msg.setHeader(SwiftConstants.OBJECT_NAME, OBJECT_NAME);
+
+        producer.process(exchange);
+
+        assertTrue(msg.isFault());
+        assertTrue(msg.getBody(String.class).contains(failMessage));
+    }
+
+    @Test
+    public void updateMetadataTest() throws Exception {
+        final Map<String, String> md = new HashMap<>();
+        md.put("key", "val");
+
+        msg.setHeader(SwiftConstants.OPERATION, SwiftConstants.CREATE_UPDATE_METADATA);
+        msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
+        msg.setHeader(SwiftConstants.OBJECT_NAME, OBJECT_NAME);
+        msg.setBody(md);
+
+        producer.process(exchange);
+
+        ArgumentCaptor<ObjectLocation> locationCaptor = ArgumentCaptor.forClass(ObjectLocation.class);
+        ArgumentCaptor<Map> dataCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(objectService).updateMetadata(locationCaptor.capture(), dataCaptor.capture());
+        ObjectLocation location = locationCaptor.getValue();
+        assertEquals(CONTAINER_NAME, location.getContainerName());
+        assertEquals(OBJECT_NAME, location.getObjectName());
+        assertEquals(md, dataCaptor.getValue());
+    }
+
+    @Test
+    public void getMetadataTest() throws Exception {
+        final Map<String, String> md = new HashMap<>();
+        md.put("key", "val");
+
+        when(objectService.getMetadata(CONTAINER_NAME, OBJECT_NAME)).thenReturn(md);
+        msg.setHeader(SwiftConstants.OPERATION, SwiftConstants.GET_METADATA);
+        msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
+        msg.setHeader(SwiftConstants.OBJECT_NAME, OBJECT_NAME);
+
+        producer.process(exchange);
+
+        assertEquals(md, msg.getBody(Map.class));
+    }
+
+
+    private Payload getTmpPayload() throws IOException {
+        return Payloads.create(File.createTempFile("payloadPreffix", ".txt"));
+    }
 }

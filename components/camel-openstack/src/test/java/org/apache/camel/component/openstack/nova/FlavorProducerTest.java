@@ -16,21 +16,15 @@
  */
 package org.apache.camel.component.openstack.nova;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 import org.apache.camel.component.openstack.nova.producer.FlavorsProducer;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mock;
@@ -39,155 +33,158 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.compute.Flavor;
 import org.openstack4j.model.compute.builder.FlavorBuilder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class FlavorProducerTest extends NovaProducerTestSupport {
 
-	@Mock
-	private Flavor testOSFlavor;
+    @Mock
+    private Flavor testOSFlavor;
 
-	private Flavor dummyFlavor;
+    private Flavor dummyFlavor;
 
-	@Before
-	public void setUp() {
-		producer = new FlavorsProducer(endpoint, client);
+    @Before
+    public void setUp() {
+        producer = new FlavorsProducer(endpoint, client);
 
-		when(flavorService.create(Matchers.any(org.openstack4j.model.compute.Flavor.class))).thenReturn(testOSFlavor);
-		when(flavorService.get(Matchers.anyString())).thenReturn(testOSFlavor);
+        when(flavorService.create(Matchers.any(org.openstack4j.model.compute.Flavor.class))).thenReturn(testOSFlavor);
+        when(flavorService.get(Matchers.anyString())).thenReturn(testOSFlavor);
 
-		List<org.openstack4j.model.compute.Flavor> getAllList = new ArrayList<>();
-		getAllList.add(testOSFlavor);
-		getAllList.add(testOSFlavor);
-		doReturn(getAllList).when(flavorService).list();
+        List<org.openstack4j.model.compute.Flavor> getAllList = new ArrayList<>();
+        getAllList.add(testOSFlavor);
+        getAllList.add(testOSFlavor);
+        doReturn(getAllList).when(flavorService).list();
 
-		dummyFlavor = createTestFlavor();
+        dummyFlavor = createTestFlavor();
 
-		when(testOSFlavor.getId()).thenReturn(UUID.randomUUID().toString());
-		when(testOSFlavor.getName()).thenReturn(dummyFlavor.getName());
-		when(testOSFlavor.getRam()).thenReturn(dummyFlavor.getRam());
-		when(testOSFlavor.getVcpus()).thenReturn(dummyFlavor.getVcpus());
-		when(testOSFlavor.getDisk()).thenReturn(dummyFlavor.getDisk());
-		when(testOSFlavor.getSwap()).thenReturn(dummyFlavor.getSwap());
-	}
+        when(testOSFlavor.getId()).thenReturn(UUID.randomUUID().toString());
+        when(testOSFlavor.getName()).thenReturn(dummyFlavor.getName());
+        when(testOSFlavor.getRam()).thenReturn(dummyFlavor.getRam());
+        when(testOSFlavor.getVcpus()).thenReturn(dummyFlavor.getVcpus());
+        when(testOSFlavor.getDisk()).thenReturn(dummyFlavor.getDisk());
+        when(testOSFlavor.getSwap()).thenReturn(dummyFlavor.getSwap());
+    }
 
-	@Test
-	public void createFlavor() throws Exception {
-		when(endpoint.getOperation()).thenReturn(NovaConstants.CREATE);
-		final String expectedFlavorID = UUID.randomUUID().toString();
-		when(testOSFlavor.getId()).thenReturn(expectedFlavorID);
+    @Test
+    public void createFlavor() throws Exception {
+        when(endpoint.getOperation()).thenReturn(NovaConstants.CREATE);
+        final String expectedFlavorID = UUID.randomUUID().toString();
+        when(testOSFlavor.getId()).thenReturn(expectedFlavorID);
 
-		//send dummyFlavor to create
-		msg.setBody(dummyFlavor);
-		producer.process(exchange);
+        //send dummyFlavor to create
+        msg.setBody(dummyFlavor);
+        producer.process(exchange);
 
-		ArgumentCaptor<Flavor> flavorCaptor = ArgumentCaptor.forClass(Flavor.class);
-		verify(flavorService).create(flavorCaptor.capture());
-		assertEquals(dummyFlavor, flavorCaptor.getValue());
+        ArgumentCaptor<Flavor> flavorCaptor = ArgumentCaptor.forClass(Flavor.class);
+        verify(flavorService).create(flavorCaptor.capture());
+        assertEquals(dummyFlavor, flavorCaptor.getValue());
 
-		final Flavor createdFlavor = msg.getBody(Flavor.class);
-		assertEqualsFlavors(dummyFlavor, createdFlavor);
-		assertNotNull(createdFlavor.getId());
-	}
+        final Flavor createdFlavor = msg.getBody(Flavor.class);
+        assertEqualsFlavors(dummyFlavor, createdFlavor);
+        assertNotNull(createdFlavor.getId());
+    }
 
-	@Test
-	public void createFlavorWithHeaders() throws Exception {
-		Map<String, Object> headers = new HashMap<>();
-		headers.put(NovaConstants.OPERATION, NovaConstants.CREATE);
-		headers.put(NovaConstants.NAME, dummyFlavor.getName());
-		headers.put(NovaConstants.VCPU, dummyFlavor.getVcpus());
-		headers.put(NovaConstants.DISK, dummyFlavor.getDisk());
-		headers.put(NovaConstants.SWAP, dummyFlavor.getSwap());
-		headers.put(NovaConstants.RAM, dummyFlavor.getRam());
-		msg.setHeaders(headers);
-		producer.process(exchange);
+    @Test
+    public void createFlavorWithHeaders() throws Exception {
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(NovaConstants.OPERATION, NovaConstants.CREATE);
+        headers.put(NovaConstants.NAME, dummyFlavor.getName());
+        headers.put(NovaConstants.VCPU, dummyFlavor.getVcpus());
+        headers.put(NovaConstants.DISK, dummyFlavor.getDisk());
+        headers.put(NovaConstants.SWAP, dummyFlavor.getSwap());
+        headers.put(NovaConstants.RAM, dummyFlavor.getRam());
+        msg.setHeaders(headers);
+        producer.process(exchange);
 
-		ArgumentCaptor<Flavor> flavorCaptor = ArgumentCaptor.forClass(Flavor.class);
-		verify(flavorService).create(flavorCaptor.capture());
-		assertEqualsFlavors(dummyFlavor, flavorCaptor.getValue());
+        ArgumentCaptor<Flavor> flavorCaptor = ArgumentCaptor.forClass(Flavor.class);
+        verify(flavorService).create(flavorCaptor.capture());
+        assertEqualsFlavors(dummyFlavor, flavorCaptor.getValue());
 
-		final Flavor created = msg.getBody(Flavor.class);
-		assertNotNull(created.getId());
-		assertEqualsFlavors(dummyFlavor, created);
-	}
+        final Flavor created = msg.getBody(Flavor.class);
+        assertNotNull(created.getId());
+        assertEqualsFlavors(dummyFlavor, created);
+    }
 
-	@Test
-	public void getTest() throws Exception {
-		msg.setHeader(NovaConstants.OPERATION, NovaConstants.GET);
-		msg.setHeader(NovaConstants.ID, "anything - client is mocked");
+    @Test
+    public void getTest() throws Exception {
+        msg.setHeader(NovaConstants.OPERATION, NovaConstants.GET);
+        msg.setHeader(NovaConstants.ID, "anything - client is mocked");
 
-		//should return dummyFlavor
-		producer.process(exchange);
+        //should return dummyFlavor
+        producer.process(exchange);
 
-		final Flavor result = msg.getBody(Flavor.class);
-		assertEqualsFlavors(dummyFlavor, result);
-		assertNotNull(result.getId());
-	}
+        final Flavor result = msg.getBody(Flavor.class);
+        assertEqualsFlavors(dummyFlavor, result);
+        assertNotNull(result.getId());
+    }
 
-	@Test
-	public void getAllTest() throws Exception {
-		when(endpoint.getOperation()).thenReturn(NovaConstants.GET_ALL);
+    @Test
+    public void getAllTest() throws Exception {
+        when(endpoint.getOperation()).thenReturn(NovaConstants.GET_ALL);
 
-		producer.process(exchange);
-		List<Flavor> result = msg.getBody(List.class);
+        producer.process(exchange);
+        List<Flavor> result = msg.getBody(List.class);
 
-		assertTrue(result.size() == 2);
-		for (Flavor f : result) {
-			assertEqualsFlavors(dummyFlavor, f);
-			assertNotNull(f.getId());
-		}
-	}
+        assertTrue(result.size() == 2);
+        for (Flavor f : result) {
+            assertEqualsFlavors(dummyFlavor, f);
+            assertNotNull(f.getId());
+        }
+    }
 
-	@Test
-	public void deleteSuccess() throws Exception {
-		when(flavorService.delete(Matchers.anyString())).thenReturn(ActionResponse.actionSuccess());
-		when(endpoint.getOperation()).thenReturn(NovaConstants.DELETE);
-		String id = "myID";
-		msg.setHeader(NovaConstants.ID, id);
-		producer.process(exchange);
+    @Test
+    public void deleteSuccess() throws Exception {
+        when(flavorService.delete(Matchers.anyString())).thenReturn(ActionResponse.actionSuccess());
+        when(endpoint.getOperation()).thenReturn(NovaConstants.DELETE);
+        String id = "myID";
+        msg.setHeader(NovaConstants.ID, id);
+        producer.process(exchange);
 
-		ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
-		verify(flavorService).delete(argumentCaptor.capture());
-		assertEquals(id, argumentCaptor.getValue());
+        ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
+        verify(flavorService).delete(argumentCaptor.capture());
+        assertEquals(id, argumentCaptor.getValue());
 
-		assertFalse(msg.isFault());
-		assertNull(msg.getBody());
-	}
+        assertFalse(msg.isFault());
+        assertNull(msg.getBody());
+    }
 
-	@Test
-	public void deleteFailure() throws Exception {
-		final String failReason = "unknown";
-		when(flavorService.delete(Matchers.anyString())).thenReturn(ActionResponse.actionFailed(failReason, 401));
-		when(endpoint.getOperation()).thenReturn(NovaConstants.DELETE);
-		String id = "myID";
-		msg.setHeader(NovaConstants.ID, id);
-		producer.process(exchange);
+    @Test
+    public void deleteFailure() throws Exception {
+        final String failReason = "unknown";
+        when(flavorService.delete(Matchers.anyString())).thenReturn(ActionResponse.actionFailed(failReason, 401));
+        when(endpoint.getOperation()).thenReturn(NovaConstants.DELETE);
+        String id = "myID";
+        msg.setHeader(NovaConstants.ID, id);
+        producer.process(exchange);
 
-		ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
-		verify(flavorService).delete(argumentCaptor.capture());
-		assertEquals(id, argumentCaptor.getValue());
+        ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
+        verify(flavorService).delete(argumentCaptor.capture());
+        assertEquals(id, argumentCaptor.getValue());
 
-		assertTrue(msg.isFault());
-		assertTrue(msg.getBody(String.class).contains(failReason));
-	}
+        assertTrue(msg.isFault());
+        assertTrue(msg.getBody(String.class).contains(failReason));
+    }
 
-	private Flavor createTestFlavor() {
-		FlavorBuilder builder = Builders.flavor()
-				.name("dummy flavor")
-				.ram(3)
-				.vcpus(2)
-				.disk(5)
-				.swap(2);
-		return builder.build();
-	}
+    private Flavor createTestFlavor() {
+        FlavorBuilder builder = Builders.flavor()
+                .name("dummy flavor")
+                .ram(3)
+                .vcpus(2)
+                .disk(5)
+                .swap(2);
+        return builder.build();
+    }
 
-	private void assertEqualsFlavors(Flavor old, Flavor createdFlavor) {
-		assertEquals(old.getName(), createdFlavor.getName());
-		assertEquals(old.getRam(), createdFlavor.getRam());
-		assertEquals(old.getVcpus(), createdFlavor.getVcpus());
-		assertEquals(old.getDisk(), createdFlavor.getDisk());
-	}
+    private void assertEqualsFlavors(Flavor old, Flavor createdFlavor) {
+        assertEquals(old.getName(), createdFlavor.getName());
+        assertEquals(old.getRam(), createdFlavor.getRam());
+        assertEquals(old.getVcpus(), createdFlavor.getVcpus());
+        assertEquals(old.getDisk(), createdFlavor.getDisk());
+    }
 }

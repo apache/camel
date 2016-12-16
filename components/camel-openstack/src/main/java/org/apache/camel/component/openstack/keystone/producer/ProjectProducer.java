@@ -16,106 +16,108 @@
  */
 package org.apache.camel.component.openstack.keystone.producer;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.openstack.keystone.KeystoneConstants;
 import org.apache.camel.component.openstack.keystone.KeystoneEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.identity.v3.Project;
 import org.openstack4j.model.identity.v3.builder.ProjectBuilder;
 
-import java.util.List;
-import java.util.Map;
-
 public class ProjectProducer extends AbstractKeystoneProducer {
 
-	public ProjectProducer(KeystoneEndpoint endpoint, OSClient client) {
-		super(endpoint, client);
-	}
+    public ProjectProducer(KeystoneEndpoint endpoint, OSClient client) {
+        super(endpoint, client);
+    }
 
-	@Override
-	public void process(Exchange exchange) throws Exception {
-		final String operation = getOperation(exchange);
-		switch (operation) {
-			case KeystoneConstants.CREATE:
-				doCreate(exchange);
-				break;
-			case KeystoneConstants.GET:
-				doGet(exchange);
-				break;
-			case KeystoneConstants.GET_ALL:
-				doGetAll(exchange);
-				break;
-			case KeystoneConstants.UPDATE:
-				doUpdate(exchange);
-				break;
-			case KeystoneConstants.DELETE:
-				doDelete(exchange);
-				break;
-			default:
-				throw new IllegalArgumentException("Unsupported operation " + operation);
-		}
-	}
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        final String operation = getOperation(exchange);
+        switch (operation) {
+        case KeystoneConstants.CREATE:
+            doCreate(exchange);
+            break;
+        case KeystoneConstants.GET:
+            doGet(exchange);
+            break;
+        case KeystoneConstants.GET_ALL:
+            doGetAll(exchange);
+            break;
+        case KeystoneConstants.UPDATE:
+            doUpdate(exchange);
+            break;
+        case KeystoneConstants.DELETE:
+            doDelete(exchange);
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported operation " + operation);
+        }
+    }
 
-	private void doCreate(Exchange exchange) {
-		final Project in = messageToProject(exchange.getIn());
-		final Project out = osV3Client.identity().projects().create(in);
-		exchange.getIn().setBody(out);
-	}
+    private void doCreate(Exchange exchange) {
+        final Project in = messageToProject(exchange.getIn());
+        final Project out = osV3Client.identity().projects().create(in);
+        exchange.getIn().setBody(out);
+    }
 
-	private void doGet(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String id = msg.getHeader(KeystoneConstants.ID, String.class);
-		ObjectHelper.notEmpty(id, "Project ID");
-		final Project result = osV3Client.identity().projects().get(id);
-		msg.setBody(result);
-	}
+    private void doGet(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String id = msg.getHeader(KeystoneConstants.ID, String.class);
+        ObjectHelper.notEmpty(id, "Project ID");
+        final Project result = osV3Client.identity().projects().get(id);
+        msg.setBody(result);
+    }
 
-	private void doGetAll(Exchange exchange) {
-		final List<? extends Project> out = osV3Client.identity().projects().list();
-		exchange.getIn().setBody(out);
-	}
+    private void doGetAll(Exchange exchange) {
+        final List<? extends Project> out = osV3Client.identity().projects().list();
+        exchange.getIn().setBody(out);
+    }
 
-	private void doUpdate(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final Project in = messageToProject(msg);
-		final Project out = osV3Client.identity().projects().update(in);
-		msg.setBody(out);
-	}
+    private void doUpdate(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final Project in = messageToProject(msg);
+        final Project out = osV3Client.identity().projects().update(in);
+        msg.setBody(out);
+    }
 
-	private void doDelete(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String id = msg.getHeader(KeystoneConstants.ID, String.class);
-		ObjectHelper.notEmpty(id, "Project ID");
-		final ActionResponse response = osV3Client.identity().projects().delete(id);
-		checkFailure(response, msg, "Delete project with ID " + id);
-	}
+    private void doDelete(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String id = msg.getHeader(KeystoneConstants.ID, String.class);
+        ObjectHelper.notEmpty(id, "Project ID");
+        final ActionResponse response = osV3Client.identity().projects().delete(id);
+        checkFailure(response, msg, "Delete project with ID " + id);
+    }
 
-	private Project messageToProject(Message message) {
-		Project project = message.getBody(Project.class);
+    private Project messageToProject(Message message) {
+        Project project = message.getBody(Project.class);
 
-		if (project == null) {
-			Map headers = message.getHeaders();
-			ProjectBuilder builder = Builders.project();
+        if (project == null) {
+            Map headers = message.getHeaders();
+            ProjectBuilder builder = Builders.project();
 
-			ObjectHelper.notEmpty(message.getHeader(KeystoneConstants.NAME, String.class), "Name");
-			builder.name(message.getHeader(KeystoneConstants.NAME, String.class));
+            ObjectHelper.notEmpty(message.getHeader(KeystoneConstants.NAME, String.class), "Name");
+            builder.name(message.getHeader(KeystoneConstants.NAME, String.class));
 
-			if (headers.containsKey(KeystoneConstants.DOMAIN_ID))
-				builder.domainId(message.getHeader(KeystoneConstants.DOMAIN_ID, String.class));
+            if (headers.containsKey(KeystoneConstants.DOMAIN_ID)) {
+                builder.domainId(message.getHeader(KeystoneConstants.DOMAIN_ID, String.class));
+            }
 
-			if(headers.containsKey(KeystoneConstants.DESCRIPTION))
-				builder.description(message.getHeader(KeystoneConstants.DESCRIPTION, String.class));
+            if (headers.containsKey(KeystoneConstants.DESCRIPTION)) {
+                builder.description(message.getHeader(KeystoneConstants.DESCRIPTION, String.class));
+            }
 
-			if(headers.containsKey(KeystoneConstants.PARENT_ID))
-				builder.parentId(message.getHeader(KeystoneConstants.PARENT_ID, String.class));
+            if (headers.containsKey(KeystoneConstants.PARENT_ID)) {
+                builder.parentId(message.getHeader(KeystoneConstants.PARENT_ID, String.class));
+            }
 
-			project = builder.build();
-		}
-		return project;
-	}
+            project = builder.build();
+        }
+        return project;
+    }
 }

@@ -20,8 +20,6 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.util.ObjectHelper;
-
 import org.openstack4j.api.OSClient;
 import org.openstack4j.api.client.IOSClientBuilder;
 import org.openstack4j.core.transport.Config;
@@ -30,76 +28,76 @@ import org.openstack4j.openstack.OSFactory;
 
 public abstract class AbstractOpenstackEndpoint extends DefaultEndpoint {
 
-	public static final String v2 = "v2";
-	public static final String v3 = "v3";
+    public static final String V2 = "V2";
+    public static final String V3 = "V3";
 
-	protected abstract String getHost();
+    public AbstractOpenstackEndpoint(String endpointUri, Component component) {
+        super(endpointUri, component);
+    }
 
-	protected abstract String getUsername();
+    protected abstract String getHost();
 
-	protected abstract String getDomain();
+    protected abstract String getUsername();
 
-	protected abstract String getPassword();
+    protected abstract String getDomain();
 
-	protected abstract String getProject();
+    protected abstract String getPassword();
 
-	protected abstract String getOperation();
+    protected abstract String getProject();
 
-	protected abstract Config getConfig();
+    protected abstract String getOperation();
 
-	protected abstract String getApiVersion();
+    protected abstract Config getConfig();
 
-	public AbstractOpenstackEndpoint(String endpointUri, Component component) {
-		super(endpointUri, component);
-	}
+    protected abstract String getApiVersion();
 
-	protected OSClient createClient() {
+    protected OSClient createClient() {
 
-		//client should reAuthenticate itself when token expires
-		if(v2.equals(getApiVersion())) {
-			return createV2Client();
-		}
+        //client should reAuthenticate itself when token expires
+        if (V2.equals(getApiVersion())) {
+            return createV2Client();
+        }
 
-		return createV3Client();
-	}
+        return createV3Client();
+    }
 
-	@Override
-	public Consumer createConsumer(Processor processor) throws Exception {
-		throw new IllegalStateException("There is no consumer available for OpenStack");
-	}
+    @Override
+    public Consumer createConsumer(Processor processor) throws Exception {
+        throw new IllegalStateException("There is no consumer available for OpenStack");
+    }
 
-	@Override
-	public boolean isSingleton() {
-		return false;
-	}
+    @Override
+    public boolean isSingleton() {
+        return false;
+    }
 
-	private OSClient.OSClientV3 createV3Client() {
-		IOSClientBuilder.V3 builder = OSFactory.builderV3()
-				.endpoint(getHost());
+    private OSClient.OSClientV3 createV3Client() {
+        IOSClientBuilder.V3 builder = OSFactory.builderV3()
+                .endpoint(getHost());
 
-		builder.credentials(getUsername(), getPassword(), Identifier.byId(getDomain()));
+        builder.credentials(getUsername(), getPassword(), Identifier.byId(getDomain()));
 
-		builder.scopeToProject(Identifier.byId(getProject()));
+        builder.scopeToProject(Identifier.byId(getProject()));
 
-		if(getConfig() != null) {
-			builder.withConfig(getConfig());
-		}
+        if (getConfig() != null) {
+            builder.withConfig(getConfig());
+        }
 
-		return builder.authenticate();
-	}
+        return builder.authenticate();
+    }
 
-	private OSClient.OSClientV2 createV2Client() {
-		IOSClientBuilder.V2 builder = OSFactory.builderV2()
-				.endpoint(getHost());
+    private OSClient.OSClientV2 createV2Client() {
+        IOSClientBuilder.V2 builder = OSFactory.builderV2()
+                .endpoint(getHost());
 
-		builder.credentials(getUsername(), getPassword());
+        builder.credentials(getUsername(), getPassword());
 
-		builder.tenantId(getProject());
+        builder.tenantId(getProject());
 
-		if(getConfig() != null) {
-			builder.withConfig(getConfig());
-		}
+        if (getConfig() != null) {
+            builder.withConfig(getConfig());
+        }
 
-		return builder.authenticate();
-	}
+        return builder.authenticate();
+    }
 }

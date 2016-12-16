@@ -22,15 +22,17 @@ package org.apache.camel.component.openstack.common;
  */
 public class OpenstackConstants {
 
-	public static final String OPERATION = "operation";
-	public static final String ID = "ID";
-	public static final String NAME = "name";
-	public static final String DESCRIPTION = "description";
-	public static final String PROPERTIES = "properties";
+    public static final String OPERATION = "operation";
+    public static final String ID = "ID";
+    public static final String NAME = "name";
+    public static final String DESCRIPTION = "description";
+    public static final String PROPERTIES = "properties";
 
-	public static final String CREATE = "create";
-	public static final String UPDATE = "update";
-	public static final String GET_ALL = "getAll";
-	public static final String GET = "get";
-	public static final String DELETE = "delete";
+    public static final String CREATE = "create";
+    public static final String UPDATE = "update";
+    public static final String GET_ALL = "getAll";
+    public static final String GET = "get";
+    public static final String DELETE = "delete";
+
+    protected OpenstackConstants() { }
 }

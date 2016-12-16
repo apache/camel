@@ -16,40 +16,38 @@
  */
 package org.apache.camel.component.openstack.nova;
 
-import static org.mockito.Mockito.when;
-
 import org.apache.camel.component.openstack.AbstractProducerTestSupport;
-
 import org.junit.Before;
-
 import org.mockito.Mock;
 import org.openstack4j.api.compute.ComputeService;
 import org.openstack4j.api.compute.FlavorService;
 import org.openstack4j.api.compute.KeypairService;
 import org.openstack4j.api.compute.ServerService;
 
+import static org.mockito.Mockito.when;
+
 public class NovaProducerTestSupport extends AbstractProducerTestSupport {
 
-	@Mock
-	protected NovaEndpoint endpoint;
+    @Mock
+    protected NovaEndpoint endpoint;
 
-	@Mock
-	protected ComputeService computeService;
+    @Mock
+    protected ComputeService computeService;
 
-	@Mock
-	FlavorService flavorService;
+    @Mock
+    FlavorService flavorService;
 
-	@Mock
-	ServerService serverService;
+    @Mock
+    ServerService serverService;
 
-	@Mock
-	KeypairService keypairService;
+    @Mock
+    KeypairService keypairService;
 
-	@Before
-	public void setUpComputeService(){
-		when(client.compute()).thenReturn(computeService);
-		when(computeService.flavors()).thenReturn(flavorService);
-		when(computeService.servers()).thenReturn(serverService);
-		when(computeService.keypairs()).thenReturn(keypairService);
-	}
+    @Before
+    public void setUpComputeService() {
+        when(client.compute()).thenReturn(computeService);
+        when(computeService.flavors()).thenReturn(flavorService);
+        when(computeService.servers()).thenReturn(serverService);
+        when(computeService.keypairs()).thenReturn(keypairService);
+    }
 }
