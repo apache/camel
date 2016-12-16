@@ -18,6 +18,7 @@ package org.apache.camel.commands;
 
 import java.io.PrintStream;
 import java.net.URLDecoder;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -29,10 +30,11 @@ import org.apache.camel.util.URISupport;
 /**
  * List the Camel endpoints available in the JVM.
  */
-public class EndpointListCommand extends AbstractContextCommand {
+public class EndpointListCommand extends AbstractCamelCommand {
 
     private static final String URI_COLUMN_LABEL = "Uri";
     private static final String STATUS_COLUMN_LABEL = "Status";
+    private static final String CONTEXT_NAME_COLUMN_LABEL = "Context";
 
     private static final int DEFAULT_COLUMN_WIDTH_INCREMENT = 0;
     private static final String DEFAULT_FIELD_PREAMBLE = " ";
@@ -47,25 +49,39 @@ public class EndpointListCommand extends AbstractContextCommand {
     boolean decode = true;
     boolean verbose;
     boolean explain;
+    private final String context;
 
     public EndpointListCommand(String context, boolean decode, boolean verbose, boolean explain) {
-        super(context);
         this.decode = decode;
         this.verbose = verbose;
         this.explain = explain;
+        this.context = context;
     }
 
     @Override
-    protected Object performContextCommand(CamelController camelController, String contextName, PrintStream out, PrintStream err) throws Exception {
-        List<Map<String, String>> endpoints = camelController.getEndpoints(contextName);
+    public Object execute(CamelController camelController, PrintStream out, PrintStream err) throws Exception {
+        final List<Map<String, String>> camelContextInfos = camelController.getCamelContexts(this.context);
+        final Map<String, List<Map<String, String>>> contextsToEndpoints = new HashMap<>();
+        
+        for (Map<String, String> camelContextInfo : camelContextInfos) {
+            String camelContextName = camelContextInfo.get("name");
+            final List<Map<String, String>> endpoints = camelController.getEndpoints(camelContextName);
+            if (endpoints.isEmpty()) {
+                continue;
+            }
+            contextsToEndpoints.put(camelContextName, endpoints);
+        }
 
-        final Map<String, Integer> columnWidths = computeColumnWidths(endpoints);
+        final Map<String, Integer> columnWidths = computeColumnWidths(contextsToEndpoints);
         final String headerFormat = buildFormatString(columnWidths, true);
         final String rowFormat = buildFormatString(columnWidths, false);
 
-        if (endpoints.size() > 0) {
-            out.println(String.format(headerFormat, URI_COLUMN_LABEL, STATUS_COLUMN_LABEL));
-            out.println(String.format(headerFormat, "---", "------"));
+        for (Map.Entry<String, List<Map<String, String>>> stringListEntry : contextsToEndpoints.entrySet()) {
+            final String camelContextName = stringListEntry.getKey();
+            final List<Map<String, String>> endpoints = stringListEntry.getValue();
+
+            out.println(String.format(headerFormat, CONTEXT_NAME_COLUMN_LABEL, URI_COLUMN_LABEL, STATUS_COLUMN_LABEL));
+            out.println(String.format(headerFormat, "-------", "---", "------"));
             for (Map<String, String> row : endpoints) {
                 String uri = row.get("uri");
                 if (decode) {
@@ -75,11 +91,11 @@ public class EndpointListCommand extends AbstractContextCommand {
                 // sanitize and mask uri so we dont see passwords
                 uri = URISupport.sanitizeUri(uri);
                 String state = row.get("state");
-                out.println(String.format(rowFormat, uri, state));
+                out.println(String.format(rowFormat, camelContextName, uri, state));
 
                 if (explain) {
                     boolean first = true;
-                    String json = camelController.explainEndpointAsJSon(context, row.get("uri"), verbose);
+                    String json = camelController.explainEndpointAsJSon(camelContextName, row.get("uri"), verbose);
                     // use a basic json parser
                     List<Map<String, String>> options = JsonSchemaHelper.parseJsonSchema("properties", json, true);
 
@@ -122,16 +138,21 @@ public class EndpointListCommand extends AbstractContextCommand {
                 }
             }
         }
-
         return null;
     }
 
-    private Map<String, Integer> computeColumnWidths(final Iterable<Map<String, String>> endpoints) throws Exception {
-        if (endpoints == null) {
-            throw new IllegalArgumentException("Unable to determine column widths from null Iterable<Endpoint>");
-        } else {
-            int maxUriLen = 0;
-            int maxStatusLen = 0;
+    private Map<String, Integer> computeColumnWidths(final Map<String, List<Map<String, String>>> contextsToEndpoints) throws Exception {
+        int maxUriLen = 0;
+        int maxStatusLen = 0;
+        int maxCamelContextLen = 0;
+
+        for (Map.Entry<String, List<Map<String, String>>> stringListEntry : contextsToEndpoints.entrySet()) {
+            final String camelContextName = stringListEntry.getKey();
+
+            maxCamelContextLen = java.lang.Math.max(maxCamelContextLen, camelContextName.length());
+            
+            final List<Map<String, String>> endpoints = stringListEntry.getValue();
+
 
             for (Map<String, String> row : endpoints) {
                 String uri = row.get("uri");
@@ -147,13 +168,14 @@ public class EndpointListCommand extends AbstractContextCommand {
                 final String status = row.get("state");
                 maxStatusLen = java.lang.Math.max(maxStatusLen, status == null ? 0 : status.length());
             }
-
-            final Map<String, Integer> retval = new Hashtable<String, Integer>();
-            retval.put(URI_COLUMN_LABEL, maxUriLen);
-            retval.put(STATUS_COLUMN_LABEL, maxStatusLen);
-
-            return retval;
         }
+    
+        final Map<String, Integer> retval = new Hashtable<>();
+        retval.put(URI_COLUMN_LABEL, maxUriLen);
+        retval.put(STATUS_COLUMN_LABEL, maxStatusLen);
+        retval.put(CONTEXT_NAME_COLUMN_LABEL, maxCamelContextLen);
+
+        return retval;
     }
 
     private String buildFormatString(final Map<String, Integer> columnWidths, final boolean isHeader) {
@@ -172,9 +194,13 @@ public class EndpointListCommand extends AbstractContextCommand {
 
         int uriLen = java.lang.Math.min(columnWidths.get(URI_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
         uriLen = Math.max(MIN_COLUMN_WIDTH, uriLen);
+
+        int ctxLen = java.lang.Math.min(columnWidths.get(CONTEXT_NAME_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
+        ctxLen = Math.max(MIN_COLUMN_WIDTH, ctxLen);
         // last row does not have min width
 
         final StringBuilder retval = new StringBuilder(DEFAULT_FORMAT_BUFFER_LENGTH);
+        retval.append(fieldPreamble).append("%-").append(ctxLen).append('.').append(ctxLen).append('s').append(fieldPostamble).append(' ');
         retval.append(fieldPreamble).append("%-").append(uriLen).append('.').append(uriLen).append('s').append(fieldPostamble).append(' ');
         retval.append(fieldPreamble).append("%s").append(fieldPostamble).append(' ');
 
@@ -188,5 +214,4 @@ public class EndpointListCommand extends AbstractContextCommand {
             return MAX_COLUMN_WIDTH;
         }
     }
-
 }
