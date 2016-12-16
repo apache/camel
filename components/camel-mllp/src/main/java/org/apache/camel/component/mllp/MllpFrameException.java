@@ -17,22 +17,25 @@
 package org.apache.camel.component.mllp;
 
 /**
- * Raised when a MLLP Producer or consumer encounter an error transmitting data
+ * @deprecated - replaced by more specific exceptions.  MllpTimeoutException, MllpInvalidMessageException and MllpInvalidAcknowledgementException
+ * Raised when a MLLP Producer or consumer encounters a corrupt MLLP Frame while attempting
+ * to readEnvelopedPayload or writeEnvelopedMessage a MLLP payload.
  */
-public class MllpWriteException extends MllpException {
-    public MllpWriteException(String message, byte[] hl7Message) {
+public class MllpFrameException extends MllpException {
+    public MllpFrameException(String message, byte[] hl7Message) {
         super(message, hl7Message);
     }
 
-    public MllpWriteException(String message, byte[] hl7Message, byte[] hl7Acknowledgement) {
+    public MllpFrameException(String message, byte[] hl7Message, byte[] hl7Acknowledgement) {
         super(message, hl7Message, hl7Acknowledgement);
     }
 
-    public MllpWriteException(String message, byte[] hl7Message, Throwable cause) {
+    public MllpFrameException(String message, byte[] hl7Message, Throwable cause) {
         super(message, hl7Message, cause);
     }
 
-    public MllpWriteException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
+    public MllpFrameException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
         super(message, hl7Message, hl7Acknowledgement, cause);
     }
+
 }

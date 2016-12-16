@@ -28,14 +28,13 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpServerResource;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Rule;
 import org.junit.Test;
 
 import static org.apache.camel.component.mllp.MllpEndpoint.END_OF_BLOCK;
 import static org.apache.camel.component.mllp.MllpEndpoint.START_OF_BLOCK;
 
-public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
+public class MllpTcpClientProducerAcknowledgementValidationTest extends CamelTestSupport {
     static final String TEST_MESSAGE =
         "MSH|^~\\&|ADT|EPIC|JCAPS|CC|20161206193919|RISTECH|ADT^A08|00001|D|2.3^^|||||||" + '\r'
             + "EVN|A08|20150107161440||REG_UPDATE_SEND_VISIT_MESSAGES_ON_PATIENT_CHANGES|RISTECH^RADIOLOGY^TECHNOLOGIST^^^^^^UCLA^^^^^RRMC||" + '\r'
@@ -126,7 +125,7 @@ public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
 
                 from(source.getDefaultEndpoint()).routeId(routeId)
                         .log(LoggingLevel.INFO, routeId, "Sending Message")
-                        .toF("mllp://%s:%d", mllpServer.getListenHost(), mllpServer.getListenPort())
+                        .toF("mllp://%s:%d?validatePayload=true", mllpServer.getListenHost(), mllpServer.getListenPort())
                         .log(LoggingLevel.INFO, routeId, "Received Acknowledgement")
                         .to(aa);
             }
@@ -196,17 +195,16 @@ public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
 
     @Test
     public void testEmptyAcknowledgement() throws Exception {
-        aa.expectedBodiesReceived(TEST_MESSAGE);
-        aa.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, "");
-        aa.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT, "".getBytes());
-        aa.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, "");
+        invalid.expectedBodiesReceived(TEST_MESSAGE);
+        invalid.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT, "".getBytes());
+        invalid.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, "");
 
         failed.expectedMessageCount(0);
         failed.setAssertPeriod(1000);
 
-        ar.expectedMessageCount(0);
+        aa.expectedMessageCount(0);
         ae.expectedMessageCount(0);
-        invalid.expectedMessageCount(0);
+        ar.expectedMessageCount(0);
 
         mllpServer.setExcludeAcknowledgementModulus(1);
 
@@ -219,17 +217,16 @@ public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
     public void testInvalidAcknowledgement() throws Exception {
         final String badAcknowledgement = "A VERY BAD ACKNOWLEDGEMENT";
 
-        aa.expectedBodiesReceived(TEST_MESSAGE);
-        aa.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, "");
-        aa.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, badAcknowledgement.getBytes());
-        aa.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, badAcknowledgement);
+        invalid.expectedBodiesReceived(TEST_MESSAGE);
+        invalid.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, badAcknowledgement.getBytes());
+        invalid.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, badAcknowledgement);
 
         failed.expectedMessageCount(0);
         failed.setAssertPeriod(1000);
 
-        ar.expectedMessageCount(0);
+        aa.expectedMessageCount(0);
         ae.expectedMessageCount(0);
-        invalid.expectedMessageCount(0);
+        ar.expectedMessageCount(0);
 
         mllpServer.setAcknowledgementString(badAcknowledgement);
 
@@ -242,17 +239,17 @@ public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
     public void testInvalidAcknowledgementContainingEmbeddedStartOfBlock() throws Exception {
         final String badAcknowledgement = EXPECTED_AA.replaceFirst("RISTECH", "RISTECH" + START_OF_BLOCK);
 
-        aa.expectedBodiesReceived(TEST_MESSAGE);
+        invalid.expectedBodiesReceived(TEST_MESSAGE);
         aa.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, "AA");
-        aa.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, badAcknowledgement.getBytes());
-        aa.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, badAcknowledgement);
+        invalid.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, badAcknowledgement.getBytes());
+        invalid.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, badAcknowledgement);
 
         failed.expectedMessageCount(0);
         failed.setAssertPeriod(1000);
 
-        ar.expectedMessageCount(0);
+        aa.expectedMessageCount(0);
         ae.expectedMessageCount(0);
-        invalid.expectedMessageCount(0);
+        ar.expectedMessageCount(0);
 
         mllpServer.setAcknowledgementString(badAcknowledgement);
 
@@ -265,17 +262,17 @@ public class MllpTcpClientProducerAcknowledgementTest extends CamelTestSupport {
     public void testInvalidAcknowledgementContainingEmbeddedEndOfBlock() throws Exception {
         final String badAcknowledgement = EXPECTED_AA.replaceFirst("RISTECH", "RISTECH" + END_OF_BLOCK);
 
-        aa.expectedBodiesReceived(TEST_MESSAGE);
+        invalid.expectedBodiesReceived(TEST_MESSAGE);
         aa.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_TYPE, "AA");
-        aa.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, badAcknowledgement.getBytes());
-        aa.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, badAcknowledgement);
+        invalid.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, badAcknowledgement.getBytes());
+        invalid.expectedHeaderReceived(MllpConstants.MLLP_ACKNOWLEDGEMENT_STRING, badAcknowledgement);
 
         failed.expectedMessageCount(0);
         failed.setAssertPeriod(1000);
 
-        ar.expectedMessageCount(0);
+        aa.expectedMessageCount(0);
         ae.expectedMessageCount(0);
-        invalid.expectedMessageCount(0);
+        ar.expectedMessageCount(0);
 
         mllpServer.setAcknowledgementString(badAcknowledgement);
 
