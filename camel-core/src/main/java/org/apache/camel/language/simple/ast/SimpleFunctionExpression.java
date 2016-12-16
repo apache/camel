@@ -448,6 +448,18 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
         }
 
+        // skip function
+        remainder = ifStartsWithReturnRemainder("skip", function);
+        if (remainder != null) {
+            String values = ObjectHelper.between(remainder, "(", ")");
+            if (values == null || ObjectHelper.isEmpty(values)) {
+                throw new SimpleParserException("Valid syntax: ${skip(number)} was: " + function, token.getIndex());
+            }
+            String exp = "${body}";
+            int num = Integer.parseInt(values.trim());
+            return ExpressionBuilder.skipExpression(exp, num);
+        }
+
         // collate function
         remainder = ifStartsWithReturnRemainder("collate", function);
         if (remainder != null) {

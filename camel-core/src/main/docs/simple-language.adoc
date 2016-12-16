@@ -278,6 +278,10 @@ link:splitter.html[Splitter] EIP to split a message body and group/batch
 the splitted sub message into a group of N sub lists. This method works
 similar to the collate method in Groovy.
 
+|skip(number) |Iterator |*Camel 2.19:* The skip function iterates the message body and skips
+the first number of items. This can be used with the
+link:splitter.html[Splitter] EIP to split a message body and skip the first N number of items.
+
 |messageHistory |String |*Camel 2.17:* The message history of the current exchange how it has
 been routed. This is similar to the route stack-trace message history
 the error handler logs in case of an unhandled exception.
