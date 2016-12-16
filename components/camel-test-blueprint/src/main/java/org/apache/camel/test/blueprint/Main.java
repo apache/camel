@@ -108,8 +108,6 @@ public class Main extends MainSupport {
             }
             Set<Long> eventHistory = new HashSet<>();
 
-            CamelBlueprintHelper.waitForBlueprintContainer(eventHistory, bundleContext, bundleName, BlueprintEvent.CREATED, null);
-
             camelContext = CamelBlueprintHelper.getOsgiService(bundleContext, CamelContext.class);
             if (camelContext == null) {
                 throw new IllegalArgumentException("Cannot find CamelContext in blueprint XML file: " + descriptors);
