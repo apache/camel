@@ -64,7 +64,7 @@ import org.codehaus.mojo.exec.Property;
  *
  * @goal run
  * @requiresDependencyResolution compile+runtime
- * @execute phase="test-compile"
+ * @execute phase="prepare-package"
  */
 public class RunMojo extends AbstractExecMojo {
 
@@ -358,9 +358,16 @@ public class RunMojo extends AbstractExecMojo {
      * @throws MojoFailureException something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
+
+        String skip = System.getProperties().getProperty("maven.test.skip");
+        if (skip == null || "false".equals(skip)) {
+            // lets log a INFO about how to skip tests if you want to so you can run faster
+            getLog().info("You can skip tests from the command line using: mvn camel:run -Dmaven.test.skip=true");
+        }
+
         boolean usingSpringJavaConfigureMain = false;
 
-        boolean useCdiMain = false;
+        boolean useCdiMain;
         if (useCDI != null) {
             // use configured value
             useCdiMain = useCDI;
@@ -368,7 +375,7 @@ public class RunMojo extends AbstractExecMojo {
             // auto detect if we have cdi
             useCdiMain = detectCDIOnClassPath();
         }
-        boolean usingBlueprintMain = false;
+        boolean usingBlueprintMain;
         if (useBlueprint != null) {
             // use configured value
             usingBlueprintMain = useBlueprint;
