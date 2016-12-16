@@ -20,6 +20,7 @@ package org.apache.camel.component.mllp;
  * Raised when a MLLP Consumer receives an invalid HL7 Message.
  */
 public class MllpInvalidMessageException extends MllpException {
+
     public MllpInvalidMessageException(String message, byte[] hl7Message) {
         super(message, hl7Message);
     }

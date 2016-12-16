@@ -237,7 +237,7 @@ public class MllpTcpClientProducer extends DefaultProducer {
     /**
      * Validate the TCP Connection
      *
-     * @return null if the connection is valid, otherwise the Exception encounted checking the connection
+     * @return null if the connection is valid, otherwise the Exception encountered checking the connection
      */
     void checkConnection() throws IOException {
         if (null == socket || socket.isClosed() || !socket.isConnected()) {

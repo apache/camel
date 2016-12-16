@@ -23,13 +23,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
 import static org.apache.camel.component.mllp.MllpEndpoint.END_OF_BLOCK;
-import static org.apache.camel.component.mllp.MllpEndpoint.END_OF_DATA;
 import static org.apache.camel.component.mllp.MllpEndpoint.START_OF_BLOCK;
 
 /**
  * Represents the component that manages {@link MllpEndpoint}.
  */
 public class MllpComponent extends UriEndpointComponent {
+
     public static final String MLLP_LOG_PHI_PROPERTY = "org.apache.camel.component.mllp.logPHI";
 
     public MllpComponent() {

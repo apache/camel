@@ -31,6 +31,7 @@ import static org.apache.camel.component.mllp.MllpEndpoint.END_OF_DATA;
 import static org.apache.camel.component.mllp.MllpEndpoint.START_OF_BLOCK;
 
 public class MllpBufferedSocketWriter extends MllpSocketWriter {
+
     static final int DEFAULT_SO_SNDBUF = 65535;
 
     ByteArrayOutputStream outputBuffer;

@@ -26,7 +26,6 @@ public class MllpReceiveAcknowledgementException extends MllpAcknowledgementExce
         super(EXCEPTION_MESSAGE, hl7Message);
     }
 
-
     public MllpReceiveAcknowledgementException(byte[] hl7Message, byte[] hl7Acknowledgement) {
         super(EXCEPTION_MESSAGE, hl7Message, hl7Acknowledgement);
     }
@@ -34,7 +33,6 @@ public class MllpReceiveAcknowledgementException extends MllpAcknowledgementExce
     public MllpReceiveAcknowledgementException(byte[] hl7Message, Throwable cause) {
         super(EXCEPTION_MESSAGE, hl7Message, cause);
     }
-
 
     public MllpReceiveAcknowledgementException(byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
         super(EXCEPTION_MESSAGE, hl7Message, hl7Acknowledgement, cause);
@@ -51,6 +49,7 @@ public class MllpReceiveAcknowledgementException extends MllpAcknowledgementExce
     public MllpReceiveAcknowledgementException(String message, byte[] hl7Message, Throwable cause) {
         super(message, hl7Message, cause);
     }
+
     public MllpReceiveAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
         super(message, hl7Message, hl7Acknowledgement, cause);
     }
