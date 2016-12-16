@@ -17,9 +17,7 @@
 package org.apache.camel.component.ahc;
 
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.junit.Ignore;
 
-@Ignore("TODO: Does not work with Jetty 9.3.x")
 public class AhcComponentClientConfigSslContextParametersTest extends AhcComponentClientConfigTest {
 
     public void configureComponent() {
