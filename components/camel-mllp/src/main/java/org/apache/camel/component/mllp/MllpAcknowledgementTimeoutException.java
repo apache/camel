@@ -20,6 +20,7 @@ package org.apache.camel.component.mllp;
  * Raised when a MLLP Producer does not receive a HL7 acknowledgement within the configured timespan
  */
 public class MllpAcknowledgementTimeoutException extends MllpAcknowledgementException {
+
     static final String EXCEPTION_MESSAGE = "Timeout receiving HL7 Acknowledgement";
 
     public MllpAcknowledgementTimeoutException(byte[] hl7Message) {

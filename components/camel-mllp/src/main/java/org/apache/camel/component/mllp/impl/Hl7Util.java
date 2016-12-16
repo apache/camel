@@ -25,6 +25,7 @@ import static org.apache.camel.component.mllp.MllpEndpoint.SEGMENT_DELIMITER;
 import static org.apache.camel.component.mllp.MllpEndpoint.START_OF_BLOCK;
 
 public final class Hl7Util {
+
     static final Logger LOG = LoggerFactory.getLogger(Hl7Util.class);
 
     private Hl7Util() {

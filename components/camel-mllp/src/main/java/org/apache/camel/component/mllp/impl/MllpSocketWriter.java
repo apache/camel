@@ -32,6 +32,7 @@ import static org.apache.camel.component.mllp.MllpEndpoint.END_OF_DATA;
 import static org.apache.camel.component.mllp.MllpEndpoint.START_OF_BLOCK;
 
 public class MllpSocketWriter {
+
     static final byte[] PAYLOAD_TERMINATOR;
 
     static {

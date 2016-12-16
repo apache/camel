@@ -59,7 +59,6 @@ public class MllpException extends Exception {
         this.hl7Acknowledgement = (hl7Acknowledgement != null && hl7Acknowledgement.length > 0) ? hl7Acknowledgement : null;
     }
 
-
     /**
      * Get the HL7 message payload associated with this exception, if any.
      *

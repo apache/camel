@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.component.mllp.MllpEndpoint.START_OF_BLOCK;
 
 public class MllpSocketReader {
+
     final Socket socket;
     final int receiveTimeout;
     final int readTimeout;
@@ -54,7 +55,6 @@ public class MllpSocketReader {
             throw new IllegalStateException("Cannot retrieve the value of SO_RCVBUF from the Socket", socketEx);
         }
     }
-
 
     public byte[] readEnvelopedPayload() throws MllpException {
         return readEnvelopedPayload(null, null);

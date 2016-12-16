@@ -41,10 +41,9 @@ public class Hl7AcknowledgementGenerator implements Processor {
             + "MSA|AR|" + SEGMENT_DELIMITER
             + MESSAGE_TERMINATOR;
 
-
     @Override
     public void process(Exchange exchange) throws Exception {
-        Message message = null;
+        Message message;
         if (exchange.hasOut()) {
             message = exchange.getOut();
         } else {
