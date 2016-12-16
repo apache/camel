@@ -656,6 +656,7 @@
     <yammer-metrics-version>2.2.0</yammer-metrics-version>
     <zjsonpatch-version>0.2.3</zjsonpatch-version>
     <zookeeper-version>3.4.9</zookeeper-version>
+    <zookeeper-guava-version>16.0</zookeeper-guava-version>
     <zxing-version>3.3.0</zxing-version>
     <zxing-bundle-version>3.3.0_1</zxing-bundle-version>
 
