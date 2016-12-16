@@ -184,7 +184,8 @@
                 <!-- camel-ignite requires to install apache ignite first -->
                 <!-- camel-guice does not work in OSGi currently -->
                 <!-- camel-leveldb uses some wrap magic to install which validator fails but it works -->
-                <feature>camel|camel-(?!(blueprint|cdi|cxf|ignite|guice|leveldb))*</feature>
+                <!-- camel-spring-dm cannot be validated -->
+                <feature>camel|camel-(?!(blueprint|cdi|cxf|ignite|guice|leveldb|spring-dm))*</feature>
               </features>
 			        <configuration>file://${project.build.directory}/classes/config.properties</configuration>
             </configuration>
