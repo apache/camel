@@ -20,6 +20,7 @@ package org.apache.camel.component.mllp;
  * Raised when a MLLP Consumer cannot deliver the MLLP Acknowledgement
  */
 public class MllpReceiveException extends MllpException {
+
     public MllpReceiveException(String message) {
         super(message);
     }

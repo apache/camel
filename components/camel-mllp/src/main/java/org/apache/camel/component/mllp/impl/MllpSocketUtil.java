@@ -29,6 +29,7 @@ import static org.apache.camel.component.mllp.MllpEndpoint.END_OF_DATA;
 import static org.apache.camel.component.mllp.MllpEndpoint.START_OF_BLOCK;
 
 public final class MllpSocketUtil {
+
     private static final Logger LOG = LoggerFactory.getLogger(MllpSocketUtil.class);
 
     private MllpSocketUtil() {

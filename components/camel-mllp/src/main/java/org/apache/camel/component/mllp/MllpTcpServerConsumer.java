@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mllp;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.BindException;
@@ -27,7 +28,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;

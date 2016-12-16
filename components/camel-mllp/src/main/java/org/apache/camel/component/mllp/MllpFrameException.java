@@ -21,7 +21,9 @@ package org.apache.camel.component.mllp;
  * Raised when a MLLP Producer or consumer encounters a corrupt MLLP Frame while attempting
  * to readEnvelopedPayload or writeEnvelopedMessage a MLLP payload.
  */
+@Deprecated
 public class MllpFrameException extends MllpException {
+
     public MllpFrameException(String message, byte[] hl7Message) {
         super(message, hl7Message);
     }
