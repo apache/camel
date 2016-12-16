@@ -18,17 +18,20 @@ package org.apache.camel.component.openstack.glance;
 
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 
-public final class GlanceConstants extends OpenstackConstants{
+public final class GlanceConstants extends OpenstackConstants {
 
-	public static final String DISK_FORMAT = "diskFormat";
-	public static final String CONTAINER_FORMAT = "containerFormat";
-	public static final String OWNER = "owner";
-	public static final String IS_PUBLIC = "isPublic";
-	public static final String MIN_RAM = "minRam";
-	public static final String MIN_DISK = "minDisk";
-	public static final String SIZE = "size";
-	public static final String CHECKSUM = "checksum";
+    public static final String DISK_FORMAT = "diskFormat";
+    public static final String CONTAINER_FORMAT = "containerFormat";
+    public static final String OWNER = "owner";
+    public static final String IS_PUBLIC = "isPublic";
+    public static final String MIN_RAM = "minRam";
+    public static final String MIN_DISK = "minDisk";
+    public static final String SIZE = "size";
+    public static final String CHECKSUM = "checksum";
 
-	public static final String RESERVE = "reserve";
-	public static final String UPLOAD = "upload";
+    public static final String RESERVE = "reserve";
+    public static final String UPLOAD = "upload";
+
+    private GlanceConstants() { }
+
 }

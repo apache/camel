@@ -16,38 +16,36 @@
  */
 package org.apache.camel.component.openstack;
 
-import static org.mockito.Mockito.when;
+import java.io.IOException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultMessage;
-
 import org.junit.Before;
 import org.junit.runner.RunWith;
-
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.openstack4j.api.OSClient;
 
-import java.io.IOException;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public abstract class AbstractProducerTestSupport {
 
-	@Mock
-	protected OSClient.OSClientV3 client;
+    @Mock
+    protected OSClient.OSClientV3 client;
 
-	@Mock
-	protected Exchange exchange;
+    @Mock
+    protected Exchange exchange;
 
-	protected Message msg;
+    protected Message msg;
 
-	protected Producer producer;
+    protected Producer producer;
 
-	@Before
-	public void before() throws IOException {
-		msg  = new DefaultMessage();
-		when(exchange.getIn()).thenReturn(msg);
-	}
+    @Before
+    public void before() throws IOException {
+        msg = new DefaultMessage();
+        when(exchange.getIn()).thenReturn(msg);
+    }
 }

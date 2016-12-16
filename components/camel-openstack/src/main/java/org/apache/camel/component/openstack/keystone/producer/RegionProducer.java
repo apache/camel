@@ -16,95 +16,96 @@
  */
 package org.apache.camel.component.openstack.keystone.producer;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.openstack.keystone.KeystoneConstants;
 import org.apache.camel.component.openstack.keystone.KeystoneEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.identity.v3.Region;
 import org.openstack4j.model.identity.v3.builder.RegionBuilder;
 
-import java.util.List;
-import java.util.Map;
-
 public class RegionProducer extends AbstractKeystoneProducer {
 
-	public RegionProducer(KeystoneEndpoint endpoint, OSClient client) {
-		super(endpoint, client);
-	}
+    public RegionProducer(KeystoneEndpoint endpoint, OSClient client) {
+        super(endpoint, client);
+    }
 
-	@Override public void process(Exchange exchange) throws Exception {
-		final String operation = getOperation(exchange);
-		switch (operation) {
-			case KeystoneConstants.CREATE:
-				doCreate(exchange);
-				break;
-			case KeystoneConstants.GET:
-				doGet(exchange);
-				break;
-			case KeystoneConstants.GET_ALL:
-				doGetAll(exchange);
-				break;
-			case KeystoneConstants.UPDATE:
-				doUpdate(exchange);
-				break;
-			case KeystoneConstants.DELETE:
-				doDelete(exchange);
-				break;
-			default:
-				throw new IllegalArgumentException("Unsupported operation " + operation);
-		}
-	}
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        final String operation = getOperation(exchange);
+        switch (operation) {
+        case KeystoneConstants.CREATE:
+            doCreate(exchange);
+            break;
+        case KeystoneConstants.GET:
+            doGet(exchange);
+            break;
+        case KeystoneConstants.GET_ALL:
+            doGetAll(exchange);
+            break;
+        case KeystoneConstants.UPDATE:
+            doUpdate(exchange);
+            break;
+        case KeystoneConstants.DELETE:
+            doDelete(exchange);
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported operation " + operation);
+        }
+    }
 
-	private void doCreate(Exchange exchange) {
-		final Region in = messageToRegion(exchange.getIn());
-		final Region out = osV3Client.identity().regions().create(in);
-		exchange.getIn().setBody(out);
-	}
+    private void doCreate(Exchange exchange) {
+        final Region in = messageToRegion(exchange.getIn());
+        final Region out = osV3Client.identity().regions().create(in);
+        exchange.getIn().setBody(out);
+    }
 
-	private void doGet(Exchange exchange) {
-		final String id = exchange.getIn().getHeader(KeystoneConstants.ID, String.class);
-		ObjectHelper.notEmpty(id, "Region ID");
-		final Region out = osV3Client.identity().regions().get(id);
-		exchange.getIn().setBody(out);
-	}
+    private void doGet(Exchange exchange) {
+        final String id = exchange.getIn().getHeader(KeystoneConstants.ID, String.class);
+        ObjectHelper.notEmpty(id, "Region ID");
+        final Region out = osV3Client.identity().regions().get(id);
+        exchange.getIn().setBody(out);
+    }
 
-	private void doGetAll(Exchange exchange) {
-		final List<? extends Region> out = osV3Client.identity().regions().list();
-		exchange.getIn().setBody(out);
-	}
+    private void doGetAll(Exchange exchange) {
+        final List<? extends Region> out = osV3Client.identity().regions().list();
+        exchange.getIn().setBody(out);
+    }
 
-	private void doUpdate(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final Region in = messageToRegion(msg);
-		final Region out = osV3Client.identity().regions().update(in);
-		msg.setBody(out);
-	}
+    private void doUpdate(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final Region in = messageToRegion(msg);
+        final Region out = osV3Client.identity().regions().update(in);
+        msg.setBody(out);
+    }
 
-	private void doDelete(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String id = msg.getHeader(KeystoneConstants.ID, String.class);
-		ObjectHelper.notEmpty(id, "Region ID");
-		final ActionResponse response = osV3Client.identity().regions().delete(id);
-		checkFailure(response, msg, "Delete network" + id);
-	}
+    private void doDelete(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String id = msg.getHeader(KeystoneConstants.ID, String.class);
+        ObjectHelper.notEmpty(id, "Region ID");
+        final ActionResponse response = osV3Client.identity().regions().delete(id);
+        checkFailure(response, msg, "Delete network" + id);
+    }
 
-	private Region messageToRegion(Message message) {
-		Region region = message.getBody(Region.class);
-		if(region == null) {
-			Map headers = message.getHeaders();
-			RegionBuilder builder = Builders.region();
+    private Region messageToRegion(Message message) {
+        Region region = message.getBody(Region.class);
+        if (region == null) {
+            Map headers = message.getHeaders();
+            RegionBuilder builder = Builders.region();
 
-			if(headers.containsKey(KeystoneConstants.DESCRIPTION))
-			builder.description(message.getHeader(KeystoneConstants.DESCRIPTION, String.class));
+            if (headers.containsKey(KeystoneConstants.DESCRIPTION)) {
+                builder.description(message.getHeader(KeystoneConstants.DESCRIPTION, String.class));
+            }
 
-			region = builder.build();
-		}
+            region = builder.build();
+        }
 
-		return region;
-	}
+        return region;
+    }
 }

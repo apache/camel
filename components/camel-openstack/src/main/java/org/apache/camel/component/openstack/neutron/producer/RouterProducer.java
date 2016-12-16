@@ -16,13 +16,15 @@
  */
 package org.apache.camel.component.openstack.neutron.producer;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
 import org.apache.camel.component.openstack.neutron.NeutronConstants;
 import org.apache.camel.component.openstack.neutron.NeutronEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
@@ -31,116 +33,114 @@ import org.openstack4j.model.network.Router;
 import org.openstack4j.model.network.RouterInterface;
 import org.openstack4j.model.network.builder.RouterBuilder;
 
-import java.util.List;
-import java.util.Map;
-
 public class RouterProducer extends AbstractOpenstackProducer {
 
-	public RouterProducer(NeutronEndpoint endpoint, OSClient client) {
-		super(endpoint, client);
-	}
+    public RouterProducer(NeutronEndpoint endpoint, OSClient client) {
+        super(endpoint, client);
+    }
 
-	@Override
-	public void process(Exchange exchange) throws Exception {
-		final String operation = getOperation(exchange);
-		switch (operation) {
-			case NeutronConstants.CREATE:
-				doCreate(exchange);
-				break;
-			case NeutronConstants.GET:
-				doGet(exchange);
-				break;
-			case NeutronConstants.GET_ALL:
-				doGetAll(exchange);
-				break;
-			case NeutronConstants.UPDATE:
-				doUpdate(exchange);
-				break;
-			case NeutronConstants.DELETE:
-				doDelete(exchange);
-				break;
-			case NeutronConstants.ATTACH_INTERFACE:
-				doAttach(exchange);
-				break;
-			case NeutronConstants.DETACH_INTERFACE:
-				doDetach(exchange);
-				break;
-			default:
-				throw new IllegalArgumentException("Unsuproutered operation " + operation);
-		}
-	}
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        final String operation = getOperation(exchange);
+        switch (operation) {
+        case NeutronConstants.CREATE:
+            doCreate(exchange);
+            break;
+        case NeutronConstants.GET:
+            doGet(exchange);
+            break;
+        case NeutronConstants.GET_ALL:
+            doGetAll(exchange);
+            break;
+        case NeutronConstants.UPDATE:
+            doUpdate(exchange);
+            break;
+        case NeutronConstants.DELETE:
+            doDelete(exchange);
+            break;
+        case NeutronConstants.ATTACH_INTERFACE:
+            doAttach(exchange);
+            break;
+        case NeutronConstants.DETACH_INTERFACE:
+            doDetach(exchange);
+            break;
+        default:
+            throw new IllegalArgumentException("Unsuproutered operation " + operation);
+        }
+    }
 
-	private void doCreate(Exchange exchange) {
-		final Router in = messageToRouter(exchange.getIn());
-		final Router out = os.networking().router().create(in);
-		exchange.getIn().setBody(out);
-	}
+    private void doCreate(Exchange exchange) {
+        final Router in = messageToRouter(exchange.getIn());
+        final Router out = os.networking().router().create(in);
+        exchange.getIn().setBody(out);
+    }
 
-	private void doGet(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String id = msg.getHeader(NeutronConstants.ID, msg.getHeader(NeutronConstants.ROUTER_ID, String.class), String.class);
-		ObjectHelper.notEmpty(id, "Router ID");
-		final Router result = os.networking().router().get(id);
-		msg.setBody(result);
-	}
+    private void doGet(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String id = msg.getHeader(NeutronConstants.ID, msg.getHeader(NeutronConstants.ROUTER_ID, String.class), String.class);
+        ObjectHelper.notEmpty(id, "Router ID");
+        final Router result = os.networking().router().get(id);
+        msg.setBody(result);
+    }
 
-	private void doGetAll(Exchange exchange) {
-		final List<? extends Router> out = os.networking().router().list();
-		exchange.getIn().setBody(out);
-	}
+    private void doGetAll(Exchange exchange) {
+        final List<? extends Router> out = os.networking().router().list();
+        exchange.getIn().setBody(out);
+    }
 
-	private void doUpdate(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final Router router = messageToRouter(msg);
-		final Router updatedRouter = os.networking().router().update(router);
-		msg.setBody(updatedRouter);
-	}
+    private void doUpdate(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final Router router = messageToRouter(msg);
+        final Router updatedRouter = os.networking().router().update(router);
+        msg.setBody(updatedRouter);
+    }
 
-	private void doDelete(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String id = msg.getHeader(NeutronConstants.ID, msg.getHeader(NeutronConstants.ROUTER_ID, String.class), String.class);
-		ObjectHelper.notEmpty(id, "Router ID");
-		final ActionResponse response = os.networking().router().delete(id);
-		checkFailure(response, msg, "Delete router with ID " + id);
-	}
+    private void doDelete(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String id = msg.getHeader(NeutronConstants.ID, msg.getHeader(NeutronConstants.ROUTER_ID, String.class), String.class);
+        ObjectHelper.notEmpty(id, "Router ID");
+        final ActionResponse response = os.networking().router().delete(id);
+        checkFailure(response, msg, "Delete router with ID " + id);
+    }
 
-	private void doDetach(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String routerId = msg.getHeader(NeutronConstants.ROUTER_ID, String.class);
-		final String subnetId = msg.getHeader(NeutronConstants.SUBNET_ID, String.class);
-		final String portId = msg.getHeader(NeutronConstants.PORT_ID, String.class);
-		ObjectHelper.notEmpty(routerId, "Router ID");
-		RouterInterface iface = os.networking().router().detachInterface(routerId, subnetId, portId);
-		msg.setBody(iface);
-	}
+    private void doDetach(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String routerId = msg.getHeader(NeutronConstants.ROUTER_ID, String.class);
+        final String subnetId = msg.getHeader(NeutronConstants.SUBNET_ID, String.class);
+        final String portId = msg.getHeader(NeutronConstants.PORT_ID, String.class);
+        ObjectHelper.notEmpty(routerId, "Router ID");
+        RouterInterface iface = os.networking().router().detachInterface(routerId, subnetId, portId);
+        msg.setBody(iface);
+    }
 
-	private void doAttach(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String routerId = msg.getHeader(NeutronConstants.ROUTER_ID, String.class);
-		final String subnetPortId = msg.getHeader(NeutronConstants.SUBNET_ID, msg.getHeader(NeutronConstants.PORT_ID), String.class);
-		final AttachInterfaceType type = msg.getHeader(NeutronConstants.ITERFACE_TYPE, AttachInterfaceType.class);
-		ObjectHelper.notEmpty(routerId, "Router ID");
-		ObjectHelper.notEmpty(subnetPortId, "Subnet/Port ID");
-		ObjectHelper.notNull(type, "AttachInterfaceType ");
-		RouterInterface routerInterface = os.networking().router().attachInterface(routerId, type, subnetPortId);
-		msg.setBody(routerInterface);
-	}
+    private void doAttach(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String routerId = msg.getHeader(NeutronConstants.ROUTER_ID, String.class);
+        final String subnetPortId = msg.getHeader(NeutronConstants.SUBNET_ID, msg.getHeader(NeutronConstants.PORT_ID), String.class);
+        final AttachInterfaceType type = msg.getHeader(NeutronConstants.ITERFACE_TYPE, AttachInterfaceType.class);
+        ObjectHelper.notEmpty(routerId, "Router ID");
+        ObjectHelper.notEmpty(subnetPortId, "Subnet/Port ID");
+        ObjectHelper.notNull(type, "AttachInterfaceType ");
+        RouterInterface routerInterface = os.networking().router().attachInterface(routerId, type, subnetPortId);
+        msg.setBody(routerInterface);
+    }
 
-	private Router messageToRouter(Message message) {
-		Router router = message.getBody(Router.class);
+    private Router messageToRouter(Message message) {
+        Router router = message.getBody(Router.class);
 
-		if (router == null) {
-			Map headers = message.getHeaders();
-			RouterBuilder builder = Builders.router();
+        if (router == null) {
+            Map headers = message.getHeaders();
+            RouterBuilder builder = Builders.router();
 
-			ObjectHelper.notEmpty(message.getHeader(NeutronConstants.NAME, String.class), "Name");
-			builder.name(message.getHeader(NeutronConstants.NAME, String.class));
+            ObjectHelper.notEmpty(message.getHeader(NeutronConstants.NAME, String.class), "Name");
+            builder.name(message.getHeader(NeutronConstants.NAME, String.class));
 
-			if (headers.containsKey(NeutronConstants.TENANT_ID))
-				builder.tenantId(message.getHeader(NeutronConstants.TENANT_ID, String.class));
+            if (headers.containsKey(NeutronConstants.TENANT_ID)) {
+                builder.tenantId(message.getHeader(NeutronConstants.TENANT_ID, String.class));
+            }
 
-			router = builder.build();
-		}
-		return router;
-	}
+            router = builder.build();
+        }
+        return router;
+    }
 }

@@ -18,35 +18,29 @@ package org.apache.camel.component.openstack.nova;
 
 import org.apache.camel.component.openstack.common.OpenstackConstants;
 
-public final class  NovaConstants extends OpenstackConstants{
+public final class NovaConstants extends OpenstackConstants {
+    public static final String NOVA_SUBSYSTEM_FLAVORS = "flavors";
+    public static final String NOVA_SUBSYSTEM_SERVERS = "servers";
+    public static final String NOVA_SUBSYSTEM_KEYPAIRS = "keypairs";
 
-	/*****************************************
-	 * 		constants for options			 *
-	 *****************************************/
-	public static final String NOVA_SUBSYSTEM_FLAVORS = "flavors";
-	public static final String NOVA_SUBSYSTEM_SERVERS = "servers";
-	public static final String NOVA_SUBSYSTEM_KEYPAIRS = "keypairs";
+    public static final String FLAVOR_ID = "FlavorId";
 
+    //flavor
+    public static final String RAM = "RAM";
+    public static final String VCPU = "VCPU";
+    public static final String DISK = "disk";
+    public static final String SWAP = "swap";
+    public static final String RXTXFACTOR = "rxtxFactor";
 
-	public static final String FLAVOR_ID = "FlavorId";
+    //server
+    public static final String ADMIN_PASSWORD = "AdminPassword";
+    public static final String IMAGE_ID = "ImageId";
+    public static final String KEYPAIR_NAME = "KeypairName";
+    public static final String NETWORK = "NetworkId";
 
-	//flavor
-	public static final String RAM = "RAM";
-	public static final String VCPU = "VCPU";
-	public static final String DISK = "disk";
-	public static final String SWAP = "swap";
-	public static final String RXTXFACTOR = "rxtxFactor";
+    //server
+    public static final String CREATE_SNAPSHOT = "createSnapshot";
+    public static final String ACTION = "action";
 
-	//server
-	public static final String ADMIN_PASSWORD = "AdminPassword";
-	public static final String IMAGE_ID = "ImageId";
-	public static final String KEYPAIR_NAME = "KeypairName";
-	public static final String NETWORK = "NetworkId";
-
-	/*****************************************
-	 * constants for operations				 *
-	 *****************************************/
-	//server
-	public static final String CREATE_SNAPSHOT = "createSnapshot";
-	public static final String ACTION= "action";
+    private NovaConstants() { }
 }

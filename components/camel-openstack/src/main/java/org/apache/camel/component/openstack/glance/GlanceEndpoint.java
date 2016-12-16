@@ -27,135 +27,135 @@ import org.openstack4j.core.transport.Config;
 @UriEndpoint(scheme = "openstack-glance", title = "OpenStack-Glance", syntax = "openstack-glance:host", label = "cloud, virtualization")
 public class GlanceEndpoint extends AbstractOpenstackEndpoint {
 
-	@UriPath
-	@Metadata(required = "true")
-	private String host;
+    @UriPath
+    @Metadata(required = "true")
+    private String host;
 
-	@UriParam(defaultValue = "default")
-	private String domain = "default";
+    @UriParam(defaultValue = "default")
+    private String domain = "default";
 
-	@UriParam
-	@Metadata(required = "true")
-	private String project;
+    @UriParam
+    @Metadata(required = "true")
+    private String project;
 
-	@UriParam
-	private String operation;
+    @UriParam
+    private String operation;
 
-	@UriParam
-	@Metadata(required = "true")
-	private String username;
+    @UriParam
+    @Metadata(required = "true")
+    private String username;
 
-	@UriParam
-	@Metadata(required = "true")
-	private String password;
+    @UriParam
+    @Metadata(required = "true")
+    private String password;
 
-	@UriParam
-	private Config config;
+    @UriParam
+    private Config config;
 
-	@UriParam(defaultValue = v3, enums = "v2, v3")
-	private String apiVersion = v3;
+    @UriParam(defaultValue = V3, enums = "V2, V3")
+    private String apiVersion = V3;
 
-	public GlanceEndpoint(String uri, GlanceComponent component) {
-		super(uri, component);
-	}
+    public GlanceEndpoint(String uri, GlanceComponent component) {
+        super(uri, component);
+    }
 
-	@Override
-	public Producer createProducer() throws Exception {
-		return new GlanceProducer(this, createClient());
-	}
+    @Override
+    public Producer createProducer() throws Exception {
+        return new GlanceProducer(this, createClient());
+    }
 
-	@Override
-	public String getDomain() {
-		return domain;
-	}
+    @Override
+    public String getDomain() {
+        return domain;
+    }
 
-	/**
-	 * Authentication domain
-	 */
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
+    /**
+     * Authentication domain
+     */
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
 
-	@Override
-	public String getProject() {
-		return project;
-	}
+    @Override
+    public String getProject() {
+        return project;
+    }
 
-	/**
-	 * The project ID
-	 */
-	public void setProject(String project) {
-		this.project = project;
-	}
+    /**
+     * The project ID
+     */
+    public void setProject(String project) {
+        this.project = project;
+    }
 
-	@Override
-	public String getOperation() {
-		return operation;
-	}
+    @Override
+    public String getOperation() {
+        return operation;
+    }
 
-	/**
-	 * The operation to do
-	 */
-	public void setOperation(String operation) {
-		this.operation = operation;
-	}
+    /**
+     * The operation to do
+     */
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
 
-	@Override
-	public String getUsername() {
-		return username;
-	}
+    @Override
+    public String getUsername() {
+        return username;
+    }
 
-	/**
-	 * OpenStack username
-	 */
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    /**
+     * OpenStack username
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	@Override
-	public String getPassword() {
-		return password;
-	}
+    @Override
+    public String getPassword() {
+        return password;
+    }
 
-	/**
-	 * OpenStack password
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    /**
+     * OpenStack password
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	@Override
-	public String getHost() {
-		return host;
-	}
+    @Override
+    public String getHost() {
+        return host;
+    }
 
-	/**
-	 * OpenStack host url
-	 */
-	public void setHost(String host) {
-		this.host = host;
-	}
+    /**
+     * OpenStack host url
+     */
+    public void setHost(String host) {
+        this.host = host;
+    }
 
-	public Config getConfig() {
-		return config;
-	}
+    public Config getConfig() {
+        return config;
+    }
 
-	/**
-	 *OpenStack configuration
-	 */
-	public void setConfig(Config config) {
-		this.config = config;
-	}
+    /**
+     *OpenStack configuration
+     */
+    public void setConfig(Config config) {
+        this.config = config;
+    }
 
-	public String getApiVersion() {
-		return apiVersion;
-	}
+    public String getApiVersion() {
+        return apiVersion;
+    }
 
-	/**
-	 * OpenStack API version
-	 */
-	public void setApiVersion(String apiVersion) {
-		this.apiVersion = apiVersion;
-	}
+    /**
+     * OpenStack API version
+     */
+    public void setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
+    }
 }
 

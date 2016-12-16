@@ -16,13 +16,15 @@
  */
 package org.apache.camel.component.openstack.nova.producer;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
 import org.apache.camel.component.openstack.nova.NovaConstants;
 import org.apache.camel.component.openstack.nova.NovaEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
@@ -31,123 +33,125 @@ import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.compute.ServerCreate;
 import org.openstack4j.model.compute.builder.ServerCreateBuilder;
 
-import java.util.List;
-import java.util.Map;
-
 public class ServerProducer extends AbstractOpenstackProducer {
 
-	public ServerProducer(NovaEndpoint endpoint, OSClient client) {
-		super(endpoint, client);
-	}
+    public ServerProducer(NovaEndpoint endpoint, OSClient client) {
+        super(endpoint, client);
+    }
 
-	@Override
-	public void process(Exchange exchange) throws Exception {
-		final String operation = getOperation(exchange);
-		switch (operation) {
-			case NovaConstants.CREATE:
-				doCreate(exchange);
-				break;
-			case NovaConstants.CREATE_SNAPSHOT:
-				doCreateSnapshot(exchange);
-				break;
-			case NovaConstants.GET:
-				doGet(exchange);
-				break;
-			case NovaConstants.GET_ALL:
-				doGetAll(exchange);
-			case NovaConstants.DELETE:
-				doDelete(exchange);
-				break;
-			case NovaConstants.ACTION:
-				doAction(exchange);
-				break;
-			default:
-				//execute action when Operation:Action header is not set but
-				// Action is properly specified
-				if (exchange.getIn().getHeaders().containsKey(NovaConstants.ACTION)) {
-					doAction(exchange);
-				}
-				else {
-					throw new IllegalArgumentException("Unsupported operation " + operation);
-				}
-		}
-	}
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        final String operation = getOperation(exchange);
+        switch (operation) {
+        case NovaConstants.CREATE:
+            doCreate(exchange);
+            break;
+        case NovaConstants.CREATE_SNAPSHOT:
+            doCreateSnapshot(exchange);
+            break;
+        case NovaConstants.GET:
+            doGet(exchange);
+            break;
+        case NovaConstants.GET_ALL:
+            doGetAll(exchange);
+            break;
+        case NovaConstants.DELETE:
+            doDelete(exchange);
+            break;
+        case NovaConstants.ACTION:
+            doAction(exchange);
+            break;
+        default:
+            //execute action when Operation:Action header is not set but
+            // Action is properly specified
+            if (exchange.getIn().getHeaders().containsKey(NovaConstants.ACTION)) {
+                doAction(exchange);
+            } else {
+                throw new IllegalArgumentException("Unsupported operation " + operation);
+            }
+        }
+    }
 
-	private void doCreate(Exchange exchange) {
-		final ServerCreate in = messageToServer(exchange.getIn());
-		final Server out = os.compute().servers().boot(in);
-		exchange.getIn().setBody(out);
-	}
+    private void doCreate(Exchange exchange) {
+        final ServerCreate in = messageToServer(exchange.getIn());
+        final Server out = os.compute().servers().boot(in);
+        exchange.getIn().setBody(out);
+    }
 
-	private void doCreateSnapshot(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String serverId = msg.getHeader(NovaConstants.ID, String.class);
-		final String name = msg.getHeader(NovaConstants.NAME, String.class);
-		ObjectHelper.notEmpty(serverId, "Server ID");
-		ObjectHelper.notEmpty(name, "VolumeSnapshot name");
+    private void doCreateSnapshot(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String serverId = msg.getHeader(NovaConstants.ID, String.class);
+        final String name = msg.getHeader(NovaConstants.NAME, String.class);
+        ObjectHelper.notEmpty(serverId, "Server ID");
+        ObjectHelper.notEmpty(name, "VolumeSnapshot name");
 
-		final String snapshotId = os.compute().servers().createSnapshot(serverId, name);
-		msg.setBody(snapshotId);
-	}
+        final String snapshotId = os.compute().servers().createSnapshot(serverId, name);
+        msg.setBody(snapshotId);
+    }
 
-	private void doGet(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String serverId = msg.getHeader(NovaConstants.ID, String.class);
-		ObjectHelper.notEmpty(serverId, "Server ID");
-		final Server result = os.compute().servers().get(serverId);
-		msg.setBody(result);
-	}
+    private void doGet(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String serverId = msg.getHeader(NovaConstants.ID, String.class);
+        ObjectHelper.notEmpty(serverId, "Server ID");
+        final Server result = os.compute().servers().get(serverId);
+        msg.setBody(result);
+    }
 
-	private void doGetAll(Exchange exchange) {
-		final List<? extends Server> out = os.compute().servers().list();
-		exchange.getIn().setBody(out);
-	}
+    private void doGetAll(Exchange exchange) {
+        final List<? extends Server> out = os.compute().servers().list();
+        exchange.getIn().setBody(out);
+    }
 
-	private void doAction(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final Action action = msg.getHeader(NovaConstants.ACTION, Action.class);
-		final String serverId = msg.getHeader(NovaConstants.ID, String.class);
-		ObjectHelper.notNull(action, "Server action");
-		ObjectHelper.notEmpty(serverId, "Server ID");
-		final ActionResponse response = os.compute().servers().action(serverId, action);
-		checkFailure(response, msg, "Performing action " + action.name());
-	}
+    private void doAction(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final Action action = msg.getHeader(NovaConstants.ACTION, Action.class);
+        final String serverId = msg.getHeader(NovaConstants.ID, String.class);
+        ObjectHelper.notNull(action, "Server action");
+        ObjectHelper.notEmpty(serverId, "Server ID");
+        final ActionResponse response = os.compute().servers().action(serverId, action);
+        checkFailure(response, msg, "Performing action " + action.name());
+    }
 
-	private void doDelete(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String serverId = msg.getHeader(NovaConstants.ID, String.class);
-		ObjectHelper.notEmpty(serverId, "Server ID");
-		final ActionResponse response = os.compute().servers().delete(serverId);
-		checkFailure(response, msg, "Delete server with ID " + serverId);
-	}
+    private void doDelete(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String serverId = msg.getHeader(NovaConstants.ID, String.class);
+        ObjectHelper.notEmpty(serverId, "Server ID");
+        final ActionResponse response = os.compute().servers().delete(serverId);
+        checkFailure(response, msg, "Delete server with ID " + serverId);
+    }
 
-	private ServerCreate messageToServer(Message message) {
-		ServerCreate serverCreate = message.getBody(ServerCreate.class);
+    private ServerCreate messageToServer(Message message) {
+        ServerCreate serverCreate = message.getBody(ServerCreate.class);
 
-		if (serverCreate == null) {
-			Map headers = message.getHeaders();
-			ServerCreateBuilder builder = Builders.server();
+        if (serverCreate == null) {
+            Map headers = message.getHeaders();
+            ServerCreateBuilder builder = Builders.server();
 
-			ObjectHelper.notEmpty(message.getHeader(NovaConstants.NAME, String.class), "Name");
-			builder.name(message.getHeader(NovaConstants.NAME, String.class));
+            ObjectHelper.notEmpty(message.getHeader(NovaConstants.NAME, String.class), "Name");
+            builder.name(message.getHeader(NovaConstants.NAME, String.class));
 
-			if (headers.containsKey(NovaConstants.IMAGE_ID))
-				builder.image(message.getHeader(NovaConstants.IMAGE_ID, String.class));
+            if (headers.containsKey(NovaConstants.IMAGE_ID)) {
+                builder.image(message.getHeader(NovaConstants.IMAGE_ID, String.class));
+            }
 
-			if(headers.containsKey(NovaConstants.NETWORK))
-				builder.networks(message.getHeader(NovaConstants.NETWORK, List.class));
+            if (headers.containsKey(NovaConstants.NETWORK)) {
+                builder.networks(message.getHeader(NovaConstants.NETWORK, List.class));
+            }
 
-			if (headers.containsKey(NovaConstants.FLAVOR_ID))
-				builder.flavor(message.getHeader(NovaConstants.FLAVOR_ID, String.class));
+            if (headers.containsKey(NovaConstants.FLAVOR_ID)) {
+                builder.flavor(message.getHeader(NovaConstants.FLAVOR_ID, String.class));
+            }
 
-			if (headers.containsKey(NovaConstants.KEYPAIR_NAME))
-				builder.keypairName(message.getHeader(NovaConstants.KEYPAIR_NAME, String.class));
+            if (headers.containsKey(NovaConstants.KEYPAIR_NAME)) {
+                builder.keypairName(message.getHeader(NovaConstants.KEYPAIR_NAME, String.class));
+            }
 
-			if (headers.containsKey(NovaConstants.ADMIN_PASSWORD))
-				builder.addAdminPass(message.getHeader(NovaConstants.ADMIN_PASSWORD, String.class));
+            if (headers.containsKey(NovaConstants.ADMIN_PASSWORD)) {
+                builder.addAdminPass(message.getHeader(NovaConstants.ADMIN_PASSWORD, String.class));
+            }
 
-			serverCreate = builder.build();
-		}
-		return serverCreate;
-	}
+            serverCreate = builder.build();
+        }
+        return serverCreate;
+    }
 }

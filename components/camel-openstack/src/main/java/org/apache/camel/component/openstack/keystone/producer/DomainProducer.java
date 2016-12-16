@@ -16,99 +16,100 @@
  */
 package org.apache.camel.component.openstack.keystone.producer;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.openstack.keystone.KeystoneConstants;
 import org.apache.camel.component.openstack.keystone.KeystoneEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.identity.v3.Domain;
 import org.openstack4j.model.identity.v3.builder.DomainBuilder;
 
-import java.util.List;
-import java.util.Map;
-
 public class DomainProducer extends AbstractKeystoneProducer {
 
-	public DomainProducer(KeystoneEndpoint endpoint, OSClient client) {
-		super(endpoint, client);
-	}
+    public DomainProducer(KeystoneEndpoint endpoint, OSClient client) {
+        super(endpoint, client);
+    }
 
-	@Override public void process(Exchange exchange) throws Exception {
-		final String operation = getOperation(exchange);
-		switch (operation) {
-			case KeystoneConstants.CREATE:
-				doCreate(exchange);
-				break;
-			case KeystoneConstants.GET:
-				doGet(exchange);
-				break;
-			case KeystoneConstants.GET_ALL:
-				doGetAll(exchange);
-				break;
-			case KeystoneConstants.UPDATE:
-				doUpdate(exchange);
-				break;
-			case KeystoneConstants.DELETE:
-				doDelete(exchange);
-				break;
-			default:
-				throw new IllegalArgumentException("Unsupported operation " + operation);
-		}
-	}
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        final String operation = getOperation(exchange);
+        switch (operation) {
+        case KeystoneConstants.CREATE:
+            doCreate(exchange);
+            break;
+        case KeystoneConstants.GET:
+            doGet(exchange);
+            break;
+        case KeystoneConstants.GET_ALL:
+            doGetAll(exchange);
+            break;
+        case KeystoneConstants.UPDATE:
+            doUpdate(exchange);
+            break;
+        case KeystoneConstants.DELETE:
+            doDelete(exchange);
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported operation " + operation);
+        }
+    }
 
-	private void doCreate(Exchange exchange) {
-		final Domain in = messageToDomain(exchange.getIn());
-		final Domain out = osV3Client.identity().domains().create(in);
-		exchange.getIn().setBody(out);
-	}
+    private void doCreate(Exchange exchange) {
+        final Domain in = messageToDomain(exchange.getIn());
+        final Domain out = osV3Client.identity().domains().create(in);
+        exchange.getIn().setBody(out);
+    }
 
-	private void doGet(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String id = msg.getHeader(KeystoneConstants.ID, msg.getHeader(KeystoneConstants.DOMAIN_ID, String.class), String.class);
-		ObjectHelper.notEmpty(id, "Domain ID");
-		final Domain out = osV3Client.identity().domains().get(id);
-		exchange.getIn().setBody(out);
-	}
+    private void doGet(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String id = msg.getHeader(KeystoneConstants.ID, msg.getHeader(KeystoneConstants.DOMAIN_ID, String.class), String.class);
+        ObjectHelper.notEmpty(id, "Domain ID");
+        final Domain out = osV3Client.identity().domains().get(id);
+        exchange.getIn().setBody(out);
+    }
 
-	private void doGetAll(Exchange exchange) {
-		final List<? extends Domain> out = osV3Client.identity().domains().list();
-		exchange.getIn().setBody(out);
-	}
+    private void doGetAll(Exchange exchange) {
+        final List<? extends Domain> out = osV3Client.identity().domains().list();
+        exchange.getIn().setBody(out);
+    }
 
-	private void doUpdate(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final Domain in = messageToDomain(msg);
-		final Domain out = osV3Client.identity().domains().update(in);
-		msg.setBody(out);
-	}
+    private void doUpdate(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final Domain in = messageToDomain(msg);
+        final Domain out = osV3Client.identity().domains().update(in);
+        msg.setBody(out);
+    }
 
-	private void doDelete(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String id = msg.getHeader(KeystoneConstants.ID, msg.getHeader(KeystoneConstants.DOMAIN_ID, String.class), String.class);
-		ObjectHelper.notEmpty(id, "Domain ID");
-		final ActionResponse response = osV3Client.identity().domains().delete(id);
-		checkFailure(response, msg, "Delete domain" + id);
-	}
+    private void doDelete(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String id = msg.getHeader(KeystoneConstants.ID, msg.getHeader(KeystoneConstants.DOMAIN_ID, String.class), String.class);
+        ObjectHelper.notEmpty(id, "Domain ID");
+        final ActionResponse response = osV3Client.identity().domains().delete(id);
+        checkFailure(response, msg, "Delete domain" + id);
+    }
 
-	private Domain messageToDomain(Message message) {
-		Domain domain = message.getBody(Domain.class);
-		if(domain == null) {
-			Map headers = message.getHeaders();
-			DomainBuilder builder = Builders.domain();
+    private Domain messageToDomain(Message message) {
+        Domain domain = message.getBody(Domain.class);
+        if (domain == null) {
+            Map headers = message.getHeaders();
+            DomainBuilder builder = Builders.domain();
 
-			ObjectHelper.notEmpty(message.getHeader(KeystoneConstants.NAME, String.class), "Name");
-			builder.name(message.getHeader(KeystoneConstants.NAME, String.class));
+            ObjectHelper.notEmpty(message.getHeader(KeystoneConstants.NAME, String.class), "Name");
+            builder.name(message.getHeader(KeystoneConstants.NAME, String.class));
 
-			if (headers.containsKey(KeystoneConstants.DESCRIPTION))
-				builder.description(message.getHeader(KeystoneConstants.DESCRIPTION, String.class));
+            if (headers.containsKey(KeystoneConstants.DESCRIPTION)) {
+                builder.description(message.getHeader(KeystoneConstants.DESCRIPTION, String.class));
+            }
 
-			domain = builder.build();
-		}
+            domain = builder.build();
+        }
 
-		return domain;
-	}
+        return domain;
+    }
 }

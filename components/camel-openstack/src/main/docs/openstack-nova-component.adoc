@@ -54,7 +54,7 @@ The OpenStack-Nova component supports 13 endpoint options which are listed below
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | host | common |  | String | *Required* OpenStack host url
-| apiVersion | common | v3 | String | OpenStack API version
+| apiVersion | common | V3 | String | OpenStack API version
 | config | common |  | Config | OpenStack configuration
 | domain | common | default | String | Authentication domain
 | operation | common |  | String | The operation to do

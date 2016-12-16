@@ -16,17 +16,18 @@
  */
 package org.apache.camel.component.openstack.glance;
 
+import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
-import java.util.Map;
-
 public class GlanceComponent extends DefaultComponent {
 
-	@Override protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-		GlanceEndpoint endpoint = new GlanceEndpoint(uri, this);
-		setProperties(endpoint, parameters);
-		endpoint.setHost(remaining);
-		return endpoint;
-	}
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        GlanceEndpoint endpoint = new GlanceEndpoint(uri, this);
+        setProperties(endpoint, parameters);
+        endpoint.setHost(remaining);
+        return endpoint;
+    }
 }
