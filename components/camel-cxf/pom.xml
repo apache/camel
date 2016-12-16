@@ -15,7 +15,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -113,9 +114,9 @@
       <version>${cxf-version}</version>
     </dependency>
     <dependency>
-        <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-rt-rs-security-oauth</artifactId>
-        <version>${cxf-version}</version>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-security-oauth</artifactId>
+      <version>${cxf-version}</version>
     </dependency>
 
     <dependency>
@@ -161,12 +162,12 @@
       <artifactId>camel-core-xml</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <!-- Try to test convert PayLoad into POJO -->
     <dependency>
-       <groupId>org.apache.camel</groupId>
-       <artifactId>camel-jaxb</artifactId>
-       <scope>test</scope>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jaxb</artifactId>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -184,25 +185,25 @@
 
     <!-- test for the cxf jms transport -->
     <dependency>
-       <groupId>org.apache.activemq</groupId>
-       <artifactId>activemq-broker</artifactId>
-       <scope>test</scope>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-broker</artifactId>
+      <scope>test</scope>
     </dependency>
-    
+
     <!-- test for cxf failover feature -->
-	<dependency>
-		<groupId>org.apache.cxf</groupId>
-		<artifactId>cxf-rt-features-clustering</artifactId>
-		<version>${cxf-version}</version>
-                <scope>test</scope>
-	</dependency>
-    
     <dependency>
-        <groupId>org.apache.activemq</groupId>
-        <artifactId>activemq-kahadb-store</artifactId>
-        <scope>test</scope>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-features-clustering</artifactId>
+      <version>${cxf-version}</version>
+      <scope>test</scope>
     </dependency>
-    
+
+    <dependency>
+      <groupId>org.apache.activemq</groupId>
+      <artifactId>activemq-kahadb-store</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-jms</artifactId>
@@ -215,7 +216,39 @@
       <artifactId>cxf-rt-transports-http-jetty</artifactId>
       <version>${cxf-version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-server</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-util</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-io</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-security</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-continuation</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-http</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jetty9</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-soap</artifactId>
@@ -233,13 +266,13 @@
       <artifactId>httpclient</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
-    	<groupId>org.apache.httpcomponents</groupId>
-    	<artifactId>httpmime</artifactId>
-      	<scope>test</scope>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpmime</artifactId>
+      <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
@@ -262,7 +295,7 @@
       <version>${cxf-version}</version>
       <scope>test</scope>
     </dependency>
-    
+
     <!-- this dependency is just for testing -->
     <dependency>
       <groupId>org.apache.cxf</groupId>
@@ -270,7 +303,7 @@
       <version>${cxf-version}</version>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-security</artifactId>
@@ -307,7 +340,7 @@
       <artifactId>cxf-rt-rs-extension-providers</artifactId>
       <version>${cxf-version}</version>
       <scope>test</scope>
-    </dependency>  
+    </dependency>
     <dependency>
       <groupId>org.codehaus.jettison</groupId>
       <artifactId>jettison</artifactId>
@@ -334,7 +367,7 @@
         <configuration>
           <childDelegation>false</childDelegation>
           <forkCount>1</forkCount>
-	        <reuseForks>true</reuseForks>
+          <reuseForks>true</reuseForks>
           <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
           <reportFormat>brief</reportFormat>
           <useFile>false</useFile>
@@ -381,7 +414,7 @@
             <configuration>
               <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
               <defaultOptions>
-                  <frontEnd>jaxws21</frontEnd>
+                <frontEnd>jaxws21</frontEnd>
               </defaultOptions>
               <wsdlOptions>
                 <wsdlOption>
