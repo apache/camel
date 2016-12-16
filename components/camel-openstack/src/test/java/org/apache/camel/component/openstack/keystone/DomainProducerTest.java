@@ -16,154 +16,150 @@
  */
 package org.apache.camel.component.openstack.keystone;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.camel.component.openstack.keystone.producer.DomainProducer;
 import org.apache.camel.component.openstack.neutron.NeutronConstants;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.openstack4j.api.Builders;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.identity.v3.Domain;
 import org.openstack4j.model.network.Network;
-import org.openstack4j.model.network.Router;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class DomainProducerTest extends KeystoneProducerTestSupport {
 
-	private Domain dummyDomain;
+    private Domain dummyDomain;
 
-	@Mock
-	private Domain testOSdomain;
+    @Mock
+    private Domain testOSdomain;
 
-	@Before
-	public void setUp() {
-		producer = new DomainProducer(endpoint, client);
-		
-		when(domainService.create(any(Domain.class))).thenReturn(testOSdomain);
-		when(domainService.get(anyString())).thenReturn(testOSdomain);
+    @Before
+    public void setUp() {
+        producer = new DomainProducer(endpoint, client);
 
-		List<Domain> getAllList = new ArrayList<>();
-		getAllList.add(testOSdomain);
-		getAllList.add(testOSdomain);
-		doReturn(getAllList).when(domainService).list();
-		
-		dummyDomain = createDomain();
+        when(domainService.create(any(Domain.class))).thenReturn(testOSdomain);
+        when(domainService.get(anyString())).thenReturn(testOSdomain);
 
-		when(testOSdomain.getName()).thenReturn(dummyDomain.getName());
-		when(testOSdomain.getDescription()).thenReturn(dummyDomain.getDescription());
-	}
-	
-	@Test
-	public void createTest() throws Exception {
-		msg.setHeader(KeystoneConstants.OPERATION, KeystoneConstants.CREATE);
-		msg.setHeader(KeystoneConstants.NAME, dummyDomain.getName());
-		msg.setHeader(KeystoneConstants.DESCRIPTION, dummyDomain.getDescription());
+        List<Domain> getAllList = new ArrayList<>();
+        getAllList.add(testOSdomain);
+        getAllList.add(testOSdomain);
+        doReturn(getAllList).when(domainService).list();
+
+        dummyDomain = createDomain();
+
+        when(testOSdomain.getName()).thenReturn(dummyDomain.getName());
+        when(testOSdomain.getDescription()).thenReturn(dummyDomain.getDescription());
+    }
+
+    @Test
+    public void createTest() throws Exception {
+        msg.setHeader(KeystoneConstants.OPERATION, KeystoneConstants.CREATE);
+        msg.setHeader(KeystoneConstants.NAME, dummyDomain.getName());
+        msg.setHeader(KeystoneConstants.DESCRIPTION, dummyDomain.getDescription());
 
 
-		producer.process(exchange);
+        producer.process(exchange);
 
-		ArgumentCaptor<Domain> captor = ArgumentCaptor.forClass(Domain.class);
-		verify(domainService).create(captor.capture());
+        ArgumentCaptor<Domain> captor = ArgumentCaptor.forClass(Domain.class);
+        verify(domainService).create(captor.capture());
 
-		assertEqualsDomain(dummyDomain, captor.getValue());
-	}
+        assertEqualsDomain(dummyDomain, captor.getValue());
+    }
 
-	@Test
-	public void getTest() throws Exception {
-		final String id = "id";
-		msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.GET);
-		msg.setHeader(NeutronConstants.ID, id);
+    @Test
+    public void getTest() throws Exception {
+        final String id = "id";
+        msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.GET);
+        msg.setHeader(NeutronConstants.ID, id);
 
-		producer.process(exchange);
+        producer.process(exchange);
 
-		ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-		verify(domainService).get(captor.capture());
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        verify(domainService).get(captor.capture());
 
-		assertEquals(id, captor.getValue());
-		assertEqualsDomain(testOSdomain, msg.getBody(Domain.class));
-	}
+        assertEquals(id, captor.getValue());
+        assertEqualsDomain(testOSdomain, msg.getBody(Domain.class));
+    }
 
-	@Test
-	public void getAllTest() throws Exception {
-		msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.GET_ALL);
+    @Test
+    public void getAllTest() throws Exception {
+        msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.GET_ALL);
 
-		producer.process(exchange);
+        producer.process(exchange);
 
-		final List<Network> result = msg.getBody(List.class);
-		assertTrue(result.size() == 2);
-		assertEquals(testOSdomain, result.get(0));
-	}
+        final List<Network> result = msg.getBody(List.class);
+        assertTrue(result.size() == 2);
+        assertEquals(testOSdomain, result.get(0));
+    }
 
-	@Test
-	public void updateTest() throws Exception {
-		final String id = "myID";
-		msg.setHeader(KeystoneConstants.OPERATION, KeystoneConstants.UPDATE);
-		final String newName = "newName";
+    @Test
+    public void updateTest() throws Exception {
+        final String id = "myID";
+        msg.setHeader(KeystoneConstants.OPERATION, KeystoneConstants.UPDATE);
+        final String newName = "newName";
 
-		when(testOSdomain.getId()).thenReturn(id);
-		when(testOSdomain.getName()).thenReturn(newName);
-		when(testOSdomain.getDescription()).thenReturn("desc");
+        when(testOSdomain.getId()).thenReturn(id);
+        when(testOSdomain.getName()).thenReturn(newName);
+        when(testOSdomain.getDescription()).thenReturn("desc");
 
-		when(domainService.update(any(Domain.class))).thenReturn(testOSdomain);
-		msg.setBody(testOSdomain);
+        when(domainService.update(any(Domain.class))).thenReturn(testOSdomain);
+        msg.setBody(testOSdomain);
 
-		producer.process(exchange);
+        producer.process(exchange);
 
-		ArgumentCaptor<Domain> captor = ArgumentCaptor.forClass(Domain.class);
-		verify(domainService).update(captor.capture());
+        ArgumentCaptor<Domain> captor = ArgumentCaptor.forClass(Domain.class);
+        verify(domainService).update(captor.capture());
 
-		assertEqualsDomain(testOSdomain, captor.getValue());
-		assertNotNull(captor.getValue().getId());
-		assertEquals(newName, msg.getBody(Domain.class).getName());
-	}
-	
-	@Test
-	public void deleteTest() throws Exception {
-		when(domainService.delete(anyString())).thenReturn(ActionResponse.actionSuccess());
-		final String networkID = "myID";
-		msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.DELETE);
-		msg.setHeader(NeutronConstants.ID, networkID);
+        assertEqualsDomain(testOSdomain, captor.getValue());
+        assertNotNull(captor.getValue().getId());
+        assertEquals(newName, msg.getBody(Domain.class).getName());
+    }
 
-		producer.process(exchange);
+    @Test
+    public void deleteTest() throws Exception {
+        when(domainService.delete(anyString())).thenReturn(ActionResponse.actionSuccess());
+        final String networkID = "myID";
+        msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.DELETE);
+        msg.setHeader(NeutronConstants.ID, networkID);
 
-		ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
-		verify(domainService).delete(captor.capture());
-		assertEquals(networkID, captor.getValue());
-		assertFalse(msg.isFault());
+        producer.process(exchange);
 
-		//in case of failure
-		final String failureMessage = "fail";
-		when(domainService.delete(anyString())).thenReturn(ActionResponse.actionFailed(failureMessage, 404));
-		producer.process(exchange);
-		assertTrue(msg.isFault());
-		assertTrue(msg.getBody(String.class).contains(failureMessage));
-	}
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        verify(domainService).delete(captor.capture());
+        assertEquals(networkID, captor.getValue());
+        assertFalse(msg.isFault());
 
-	private void assertEqualsDomain(Domain old, Domain newDomain) {
-		assertEquals(old.getName(), newDomain.getName());
-		assertEquals(old.getDescription(), newDomain.getDescription());
-	}
+        //in case of failure
+        final String failureMessage = "fail";
+        when(domainService.delete(anyString())).thenReturn(ActionResponse.actionFailed(failureMessage, 404));
+        producer.process(exchange);
+        assertTrue(msg.isFault());
+        assertTrue(msg.getBody(String.class).contains(failureMessage));
+    }
 
-	private Domain createDomain() {
-		return Builders.domain()
-				.description("desc")
-				.name("domain Name").build();
-	}
+    private void assertEqualsDomain(Domain old, Domain newDomain) {
+        assertEquals(old.getName(), newDomain.getName());
+        assertEquals(old.getDescription(), newDomain.getDescription());
+    }
+
+    private Domain createDomain() {
+        return Builders.domain()
+                .description("desc")
+                .name("domain Name").build();
+    }
 
 }

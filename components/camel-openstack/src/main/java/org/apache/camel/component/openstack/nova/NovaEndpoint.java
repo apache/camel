@@ -25,164 +25,161 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-
 import org.openstack4j.core.transport.Config;
 
 @UriEndpoint(scheme = "openstack-nova", title = "OpenStack-Nova", syntax = "openstack-nova:host", label = "cloud, virtualization")
 public class NovaEndpoint extends AbstractOpenstackEndpoint {
 
-	@UriPath
-	@Metadata(required = "true")
-	private String host;
+    @UriParam(enums = "flavors, servers, keypairs")
+    @Metadata(required = "true")
+    String subsystem;
+    @UriPath
+    @Metadata(required = "true")
+    private String host;
+    @UriParam(defaultValue = "default")
+    private String domain = "default";
 
-	@UriParam (enums = "flavors, servers, keypairs")
-	@Metadata(required = "true")
-	String subsystem;
+    @UriParam
+    @Metadata(required = "true")
+    private String project;
 
-	@UriParam(defaultValue = "default")
-	private String domain = "default";
+    @UriParam
+    private String operation;
 
-	@UriParam
-	@Metadata(required = "true")
-	private String project;
+    @UriParam
+    @Metadata(required = "true")
+    private String username;
 
-	@UriParam
-	private String operation;
+    @UriParam
+    @Metadata(required = "true")
+    private String password;
 
-	@UriParam
-	@Metadata(required = "true")
-	private String username;
+    @UriParam
+    private Config config;
 
-	@UriParam
-	@Metadata(required = "true")
-	private String password;
+    @UriParam(defaultValue = V3, enums = "V2, V3")
+    private String apiVersion = V3;
 
-	@UriParam
-	private Config config;
+    public NovaEndpoint(String uri, NovaComponent component) {
+        super(uri, component);
+    }
 
-	@UriParam(defaultValue = v3, enums = "v2, v3")
-	private String apiVersion = v3;
+    @Override
+    public Producer createProducer() throws Exception {
+        switch (getSubsystem()) {
+        case NovaConstants.NOVA_SUBSYSTEM_FLAVORS:
+            return new FlavorsProducer(this, createClient());
+        case NovaConstants.NOVA_SUBSYSTEM_SERVERS:
+            return new ServerProducer(this, createClient());
+        case NovaConstants.NOVA_SUBSYSTEM_KEYPAIRS:
+            return new KeypairProducer(this, createClient());
+        default:
+            throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
+        }
+    }
 
-	public NovaEndpoint(String uri, NovaComponent component) {
-		super(uri, component);
-	}
+    public String getSubsystem() {
+        return subsystem;
+    }
 
-	@Override
-	public Producer createProducer() throws Exception {
-		switch (getSubsystem()) {
-			case NovaConstants.NOVA_SUBSYSTEM_FLAVORS:
-				return new FlavorsProducer(this, createClient());
-			case NovaConstants.NOVA_SUBSYSTEM_SERVERS:
-				return new ServerProducer(this, createClient());
-			case NovaConstants.NOVA_SUBSYSTEM_KEYPAIRS:
-				return new KeypairProducer(this, createClient());
-			default:
-				throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
-		}
-	}
+    /**
+     * OpenStack Nova subsystem
+     */
+    public void setSubsystem(String subsystem) {
+        this.subsystem = subsystem;
+    }
 
-	public String getSubsystem() {
-		return subsystem;
-	}
+    @Override
+    public String getDomain() {
+        return domain;
+    }
 
-	/**
-	 * OpenStack Nova subsystem
-	 */
-	public void setSubsystem(String subsystem) {
-		this.subsystem = subsystem;
-	}
+    /**
+     * Authentication domain
+     */
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
 
-	@Override
-	public String getDomain() {
-		return domain;
-	}
+    @Override
+    public String getProject() {
+        return project;
+    }
 
-	/**
-	 * Authentication domain
-	 */
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
+    /**
+     * The project ID
+     */
+    public void setProject(String project) {
+        this.project = project;
+    }
 
-	@Override
-	public String getProject() {
-		return project;
-	}
+    @Override
+    public String getOperation() {
+        return operation;
+    }
 
-	/**
-	 * The project ID
-	 */
-	public void setProject(String project) {
-		this.project = project;
-	}
+    /**
+     * The operation to do
+     */
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
 
-	@Override
-	public String getOperation() {
-		return operation;
-	}
+    @Override
+    public String getUsername() {
+        return username;
+    }
 
-	/**
-	 * The operation to do
-	 */
-	public void setOperation(String operation) {
-		this.operation = operation;
-	}
+    /**
+     * OpenStack username
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	@Override
-	public String getUsername() {
-		return username;
-	}
+    @Override
+    public String getPassword() {
+        return password;
+    }
 
-	/**
-	 * OpenStack username
-	 */
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    /**
+     * OpenStack password
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	@Override
-	public String getPassword() {
-		return password;
-	}
+    @Override
+    public String getHost() {
+        return host;
+    }
 
-	/**
-	 * OpenStack password
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    /**
+     * OpenStack host url
+     */
+    public void setHost(String host) {
+        this.host = host;
+    }
 
-	@Override
-	public String getHost() {
-		return host;
-	}
+    public Config getConfig() {
+        return config;
+    }
 
-	/**
-	 * OpenStack host url
-	 */
-	public void setHost(String host) {
-		this.host = host;
-	}
+    /**
+     *OpenStack configuration
+     */
+    public void setConfig(Config config) {
+        this.config = config;
+    }
 
-	public Config getConfig() {
-		return config;
-	}
+    public String getApiVersion() {
+        return apiVersion;
+    }
 
-	/**
-	 *OpenStack configuration
-	 */
-	public void setConfig(Config config) {
-		this.config = config;
-	}
-
-	public String getApiVersion() {
-		return apiVersion;
-	}
-
-	/**
-	 * OpenStack API version
-	 */
-	public void setApiVersion(String apiVersion) {
-		this.apiVersion = apiVersion;
-	}
+    /**
+     * OpenStack API version
+     */
+    public void setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
+    }
 }

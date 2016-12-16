@@ -16,116 +16,115 @@
  */
 package org.apache.camel.component.openstack.swift.producer;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
 import org.apache.camel.component.openstack.swift.SwiftConstants;
 import org.apache.camel.component.openstack.swift.SwiftEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.common.Payload;
 import org.openstack4j.model.storage.object.SwiftObject;
 import org.openstack4j.model.storage.object.options.ObjectLocation;
 
-import java.util.List;
-import java.util.Map;
-
 public class ObjectProducer extends AbstractOpenstackProducer {
 
-	public ObjectProducer(SwiftEndpoint endpoint, OSClient client) {
-		super(endpoint, client);
-	}
+    public ObjectProducer(SwiftEndpoint endpoint, OSClient client) {
+        super(endpoint, client);
+    }
 
-	@Override
-	public void process(Exchange exchange) throws Exception {
-		String operation = getOperation(exchange);
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        String operation = getOperation(exchange);
 
-		switch (operation) {
-			case SwiftConstants.CREATE:
-				doCreate(exchange);
-				break;
-			case SwiftConstants.GET:
-				doGet(exchange);
-				break;
-			case SwiftConstants.GET_ALL:
-				doGetAll(exchange);
-				break;
-			case SwiftConstants.DELETE:
-				doDelete(exchange);
-				break;
-			case SwiftConstants.GET_METADATA:
-				doGetMetadata(exchange);
-				break;
-			case SwiftConstants.CREATE_UPDATE_METADATA:
-				doUpdateMetadata(exchange);
-				break;
-			default:
-				throw new IllegalArgumentException("Unsupported operation " + operation);
-		}
-	}
+        switch (operation) {
+        case SwiftConstants.CREATE:
+            doCreate(exchange);
+            break;
+        case SwiftConstants.GET:
+            doGet(exchange);
+            break;
+        case SwiftConstants.GET_ALL:
+            doGetAll(exchange);
+            break;
+        case SwiftConstants.DELETE:
+            doDelete(exchange);
+            break;
+        case SwiftConstants.GET_METADATA:
+            doGetMetadata(exchange);
+            break;
+        case SwiftConstants.CREATE_UPDATE_METADATA:
+            doUpdateMetadata(exchange);
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported operation " + operation);
+        }
+    }
 
-	private void doCreate(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final Payload payload = createPayload(msg);
-		final String containerName = msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class);
-		final String objectName = msg.getHeader(SwiftConstants.OBJECT_NAME, String.class);
-		ObjectHelper.notEmpty(containerName, "Container name");
-		ObjectHelper.notEmpty(objectName, "Object name");
-		final String etag = os.objectStorage().objects().put(containerName, objectName, payload);
-		msg.setBody(etag);
-	}
+    private void doCreate(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final Payload payload = createPayload(msg);
+        final String containerName = msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class);
+        final String objectName = msg.getHeader(SwiftConstants.OBJECT_NAME, String.class);
+        ObjectHelper.notEmpty(containerName, "Container name");
+        ObjectHelper.notEmpty(objectName, "Object name");
+        final String etag = os.objectStorage().objects().put(containerName, objectName, payload);
+        msg.setBody(etag);
+    }
 
-	private void doGet(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String containerName = msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class);
-		final String objectName = msg.getHeader(SwiftConstants.OBJECT_NAME, String.class);
-		ObjectHelper.notEmpty(containerName, "Container name");
-		ObjectHelper.notEmpty(objectName, "Object name");
-		final SwiftObject out = os.objectStorage().objects().get(containerName, objectName);
-		msg.setBody(out);
-	}
+    private void doGet(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String containerName = msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class);
+        final String objectName = msg.getHeader(SwiftConstants.OBJECT_NAME, String.class);
+        ObjectHelper.notEmpty(containerName, "Container name");
+        ObjectHelper.notEmpty(objectName, "Object name");
+        final SwiftObject out = os.objectStorage().objects().get(containerName, objectName);
+        msg.setBody(out);
+    }
 
-	private void doGetAll(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String name = msg.getHeader(SwiftConstants.CONTAINER_NAME, msg.getHeader(SwiftConstants.NAME, String.class), String.class);
-		ObjectHelper.notEmpty(name, "Container name");
-		final List<? extends SwiftObject> out = os.objectStorage().objects().list(name);
-		exchange.getIn().setBody(out);
-	}
+    private void doGetAll(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String name = msg.getHeader(SwiftConstants.CONTAINER_NAME, msg.getHeader(SwiftConstants.NAME, String.class), String.class);
+        ObjectHelper.notEmpty(name, "Container name");
+        final List<? extends SwiftObject> out = os.objectStorage().objects().list(name);
+        exchange.getIn().setBody(out);
+    }
 
-	private void doDelete(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String containerName = msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class);
-		final String objectName = msg.getHeader(SwiftConstants.OBJECT_NAME, String.class);
-		ObjectHelper.notEmpty(containerName, "Container name");
-		ObjectHelper.notEmpty(objectName, "Object name");
-		final ActionResponse out = os.objectStorage().objects().delete(containerName, objectName);
-		msg.setBody(out.getFault());
-		msg.setFault(!out.isSuccess());
-	}
+    private void doDelete(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String containerName = msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class);
+        final String objectName = msg.getHeader(SwiftConstants.OBJECT_NAME, String.class);
+        ObjectHelper.notEmpty(containerName, "Container name");
+        ObjectHelper.notEmpty(objectName, "Object name");
+        final ActionResponse out = os.objectStorage().objects().delete(containerName, objectName);
+        msg.setBody(out.getFault());
+        msg.setFault(!out.isSuccess());
+    }
 
-	private void doGetMetadata(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String containerName = msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class);
-		final String objectName = msg.getHeader(SwiftConstants.OBJECT_NAME, String.class);
-		ObjectHelper.notEmpty(containerName, "Container name");
-		ObjectHelper.notEmpty(objectName, "Object name");
+    private void doGetMetadata(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String containerName = msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class);
+        final String objectName = msg.getHeader(SwiftConstants.OBJECT_NAME, String.class);
+        ObjectHelper.notEmpty(containerName, "Container name");
+        ObjectHelper.notEmpty(objectName, "Object name");
 
-		msg.setBody(os.objectStorage().objects().getMetadata(containerName, objectName));
-	}
+        msg.setBody(os.objectStorage().objects().getMetadata(containerName, objectName));
+    }
 
-	private void doUpdateMetadata(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String containerName = msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class);
-		final String objectName = msg.getHeader(SwiftConstants.OBJECT_NAME, String.class);
-		ObjectHelper.notEmpty(containerName, "Container name");
-		ObjectHelper.notEmpty(objectName, "Object name");
-		final boolean success = os.objectStorage().objects().updateMetadata(ObjectLocation.create(containerName, objectName), msg.getBody(Map.class));
-		msg.setFault(!success);
-		if (!success) {
-			msg.setBody("Updating metadata was not successful");
-		}
-	}
+    private void doUpdateMetadata(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String containerName = msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class);
+        final String objectName = msg.getHeader(SwiftConstants.OBJECT_NAME, String.class);
+        ObjectHelper.notEmpty(containerName, "Container name");
+        ObjectHelper.notEmpty(objectName, "Object name");
+        final boolean success = os.objectStorage().objects().updateMetadata(ObjectLocation.create(containerName, objectName), msg.getBody(Map.class));
+        msg.setFault(!success);
+        if (!success) {
+            msg.setBody("Updating metadata was not successful");
+        }
+    }
 }

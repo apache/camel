@@ -16,12 +16,8 @@
  */
 package org.apache.camel.component.openstack.neutron;
 
-import static org.mockito.Mockito.when;
-
 import org.apache.camel.component.openstack.AbstractProducerTestSupport;
-
 import org.junit.Before;
-
 import org.mockito.Mock;
 import org.openstack4j.api.networking.NetworkService;
 import org.openstack4j.api.networking.NetworkingService;
@@ -29,32 +25,34 @@ import org.openstack4j.api.networking.PortService;
 import org.openstack4j.api.networking.RouterService;
 import org.openstack4j.api.networking.SubnetService;
 
+import static org.mockito.Mockito.when;
+
 public class NeutronProducerTestSupport extends AbstractProducerTestSupport {
 
-	@Mock
-	protected NeutronEndpoint endpoint;
+    @Mock
+    protected NeutronEndpoint endpoint;
 
-	@Mock
-	protected NetworkingService networkingService;
+    @Mock
+    protected NetworkingService networkingService;
 
-	@Mock
-	PortService portService;
+    @Mock
+    PortService portService;
 
-	@Mock
-	RouterService routerService;
+    @Mock
+    RouterService routerService;
 
-	@Mock
-	SubnetService subnetService;
+    @Mock
+    SubnetService subnetService;
 
-	@Mock
-	NetworkService networkService;
+    @Mock
+    NetworkService networkService;
 
-	@Before
-	public void setUpComputeService(){
-		when(client.networking()).thenReturn(networkingService);
-		when(networkingService.port()).thenReturn(portService);
-		when(networkingService.router()).thenReturn(routerService);
-		when(networkingService.subnet()).thenReturn(subnetService);
-		when(networkingService.network()).thenReturn(networkService);
-	}
+    @Before
+    public void setUpComputeService() {
+        when(client.networking()).thenReturn(networkingService);
+        when(networkingService.port()).thenReturn(portService);
+        when(networkingService.router()).thenReturn(routerService);
+        when(networkingService.subnet()).thenReturn(subnetService);
+        when(networkingService.network()).thenReturn(networkService);
+    }
 }

@@ -29,160 +29,156 @@ import org.openstack4j.core.transport.Config;
 @UriEndpoint(scheme = "openstack-swift", title = "OpenStack-Swift", syntax = "openstack-swift:host", label = "cloud, virtualization")
 public class SwiftEndpoint extends AbstractOpenstackEndpoint {
 
-	@UriPath
-	@Metadata(required = "true")
-	private String host;
+    @UriParam(enums = "objects, containers")
+    @Metadata(required = "true")
+    String subsystem;
+    @UriPath
+    @Metadata(required = "true")
+    private String host;
+    @UriParam(defaultValue = "default")
+    private String domain = "default";
+    @UriParam
+    @Metadata(required = "true")
+    private String project;
 
-	@UriParam(defaultValue = "default")
-	private String domain = "default";
+    @UriParam
+    private String operation;
 
-	@UriParam(enums = "objects, containers")
-	@Metadata(required = "true")
-	String subsystem;
+    @UriParam
+    @Metadata(required = "true")
+    private String username;
 
-	@UriParam
-	@Metadata(required = "true")
-	private String project;
+    @UriParam
+    @Metadata(required = "true")
+    private String password;
 
-	@UriParam
-	private String operation;
+    @UriParam
+    private Config config;
 
-	@UriParam
-	@Metadata(required = "true")
-	private String username;
+    @UriParam(defaultValue = V3, enums = "V2, V3")
+    private String apiVersion = V3;
 
-	@UriParam
-	@Metadata(required = "true")
-	private String password;
+    public SwiftEndpoint(String uri, SwiftComponent component) {
+        super(uri, component);
+    }
 
-	@UriParam
-	private Config config;
+    @Override
+    public Producer createProducer() throws Exception {
+        switch (subsystem) {
+        case SwiftConstants.SWIFT_SUBSYSTEM_OBJECTS:
+            return new ObjectProducer(this, createClient());
+        case SwiftConstants.SWIFT_SUBSYSTEM_CONTAINERS:
+            return new ContainerProducer(this, createClient());
+        default:
+            throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
+        }
+    }
 
-	@UriParam(defaultValue = v3, enums = "v2, v3")
-	private String apiVersion = v3;
+    public String getSubsystem() {
+        return subsystem;
+    }
 
-	public SwiftEndpoint(String uri, SwiftComponent component) {
-		super(uri, component);
+    /**
+     * OpenStack Swift subsystem
+     */
+    public void setSubsystem(String subsystem) {
+        this.subsystem = subsystem;
+    }
 
-	}
+    @Override
+    public String getDomain() {
+        return domain;
+    }
 
-	@Override
-	public Producer createProducer() throws Exception {
-		switch (subsystem) {
-			case SwiftConstants.SWIFT_SUBSYSTEM_OBJECTS:
-				return new ObjectProducer(this, createClient());
-			case SwiftConstants.SWIFT_SUBSYSTEM_CONTAINERS:
-				return new ContainerProducer(this, createClient());
-			default:
-				throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
-		}
-	}
+    /**
+     * Authentication domain
+     */
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
 
-	public String getSubsystem() {
-		return subsystem;
-	}
+    @Override
+    public String getProject() {
+        return project;
+    }
 
-	/**
-	 * OpenStack Swift subsystem
-	 */
-	public void setSubsystem(String subsystem) {
-		this.subsystem = subsystem;
-	}
+    /**
+     * The project ID
+     */
+    public void setProject(String project) {
+        this.project = project;
+    }
 
-	@Override
-	public String getDomain() {
-		return domain;
-	}
+    @Override
+    public String getOperation() {
+        return operation;
+    }
 
-	/**
-	 * Authentication domain
-	 */
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
+    /**
+     * The operation to do
+     */
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
 
-	@Override
-	public String getProject() {
-		return project;
-	}
+    @Override
+    public String getUsername() {
+        return username;
+    }
 
-	/**
-	 * The project ID
-	 */
-	public void setProject(String project) {
-		this.project = project;
-	}
+    /**
+     * OpenStack username
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	@Override
-	public String getOperation() {
-		return operation;
-	}
+    @Override
+    public String getPassword() {
+        return password;
+    }
 
-	/**
-	 * The operation to do
-	 */
-	public void setOperation(String operation) {
-		this.operation = operation;
-	}
+    /**
+     * OpenStack password
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	@Override
-	public String getUsername() {
-		return username;
-	}
+    @Override
+    public String getHost() {
+        return host;
+    }
 
-	/**
-	 * OpenStack username
-	 */
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    /**
+     * OpenStack host url
+     */
+    public void setHost(String host) {
+        this.host = host;
+    }
 
-	@Override
-	public String getPassword() {
-		return password;
-	}
+    public Config getConfig() {
+        return config;
+    }
 
-	/**
-	 * OpenStack password
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	@Override
-	public String getHost() {
-		return host;
-	}
-
-	/**
-	 * OpenStack host url
-	 */
-	public void setHost(String host) {
-		this.host = host;
-	}
-
-	public Config getConfig() {
-		return config;
-	}
-
-	/**
-	 *OpenStack configuration
-	 */
-	public void setConfig(Config config) {
-		this.config = config;
-	}
+    /**
+     *OpenStack configuration
+     */
+    public void setConfig(Config config) {
+        this.config = config;
+    }
 
 
-	public String getApiVersion() {
-		return apiVersion;
-	}
+    public String getApiVersion() {
+        return apiVersion;
+    }
 
-	/**
-	 * OpenStack API version
-	 */
-	public void setApiVersion(String apiVersion) {
-		this.apiVersion = apiVersion;
-	}
+    /**
+     * OpenStack API version
+     */
+    public void setApiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
+    }
 }
 
 

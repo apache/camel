@@ -16,35 +16,33 @@
  */
 package org.apache.camel.component.openstack.cinder;
 
-import static org.mockito.Mockito.when;
-
 import org.apache.camel.component.openstack.AbstractProducerTestSupport;
-
 import org.junit.Before;
-
 import org.mockito.Mock;
 import org.openstack4j.api.storage.BlockStorageService;
 import org.openstack4j.api.storage.BlockVolumeService;
 import org.openstack4j.api.storage.BlockVolumeSnapshotService;
 
+import static org.mockito.Mockito.when;
+
 public class CinderProducerTestSupport extends AbstractProducerTestSupport {
 
-	@Mock
-	protected CinderEndpoint endpoint;
+    @Mock
+    protected CinderEndpoint endpoint;
 
-	@Mock
-	protected BlockStorageService blockStorageService;
+    @Mock
+    protected BlockStorageService blockStorageService;
 
-	@Mock
-	protected BlockVolumeService volumeService;
+    @Mock
+    protected BlockVolumeService volumeService;
 
-	@Mock
-	protected BlockVolumeSnapshotService snapshotService;
+    @Mock
+    protected BlockVolumeSnapshotService snapshotService;
 
-	@Before
-	public void setUpComputeService(){
-		when(client.blockStorage()).thenReturn(blockStorageService);
-		when(blockStorageService.volumes()).thenReturn(volumeService);
-		when(blockStorageService.snapshots()).thenReturn(snapshotService);
-	}
+    @Before
+    public void setUpComputeService() {
+        when(client.blockStorage()).thenReturn(blockStorageService);
+        when(blockStorageService.volumes()).thenReturn(volumeService);
+        when(blockStorageService.snapshots()).thenReturn(snapshotService);
+    }
 }

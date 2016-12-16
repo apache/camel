@@ -27,159 +27,156 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-
 import org.openstack4j.core.transport.Config;
 
 @UriEndpoint(scheme = "openstack-keystone", title = "OpenStack-Keystone", syntax = "openstack-keystone:host", label = "cloud, virtualization")
 public class KeystoneEndpoint extends AbstractOpenstackEndpoint {
 
-	@UriPath
-	@Metadata(required = "true")
-	private String host;
+    @UriParam(enums = "regions, domains, projects, users, groups")
+    @Metadata(required = "true")
+    String subsystem;
+    @UriPath
+    @Metadata(required = "true")
+    private String host;
+    @UriParam(defaultValue = "default")
+    private String domain = "default";
 
-	@UriParam(enums = "regions, domains, projects, users, groups")
-	@Metadata(required = "true")
-	String subsystem;
+    @UriParam
+    @Metadata(required = "true")
+    private String project;
 
-	@UriParam(defaultValue = "default")
-	private String domain = "default";
+    @UriParam
+    private String operation;
 
-	@UriParam
-	@Metadata(required = "true")
-	private String project;
+    @UriParam
+    @Metadata(required = "true")
+    private String username;
 
-	@UriParam
-	private String operation;
+    @UriParam
+    @Metadata(required = "true")
+    private String password;
 
-	@UriParam
-	@Metadata(required = "true")
-	private String username;
+    @UriParam
+    private Config config;
 
-	@UriParam
-	@Metadata(required = "true")
-	private String password;
+    public KeystoneEndpoint(String uri, KeystoneComponent component) {
+        super(uri, component);
+    }
 
-	@UriParam
-	private Config config;
+    @Override
+    public Producer createProducer() throws Exception {
+        switch (getSubsystem()) {
+        case KeystoneConstants.REGIONS:
+            return new RegionProducer(this, createClient());
+        case KeystoneConstants.DOMAINS:
+            return new DomainProducer(this, createClient());
+        case KeystoneConstants.PROJECTS:
+            return new ProjectProducer(this, createClient());
+        case KeystoneConstants.USERS:
+            return new UserProducer(this, createClient());
+        case KeystoneConstants.GROUPS:
+            return new GroupProducer(this, createClient());
+        default:
+            throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
+        }
+    }
 
-	public KeystoneEndpoint(String uri, KeystoneComponent component) {
-		super(uri, component);
-	}
+    public String getSubsystem() {
+        return subsystem;
+    }
 
-	@Override
-	public Producer createProducer() throws Exception {
-		switch (getSubsystem()) {
-			case KeystoneConstants.REGIONS:
-				return new RegionProducer(this, createClient());
-			case KeystoneConstants.DOMAINS:
-				return new DomainProducer(this, createClient());
-			case KeystoneConstants.PROJECTS:
-				return new ProjectProducer(this, createClient());
-			case KeystoneConstants.USERS:
-				return new UserProducer(this, createClient());
-			case KeystoneConstants.GROUPS:
-				return new GroupProducer(this, createClient());
-			default:
-				throw new IllegalArgumentException("Can't create producer with subsystem " + subsystem);
-		}
-	}
+    /**
+     * OpenStack Keystone subsystem
+     */
+    public void setSubsystem(String subsystem) {
+        this.subsystem = subsystem;
+    }
 
-	public String getSubsystem() {
-		return subsystem;
-	}
+    @Override
+    public String getDomain() {
+        return domain;
+    }
 
-	/**
-	 * OpenStack Keystone subsystem
-	 */
-	public void setSubsystem(String subsystem) {
-		this.subsystem = subsystem;
-	}
+    /**
+     * Authentication domain
+     */
+    public void setDomain(String domain) {
+        this.domain = domain;
+    }
 
-	@Override
-	public String getDomain() {
-		return domain;
-	}
+    @Override
+    public String getProject() {
+        return project;
+    }
 
-	/**
-	 * Authentication domain
-	 */
-	public void setDomain(String domain) {
-		this.domain = domain;
-	}
+    /**
+     * The project ID
+     */
+    public void setProject(String project) {
+        this.project = project;
+    }
 
-	@Override
-	public String getProject() {
-		return project;
-	}
+    @Override
+    public String getOperation() {
+        return operation;
+    }
 
-	/**
-	 * The project ID
-	 */
-	public void setProject(String project) {
-		this.project = project;
-	}
+    /**
+     * The operation to do
+     */
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
 
-	@Override
-	public String getOperation() {
-		return operation;
-	}
+    @Override
+    public String getUsername() {
+        return username;
+    }
 
-	/**
-	 * The operation to do
-	 */
-	public void setOperation(String operation) {
-		this.operation = operation;
-	}
+    /**
+     * OpenStack username
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	@Override
-	public String getUsername() {
-		return username;
-	}
+    @Override
+    public String getPassword() {
+        return password;
+    }
 
-	/**
-	 * OpenStack username
-	 */
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    /**
+     * OpenStack password
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	@Override
-	public String getPassword() {
-		return password;
-	}
+    @Override
+    public String getHost() {
+        return host;
+    }
 
-	/**
-	 * OpenStack password
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    /**
+     * OpenStack host url
+     */
+    public void setHost(String host) {
+        this.host = host;
+    }
 
-	@Override
-	public String getHost() {
-		return host;
-	}
+    public Config getConfig() {
+        return config;
+    }
 
-	/**
-	 * OpenStack host url
-	 */
-	public void setHost(String host) {
-		this.host = host;
-	}
+    /**
+     *OpenStack configuration
+     */
+    public void setConfig(Config config) {
+        this.config = config;
+    }
 
-	public Config getConfig() {
-		return config;
-	}
-
-	/**
-	 *OpenStack configuration
-	 */
-	public void setConfig(Config config) {
-		this.config = config;
-	}
-
-	// v2 API is not supported (is deprecated)
-	public String getApiVersion() {
-		return v3;
-	}
+    // V2 API is not supported (is deprecated)
+    public String getApiVersion() {
+        return V3;
+    }
 }

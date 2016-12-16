@@ -16,37 +16,35 @@
  */
 package org.apache.camel.component.openstack.swift;
 
-import static org.mockito.Mockito.when;
-
 import org.apache.camel.component.openstack.AbstractProducerTestSupport;
-
 import org.junit.Before;
-
 import org.mockito.Mock;
 import org.openstack4j.api.storage.ObjectStorageContainerService;
 import org.openstack4j.api.storage.ObjectStorageObjectService;
 import org.openstack4j.api.storage.ObjectStorageService;
 
+import static org.mockito.Mockito.when;
+
 public class SwiftProducerTestSupport extends AbstractProducerTestSupport {
 
-	@Mock
-	protected SwiftEndpoint endpoint;
+    @Mock
+    protected SwiftEndpoint endpoint;
 
-	@Mock
-	protected ObjectStorageService objectStorageService;
+    @Mock
+    protected ObjectStorageService objectStorageService;
 
-	@Mock
-	protected ObjectStorageContainerService containerService;
+    @Mock
+    protected ObjectStorageContainerService containerService;
 
-	@Mock
-	protected ObjectStorageObjectService objectService;
+    @Mock
+    protected ObjectStorageObjectService objectService;
 
-	@Before
-	public void setUpComputeService(){
-		when(client.objectStorage()).thenReturn(objectStorageService);
-		when(objectStorageService.containers()).thenReturn(containerService);
-		when(objectStorageService.objects()).thenReturn(objectService);
-	}
+    @Before
+    public void setUpComputeService() {
+        when(client.objectStorage()).thenReturn(objectStorageService);
+        when(objectStorageService.containers()).thenReturn(containerService);
+        when(objectStorageService.objects()).thenReturn(objectService);
+    }
 
 
 }

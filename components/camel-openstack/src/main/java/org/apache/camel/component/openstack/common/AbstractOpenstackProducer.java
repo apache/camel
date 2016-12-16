@@ -16,71 +16,67 @@
  */
 package org.apache.camel.component.openstack.common;
 
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.openstack.nova.NovaConstants;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.common.Payload;
 import org.openstack4j.model.common.Payloads;
 
-import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
-
 public abstract class AbstractOpenstackProducer extends DefaultProducer {
 
-	protected OSClient os;
+    protected OSClient os;
 
-	private AbstractOpenstackEndpoint endpoint;
+    private AbstractOpenstackEndpoint endpoint;
 
-	public AbstractOpenstackProducer(AbstractOpenstackEndpoint endpoint, OSClient client) {
-		super(endpoint);
-		this.os = client;
-		this.endpoint = endpoint;
-	}
+    public AbstractOpenstackProducer(AbstractOpenstackEndpoint endpoint, OSClient client) {
+        super(endpoint);
+        this.os = client;
+        this.endpoint = endpoint;
+    }
 
-	protected Payload createPayload(Message msg) {
-		//if payload object is send directly
-		Payload payload = msg.getBody(Payload.class);
-		if(ObjectHelper.isNotEmpty(payload))
-		{
-			return payload;
-		}
+    protected Payload createPayload(Message msg) {
+        //if payload object is send directly
+        Payload payload = msg.getBody(Payload.class);
+        if (ObjectHelper.isNotEmpty(payload)) {
+            return payload;
+        }
 
-		Object messageBody = msg.getBody();
-		if (messageBody instanceof URL) {
-			payload = Payloads.create((URL) messageBody);
-		}
-		if (messageBody instanceof File) {
-			payload = Payloads.create((File) messageBody);
-		}
-		if (messageBody instanceof InputStream) {
-			payload = Payloads.create((InputStream) messageBody);
-		}
+        Object messageBody = msg.getBody();
+        if (messageBody instanceof URL) {
+            payload = Payloads.create((URL) messageBody);
+        }
+        if (messageBody instanceof File) {
+            payload = Payloads.create((File) messageBody);
+        }
+        if (messageBody instanceof InputStream) {
+            payload = Payloads.create((InputStream) messageBody);
+        }
 
-		if (payload == null) {
-			throw new IllegalArgumentException("You have to set payload. It can be InputStream, File or URL class");
-		}
+        if (payload == null) {
+            throw new IllegalArgumentException("You have to set payload. It can be InputStream, File or URL class");
+        }
 
-		return payload;
-	}
+        return payload;
+    }
 
-	protected String getOperation(Exchange exchange) {
-		final String operation = exchange.getIn().getHeader(NovaConstants.OPERATION, endpoint.getOperation(), String.class);
-		ObjectHelper.notEmpty(operation, "Operation");
-		return operation;
-	}
+    protected String getOperation(Exchange exchange) {
+        final String operation = exchange.getIn().getHeader(NovaConstants.OPERATION, endpoint.getOperation(), String.class);
+        ObjectHelper.notEmpty(operation, "Operation");
+        return operation;
+    }
 
-	protected void checkFailure(ActionResponse response, Message msg, String operation)
-	{
-		msg.setFault(!response.isSuccess());
-		if(!response.isSuccess())
-		{
-			msg.setBody(String.format(" %s was not successful: %s", operation, response.getFault()));
-		}
-	}
+    protected void checkFailure(ActionResponse response, Message msg, String operation) {
+        msg.setFault(!response.isSuccess());
+        if (!response.isSuccess()) {
+            msg.setBody(String.format(" %s was not successful: %s", operation, response.getFault()));
+        }
+    }
 }

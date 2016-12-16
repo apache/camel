@@ -16,12 +16,8 @@
  */
 package org.apache.camel.component.openstack.keystone;
 
-import static org.mockito.Mockito.when;
-
 import org.apache.camel.component.openstack.AbstractProducerTestSupport;
-
 import org.junit.Before;
-
 import org.mockito.Mock;
 import org.openstack4j.api.identity.v3.DomainService;
 import org.openstack4j.api.identity.v3.GroupService;
@@ -30,36 +26,38 @@ import org.openstack4j.api.identity.v3.ProjectService;
 import org.openstack4j.api.identity.v3.RegionService;
 import org.openstack4j.api.identity.v3.UserService;
 
+import static org.mockito.Mockito.when;
+
 public class KeystoneProducerTestSupport extends AbstractProducerTestSupport {
 
-	@Mock
-	protected KeystoneEndpoint endpoint;
+    @Mock
+    protected KeystoneEndpoint endpoint;
 
-	@Mock
-	protected IdentityService identityService;
+    @Mock
+    protected IdentityService identityService;
 
-	@Mock
-	protected DomainService domainService;
+    @Mock
+    protected DomainService domainService;
 
-	@Mock
-	protected GroupService groupService;
+    @Mock
+    protected GroupService groupService;
 
-	@Mock
-	protected ProjectService projectService;
+    @Mock
+    protected ProjectService projectService;
 
-	@Mock
-	protected RegionService regionService;
+    @Mock
+    protected RegionService regionService;
 
-	@Mock
-	protected UserService userService;
+    @Mock
+    protected UserService userService;
 
-	@Before
-	public void setUpComputeService(){
-		when(client.identity()).thenReturn(identityService);
-		when(identityService.domains()).thenReturn(domainService);
-		when(identityService.groups()).thenReturn(groupService);
-		when(identityService.projects()).thenReturn(projectService);
-		when(identityService.regions()).thenReturn(regionService);
-		when(identityService.users()).thenReturn(userService);
-	}
+    @Before
+    public void setUpComputeService() {
+        when(client.identity()).thenReturn(identityService);
+        when(identityService.domains()).thenReturn(domainService);
+        when(identityService.groups()).thenReturn(groupService);
+        when(identityService.projects()).thenReturn(projectService);
+        when(identityService.regions()).thenReturn(regionService);
+        when(identityService.users()).thenReturn(userService);
+    }
 }

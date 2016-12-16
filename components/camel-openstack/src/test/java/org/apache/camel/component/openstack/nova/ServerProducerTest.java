@@ -16,22 +16,11 @@
  */
 package org.apache.camel.component.openstack.nova;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import java.util.UUID;
 
 import org.apache.camel.component.openstack.nova.producer.ServerProducer;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.openstack4j.api.Builders;
@@ -41,115 +30,123 @@ import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.compute.ServerCreate;
 import org.openstack4j.openstack.compute.domain.NovaServerCreate;
 
-import java.util.UUID;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ServerProducerTest extends NovaProducerTestSupport {
-	@Mock
-	private org.openstack4j.model.compute.Server testOSServer;
+    @Mock
+    private org.openstack4j.model.compute.Server testOSServer;
 
-	private ServerCreate dummyServer;
+    private ServerCreate dummyServer;
 
-	@Before
-	public void setUp() {
-		producer = new ServerProducer(endpoint, client);
+    @Before
+    public void setUp() {
+        producer = new ServerProducer(endpoint, client);
 
-		when(serverService.boot(any(NovaServerCreate.class))).thenReturn(testOSServer);
+        when(serverService.boot(any(NovaServerCreate.class))).thenReturn(testOSServer);
 
-		dummyServer = createDummyServer();
-		initServerMock();
-	}
+        dummyServer = createDummyServer();
+        initServerMock();
+    }
 
-	@Test
-	public void createServer() throws Exception {
-		when(endpoint.getOperation()).thenReturn(NovaConstants.CREATE);
-		final String expectedFlavorID = UUID.randomUUID().toString();
-		when(testOSServer.getId()).thenReturn(expectedFlavorID);
-		msg.setBody(dummyServer);
-		producer.process(exchange);
-		final Server created = msg.getBody(Server.class);
-		checkCreatedServer(dummyServer, created);
-	}
+    @Test
+    public void createServer() throws Exception {
+        when(endpoint.getOperation()).thenReturn(NovaConstants.CREATE);
+        final String expectedFlavorID = UUID.randomUUID().toString();
+        when(testOSServer.getId()).thenReturn(expectedFlavorID);
+        msg.setBody(dummyServer);
+        producer.process(exchange);
+        final Server created = msg.getBody(Server.class);
+        checkCreatedServer(dummyServer, created);
+    }
 
-	@Test
-	public void createServerWithHeaders() throws Exception {
-		final String expectedFlavorID = UUID.randomUUID().toString();
-		when(testOSServer.getId()).thenReturn(expectedFlavorID);
+    @Test
+    public void createServerWithHeaders() throws Exception {
+        final String expectedFlavorID = UUID.randomUUID().toString();
+        when(testOSServer.getId()).thenReturn(expectedFlavorID);
 
-		msg.setHeader(NovaConstants.OPERATION, NovaConstants.CREATE);
-		msg.setHeader(NovaConstants.NAME, dummyServer.getName());
-		msg.setHeader(NovaConstants.FLAVOR_ID, dummyServer.getFlavorRef());
-		msg.setHeader(NovaConstants.IMAGE_ID, dummyServer.getImageRef());
+        msg.setHeader(NovaConstants.OPERATION, NovaConstants.CREATE);
+        msg.setHeader(NovaConstants.NAME, dummyServer.getName());
+        msg.setHeader(NovaConstants.FLAVOR_ID, dummyServer.getFlavorRef());
+        msg.setHeader(NovaConstants.IMAGE_ID, dummyServer.getImageRef());
 
-		producer.process(exchange);
+        producer.process(exchange);
 
-		final Server created = msg.getBody(Server.class);
+        final Server created = msg.getBody(Server.class);
 
-		checkCreatedServer(dummyServer, created);
-	}
+        checkCreatedServer(dummyServer, created);
+    }
 
-	@Test
-	public void serverAction() throws Exception {
-		when(serverService.action(anyString(), any(Action.class))).thenReturn(ActionResponse.actionSuccess());
-		when(endpoint.getOperation()).thenReturn(NovaConstants.ACTION);
-		String id = "myID";
-		msg.setHeader(NovaConstants.ACTION, Action.PAUSE);
-		msg.setHeader(NovaConstants.ID, id);
-		producer.process(exchange);
+    @Test
+    public void serverAction() throws Exception {
+        when(serverService.action(anyString(), any(Action.class))).thenReturn(ActionResponse.actionSuccess());
+        when(endpoint.getOperation()).thenReturn(NovaConstants.ACTION);
+        String id = "myID";
+        msg.setHeader(NovaConstants.ACTION, Action.PAUSE);
+        msg.setHeader(NovaConstants.ID, id);
+        producer.process(exchange);
 
-		ArgumentCaptor<Action> actionArgumentCaptor = ArgumentCaptor.forClass(Action.class);
-		ArgumentCaptor<String> idArgumentCaptor = ArgumentCaptor.forClass(String.class);
-		verify(serverService).action(idArgumentCaptor.capture(), actionArgumentCaptor.capture());
+        ArgumentCaptor<Action> actionArgumentCaptor = ArgumentCaptor.forClass(Action.class);
+        ArgumentCaptor<String> idArgumentCaptor = ArgumentCaptor.forClass(String.class);
+        verify(serverService).action(idArgumentCaptor.capture(), actionArgumentCaptor.capture());
 
-		assertEquals(id, idArgumentCaptor.getValue());
-		assertTrue(actionArgumentCaptor.getValue() == Action.PAUSE);
-		assertFalse(msg.isFault());
-		assertNull(msg.getBody());
+        assertEquals(id, idArgumentCaptor.getValue());
+        assertTrue(actionArgumentCaptor.getValue() == Action.PAUSE);
+        assertFalse(msg.isFault());
+        assertNull(msg.getBody());
 
-		//test fail
-		final String failReason = "fr";
-		when(serverService.action(anyString(), any(Action.class))).thenReturn(ActionResponse.actionFailed(failReason, 401));
-		producer.process(exchange);
-		assertTrue(msg.isFault());
-		assertTrue(msg.getBody(String.class).contains(failReason));
-	}
+        //test fail
+        final String failReason = "fr";
+        when(serverService.action(anyString(), any(Action.class))).thenReturn(ActionResponse.actionFailed(failReason, 401));
+        producer.process(exchange);
+        assertTrue(msg.isFault());
+        assertTrue(msg.getBody(String.class).contains(failReason));
+    }
 
-	@Test
-	public void createSnapshot() throws Exception {
-		String id = "myID";
-		String snapshotName = "mySnapshot";
+    @Test
+    public void createSnapshot() throws Exception {
+        String id = "myID";
+        String snapshotName = "mySnapshot";
 
-		msg.setHeader(NovaConstants.OPERATION, NovaConstants.CREATE_SNAPSHOT);
-		msg.setHeader(NovaConstants.NAME, snapshotName);
-		msg.setHeader(NovaConstants.ID, id);
-		producer.process(exchange);
+        msg.setHeader(NovaConstants.OPERATION, NovaConstants.CREATE_SNAPSHOT);
+        msg.setHeader(NovaConstants.NAME, snapshotName);
+        msg.setHeader(NovaConstants.ID, id);
+        producer.process(exchange);
 
-		ArgumentCaptor<String> snapshot = ArgumentCaptor.forClass(String.class);
-		ArgumentCaptor<String> idCaptor = ArgumentCaptor.forClass(String.class);
-		verify(serverService).createSnapshot(idCaptor.capture(), snapshot.capture());
+        ArgumentCaptor<String> snapshot = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> idCaptor = ArgumentCaptor.forClass(String.class);
+        verify(serverService).createSnapshot(idCaptor.capture(), snapshot.capture());
 
-		assertEquals(id, idCaptor.getValue());
-		assertEquals(snapshotName, snapshot.getValue());
-	}
+        assertEquals(id, idCaptor.getValue());
+        assertEquals(snapshotName, snapshot.getValue());
+    }
 
-	private void initServerMock() {
-		when(testOSServer.getId()).thenReturn(UUID.randomUUID().toString());
-		when(testOSServer.getName()).thenReturn(dummyServer.getName());
-		when(testOSServer.getFlavorId()).thenReturn(dummyServer.getFlavorRef());
-		when(testOSServer.getImageId()).thenReturn(dummyServer.getImageRef());
-	}
+    private void initServerMock() {
+        when(testOSServer.getId()).thenReturn(UUID.randomUUID().toString());
+        when(testOSServer.getName()).thenReturn(dummyServer.getName());
+        when(testOSServer.getFlavorId()).thenReturn(dummyServer.getFlavorRef());
+        when(testOSServer.getImageId()).thenReturn(dummyServer.getImageRef());
+    }
 
-	private ServerCreate createDummyServer() {
-		return Builders.server()
-				.name("MyCoolServer")
-				.flavor("flavorID")
-				.image("imageID").build();
-	}
+    private ServerCreate createDummyServer() {
+        return Builders.server()
+                .name("MyCoolServer")
+                .flavor("flavorID")
+                .image("imageID").build();
+    }
 
-	private void checkCreatedServer(ServerCreate old, Server created) {
-		assertEquals(old.getName(), created.getName());
-		assertEquals(old.getFlavorRef(), created.getFlavorId());
-		assertEquals(old.getImageRef(), created.getImageId());
+    private void checkCreatedServer(ServerCreate old, Server created) {
+        assertEquals(old.getName(), created.getName());
+        assertEquals(old.getFlavorRef(), created.getFlavorId());
+        assertEquals(old.getImageRef(), created.getImageId());
 
-		assertNotNull(created.getId());
-	}
+        assertNotNull(created.getId());
+    }
 }

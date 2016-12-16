@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.openstack.glance;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
 import org.apache.camel.util.ObjectHelper;
-
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
@@ -30,151 +32,159 @@ import org.openstack4j.model.image.DiskFormat;
 import org.openstack4j.model.image.Image;
 import org.openstack4j.model.image.builder.ImageBuilder;
 
-import java.util.List;
-import java.util.Map;
-
 public class GlanceProducer extends AbstractOpenstackProducer {
 
-	public GlanceProducer(GlanceEndpoint endpoint, OSClient client) {
-		super(endpoint, client);
-	}
+    public GlanceProducer(GlanceEndpoint endpoint, OSClient client) {
+        super(endpoint, client);
+    }
 
-	@Override
-	public void process(Exchange exchange) throws Exception {
-		String operation = getOperation(exchange);
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        String operation = getOperation(exchange);
 
-		switch (operation) {
-			case GlanceConstants.RESERVE:
-				doReserve(exchange);
-				break;
-			case GlanceConstants.CREATE:
-				doCreate(exchange);
-				break;
-			case GlanceConstants.UPDATE:
-				doUpdate(exchange);
-				break;
-			case GlanceConstants.UPLOAD:
-				doUpload(exchange);
-				break;
-			case GlanceConstants.GET:
-				doGet(exchange);
-				break;
-			case GlanceConstants.GET_ALL:
-				doGetAll(exchange);
-				break;
-			case GlanceConstants.DELETE:
-				doDelete(exchange);
-				break;
-			default:
-				throw new IllegalArgumentException("Unsupported operation " + operation);
-		}
-	}
+        switch (operation) {
+        case GlanceConstants.RESERVE:
+            doReserve(exchange);
+            break;
+        case GlanceConstants.CREATE:
+            doCreate(exchange);
+            break;
+        case GlanceConstants.UPDATE:
+            doUpdate(exchange);
+            break;
+        case GlanceConstants.UPLOAD:
+            doUpload(exchange);
+            break;
+        case GlanceConstants.GET:
+            doGet(exchange);
+            break;
+        case GlanceConstants.GET_ALL:
+            doGetAll(exchange);
+            break;
+        case GlanceConstants.DELETE:
+            doDelete(exchange);
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported operation " + operation);
+        }
+    }
 
-	private void doReserve(Exchange exchange) {
-		final Image in = messageToImage(exchange.getIn());
-		final Image out = os.images().reserve(in);
-		exchange.getIn().setBody(out);
-	}
+    private void doReserve(Exchange exchange) {
+        final Image in = messageToImage(exchange.getIn());
+        final Image out = os.images().reserve(in);
+        exchange.getIn().setBody(out);
+    }
 
-	private void doCreate(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final Image in = messageHeadersToImage(msg, true);
-		final Payload payload = createPayload(msg);
-		final Image out = os.images().create(in, payload);
-		msg.setBody(out);
-	}
+    private void doCreate(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final Image in = messageHeadersToImage(msg, true);
+        final Payload payload = createPayload(msg);
+        final Image out = os.images().create(in, payload);
+        msg.setBody(out);
+    }
 
-	private void doUpload(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String imageId = msg.getHeader(GlanceConstants.ID, String.class);
-		ObjectHelper.notEmpty(imageId, "Image ID");
-		final Image in = messageHeadersToImage(msg, false);
-		final Payload payload = createPayload(msg);
-		final Image out = os.images().upload(imageId, payload, in);
-		msg.setBody(out);
-	}
+    private void doUpload(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String imageId = msg.getHeader(GlanceConstants.ID, String.class);
+        ObjectHelper.notEmpty(imageId, "Image ID");
+        final Image in = messageHeadersToImage(msg, false);
+        final Payload payload = createPayload(msg);
+        final Image out = os.images().upload(imageId, payload, in);
+        msg.setBody(out);
+    }
 
-	private void doUpdate(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final Image in = messageToImage(msg);
-		final Image out = os.images().update(in);
-		msg.setBody(out);
-	}
+    private void doUpdate(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final Image in = messageToImage(msg);
+        final Image out = os.images().update(in);
+        msg.setBody(out);
+    }
 
-	private void doGet(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String imageId = msg.getHeader(GlanceConstants.ID, String.class);
-		ObjectHelper.notEmpty(imageId, "ImageID");
-		final Image out = os.images().get(imageId);
-		msg.setBody(out);
-	}
+    private void doGet(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String imageId = msg.getHeader(GlanceConstants.ID, String.class);
+        ObjectHelper.notEmpty(imageId, "ImageID");
+        final Image out = os.images().get(imageId);
+        msg.setBody(out);
+    }
 
-	private void doGetAll(Exchange exchange) {
-		final List<? extends Image> out = os.images().list();
-		exchange.getIn().setBody(out);
-	}
+    private void doGetAll(Exchange exchange) {
+        final List<? extends Image> out = os.images().list();
+        exchange.getIn().setBody(out);
+    }
 
-	private void doDelete(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String imageId = msg.getHeader(GlanceConstants.ID, String.class);
-		ObjectHelper.notEmpty(imageId, "ImageID");
-		final ActionResponse response = os.compute().images().delete(imageId);
-		checkFailure(response, msg, "Delete image " + imageId);
-	}
+    private void doDelete(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String imageId = msg.getHeader(GlanceConstants.ID, String.class);
+        ObjectHelper.notEmpty(imageId, "ImageID");
+        final ActionResponse response = os.compute().images().delete(imageId);
+        checkFailure(response, msg, "Delete image " + imageId);
+    }
 
-	private Image messageToImage(Message message) {
-		Image image = message.getBody(Image.class);
-		if (image == null) {
-			image = messageHeadersToImage(message, true);
-		}
+    private Image messageToImage(Message message) {
+        Image image = message.getBody(Image.class);
+        if (image == null) {
+            image = messageHeadersToImage(message, true);
+        }
 
-		return image;
-	}
+        return image;
+    }
 
-	private Image messageHeadersToImage(Message message, boolean required) {
-		ImageBuilder imageBuilder = null;
+    private Image messageHeadersToImage(Message message, boolean required) {
+        ImageBuilder imageBuilder = null;
 
-		if (required && ObjectHelper.isEmpty(message.getHeader(GlanceConstants.NAME, String.class)))
-			throw new IllegalArgumentException("Image Name must be specified and not empty");
+        if (required && ObjectHelper.isEmpty(message.getHeader(GlanceConstants.NAME, String.class))) {
+            throw new IllegalArgumentException("Image Name must be specified and not empty");
+        }
 
-		if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.NAME, String.class)))
-			imageBuilder = getImageBuilder(imageBuilder).name(message.getHeader(GlanceConstants.NAME, String.class));
+        if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.NAME, String.class))) {
+            imageBuilder = getImageBuilder(imageBuilder).name(message.getHeader(GlanceConstants.NAME, String.class));
+        }
 
-		if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.DISK_FORMAT, DiskFormat.class)))
-			imageBuilder = getImageBuilder(imageBuilder).diskFormat(message.getHeader(GlanceConstants.DISK_FORMAT, DiskFormat.class));
+        if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.DISK_FORMAT, DiskFormat.class))) {
+            imageBuilder = getImageBuilder(imageBuilder).diskFormat(message.getHeader(GlanceConstants.DISK_FORMAT, DiskFormat.class));
+        }
 
-		if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.CONTAINER_FORMAT, ContainerFormat.class)))
-			imageBuilder = getImageBuilder(imageBuilder).containerFormat(message.getHeader(GlanceConstants.CONTAINER_FORMAT, ContainerFormat.class));
+        if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.CONTAINER_FORMAT, ContainerFormat.class))) {
+            imageBuilder = getImageBuilder(imageBuilder).containerFormat(message.getHeader(GlanceConstants.CONTAINER_FORMAT, ContainerFormat.class));
+        }
 
-		if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.SIZE, Long.class)))
-			imageBuilder = getImageBuilder(imageBuilder).size(message.getHeader(GlanceConstants.SIZE, Long.class));
+        if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.SIZE, Long.class))) {
+            imageBuilder = getImageBuilder(imageBuilder).size(message.getHeader(GlanceConstants.SIZE, Long.class));
+        }
 
-		if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.CHECKSUM)))
-			imageBuilder = getImageBuilder(imageBuilder).checksum(message.getHeader(GlanceConstants.CHECKSUM, String.class));
+        if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.CHECKSUM))) {
+            imageBuilder = getImageBuilder(imageBuilder).checksum(message.getHeader(GlanceConstants.CHECKSUM, String.class));
+        }
 
-		if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.MIN_DISK)))
-			imageBuilder = getImageBuilder(imageBuilder).minDisk(message.getHeader(GlanceConstants.MIN_DISK, Long.class));
+        if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.MIN_DISK))) {
+            imageBuilder = getImageBuilder(imageBuilder).minDisk(message.getHeader(GlanceConstants.MIN_DISK, Long.class));
+        }
 
-		if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.MIN_RAM)))
-			imageBuilder = getImageBuilder(imageBuilder).minRam(message.getHeader(GlanceConstants.MIN_RAM, Long.class));
+        if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.MIN_RAM))) {
+            imageBuilder = getImageBuilder(imageBuilder).minRam(message.getHeader(GlanceConstants.MIN_RAM, Long.class));
+        }
 
-		if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.OWNER)))
-			imageBuilder = getImageBuilder(imageBuilder).owner(message.getHeader(GlanceConstants.OWNER, String.class));
+        if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.OWNER))) {
+            imageBuilder = getImageBuilder(imageBuilder).owner(message.getHeader(GlanceConstants.OWNER, String.class));
+        }
 
-		if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.IS_PUBLIC)))
-			imageBuilder = getImageBuilder(imageBuilder).isPublic(message.getHeader(GlanceConstants.IS_PUBLIC, Boolean.class));
+        if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.IS_PUBLIC))) {
+            imageBuilder = getImageBuilder(imageBuilder).isPublic(message.getHeader(GlanceConstants.IS_PUBLIC, Boolean.class));
+        }
 
-		if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.PROPERTIES)))
-			imageBuilder = getImageBuilder(imageBuilder).properties(message.getHeader(GlanceConstants.PROPERTIES, Map.class));
+        if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.PROPERTIES))) {
+            imageBuilder = getImageBuilder(imageBuilder).properties(message.getHeader(GlanceConstants.PROPERTIES, Map.class));
+        }
 
-		if (!required && imageBuilder == null) {
-			return null;
-		}
-		ObjectHelper.notNull(imageBuilder, "Image");
-		return imageBuilder.build();
-	}
+        if (!required && imageBuilder == null) {
+            return null;
+        }
+        ObjectHelper.notNull(imageBuilder, "Image");
+        return imageBuilder.build();
+    }
 
-	private ImageBuilder getImageBuilder(ImageBuilder builder) {
-		return builder == null ? Builders.image() : builder;
-	}
+    private ImageBuilder getImageBuilder(ImageBuilder builder) {
+        return builder == null ? Builders.image() : builder;
+    }
 }

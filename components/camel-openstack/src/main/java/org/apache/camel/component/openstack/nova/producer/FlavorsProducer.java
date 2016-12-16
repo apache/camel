@@ -16,102 +16,107 @@
  */
 package org.apache.camel.component.openstack.nova.producer;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
 import org.apache.camel.component.openstack.nova.NovaConstants;
 import org.apache.camel.component.openstack.nova.NovaEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.compute.Flavor;
 import org.openstack4j.model.compute.builder.FlavorBuilder;
 
-import java.util.List;
-import java.util.Map;
-
 public class FlavorsProducer extends AbstractOpenstackProducer {
 
-	public FlavorsProducer(NovaEndpoint endpoint, OSClient client) {
-		super(endpoint, client);
-	}
+    public FlavorsProducer(NovaEndpoint endpoint, OSClient client) {
+        super(endpoint, client);
+    }
 
-	@Override public void process(Exchange exchange) throws Exception {
-		final String operation = getOperation(exchange);
-		switch (operation) {
-			case NovaConstants.CREATE:
-				doCreate(exchange);
-				break;
-			case NovaConstants.GET:
-				doGet(exchange);
-				break;
-			case NovaConstants.GET_ALL:
-				doGetAll(exchange);
-				break;
-			case NovaConstants.DELETE:
-				doDelete(exchange);
-				break;
-			default:
-				throw new IllegalArgumentException("Unsupported operation " + operation);
-		}
-	}
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        final String operation = getOperation(exchange);
+        switch (operation) {
+        case NovaConstants.CREATE:
+            doCreate(exchange);
+            break;
+        case NovaConstants.GET:
+            doGet(exchange);
+            break;
+        case NovaConstants.GET_ALL:
+            doGetAll(exchange);
+            break;
+        case NovaConstants.DELETE:
+            doDelete(exchange);
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported operation " + operation);
+        }
+    }
 
-	private void doCreate(Exchange exchange) {
-		final Flavor in = messageToFlavor(exchange.getIn());
-		final Flavor out = os.compute().flavors().create(in);
-		exchange.getIn().setBody(out);
-	}
+    private void doCreate(Exchange exchange) {
+        final Flavor in = messageToFlavor(exchange.getIn());
+        final Flavor out = os.compute().flavors().create(in);
+        exchange.getIn().setBody(out);
+    }
 
-	private void doGet(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String flavorId = msg.getHeader(NovaConstants.ID, msg.getHeader(NovaConstants.FLAVOR_ID, String.class), String.class);
-		ObjectHelper.notEmpty(flavorId, "FlavorID");
-		final Flavor out = os.compute().flavors().get(flavorId);
-		exchange.getIn().setBody(out);
-	}
+    private void doGet(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String flavorId = msg.getHeader(NovaConstants.ID, msg.getHeader(NovaConstants.FLAVOR_ID, String.class), String.class);
+        ObjectHelper.notEmpty(flavorId, "FlavorID");
+        final Flavor out = os.compute().flavors().get(flavorId);
+        exchange.getIn().setBody(out);
+    }
 
-	private void doGetAll(Exchange exchange) {
-		final List<? extends Flavor> out = os.compute().flavors().list();
-		exchange.getIn().setBody(out);
-	}
+    private void doGetAll(Exchange exchange) {
+        final List<? extends Flavor> out = os.compute().flavors().list();
+        exchange.getIn().setBody(out);
+    }
 
-	private void doDelete(Exchange exchange) {
-		final Message msg = exchange.getIn();
-		final String flavorId = msg.getHeader(NovaConstants.ID, msg.getHeader(NovaConstants.FLAVOR_ID, String.class), String.class);
-		ObjectHelper.notEmpty(flavorId, "FlavorID");
-		final ActionResponse response = os.compute().flavors().delete(flavorId);
-		checkFailure(response, msg, "Delete flavor");
-	}
+    private void doDelete(Exchange exchange) {
+        final Message msg = exchange.getIn();
+        final String flavorId = msg.getHeader(NovaConstants.ID, msg.getHeader(NovaConstants.FLAVOR_ID, String.class), String.class);
+        ObjectHelper.notEmpty(flavorId, "FlavorID");
+        final ActionResponse response = os.compute().flavors().delete(flavorId);
+        checkFailure(response, msg, "Delete flavor");
+    }
 
-	private org.openstack4j.model.compute.Flavor messageToFlavor(Message message) {
-		Flavor flavor = message.getBody(Flavor.class);
-		if(flavor == null) {
-			Map headers = message.getHeaders();
-			FlavorBuilder flavorBuilder = Builders.flavor();
+    private org.openstack4j.model.compute.Flavor messageToFlavor(Message message) {
+        Flavor flavor = message.getBody(Flavor.class);
+        if (flavor == null) {
+            Map headers = message.getHeaders();
+            FlavorBuilder flavorBuilder = Builders.flavor();
 
-			ObjectHelper.notEmpty(message.getHeader(NovaConstants.NAME, String.class), "Name");
-			flavorBuilder.name(message.getHeader(NovaConstants.NAME, String.class));
+            ObjectHelper.notEmpty(message.getHeader(NovaConstants.NAME, String.class), "Name");
+            flavorBuilder.name(message.getHeader(NovaConstants.NAME, String.class));
 
-			if(headers.containsKey(NovaConstants.VCPU))
-			flavorBuilder.vcpus(message.getHeader(NovaConstants.VCPU, Integer.class));
+            if (headers.containsKey(NovaConstants.VCPU)) {
+                flavorBuilder.vcpus(message.getHeader(NovaConstants.VCPU, Integer.class));
+            }
 
-			if(headers.containsKey(NovaConstants.RAM))
-			flavorBuilder.ram(message.getHeader(NovaConstants.RAM, Integer.class));
+            if (headers.containsKey(NovaConstants.RAM)) {
+                flavorBuilder.ram(message.getHeader(NovaConstants.RAM, Integer.class));
+            }
 
-			if(headers.containsKey(NovaConstants.DISK))
-			flavorBuilder.disk(message.getHeader(NovaConstants.DISK, Integer.class));
+            if (headers.containsKey(NovaConstants.DISK)) {
+                flavorBuilder.disk(message.getHeader(NovaConstants.DISK, Integer.class));
+            }
 
-			if(headers.containsKey(NovaConstants.SWAP))
-			flavorBuilder.swap(message.getHeader(NovaConstants.SWAP, Integer.class));
+            if (headers.containsKey(NovaConstants.SWAP)) {
+                flavorBuilder.swap(message.getHeader(NovaConstants.SWAP, Integer.class));
+            }
 
-			if(headers.containsKey(NovaConstants.RXTXFACTOR))
-			flavorBuilder.rxtxFactor(message.getHeader(NovaConstants.RXTXFACTOR, Integer.class));
+            if (headers.containsKey(NovaConstants.RXTXFACTOR)) {
+                flavorBuilder.rxtxFactor(message.getHeader(NovaConstants.RXTXFACTOR, Integer.class));
+            }
 
-			flavor = flavorBuilder.build();
-		}
+            flavor = flavorBuilder.build();
+        }
 
-		return flavor;
-	}
+        return flavor;
+    }
 }
