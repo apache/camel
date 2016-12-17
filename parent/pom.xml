@@ -78,7 +78,7 @@
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
     <beanio-version>2.1.0</beanio-version>
     <beanstalkd-client-version>1.4.6</beanstalkd-client-version>
-    <bndlib-version>3.1.0</bndlib-version>
+    <bndlib-version>2.4.0</bndlib-version>
     <bsh-version>2.0b6</bsh-version>
     <boon-version>0.34</boon-version>
     <bouncycastle-version>1.55</bouncycastle-version>
@@ -477,6 +477,7 @@
     <openstack4j-version>3.0.2</openstack4j-version>
     <openstack4j-guava-version>17.0</openstack4j-guava-version>
     <optaplanner-version>6.5.0.Final</optaplanner-version>
+    <ops4j-base-version>1.5.0</ops4j-base-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
     <osgi-version>4.3.1</osgi-version>
