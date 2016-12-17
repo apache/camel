@@ -40,7 +40,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.pacesys.openstack4j.connectors</groupId>
-			<artifactId>openstack4j-jersey2</artifactId>
+			<artifactId>openstack4j-okhttp</artifactId>
 			<version>${openstack4j-version}</version>
 		</dependency>
 

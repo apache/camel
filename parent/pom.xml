@@ -51,6 +51,7 @@
     <aries-blueprint-core-version>1.4.4</aries-blueprint-core-version>
     <aries-blueprint-proxy-version>1.0.1</aries-blueprint-proxy-version>
     <aries-blueprint-proxy-impl-version>1.0.4</aries-blueprint-proxy-impl-version>
+    <aries-spifly-version>1.0.8</aries-spifly-version>
     <aries-util-version>1.1.1</aries-util-version>
     <arquillian-container-se-managed-version>1.0.0.Final</arquillian-container-se-managed-version>
     <arquillian-version>1.1.11.Final</arquillian-version>
@@ -474,6 +475,7 @@
     <openshift-java-client-version>2.7.0.Final</openshift-java-client-version>
     <openshift-client-version>1.4.27</openshift-client-version>
     <openstack4j-version>3.0.2</openstack4j-version>
+    <openstack4j-guava-version>17.0</openstack4j-guava-version>
     <optaplanner-version>6.5.0.Final</optaplanner-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
