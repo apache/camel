@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.UUID;
 
 import org.apache.camel.component.openstack.AbstractProducerTestSupport;
+import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -94,7 +95,7 @@ public class GlanceProducerTest extends AbstractProducerTestSupport {
     @Test
     public void reserveWithHeadersTest() throws Exception {
         when(endpoint.getOperation()).thenReturn(GlanceConstants.RESERVE);
-        msg.setHeader(GlanceConstants.NAME, dummyImage.getName());
+        msg.setHeader(OpenstackConstants.NAME, dummyImage.getName());
         msg.setHeader(GlanceConstants.CONTAINER_FORMAT, dummyImage.getContainerFormat());
         msg.setHeader(GlanceConstants.DISK_FORMAT, dummyImage.getDiskFormat());
         msg.setHeader(GlanceConstants.CHECKSUM, dummyImage.getChecksum());
@@ -114,8 +115,8 @@ public class GlanceProducerTest extends AbstractProducerTestSupport {
 
     @Test
     public void createTest() throws Exception {
-        msg.setHeader(GlanceConstants.OPERATION, GlanceConstants.CREATE);
-        msg.setHeader(GlanceConstants.NAME, dummyImage.getName());
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.CREATE);
+        msg.setHeader(OpenstackConstants.NAME, dummyImage.getName());
         msg.setHeader(GlanceConstants.OWNER, dummyImage.getOwner());
         msg.setHeader(GlanceConstants.MIN_DISK, dummyImage.getMinDisk());
         msg.setHeader(GlanceConstants.MIN_RAM, dummyImage.getMinRam());
@@ -139,9 +140,9 @@ public class GlanceProducerTest extends AbstractProducerTestSupport {
 
     @Test
     public void uploadWithoutUpdatingTest() throws Exception {
-        msg.setHeader(GlanceConstants.OPERATION, GlanceConstants.UPLOAD);
+        msg.setHeader(OpenstackConstants.OPERATION, GlanceConstants.UPLOAD);
         final String id = "id";
-        msg.setHeader(GlanceConstants.ID, id);
+        msg.setHeader(OpenstackConstants.ID, id);
 
         final File file = File.createTempFile("image", ".iso");
         msg.setBody(file);
@@ -165,10 +166,10 @@ public class GlanceProducerTest extends AbstractProducerTestSupport {
         final String newName = "newName";
         dummyImage.setName(newName);
         when(osImage.getName()).thenReturn(newName);
-        msg.setHeader(GlanceConstants.OPERATION, GlanceConstants.UPLOAD);
+        msg.setHeader(OpenstackConstants.OPERATION, GlanceConstants.UPLOAD);
         final String id = "id";
-        msg.setHeader(GlanceConstants.ID, id);
-        msg.setHeader(GlanceConstants.NAME, dummyImage.getName());
+        msg.setHeader(OpenstackConstants.ID, id);
+        msg.setHeader(OpenstackConstants.NAME, dummyImage.getName());
         msg.setHeader(GlanceConstants.OWNER, dummyImage.getOwner());
         msg.setHeader(GlanceConstants.MIN_DISK, dummyImage.getMinDisk());
         msg.setHeader(GlanceConstants.MIN_RAM, dummyImage.getMinRam());
@@ -195,7 +196,7 @@ public class GlanceProducerTest extends AbstractProducerTestSupport {
 
     @Test
     public void updateTest() throws Exception {
-        msg.setHeader(GlanceConstants.OPERATION, GlanceConstants.UPDATE);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.UPDATE);
         when(imageService.update(any(Image.class))).thenReturn(osImage);
         final String newName = "newName";
         when(osImage.getName()).thenReturn(newName);

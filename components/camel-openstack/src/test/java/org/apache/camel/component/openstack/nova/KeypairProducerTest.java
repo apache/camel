@@ -19,6 +19,7 @@ package org.apache.camel.component.openstack.nova;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.nova.producer.KeypairProducer;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,8 +69,8 @@ public class KeypairProducerTest extends NovaProducerTestSupport {
         when(osTestKeypair.getFingerprint()).thenReturn(fingerPrint);
         when(osTestKeypair.getPrivateKey()).thenReturn(privatecKey);
 
-        msg.setHeader(NovaConstants.OPERATION, NovaConstants.CREATE);
-        msg.setHeader(NovaConstants.NAME, KEYPAIR_NAME);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.CREATE);
+        msg.setHeader(OpenstackConstants.NAME, KEYPAIR_NAME);
 
         producer.process(exchange);
 
@@ -90,8 +91,8 @@ public class KeypairProducerTest extends NovaProducerTestSupport {
 
     @Test
     public void createKeypairFromExisting() throws Exception {
-        msg.setHeader(NovaConstants.OPERATION, NovaConstants.CREATE);
-        msg.setHeader(NovaConstants.NAME, KEYPAIR_NAME);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.CREATE);
+        msg.setHeader(OpenstackConstants.NAME, KEYPAIR_NAME);
         String key = "existing public key string";
         when(osTestKeypair.getPublicKey()).thenReturn(key);
         msg.setBody(key);
@@ -113,6 +114,6 @@ public class KeypairProducerTest extends NovaProducerTestSupport {
     }
 
     private Keypair createDummyKeypair() {
-        return new NovaKeypair().create(KEYPAIR_NAME, "string contains private key");
+		return NovaKeypair.create(KEYPAIR_NAME, "string contains private key");
     }
 }
