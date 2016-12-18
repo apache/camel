@@ -114,6 +114,6 @@ public class KeypairProducerTest extends NovaProducerTestSupport {
     }
 
     private Keypair createDummyKeypair() {
-		return NovaKeypair.create(KEYPAIR_NAME, "string contains private key");
+        return NovaKeypair.create(KEYPAIR_NAME, "string contains private key");
     }
 }
