@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
+import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.swift.SwiftConstants;
 import org.apache.camel.component.openstack.swift.SwiftEndpoint;
 import org.apache.camel.util.ObjectHelper;
@@ -42,16 +43,16 @@ public class ObjectProducer extends AbstractOpenstackProducer {
         String operation = getOperation(exchange);
 
         switch (operation) {
-        case SwiftConstants.CREATE:
+        case OpenstackConstants.CREATE:
             doCreate(exchange);
             break;
-        case SwiftConstants.GET:
+        case OpenstackConstants.GET:
             doGet(exchange);
             break;
-        case SwiftConstants.GET_ALL:
+        case OpenstackConstants.GET_ALL:
             doGetAll(exchange);
             break;
-        case SwiftConstants.DELETE:
+        case OpenstackConstants.DELETE:
             doDelete(exchange);
             break;
         case SwiftConstants.GET_METADATA:
@@ -88,7 +89,7 @@ public class ObjectProducer extends AbstractOpenstackProducer {
 
     private void doGetAll(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String name = msg.getHeader(SwiftConstants.CONTAINER_NAME, msg.getHeader(SwiftConstants.NAME, String.class), String.class);
+        final String name = msg.getHeader(SwiftConstants.CONTAINER_NAME, msg.getHeader(OpenstackConstants.NAME, String.class), String.class);
         ObjectHelper.notEmpty(name, "Container name");
         final List<? extends SwiftObject> out = os.objectStorage().objects().list(name);
         exchange.getIn().setBody(out);

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.swift.producer.ObjectProducer;
 import org.junit.Before;
 import org.junit.Test;
@@ -63,7 +64,7 @@ public class ObjectProducerTest extends SwiftProducerTestSupport {
     @Test
     public void createTest() throws Exception {
         when(objectService.put(anyString(), anyString(), any(Payload.class))).thenReturn(ETAG);
-        msg.setHeader(SwiftConstants.OPERATION, SwiftConstants.CREATE);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.CREATE);
         msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
         msg.setHeader(SwiftConstants.OBJECT_NAME, OBJECT_NAME);
         final Payload payload = getTmpPayload();
@@ -85,7 +86,7 @@ public class ObjectProducerTest extends SwiftProducerTestSupport {
     @Test
     public void getTest() throws Exception {
         when(objectService.get(CONTAINER_NAME, OBJECT_NAME)).thenReturn(mockOsObject);
-        when(endpoint.getOperation()).thenReturn(SwiftConstants.GET);
+        when(endpoint.getOperation()).thenReturn(OpenstackConstants.GET);
 
         msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
         msg.setHeader(SwiftConstants.OBJECT_NAME, OBJECT_NAME);
@@ -101,7 +102,7 @@ public class ObjectProducerTest extends SwiftProducerTestSupport {
         objectsList.add(mockOsObject);
         doReturn(objectsList).when(objectService).list(CONTAINER_NAME);
 
-        when(endpoint.getOperation()).thenReturn(SwiftConstants.GET_ALL);
+        when(endpoint.getOperation()).thenReturn(OpenstackConstants.GET_ALL);
 
         msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
 
@@ -114,7 +115,7 @@ public class ObjectProducerTest extends SwiftProducerTestSupport {
     public void deleteObjectTest() throws Exception {
         final String failMessage = "fail";
         when(objectService.delete(anyString(), anyString())).thenReturn(ActionResponse.actionSuccess());
-        msg.setHeader(SwiftConstants.OPERATION, SwiftConstants.DELETE);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.DELETE);
         msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
         msg.setHeader(SwiftConstants.OBJECT_NAME, OBJECT_NAME);
 
@@ -134,7 +135,7 @@ public class ObjectProducerTest extends SwiftProducerTestSupport {
     public void deleteObjectFailTest() throws Exception {
         final String failMessage = "fail";
         when(objectService.delete(anyString(), anyString())).thenReturn(ActionResponse.actionFailed(failMessage, 401));
-        msg.setHeader(SwiftConstants.OPERATION, SwiftConstants.DELETE);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.DELETE);
         msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
         msg.setHeader(SwiftConstants.OBJECT_NAME, OBJECT_NAME);
 
@@ -149,7 +150,7 @@ public class ObjectProducerTest extends SwiftProducerTestSupport {
         final Map<String, String> md = new HashMap<>();
         md.put("key", "val");
 
-        msg.setHeader(SwiftConstants.OPERATION, SwiftConstants.CREATE_UPDATE_METADATA);
+        msg.setHeader(OpenstackConstants.OPERATION, SwiftConstants.CREATE_UPDATE_METADATA);
         msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
         msg.setHeader(SwiftConstants.OBJECT_NAME, OBJECT_NAME);
         msg.setBody(md);
@@ -171,7 +172,7 @@ public class ObjectProducerTest extends SwiftProducerTestSupport {
         md.put("key", "val");
 
         when(objectService.getMetadata(CONTAINER_NAME, OBJECT_NAME)).thenReturn(md);
-        msg.setHeader(SwiftConstants.OPERATION, SwiftConstants.GET_METADATA);
+        msg.setHeader(OpenstackConstants.OPERATION, SwiftConstants.GET_METADATA);
         msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
         msg.setHeader(SwiftConstants.OBJECT_NAME, OBJECT_NAME);
 
