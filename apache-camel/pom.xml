@@ -678,6 +678,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-openstack</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-optaplanner</artifactId>
     </dependency>
     <dependency>
@@ -1755,6 +1759,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-openshift-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-openstack-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
