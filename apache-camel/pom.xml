@@ -614,6 +614,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-mongodb3</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-mongodb-gridfs</artifactId>
     </dependency>
     <dependency>
@@ -1676,6 +1680,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-mongodb-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-mongodb3-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

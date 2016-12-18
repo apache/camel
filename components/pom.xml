@@ -184,6 +184,7 @@
     <module>camel-mina2</module>
     <module>camel-mllp</module>
     <module>camel-mongodb</module>
+    <module>camel-mongodb3</module>
     <module>camel-mongodb-gridfs</module>
     <module>camel-mqtt</module>
     <module>camel-msv</module>
