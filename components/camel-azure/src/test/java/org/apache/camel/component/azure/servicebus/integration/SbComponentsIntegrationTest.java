@@ -10,11 +10,7 @@ import org.junit.Test;
 
 import java.net.URLEncoder;
 
-/**
- * Created by alan on 14/10/16.
- */
-@Ignore("Must be manually tested. Provide your own accessKey and secretKey!")
-
+@Ignore("Integration test! Must be run manually.")
 public class SbComponentsIntegrationTest extends CamelTestSupport {
     private String namespace = "alanliu";
     private String serviceBusRootUri = ".servicebus.windows.net";

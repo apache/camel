@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.azure.servicebus;
 
-import java.util.Collection;
-
 import com.microsoft.windowsazure.exception.ServiceException;
 import com.microsoft.windowsazure.services.servicebus.ServiceBusContract;
 import com.microsoft.windowsazure.services.servicebus.models.BrokeredMessage;
@@ -30,6 +28,8 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collection;
 
 public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractSbConsumer.class);
@@ -51,9 +51,11 @@ public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
     protected SbConfiguration getConfiguration() {
         return getEndpoint().getConfiguration();
     }
+
     protected ServiceBusContract getClient() {
         return getEndpoint().getClient();
     }
+
     /**
      * Strategy to delete the message after being processed.
      *
@@ -66,10 +68,9 @@ public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
                 getClient().deleteMessage(delMsg);
                 LOG.debug("delete message - LOCK_LOCATION: " + exchange.getIn().getHeader(SbConstants.LOCK_LOCATION, String.class));
                 LOG.debug("delete message - LOCK_TOKEN: " + exchange.getIn().getHeader(SbConstants.LOCK_TOKEN, String.class));
-
             }
         } catch (ServiceException e) {
-            getExceptionHandler().handleException("Error occurred during deleting message. This exception is ignored.", exchange, e);
+            getExceptionHandler().handleException("Error occurred during deleting message from the Service Bus. This exception is ignored.", exchange, e);
         }
     }
 
@@ -81,16 +82,17 @@ public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
     }
 
     protected void processRollback(Exchange exchange) {
-
         if (getConfiguration().isPeekLock()) {
             try {
                 getClient().unlockMessage(getLockBrokeredMessage(exchange));
-                System.out.println("unlock message - LOCK_LOCATION: " + exchange.getIn().getHeader(SbConstants.LOCK_LOCATION, String.class));
-                System.out.println("unlock message - LOCK_TOKEN: " + exchange.getIn().getHeader(SbConstants.LOCK_TOKEN, String.class));
+                LOG.debug("unlock message - LOCK_LOCATION: " + exchange.getIn().getHeader(SbConstants.LOCK_LOCATION, String.class));
+                LOG.debug("unlock message - LOCK_TOKEN: " + exchange.getIn().getHeader(SbConstants.LOCK_TOKEN, String.class));
             } catch (ServiceException e) {
                 // do nothing. Because it will be unlock after timeout anyway.
+                LOG.debug("failed unlocking a message", e);
             }
         }
+
         Exception cause = exchange.getException();
         if (cause != null) {
             getExceptionHandler().handleException("Error during processing exchange. Will attempt to process the message on next poll.", exchange, cause);

@@ -11,12 +11,10 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by alan on 16/10/16.
- */
 public class SbQueueEndpointTest {
     private AbstractSbEndpoint endpoint;
     private ServiceBusContract sbContract;
+
     @Before
     public void setUp() throws Exception {
         sbContract = EasyMock.createMock(ServiceBusContract.class);
@@ -29,21 +27,19 @@ public class SbQueueEndpointTest {
         endpoint = new SbQueueEndpoint("azure-sb://queue?queueName=MyQueue", new SbComponent(new DefaultCamelContext()), config);
 
     }
+
     @Test
     public void doStartShouldNotCallUpdateQueueAttributesIfQueueExistAndNoOptionIsSpecified() throws Exception {
         List<QueueInfo>items = new ArrayList<>();
         ListQueuesResult lqr = new ListQueuesResult();
         items.add(new QueueInfo("MyQueue"));
         lqr.setItems(items);
-        EasyMock.expect(sbContract.listQueues())
-                .andReturn(lqr);
 
+        EasyMock.expect(sbContract.listQueues()).andReturn(lqr);
         EasyMock.replay(sbContract);
 
         endpoint.doStart();
 
         EasyMock.verify(sbContract);
     }
-
-
 }

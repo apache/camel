@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.azure.servicebus;
 
-import javax.xml.datatype.Duration;
-
 import com.microsoft.windowsazure.services.servicebus.ServiceBusContract;
 import com.microsoft.windowsazure.services.servicebus.implementation.EntityStatus;
 import com.microsoft.windowsazure.services.servicebus.implementation.PartitioningPolicy;
@@ -25,6 +23,8 @@ import com.microsoft.windowsazure.services.servicebus.models.ReceiveMode;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+
+import javax.xml.datatype.Duration;
 
 /**
  * azure-sb://<queue>?queueName=<queueName>&ServiceBusContract=<ServiceBusContract>
@@ -333,7 +333,6 @@ public class SbConfiguration {
     }
 
     public String getTopicPath() {
-
         return topicPath;
     }
 

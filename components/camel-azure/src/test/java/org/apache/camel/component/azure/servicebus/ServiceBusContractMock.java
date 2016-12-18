@@ -6,21 +6,21 @@ import com.microsoft.windowsazure.core.pipeline.jersey.ServiceFilter;
 import com.microsoft.windowsazure.exception.ServiceException;
 import com.microsoft.windowsazure.services.servicebus.ServiceBusContract;
 import com.microsoft.windowsazure.services.servicebus.models.*;
+import org.apache.log4j.Logger;
 
 import java.util.*;
 
-/**
- * Created by alan on 14/10/16.
- */
 public class ServiceBusContractMock implements ServiceBusContract {
-    protected Map<String, TopicInfo> _dummyTopicInfos = new HashMap<>();
-    protected Map<String, SubscriptionInfo> _dummySubscriptionInfos = new HashMap<>();
-    protected Map<String, RuleInfo> _dummyRules = new HashMap<>();
-    protected Map<String, QueueInfo> _dummyQueueInfos = new HashMap<>();
-    protected Map<String, EventHubInfo> _dummyEventHubs = new HashMap<>();
-    protected Map<String, List<BrokeredMessage>> _dummyMq = new HashMap<>();
-    protected Map<String, List<String>> _dummyTopicSubscriptions = new HashMap<>();
-    protected Map<String, BrokeredMessage> _dummyLocks = new HashMap<>();
+    private Map<String, TopicInfo> _dummyTopicInfos = new HashMap<>();
+    private Map<String, SubscriptionInfo> _dummySubscriptionInfos = new HashMap<>();
+    private Map<String, RuleInfo> _dummyRules = new HashMap<>();
+    private Map<String, QueueInfo> _dummyQueueInfos = new HashMap<>();
+    private Map<String, EventHubInfo> _dummyEventHubs = new HashMap<>();
+    private Map<String, List<BrokeredMessage>> _dummyMq = new HashMap<>();
+    private Map<String, List<String>> _dummyTopicSubscriptions = new HashMap<>();
+    private Map<String, BrokeredMessage> _dummyLocks = new HashMap<>();
+
+    private Logger LOG = Logger.getLogger(ServiceBusContractMock.class);
 
     protected BrokeredMessage getBrokeredMessage(String queuePath) {
         BrokeredMessage message = null;
@@ -29,6 +29,7 @@ public class ServiceBusContractMock implements ServiceBusContract {
         }
         return message;
     }
+
     protected BrokeredMessage removeBrokeredMessage(String queuePath) {
         BrokeredMessage message = null;
         if(_dummyMq.get(queuePath) != null && _dummyMq.get(queuePath).size() >0) {
@@ -36,6 +37,7 @@ public class ServiceBusContractMock implements ServiceBusContract {
         }
         return message;
     }
+
     protected BrokeredMessage getQueueMessage(String queuePath, ReceiveMessageOptions options) {
 
         BrokeredMessage message = null;
@@ -60,38 +62,32 @@ public class ServiceBusContractMock implements ServiceBusContract {
 
     protected void lockMessage(BrokeredMessage message) {
         if (message == null){
-            System.out.println("$$$ message == null $$$");
+            LOG.debug("$$$ message == null $$$");
 
         }
         if (message.getBrokerProperties() == null){
-            System.out.println("$$$message.getBrokerProperties() == null$$$");
+            LOG.debug("$$$message.getBrokerProperties() == null$$$");
         }
         message.getBrokerProperties().setLockLocation("Lock://" + message.getLockToken());
         _dummyLocks.put(message.getLockLocation(), message);
     }
 
-    //    private BrokeredMessage getTopicMessage(String topicPath) {
+//    private BrokeredMessage getTopicMessage(String topicPath) {
 //        return getBrokeredMessage(topicPath,_dummyTopics);
 //    }
+
     protected void setBrokeredMessage(String name, BrokeredMessage message, Map<String, List<BrokeredMessage>> manager){
-        List<BrokeredMessage> messagesList = manager.get(name);
-        if (messagesList == null){
-            messagesList = new ArrayList<>();
-            manager.put(name,messagesList);
-        }
+        List<BrokeredMessage> messagesList = manager.computeIfAbsent(name, k -> new ArrayList<>());
         messagesList.add(message);
     }
+
     protected synchronized void setQueueMessage(String queuePath, BrokeredMessage message){
         setBrokeredMessage(queuePath, message, _dummyMq);
     }
+
     protected synchronized void setTopicMessage(String topicPath, BrokeredMessage message){
-        List<String> subscriptions = _dummyTopicSubscriptions.get(topicPath);
-        if (subscriptions == null) {
-            subscriptions = new ArrayList<>();
-            _dummyTopicSubscriptions.put(topicPath, subscriptions);
-        }
-        subscriptions.forEach(subscritption -> setBrokeredMessage(getSubscriptionPath(topicPath, subscritption),
-                message,_dummyMq));
+        List<String> subscriptions = _dummyTopicSubscriptions.computeIfAbsent(topicPath, k -> new ArrayList<>());
+        subscriptions.forEach(subscritption -> setBrokeredMessage(getSubscriptionPath(topicPath, subscritption), message, _dummyMq));
     }
 
     protected String getSubscriptionPath(String topicPath, String subscriptionName) {
@@ -158,8 +154,7 @@ public class ServiceBusContractMock implements ServiceBusContract {
      * @throws ServiceException If a service exception is encountered.
      */
     @Override
-    public ReceiveQueueMessageResult receiveQueueMessage(String queuePath, ReceiveMessageOptions options)
-            throws ServiceException {
+    public ReceiveQueueMessageResult receiveQueueMessage(String queuePath, ReceiveMessageOptions options) throws ServiceException {
         return new ReceiveQueueMessageResult(getQueueMessage(queuePath, options));
     }
 
@@ -191,8 +186,7 @@ public class ServiceBusContractMock implements ServiceBusContract {
      * @throws ServiceException If a service exception is encountered.
      */
     @Override
-    public ReceiveSubscriptionMessageResult receiveSubscriptionMessage(String topicPath, String subscriptionName)
-            throws ServiceException {
+    public ReceiveSubscriptionMessageResult receiveSubscriptionMessage(String topicPath, String subscriptionName) throws ServiceException {
         return receiveSubscriptionMessage(topicPath, subscriptionName,
                 ReceiveMessageOptions.DEFAULT);
     }
@@ -212,12 +206,8 @@ public class ServiceBusContractMock implements ServiceBusContract {
      * @throws ServiceException If a service exception is encountered.
      */
     @Override
-    public ReceiveSubscriptionMessageResult receiveSubscriptionMessage(
-            String topicPath,
-            String subscriptionName,
-            ReceiveMessageOptions options) throws ServiceException {
-        BrokeredMessage message = getBrokeredMessage(
-                getSubscriptionPath(topicPath, subscriptionName));
+    public ReceiveSubscriptionMessageResult receiveSubscriptionMessage(String topicPath, String subscriptionName, ReceiveMessageOptions options) throws ServiceException {
+        BrokeredMessage message = getBrokeredMessage(getSubscriptionPath(topicPath, subscriptionName));
         return new ReceiveSubscriptionMessageResult(message);
     }
 
@@ -347,8 +337,8 @@ public class ServiceBusContractMock implements ServiceBusContract {
      */
     @Override
     public ListQueuesResult listQueues() throws ServiceException {
-        ArrayList<QueueInfo> queues = new ArrayList<QueueInfo>();
-        _dummyQueueInfos.values().forEach(queueInfo -> queues.add(queueInfo));
+        ArrayList<QueueInfo> queues = new ArrayList<>();
+        _dummyQueueInfos.values().forEach(queues::add);
 
         ListQueuesResult result = new ListQueuesResult();
         result.setItems(queues);
@@ -434,7 +424,7 @@ public class ServiceBusContractMock implements ServiceBusContract {
     @Override
     public ListEventHubsResult listEventHubs() throws ServiceException {
         ArrayList<EventHubInfo> hubs = new ArrayList<>();
-        _dummyEventHubs.values().forEach(hubInfo -> hubs.add(hubInfo));
+        _dummyEventHubs.values().forEach(hubs::add);
         ListEventHubsResult result = new ListEventHubsResult();
         result.setItems(hubs);
         return result;
@@ -504,7 +494,7 @@ public class ServiceBusContractMock implements ServiceBusContract {
     @Override
     public ListTopicsResult listTopics() throws ServiceException {
         ArrayList<TopicInfo> topics = new ArrayList<>();
-        _dummyTopicInfos.values().forEach(topicInfo -> topics.add(topicInfo));
+        _dummyTopicInfos.values().forEach(topics::add);
         ListTopicsResult result = new ListTopicsResult();
         result.setItems(topics);
         return result;
@@ -757,14 +747,11 @@ public class ServiceBusContractMock implements ServiceBusContract {
     /**
      * Renew subscription lock.
      *
-     * @param topicName        A <code>String</code> object that represents the name of the
-     *                         topic.
-     * @param subscriptionName
-     * @param messageId        A <code>String</code> object that represents the ID of the
-     *                         message.
-     * @param lockToken        A <code>String</code> object that represents the token of the
-     *                         lock.   @throws ServiceException
-     *                         If a service exception is encountered.
+     * @param topicName         A <code>String</code> object that represents the name of the topic.
+     * @param subscriptionName  A <code>String</code> object that represents the name of the Azure subscription
+     * @param messageId         A <code>String</code> object that represents the ID of the message.
+     * @param lockToken         A <code>String</code> object that represents the token of the lock.
+     * @throws ServiceException If a service exception is encountered.
      */
     @Override
     public void renewSubscriptionLock(String topicName, String subscriptionName, String messageId, String lockToken) throws ServiceException {

@@ -16,24 +16,20 @@
  */
 package org.apache.camel.component.azure.servicebus;
 
-import java.io.InputStream;
-import java.util.HashMap;
-
 import com.microsoft.windowsazure.Configuration;
 import com.microsoft.windowsazure.services.servicebus.ServiceBusConfiguration;
 import com.microsoft.windowsazure.services.servicebus.ServiceBusContract;
 import com.microsoft.windowsazure.services.servicebus.ServiceBusService;
 import com.microsoft.windowsazure.services.servicebus.models.BrokeredMessage;
-import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
-import org.apache.camel.Processor;
+import org.apache.camel.*;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.InputStream;
+import java.util.HashMap;
 
 @UriEndpoint(scheme = "azure-sb", title = "Azure Service Bus", syntax = "azure-sb:", label = "cloud,messaging")
 public abstract class AbstractSbEndpoint extends DefaultEndpoint {
@@ -53,6 +49,7 @@ public abstract class AbstractSbEndpoint extends DefaultEndpoint {
         if (client == null) {
             client = createClient();
         }
+
         return client;
     }
 
@@ -69,6 +66,7 @@ public abstract class AbstractSbEndpoint extends DefaultEndpoint {
                 configuration.getSasKeyName(),
                 configuration.getSasKey(),
                 configuration.getServiceBusRootUri());
+
         return ServiceBusService.create(config);
     }
 
@@ -89,9 +87,9 @@ public abstract class AbstractSbEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStart() throws Exception {
-        client = getConfiguration().getServiceBusContract() != null
-                ? getConfiguration().getServiceBusContract() : getClient();
+        client = getConfiguration().getServiceBusContract() != null ? getConfiguration().getServiceBusContract() : getClient();
     }
+
     @Override
     protected void doStop() throws Exception {
         client = null;
@@ -106,7 +104,7 @@ public abstract class AbstractSbEndpoint extends DefaultEndpoint {
         Exchange exchange = super.createExchange(pattern);
         Message message = exchange.getIn();
         message.setBody(msg.getBody(), InputStream.class);
-        message.setHeaders(new HashMap<String, Object>(msg.getProperties()));
+        message.setHeaders(new HashMap<>(msg.getProperties()));
         message.setHeader(SbConstants.BROKER_PROPERTIES, msg.getBrokerProperties()); //BrokerProperties included every msg properties
         message.setHeader(SbConstants.MESSAGE_ID, msg.getMessageId());
         message.setHeader(SbConstants.CONTENT_TYPE, SbConstants.DEFAULT_CONTENT_TYPE);  // FIXME: just passing through a content_type is dangerous

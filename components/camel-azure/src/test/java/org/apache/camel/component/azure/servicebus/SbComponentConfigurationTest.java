@@ -6,19 +6,18 @@ import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-/**
- * Created by alan on 14/10/16.
- */
 public class SbComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createTopicEndpointWithServiceBusContractAndMaximalConfiguration() throws Exception {
         ServiceBusContractMock mock = new ServiceBusContractMock();
         ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("MyServiceBusContract", mock);
+
         SbComponent component = new SbComponent(context);
         AbstractSbEndpoint endpoint = (AbstractSbEndpoint) component.createEndpoint(
                 "azure-sb://topic?topicPath=mytopic&subscriptionName=mysubcription&ServiceBusContract=#MyServiceBusContract&timeout=2000&peekLock=true"
         );
+
         assertEquals("mytopic", endpoint.getConfiguration().getTopicPath());
         assertEquals("mysubcription", endpoint.getConfiguration().getSubscriptionName());
         assertEquals(EntityType.TOPIC,endpoint.getConfiguration().getEntities());
@@ -30,14 +29,14 @@ public class SbComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createTopicEndpointWithServiceBusContractAndMinimalConfiguration() throws Exception {
         ServiceBusContractMock mock = new ServiceBusContractMock();
-
         ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("MyServiceBusContract", mock);
+
         SbComponent component = new SbComponent(context);
         AbstractSbEndpoint endpoint = (AbstractSbEndpoint) component.createEndpoint("azure-sb://topic?topicPath=mytopic&subscriptionName=mysubcription&ServiceBusContract=#MyServiceBusContract");
+
         assertEquals("mytopic", endpoint.getConfiguration().getTopicPath());
         assertEquals("mysubcription", endpoint.getConfiguration().getSubscriptionName());
-
-        assertEquals(EntityType.TOPIC,endpoint.getConfiguration().getEntities());
+        assertEquals(EntityType.TOPIC, endpoint.getConfiguration().getEntities());
         assertSame(mock, endpoint.getConfiguration().getServiceBusContract());
         assertNull(endpoint.getConfiguration().getTimeout());
         assertEquals(ReceiveMode.RECEIVE_AND_DELETE, endpoint.getConfiguration().getReceiveMode());
@@ -46,10 +45,12 @@ public class SbComponentConfigurationTest extends CamelTestSupport {
     public void createQueueEndpointWithServiceBusContractAndMaximalConfiguration() throws Exception {
         ServiceBusContractMock mock = new ServiceBusContractMock();
         ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("MyServiceBusContract", mock);
+
         SbComponent component = new SbComponent(context);
         AbstractSbEndpoint endpoint = (AbstractSbEndpoint) component.createEndpoint(
                 "azure-sb://queue?queueName=MyQueue&ServiceBusContract=#MyServiceBusContract&timeout=2000&peekLock=true"
         );
+
         assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
         assertEquals(EntityType.QUEUE,endpoint.getConfiguration().getEntities());
         assertSame(mock, endpoint.getConfiguration().getServiceBusContract());
@@ -60,10 +61,11 @@ public class SbComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createQueueEndpointWithServiceBusContractAndMinimalConfiguration() throws Exception {
         ServiceBusContractMock mock = new ServiceBusContractMock();
-
         ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("MyServiceBusContract", mock);
+
         SbComponent component = new SbComponent(context);
         AbstractSbEndpoint endpoint = (AbstractSbEndpoint) component.createEndpoint("azure-sb://queue?queueName=MyQueue&ServiceBusContract=#MyServiceBusContract");
+
         assertEquals("MyQueue", endpoint.getConfiguration().getQueueName());
         assertEquals(EntityType.QUEUE,endpoint.getConfiguration().getEntities());
         assertSame(mock, endpoint.getConfiguration().getServiceBusContract());

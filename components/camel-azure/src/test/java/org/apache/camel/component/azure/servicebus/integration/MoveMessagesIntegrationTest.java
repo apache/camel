@@ -12,6 +12,7 @@ import org.apache.camel.component.azure.servicebus.Utilities;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.naming.Context;
@@ -23,13 +24,10 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Created by alan on 17/10/16.
- */
-public class MoveMessagesTest {
+@Ignore("Integration test! Must be run manually.")
+public class MoveMessagesIntegrationTest {
     private String namespace = "alanliu";
     private String serviceBusRootUri = ".servicebus.windows.net";
     private String sasKeyName = "RootManageSharedAccessKey";
