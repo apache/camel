@@ -22,12 +22,12 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class MongoDbSpringDslOperationsTest extends MongoDbOperationsTest {
-    
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         applicationContext = new AnnotationConfigApplicationContext(MongoBasicOperationsConfiguration.class);
         @SuppressWarnings("deprecation")
-		CamelContext ctx = SpringCamelContext.springCamelContext(applicationContext);
+        CamelContext ctx = SpringCamelContext.springCamelContext(applicationContext);
         return ctx;
     }
 
@@ -36,9 +36,10 @@ public class MongoDbSpringDslOperationsTest extends MongoDbOperationsTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // Nothing, all routes are initialized by the Spring DSL context file
+                // Nothing, all routes are initialized by the Spring DSL context
+                // file
             }
         };
     }
-    
+
 }

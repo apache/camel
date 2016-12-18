@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.mongodb3;
 
-import static com.mongodb.client.model.Filters.eq;
-import static com.mongodb.client.model.Indexes.*;
-import static org.apache.camel.component.mongodb3.MongoDbConstants.MONGO_ID;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,28 +23,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.StreamSupport;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mongodb3.MongoDbConstants;
-import org.bson.Document;
-import org.bson.conversions.Bson;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import com.mongodb.WriteResult;
 import com.mongodb.client.ListIndexesIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 
+import org.apache.camel.builder.RouteBuilder;
+import org.bson.Document;
+import org.bson.conversions.Bson;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Indexes.ascending;
+import static com.mongodb.client.model.Indexes.descending;
+import static org.apache.camel.component.mongodb3.MongoDbConstants.MONGO_ID;
+
 public class MongoDbIndexTest extends AbstractMongoDbTest {
 
-	@Test
+    @Test
     public void testInsertDynamicityEnabledDBAndCollectionAndIndex() {
         assertEquals(0, testCollection.count());
         mongo.getDatabase("otherDB").drop();
         db.getCollection("otherCollection").drop();
-        assertFalse("The otherDB database should not exist",
-                StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false)
-                        .anyMatch("otherDB"::equals));
+        assertFalse("The otherDB database should not exist", StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false).anyMatch("otherDB"::equals));
 
         String body = "{\"_id\": \"testInsertDynamicityEnabledDBAndCollection\", \"a\" : 1, \"b\" : 2}";
         Map<String, Object> headers = new HashMap<>();
@@ -87,9 +85,7 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         b = testCollection.find(new Document(MONGO_ID, "testInsertDynamicityEnabledDBOnly")).first();
         assertNull("There is a record with 'testInsertDynamicityEnabledDBAndCollection' _id in the test collection", b);
 
-        assertTrue("The otherDB database should exist",
-                StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false)
-                        .anyMatch("otherDB"::equals));
+        assertTrue("The otherDB database should exist", StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false).anyMatch("otherDB"::equals));
     }
 
     @Test
@@ -97,15 +93,13 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         assertEquals(0, testCollection.count());
         mongo.getDatabase("otherDB").drop();
         db.getCollection("otherCollection").drop();
-        assertFalse("The otherDB database should not exist",
-                StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false)
-                        .anyMatch("otherDB"::equals));
+        assertFalse("The otherDB database should not exist", StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false).anyMatch("otherDB"::equals));
 
         String body = "{\"_id\": \"testInsertDynamicityEnabledCollectionAndIndex\", \"a\" : 1, \"b\" : 2}";
         Map<String, Object> headers = new HashMap<>();
         headers.put(MongoDbConstants.COLLECTION, "otherCollection");
 
-        List<Bson> objIndex = Arrays.asList(ascending("a"),descending("b"));
+        List<Bson> objIndex = Arrays.asList(ascending("a"), descending("b"));
         headers.put(MongoDbConstants.COLLECTION_INDEX, objIndex);
 
         Object result = template.requestBodyAndHeaders("direct:dynamicityEnabled", body, headers);
@@ -137,9 +131,7 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         assertEquals(0, testCollection.count());
         mongo.getDatabase("otherDB").drop();
         db.getCollection("otherCollection").drop();
-        assertFalse("The otherDB database should not exist",
-                StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false)
-                        .anyMatch("otherDB"::equals));
+        assertFalse("The otherDB database should not exist", StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false).anyMatch("otherDB"::equals));
 
         String body = "{\"_id\": \"testInsertDynamicityEnabledCollectionOnlyAndURIIndex\", \"a\" : 1, \"b\" : 2}";
         Map<String, Object> headers = new HashMap<>();
@@ -163,9 +155,7 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         b = testCollection.find(eq(MONGO_ID, "testInsertDynamicityEnabledCollectionOnlyAndURIIndex")).first();
         assertNull("There is a record with 'testInsertDynamicityEnabledCollectionOnlyAndURIIndex' _id in the test collection", b);
 
-        assertFalse("The otherDB database should not exist",
-                StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false)
-                        .anyMatch("otherDB"::equals));
+        assertFalse("The otherDB database should not exist", StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false).anyMatch("otherDB"::equals));
     }
 
     @Ignore
@@ -195,21 +185,18 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         b = testCollection.find(eq(MONGO_ID, "testInsertAutoCreateCollectionAndURIIndex")).first();
         assertNull("There is a record with 'testInsertAutoCreateCollectionAndURIIndex' _id in the test collection", b);
 
-        assertFalse("The otherDB database should not exist",
-                StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false)
-                        .anyMatch("otherDB"::equals));
+        assertFalse("The otherDB database should not exist", StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false).anyMatch("otherDB"::equals));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:dynamicityEnabled")
-                        .to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&dynamicity=true");//&writeConcern=SAFE");
+                from("direct:dynamicityEnabled").to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&dynamicity=true");
                 from("direct:dynamicityEnabledWithIndexUri")
-                        .to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&collectionIndex={\"a\":1}&operation=insert&dynamicity=true");//&writeConcern=SAFE");
+                    .to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&collectionIndex={\"a\":1}&operation=insert&dynamicity=true");
                 from("direct:dynamicityDisabled")
-                        .to("mongodb3:myDb?database={{mongodb.testDb}}&collection=otherCollection&collectionIndex={\"a\":1,\"b\":-1}&operation=insert&dynamicity=false");//&writeConcern=SAFE");
+                    .to("mongodb3:myDb?database={{mongodb.testDb}}&collection=otherCollection&collectionIndex={\"a\":1,\"b\":-1}&operation=insert&dynamicity=false");
             }
         };
     }

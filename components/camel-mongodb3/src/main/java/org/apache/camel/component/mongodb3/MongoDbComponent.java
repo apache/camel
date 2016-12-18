@@ -21,25 +21,21 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.mongodb.MongoClient;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mongodb.MongoClient;
-
 /**
  * Represents the component that manages {@link MongoDbEndpoint}.
  */
 public class MongoDbComponent extends UriEndpointComponent {
-    
-    public static final Set<MongoDbOperation> WRITE_OPERATIONS = 
-            new HashSet<>(Arrays.asList(
-            		MongoDbOperation.insert, 
-            		MongoDbOperation.save, 
-                    MongoDbOperation.update, 
-                    MongoDbOperation.remove));
+
+    public static final Set<MongoDbOperation> WRITE_OPERATIONS = new HashSet<>(Arrays.asList(MongoDbOperation.insert, MongoDbOperation.save, MongoDbOperation.update,
+                                                                                             MongoDbOperation.remove));
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbComponent.class);
     private volatile MongoClient db;
 
@@ -50,7 +46,7 @@ public class MongoDbComponent extends UriEndpointComponent {
     /**
      * Should access a singleton of type Mongo
      */
-	protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // TODO: this only supports one mongodb
         if (db == null) {
             db = CamelContextHelper.mandatoryLookup(getCamelContext(), remaining, MongoClient.class);
@@ -61,7 +57,7 @@ public class MongoDbComponent extends UriEndpointComponent {
         endpoint.setConnectionBean(remaining);
         endpoint.setMongoConnection(db);
         setProperties(endpoint, parameters);
-        
+
         return endpoint;
     }
 
@@ -78,7 +74,7 @@ public class MongoDbComponent extends UriEndpointComponent {
 
     public static CamelMongoDbException wrapInCamelMongoDbException(Throwable t) {
         if (t instanceof CamelMongoDbException) {
-            return (CamelMongoDbException) t;
+            return (CamelMongoDbException)t;
         } else {
             return new CamelMongoDbException(t);
         }

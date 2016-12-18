@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.mongodb3.processor.idempotent;
 
-import static com.mongodb.client.model.Filters.eq;
-import static org.apache.camel.component.mongodb3.MongoDbConstants.MONGO_ID;
+import com.mongodb.ErrorCategory;
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.result.DeleteResult;
 
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
@@ -27,14 +29,12 @@ import org.apache.camel.util.ObjectHelper;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 
-import com.mongodb.ErrorCategory;
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.result.DeleteResult;
+import static com.mongodb.client.model.Filters.eq;
+import static org.apache.camel.component.mongodb3.MongoDbConstants.MONGO_ID;
 
 @ManagedResource(description = "Mongo db based message id repository")
 public class MongoDbIdempotentRepository<E> extends ServiceSupport implements IdempotentRepository<E> {
-	private MongoClient mongoClient;
+    private MongoClient mongoClient;
     private String collectionName;
     private String dbName;
     private MongoCollection<Document> collection;
@@ -68,7 +68,7 @@ public class MongoDbIdempotentRepository<E> extends ServiceSupport implements Id
     @Override
     public boolean contains(E key) {
         Bson document = eq(MONGO_ID, key);
-        long count =  collection.count(document);
+        long count = collection.count(document);
         return count > 0;
     }
 
@@ -77,7 +77,7 @@ public class MongoDbIdempotentRepository<E> extends ServiceSupport implements Id
     public boolean remove(E key) {
         Bson document = eq(MONGO_ID, key);
         DeleteResult res = collection.deleteOne(document);
-        return  res.getDeletedCount() > 0;
+        return res.getDeletedCount() > 0;
     }
 
     @Override
@@ -131,4 +131,3 @@ public class MongoDbIdempotentRepository<E> extends ServiceSupport implements Id
         this.dbName = dbName;
     }
 }
-

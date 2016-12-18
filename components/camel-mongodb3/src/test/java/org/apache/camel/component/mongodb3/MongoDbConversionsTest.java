@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.mongodb3;
 
-import static com.mongodb.client.model.Filters.eq;
-import static org.apache.camel.component.mongodb3.MongoDbConstants.MONGO_ID;
-
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,85 +25,89 @@ import org.apache.camel.converter.IOConverter;
 import org.bson.Document;
 import org.junit.Test;
 
+import static com.mongodb.client.model.Filters.eq;
+import static org.apache.camel.component.mongodb3.MongoDbConstants.MONGO_ID;
+
 public class MongoDbConversionsTest extends AbstractMongoDbTest {
 
-	@Test
+    @Test
     public void testInsertMap() throws InterruptedException {
         assertEquals(0, testCollection.count());
-        
+
         Map<String, Object> m1 = new HashMap<>();
         Map<String, String> m1Nested = new HashMap<>();
 
         m1Nested.put("nested1", "nestedValue1");
         m1Nested.put("nested2", "nestedValue2");
-        
+
         m1.put("field1", "value1");
         m1.put("field2", "value2");
         m1.put("nestedField", m1Nested);
         m1.put(MONGO_ID, "testInsertMap");
 
-//        Object result = 
-        		template.requestBody("direct:insertMap", m1);
-        		Document b = testCollection.find(eq(MONGO_ID, "testInsertMap")).first();
+        // Object result =
+        template.requestBody("direct:insertMap", m1);
+        Document b = testCollection.find(eq(MONGO_ID, "testInsertMap")).first();
         assertNotNull("No record with 'testInsertMap' _id", b);
 
     }
-    
+
     @Test
     public void testInsertPojo() {
         assertEquals(0, testCollection.count());
-//        Object result = 
-        		template.requestBody("direct:insertPojo", new MyPojoTest());
-        		Document b = testCollection.find(eq(MONGO_ID, "testInsertPojo")).first();
+        // Object result =
+        template.requestBody("direct:insertPojo", new MyPojoTest());
+        Document b = testCollection.find(eq(MONGO_ID, "testInsertPojo")).first();
         assertNotNull("No record with 'testInsertPojo' _id", b);
     }
-    
+
     @Test
     public void testInsertJsonString() {
         assertEquals(0, testCollection.count());
-//        Object result = 
-        		template.requestBody("direct:insertJsonString", "{\"fruits\": [\"apple\", \"banana\", \"papaya\"], \"veggie\": \"broccoli\", \"_id\": \"testInsertJsonString\"}");
-        //assertTrue(result instanceof WriteResult);
+        // Object result =
+        template.requestBody("direct:insertJsonString", "{\"fruits\": [\"apple\", \"banana\", \"papaya\"], \"veggie\": \"broccoli\", \"_id\": \"testInsertJsonString\"}");
+        // assertTrue(result instanceof WriteResult);
         Document b = testCollection.find(eq(MONGO_ID, "testInsertJsonString")).first();
         assertNotNull("No record with 'testInsertJsonString' _id", b);
     }
-    
+
     @Test
     public void testInsertJsonInputStream() throws Exception {
         assertEquals(0, testCollection.count());
-//        Object result = 
-        		template.requestBody("direct:insertJsonString", 
-                        IOConverter.toInputStream("{\"fruits\": [\"apple\", \"banana\"], \"veggie\": \"broccoli\", \"_id\": \"testInsertJsonString\"}\n", null));
-        		Document b = testCollection.find(eq(MONGO_ID, "testInsertJsonString")).first();
+        // Object result =
+        template.requestBody("direct:insertJsonString",
+                             IOConverter.toInputStream("{\"fruits\": [\"apple\", \"banana\"], \"veggie\": \"broccoli\", \"_id\": \"testInsertJsonString\"}\n", null));
+        Document b = testCollection.find(eq(MONGO_ID, "testInsertJsonString")).first();
         assertNotNull("No record with 'testInsertJsonString' _id", b);
     }
-    
+
     @Test
     public void testInsertBsonInputStream() {
         assertEquals(0, testCollection.count());
-        
+
         Document document = new Document(MONGO_ID, "testInsertBsonString");
-        
-//        Object result = 
-        		template.requestBody("direct:insertJsonString", new ByteArrayInputStream(document.toJson().getBytes()));
-        		Document b = testCollection.find(eq(MONGO_ID, "testInsertBsonString")).first();
+
+        // Object result =
+        template.requestBody("direct:insertJsonString", new ByteArrayInputStream(document.toJson().getBytes()));
+        Document b = testCollection.find(eq(MONGO_ID, "testInsertBsonString")).first();
         assertNotNull("No record with 'testInsertBsonString' _id", b);
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                
+
                 from("direct:insertMap").to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
                 from("direct:insertPojo").to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
                 from("direct:insertJsonString").to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
-                from("direct:insertJsonStringWriteResultInString").to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert").convertBodyTo(String.class);
+                from("direct:insertJsonStringWriteResultInString").to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert")
+                    .convertBodyTo(String.class);
 
             }
         };
     }
-    
+
     @SuppressWarnings("unused")
     private class MyPojoTest {
         public int number = 123;
@@ -116,5 +117,5 @@ public class MongoDbConversionsTest extends AbstractMongoDbTest {
         public String _id = "testInsertPojo";
         // CHECKSTYLE:ON
     }
-    
+
 }

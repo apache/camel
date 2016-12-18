@@ -17,7 +17,7 @@
 package org.apache.camel.component.mongodb3;
 
 public enum MongoDbOutputType {
-    DocumentList, //List<Document>
-    Document, //Document
-    MongoIterable //MongoIterable
+    DocumentList, // List<Document>
+    Document, // Document
+    MongoIterable // MongoIterable
 }

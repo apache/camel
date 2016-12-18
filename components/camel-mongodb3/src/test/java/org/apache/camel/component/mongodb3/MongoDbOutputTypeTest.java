@@ -16,24 +16,23 @@
  */
 package org.apache.camel.component.mongodb3;
 
-import static org.apache.camel.component.mongodb3.MongoDbConstants.MONGO_ID;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.mongodb.client.MongoIterable;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mongodb3.MongoDbConstants;
 import org.apache.commons.lang3.ObjectUtils;
 import org.bson.Document;
 import org.junit.Test;
 
-import com.mongodb.client.MongoIterable;
+import static org.apache.camel.component.mongodb3.MongoDbConstants.MONGO_ID;
 
 public class MongoDbOutputTypeTest extends AbstractMongoDbTest {
 
-	@Test
+    @Test
     public void testFindAllDBCursor() {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.count());
@@ -49,7 +48,7 @@ public class MongoDbOutputTypeTest extends AbstractMongoDbTest {
             assertTrue("Result is not of type MongoIterable", result instanceof MongoIterable);
 
             @SuppressWarnings("unchecked")
-			MongoIterable<Document> resultCursor = (MongoIterable<Document>) result;
+            MongoIterable<Document> resultCursor = (MongoIterable<Document>)result;
             // Ensure that all returned documents contain all fields
             for (Document document : resultCursor) {
                 assertNotNull("Document in returned list should contain all fields", document.get(MONGO_ID));
@@ -69,7 +68,7 @@ public class MongoDbOutputTypeTest extends AbstractMongoDbTest {
         Object result = template.requestBody("direct:findAllDocumentList", ObjectUtils.NULL);
         assertTrue("Result is not of type List", result instanceof List);
         @SuppressWarnings("unchecked")
-        List<Document> resultList = (List<Document>) result;
+        List<Document> resultList = (List<Document>)result;
 
         assertListSize("Result does not contain 1000 elements", resultList, 1000);
 
@@ -91,7 +90,8 @@ public class MongoDbOutputTypeTest extends AbstractMongoDbTest {
             RouteBuilder taillableRouteBuilder = new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findById&dynamicity=true&outputType=MongoIterable").to("mock:dummy");
+                    from("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findById&dynamicity=true&outputType=MongoIterable")
+                        .to("mock:dummy");
                 }
             };
             template.getCamelContext().addRoutes(taillableRouteBuilder);
@@ -108,9 +108,7 @@ public class MongoDbOutputTypeTest extends AbstractMongoDbTest {
                 @Override
                 public void configure() throws Exception {
                     from("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.cappedTestCollection}}&tailTrackIncreasingField=increasing&outputType=MongoIterable")
-                            .id("tailableCursorConsumer1")
-                            .autoStartup(false)
-                            .to("mock:test");
+                        .id("tailableCursorConsumer1").autoStartup(false).to("mock:test");
                 }
             };
             template.getCamelContext().addRoutes(taillableRouteBuilder);
@@ -126,11 +124,10 @@ public class MongoDbOutputTypeTest extends AbstractMongoDbTest {
             public void configure() {
 
                 from("direct:findAllDBCursor")
-                        .to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findAll&dynamicity=true&outputType=MongoIterable")
-                        .to("mock:resultFindAllDBCursor");
-                from("direct:findAllDocumentList")
-                        .to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findAll&outputType=DocumentList")
-                        .to("mock:resultFindAllDocumentList");
+                    .to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findAll&dynamicity=true&outputType=MongoIterable")
+                    .to("mock:resultFindAllDBCursor");
+                from("direct:findAllDocumentList").to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findAll&outputType=DocumentList")
+                    .to("mock:resultFindAllDocumentList");
 
             }
         };

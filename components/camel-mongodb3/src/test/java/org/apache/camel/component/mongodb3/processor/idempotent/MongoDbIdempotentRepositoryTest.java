@@ -18,14 +18,13 @@ package org.apache.camel.component.mongodb3.processor.idempotent;
 
 import java.util.UUID;
 
+import com.mongodb.MongoClient;
+
 import org.apache.camel.component.mongodb3.AbstractMongoDbTest;
-import org.apache.camel.component.mongodb3.processor.idempotent.MongoDbIdempotentRepository;
 import org.bson.Document;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.mongodb.MongoClient;
 
 public class MongoDbIdempotentRepositoryTest extends AbstractMongoDbTest {
 
@@ -40,7 +39,7 @@ public class MongoDbIdempotentRepositoryTest extends AbstractMongoDbTest {
     @Override
     public void doPostSetup() {
         super.doPostSetup();
-        repo = new MongoDbIdempotentRepository<>((MongoClient) mongo, testCollectionName, dbName);
+        repo = new MongoDbIdempotentRepository<>((MongoClient)mongo, testCollectionName, dbName);
     }
 
     @Test
@@ -59,7 +58,7 @@ public class MongoDbIdempotentRepositoryTest extends AbstractMongoDbTest {
         repo.add(randomUUIDString);
         assertEquals(1, testCollection.count());
 
-        boolean found =  repo.contains(randomUUIDString);
+        boolean found = repo.contains(randomUUIDString);
         assertTrue("Added uid was found", found);
     }
 
@@ -70,7 +69,7 @@ public class MongoDbIdempotentRepositoryTest extends AbstractMongoDbTest {
         repo.add(randomUUIDString);
         assertEquals(1, testCollection.count());
 
-        boolean removed =  repo.remove(randomUUIDString);
+        boolean removed = repo.remove(randomUUIDString);
         assertTrue("Added uid was removed correctly", removed);
         assertEquals(0, testCollection.count());
     }
@@ -82,7 +81,7 @@ public class MongoDbIdempotentRepositoryTest extends AbstractMongoDbTest {
         repo.add(randomUUIDString);
         assertEquals(1, testCollection.count());
 
-        boolean added =  repo.add(randomUUIDString);
+        boolean added = repo.add(randomUUIDString);
         assertTrue("Duplicated entry was not added", !added);
         assertEquals(1, testCollection.count());
     }
@@ -91,26 +90,25 @@ public class MongoDbIdempotentRepositoryTest extends AbstractMongoDbTest {
     public void deleteMissingiIsFailse() throws Exception {
         String randomUUIDString = UUID.randomUUID().toString();
         assertEquals(0, testCollection.count());
-        boolean removed =  repo.remove(randomUUIDString);
+        boolean removed = repo.remove(randomUUIDString);
         assertTrue("Non exisint uid returns false", !removed);
     }
 
     @Test
     public void containsMissingReturnsFalse() throws Exception {
         String randomUUIDString = UUID.randomUUID().toString();
-        boolean found =  repo.contains(randomUUIDString);
+        boolean found = repo.contains(randomUUIDString);
         assertTrue("Non existing item is not found", !found);
     }
 
     @Test
     public void confirmAllwaysReturnsTrue() throws Exception {
         String randomUUIDString = UUID.randomUUID().toString();
-        boolean found =  repo.confirm(randomUUIDString);
+        boolean found = repo.confirm(randomUUIDString);
         assertTrue("Confirm always returns true", found);
 
-        found =  repo.confirm(null);
+        found = repo.confirm(null);
         assertTrue("Confirm always returns true, even with null", found);
     }
 
 }
-
