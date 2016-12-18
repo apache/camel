@@ -68,7 +68,7 @@ The MongoDB component has no options.
 
 
 // endpoint options: START
-The MongoDB component supports 22 endpoint options which are listed below:
+The MongoDB component supports 20 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -80,7 +80,7 @@ The MongoDB component supports 22 endpoint options which are listed below:
 | createCollection | common | true | boolean | Create collection during initialisation if it doesn't exist. Default is true.
 | database | common |  | String | Sets the name of the MongoDB database to target
 | operation | common |  | MongoDbOperation | Sets the operation this endpoint will execute against MongoDB. For possible values see MongoDbOperation.
-| outputType | common |  | MongoDbOutputType | Convert the output of the producer to the selected type : DocumentList Document or MongoIterable (cursor). DocumentList or Document applies to findAll. MongoIterable applies to all other operations.
+| outputType | common |  | MongoDbOutputType | Convert the output of the producer to the selected type : DocumentList Document or MongoIterable. DocumentList or Document applies to findAll. MongoIterable applies to all other operations.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
