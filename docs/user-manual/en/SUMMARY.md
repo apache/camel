@@ -236,6 +236,7 @@
 	* [Mina2](mina2-component.adoc)
 	* [MLLP](mllp-component.adoc)
 	* [MongoDB](mongodb-component.adoc)
+	* [MongoDB](mongodb3-component.adoc)
 	* [MongoDBGridFS](gridfs-component.adoc)
 	* [MQTT](mqtt-component.adoc)
 	* [MSV](msv-component.adoc)

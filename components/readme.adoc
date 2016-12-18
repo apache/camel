@@ -342,6 +342,9 @@ Components
 | link:camel-mongodb/src/main/docs/mongodb-component.adoc[MongoDB] (camel-mongodb) +
 `mongodb:connectionBean` | Component for working with documents stored in MongoDB database.
 
+| link:camel-mongodb3/src/main/docs/mongodb3-component.adoc[MongoDB] (camel-mongodb3) +
+`mongodb3:connectionBean` | Component for working with documents stored in MongoDB database.
+
 | link:camel-mongodb-gridfs/src/main/docs/gridfs-component.adoc[MongoDBGridFS] (camel-mongodb-gridfs) +
 `gridfs:connectionBean` | Component for working with MongoDB GridFS.
 
