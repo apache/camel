@@ -1246,6 +1246,12 @@
     <bundle dependency='true'>mvn:org.mongodb/mongo-java-driver/${mongo-java-driver-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-mongodb/${project.version}</bundle>
   </feature>
+  <feature name='camel-mongodb3' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <feature version='${project.version}'>camel-jackson</feature>
+    <bundle dependency='true'>mvn:org.mongodb/mongo-java-driver/${mongo-java-driver-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-mongodb3/${project.version}</bundle>
+  </feature>
   <feature name='camel-mongodb-gridfs' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-jackson</feature>
