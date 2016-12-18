@@ -19,6 +19,7 @@ package org.apache.camel.component.openstack.cinder;
 import java.util.UUID;
 
 import org.apache.camel.component.openstack.cinder.producer.SnapshotProducer;
+import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -59,7 +60,7 @@ public class VolumeSnapshotProducerTest extends CinderProducerTestSupport {
 
     @Test
     public void createVolumeTest() throws Exception {
-        when(endpoint.getOperation()).thenReturn(CinderConstants.CREATE);
+        when(endpoint.getOperation()).thenReturn(OpenstackConstants.CREATE);
         msg.setBody(dummyVolumeSnapshot);
         producer.process(exchange);
         final VolumeSnapshot result = msg.getBody(VolumeSnapshot.class);
@@ -70,13 +71,13 @@ public class VolumeSnapshotProducerTest extends CinderProducerTestSupport {
     @Test
     public void updateVolumeSnapshotTest() throws Exception {
         when(snapshotService.update(anyString(), anyString(), anyString())).thenReturn(ActionResponse.actionSuccess());
-        msg.setHeader(CinderConstants.OPERATION, CinderConstants.UPDATE);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.UPDATE);
         final String id = "id";
         final String desc = "newDesc";
         final String name = "newName";
-        msg.setHeader(CinderConstants.ID, id);
-        msg.setHeader(CinderConstants.DESCRIPTION, desc);
-        msg.setHeader(CinderConstants.NAME, name);
+        msg.setHeader(OpenstackConstants.ID, id);
+        msg.setHeader(OpenstackConstants.DESCRIPTION, desc);
+        msg.setHeader(OpenstackConstants.NAME, name);
 
         producer.process(exchange);
 
@@ -95,8 +96,8 @@ public class VolumeSnapshotProducerTest extends CinderProducerTestSupport {
 
     @Test
     public void getVolumeSnapshotTest() throws Exception {
-        when(endpoint.getOperation()).thenReturn(CinderConstants.GET);
-        msg.setHeader(CinderConstants.ID, "anyID");
+        when(endpoint.getOperation()).thenReturn(OpenstackConstants.GET);
+        msg.setHeader(OpenstackConstants.ID, "anyID");
         producer.process(exchange);
 
         assertEqualsVolumeSnapshots(dummyVolumeSnapshot, msg.getBody(VolumeSnapshot.class));
@@ -104,10 +105,10 @@ public class VolumeSnapshotProducerTest extends CinderProducerTestSupport {
 
     @Test
     public void deleteVolumeSnapshotTest() throws Exception {
-        msg.setHeader(CinderConstants.OPERATION, CinderConstants.DELETE);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.DELETE);
         when(snapshotService.delete(anyString())).thenReturn(ActionResponse.actionSuccess());
         final String id = "id";
-        msg.setHeader(CinderConstants.ID, id);
+        msg.setHeader(OpenstackConstants.ID, id);
 
         producer.process(exchange);
 

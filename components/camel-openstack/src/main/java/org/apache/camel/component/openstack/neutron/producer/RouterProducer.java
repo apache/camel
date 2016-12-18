@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
+import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.neutron.NeutronConstants;
 import org.apache.camel.component.openstack.neutron.NeutronEndpoint;
 import org.apache.camel.util.ObjectHelper;
@@ -43,19 +44,19 @@ public class RouterProducer extends AbstractOpenstackProducer {
     public void process(Exchange exchange) throws Exception {
         final String operation = getOperation(exchange);
         switch (operation) {
-        case NeutronConstants.CREATE:
+        case OpenstackConstants.CREATE:
             doCreate(exchange);
             break;
-        case NeutronConstants.GET:
+        case OpenstackConstants.GET:
             doGet(exchange);
             break;
-        case NeutronConstants.GET_ALL:
+        case OpenstackConstants.GET_ALL:
             doGetAll(exchange);
             break;
-        case NeutronConstants.UPDATE:
+        case OpenstackConstants.UPDATE:
             doUpdate(exchange);
             break;
-        case NeutronConstants.DELETE:
+        case OpenstackConstants.DELETE:
             doDelete(exchange);
             break;
         case NeutronConstants.ATTACH_INTERFACE:
@@ -77,7 +78,7 @@ public class RouterProducer extends AbstractOpenstackProducer {
 
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String id = msg.getHeader(NeutronConstants.ID, msg.getHeader(NeutronConstants.ROUTER_ID, String.class), String.class);
+        final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(NeutronConstants.ROUTER_ID, String.class), String.class);
         ObjectHelper.notEmpty(id, "Router ID");
         final Router result = os.networking().router().get(id);
         msg.setBody(result);
@@ -97,7 +98,7 @@ public class RouterProducer extends AbstractOpenstackProducer {
 
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String id = msg.getHeader(NeutronConstants.ID, msg.getHeader(NeutronConstants.ROUTER_ID, String.class), String.class);
+        final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(NeutronConstants.ROUTER_ID, String.class), String.class);
         ObjectHelper.notEmpty(id, "Router ID");
         final ActionResponse response = os.networking().router().delete(id);
         checkFailure(response, msg, "Delete router with ID " + id);
@@ -132,8 +133,8 @@ public class RouterProducer extends AbstractOpenstackProducer {
             Map headers = message.getHeaders();
             RouterBuilder builder = Builders.router();
 
-            ObjectHelper.notEmpty(message.getHeader(NeutronConstants.NAME, String.class), "Name");
-            builder.name(message.getHeader(NeutronConstants.NAME, String.class));
+            ObjectHelper.notEmpty(message.getHeader(OpenstackConstants.NAME, String.class), "Name");
+            builder.name(message.getHeader(OpenstackConstants.NAME, String.class));
 
             if (headers.containsKey(NeutronConstants.TENANT_ID)) {
                 builder.tenantId(message.getHeader(NeutronConstants.TENANT_ID, String.class));
