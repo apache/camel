@@ -55,11 +55,11 @@ public class MongoDbTailableCursorConsumer extends DefaultConsumer {
         tailingProcess.initializeProcess();
         executor.execute(tailingProcess);
     }
-    
+
     protected MongoDbTailTrackingManager initTailTracking() throws Exception {
         MongoDbTailTrackingManager answer = new MongoDbTailTrackingManager(endpoint.getMongoConnection(), endpoint.getTailTrackingConfig());
         answer.initialize();
         return answer;
     }
-    
+
 }

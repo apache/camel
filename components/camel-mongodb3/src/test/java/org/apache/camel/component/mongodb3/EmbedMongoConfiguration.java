@@ -16,16 +16,8 @@
  */
 package org.apache.camel.component.mongodb3;
 
-import static com.mongodb.MongoClientOptions.builder;
-import static de.flapdoodle.embed.mongo.distribution.Version.Main.PRODUCTION;
-import static de.flapdoodle.embed.process.runtime.Network.localhostIsIPv6;
-import static org.springframework.util.SocketUtils.findAvailableTcpPort;
-
 import java.io.IOException;
 import java.net.UnknownHostException;
-
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -38,6 +30,14 @@ import de.flapdoodle.embed.mongo.config.IMongodConfig;
 import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
 import de.flapdoodle.embed.mongo.config.Net;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import static com.mongodb.MongoClientOptions.builder;
+import static de.flapdoodle.embed.mongo.distribution.Version.Main.PRODUCTION;
+import static de.flapdoodle.embed.process.runtime.Network.localhostIsIPv6;
+import static org.springframework.util.SocketUtils.findAvailableTcpPort;
+
 @Configuration
 public class EmbedMongoConfiguration {
 
@@ -45,10 +45,7 @@ public class EmbedMongoConfiguration {
 
     static {
         try {
-            IMongodConfig mongodConfig = new MongodConfigBuilder()
-                    .version(PRODUCTION)
-                    .net(new Net(PORT, localhostIsIPv6()))
-                    .build();
+            IMongodConfig mongodConfig = new MongodConfigBuilder().version(PRODUCTION).net(new Net(PORT, localhostIsIPv6())).build();
             MongodExecutable mongodExecutable = MongodStarter.getDefaultInstance().prepare(mongodConfig);
             mongodExecutable.start();
         } catch (IOException e) {
@@ -63,37 +60,37 @@ public class EmbedMongoConfiguration {
 
     @Bean
     public MongoClient myDbP() throws UnknownHostException {
-		MongoClientURI uri = new MongoClientURI("mongodb://localhost:"+PORT, builder().readPreference(ReadPreference.primary()));
-		return new MongoClient(uri);
+        MongoClientURI uri = new MongoClientURI("mongodb://localhost:" + PORT, builder().readPreference(ReadPreference.primary()));
+        return new MongoClient(uri);
     }
 
     @Bean
     public MongoClient myDbPP() throws UnknownHostException {
-		MongoClientURI uri = new MongoClientURI("mongodb://localhost:"+PORT, builder().readPreference(ReadPreference.primaryPreferred()));
-		return new MongoClient(uri);
+        MongoClientURI uri = new MongoClientURI("mongodb://localhost:" + PORT, builder().readPreference(ReadPreference.primaryPreferred()));
+        return new MongoClient(uri);
     }
 
     @Bean
     public MongoClient myDbS() throws UnknownHostException {
-		MongoClientURI uri = new MongoClientURI("mongodb://localhost:"+PORT, builder().readPreference(ReadPreference.secondary()));
-		return new MongoClient(uri);
+        MongoClientURI uri = new MongoClientURI("mongodb://localhost:" + PORT, builder().readPreference(ReadPreference.secondary()));
+        return new MongoClient(uri);
     }
 
     @Bean
     public MongoClient myDbWCA() throws UnknownHostException {
-		MongoClientURI uri = new MongoClientURI("mongodb://localhost:"+PORT, builder().writeConcern(WriteConcern.ACKNOWLEDGED));
-		return new MongoClient(uri);
+        MongoClientURI uri = new MongoClientURI("mongodb://localhost:" + PORT, builder().writeConcern(WriteConcern.ACKNOWLEDGED));
+        return new MongoClient(uri);
     }
 
     @Bean
     public MongoClient myDbSP() throws UnknownHostException {
-        MongoClientURI uri = new MongoClientURI("mongodb://localhost:"+PORT, builder().readPreference(ReadPreference.secondaryPreferred()));
-		return new MongoClient(uri);
+        MongoClientURI uri = new MongoClientURI("mongodb://localhost:" + PORT, builder().readPreference(ReadPreference.secondaryPreferred()));
+        return new MongoClient(uri);
     }
 
     @Bean
     public MongoClient myDbN() throws UnknownHostException {
-		MongoClientURI uri = new MongoClientURI("mongodb://localhost:"+PORT, builder().readPreference(ReadPreference.nearest()));
-		return new MongoClient(uri);
+        MongoClientURI uri = new MongoClientURI("mongodb://localhost:" + PORT, builder().readPreference(ReadPreference.nearest()));
+        return new MongoClient(uri);
     }
 }

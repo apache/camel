@@ -18,9 +18,12 @@ package org.apache.camel.component.mongodb3;
 
 import java.util.Formatter;
 
+import com.mongodb.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.component.mongodb3.CamelMongoDbException;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -30,19 +33,13 @@ import org.bson.Document;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-
-
-
 public abstract class AbstractMongoDbTest extends CamelTestSupport {
 
     protected static MongoClient mongo;
     protected static MongoDatabase db;
     protected static MongoCollection<Document> testCollection;
     protected static MongoCollection<Document> dynamicCollection;
-    
+
     protected static String dbName = "test";
     protected static String testCollectionName;
     protected static String dynamicCollectionName;
@@ -54,13 +51,14 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
         mongo = applicationContext.getBean("myDb", MongoClient.class);
         db = mongo.getDatabase(dbName);
 
-        // Refresh the test collection - drop it and recreate it. We don't do this for the database because MongoDB would create large
+        // Refresh the test collection - drop it and recreate it. We don't do
+        // this for the database because MongoDB would create large
         // store files each time
         testCollectionName = "camelTest";
         testCollection = db.getCollection(testCollectionName, Document.class);
         testCollection.drop();
         testCollection = db.getCollection(testCollectionName, Document.class);
-        
+
         dynamicCollectionName = testCollectionName.concat("Dynamic");
         dynamicCollection = db.getCollection(dynamicCollectionName, Document.class);
         dynamicCollection.drop();
@@ -80,7 +78,7 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         applicationContext = new AnnotationConfigApplicationContext(EmbedMongoConfiguration.class);
         @SuppressWarnings("deprecation")
-		CamelContext ctx = SpringCamelContext.springCamelContext(applicationContext);
+        CamelContext ctx = SpringCamelContext.springCamelContext(applicationContext);
         PropertiesComponent pc = new PropertiesComponent("classpath:mongodb.test.properties");
         ctx.addComponent("properties", pc);
         return ctx;
@@ -102,7 +100,7 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
     protected CamelMongoDbException extractAndAssertCamelMongoDbException(Object result, String message) {
         assertTrue("Result is not an Exception", result instanceof Throwable);
         assertTrue("Result is not an CamelExecutionException", result instanceof CamelExecutionException);
-        Throwable exc = ((CamelExecutionException) result).getCause();
+        Throwable exc = ((CamelExecutionException)result).getCause();
         assertTrue("Result is not an CamelMongoDbException", exc instanceof CamelMongoDbException);
         CamelMongoDbException camelExc = ObjectHelper.cast(CamelMongoDbException.class, exc);
         if (message != null) {

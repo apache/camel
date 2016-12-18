@@ -16,21 +16,20 @@
  */
 package org.apache.camel.component.mongodb3;
 
-import static com.mongodb.client.model.Filters.eq;
-import static org.apache.camel.component.mongodb3.MongoDbConstants.MONGO_ID;
+import com.mongodb.client.result.UpdateResult;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mongodb3.MongoDbConstants;
 import org.bson.Document;
 import org.junit.Test;
 
-import com.mongodb.client.result.UpdateResult;
+import static com.mongodb.client.model.Filters.eq;
+import static org.apache.camel.component.mongodb3.MongoDbConstants.MONGO_ID;
 
 public class MongoDbHeaderHandlingTest extends AbstractMongoDbTest {
 
-	@Test
+    @Test
     public void testInHeadersTransferredToOutOnCount() {
         // a read operation
         assertEquals(0, testCollection.count());
@@ -56,32 +55,31 @@ public class MongoDbHeaderHandlingTest extends AbstractMongoDbTest {
             }
         });
 
-        //TODO: WriteResult isn't return when inserting
-        //assertTrue(result.getOut().getBody() instanceof WriteResult);
+        // TODO: WriteResult isn't return when inserting
+        // assertTrue(result.getOut().getBody() instanceof WriteResult);
         assertEquals("An input header was not returned", "def", result.getOut().getHeader("abc"));
         Document b = testCollection.find(eq(MONGO_ID, "testInsertString")).first();
         assertNotNull("No record with 'testInsertString' _id", b);
     }
-    
+
     @Test
     public void testWriteResultAsHeaderWithWriteOp() {
         // Prepare test
         assertEquals(0, testCollection.count());
-        Object[] req = new Object[] {
-        		new Document(MONGO_ID, "testSave1").append("scientist", "Einstein").toJson(),
-        		new Document(MONGO_ID,"testSave2").append("scientist", "Copernicus").toJson()
-        		};
-//        Object result = 
-        		template.requestBody("direct:insert", req);
-        //assertTrue(result instanceof WriteResult);
+        Object[] req = new Object[] {new Document(MONGO_ID, "testSave1").append("scientist", "Einstein").toJson(),
+                                     new Document(MONGO_ID, "testSave2").append("scientist", "Copernicus").toJson()};
+        // Object result =
+        template.requestBody("direct:insert", req);
+        // assertTrue(result instanceof WriteResult);
         assertEquals("Number of records persisted must be 2", 2, testCollection.count());
-        
+
         // Testing the save logic
         final Document record1 = testCollection.find(eq(MONGO_ID, "testSave1")).first();
         assertEquals("Scientist field of 'testSave1' must equal 'Einstein'", "Einstein", record1.get("scientist"));
         record1.put("scientist", "Darwin");
-        
-        // test that as a payload, we get back exactly our input, but enriched with the CamelMongoDbWriteResult header
+
+        // test that as a payload, we get back exactly our input, but enriched
+        // with the CamelMongoDbWriteResult header
         Exchange resultExch = template.request("direct:save", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
@@ -96,7 +94,7 @@ public class MongoDbHeaderHandlingTest extends AbstractMongoDbTest {
         assertEquals("Scientist field of 'testSave1' must equal 'Darwin' after save operation", "Darwin", record2.get("scientist"));
 
     }
-    
+
     @Test
     public void testWriteResultAsHeaderWithReadOp() {
         Exchange resultExch = template.request("direct:getDbStats", new Processor() {
@@ -110,22 +108,21 @@ public class MongoDbHeaderHandlingTest extends AbstractMongoDbTest {
         assertNull(resultExch.getOut().getHeader(MongoDbConstants.WRITERESULT));
         assertEquals("def", resultExch.getOut().getHeader("abc"));
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                
+
                 // tested routes
                 from("direct:count").to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=count&dynamicity=true");
-                from("direct:save").to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save&writeResultAsHeader=true");//&writeConcern=SAFE");
+                from("direct:save").to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=save&writeResultAsHeader=true");
                 from("direct:getDbStats").to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=getDbStats&writeResultAsHeader=true");
 
                 // supporting routes
-                from("direct:insert").to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");//&writeConcern=SAFE");
-                
+                from("direct:insert").to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
+
             }
         };
     }
 }
-

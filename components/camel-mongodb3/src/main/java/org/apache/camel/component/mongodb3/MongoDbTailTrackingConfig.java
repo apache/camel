@@ -17,10 +17,10 @@
 package org.apache.camel.component.mongodb3;
 
 public class MongoDbTailTrackingConfig {
-    
+
     public static final String DEFAULT_COLLECTION = "camelTailTracking";
     public static final String DEFAULT_FIELD = "lastTrackingValue";
-    
+
     /**
      * See {@link MongoDbEndpoint#setTailTrackIncreasingField(String)}
      */
@@ -45,9 +45,9 @@ public class MongoDbTailTrackingConfig {
      * See {@link MongoDbEndpoint#setPersistentId(String)}
      */
     public final String persistentId;
-    
-    public MongoDbTailTrackingConfig(boolean persistentTailTracking, String tailTrackIncreasingField, String tailTrackDb,
-            String tailTrackCollection, String tailTrackField, String persistentId) {
+
+    public MongoDbTailTrackingConfig(boolean persistentTailTracking, String tailTrackIncreasingField, String tailTrackDb, String tailTrackCollection, String tailTrackField,
+                                     String persistentId) {
         this.increasingField = tailTrackIncreasingField;
         this.persistent = persistentTailTracking;
         this.db = tailTrackDb;

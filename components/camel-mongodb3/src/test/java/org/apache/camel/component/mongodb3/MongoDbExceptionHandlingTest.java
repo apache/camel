@@ -17,18 +17,17 @@
 package org.apache.camel.component.mongodb3;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mongodb3.MongoDbConstants;
 import org.bson.Document;
 import org.junit.Test;
 
-public class MongoDbExceptionHandlingTest extends AbstractMongoDbTest {    
-    
+public class MongoDbExceptionHandlingTest extends AbstractMongoDbTest {
+
     @Test
     public void testInduceParseException() throws Exception {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.count());
         pumpDataIntoTestCollection();
-        
+
         // notice missing quote at the end of Einstein
         try {
             template.requestBody("direct:findOneByQuery", "{\"scientist\": \"Einstein}");
@@ -37,37 +36,34 @@ public class MongoDbExceptionHandlingTest extends AbstractMongoDbTest {
             extractAndAssertCamelMongoDbException(e, null);
         }
     }
-    
+
     @Test
     public void testErroneousDynamicOperation() throws Exception {
         // Test that the collection has 0 documents in it
         assertEquals(0, testCollection.count());
         pumpDataIntoTestCollection();
-        
+
         try {
             template.requestBodyAndHeader("direct:findOneByQuery", new Document("scientist", "Einstein").toJson(), MongoDbConstants.OPERATION_HEADER, "dummyOp");
             fail("Should have thrown an exception");
         } catch (Exception e) {
             extractAndAssertCamelMongoDbException(e, "Operation specified on header is not supported. Value: dummyOp");
         }
-       
+
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                
-                from("direct:findAll")
-                    .to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findAll&dynamicity=true")
+
+                from("direct:findAll").to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findAll&dynamicity=true")
                     .to("mock:resultFindAll");
-                
-                from("direct:findOneByQuery")
-                    .to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findOneByQuery&dynamicity=true")
+
+                from("direct:findOneByQuery").to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findOneByQuery&dynamicity=true")
                     .to("mock:resultFindOneByQuery");
-                
-                from("direct:findById")
-                    .to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findById&dynamicity=true")
+
+                from("direct:findById").to("mongodb3:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findById&dynamicity=true")
                     .to("mock:resultFindById");
 
             }

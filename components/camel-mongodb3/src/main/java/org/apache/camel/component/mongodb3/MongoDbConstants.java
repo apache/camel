@@ -18,31 +18,31 @@ package org.apache.camel.component.mongodb3;
 
 public final class MongoDbConstants {
 
-	public static final String OPERATION_HEADER = "CamelMongoDbOperation";
-	public static final String RESULT_TOTAL_SIZE = "CamelMongoDbResultTotalSize";
-	public static final String RESULT_PAGE_SIZE = "CamelMongoDbResultPageSize";
+    public static final String OPERATION_HEADER = "CamelMongoDbOperation";
+    public static final String RESULT_TOTAL_SIZE = "CamelMongoDbResultTotalSize";
+    public static final String RESULT_PAGE_SIZE = "CamelMongoDbResultPageSize";
 
-	public static final String CRITERIA = "CamelMongoDbCriteria";
-	public static final String FIELDS_PROJECTION = "CamelMongoDbFieldsProjection";
-	public static final String BATCH_SIZE = "CamelMongoDbBatchSize";
-	public static final String NUM_TO_SKIP = "CamelMongoDbNumToSkip";
-	public static final String INSERT_RECORDS_AFFECTED = "CamelMongoDbInsertRecordsAffected";
-	public static final String MULTIUPDATE = "CamelMongoDbMultiUpdate";
-	public static final String UPSERT = "CamelMongoDbUpsert";
-	public static final String RECORDS_AFFECTED = "CamelMongoDbRecordsAffected";
-	public static final String RECORDS_MATCHED = "CamelMongoDbRecordsMatched";
-	public static final String SORT_BY = "CamelMongoDbSortBy";
-	public static final String DATABASE = "CamelMongoDbDatabase";
-	public static final String COLLECTION = "CamelMongoDbCollection";
-	public static final String COLLECTION_INDEX = "CamelMongoDbCollectionIndex";
-	public static final String LIMIT = "CamelMongoDbLimit";
-	public static final String FROM_TAILABLE = "CamelMongoDbTailable";
-	public static final String WRITERESULT = "CamelMongoWriteResult";
-	public static final String OID = "CamelMongoOid";
+    public static final String CRITERIA = "CamelMongoDbCriteria";
+    public static final String FIELDS_PROJECTION = "CamelMongoDbFieldsProjection";
+    public static final String BATCH_SIZE = "CamelMongoDbBatchSize";
+    public static final String NUM_TO_SKIP = "CamelMongoDbNumToSkip";
+    public static final String INSERT_RECORDS_AFFECTED = "CamelMongoDbInsertRecordsAffected";
+    public static final String MULTIUPDATE = "CamelMongoDbMultiUpdate";
+    public static final String UPSERT = "CamelMongoDbUpsert";
+    public static final String RECORDS_AFFECTED = "CamelMongoDbRecordsAffected";
+    public static final String RECORDS_MATCHED = "CamelMongoDbRecordsMatched";
+    public static final String SORT_BY = "CamelMongoDbSortBy";
+    public static final String DATABASE = "CamelMongoDbDatabase";
+    public static final String COLLECTION = "CamelMongoDbCollection";
+    public static final String COLLECTION_INDEX = "CamelMongoDbCollectionIndex";
+    public static final String LIMIT = "CamelMongoDbLimit";
+    public static final String FROM_TAILABLE = "CamelMongoDbTailable";
+    public static final String WRITERESULT = "CamelMongoWriteResult";
+    public static final String OID = "CamelMongoOid";
 
-	public static final String MONGO_ID = "_id"; //default id field
+    public static final String MONGO_ID = "_id"; // default id field
 
-	private MongoDbConstants() {
-	}
+    private MongoDbConstants() {
+    }
 
 }

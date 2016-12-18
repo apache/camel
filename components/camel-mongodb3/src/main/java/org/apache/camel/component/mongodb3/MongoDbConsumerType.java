@@ -20,5 +20,5 @@ public enum MongoDbConsumerType {
 
     tailable
     // more consumer types to be included in future versions
-    
+
 }
