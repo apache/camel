@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
+import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.util.ObjectHelper;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
@@ -46,22 +47,22 @@ public class GlanceProducer extends AbstractOpenstackProducer {
         case GlanceConstants.RESERVE:
             doReserve(exchange);
             break;
-        case GlanceConstants.CREATE:
+        case OpenstackConstants.CREATE:
             doCreate(exchange);
             break;
-        case GlanceConstants.UPDATE:
+        case OpenstackConstants.UPDATE:
             doUpdate(exchange);
             break;
         case GlanceConstants.UPLOAD:
             doUpload(exchange);
             break;
-        case GlanceConstants.GET:
+        case OpenstackConstants.GET:
             doGet(exchange);
             break;
-        case GlanceConstants.GET_ALL:
+        case OpenstackConstants.GET_ALL:
             doGetAll(exchange);
             break;
-        case GlanceConstants.DELETE:
+        case OpenstackConstants.DELETE:
             doDelete(exchange);
             break;
         default:
@@ -85,7 +86,7 @@ public class GlanceProducer extends AbstractOpenstackProducer {
 
     private void doUpload(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String imageId = msg.getHeader(GlanceConstants.ID, String.class);
+        final String imageId = msg.getHeader(OpenstackConstants.ID, String.class);
         ObjectHelper.notEmpty(imageId, "Image ID");
         final Image in = messageHeadersToImage(msg, false);
         final Payload payload = createPayload(msg);
@@ -102,7 +103,7 @@ public class GlanceProducer extends AbstractOpenstackProducer {
 
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String imageId = msg.getHeader(GlanceConstants.ID, String.class);
+        final String imageId = msg.getHeader(OpenstackConstants.ID, String.class);
         ObjectHelper.notEmpty(imageId, "ImageID");
         final Image out = os.images().get(imageId);
         msg.setBody(out);
@@ -115,7 +116,7 @@ public class GlanceProducer extends AbstractOpenstackProducer {
 
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String imageId = msg.getHeader(GlanceConstants.ID, String.class);
+        final String imageId = msg.getHeader(OpenstackConstants.ID, String.class);
         ObjectHelper.notEmpty(imageId, "ImageID");
         final ActionResponse response = os.compute().images().delete(imageId);
         checkFailure(response, msg, "Delete image " + imageId);
@@ -133,12 +134,12 @@ public class GlanceProducer extends AbstractOpenstackProducer {
     private Image messageHeadersToImage(Message message, boolean required) {
         ImageBuilder imageBuilder = null;
 
-        if (required && ObjectHelper.isEmpty(message.getHeader(GlanceConstants.NAME, String.class))) {
+        if (required && ObjectHelper.isEmpty(message.getHeader(OpenstackConstants.NAME, String.class))) {
             throw new IllegalArgumentException("Image Name must be specified and not empty");
         }
 
-        if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.NAME, String.class))) {
-            imageBuilder = getImageBuilder(imageBuilder).name(message.getHeader(GlanceConstants.NAME, String.class));
+        if (ObjectHelper.isNotEmpty(message.getHeader(OpenstackConstants.NAME, String.class))) {
+            imageBuilder = getImageBuilder(imageBuilder).name(message.getHeader(OpenstackConstants.NAME, String.class));
         }
 
         if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.DISK_FORMAT, DiskFormat.class))) {
@@ -173,8 +174,8 @@ public class GlanceProducer extends AbstractOpenstackProducer {
             imageBuilder = getImageBuilder(imageBuilder).isPublic(message.getHeader(GlanceConstants.IS_PUBLIC, Boolean.class));
         }
 
-        if (ObjectHelper.isNotEmpty(message.getHeader(GlanceConstants.PROPERTIES))) {
-            imageBuilder = getImageBuilder(imageBuilder).properties(message.getHeader(GlanceConstants.PROPERTIES, Map.class));
+        if (ObjectHelper.isNotEmpty(message.getHeader(OpenstackConstants.PROPERTIES))) {
+            imageBuilder = getImageBuilder(imageBuilder).properties(message.getHeader(OpenstackConstants.PROPERTIES, Map.class));
         }
 
         if (!required && imageBuilder == null) {

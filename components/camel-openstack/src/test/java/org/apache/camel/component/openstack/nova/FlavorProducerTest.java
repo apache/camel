@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.nova.producer.FlavorsProducer;
 import org.junit.Before;
 import org.junit.Test;
@@ -73,7 +74,7 @@ public class FlavorProducerTest extends NovaProducerTestSupport {
 
     @Test
     public void createFlavor() throws Exception {
-        when(endpoint.getOperation()).thenReturn(NovaConstants.CREATE);
+        when(endpoint.getOperation()).thenReturn(OpenstackConstants.CREATE);
         final String expectedFlavorID = UUID.randomUUID().toString();
         when(testOSFlavor.getId()).thenReturn(expectedFlavorID);
 
@@ -93,8 +94,8 @@ public class FlavorProducerTest extends NovaProducerTestSupport {
     @Test
     public void createFlavorWithHeaders() throws Exception {
         Map<String, Object> headers = new HashMap<>();
-        headers.put(NovaConstants.OPERATION, NovaConstants.CREATE);
-        headers.put(NovaConstants.NAME, dummyFlavor.getName());
+        headers.put(OpenstackConstants.OPERATION, OpenstackConstants.CREATE);
+        headers.put(OpenstackConstants.NAME, dummyFlavor.getName());
         headers.put(NovaConstants.VCPU, dummyFlavor.getVcpus());
         headers.put(NovaConstants.DISK, dummyFlavor.getDisk());
         headers.put(NovaConstants.SWAP, dummyFlavor.getSwap());
@@ -113,8 +114,8 @@ public class FlavorProducerTest extends NovaProducerTestSupport {
 
     @Test
     public void getTest() throws Exception {
-        msg.setHeader(NovaConstants.OPERATION, NovaConstants.GET);
-        msg.setHeader(NovaConstants.ID, "anything - client is mocked");
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.GET);
+        msg.setHeader(OpenstackConstants.ID, "anything - client is mocked");
 
         //should return dummyFlavor
         producer.process(exchange);
@@ -126,7 +127,7 @@ public class FlavorProducerTest extends NovaProducerTestSupport {
 
     @Test
     public void getAllTest() throws Exception {
-        when(endpoint.getOperation()).thenReturn(NovaConstants.GET_ALL);
+        when(endpoint.getOperation()).thenReturn(OpenstackConstants.GET_ALL);
 
         producer.process(exchange);
         List<Flavor> result = msg.getBody(List.class);
@@ -141,9 +142,9 @@ public class FlavorProducerTest extends NovaProducerTestSupport {
     @Test
     public void deleteSuccess() throws Exception {
         when(flavorService.delete(Matchers.anyString())).thenReturn(ActionResponse.actionSuccess());
-        when(endpoint.getOperation()).thenReturn(NovaConstants.DELETE);
+        when(endpoint.getOperation()).thenReturn(OpenstackConstants.DELETE);
         String id = "myID";
-        msg.setHeader(NovaConstants.ID, id);
+        msg.setHeader(OpenstackConstants.ID, id);
         producer.process(exchange);
 
         ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);
@@ -158,9 +159,9 @@ public class FlavorProducerTest extends NovaProducerTestSupport {
     public void deleteFailure() throws Exception {
         final String failReason = "unknown";
         when(flavorService.delete(Matchers.anyString())).thenReturn(ActionResponse.actionFailed(failReason, 401));
-        when(endpoint.getOperation()).thenReturn(NovaConstants.DELETE);
+        when(endpoint.getOperation()).thenReturn(OpenstackConstants.DELETE);
         String id = "myID";
-        msg.setHeader(NovaConstants.ID, id);
+        msg.setHeader(OpenstackConstants.ID, id);
         producer.process(exchange);
 
         ArgumentCaptor<String> argumentCaptor = ArgumentCaptor.forClass(String.class);

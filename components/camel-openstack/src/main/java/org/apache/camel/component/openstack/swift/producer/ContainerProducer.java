@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
+import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.swift.SwiftConstants;
 import org.apache.camel.component.openstack.swift.SwiftEndpoint;
 import org.apache.camel.util.ObjectHelper;
@@ -43,19 +44,19 @@ public class ContainerProducer extends AbstractOpenstackProducer {
         String operation = getOperation(exchange);
 
         switch (operation) {
-        case SwiftConstants.CREATE:
+        case OpenstackConstants.CREATE:
             doCreate(exchange);
             break;
-        case SwiftConstants.GET:
+        case OpenstackConstants.GET:
             doGet(exchange);
             break;
-        case SwiftConstants.GET_ALL:
+        case OpenstackConstants.GET_ALL:
             doGetAll(exchange);
             break;
-        case SwiftConstants.UPDATE:
+        case OpenstackConstants.UPDATE:
             doUpdate(exchange);
             break;
-        case SwiftConstants.DELETE:
+        case OpenstackConstants.DELETE:
             doDelete(exchange);
             break;
         case SwiftConstants.GET_METADATA:
@@ -74,7 +75,7 @@ public class ContainerProducer extends AbstractOpenstackProducer {
 
     private void doCreate(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String name = msg.getHeader(SwiftConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class), String.class);
+        final String name = msg.getHeader(OpenstackConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class), String.class);
         ObjectHelper.notEmpty(name, "Container name");
 
         final CreateUpdateContainerOptions options = messageToCreateUpdateOptions(msg);
@@ -97,7 +98,7 @@ public class ContainerProducer extends AbstractOpenstackProducer {
 
     private void doUpdate(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String name = msg.getHeader(SwiftConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class), String.class);
+        final String name = msg.getHeader(OpenstackConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class), String.class);
         ObjectHelper.notEmpty(name, "Container name");
         final CreateUpdateContainerOptions options = messageToCreateUpdateOptions(msg);
         final ActionResponse out = os.objectStorage().containers().update(name, options);
@@ -106,7 +107,7 @@ public class ContainerProducer extends AbstractOpenstackProducer {
 
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String name = msg.getHeader(SwiftConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class), String.class);
+        final String name = msg.getHeader(OpenstackConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class), String.class);
         ObjectHelper.notEmpty(name, "Container name");
         final ActionResponse out = os.objectStorage().containers().delete(name);
         checkFailure(out, msg, "Delete container " + name);
@@ -114,14 +115,14 @@ public class ContainerProducer extends AbstractOpenstackProducer {
 
     private void doGetMetadata(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String name = msg.getHeader(SwiftConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class), String.class);
+        final String name = msg.getHeader(OpenstackConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class), String.class);
         ObjectHelper.notEmpty(name, "Container name");
         msg.setBody(os.objectStorage().containers().getMetadata(name));
     }
 
     private void doDeleteMetadata(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String name = msg.getHeader(SwiftConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class), String.class);
+        final String name = msg.getHeader(OpenstackConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class), String.class);
         ObjectHelper.notEmpty(name, "Container name");
         boolean success = os.objectStorage().containers().deleteMetadata(name, msg.getBody(Map.class));
         msg.setFault(!success);
@@ -132,7 +133,7 @@ public class ContainerProducer extends AbstractOpenstackProducer {
 
     private void doUpdateMetadata(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String name = msg.getHeader(SwiftConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class), String.class);
+        final String name = msg.getHeader(OpenstackConstants.NAME, msg.getHeader(SwiftConstants.CONTAINER_NAME, String.class), String.class);
         ObjectHelper.notEmpty(name, "Container name");
         boolean success = os.objectStorage().containers().updateMetadata(name, msg.getBody(Map.class));
         msg.setFault(!success);
