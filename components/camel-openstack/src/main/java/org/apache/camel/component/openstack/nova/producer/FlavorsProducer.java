@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
+import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.nova.NovaConstants;
 import org.apache.camel.component.openstack.nova.NovaEndpoint;
 import org.apache.camel.util.ObjectHelper;
@@ -41,16 +42,16 @@ public class FlavorsProducer extends AbstractOpenstackProducer {
     public void process(Exchange exchange) throws Exception {
         final String operation = getOperation(exchange);
         switch (operation) {
-        case NovaConstants.CREATE:
+        case OpenstackConstants.CREATE:
             doCreate(exchange);
             break;
-        case NovaConstants.GET:
+        case OpenstackConstants.GET:
             doGet(exchange);
             break;
-        case NovaConstants.GET_ALL:
+        case OpenstackConstants.GET_ALL:
             doGetAll(exchange);
             break;
-        case NovaConstants.DELETE:
+        case OpenstackConstants.DELETE:
             doDelete(exchange);
             break;
         default:
@@ -66,7 +67,7 @@ public class FlavorsProducer extends AbstractOpenstackProducer {
 
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String flavorId = msg.getHeader(NovaConstants.ID, msg.getHeader(NovaConstants.FLAVOR_ID, String.class), String.class);
+        final String flavorId = msg.getHeader(OpenstackConstants.ID, msg.getHeader(NovaConstants.FLAVOR_ID, String.class), String.class);
         ObjectHelper.notEmpty(flavorId, "FlavorID");
         final Flavor out = os.compute().flavors().get(flavorId);
         exchange.getIn().setBody(out);
@@ -79,7 +80,7 @@ public class FlavorsProducer extends AbstractOpenstackProducer {
 
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String flavorId = msg.getHeader(NovaConstants.ID, msg.getHeader(NovaConstants.FLAVOR_ID, String.class), String.class);
+        final String flavorId = msg.getHeader(OpenstackConstants.ID, msg.getHeader(NovaConstants.FLAVOR_ID, String.class), String.class);
         ObjectHelper.notEmpty(flavorId, "FlavorID");
         final ActionResponse response = os.compute().flavors().delete(flavorId);
         checkFailure(response, msg, "Delete flavor");
@@ -91,8 +92,8 @@ public class FlavorsProducer extends AbstractOpenstackProducer {
             Map headers = message.getHeaders();
             FlavorBuilder flavorBuilder = Builders.flavor();
 
-            ObjectHelper.notEmpty(message.getHeader(NovaConstants.NAME, String.class), "Name");
-            flavorBuilder.name(message.getHeader(NovaConstants.NAME, String.class));
+            ObjectHelper.notEmpty(message.getHeader(OpenstackConstants.NAME, String.class), "Name");
+            flavorBuilder.name(message.getHeader(OpenstackConstants.NAME, String.class));
 
             if (headers.containsKey(NovaConstants.VCPU)) {
                 flavorBuilder.vcpus(message.getHeader(NovaConstants.VCPU, Integer.class));

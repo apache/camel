@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.swift.producer.ContainerProducer;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,7 +57,7 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
     @Test
     public void createTestWithoutOptions() throws Exception {
         when(containerService.create(anyString(), any(CreateUpdateContainerOptions.class))).thenReturn(ActionResponse.actionSuccess());
-        msg.setHeader(SwiftConstants.OPERATION, SwiftConstants.CREATE);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.CREATE);
         msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
 
         producer.process(exchange);
@@ -74,7 +75,7 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
     @Test
     public void createTestWithOptions() throws Exception {
         when(containerService.create(anyString(), any(CreateUpdateContainerOptions.class))).thenReturn(ActionResponse.actionSuccess());
-        msg.setHeader(SwiftConstants.OPERATION, SwiftConstants.CREATE);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.CREATE);
         msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
         final CreateUpdateContainerOptions options = CreateUpdateContainerOptions.create().accessAnybodyRead();
         msg.setBody(options);
@@ -94,7 +95,7 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
         List<SwiftContainer> list = new ArrayList<>();
         list.add(mockOsContainer);
         doReturn(list).when(containerService).list(any(ContainerListOptions.class));
-        when(endpoint.getOperation()).thenReturn(SwiftConstants.GET);
+        when(endpoint.getOperation()).thenReturn(OpenstackConstants.GET);
 
         msg.setHeader(SwiftConstants.LIMIT, 10);
         msg.setHeader(SwiftConstants.DELIMITER, 'x');
@@ -114,7 +115,7 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
         list.add(mockOsContainer);
         doReturn(list).when(containerService).list();
 
-        when(endpoint.getOperation()).thenReturn(SwiftConstants.GET_ALL);
+        when(endpoint.getOperation()).thenReturn(OpenstackConstants.GET_ALL);
 
         msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
 
@@ -125,7 +126,7 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
     @Test
     public void deleteObjectTest() throws Exception {
         when(containerService.delete(anyString())).thenReturn(ActionResponse.actionSuccess());
-        msg.setHeader(SwiftConstants.OPERATION, SwiftConstants.DELETE);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.DELETE);
         msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
 
         producer.process(exchange);
@@ -141,7 +142,7 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
     public void deleteObjectFailTest() throws Exception {
         final String failMessage = "fail";
         when(containerService.delete(anyString())).thenReturn(ActionResponse.actionFailed(failMessage, 401));
-        msg.setHeader(SwiftConstants.OPERATION, SwiftConstants.DELETE);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.DELETE);
         msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
 
         producer.process(exchange);
@@ -155,7 +156,7 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
         final Map<String, String> md = new HashMap<>();
         md.put("key", "val");
 
-        msg.setHeader(SwiftConstants.OPERATION, SwiftConstants.CREATE_UPDATE_METADATA);
+        msg.setHeader(OpenstackConstants.OPERATION, SwiftConstants.CREATE_UPDATE_METADATA);
         msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
         msg.setBody(md);
 
@@ -175,7 +176,7 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
         md.put("key", "val");
 
         when(containerService.getMetadata(CONTAINER_NAME)).thenReturn(md);
-        msg.setHeader(SwiftConstants.OPERATION, SwiftConstants.GET_METADATA);
+        msg.setHeader(OpenstackConstants.OPERATION, SwiftConstants.GET_METADATA);
         msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
 
         producer.process(exchange);

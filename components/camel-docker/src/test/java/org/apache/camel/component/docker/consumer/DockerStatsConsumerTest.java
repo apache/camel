@@ -27,6 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
@@ -51,7 +52,7 @@ public class DockerStatsConsumerTest extends CamelTestSupport {
     private DockerClient dockerClient;
 
     public void setupMocks() {
-        Mockito.when(dockerClient.statsCmd(Mockito.anyString())).thenReturn(statsCmd);
+        Mockito.when(dockerClient.statsCmd(Matchers.anyString())).thenReturn(statsCmd);
     }
 
     @Test

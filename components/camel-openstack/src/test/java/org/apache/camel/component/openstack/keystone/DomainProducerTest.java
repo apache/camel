@@ -19,6 +19,7 @@ package org.apache.camel.component.openstack.keystone;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.keystone.producer.DomainProducer;
 import org.apache.camel.component.openstack.neutron.NeutronConstants;
 import org.junit.Before;
@@ -67,8 +68,8 @@ public class DomainProducerTest extends KeystoneProducerTestSupport {
 
     @Test
     public void createTest() throws Exception {
-        msg.setHeader(KeystoneConstants.OPERATION, KeystoneConstants.CREATE);
-        msg.setHeader(KeystoneConstants.NAME, dummyDomain.getName());
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.CREATE);
+        msg.setHeader(OpenstackConstants.NAME, dummyDomain.getName());
         msg.setHeader(KeystoneConstants.DESCRIPTION, dummyDomain.getDescription());
 
 
@@ -83,8 +84,8 @@ public class DomainProducerTest extends KeystoneProducerTestSupport {
     @Test
     public void getTest() throws Exception {
         final String id = "id";
-        msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.GET);
-        msg.setHeader(NeutronConstants.ID, id);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.GET);
+        msg.setHeader(OpenstackConstants.ID, id);
 
         producer.process(exchange);
 
@@ -97,7 +98,7 @@ public class DomainProducerTest extends KeystoneProducerTestSupport {
 
     @Test
     public void getAllTest() throws Exception {
-        msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.GET_ALL);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.GET_ALL);
 
         producer.process(exchange);
 
@@ -109,7 +110,7 @@ public class DomainProducerTest extends KeystoneProducerTestSupport {
     @Test
     public void updateTest() throws Exception {
         final String id = "myID";
-        msg.setHeader(KeystoneConstants.OPERATION, KeystoneConstants.UPDATE);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.UPDATE);
         final String newName = "newName";
 
         when(testOSdomain.getId()).thenReturn(id);
@@ -133,8 +134,8 @@ public class DomainProducerTest extends KeystoneProducerTestSupport {
     public void deleteTest() throws Exception {
         when(domainService.delete(anyString())).thenReturn(ActionResponse.actionSuccess());
         final String networkID = "myID";
-        msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.DELETE);
-        msg.setHeader(NeutronConstants.ID, networkID);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.DELETE);
+        msg.setHeader(OpenstackConstants.ID, networkID);
 
         producer.process(exchange);
 

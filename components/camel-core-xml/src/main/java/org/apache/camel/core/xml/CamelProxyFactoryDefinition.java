@@ -62,7 +62,8 @@ public class CamelProxyFactoryDefinition extends IdentifiedType {
      *
      * @deprecated use serviceUrl instead with the ref endpoint.
      */
-    public void setServiceRef(String serviceRef) {
+    @Deprecated
+	public void setServiceRef(String serviceRef) {
         this.serviceRef = serviceRef;
     }
 
