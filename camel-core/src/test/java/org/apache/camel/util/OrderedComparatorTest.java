@@ -17,7 +17,6 @@
 package org.apache.camel.util;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;

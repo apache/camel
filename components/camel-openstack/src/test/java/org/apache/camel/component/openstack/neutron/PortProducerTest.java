@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.neutron.producer.PortProducer;
 import org.junit.Before;
 import org.junit.Test;
@@ -67,8 +68,8 @@ public class PortProducerTest extends NeutronProducerTestSupport {
 
     @Test
     public void createTest() throws Exception {
-        msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.CREATE);
-        msg.setHeader(NeutronConstants.NAME, dummyPort.getName());
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.CREATE);
+        msg.setHeader(OpenstackConstants.NAME, dummyPort.getName());
         msg.setHeader(NeutronConstants.TENANT_ID, dummyPort.getTenantId());
         msg.setHeader(NeutronConstants.NETWORK_ID, dummyPort.getNetworkId());
         msg.setHeader(NeutronConstants.MAC_ADDRESS, dummyPort.getMacAddress());
@@ -86,8 +87,8 @@ public class PortProducerTest extends NeutronProducerTestSupport {
     @Test
     public void getTest() throws Exception {
         final String portID = "myNetID";
-        msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.GET);
-        msg.setHeader(NeutronConstants.ID, portID);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.GET);
+        msg.setHeader(OpenstackConstants.ID, portID);
 
         producer.process(exchange);
 
@@ -100,7 +101,7 @@ public class PortProducerTest extends NeutronProducerTestSupport {
 
     @Test
     public void getAllTest() throws Exception {
-        msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.GET_ALL);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.GET_ALL);
 
         producer.process(exchange);
 
@@ -112,7 +113,7 @@ public class PortProducerTest extends NeutronProducerTestSupport {
     @Test
     public void updateTest() throws Exception {
         final String portID = "myID";
-        msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.UPDATE);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.UPDATE);
         final String newDevId = "dev";
         when(testOSport.getDeviceId()).thenReturn(newDevId);
         when(testOSport.getId()).thenReturn(portID);
@@ -133,8 +134,8 @@ public class PortProducerTest extends NeutronProducerTestSupport {
     public void deleteTest() throws Exception {
         when(portService.delete(anyString())).thenReturn(ActionResponse.actionSuccess());
         final String portID = "myNetID";
-        msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.DELETE);
-        msg.setHeader(NeutronConstants.ID, portID);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.DELETE);
+        msg.setHeader(OpenstackConstants.ID, portID);
 
         producer.process(exchange);
 
