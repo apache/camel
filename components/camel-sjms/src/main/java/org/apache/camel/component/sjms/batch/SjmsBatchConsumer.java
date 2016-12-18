@@ -70,7 +70,6 @@ public class SjmsBatchConsumer extends DefaultConsumer {
     private final int pollDuration;
     private final ConnectionFactory connectionFactory;
     private final String destinationName;
-    private final Processor processor;
     private ExecutorService jmsConsumerExecutors;
     private final AtomicBoolean running = new AtomicBoolean(true);
     private final AtomicReference<CountDownLatch> consumersShutdownLatchRef = new AtomicReference<>();
@@ -80,7 +79,6 @@ public class SjmsBatchConsumer extends DefaultConsumer {
         super(sjmsBatchEndpoint, processor);
 
         this.sjmsBatchEndpoint = ObjectHelper.notNull(sjmsBatchEndpoint, "batchJmsEndpoint");
-        this.processor = ObjectHelper.notNull(processor, "processor");
 
         destinationName = ObjectHelper.notEmpty(sjmsBatchEndpoint.getDestinationName(), "destinationName");
 
@@ -133,9 +131,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
         connection = connectionFactory.createConnection();
         connection.start();
 
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Starting " + consumerCount + " consumer(s) for " + destinationName + ":" + completionSize);
-        }
+        LOG.info("Starting {} consumer(s) for {}:{}", consumerCount, destinationName, completionSize);
         consumersShutdownLatchRef.set(new CountDownLatch(consumerCount));
 
         jmsConsumerExecutors = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "SjmsBatchConsumer", consumerCount);
@@ -148,7 +144,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
         }
 
         if (completionInterval > 0) {
-            LOG.info("Using CompletionInterval to run every " + completionInterval + " millis.");
+            LOG.info("Using CompletionInterval to run every {} millis.", completionInterval);
             if (timeoutCheckerExecutorService == null) {
                 setTimeoutCheckerExecutorService(getEndpoint().getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this, SJMS_BATCH_TIMEOUT_CHECKER, 1));
                 shutdownTimeoutCheckerExecutorService = true;
@@ -170,7 +166,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
             if (consumersShutdownLatch.await(60, TimeUnit.SECONDS)) {
                 LOG.warn("Timeout waiting on consumer threads to signal completion - shutting down");
             } else {
-                LOG.info("All consumers have shut down");
+                LOG.info("All consumers have been shutdown");
             }
         } else {
             LOG.info("Stop signalled while there are no consumers yet, so no need to wait for consumers");
@@ -180,14 +176,14 @@ public class SjmsBatchConsumer extends DefaultConsumer {
             LOG.debug("Shutting down JMS connection");
             connection.close();
         } catch (Exception e) {
-            LOG.warn("Exception caught closing JMS connection", e);
+            // ignore
         }
 
-        getEndpoint().getCamelContext().getExecutorServiceManager().shutdown(jmsConsumerExecutors);
+        getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(jmsConsumerExecutors);
         jmsConsumerExecutors = null;
 
         if (shutdownTimeoutCheckerExecutorService) {
-            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(timeoutCheckerExecutorService);
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(timeoutCheckerExecutorService);
             timeoutCheckerExecutorService = null;
         }
     }
@@ -240,34 +236,42 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                     try {
                         task.consumeBatchesOnLoop(session, consumer);
                     } finally {
-                        try {
-                            consumer.close();
-                        } catch (JMSException ex2) {
-                            // only include stacktrace in debug logging
-                            if (log.isDebugEnabled()) {
-                                log.debug("Exception caught closing consumer", ex2);
-                            }
-                            log.warn("Exception caught closing consumer: {}", ex2.getMessage());
-                        }
+                        closeJmsConsumer(consumer);
                     }
                 } finally {
-                    try {
-                        session.close();
-                    } catch (JMSException ex1) {
-                        // only include stacktrace in debug logging
-                        if (log.isDebugEnabled()) {
-                            log.debug("Exception caught closing session: {}", ex1);
-                        }
-                        log.warn("Exception caught closing session: {}", ex1.getMessage());
-                    }
+                    closeJmsSession(session);
                 }
-            } catch (JMSException ex) {
-                // from loop
-                LOG.warn("Exception caught consuming from " + destinationName, ex);
+            } catch (Throwable ex) {
+                // from consumeBatchesOnLoop
+                getExceptionHandler().handleException("Exception caught consuming from " + destinationName, ex);
             } finally {
                 // indicate that we have shut down
                 CountDownLatch consumersShutdownLatch = consumersShutdownLatchRef.get();
                 consumersShutdownLatch.countDown();
+            }
+        }
+
+        private void closeJmsConsumer(MessageConsumer consumer) {
+            try {
+                consumer.close();
+            } catch (JMSException ex2) {
+                // only include stacktrace in debug logging
+                if (log.isDebugEnabled()) {
+                    log.debug("Exception caught closing consumer", ex2);
+                }
+                log.warn("Exception caught closing consumer: {}. This exception is ignored.", ex2.getMessage());
+            }
+        }
+
+        private void closeJmsSession(Session session) {
+            try {
+                session.close();
+            } catch (JMSException ex2) {
+                // only include stacktrace in debug logging
+                if (log.isDebugEnabled()) {
+                    log.debug("Exception caught closing session", ex2);
+                }
+                log.warn("Exception caught closing session: {}. This exception is ignored.", ex2.getMessage());
             }
         }
 
@@ -449,7 +453,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
             SessionCompletion sessionCompletion = new SessionCompletion(session);
             exchange.addOnCompletion(sessionCompletion);
             try {
-                processor.process(exchange);
+                getProcessor().process(exchange);
                 long total = MESSAGE_PROCESSED.addAndGet(batchSize);
                 LOG.debug("Completed processing[{}]:total={}", id, total);
             } catch (Exception e) {
