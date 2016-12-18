@@ -34,6 +34,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -453,8 +454,7 @@ public final class IntrospectionSupport {
 
         Map<String, String> rc = new LinkedHashMap<String, String>(properties.size());
 
-        for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
-            Map.Entry<String, Object> entry = it.next();
+        for (Entry<String, Object> entry : properties.entrySet()) {
             String name = entry.getKey();
             String value = entry.getValue().toString();
             rc.put(name, value);

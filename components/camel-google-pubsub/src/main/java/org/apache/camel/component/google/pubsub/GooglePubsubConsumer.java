@@ -28,14 +28,11 @@ import com.google.api.services.pubsub.model.PullResponse;
 import com.google.api.services.pubsub.model.ReceivedMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.google.pubsub.consumer.ExchangeAckTransaction;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.spi.Synchronization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 class GooglePubsubConsumer extends DefaultConsumer {
 

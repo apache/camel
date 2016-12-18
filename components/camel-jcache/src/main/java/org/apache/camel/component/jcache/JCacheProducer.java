@@ -305,9 +305,9 @@ public class JCacheProducer extends DefaultProducer {
 
         static Action fromName(String name) {
             if (ObjectHelper.isNotEmpty(name)) {
-                for (int i = 0; i < VALUES.length; i++) {
-                    if (VALUES[i].name().equalsIgnoreCase(name)) {
-                        return VALUES[i];
+                for (Action action : VALUES) {
+                    if (action.name().equalsIgnoreCase(name)) {
+                        return action;
                     }
                 }
             }

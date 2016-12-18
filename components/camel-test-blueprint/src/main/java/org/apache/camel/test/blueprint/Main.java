@@ -26,7 +26,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.main.MainSupport;
 import org.osgi.framework.BundleContext;
-import org.osgi.service.blueprint.container.BlueprintEvent;
 
 /**
  * A command line tool for booting up a CamelContext using an OSGi Blueprint XML file

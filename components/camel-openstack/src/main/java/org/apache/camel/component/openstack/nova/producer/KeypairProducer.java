@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
+import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.nova.NovaConstants;
 import org.apache.camel.component.openstack.nova.NovaEndpoint;
 import org.apache.camel.util.ObjectHelper;
@@ -38,16 +39,16 @@ public class KeypairProducer extends AbstractOpenstackProducer {
     public void process(Exchange exchange) throws Exception {
         String operation = getOperation(exchange);
         switch (operation) {
-        case NovaConstants.CREATE:
+        case OpenstackConstants.CREATE:
             doCreate(exchange);
             break;
-        case NovaConstants.GET:
+        case OpenstackConstants.GET:
             doGet(exchange);
             break;
-        case NovaConstants.GET_ALL:
+        case OpenstackConstants.GET_ALL:
             doGetAll(exchange);
             break;
-        case NovaConstants.DELETE:
+        case OpenstackConstants.DELETE:
             doDelete(exchange);
             break;
         default:
@@ -57,7 +58,7 @@ public class KeypairProducer extends AbstractOpenstackProducer {
 
     private void doCreate(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String name = msg.getHeader(NovaConstants.NAME, String.class);
+        final String name = msg.getHeader(OpenstackConstants.NAME, String.class);
         ObjectHelper.notEmpty(name, "Keypair name");
 
         final String body = msg.getBody(String.class);
@@ -67,7 +68,7 @@ public class KeypairProducer extends AbstractOpenstackProducer {
 
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String keypairName = msg.getHeader(NovaConstants.NAME, String.class);
+        final String keypairName = msg.getHeader(OpenstackConstants.NAME, String.class);
         ObjectHelper.notEmpty(keypairName, "Keypair name");
         final Keypair kp = os.compute().keypairs().get(keypairName);
         msg.setBody(kp);
@@ -81,7 +82,7 @@ public class KeypairProducer extends AbstractOpenstackProducer {
 
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String keypairName = msg.getHeader(NovaConstants.NAME, String.class);
+        final String keypairName = msg.getHeader(OpenstackConstants.NAME, String.class);
         ObjectHelper.notEmpty(keypairName, "Keypair name");
         final ActionResponse response = os.compute().keypairs().delete(keypairName);
         checkFailure(response, msg, "Delete keypair " + keypairName);
