@@ -68,7 +68,7 @@ public abstract class AbstractOpenstackProducer extends DefaultProducer {
     }
 
     protected String getOperation(Exchange exchange) {
-        final String operation = exchange.getIn().getHeader(NovaConstants.OPERATION, endpoint.getOperation(), String.class);
+        final String operation = exchange.getIn().getHeader(OpenstackConstants.OPERATION, endpoint.getOperation(), String.class);
         ObjectHelper.notEmpty(operation, "Operation");
         return operation;
     }
