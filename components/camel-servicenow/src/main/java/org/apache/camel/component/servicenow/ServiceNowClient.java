@@ -162,7 +162,7 @@ public final class ServiceNowClient {
     }
 
     private static void configureTls(
-        CamelContext camelContext, ServiceNowConfiguration configuration, WebClient client) throws Exception{
+        CamelContext camelContext, ServiceNowConfiguration configuration, WebClient client) throws Exception {
 
         SSLContextParameters sslContextParams = configuration.getSslContextParameters();
         if (sslContextParams != null) {

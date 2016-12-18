@@ -19,7 +19,6 @@ package org.apache.camel.component.ribbon.processor;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 
-import com.netflix.client.config.CommonClientConfigKey;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.client.config.IClientConfigKey;
 import com.netflix.loadbalancer.DummyPing;
@@ -46,8 +45,8 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ServiceCallServerListStrategy;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,18 +77,18 @@ public class RibbonServiceCallProcessor extends ServiceSupport implements AsyncP
         // setup from the provided name which can contain scheme and context-path information as well
         String serviceName;
         if (name.contains("/")) {
-            serviceName = ObjectHelper.before(name, "/");
-            this.contextPath = ObjectHelper.after(name, "/");
+            serviceName = StringHelper.before(name, "/");
+            this.contextPath = StringHelper.after(name, "/");
         } else if (name.contains("?")) {
-            serviceName = ObjectHelper.before(name, "?");
-            this.contextPath = ObjectHelper.after(name, "?");
+            serviceName = StringHelper.before(name, "?");
+            this.contextPath = StringHelper.after(name, "?");
         } else {
             serviceName = name;
             this.contextPath = null;
         }
         if (serviceName.contains(":")) {
-            this.scheme = ObjectHelper.before(serviceName, ":");
-            this.name = ObjectHelper.after(serviceName, ":");
+            this.scheme = StringHelper.before(serviceName, ":");
+            this.name = StringHelper.after(serviceName, ":");
         } else {
             this.scheme = scheme;
             this.name = serviceName;
@@ -199,7 +198,7 @@ public class RibbonServiceCallProcessor extends ServiceSupport implements AsyncP
     @Override
     @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
-        ObjectHelper.notEmpty(name, "name", this);
+        StringHelper.notEmpty(name, "name", this);
 
         if (serverListStrategy == null) {
             serverListStrategy = new RibbonServiceCallStaticServerListStrategy();
@@ -222,7 +221,7 @@ public class RibbonServiceCallProcessor extends ServiceSupport implements AsyncP
         IClientConfig config = IClientConfig.Builder.newBuilder(name).build();
         if (ribbonClientConfig != null) {
             for (Map.Entry<String, String> entry : ribbonClientConfig.entrySet()) {
-                IClientConfigKey key = CommonClientConfigKey.valueOf(entry.getKey());
+                IClientConfigKey key = IClientConfigKey.Keys.valueOf(entry.getKey());
                 String value = entry.getValue();
                 LOG.debug("RibbonClientConfig: {}={}", key.key(), value);
                 config.set(key, entry.getValue());
