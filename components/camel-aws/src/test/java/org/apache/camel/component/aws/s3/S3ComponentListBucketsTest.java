@@ -54,8 +54,8 @@ public class S3ComponentListBucketsTest extends CamelTestSupport {
     private void assertResultExchange(Exchange resultExchange) {
         List<Bucket> list = resultExchange.getIn().getBody(List.class);
         assertEquals(1, list.size());
-        assertEquals("camel", ((Bucket) list.get(0)).getOwner().getDisplayName());
-        assertEquals("camel-bucket", ((Bucket) list.get(0)).getName());
+        assertEquals("camel", list.get(0).getOwner().getDisplayName());
+        assertEquals("camel-bucket", list.get(0).getName());
     }
     
     @Override

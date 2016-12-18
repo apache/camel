@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.neutron.producer.RouterProducer;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,8 +69,8 @@ public class RouterProducerTest extends NeutronProducerTestSupport {
 
     @Test
     public void createTest() throws Exception {
-        msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.CREATE);
-        msg.setHeader(NeutronConstants.NAME, dummyRouter.getName());
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.CREATE);
+        msg.setHeader(OpenstackConstants.NAME, dummyRouter.getName());
         msg.setHeader(NeutronConstants.TENANT_ID, dummyRouter.getTenantId());
 
         producer.process(exchange);
@@ -84,7 +85,7 @@ public class RouterProducerTest extends NeutronProducerTestSupport {
     @Test
     public void getTest() throws Exception {
         final String routerID = "myRouterID";
-        msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.GET);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.GET);
         msg.setHeader(NeutronConstants.ROUTER_ID, routerID);
 
         producer.process(exchange);
@@ -98,7 +99,7 @@ public class RouterProducerTest extends NeutronProducerTestSupport {
 
     @Test
     public void getAllTest() throws Exception {
-        msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.GET_ALL);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.GET_ALL);
 
         producer.process(exchange);
 
@@ -110,7 +111,7 @@ public class RouterProducerTest extends NeutronProducerTestSupport {
     @Test
     public void updateTest() throws Exception {
         final String routerID = "myRouterID";
-        msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.UPDATE);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.UPDATE);
         final Router tmp = createRouter();
         final String newName = "newName";
         tmp.setName(newName);
@@ -132,8 +133,8 @@ public class RouterProducerTest extends NeutronProducerTestSupport {
     public void deleteTest() throws Exception {
         when(routerService.delete(anyString())).thenReturn(ActionResponse.actionSuccess());
         final String routerID = "myRouterID";
-        msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.DELETE);
-        msg.setHeader(NeutronConstants.ID, routerID);
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.DELETE);
+        msg.setHeader(OpenstackConstants.ID, routerID);
 
         producer.process(exchange);
 
@@ -158,7 +159,7 @@ public class RouterProducerTest extends NeutronProducerTestSupport {
         final RouterInterface ifce = new NeutronRouterInterface(subnetId, portId);
         when(routerService.detachInterface(anyString(), anyString(), anyString())).thenReturn(ifce);
 
-        msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.DETACH_INTERFACE);
+        msg.setHeader(OpenstackConstants.OPERATION, NeutronConstants.DETACH_INTERFACE);
         msg.setHeader(NeutronConstants.ROUTER_ID, routerID);
         msg.setHeader(NeutronConstants.SUBNET_ID, subnetId);
         msg.setHeader(NeutronConstants.PORT_ID, portId);
@@ -184,7 +185,7 @@ public class RouterProducerTest extends NeutronProducerTestSupport {
         final RouterInterface ifce = new NeutronRouterInterface(subnetId, null);
         when(routerService.attachInterface(anyString(), any(AttachInterfaceType.class), anyString())).thenReturn(ifce);
 
-        msg.setHeader(NeutronConstants.OPERATION, NeutronConstants.ATTACH_INTERFACE);
+        msg.setHeader(OpenstackConstants.OPERATION, NeutronConstants.ATTACH_INTERFACE);
         msg.setHeader(NeutronConstants.ROUTER_ID, routerID);
         msg.setHeader(NeutronConstants.SUBNET_ID, subnetId);
         msg.setHeader(NeutronConstants.ITERFACE_TYPE, AttachInterfaceType.SUBNET);

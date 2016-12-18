@@ -18,6 +18,7 @@ package org.apache.camel.component.openstack.nova;
 
 import java.util.UUID;
 
+import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.nova.producer.ServerProducer;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,7 +59,7 @@ public class ServerProducerTest extends NovaProducerTestSupport {
 
     @Test
     public void createServer() throws Exception {
-        when(endpoint.getOperation()).thenReturn(NovaConstants.CREATE);
+        when(endpoint.getOperation()).thenReturn(OpenstackConstants.CREATE);
         final String expectedFlavorID = UUID.randomUUID().toString();
         when(testOSServer.getId()).thenReturn(expectedFlavorID);
         msg.setBody(dummyServer);
@@ -72,8 +73,8 @@ public class ServerProducerTest extends NovaProducerTestSupport {
         final String expectedFlavorID = UUID.randomUUID().toString();
         when(testOSServer.getId()).thenReturn(expectedFlavorID);
 
-        msg.setHeader(NovaConstants.OPERATION, NovaConstants.CREATE);
-        msg.setHeader(NovaConstants.NAME, dummyServer.getName());
+        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.CREATE);
+        msg.setHeader(OpenstackConstants.NAME, dummyServer.getName());
         msg.setHeader(NovaConstants.FLAVOR_ID, dummyServer.getFlavorRef());
         msg.setHeader(NovaConstants.IMAGE_ID, dummyServer.getImageRef());
 
@@ -90,7 +91,7 @@ public class ServerProducerTest extends NovaProducerTestSupport {
         when(endpoint.getOperation()).thenReturn(NovaConstants.ACTION);
         String id = "myID";
         msg.setHeader(NovaConstants.ACTION, Action.PAUSE);
-        msg.setHeader(NovaConstants.ID, id);
+        msg.setHeader(OpenstackConstants.ID, id);
         producer.process(exchange);
 
         ArgumentCaptor<Action> actionArgumentCaptor = ArgumentCaptor.forClass(Action.class);
@@ -115,9 +116,9 @@ public class ServerProducerTest extends NovaProducerTestSupport {
         String id = "myID";
         String snapshotName = "mySnapshot";
 
-        msg.setHeader(NovaConstants.OPERATION, NovaConstants.CREATE_SNAPSHOT);
-        msg.setHeader(NovaConstants.NAME, snapshotName);
-        msg.setHeader(NovaConstants.ID, id);
+        msg.setHeader(OpenstackConstants.OPERATION, NovaConstants.CREATE_SNAPSHOT);
+        msg.setHeader(OpenstackConstants.NAME, snapshotName);
+        msg.setHeader(OpenstackConstants.ID, id);
         producer.process(exchange);
 
         ArgumentCaptor<String> snapshot = ArgumentCaptor.forClass(String.class);

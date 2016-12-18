@@ -366,7 +366,7 @@ public class WeatherConfiguration {
     }
 
     public List<String> getIds() {
-        return (List<String>) ids;
+        return ids;
     }
 
     /**

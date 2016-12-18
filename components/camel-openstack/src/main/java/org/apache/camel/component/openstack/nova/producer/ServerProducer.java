@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
+import org.apache.camel.component.openstack.common.OpenstackConstants;
 import org.apache.camel.component.openstack.nova.NovaConstants;
 import org.apache.camel.component.openstack.nova.NovaEndpoint;
 import org.apache.camel.util.ObjectHelper;
@@ -43,19 +44,19 @@ public class ServerProducer extends AbstractOpenstackProducer {
     public void process(Exchange exchange) throws Exception {
         final String operation = getOperation(exchange);
         switch (operation) {
-        case NovaConstants.CREATE:
+        case OpenstackConstants.CREATE:
             doCreate(exchange);
             break;
         case NovaConstants.CREATE_SNAPSHOT:
             doCreateSnapshot(exchange);
             break;
-        case NovaConstants.GET:
+        case OpenstackConstants.GET:
             doGet(exchange);
             break;
-        case NovaConstants.GET_ALL:
+        case OpenstackConstants.GET_ALL:
             doGetAll(exchange);
             break;
-        case NovaConstants.DELETE:
+        case OpenstackConstants.DELETE:
             doDelete(exchange);
             break;
         case NovaConstants.ACTION:
@@ -80,8 +81,8 @@ public class ServerProducer extends AbstractOpenstackProducer {
 
     private void doCreateSnapshot(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String serverId = msg.getHeader(NovaConstants.ID, String.class);
-        final String name = msg.getHeader(NovaConstants.NAME, String.class);
+        final String serverId = msg.getHeader(OpenstackConstants.ID, String.class);
+        final String name = msg.getHeader(OpenstackConstants.NAME, String.class);
         ObjectHelper.notEmpty(serverId, "Server ID");
         ObjectHelper.notEmpty(name, "VolumeSnapshot name");
 
@@ -91,7 +92,7 @@ public class ServerProducer extends AbstractOpenstackProducer {
 
     private void doGet(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String serverId = msg.getHeader(NovaConstants.ID, String.class);
+        final String serverId = msg.getHeader(OpenstackConstants.ID, String.class);
         ObjectHelper.notEmpty(serverId, "Server ID");
         final Server result = os.compute().servers().get(serverId);
         msg.setBody(result);
@@ -105,7 +106,7 @@ public class ServerProducer extends AbstractOpenstackProducer {
     private void doAction(Exchange exchange) {
         final Message msg = exchange.getIn();
         final Action action = msg.getHeader(NovaConstants.ACTION, Action.class);
-        final String serverId = msg.getHeader(NovaConstants.ID, String.class);
+        final String serverId = msg.getHeader(OpenstackConstants.ID, String.class);
         ObjectHelper.notNull(action, "Server action");
         ObjectHelper.notEmpty(serverId, "Server ID");
         final ActionResponse response = os.compute().servers().action(serverId, action);
@@ -114,7 +115,7 @@ public class ServerProducer extends AbstractOpenstackProducer {
 
     private void doDelete(Exchange exchange) {
         final Message msg = exchange.getIn();
-        final String serverId = msg.getHeader(NovaConstants.ID, String.class);
+        final String serverId = msg.getHeader(OpenstackConstants.ID, String.class);
         ObjectHelper.notEmpty(serverId, "Server ID");
         final ActionResponse response = os.compute().servers().delete(serverId);
         checkFailure(response, msg, "Delete server with ID " + serverId);
@@ -127,8 +128,8 @@ public class ServerProducer extends AbstractOpenstackProducer {
             Map headers = message.getHeaders();
             ServerCreateBuilder builder = Builders.server();
 
-            ObjectHelper.notEmpty(message.getHeader(NovaConstants.NAME, String.class), "Name");
-            builder.name(message.getHeader(NovaConstants.NAME, String.class));
+            ObjectHelper.notEmpty(message.getHeader(OpenstackConstants.NAME, String.class), "Name");
+            builder.name(message.getHeader(OpenstackConstants.NAME, String.class));
 
             if (headers.containsKey(NovaConstants.IMAGE_ID)) {
                 builder.image(message.getHeader(NovaConstants.IMAGE_ID, String.class));

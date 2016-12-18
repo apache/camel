@@ -19,6 +19,7 @@ package org.apache.camel.component.ribbon.processor;
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
 
+import com.netflix.client.config.CommonClientConfigKey;
 import com.netflix.client.config.IClientConfig;
 import com.netflix.client.config.IClientConfigKey;
 import com.netflix.loadbalancer.DummyPing;
@@ -221,7 +222,7 @@ public class RibbonServiceCallProcessor extends ServiceSupport implements AsyncP
         IClientConfig config = IClientConfig.Builder.newBuilder(name).build();
         if (ribbonClientConfig != null) {
             for (Map.Entry<String, String> entry : ribbonClientConfig.entrySet()) {
-                IClientConfigKey key = IClientConfigKey.Keys.valueOf(entry.getKey());
+                IClientConfigKey key = CommonClientConfigKey.valueOf(entry.getKey());
                 String value = entry.getValue();
                 LOG.debug("RibbonClientConfig: {}={}", key.key(), value);
                 config.set(key, entry.getValue());
