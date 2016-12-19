@@ -32,7 +32,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultModelJAXBContextFactory;
-import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.impl.FileWatcherReloadStrategy;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ReloadStrategy;
@@ -60,6 +60,7 @@ public abstract class MainSupport extends ServiceSupport {
     protected boolean trace;
     protected List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
     protected String routeBuilderClasses;
+    protected String fileWatchDirectory;
     protected final List<CamelContext> camelContexts = new ArrayList<CamelContext>();
     protected ProducerTemplate camelTemplate;
     protected boolean hangupInterceptorEnabled = true;
@@ -125,6 +126,14 @@ public abstract class MainSupport extends ServiceSupport {
                 "exitcode")  {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setDurationHitExitCode(Integer.parseInt(parameter));
+            }
+        });
+        addOption(new ParameterOption("watch", "fileWatch",
+                "Sets a directory to watch for file changes to trigger reloading routes on-the-fly",
+                "fileWatch") {
+            @Override
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                setFileWatchDirectory(parameter);
             }
         });
     }
@@ -341,9 +350,16 @@ public abstract class MainSupport extends ServiceSupport {
         return exitCode.get();
     }
 
-
     public void setRouteBuilderClasses(String builders) {
         this.routeBuilderClasses = builders;
+    }
+
+    public String getFileWatchDirectory() {
+        return fileWatchDirectory;
+    }
+
+    public void setFileWatchDirectory(String fileWatchDirectory) {
+        this.fileWatchDirectory = fileWatchDirectory;
     }
 
     public String getRouteBuilderClasses() {
@@ -423,7 +439,7 @@ public abstract class MainSupport extends ServiceSupport {
     public List<RouteDefinition> getRouteDefinitions() {
         List<RouteDefinition> answer = new ArrayList<RouteDefinition>();
         for (CamelContext camelContext : camelContexts) {
-            answer.addAll(((ModelCamelContext)camelContext).getRouteDefinitions());
+            answer.addAll(camelContext.getRouteDefinitions());
         }
         return answer;
     }
@@ -468,6 +484,12 @@ public abstract class MainSupport extends ServiceSupport {
     protected void postProcessCamelContext(CamelContext camelContext) throws Exception {
         if (trace) {
             camelContext.setTracing(true);
+        }
+        if (fileWatchDirectory != null) {
+            ReloadStrategy reload = new FileWatcherReloadStrategy(fileWatchDirectory);
+            camelContext.setReloadStrategy(reload);
+            // ensure reload is added as service and started
+            camelContext.addService(reload);
         }
         // try to load the route builders from the routeBuilderClasses
         loadRouteBuilders(camelContext);
