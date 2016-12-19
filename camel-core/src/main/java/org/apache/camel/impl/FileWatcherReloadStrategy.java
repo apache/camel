@@ -37,10 +37,13 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A file based {@link org.apache.camel.spi.ReloadStrategy} which watches a file folder
  * for modified files and reload on file changes.
+ * <p/>
+ * This implementation uses the JDK {@link WatchService} to watch for when files are
+ * created or modified. Mac OS X users should be noted the osx JDK does not support
+ * native file system changes and therefore the watch service is much slower than on
+ * linux or windows systems.
  */
 public class FileWatcherReloadStrategy extends ReloadStrategySupport {
-
-    // TODO: support multiple folders
 
     private Path folder;
     private WatchService watcher;
@@ -63,6 +66,11 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
 
     @Override
     protected void doStart() throws Exception {
+        if (folder == null) {
+            // no folder configured
+            return;
+        }
+
         log.info("Starting ReloadStrategy to watch directory: {}", folder);
         try {
             this.watcher = folder.getFileSystem().newWatchService();
@@ -79,7 +87,10 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
 
     @Override
     protected void doStop() throws Exception {
-        getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
+        if (executorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
+            executorService = null;
+        }
     }
 
     /**

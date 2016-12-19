@@ -17,8 +17,12 @@
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedReloadStrategyMBean extends ManagedServiceMBean {
+
+    @ManagedOperation(description = "Force reload of CamelContext")
+    void forceReloadCamelContext();
 
     @ManagedAttribute(description = "Strategy")
     String getStrategy();
