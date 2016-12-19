@@ -27,7 +27,10 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.openstack4j.core.transport.Config;
 
-@UriEndpoint(scheme = "openstack-nova", title = "OpenStack-Nova", syntax = "openstack-nova:host", label = "cloud, virtualization")
+/**
+ * The openstack-nova component allows messages to be sent to an OpenStack compute services.
+ */
+@UriEndpoint(scheme = "openstack-nova", title = "OpenStack Nova", syntax = "openstack-nova:host", label = "cloud,paas", producerOnly = true)
 public class NovaEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "flavors, servers, keypairs")

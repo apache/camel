@@ -4,7 +4,7 @@ Openstack Nova Component
 
 *Available as of Camel 2.19*
 
-The openstack-nova component allows to messages to be sent to an OpenStack compute services.
+The openstack-nova component allows messages to be sent to an OpenStack compute services.
 
 [[openstack-nova-Dependencies]]
 Dependencies
@@ -43,28 +43,25 @@ URI Options
 ^^^^^^^^^^^
 
 // component options: START
-The OpenStack-Nova component has no options.
+The OpenStack Nova component has no options.
 // component options: END
 
 // endpoint options: START
-The OpenStack-Nova component supports 13 endpoint options which are listed below:
+The OpenStack Nova component supports 10 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | common |  | String | *Required* OpenStack host url
-| apiVersion | common | V3 | String | OpenStack API version
-| config | common |  | Config | OpenStack configuration
-| domain | common | default | String | Authentication domain
-| operation | common |  | String | The operation to do
-| password | common |  | String | *Required* OpenStack password
-| project | common |  | String | *Required* The project ID
-| subsystem | common |  | String | *Required* OpenStack Nova subsystem
-| username | common |  | String | *Required* OpenStack username
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| host | producer |  | String | *Required* OpenStack host url
+| apiVersion | producer | V3 | String | OpenStack API version
+| config | producer |  | Config | OpenStack configuration
+| domain | producer | default | String | Authentication domain
+| operation | producer |  | String | The operation to do
+| password | producer |  | String | *Required* OpenStack password
+| project | producer |  | String | *Required* The project ID
+| subsystem | producer |  | String | *Required* OpenStack Nova subsystem
+| username | producer |  | String | *Required* OpenStack username
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}
