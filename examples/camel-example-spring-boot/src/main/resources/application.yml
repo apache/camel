@@ -21,3 +21,4 @@ shell.auth.simple.user.password: password
 camel:
   springboot:
     allow-use-original-message: false
+    shutdown-timeout: 15
