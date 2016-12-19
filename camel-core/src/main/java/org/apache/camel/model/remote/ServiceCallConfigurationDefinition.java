@@ -42,7 +42,7 @@ import org.apache.camel.spi.ServiceCallServerListStrategy;
 @Metadata(label = "eip,routing,remote")
 @XmlRootElement(name = "serviceCallConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class ServiceCallConfigurationDefinition extends IdentifiedType implements OtherAttributesAware {
+public class ServiceCallConfigurationDefinition extends IdentifiedType implements OtherAttributesAware {
 
     @XmlTransient
     private ServiceCallDefinition parent;

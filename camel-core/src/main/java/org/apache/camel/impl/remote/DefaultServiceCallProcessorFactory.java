@@ -24,11 +24,9 @@ import java.util.Set;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.remote.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.remote.ServiceCallDefinition;
-import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.ServiceCallLoadBalancer;
 import org.apache.camel.spi.ServiceCallServer;
@@ -37,18 +35,9 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
-public abstract class DefaultServiceCallProcessorFactory<C, S extends ServiceCallServer> implements ProcessorFactory {
-    @Override
-    public Processor createChildProcessor(RouteContext routeContext, ProcessorDefinition<?> definition, boolean mandatory) throws Exception {
-        // not in use
-        return null;
-    }
-
-    @Override
-    public Processor createProcessor(RouteContext routeContext, ProcessorDefinition<?> definition) throws Exception {
-        return definition instanceof ServiceCallDefinition
-            ? createProcessor(routeContext, (ServiceCallDefinition) definition, createConfiguration(routeContext))
-            : null;
+public abstract class DefaultServiceCallProcessorFactory<C, S extends ServiceCallServer> extends AbstractServiceCallProcessorFactory {
+    protected Processor createProcessor(RouteContext routeContext, ServiceCallDefinition definition) throws Exception {
+        return createProcessor(routeContext, definition, createConfiguration(routeContext));
     }
 
     protected Processor createProcessor(RouteContext routeContext, ServiceCallDefinition definition, C cfg) throws Exception {
@@ -114,10 +103,14 @@ public abstract class DefaultServiceCallProcessorFactory<C, S extends ServiceCal
             sl = configureServerListStrategy(cfg, routeContext, configRef);
         }
 
-        // the component is used to configure what the default scheme to use (eg camel component name)
-        String component = config != null ? config.getComponent() : null;
-        if (component == null && configRef != null) {
-            component = configRef.getComponent();
+        // The component is used to configure what the default scheme to use (eg camel component name).
+        // The component configured on EIP takes precedence vs configured on configuration.
+        String component = definition.getComponent();
+        if (component == null) {
+            component = config != null ? config.getComponent() : null;
+            if (component == null && configRef != null) {
+                component = configRef.getComponent();
+            }
         }
 
         if (ObjectHelper.isNotEmpty(lb) && lb instanceof CamelContextAware) {
@@ -148,7 +141,13 @@ public abstract class DefaultServiceCallProcessorFactory<C, S extends ServiceCal
         return processor;
     }
 
-    protected Map<String, String> configureProperties(RouteContext routeContext, ServiceCallConfigurationDefinition config, ServiceCallConfigurationDefinition configRef) throws Exception {
+    // *************************************************************************
+    // Helpers
+    // *************************************************************************
+
+    protected Map<String, String> configureProperties(
+            RouteContext routeContext, ServiceCallConfigurationDefinition config, ServiceCallConfigurationDefinition configRef) throws Exception {
+
         Map<String, String> answer = new HashMap<>();
         if (config != null && config.getProperties() != null) {
             for (PropertyDefinition prop : config.getProperties()) {
@@ -276,6 +275,9 @@ public abstract class DefaultServiceCallProcessorFactory<C, S extends ServiceCal
     // TODO: rename
     protected abstract C createConfiguration(RouteContext routeContext) throws Exception;
 
+    // *************************************************************************
+    // Defaults
+    // *************************************************************************
 
     protected ServiceCallLoadBalancer<S> createDefaultLoadBalancer(C conf) throws Exception {
         return new RoundRobinServiceCallLoadBalancer<>();

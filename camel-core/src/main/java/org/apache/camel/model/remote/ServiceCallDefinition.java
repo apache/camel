@@ -41,8 +41,10 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
 
     @XmlAttribute @Metadata(required = "true")
     private String name;
-    @XmlAttribute @Metadata(required = "true")
+    @XmlAttribute
     private String uri;
+    @XmlAttribute
+    private String component;
     @XmlAttribute
     private ExchangePattern pattern;
     @XmlElement
@@ -101,6 +103,14 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
      */
     public ServiceCallDefinition uri(String uri) {
         setUri(uri);
+        return this;
+    }
+
+    /**
+     * Sets the component to use
+     */
+    public ServiceCallDefinition component(String component) {
+        setComponent(component);
         return this;
     }
 
@@ -250,6 +260,17 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
      */
     public void setUri(String uri) {
         this.uri = uri;
+    }
+
+    public String getComponent() {
+        return component;
+    }
+
+    /**
+     * The component to use.
+     */
+    public void setComponent(String component) {
+        this.component = component;
     }
 
     public String getLoadBalancerRef() {
