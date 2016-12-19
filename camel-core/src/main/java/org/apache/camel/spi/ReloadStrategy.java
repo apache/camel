@@ -29,7 +29,6 @@ import org.apache.camel.StaticService;
 public interface ReloadStrategy extends Service, StaticService, CamelContextAware {
 
     // TODO: naming of this SPI?
-    // TODO: Add JMX mbean
 
     /**
      * A reload is triggered and the {@link CamelContext} is expected to do a re-start
@@ -46,4 +45,14 @@ public interface ReloadStrategy extends Service, StaticService, CamelContextAwar
      * @param resource      the changed resource
      */
     void onReloadRoutes(CamelContext camelContext, String name, InputStream resource);
+
+    /**
+     * Number of reloads succeeded.
+     */
+    int getReloadCounter();
+
+    /**
+     * Number of reloads failed.
+     */
+    int getFailedCounter();
 }

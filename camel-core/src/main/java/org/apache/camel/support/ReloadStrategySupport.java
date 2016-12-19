@@ -33,6 +33,9 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private CamelContext camelContext;
 
+    private int succeeded;
+    private int failed;
+
     @Override
     public CamelContext getCamelContext() {
         return camelContext;
@@ -50,21 +53,41 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
             ServiceHelper.stopService(camelContext);
             ServiceHelper.startService(camelContext);
         } catch (Exception e) {
+            failed++;
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
         log.info("Reloaded CamelContext: {}", camelContext.getName());
+
+        succeeded++;
     }
 
     @Override
     public void onReloadRoutes(CamelContext camelContext, String name, InputStream resource) {
+
+        // load the stream in as DOM and find out if its <routes> <route> or <camelContext>
+        // and if its <blueprint> <beans> etc and then find inside the <camelContext> and grab what we support re-loading
+
         log.debug("Reloading CamelContext: {} routes from resource: {}", camelContext.getName(), name);
         // assume the resource is XML routes
         try {
             RoutesDefinition routes = camelContext.loadRoutesDefinition(resource);
             camelContext.addRouteDefinitions(routes.getRoutes());
         } catch (Exception e) {
+            failed++;
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
         log.info("Reloaded CamelContext: {} routes from resource: {}", camelContext.getName(), name);
+
+        succeeded++;
+    }
+
+    @Override
+    public int getReloadCounter() {
+        return succeeded;
+    }
+
+    @Override
+    public int getFailedCounter() {
+        return failed;
     }
 }
