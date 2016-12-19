@@ -160,7 +160,9 @@ public final class ModelHelper {
         JAXBContext jaxbContext = getJAXBContext(context);
 
         Map<String, String> namespaces = new LinkedHashMap<>();
-        extractNamespaces(node.getOwnerDocument(), namespaces);
+
+        Document dom = node instanceof Document ? (Document) node : node.getOwnerDocument();
+        extractNamespaces(dom, namespaces);
 
         Binder<Node> binder = jaxbContext.createBinder();
         Object result = binder.unmarshal(node);

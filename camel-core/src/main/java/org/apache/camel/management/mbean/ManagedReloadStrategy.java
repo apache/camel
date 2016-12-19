@@ -19,6 +19,7 @@ package org.apache.camel.management.mbean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedReloadStrategyMBean;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ReloadStrategy;
 
 /**
@@ -26,11 +27,22 @@ import org.apache.camel.spi.ReloadStrategy;
  */
 @ManagedResource(description = "Managed ReloadStrategy")
 public class ManagedReloadStrategy extends ManagedService implements ManagedReloadStrategyMBean {
+
+    private final CamelContext camelContext;
     private final ReloadStrategy reloadStrategy;
 
-    public ManagedReloadStrategy(CamelContext context, ReloadStrategy reloadStrategy) {
-        super(context, reloadStrategy);
+    public ManagedReloadStrategy(CamelContext camelContext, ReloadStrategy reloadStrategy) {
+        super(camelContext, reloadStrategy);
+        this.camelContext = camelContext;
         this.reloadStrategy = reloadStrategy;
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public ReloadStrategy getReloadStrategy() {
+        return reloadStrategy;
     }
 
     @Override
@@ -51,5 +63,10 @@ public class ManagedReloadStrategy extends ManagedService implements ManagedRelo
     @Override
     public int getFailedCounter() {
         return reloadStrategy.getFailedCounter();
+    }
+
+    @Override
+    public void resetCounters() {
+        reloadStrategy.resetCounters();
     }
 }
