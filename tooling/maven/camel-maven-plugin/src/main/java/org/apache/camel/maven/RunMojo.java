@@ -217,6 +217,14 @@ public class RunMojo extends AbstractExecMojo {
     private String configAdminFileName;
 
     /**
+     * To watch the directory for file changes which triggers
+     * a live reload of the Camel routes on-the-fly.
+     *
+     * @parameter property="camel.fileWatcherDirectory"
+     */
+    private String fileWatcherDirectory;
+
+    /**
      * The class arguments.
      *
      * @parameter property="camel.arguments"
@@ -392,6 +400,10 @@ public class RunMojo extends AbstractExecMojo {
         List<String> args = new ArrayList<String>();
         if (trace) {
             args.add("-t");
+        }
+        if (fileWatcherDirectory != null) {
+            args.add("-watch");
+            args.add(fileWatcherDirectory);
         }
 
         if (applicationContextUri != null) {

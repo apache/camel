@@ -49,6 +49,10 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
     public FileWatcherReloadStrategy() {
     }
 
+    public FileWatcherReloadStrategy(String directory) {
+        setFolder(directory);
+    }
+
     public Path getFolder() {
         return folder;
     }

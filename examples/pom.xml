@@ -69,6 +69,7 @@
     <module>camel-example-netty-http</module>
     <module>camel-example-osgi-rmi</module>
     <module>camel-example-pojo-messaging</module>
+    <module>camel-example-reload</module>
     <module>camel-example-reportincident</module>
     <module>camel-example-reportincident-wssecurity</module>
     <module>camel-example-restlet-jdbc</module>
