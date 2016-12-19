@@ -23,13 +23,13 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
+    <route id="myRoute">
       <from uri="timer:foo"/>
       <!-- try to change me and save this file -->
       <transform>
         <constant>Hello World</constant>
       </transform>
-      <to uri="log:out"/>
+      <log message="You said: ${body}"/>
     </route>
   </camelContext>
 

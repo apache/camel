@@ -30,11 +30,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerException;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.NamedNode;
@@ -44,6 +39,10 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
@@ -144,16 +143,26 @@ public final class ModelHelper {
      * @throws Exception is thrown if an error is encountered unmarshalling from xml to model
      */
     public static RoutesDefinition loadRoutesDefinition(CamelContext context, InputStream inputStream) throws Exception {
-        JAXBContext jaxbContext = getJAXBContext(context);
-
         XmlConverter xmlConverter = newXmlConverter(context);
         Document dom = xmlConverter.toDOMDocument(inputStream, null);
+        return loadRoutesDefinition(context, dom);
+    }
+
+    /**
+     * Marshal the xml to the model definition
+     *
+     * @param context the CamelContext, if <tt>null</tt> then {@link org.apache.camel.spi.ModelJAXBContextFactory} is not in use
+     * @param node the xml node
+     * @throws Exception is thrown if an error is encountered unmarshalling from xml to model
+     */
+    public static RoutesDefinition loadRoutesDefinition(CamelContext context, Node node) throws Exception {
+        JAXBContext jaxbContext = getJAXBContext(context);
 
         Map<String, String> namespaces = new LinkedHashMap<>();
-        extractNamespaces(dom, namespaces);
+        extractNamespaces(node.getOwnerDocument(), namespaces);
 
         Binder<Node> binder = jaxbContext.createBinder();
-        Object result = binder.unmarshal(dom);
+        Object result = binder.unmarshal(node);
 
         if (result == null) {
             throw new JAXBException("Cannot unmarshal to RoutesDefinition using JAXB");

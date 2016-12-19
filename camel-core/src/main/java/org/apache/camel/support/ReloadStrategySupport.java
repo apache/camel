@@ -19,12 +19,16 @@ package org.apache.camel.support;
 import java.io.InputStream;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Base class for implementing custom {@link ReloadStrategy} SPI plugins.
@@ -63,21 +67,37 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
 
     @Override
     public void onReloadRoutes(CamelContext camelContext, String name, InputStream resource) {
-
-        // load the stream in as DOM and find out if its <routes> <route> or <camelContext>
-        // and if its <blueprint> <beans> etc and then find inside the <camelContext> and grab what we support re-loading
-
         log.debug("Reloading CamelContext: {} routes from resource: {}", camelContext.getName(), name);
-        // assume the resource is XML routes
-        try {
-            RoutesDefinition routes = camelContext.loadRoutesDefinition(resource);
-            camelContext.addRouteDefinitions(routes.getRoutes());
-        } catch (Exception e) {
-            failed++;
-            throw ObjectHelper.wrapRuntimeCamelException(e);
-        }
-        log.info("Reloaded CamelContext: {} routes from resource: {}", camelContext.getName(), name);
 
+        Document dom = camelContext.getTypeConverter().tryConvertTo(Document.class, resource);
+        if (dom == null) {
+            failed++;
+            log.warn("Cannot load the resource " + name + " as XML");
+            return;
+        }
+
+        // find the <routes> root
+        NodeList list = dom.getElementsByTagName("routes");
+        if (list == null || list.getLength() == 0) {
+            // fallback to <route>
+            list = dom.getElementsByTagName("route");
+        }
+
+        if (list != null && list.getLength() > 0) {
+            for (int i = 0; i < list.getLength(); i++) {
+                Node node = list.item(i);
+                try {
+                    RoutesDefinition routes = ModelHelper.loadRoutesDefinition(camelContext, node);
+                    camelContext.addRouteDefinitions(routes.getRoutes());
+                } catch (Exception e) {
+                    failed++;
+                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                }
+
+            }
+        }
+
+        log.info("Reloaded CamelContext: {} routes from resource: {}", camelContext.getName(), name);
         succeeded++;
     }
 
