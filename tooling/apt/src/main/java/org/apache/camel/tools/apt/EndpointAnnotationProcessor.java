@@ -112,7 +112,14 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                 for (int i = 0; i < schemes.length; i++) {
                     final String alias = schemes[i];
                     final String extendsAlias = extendsSchemes != null ? (i < extendsSchemes.length ? extendsSchemes[i] : extendsSchemes[0]) : null;
-                    final String aliasTitle = i < titles.length ? titles[i] : titles[0];
+                    String aTitle = i < titles.length ? titles[i] : titles[0];
+
+                    // some components offer a secure alternative which we need to amend the title accordingly
+                    if (secureAlias(schemes[0], alias)) {
+                        aTitle += " (Secure)";
+                    }
+                    final String aliasTitle = aTitle;
+
                     // write html documentation
                     String name = canonicalClassName(classElement.getQualifiedName().toString());
                     String packageName = name.substring(0, name.lastIndexOf("."));
@@ -864,6 +871,19 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             }
         }
         return answer;
+    }
+
+    private static boolean secureAlias(String scheme, String alias) {
+        if (scheme.equals(alias)) {
+            return false;
+        }
+
+        // if alias is like scheme but with ending s its secured
+        if ((scheme + "s").equals(alias)) {
+            return true;
+        }
+
+        return false;
     }
 
     // CHECKSTYLE:ON
