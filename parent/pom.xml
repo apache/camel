@@ -552,6 +552,8 @@
     <spring-batch-version>3.0.7.RELEASE</spring-batch-version>
     <spring-batch-bundle-version>3.0.7.RELEASE_1</spring-batch-bundle-version>
     <spring-boot-version>1.4.2.RELEASE</spring-boot-version>
+    <spring-cloud-commons-version>1.1.6.RELEASE</spring-cloud-commons-version>
+    <spring-cloud-netflix-version>1.2.3.RELEASE</spring-cloud-netflix-version>
     <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
     <spring-data-commons-version>1.11.6.RELEASE</spring-data-commons-version>
     <spring-data-redis-version>1.7.5.RELEASE</spring-data-redis-version>
@@ -1747,6 +1749,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-boot</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spring-cloud</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2969,6 +2976,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-boot-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spring-cloud-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

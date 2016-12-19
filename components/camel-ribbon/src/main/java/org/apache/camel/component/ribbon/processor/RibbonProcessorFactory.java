@@ -108,10 +108,14 @@ public class RibbonProcessorFactory extends DefaultServiceCallProcessorFactory<R
             throw new IllegalArgumentException("Load balancer must be of type: " + IRule.class + " but is of type: " + lb.getClass().getName());
         }
 
-        // the component is used to configure what the default scheme to use (eg camel component name)
-        String component = config != null ? config.getComponent() : null;
-        if (component == null && configRef != null) {
-            component = configRef.getComponent();
+        // The component is used to configure what the default scheme to use (eg camel component name).
+        // The component configured on EIP takes precedence vs configured on configuration.
+        String component = definition.getComponent();
+        if (component == null) {
+            component = config != null ? config.getComponent() : null;
+            if (component == null && configRef != null) {
+                component = configRef.getComponent();
+            }
         }
 
         Map<String, String> properties = configureProperties(routeContext, config, configRef);

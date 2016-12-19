@@ -79,7 +79,11 @@ public abstract class ServiceCallExpressionSupport extends ExpressionAdapter {
             }
             answer = scheme + "://" + ip + ":" + port;
             if (contextPath != null) {
-                answer += "" + contextPath;
+                if (!contextPath.startsWith("/")) {
+                    contextPath = "/" + contextPath;
+                }
+
+                answer += contextPath;
             }
         } else {
             // we have existing uri, then replace the serviceName with ip:port

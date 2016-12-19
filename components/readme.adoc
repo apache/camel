@@ -599,6 +599,7 @@ Other Components
 | Shiro (camel-shiro) | Security using Shiro
 | Spring (camel-spring) | Camel Spring XML DSL
 | Spring Boot (camel-spring-boot) | Using Camel with Spring Boot
+| Spring Cloud (camel-spring-cloud) | Using Camel with Spring Cloud
 | Spring DM (camel-spring-dm) | *deprecated* Camel SpringDM (OSGi) XML DSL
 | Spring Java Config (camel-spring-javaconfig) | Using Camel with Spring Java Configuration
 | Spring Security (camel-spring-security) | Security using Spring
