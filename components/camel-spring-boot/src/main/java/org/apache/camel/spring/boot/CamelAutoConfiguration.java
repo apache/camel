@@ -102,6 +102,14 @@ public class CamelAutoConfiguration {
             ((SpringCamelContext) camelContext).setName(config.getName());
         }
 
+        if (config.getShutdownTimeout() > 0) {
+            camelContext.getShutdownStrategy().setTimeout(config.getShutdownTimeout());
+        }
+        camelContext.getShutdownStrategy().setSuppressLoggingOnTimeout(config.isShutdownSuppressLoggingOnTimeout());
+        camelContext.getShutdownStrategy().setShutdownNowOnTimeout(config.isShutdownNowOnTimeout());
+        camelContext.getShutdownStrategy().setShutdownRoutesInReverseOrder(config.isShutdownRoutesInReverseOrder());
+        camelContext.getShutdownStrategy().setLogInflightExchangesOnTimeout(config.isShutdownLogInflightExchangesOnTimeout());
+
         if (config.getLogDebugMaxChars() > 0) {
             camelContext.getProperties().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "" + config.getLogDebugMaxChars());
         }
