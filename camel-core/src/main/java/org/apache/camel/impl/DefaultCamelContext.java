@@ -145,6 +145,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteContext;
@@ -283,6 +284,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ModelJAXBContextFactory modelJAXBContextFactory;
     private List<TransformerDefinition> transformers = new ArrayList<TransformerDefinition>();
     private Map<TransformerKey, Transformer> transformerRegistry = new HashMap<TransformerKey, Transformer>();
+    private ReloadStrategy reloadStrategy;
 
     /**
      * Creates the {@link CamelContext} using {@link JndiRegistry} as registry,
@@ -3118,6 +3120,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         addService(packageScanClassResolver, true, true);
         addService(restRegistry, true, true);
         addService(messageHistoryFactory, true, true);
+        if (reloadStrategy != null) {
+            log.info("Using ReloadStrategy: {}", reloadStrategy);
+            addService(reloadStrategy, true, true);
+        }
 
         if (runtimeEndpointRegistry != null) {
             if (runtimeEndpointRegistry instanceof EventNotifier) {
@@ -4247,6 +4253,42 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return value;
     }
 
+    @Override
+    public ReloadStrategy getReloadStrategy() {
+        return reloadStrategy;
+    }
+
+    @Override
+    public void setReloadStrategy(ReloadStrategy reloadStrategy) {
+        this.reloadStrategy = reloadStrategy;
+    }
+
+    @Override
+    public void setTransformers(List<TransformerDefinition> transformers) {
+        this.transformers = transformers;
+    }
+
+    @Override
+    public List<TransformerDefinition> getTransformers() {
+        return transformers;
+    }
+
+    @Override
+    public Transformer resolveTransformer(String scheme) {
+        if (scheme == null) {
+            return null;
+        }
+        return resolveTransformer(getTransformerKey(scheme));
+    }
+
+    @Override
+    public Transformer resolveTransformer(DataType from, DataType to) {
+        if (from == null || to == null) {
+            return null;
+        }
+        return resolveTransformer(getTransformerKey(from, to));
+    }
+
     protected Map<String, RouteService> getRouteServices() {
         return routeServices;
     }
@@ -4278,61 +4320,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return new DefaultModelJAXBContextFactory();
     }
 
-    @Override
-    public String toString() {
-        return "CamelContext(" + getName() + ")";
-    }
-
-    class MDCHelper implements AutoCloseable {
-        final Map<String, String> originalContextMap;
-
-        MDCHelper() {
-            if (isUseMDCLogging()) {
-                originalContextMap = MDC.getCopyOfContextMap();
-                MDC.put(MDC_CAMEL_CONTEXT_ID, getName());
-            } else {
-                originalContextMap = null;
-            }
-        }
-
-        @Override
-        public void close() {
-            if (isUseMDCLogging()) {
-                if (originalContextMap != null) {
-                    MDC.setContextMap(originalContextMap);
-                } else {
-                    MDC.clear();
-                }
-            }
-        }
-    }
-
-    @Override
-    public void setTransformers(List<TransformerDefinition> transformers) {
-        this.transformers = transformers;
-    }
-
-    @Override
-    public List<TransformerDefinition> getTransformers() {
-        return transformers;
-    }
-
-    @Override
-    public Transformer resolveTransformer(String scheme) {
-        if (scheme == null) {
-            return null;
-        }
-        return resolveTransformer(getTransformerKey(scheme));
-    }
-
-    @Override
-    public Transformer resolveTransformer(DataType from, DataType to) {
-        if (from == null || to == null) {
-            return null;
-        }
-        return resolveTransformer(getTransformerKey(from, to));
-    }
-
     protected Transformer resolveTransformer(TransformerKey key) {
         Transformer transformer = transformerRegistry.get(key);
         if (transformer != null) {
@@ -4362,4 +4349,34 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     protected TransformerKey getTransformerKey(DataType from, DataType to) {
         return new TransformerKey(from, to);
     }
+
+    @Override
+    public String toString() {
+        return "CamelContext(" + getName() + ")";
+    }
+
+    class MDCHelper implements AutoCloseable {
+        final Map<String, String> originalContextMap;
+
+        MDCHelper() {
+            if (isUseMDCLogging()) {
+                originalContextMap = MDC.getCopyOfContextMap();
+                MDC.put(MDC_CAMEL_CONTEXT_ID, getName());
+            } else {
+                originalContextMap = null;
+            }
+        }
+
+        @Override
+        public void close() {
+            if (isUseMDCLogging()) {
+                if (originalContextMap != null) {
+                    MDC.setContextMap(originalContextMap);
+                } else {
+                    MDC.clear();
+                }
+            }
+        }
+    }
+
 }

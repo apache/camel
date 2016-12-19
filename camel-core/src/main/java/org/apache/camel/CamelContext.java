@@ -63,6 +63,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RoutePolicyFactory;
@@ -1842,5 +1843,17 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param modelJAXBContextFactory a JAXB Context factory
      */
     void setModelJAXBContextFactory(ModelJAXBContextFactory modelJAXBContextFactory);
+
+    /**
+     * Returns the {@link ReloadStrategy} if in use.
+     *
+     * @return the strategy, or <tt>null</tt> if none has been configured.
+     */
+    ReloadStrategy getReloadStrategy();
+
+    /**
+     * Sets a custom {@link ReloadStrategy} to be used
+     */
+    void setReloadStrategy(ReloadStrategy reloadStrategy);
 
 }

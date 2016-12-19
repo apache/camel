@@ -35,6 +35,7 @@ import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
@@ -63,6 +64,7 @@ public abstract class MainSupport extends ServiceSupport {
     protected ProducerTemplate camelTemplate;
     protected boolean hangupInterceptorEnabled = true;
     protected int durationHitExitCode = DEFAULT_EXIT_CODE;
+    protected ReloadStrategy reloadStrategy;
 
     /**
      * A class for intercepting the hang up signal and do a graceful shutdown of the Camel.
@@ -346,6 +348,14 @@ public abstract class MainSupport extends ServiceSupport {
 
     public String getRouteBuilderClasses() {
         return routeBuilderClasses;
+    }
+
+    public ReloadStrategy getReloadStrategy() {
+        return reloadStrategy;
+    }
+
+    public void setReloadStrategy(ReloadStrategy reloadStrategy) {
+        this.reloadStrategy = reloadStrategy;
     }
 
     public boolean isTrace() {
