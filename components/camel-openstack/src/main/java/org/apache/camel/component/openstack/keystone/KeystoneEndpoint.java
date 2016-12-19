@@ -29,7 +29,10 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.openstack4j.core.transport.Config;
 
-@UriEndpoint(scheme = "openstack-keystone", title = "OpenStack-Keystone", syntax = "openstack-keystone:host", label = "cloud, virtualization")
+/**
+ * The openstack-keystone component allows messages to be sent to an OpenStack identity services.
+ */
+@UriEndpoint(scheme = "openstack-keystone", title = "OpenStack Keystone", syntax = "openstack-keystone:host", label = "cloud,paas", producerOnly = true)
 public class KeystoneEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "regions, domains, projects, users, groups")

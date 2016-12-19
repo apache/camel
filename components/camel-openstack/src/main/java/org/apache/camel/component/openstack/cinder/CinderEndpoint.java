@@ -26,7 +26,10 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.openstack4j.core.transport.Config;
 
-@UriEndpoint(scheme = "openstack-cinder", title = "OpenStack-Cinder", syntax = "openstack-cinder:host", label = "cloud, virtualization")
+/**
+ * The openstack-cinder component allows messages to be sent to an OpenStack block storage services.
+ */
+@UriEndpoint(scheme = "openstack-cinder", title = "OpenStack Cinder", syntax = "openstack-cinder:host", label = "cloud,paas", producerOnly = true)
 public class CinderEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "snapshots, volumes")

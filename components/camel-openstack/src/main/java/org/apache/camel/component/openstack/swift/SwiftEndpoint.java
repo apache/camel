@@ -26,7 +26,10 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.openstack4j.core.transport.Config;
 
-@UriEndpoint(scheme = "openstack-swift", title = "OpenStack-Swift", syntax = "openstack-swift:host", label = "cloud, virtualization")
+/**
+ * The openstack-swift component allows messages to be sent to an OpenStack object storage services.
+ */
+@UriEndpoint(scheme = "openstack-swift", title = "OpenStack Swift", syntax = "openstack-swift:host", label = "cloud,paas", producerOnly = true)
 public class SwiftEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "objects, containers")
