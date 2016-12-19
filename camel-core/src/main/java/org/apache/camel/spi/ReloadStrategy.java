@@ -55,4 +55,9 @@ public interface ReloadStrategy extends Service, StaticService, CamelContextAwar
      * Number of reloads failed.
      */
     int getFailedCounter();
+
+    /**
+     * Reset the counters.
+     */
+    void resetCounters();
 }

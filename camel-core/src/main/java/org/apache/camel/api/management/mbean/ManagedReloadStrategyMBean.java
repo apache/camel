@@ -33,4 +33,7 @@ public interface ManagedReloadStrategyMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Number of reloads failed")
     int getFailedCounter();
 
+    @ManagedOperation(description = "Reset counters")
+    void resetCounters();
+
 }

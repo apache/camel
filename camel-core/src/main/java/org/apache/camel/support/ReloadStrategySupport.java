@@ -111,4 +111,10 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
     public int getFailedCounter() {
         return failed;
     }
+
+    @Override
+    public void resetCounters() {
+        succeeded = 0;
+        failed = 0;
+    }
 }
