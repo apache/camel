@@ -27,12 +27,14 @@ import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.support.ReloadStrategySupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 /**
  * A file based {@link org.apache.camel.spi.ReloadStrategy} which watches a file folder
@@ -43,10 +45,12 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
  * native file system changes and therefore the watch service is much slower than on
  * linux or windows systems.
  */
+@ManagedResource(description = "Managed FileWatcherReloadStrategy")
 public class FileWatcherReloadStrategy extends ReloadStrategySupport {
 
     private String folder;
     private ExecutorService executorService;
+    private WatchFileChangesTask task;
 
     public FileWatcherReloadStrategy() {
     }
@@ -55,9 +59,18 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
         setFolder(directory);
     }
 
-
     public void setFolder(String folder) {
         this.folder = folder;
+    }
+
+    @ManagedAttribute(description = "Folder being watched")
+    public String getFolder() {
+        return folder;
+    }
+
+    @ManagedAttribute(description = "Whether the watcher is running")
+    public boolean isRunning() {
+        return task != null && task.isRunning();
     }
 
     @Override
@@ -70,14 +83,23 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
         File dir = new File(folder);
         if (dir.exists() && dir.isDirectory()) {
             log.info("Starting ReloadStrategy to watch directory: {}", dir);
+
+            // if its mac OSX then warn its slower
+            String os = ObjectHelper.getSystemProperty("os.name", "");
+            if (os.toLowerCase(Locale.US).startsWith("mac")) {
+                log.warn("On Mac OS X the JDK WatchService is slow and it may take up till 5 seconds to notice file changes");
+            }
+
             try {
                 Path path = dir.toPath();
                 WatchService watcher = path.getFileSystem().newWatchService();
                 // we cannot support deleting files as we don't know which routes that would be
                 path.register(watcher, ENTRY_CREATE, ENTRY_MODIFY);
 
+                task = new WatchFileChangesTask(watcher, path);
+
                 executorService = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "FileWatcherReloadStrategy");
-                executorService.submit(new WatchFileChangesTask(watcher, path));
+                executorService.submit(task);
             } catch (IOException e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
@@ -100,10 +122,15 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
 
         private final WatchService watcher;
         private final Path folder;
+        private volatile boolean running;
 
         public WatchFileChangesTask(WatchService watcher, Path folder) {
             this.watcher = watcher;
             this.folder = folder;
+        }
+
+        public boolean isRunning() {
+            return running;
         }
 
         public void run() {
@@ -111,6 +138,8 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
 
             // allow to run while starting Camel
             while (isStarting() || isRunAllowed()) {
+                running = true;
+
                 WatchKey key;
                 try {
                     log.trace("ReloadStrategy is polling for file changes in directory: {}", folder);
@@ -132,7 +161,7 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
                             log.debug("Modified/Created XML file: {}", name);
                             try {
                                 FileInputStream fis = new FileInputStream(name);
-                                onReloadRoutes(getCamelContext(), name, fis);
+                                onReloadXml(getCamelContext(), name, fis);
                                 IOHelper.close(fis);
                             } catch (Exception e) {
                                 log.warn("Error reloading routes from file: " + name + " due " + e.getMessage() + ". This exception is ignored.", e);
@@ -147,6 +176,8 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
                     }
                 }
             }
+
+            running = false;
 
             log.info("ReloadStrategy is stopping watching folder: {}", folder);
         }

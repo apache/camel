@@ -19,6 +19,7 @@ All examples have been sort by type/category
 * [camel-example-console](camel-example-console/README.md)
 * [camel-example-jmx](camel-example-jmx/README.md)
 * [camel-example-ftp](camel-example-ftp/README.md)
+* [camel-example-reload](camel-example-reload/Readme.md)
 * [camel-example-ssh](camel-example-ssh/README.md)
 * [camel-example-ssh-security](camel-example-ssh-security/README.md)
 

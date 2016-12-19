@@ -61,7 +61,6 @@ import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedEndpointRegistry;
 import org.apache.camel.management.mbean.ManagedInflightRepository;
 import org.apache.camel.management.mbean.ManagedProducerCache;
-import org.apache.camel.management.mbean.ManagedReloadStrategy;
 import org.apache.camel.management.mbean.ManagedRestRegistry;
 import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedRuntimeEndpointRegistry;
@@ -92,7 +91,6 @@ import org.apache.camel.spi.ManagementAware;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
@@ -489,8 +487,6 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             answer = new ManagedStreamCachingStrategy(context, (StreamCachingStrategy) service);
         } else if (service instanceof EventNotifier) {
             answer = getManagementObjectStrategy().getManagedObjectForEventNotifier(context, (EventNotifier) service);
-        } else if (service instanceof ReloadStrategy) {
-            answer = new ManagedReloadStrategy(context, (ReloadStrategy) service);
         } else if (service != null) {
             // fallback as generic service
             answer = getManagementObjectStrategy().getManagedObjectForService(context, service);
