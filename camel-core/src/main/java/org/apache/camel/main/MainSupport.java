@@ -490,7 +490,26 @@ public abstract class MainSupport extends ServiceSupport {
             camelContext.setReloadStrategy(reload);
             // ensure reload is added as service and started
             camelContext.addService(reload);
+            // and ensure its register in JMX (which requires manually to be added because CamelContext is already started)
+            Object managedObject = camelContext.getManagementStrategy().getManagementObjectStrategy().getManagedObjectForService(camelContext, reload);
+            if (managedObject == null) {
+                // service should not be managed
+                return;
+            }
+
+            // skip already managed services, for example if a route has been restarted
+            if (camelContext.getManagementStrategy().isManaged(managedObject, null)) {
+                LOG.trace("The service is already managed: {}", reload);
+                return;
+            }
+
+            try {
+                camelContext.getManagementStrategy().manageObject(managedObject);
+            } catch (Exception e) {
+                LOG.warn("Could not register service: " + reload + " as Service MBean.", e);
+            }
         }
+
         // try to load the route builders from the routeBuilderClasses
         loadRouteBuilders(camelContext);
         for (RouteBuilder routeBuilder : routeBuilders) {

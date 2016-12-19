@@ -34,6 +34,11 @@ public class ManagedReloadStrategy extends ManagedService implements ManagedRelo
     }
 
     @Override
+    public void forceReloadCamelContext() {
+        reloadStrategy.onReloadCamelContext(getContext());
+    }
+
+    @Override
     public String getStrategy() {
         return reloadStrategy.getClass().getSimpleName();
     }

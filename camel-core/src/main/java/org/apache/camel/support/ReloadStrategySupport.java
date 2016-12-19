@@ -18,6 +18,10 @@ package org.apache.camel.support;
 
 import java.io.InputStream;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RoutesDefinition;
@@ -26,9 +30,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * Base class for implementing custom {@link ReloadStrategy} SPI plugins.
