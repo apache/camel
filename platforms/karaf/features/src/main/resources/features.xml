@@ -315,6 +315,7 @@
     <bundle dependency='true'>mvn:net.openhft/affinity/${openhft-affinity-version}</bundle>
     <bundle dependency='true'>mvn:net.openhft/compiler/${openhft-compiler-version}</bundle>
     <bundle dependency='true'>mvn:net.openhft/lang/${openhft-lang-version}</bundle>
+    <bundle dependency='true'>mvn:org.ow2.asm/asm/${asm-version}</bundle>
     <bundle dependency='true'>mvn:net.openhft/chronicle-core/${chronicle-core-version}</bundle>
     <bundle dependency='true'>mvn:net.openhft/chronicle-bytes/${chronicle-bytes-version}</bundle>
     <bundle dependency='true'>mvn:net.openhft/chronicle-wire/${chronicle-wire-version}</bundle>
@@ -1364,6 +1365,7 @@
     <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-math3/${commons-math3-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.aries/org.apache.aries.util/${aries-util-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
@@ -1387,7 +1389,11 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${openstack4j-guava-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.aries/org.apache.aries.util/${aries-util-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.aries.spifly/org.apache.aries.spifly.dynamic.bundle/${aries-spifly-version}</bundle>
+    <bundle dependency='true'>mvn:org.ow2.asm/asm/${asm-version}</bundle>
+    <bundle dependency='true'>mvn:org.ow2.asm/asm-commons/${asm-version}</bundle>
+    <bundle dependency='true'>mvn:org.ow2.asm/asm-tree/${asm-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.okhttp/${okclient-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.okio/${squareup-okio-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.pacesys/openstack4j-core/${openstack4j-version}</bundle>
