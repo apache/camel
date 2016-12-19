@@ -27,12 +27,12 @@ import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
-
 import org.apache.camel.support.ReloadStrategySupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+
+import static java.nio.file.StandardWatchEventKinds.ENTRY_CREATE;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 
 /**
  * A file based {@link org.apache.camel.spi.ReloadStrategy} which watches a file folder
@@ -45,8 +45,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class FileWatcherReloadStrategy extends ReloadStrategySupport {
 
-    private Path folder;
-    private WatchService watcher;
+    private String folder;
     private ExecutorService executorService;
 
     public FileWatcherReloadStrategy() {
@@ -56,12 +55,9 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
         setFolder(directory);
     }
 
-    public Path getFolder() {
-        return folder;
-    }
 
     public void setFolder(String folder) {
-        this.folder = new File(folder).toPath();
+        this.folder = folder;
     }
 
     @Override
@@ -71,17 +67,21 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
             return;
         }
 
-        log.info("Starting ReloadStrategy to watch directory: {}", folder);
-        try {
-            this.watcher = folder.getFileSystem().newWatchService();
-            // we cannot support deleting files as we don't know which routes that would be
-            folder.register(watcher, ENTRY_CREATE, ENTRY_MODIFY);
-        } catch (IOException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
-        }
+        File dir = new File(folder);
+        if (dir.exists() && dir.isDirectory()) {
+            log.info("Starting ReloadStrategy to watch directory: {}", dir);
+            try {
+                Path path = dir.toPath();
+                WatchService watcher = path.getFileSystem().newWatchService();
+                // we cannot support deleting files as we don't know which routes that would be
+                path.register(watcher, ENTRY_CREATE, ENTRY_MODIFY);
 
-        executorService = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "FileWatcherReloadStrategy");
-        executorService.submit(new WatchFileChangesTask());
+                executorService = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "FileWatcherReloadStrategy");
+                executorService.submit(new WatchFileChangesTask(watcher, path));
+            } catch (IOException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
     }
 
 
@@ -97,6 +97,14 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
      * Background task which watches for file changes
      */
     protected class WatchFileChangesTask implements Runnable {
+
+        private final WatchService watcher;
+        private final Path folder;
+
+        public WatchFileChangesTask(WatchService watcher, Path folder) {
+            this.watcher = watcher;
+            this.folder = folder;
+        }
 
         public void run() {
             log.debug("ReloadStrategy is starting watching folder: {}", folder);
