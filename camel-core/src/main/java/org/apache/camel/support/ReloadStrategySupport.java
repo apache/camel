@@ -23,6 +23,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.ReloadStrategy;
@@ -67,8 +69,8 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
     }
 
     @Override
-    public void onReloadRoutes(CamelContext camelContext, String name, InputStream resource) {
-        log.debug("Reloading CamelContext: {} routes from resource: {}", camelContext.getName(), name);
+    public void onReloadXml(CamelContext camelContext, String name, InputStream resource) {
+        log.debug("Reloading CamelContext: {} from XML resource: {}", camelContext.getName(), name);
 
         Document dom = camelContext.getTypeConverter().tryConvertTo(Document.class, resource);
         if (dom == null) {
@@ -94,25 +96,24 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
                     failed++;
                     throw ObjectHelper.wrapRuntimeCamelException(e);
                 }
-
             }
         }
 
-        log.info("Reloaded CamelContext: {} routes from resource: {}", camelContext.getName(), name);
+        log.info("Reloaded CamelContext: {} from XML resource: {}", camelContext.getName(), name);
         succeeded++;
     }
 
-    @Override
+    @ManagedAttribute(description = "Number of reloads succeeded")
     public int getReloadCounter() {
         return succeeded;
     }
 
-    @Override
+    @ManagedAttribute(description = "Number of reloads failed")
     public int getFailedCounter() {
         return failed;
     }
 
-    @Override
+    @ManagedOperation(description = "Reset counters")
     public void resetCounters() {
         succeeded = 0;
         failed = 0;

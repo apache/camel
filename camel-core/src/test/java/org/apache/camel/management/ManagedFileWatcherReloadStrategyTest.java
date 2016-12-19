@@ -38,8 +38,11 @@ public class ManagedFileWatcherReloadStrategyTest extends ManagementTestSupport 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,name=FileWatcherReloadStrategy");
         assertTrue(mbeanServer.isRegistered(on));
 
-        String strategy = (String) mbeanServer.getAttribute(on, "Strategy");
-        assertEquals("FileWatcherReloadStrategy", strategy);
+        String folder = (String) mbeanServer.getAttribute(on, "Folder");
+        assertEquals("target/dummy", folder);
+
+        Boolean running = (Boolean) mbeanServer.getAttribute(on, "Running");
+        assertTrue(running);
 
         Integer reload = (Integer) mbeanServer.getAttribute(on, "ReloadCounter");
         assertEquals(0, reload.intValue());
@@ -53,6 +56,10 @@ public class ManagedFileWatcherReloadStrategyTest extends ManagementTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // directory must exists for the watcher to be able to run
+                deleteDirectory("target/dummy");
+                createDirectory("target/dummy");
+
                 // add reload strategy
                 context.setReloadStrategy(new FileWatcherReloadStrategy("target/dummy"));
 
