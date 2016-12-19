@@ -358,6 +358,11 @@ public abstract class MainSupport extends ServiceSupport {
         return fileWatchDirectory;
     }
 
+    /**
+     * Sets the directory name to watch XML file changes to trigger live reload of Camel routes.
+     * <p/>
+     * Notice you cannot set this value and a custom {@link ReloadStrategy} as well.
+     */
     public void setFileWatchDirectory(String fileWatchDirectory) {
         this.fileWatchDirectory = fileWatchDirectory;
     }
@@ -370,6 +375,11 @@ public abstract class MainSupport extends ServiceSupport {
         return reloadStrategy;
     }
 
+    /**
+     * Sets a custom {@link ReloadStrategy} to be used.
+     * <p/>
+     * Notice you cannot set this value and the fileWatchDirectory as well.
+     */
     public void setReloadStrategy(ReloadStrategy reloadStrategy) {
         this.reloadStrategy = reloadStrategy;
     }
