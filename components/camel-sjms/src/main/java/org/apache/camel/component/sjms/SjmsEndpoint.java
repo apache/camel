@@ -48,6 +48,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -146,17 +147,18 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (getConnectionResource() == null) {
-            if (getConnectionFactory() != null) {
-                // We always use a connection pool, even for a pool of 1
-                ConnectionFactoryResource connections = new ConnectionFactoryResource(getConnectionCount(), getConnectionFactory());
-                connections.fillPool();
-                connectionResource = connections;
-                // we created the resource so we should close it when stopping
-                closeConnectionResource = true;
+
+        if (!isAsyncStartListener()) {
+            // if we are not async starting then create connection eager
+            if (getConnectionResource() == null) {
+                if (getConnectionFactory() != null) {
+                    connectionResource = createConnectionResource();
+                    // we created the resource so we should close it when stopping
+                    closeConnectionResource = true;
+                }
+            } else if (getConnectionResource() instanceof ConnectionFactoryResource) {
+                ((ConnectionFactoryResource) getConnectionResource()).fillPool();
             }
-        } else if (getConnectionResource() instanceof ConnectionFactoryResource) {
-            ((ConnectionFactoryResource) getConnectionResource()).fillPool();
         }
     }
 
@@ -198,6 +200,22 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     @Override
     public boolean isSingleton() {
         return true;
+    }
+
+    protected ConnectionResource createConnectionResource() {
+        if (getConnectionFactory() == null) {
+            throw new IllegalArgumentException(String.format("ConnectionResource or ConnectionFactory must be configured for %s", this));
+        }
+
+        try {
+            logger.debug("Creating ConnectionResource with connectionCount: {} using ConnectionFactory", getConnectionCount(), getConnectionFactory());
+            // We always use a connection pool, even for a pool of 1
+            ConnectionFactoryResource connections = new ConnectionFactoryResource(getConnectionCount(), getConnectionFactory());
+            connections.fillPool();
+            return connections;
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
     public Exchange createExchange(Message message, Session session) {
@@ -267,10 +285,14 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     }
 
     public ConnectionResource getConnectionResource() {
+        ConnectionResource answer = null;
         if (connectionResource != null) {
-            return connectionResource;
+            answer = connectionResource;
         }
-        return getComponent().getConnectionResource();
+        if (answer == null) {
+            answer = getComponent().getConnectionResource();
+        }
+        return answer;
     }
 
     /**
