@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring.boot;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -29,6 +30,43 @@ public class CamelConfigurationProperties {
      * Sets the name of the CamelContext.
      */
     private String name;
+
+    /**
+     * Timeout in seconds to graceful shutdown Camel.
+     */
+    private int shutdownTimeout = 300;
+
+    /**
+     * Whether Camel should try to suppress logging during shutdown and timeout was triggered,
+     * meaning forced shutdown is happening. And during forced shutdown we want to avoid logging
+     * errors/warnings et all in the logs as a side-effect of the forced timeout.
+     * <p/>
+     * By default this is <tt>false</tt>
+     * <p/>
+     * Notice the suppress is a <i>best effort</i> as there may still be some logs coming
+     * from 3rd party libraries and whatnot, which Camel cannot control.
+     */
+    private boolean shutdownSuppressLoggingOnTimeout;
+
+    /**
+     * Sets whether to force shutdown of all consumers when a timeout occurred and thus
+     * not all consumers was shutdown within that period.
+     * <p/>
+     * You should have good reasons to set this option to <tt>false</tt> as it means that the routes
+     * keep running and is halted abruptly when CamelContext has been shutdown.
+     */
+    private boolean shutdownNowOnTimeout = true;
+
+    /**
+     * Sets whether routes should be shutdown in reverse or the same order as they where started.
+     */
+    private boolean shutdownRoutesInReverseOrder = true;
+
+    /**
+     * Sets whether to log information about the inflight Exchanges which are still running
+     * during a shutdown which didn't complete without the given timeout.
+     */
+    private boolean shutdownLogInflightExchangesOnTimeout = true;
 
     /**
      * Enable JMX in your Camel application.
@@ -324,6 +362,46 @@ public class CamelConfigurationProperties {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getShutdownTimeout() {
+        return shutdownTimeout;
+    }
+
+    public void setShutdownTimeout(int shutdownTimeout) {
+        this.shutdownTimeout = shutdownTimeout;
+    }
+
+    public boolean isShutdownSuppressLoggingOnTimeout() {
+        return shutdownSuppressLoggingOnTimeout;
+    }
+
+    public void setShutdownSuppressLoggingOnTimeout(boolean shutdownSuppressLoggingOnTimeout) {
+        this.shutdownSuppressLoggingOnTimeout = shutdownSuppressLoggingOnTimeout;
+    }
+
+    public boolean isShutdownNowOnTimeout() {
+        return shutdownNowOnTimeout;
+    }
+
+    public void setShutdownNowOnTimeout(boolean shutdownNowOnTimeout) {
+        this.shutdownNowOnTimeout = shutdownNowOnTimeout;
+    }
+
+    public boolean isShutdownRoutesInReverseOrder() {
+        return shutdownRoutesInReverseOrder;
+    }
+
+    public void setShutdownRoutesInReverseOrder(boolean shutdownRoutesInReverseOrder) {
+        this.shutdownRoutesInReverseOrder = shutdownRoutesInReverseOrder;
+    }
+
+    public boolean isShutdownLogInflightExchangesOnTimeout() {
+        return shutdownLogInflightExchangesOnTimeout;
+    }
+
+    public void setShutdownLogInflightExchangesOnTimeout(boolean shutdownLogInflightExchangesOnTimeout) {
+        this.shutdownLogInflightExchangesOnTimeout = shutdownLogInflightExchangesOnTimeout;
     }
 
     public boolean isJmxEnabled() {
