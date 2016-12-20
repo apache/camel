@@ -36,13 +36,13 @@ public class TwitterConfiguration {
     private String kind;
     @UriParam(label = "consumer", defaultValue = "direct", enums = "polling,direct,event")
     private EndpointType type = EndpointType.DIRECT;
-    @UriParam(secret = true)
+    @UriParam(label = "security", secret = true)
     private String accessToken;
-    @UriParam(secret = true)
+    @UriParam(label = "security", secret = true)
     private String accessTokenSecret;
-    @UriParam(secret = true)
+    @UriParam(label = "security", secret = true)
     private String consumerKey;
-    @UriParam(secret = true)
+    @UriParam(label = "security", secret = true)
     private String consumerSecret;
     @UriParam
     private String user;
