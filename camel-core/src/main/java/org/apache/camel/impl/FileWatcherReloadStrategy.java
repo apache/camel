@@ -86,17 +86,34 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
         if (dir.exists() && dir.isDirectory()) {
             log.info("Starting ReloadStrategy to watch directory: {}", dir);
 
-            // if its mac OSX then warn its slower
+            WatchEvent.Modifier modifier = null;
+
+            // if its mac OSX then attempt to apply workaround or warn its slower
             String os = ObjectHelper.getSystemProperty("os.name", "");
             if (os.toLowerCase(Locale.US).startsWith("mac")) {
-                log.warn("On Mac OS X the JDK WatchService is slow and it may take up till 5 seconds to notice file changes");
+                // this modifier can speedup the scanner on mac osx (as java on mac has no native file notification integration)
+                Class<WatchEvent.Modifier> clazz = getCamelContext().getClassResolver().resolveClass("com.sun.nio.file.SensitivityWatchEventModifier", WatchEvent.Modifier.class);
+                if (clazz != null) {
+                    WatchEvent.Modifier[] modifiers = clazz.getEnumConstants();
+                    for (WatchEvent.Modifier mod : modifiers) {
+                        if ("HIGH".equals(mod.name())) {
+                            modifier = mod;
+                            break;
+                        }
+                    }
+                }
+                if (modifier != null) {
+                    log.info("On Mac OS X the JDK WatchService is slow by default so enabling SensitivityWatchEventModifier.HIGH as workaround");
+                } else {
+                    log.warn("On Mac OS X the JDK WatchService is slow and it may take up till 10 seconds to notice file changes");
+                }
             }
 
             try {
                 Path path = dir.toPath();
                 WatchService watcher = path.getFileSystem().newWatchService();
                 // we cannot support deleting files as we don't know which routes that would be
-                path.register(watcher, ENTRY_CREATE, ENTRY_MODIFY);
+                path.register(watcher, new WatchEvent.Kind<?>[]{ENTRY_CREATE, ENTRY_MODIFY}, modifier);
 
                 task = new WatchFileChangesTask(watcher, path);
 
@@ -107,7 +124,6 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
             }
         }
     }
-
 
     @Override
     protected void doStop() throws Exception {
