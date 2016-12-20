@@ -114,6 +114,9 @@ public class HystrixConfigurationDefinition extends IdentifiedType {
     @Metadata(label = "threadpool", defaultValue = "10")
     private Integer corePoolSize;
     @XmlAttribute
+    @Metadata(label = "threadpool", defaultValue = "10")
+    private Integer maximumSize;
+    @XmlAttribute
     @Metadata(label = "threadpool", defaultValue = "1")
     private Integer keepAliveTime;
     @XmlAttribute
@@ -128,6 +131,9 @@ public class HystrixConfigurationDefinition extends IdentifiedType {
     @XmlAttribute
     @Metadata(label = "threadpool", defaultValue = "10")
     private Integer threadPoolRollingNumberStatisticalWindowBuckets;
+    @XmlAttribute
+    @Metadata(label = "threadpool", defaultValue = "false")
+    private Boolean allowMaximumSizeToDivergeFromCoreSize;
 
     public HystrixConfigurationDefinition() {
     }
@@ -331,6 +337,14 @@ public class HystrixConfigurationDefinition extends IdentifiedType {
         this.corePoolSize = corePoolSize;
     }
 
+    public Integer getMaximumSize() {
+        return maximumSize;
+    }
+
+    public void setMaximumSize(Integer maximumSize) {
+        this.maximumSize = maximumSize;
+    }
+
     public Integer getKeepAliveTime() {
         return keepAliveTime;
     }
@@ -371,11 +385,18 @@ public class HystrixConfigurationDefinition extends IdentifiedType {
         this.threadPoolRollingNumberStatisticalWindowBuckets = threadPoolRollingNumberStatisticalWindowBuckets;
     }
 
+    public Boolean getAllowMaximumSizeToDivergeFromCoreSize() {
+        return allowMaximumSizeToDivergeFromCoreSize;
+    }
+
+    public void setAllowMaximumSizeToDivergeFromCoreSize(Boolean allowMaximumSizeToDivergeFromCoreSize) {
+        this.allowMaximumSizeToDivergeFromCoreSize = allowMaximumSizeToDivergeFromCoreSize;
+    }
 
     // Fluent API
     // -------------------------------------------------------------------------
 
-    /**
+   /**
      * Sets the group key to use. The default value is CamelHystrix.
      */
     public HystrixConfigurationDefinition groupKey(String groupKey) {
@@ -619,6 +640,15 @@ public class HystrixConfigurationDefinition extends IdentifiedType {
         this.maxQueueSize = maxQueueSize;
         return this;
     }
+    
+    /**
+     * Maximum thread-pool size that gets passed to {@link ThreadPoolExecutor#setMaximumPoolSize(int)}
+     *
+     */
+    public HystrixConfigurationDefinition maximumSize(Integer maximumSize) {
+        this.maximumSize = maximumSize;
+        return this;
+    }
 
     /**
      * Queue size rejection threshold is an artificial "max" size at which rejections will occur even
@@ -648,6 +678,14 @@ public class HystrixConfigurationDefinition extends IdentifiedType {
      */
     public HystrixConfigurationDefinition threadPoolRollingNumberStatisticalWindowBuckets(Integer threadPoolRollingNumberStatisticalWindowBuckets) {
         this.threadPoolRollingNumberStatisticalWindowBuckets = threadPoolRollingNumberStatisticalWindowBuckets;
+        return this;
+    }
+    
+    /**
+     * Allows the configuration for maximumSize to take effect. That value can then be equal to, or higher, than coreSize
+     */
+    public HystrixConfigurationDefinition allowMaximumSizeToDivergeFromCoreSize(Boolean allowMaximumSizeToDivergeFromCoreSize) {
+        this.allowMaximumSizeToDivergeFromCoreSize = allowMaximumSizeToDivergeFromCoreSize;
         return this;
     }
 
