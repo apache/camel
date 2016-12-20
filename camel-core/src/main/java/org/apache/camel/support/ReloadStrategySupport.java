@@ -16,7 +16,10 @@
  */
 package org.apache.camel.support;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -26,10 +29,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.model.ModelHelper;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.ReloadStrategy;
+import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.XmlLineNumberParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +47,9 @@ import org.slf4j.LoggerFactory;
 public abstract class ReloadStrategySupport extends ServiceSupport implements ReloadStrategy {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private CamelContext camelContext;
+
+    // store state
+    private final Map<String, ResourceState> cache = new LRUCache<String, ResourceState>(100);
 
     private int succeeded;
     private int failed;
@@ -70,14 +81,28 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
 
     @Override
     public void onReloadXml(CamelContext camelContext, String name, InputStream resource) {
-        log.debug("Reloading CamelContext: {} from XML resource: {}", camelContext.getName(), name);
+        log.debug("Reloading routes from XML resource: {}", name);
 
-        Document dom = camelContext.getTypeConverter().tryConvertTo(Document.class, resource);
-        if (dom == null) {
+        Document dom;
+        String xml;
+        try {
+            xml = camelContext.getTypeConverter().mandatoryConvertTo(String.class, resource);
+            // the JAXB model expects the spring namespace (even for blueprint)
+            dom = XmlLineNumberParser.parseXml(new ByteArrayInputStream(xml.getBytes()), null, "camelContext,routes", "http://camel.apache.org/schema/spring");
+        } catch (Exception e) {
             failed++;
             log.warn("Cannot load the resource " + name + " as XML");
             return;
         }
+
+        ResourceState state = cache.get(name);
+        if (state == null) {
+            state = new ResourceState(name, dom, xml);
+            cache.put(name, state);
+        }
+
+        String oldXml = state.getXml();
+        List<Integer> changed = StringHelper.changedLines(oldXml, xml);
 
         // find the <routes> root
         NodeList list = dom.getElementsByTagName("routes");
@@ -86,12 +111,39 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
             list = dom.getElementsByTagName("route");
         }
 
+        // collect which routes are updated
+        CollectionStringBuffer csb = new CollectionStringBuffer(",");
+
         if (list != null && list.getLength() > 0) {
             for (int i = 0; i < list.getLength(); i++) {
                 Node node = list.item(i);
+
+                // what line number are this within
+                String lineNumber = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER);
+                String lineNumberEnd = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER_END);
+                if (lineNumber != null && lineNumberEnd != null && !changed.isEmpty()) {
+                    int start = Integer.valueOf(lineNumber);
+                    int end = Integer.valueOf(lineNumberEnd);
+
+                    boolean within = withinChanged(start, end, changed);
+                    if (within) {
+                        log.debug("Updating route in lines: {}-{}", start, end);
+                    } else {
+                        log.debug("No changes to route in lines: {}-{}", start, end);
+                        continue;
+                    }
+                }
+
                 try {
                     RoutesDefinition routes = ModelHelper.loadRoutesDefinition(camelContext, node);
-                    camelContext.addRouteDefinitions(routes.getRoutes());
+                    if (!routes.getRoutes().isEmpty()) {
+                        // collect route ids and force assign ids if not in use
+                        for (RouteDefinition route : routes.getRoutes()) {
+                            String id = route.idOrCreate(camelContext.getNodeIdFactory());
+                            csb.append(id);
+                        }
+                        camelContext.addRouteDefinitions(routes.getRoutes());
+                    }
                 } catch (Exception e) {
                     failed++;
                     throw ObjectHelper.wrapRuntimeCamelException(e);
@@ -99,8 +151,25 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
             }
         }
 
-        log.info("Reloaded CamelContext: {} from XML resource: {}", camelContext.getName(), name);
+        if (!csb.isEmpty()) {
+            log.info("Reloaded routes: [{}] from XML resource: {}", csb, name);
+        }
+
+        // update cache
+        state = new ResourceState(name, dom, xml);
+        cache.put(name, state);
+
         succeeded++;
+    }
+
+    private boolean withinChanged(int start, int end, List<Integer> changed) {
+        for (int change : changed) {
+            log.trace("Changed line: {} within {}-{}", change, start, end);
+            if (change >= start && change <= end) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @ManagedAttribute(description = "Number of reloads succeeded")
@@ -118,4 +187,42 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
         succeeded = 0;
         failed = 0;
     }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        cache.clear();
+    }
+
+    /**
+     * To keep state of last reloaded resource
+     */
+    private static final class ResourceState {
+        private final String name;
+        private final Document dom;
+        private final String xml;
+
+        ResourceState(String name, Document dom, String xml) {
+            this.name = name;
+            this.dom = dom;
+            this.xml = xml;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public Document getDom() {
+            return dom;
+        }
+
+        public String getXml() {
+            return xml;
+        }
+    }
+
 }

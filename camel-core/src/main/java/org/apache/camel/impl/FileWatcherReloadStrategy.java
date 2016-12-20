@@ -75,6 +75,8 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
 
     @Override
     protected void doStart() throws Exception {
+        super.doStart();
+
         if (folder == null) {
             // no folder configured
             return;
@@ -109,6 +111,8 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
 
     @Override
     protected void doStop() throws Exception {
+        super.doStop();
+
         if (executorService != null) {
             getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
             executorService = null;
