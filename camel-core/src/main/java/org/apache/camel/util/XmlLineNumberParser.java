@@ -159,7 +159,7 @@ public final class XmlLineNumberParser {
                     }
 
                     for (int i = 0; i < attributes.getLength(); i++) {
-                        el.setAttribute(attributes.getQName(i), attributes.getValue(i));
+                        el.setAttribute(transformer.transform(attributes.getQName(i)), transformer.transform(attributes.getValue(i)));
                     }
 
                     el.setUserData(LINE_NUMBER, String.valueOf(this.locator.getLineNumber()), null);
