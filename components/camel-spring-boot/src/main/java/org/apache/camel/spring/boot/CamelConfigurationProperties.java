@@ -100,6 +100,15 @@ public class CamelConfigurationProperties {
     private String xmlRests = "classpath:camel-rest/*.xml";
 
     /**
+     * To watch the directory for file changes which triggers
+     * a live reload of the Camel routes on-the-fly.
+     * <p/>
+     * For example configure this to point to the source code where the Camel XML files are located
+     * such as: src/main/resources/camel/
+     */
+    private String xmlRoutesReloadDirectory;
+
+    /**
      * Directory to load additional configuration files that contains
      * configuration values that takes precedence over any other configuration.
      * This can be used to refer to files that may have secret configuration that
@@ -455,6 +464,14 @@ public class CamelConfigurationProperties {
 
     public void setXmlRests(String xmlRests) {
         this.xmlRests = xmlRests;
+    }
+
+    public String getXmlRoutesReloadDirectory() {
+        return xmlRoutesReloadDirectory;
+    }
+
+    public void setXmlRoutesReloadDirectory(String xmlRoutesReloadDirectory) {
+        this.xmlRoutesReloadDirectory = xmlRoutesReloadDirectory;
     }
 
     public boolean isMainRunController() {

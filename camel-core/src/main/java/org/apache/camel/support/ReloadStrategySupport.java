@@ -104,12 +104,8 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
         String oldXml = state.getXml();
         List<Integer> changed = StringHelper.changedLines(oldXml, xml);
 
-        // find the <routes> root
-        NodeList list = dom.getElementsByTagName("routes");
-        if (list == null || list.getLength() == 0) {
-            // fallback to <route>
-            list = dom.getElementsByTagName("route");
-        }
+        // find all <route> which are the routes
+        NodeList list = dom.getElementsByTagName("route");
 
         // collect which routes are updated
         CollectionStringBuffer csb = new CollectionStringBuffer(",");

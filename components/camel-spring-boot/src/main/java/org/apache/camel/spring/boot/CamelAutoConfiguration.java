@@ -29,6 +29,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TypeConverters;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
+import org.apache.camel.impl.FileWatcherReloadStrategy;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.DefaultTraceFormatter;
 import org.apache.camel.processor.interceptor.HandleFault;
@@ -43,6 +44,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
@@ -183,6 +185,11 @@ public class CamelAutoConfiguration {
                 formatter.setShowRouteId(config.isTraceFormatterShowRouteId());
                 formatter.setShowShortExchangeId(config.isTraceFormatterShowShortExchangeId());
             }
+        }
+
+        if (config.getXmlRoutesReloadDirectory() != null) {
+            ReloadStrategy reload = new FileWatcherReloadStrategy(config.getXmlRoutesReloadDirectory());
+            camelContext.setReloadStrategy(reload);
         }
 
         // additional advanced configuration which is not configured using CamelConfigurationProperties
