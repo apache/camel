@@ -18,6 +18,7 @@ package org.apache.camel.support;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -107,8 +108,8 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
         // find all <route> which are the routes
         NodeList list = dom.getElementsByTagName("route");
 
-        // collect which routes are updated
-        CollectionStringBuffer csb = new CollectionStringBuffer(",");
+        // collect which routes are updated/skpped
+        List<RouteDefinition> routes = new ArrayList<>();
 
         if (list != null && list.getLength() > 0) {
             for (int i = 0; i < list.getLength(); i++) {
@@ -131,14 +132,10 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
                 }
 
                 try {
-                    RoutesDefinition routes = ModelHelper.loadRoutesDefinition(camelContext, node);
-                    if (!routes.getRoutes().isEmpty()) {
-                        // collect route ids and force assign ids if not in use
-                        for (RouteDefinition route : routes.getRoutes()) {
-                            String id = route.idOrCreate(camelContext.getNodeIdFactory());
-                            csb.append(id);
-                        }
-                        camelContext.addRouteDefinitions(routes.getRoutes());
+                    // load from XML -> JAXB model and store as routes to be updated
+                    RoutesDefinition loaded = ModelHelper.loadRoutesDefinition(camelContext, node);
+                    if (!loaded.getRoutes().isEmpty()) {
+                        routes.addAll(loaded.getRoutes());
                     }
                 } catch (Exception e) {
                     failed++;
@@ -147,8 +144,25 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
             }
         }
 
-        if (!csb.isEmpty()) {
-            log.info("Reloaded routes: [{}] from XML resource: {}", csb, name);
+        if (!routes.isEmpty()) {
+            try {
+                CollectionStringBuffer csb = new CollectionStringBuffer(",");
+                // collect route ids and force assign ids if not in use
+                for (RouteDefinition route : routes) {
+                    String id = route.idOrCreate(camelContext.getNodeIdFactory());
+                    csb.append(id);
+                }
+                log.debug("Reloading routes: [{}] from XML resource: {}", csb, name);
+
+                // update the routes (add will remove and shutdown first)
+                camelContext.addRouteDefinitions(routes);
+
+                log.info("Reloaded routes: [{}] from XML resource: {}", csb, name);
+            } catch (Exception e) {
+                failed++;
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+
         }
 
         // update cache
