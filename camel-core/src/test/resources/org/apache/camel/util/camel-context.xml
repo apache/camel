@@ -29,15 +29,16 @@
 
     <route id="timer">
       <from uri="timer:foo"/>
+      <!-- call the 2nd route -->
       <to uri="direct:foo"/>
-      <!-- you can try changing me -->
+      <!-- try to change me and save this file -->
       <log message="You said: ${body}"/>
     </route>
 
     <route id="foo">
       <from uri="direct:foo"/>
+      <!-- try to change me and save this file -->
       <transform>
-        <!-- and I can be changed too -->
         <constant>Hello World</constant>
       </transform>
     </route>
