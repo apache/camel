@@ -32,7 +32,7 @@ import org.openstack4j.core.transport.Config;
 @UriEndpoint(scheme = "openstack-swift", title = "OpenStack Swift", syntax = "openstack-swift:host", label = "cloud,paas", producerOnly = true)
 public class SwiftEndpoint extends AbstractOpenstackEndpoint {
 
-    @UriParam(enums = "objects, containers")
+    @UriParam(enums = "objects,containers")
     @Metadata(required = "true")
     String subsystem;
     @UriPath
@@ -48,17 +48,17 @@ public class SwiftEndpoint extends AbstractOpenstackEndpoint {
     private String operation;
 
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = "true", secret = true)
     private String username;
 
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = "true", secret = true)
     private String password;
 
     @UriParam
     private Config config;
 
-    @UriParam(defaultValue = V3, enums = "V2, V3")
+    @UriParam(defaultValue = V3, enums = "V2,V3")
     private String apiVersion = V3;
 
     public SwiftEndpoint(String uri, SwiftComponent component) {

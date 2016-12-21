@@ -35,7 +35,7 @@ import org.openstack4j.core.transport.Config;
 @UriEndpoint(scheme = "openstack-keystone", title = "OpenStack Keystone", syntax = "openstack-keystone:host", label = "cloud,paas", producerOnly = true)
 public class KeystoneEndpoint extends AbstractOpenstackEndpoint {
 
-    @UriParam(enums = "regions, domains, projects, users, groups")
+    @UriParam(enums = "regions,domains,projects,users,groups")
     @Metadata(required = "true")
     String subsystem;
     @UriPath
@@ -52,11 +52,11 @@ public class KeystoneEndpoint extends AbstractOpenstackEndpoint {
     private String operation;
 
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = "true", secret = true)
     private String username;
 
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = "true", secret = true)
     private String password;
 
     @UriParam

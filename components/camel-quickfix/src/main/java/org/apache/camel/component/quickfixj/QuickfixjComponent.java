@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.StartupListener;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import quickfix.LogFactory;
@@ -40,10 +41,14 @@ public class QuickfixjComponent extends UriEndpointComponent implements StartupL
     private final Map<String, QuickfixjEngine> provisionalEngines = new HashMap<String, QuickfixjEngine>();
     private final Map<String, QuickfixjEndpoint> endpoints = new HashMap<String, QuickfixjEndpoint>();
 
-    private MessageStoreFactory messageStoreFactory;
-    private LogFactory logFactory;
-    private MessageFactory messageFactory;
     private Map<String, QuickfixjConfiguration> configurations = new HashMap<String, QuickfixjConfiguration>();
+
+    @Metadata(label = "advanced")
+    private MessageStoreFactory messageStoreFactory;
+    @Metadata(label = "advanced")
+    private LogFactory logFactory;
+    @Metadata(label = "advanced")
+    private MessageFactory messageFactory;
     private boolean lazyCreateEngines;
 
     public QuickfixjComponent() {

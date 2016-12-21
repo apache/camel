@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 
 /**
@@ -29,6 +30,7 @@ public class PahoComponent extends UriEndpointComponent {
 
     private String brokerUrl;
     private String clientId;
+    @Metadata(label = "advanced")
     private MqttConnectOptions connectOptions;
 
     public PahoComponent() {

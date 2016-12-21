@@ -34,7 +34,7 @@ import org.openstack4j.core.transport.Config;
 @UriEndpoint(scheme = "openstack-neutron", title = "OpenStack Neutron", syntax = "openstack-neutron:host", label = "cloud,paas", producerOnly = true)
 public class NeutronEndpoint extends AbstractOpenstackEndpoint {
 
-    @UriParam(enums = "networks, subnets, ports, routers")
+    @UriParam(enums = "networks,subnets,ports,routers")
     @Metadata(required = "true")
     String subsystem;
     @UriPath
@@ -51,17 +51,17 @@ public class NeutronEndpoint extends AbstractOpenstackEndpoint {
     private String operation;
 
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = "true", secret = true)
     private String username;
 
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = "true", secret = true)
     private String password;
 
     @UriParam
     private Config config;
 
-    @UriParam(defaultValue = V3, enums = "V2, V3")
+    @UriParam(defaultValue = V3, enums = "V2,V3")
     private String apiVersion = V3;
 
     public NeutronEndpoint(String uri, NeutronComponent component) {

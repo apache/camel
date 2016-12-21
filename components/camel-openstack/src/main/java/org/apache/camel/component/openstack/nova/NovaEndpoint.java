@@ -33,7 +33,7 @@ import org.openstack4j.core.transport.Config;
 @UriEndpoint(scheme = "openstack-nova", title = "OpenStack Nova", syntax = "openstack-nova:host", label = "cloud,paas", producerOnly = true)
 public class NovaEndpoint extends AbstractOpenstackEndpoint {
 
-    @UriParam(enums = "flavors, servers, keypairs")
+    @UriParam(enums = "flavors,servers,keypairs")
     @Metadata(required = "true")
     String subsystem;
     @UriPath
@@ -50,17 +50,17 @@ public class NovaEndpoint extends AbstractOpenstackEndpoint {
     private String operation;
 
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = "true", secret = true)
     private String username;
 
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = "true", secret = true)
     private String password;
 
     @UriParam
     private Config config;
 
-    @UriParam(defaultValue = V3, enums = "V2, V3")
+    @UriParam(defaultValue = V3, enums = "V2,V3")
     private String apiVersion = V3;
 
     public NovaEndpoint(String uri, NovaComponent component) {

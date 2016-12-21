@@ -45,17 +45,17 @@ public class GlanceEndpoint extends AbstractOpenstackEndpoint {
     private String operation;
 
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = "true", secret = true)
     private String username;
 
     @UriParam
-    @Metadata(required = "true")
+    @Metadata(required = "true", secret = true)
     private String password;
 
     @UriParam
     private Config config;
 
-    @UriParam(defaultValue = V3, enums = "V2, V3")
+    @UriParam(defaultValue = V3, enums = "V2,V3")
     private String apiVersion = V3;
 
     public GlanceEndpoint(String uri, GlanceComponent component) {
