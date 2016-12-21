@@ -390,9 +390,10 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertNotNull(json);
 
         assertTrue(json.contains("\"label\": \"core,endpoint\""));
-        assertTrue(json.contains("\"defaultQueueFactory\": { \"kind\": \"property\", \"type\": \"object\", \"javaType\":"
-            + " \"org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange>\","));
-        assertTrue(json.contains("\"queueSize\": { \"kind\": \"property\", \"type\": \"integer\", \"javaType\": \"int\", \"deprecated\": \"false\", \"secret\": \"false\", \"value\": \"0\""));
+        assertTrue(json.contains("\"defaultQueueFactory\": { \"kind\": \"property\", \"label\": \"advanced\", \"required\": \"false\","
+                        + " \"type\": \"object\", \"javaType\": \"org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange>\","));
+        assertTrue(json.contains("\"queueSize\": { \"kind\": \"property\", \"label\": \"advanced\", \"required\": \"false\","
+                + " \"type\": \"integer\", \"javaType\": \"int\", \"deprecated\": \"false\", \"secret\": \"false\", \"value\": \"0\""));
     }
 
     @Override
