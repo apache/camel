@@ -113,7 +113,11 @@ public class FileWatcherReloadStrategy extends ReloadStrategySupport {
                 Path path = dir.toPath();
                 WatchService watcher = path.getFileSystem().newWatchService();
                 // we cannot support deleting files as we don't know which routes that would be
-                path.register(watcher, new WatchEvent.Kind<?>[]{ENTRY_CREATE, ENTRY_MODIFY}, modifier);
+                if (modifier != null) {
+                    path.register(watcher, new WatchEvent.Kind<?>[]{ENTRY_CREATE, ENTRY_MODIFY}, modifier);
+                } else {
+                    path.register(watcher, ENTRY_CREATE, ENTRY_MODIFY);
+                }
 
                 task = new WatchFileChangesTask(watcher, path);
 
