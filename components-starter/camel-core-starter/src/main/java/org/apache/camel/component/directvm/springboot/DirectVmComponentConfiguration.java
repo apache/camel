@@ -48,7 +48,7 @@ public class DirectVmComponentConfiguration {
     private HeaderFilterStrategy headerFilterStrategy;
     /**
      * Whether to propagate or not properties from the producer side to the
-     * consumer side and viceversa. Default value: true.
+     * consumer side and vice versa. Default value: true.
      */
     private Boolean propagateProperties = true;
 
