@@ -54,7 +54,6 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
 
     private ElSql elSql;
     private NamedParameterJdbcTemplate namedJdbcTemplate;
-    private DataSource dataSource;
 
     @UriPath
     @Metadata(required = "true")
@@ -62,8 +61,10 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
     @UriPath
     private String resourceUri;
     @UriParam
-    private ElSqlDatabaseVendor databaseVendor;
+    private DataSource dataSource;
     @UriParam
+    private ElSqlDatabaseVendor databaseVendor;
+    @UriParam(label = "advanced")
     private ElSqlConfig elSqlConfig;
 
     public ElsqlEndpoint(String uri, Component component, NamedParameterJdbcTemplate namedJdbcTemplate, DataSource dataSource,
@@ -167,5 +168,16 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
      */
     public void setResourceUri(String resourceUri) {
         this.resourceUri = resourceUri;
+    }
+
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    /**
+     * Sets the DataSource to use to communicate with the database.
+     */
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 }

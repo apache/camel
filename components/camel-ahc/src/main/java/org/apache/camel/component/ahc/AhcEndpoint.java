@@ -61,7 +61,7 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private int bufferSize = 4 * 1024;
     @UriParam
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
-    @UriParam
+    @UriParam(label = "advanced")
     private AhcBinding binding;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;

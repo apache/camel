@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -45,10 +46,15 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
     private static final String CLIENT_CONFIG_PREFIX = "clientConfig.";
     private static final String CLIENT_REALM_CONFIG_PREFIX = "clientConfig.realm.";
 
+    @Metadata(label = "advanced")
     private AsyncHttpClient client;
+    @Metadata(label = "advanced")
     private AsyncHttpClientConfig clientConfig;
+    @Metadata(label = "advanced")
     private AhcBinding binding;
+    @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
+    @Metadata(label = "advanced")
     private boolean allowJavaSerializedObject;
 
     public AhcComponent() {

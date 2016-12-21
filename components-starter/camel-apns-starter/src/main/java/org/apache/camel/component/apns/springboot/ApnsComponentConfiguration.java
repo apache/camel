@@ -29,7 +29,9 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public class ApnsComponentConfiguration {
 
     /**
-     * To use a custom link ApnsService
+     * The ApnsService to use. The
+     * org.apache.camel.component.apns.factory.ApnsServiceFactory can be used to
+     * build a ApnsService
      */
     @NestedConfigurationProperty
     private ApnsService apnsService;

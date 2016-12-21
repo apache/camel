@@ -76,7 +76,6 @@ The AHC Websocket component supports 19 endpoint options which are listed below:
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | httpUri | common |  | URI | *Required* The URI to use such as http://hostname:port/path
-| binding | common |  | AhcBinding | To use a custom AhcBinding which allows to control how to bind between AHC and Camel.
 | bridgeEndpoint | common | false | boolean | If the option is true then the Exchange.HTTP_URI header is ignored and use the endpoint's URI for request. You may also set the throwExceptionOnFailure to be false to let the AhcProducer send all the fault response back.
 | bufferSize | common | 4096 | int | The initial in-memory buffer size used when transferring data between Camel and AHC Client.
 | headerFilterStrategy | common |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
@@ -89,6 +88,7 @@ The AHC Websocket component supports 19 endpoint options which are listed below:
 | connectionClose | producer | false | boolean | Define if the Connection Close header has to be added to HTTP Request. This parameter is false by default
 | cookieHandler | producer |  | CookieHandler | Configure a cookie handler to maintain a HTTP session
 | useStreaming | producer | false | boolean | To enable streaming to send data as multiple text fragments.
+| binding | advanced |  | AhcBinding | To use a custom AhcBinding which allows to control how to bind between AHC and Camel.
 | clientConfig | advanced |  | AsyncHttpClientConfig | To configure the AsyncHttpClient to use a custom com.ning.http.client.AsyncHttpClientConfig instance.
 | clientConfigOptions | advanced |  | Map | To configure the AsyncHttpClientConfig using the key/values from the Map.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).

@@ -22,6 +22,8 @@ import javax.sql.DataSource;
 import com.opengamma.elsql.ElSqlConfig;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -30,6 +32,7 @@ public class ElsqlComponent extends UriEndpointComponent {
 
     private ElSqlDatabaseVendor databaseVendor;
     private DataSource dataSource;
+    @Metadata(label = "advanced")
     private ElSqlConfig elSqlConfig;
     private String resourceUri;
 
