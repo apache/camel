@@ -58,8 +58,8 @@ The MyBatis component supports 2 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| sqlSessionFactory |  |  | SqlSessionFactory | To use the SqlSessionFactory
-| configurationUri |  | SqlMapConfig.xml | String | Location of MyBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath
+| sqlSessionFactory | advanced |  | SqlSessionFactory | To use the SqlSessionFactory
+| configurationUri | common | SqlMapConfig.xml | String | Location of MyBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath
 |=======================================================================
 {% endraw %}
 // component options: END

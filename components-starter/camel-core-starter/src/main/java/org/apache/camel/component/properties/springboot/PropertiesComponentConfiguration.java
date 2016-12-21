@@ -64,7 +64,7 @@ public class PropertiesComponentConfiguration {
     /**
      * Whether or not to cache loaded properties. The default value is true.
      */
-    private Boolean cache = false;
+    private Boolean cache = true;
     /**
      * Optional prefix prepended to property names before resolution.
      */
@@ -78,12 +78,12 @@ public class PropertiesComponentConfiguration {
      * propertyPrefix and propertySuffix before falling back the plain property
      * name specified. If false only the augmented property name is searched.
      */
-    private Boolean fallbackToUnaugmentedProperty = false;
+    private Boolean fallbackToUnaugmentedProperty = true;
     /**
      * If false the component does not attempt to find a default for the key by
      * looking after the colon separator.
      */
-    private Boolean defaultFallbackEnabled = false;
+    private Boolean defaultFallbackEnabled = true;
     /**
      * Whether to silently ignore if a location cannot be located such as a
      * properties file not found.
@@ -94,13 +94,13 @@ public class PropertiesComponentConfiguration {
      * replace. Setting a value of null restores the default token (link link
      * DEFAULT_PREFIX_TOKEN).
      */
-    private String prefixToken;
+    private String prefixToken = "{{";
     /**
      * Sets the value of the suffix token used to identify properties to
      * replace. Setting a value of null restores the default token (link link
      * DEFAULT_SUFFIX_TOKEN).
      */
-    private String suffixToken;
+    private String suffixToken = "}}";
     /**
      * Sets initial properties which will be used before any locations are
      * resolved.
@@ -114,7 +114,7 @@ public class PropertiesComponentConfiguration {
     /**
      * Sets the system property mode.
      */
-    private Integer systemPropertiesMode;
+    private Integer systemPropertiesMode = 2;
 
     public List<PropertiesLocation> getLocations() {
         return locations;

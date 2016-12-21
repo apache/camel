@@ -78,7 +78,7 @@ The Kestrel component supports 1 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| configuration |  |  | KestrelConfiguration | To use a shared configured configuration as base for creating new endpoints.
+| configuration | advanced |  | KestrelConfiguration | To use a shared configured configuration as base for creating new endpoints.
 |=======================================================================
 {% endraw %}
 // component options: END

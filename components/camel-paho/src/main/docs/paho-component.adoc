@@ -135,9 +135,9 @@ The Paho component supports 3 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| brokerUrl |  |  | String | The URL of the MQTT broker.
-| clientId |  |  | String | MQTT client identifier.
-| connectOptions |  |  | MqttConnectOptions | Client connection options
+| brokerUrl | common |  | String | The URL of the MQTT broker.
+| clientId | common |  | String | MQTT client identifier.
+| connectOptions | advanced |  | MqttConnectOptions | Client connection options
 |=======================================================================
 {% endraw %}
 // component options: END

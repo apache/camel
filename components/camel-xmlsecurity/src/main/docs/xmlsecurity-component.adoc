@@ -243,8 +243,8 @@ The XML Security component supports 2 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| signerConfiguration |  |  | XmlSignerConfiguration | To use a shared XmlSignerConfiguration configuration to use as base for configuring endpoints.
-| verifierConfiguration |  |  | XmlVerifierConfiguration | To use a shared XmlVerifierConfiguration configuration to use as base for configuring endpoints.
+| signerConfiguration | advanced |  | XmlSignerConfiguration | To use a shared XmlSignerConfiguration configuration to use as base for configuring endpoints.
+| verifierConfiguration | advanced |  | XmlVerifierConfiguration | To use a shared XmlVerifierConfiguration configuration to use as base for configuring endpoints.
 |=======================================================================
 {% endraw %}
 // component options: END

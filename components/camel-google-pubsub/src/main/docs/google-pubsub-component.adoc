@@ -71,7 +71,7 @@ The Google Pubsub component supports 1 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| connectionFactory |  |  | GooglePubsubConnectionFactory | Sets the connection factory to use: provides the ability to explicitly manage connection credentials: - the path to the key file - the Service Account Key / Email pair
+| connectionFactory | common |  | GooglePubsubConnectionFactory | Sets the connection factory to use: provides the ability to explicitly manage connection credentials: - the path to the key file - the Service Account Key / Email pair
 |=======================================================================
 {% endraw %}
 // component options: END

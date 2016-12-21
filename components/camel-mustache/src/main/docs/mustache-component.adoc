@@ -54,7 +54,7 @@ The Mustache component supports 1 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| mustacheFactory |  |  | MustacheFactory | To use a custom MustacheFactory
+| mustacheFactory | advanced |  | MustacheFactory | To use a custom MustacheFactory
 |=======================================================================
 {% endraw %}
 // component options: END

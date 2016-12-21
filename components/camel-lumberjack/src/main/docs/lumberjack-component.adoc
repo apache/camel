@@ -51,7 +51,7 @@ The Lumberjack component supports 1 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| sslContextParameters |  |  | SSLContextParameters | Sets the default SSL configuration to use for all the endpoints. You can also configure it directly at the endpoint level.
+| sslContextParameters | security |  | SSLContextParameters | Sets the default SSL configuration to use for all the endpoints. You can also configure it directly at the endpoint level.
 |=======================================================================
 {% endraw %}
 // component options: END

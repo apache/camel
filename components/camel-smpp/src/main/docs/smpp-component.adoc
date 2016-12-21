@@ -187,7 +187,7 @@ The SMPP component supports 1 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| configuration |  |  | SmppConfiguration | To use the shared SmppConfiguration as configuration.
+| configuration | advanced |  | SmppConfiguration | To use the shared SmppConfiguration as configuration.
 |=======================================================================
 {% endraw %}
 // component options: END

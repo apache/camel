@@ -48,7 +48,7 @@ public final class ComponentOption {
         this.documentation = documentation;
         this.deprecated = deprecated;
         this.secret = secret;
-        this.label = group;
+        this.group = group;
         this.label = label;
         this.enumType = enumType;
         this.enums = enums;

@@ -51,7 +51,7 @@ The Freemarker component supports 1 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| configuration |  |  | Configuration | To use an existing freemarker.template.Configuration instance as the configuration.
+| configuration | advanced |  | Configuration | To use an existing freemarker.template.Configuration instance as the configuration.
 |=======================================================================
 {% endraw %}
 // component options: END

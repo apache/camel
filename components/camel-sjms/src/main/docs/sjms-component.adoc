@@ -112,15 +112,15 @@ The Simple JMS component supports 9 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| connectionFactory |  |  | ConnectionFactory | A ConnectionFactory is required to enable the SjmsComponent. It can be set directly or set set as part of a ConnectionResource.
-| connectionResource |  |  | ConnectionResource | A ConnectionResource is an interface that allows for customization and container control of the ConnectionFactory. See Plugable Connection Resource Management for further details.
-| connectionCount |  | 1 | Integer | The maximum number of connections available to endpoints started under this component
-| jmsKeyFormatStrategy |  |  | JmsKeyFormatStrategy | Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification. Camel provides one implementation out of the box: default. The default strategy will safely marshal dots and hyphens (. and -). Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the notation.
-| transactionCommitStrategy |  |  | TransactionCommitStrategy | To configure which kind of commit strategy to use. Camel provides two implementations out of the box default and batch.
-| destinationCreationStrategy |  |  | DestinationCreationStrategy | To use a custom DestinationCreationStrategy.
-| timedTaskManager |  |  | TimedTaskManager | To use a custom TimedTaskManager
-| messageCreatedStrategy |  |  | MessageCreatedStrategy | To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of javax.jms.Message objects when Camel is sending a JMS message.
-| headerFilterStrategy |  |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
+| connectionFactory | advanced |  | ConnectionFactory | A ConnectionFactory is required to enable the SjmsComponent. It can be set directly or set set as part of a ConnectionResource.
+| connectionResource | advanced |  | ConnectionResource | A ConnectionResource is an interface that allows for customization and container control of the ConnectionFactory. See Plugable Connection Resource Management for further details.
+| connectionCount | common | 1 | Integer | The maximum number of connections available to endpoints started under this component
+| jmsKeyFormatStrategy | advanced |  | JmsKeyFormatStrategy | Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification. Camel provides one implementation out of the box: default. The default strategy will safely marshal dots and hyphens (. and -). Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the notation.
+| transactionCommitStrategy | transaction |  | TransactionCommitStrategy | To configure which kind of commit strategy to use. Camel provides two implementations out of the box default and batch.
+| destinationCreationStrategy | advanced |  | DestinationCreationStrategy | To use a custom DestinationCreationStrategy.
+| timedTaskManager | advanced |  | TimedTaskManager | To use a custom TimedTaskManager
+| messageCreatedStrategy | advanced |  | MessageCreatedStrategy | To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of javax.jms.Message objects when Camel is sending a JMS message.
+| headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
 |=======================================================================
 {% endraw %}
 // component options: END

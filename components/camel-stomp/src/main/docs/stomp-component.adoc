@@ -48,11 +48,11 @@ The Stomp component supports 5 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| configuration |  |  | StompConfiguration | To use the shared stomp configuration
-| brokerURL |  |  | String | The URI of the Stomp broker to connect to
-| login |  |  | String | The username
-| passcode |  |  | String | The password
-| host |  |  | String | The virtual host
+| configuration | advanced |  | StompConfiguration | To use the shared stomp configuration
+| brokerURL | common |  | String | The URI of the Stomp broker to connect to
+| login | security |  | String | The username
+| passcode | security |  | String | The password
+| host | common |  | String | The virtual host
 |=======================================================================
 {% endraw %}
 // component options: END

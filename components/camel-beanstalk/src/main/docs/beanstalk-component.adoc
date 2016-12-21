@@ -73,7 +73,7 @@ The Beanstalk component supports 1 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| connectionSettingsFactory |  |  | ConnectionSettingsFactory | Custom ConnectionSettingsFactory. Specify which ConnectionSettingsFactory to use to make connections to Beanstalkd. Especially useful for unit testing without beanstalkd daemon (you can mock ConnectionSettings)
+| connectionSettingsFactory | common |  | ConnectionSettingsFactory | Custom ConnectionSettingsFactory. Specify which ConnectionSettingsFactory to use to make connections to Beanstalkd. Especially useful for unit testing without beanstalkd daemon (you can mock ConnectionSettings)
 |=======================================================================
 {% endraw %}
 // component options: END

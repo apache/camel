@@ -51,8 +51,8 @@ The Google Calendar component supports 2 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| configuration |  |  | GoogleCalendarConfiguration | To use the shared configuration
-| clientFactory |  |  | GoogleCalendarClientFactory | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleCalendarClientFactory
+| configuration | common |  | GoogleCalendarConfiguration | To use the shared configuration
+| clientFactory | advanced |  | GoogleCalendarClientFactory | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleCalendarClientFactory
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -66,7 +66,7 @@ The Ganglia component supports 1 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| configuration |  |  | GangliaConfiguration | To use the shared configuration
+| configuration | advanced |  | GangliaConfiguration | To use the shared configuration
 |=======================================================================
 {% endraw %}
 // component options: END
