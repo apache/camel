@@ -20,15 +20,20 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Represents the component that manages {@link YammerEndpoint}.
  */
 public class YammerComponent extends DefaultComponent {
 
+    @Metadata(label = "security", secret = true)
     private String consumerKey;
+    @Metadata(label = "security", secret = true)
     private String consumerSecret;
+    @Metadata(label = "security", secret = true)
     private String accessToken;
+    @Metadata(label = "advanced")
     private YammerConfiguration config;
     
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

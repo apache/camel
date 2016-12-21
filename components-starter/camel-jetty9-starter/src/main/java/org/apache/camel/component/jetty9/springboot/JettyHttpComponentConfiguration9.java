@@ -138,11 +138,11 @@ public class JettyHttpComponentConfiguration9 {
      * return back a http error 503 to the client. This option is only in use
      * when using Jetty with the Asynchronous Routing Engine.
      */
-    private Long continuationTimeout;
+    private Long continuationTimeout = 30000L;
     /**
      * Whether or not to use Jetty continuations for the Jetty Server.
      */
-    private Boolean useContinuation;
+    private Boolean useContinuation = true;
     /**
      * To configure security using SSLContextParameters
      */
@@ -186,7 +186,7 @@ public class JettyHttpComponentConfiguration9 {
      * other camel-jetty endpoint is share the same port otherwise this option
      * may not work as expected.
      */
-    private Boolean sendServerVersion;
+    private Boolean sendServerVersion = true;
     /**
      * Whether to allow java serialization when a request uses
      * context-type=application/x-java-serialized-object This is by default
@@ -196,8 +196,8 @@ public class JettyHttpComponentConfiguration9 {
      */
     private Boolean allowJavaSerializedObject;
     /**
-     * To use a custom HeaderFilterStrategy to filter header to and from Camel
-     * message.
+     * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+     * header to and from Camel message.
      */
     @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;

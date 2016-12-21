@@ -59,7 +59,7 @@ public class NettyHttpComponentConfiguration {
      * The thread pool size for the EventExecutorGroup if its in use. The
      * default value is 16.
      */
-    private Integer maximumPoolSize;
+    private Integer maximumPoolSize = 16;
     /**
      * To use the given EventExecutorGroup
      */
