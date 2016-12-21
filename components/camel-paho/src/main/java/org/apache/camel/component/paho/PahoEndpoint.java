@@ -55,11 +55,11 @@ public class PahoEndpoint extends DefaultEndpoint {
     private String brokerUrl = PahoConstants.DEFAULT_BROKER_URL;
     @UriParam(defaultValue = "2")
     private int qos = PahoConstants.DEFAULT_QOS;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean retained;
     @UriParam(defaultValue = "MEMORY")
     private PahoPersistence persistence = PahoPersistence.MEMORY;
-    @UriParam(description = "Base directory used by file persistence.", defaultValue = "Current directory")
+    @UriParam(description = "Base directory used by file persistence. Will by default use current directory.")
     private String filePersistenceDirectory;
 
     // Collaboration members

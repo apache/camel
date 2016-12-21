@@ -58,7 +58,7 @@ public class NettyHttpComponentConfiguration {
      * The core pool size for the ordered thread pool if its in use. The default
      * value is 16.
      */
-    private Integer maximumPoolSize;
+    private Integer maximumPoolSize = 16;
 
     public NettyHttpBinding getNettyHttpBinding() {
         return nettyHttpBinding;
