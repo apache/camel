@@ -60,7 +60,7 @@ public class LogEndpoint extends ProcessorEndpoint {
     @UriParam
     private Long groupDelay;
     // we want to include the uri options of the DefaultExchangeFormatter
-    @UriParam
+    @UriParam(label = "advanced")
     private DefaultExchangeFormatter exchangeFormatter;
 
     public LogEndpoint() {
