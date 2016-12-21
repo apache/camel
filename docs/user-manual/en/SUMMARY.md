@@ -268,6 +268,7 @@
 	* [Quartz2](quartz2-component.adoc)
 	* [QuickFix](quickfix-component.adoc)
 	* [RabbitMQ](rabbitmq-component.adoc)
+	* [Reactive Streams](reactive-streams-component.adoc)
 	* [Restlet](restlet-component.adoc)
 	* [RMI](rmi-component.adoc)
 	* [RouteBox](routebox-component.adoc)
