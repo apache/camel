@@ -32,21 +32,32 @@ import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 
 /**
  * The <a href="http://camel.apache.org/sjms">Simple JMS</a> component.
  */
 public class SjmsComponent extends UriEndpointComponent implements HeaderFilterStrategyAware {
 
-    private ConnectionFactory connectionFactory;
-    private ConnectionResource connectionResource;
-    private HeaderFilterStrategy headerFilterStrategy = new SjmsHeaderFilterStrategy();
-    private JmsKeyFormatStrategy jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
-    private Integer connectionCount = 1;
-    private TransactionCommitStrategy transactionCommitStrategy;
-    private TimedTaskManager timedTaskManager;
-    private DestinationCreationStrategy destinationCreationStrategy;
     private ExecutorService asyncStartStopExecutorService;
+
+    @Metadata(label = "advanced")
+    private ConnectionFactory connectionFactory;
+    @Metadata(label = "advanced")
+    private ConnectionResource connectionResource;
+    @Metadata(label = "advanced")
+    private HeaderFilterStrategy headerFilterStrategy = new SjmsHeaderFilterStrategy();
+    @Metadata(label = "advanced")
+    private JmsKeyFormatStrategy jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
+    @Metadata(defaultValue = "1")
+    private Integer connectionCount = 1;
+    @Metadata(label = "transaction")
+    private TransactionCommitStrategy transactionCommitStrategy;
+    @Metadata(label = "advanced")
+    private TimedTaskManager timedTaskManager;
+    @Metadata(label = "advanced")
+    private DestinationCreationStrategy destinationCreationStrategy;
+    @Metadata(label = "advanced")
     private MessageCreatedStrategy messageCreatedStrategy;
 
     public SjmsComponent() {

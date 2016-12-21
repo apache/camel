@@ -35,6 +35,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
@@ -74,24 +75,43 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     private final Component component;
 
     // options that can be set on the restlet server
+    @Metadata(label = "consumer,advanced")
     private Boolean controllerDaemon;
+    @Metadata(label = "consumer,advanced")
     private Integer controllerSleepTimeMs;
+    @Metadata(label = "consumer")
     private Integer inboundBufferSize;
+    @Metadata(label = "consumer,advanced")
     private Integer minThreads;
+    @Metadata(label = "consumer,advanced")
     private Integer maxThreads;
+    @Metadata(label = "consumer,advanced")
     private Integer lowThreads;
+    @Metadata(label = "common")
     private Integer maxConnectionsPerHost;
+    @Metadata(label = "common")
     private Integer maxTotalConnections;
+    @Metadata(label = "consumer")
     private Integer outboundBufferSize;
+    @Metadata(label = "consumer,advanced")
     private Integer maxQueued;
+    @Metadata(label = "consumer,advanced")
     private Boolean persistingConnections;
+    @Metadata(label = "consumer,advanced")
     private Boolean pipeliningConnections;
+    @Metadata(label = "consumer,advanced")
     private Integer threadMaxIdleTimeMs;
+    @Metadata(label = "consumer")
     private Boolean useForwardedForHeader;
+    @Metadata(label = "consumer")
     private Boolean reuseAddress;
+    @Metadata(label = "consumer,advanced")
     private boolean disableStreamCache;
+    @Metadata(label = "consumer")
     private int port;
+    @Metadata(label = "producer")
     private Boolean synchronous;
+    @Metadata(label = "advanced")
     private List<String> enabledConverters;
 
     public RestletComponent() {
@@ -675,7 +695,6 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     public List<String> getEnabledConverters() {
         return enabledConverters;
     }
-
 
     /**
      * A list of converters to enable as full class name or simple class name.
