@@ -232,6 +232,7 @@
     <module>camel-quartz2-starter</module>
     <module>camel-quickfix-starter</module>
     <module>camel-rabbitmq-starter</module>
+    <module>camel-reactive-streams-starter</module>
     <module>camel-restlet-starter</module>
     <module>camel-ribbon-starter</module>
     <module>camel-rmi-starter</module>
