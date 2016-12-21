@@ -29,15 +29,13 @@ import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.MessageCreatedStrategy;
 import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
-import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
 
 /**
  * The <a href="http://camel.apache.org/sjms">Simple JMS</a> component.
  */
-public class SjmsComponent extends UriEndpointComponent implements HeaderFilterStrategyAware {
+public class SjmsComponent extends HeaderFilterStrategyComponent {
 
     private ExecutorService asyncStartStopExecutorService;
 
@@ -45,8 +43,6 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     private ConnectionFactory connectionFactory;
     @Metadata(label = "advanced")
     private ConnectionResource connectionResource;
-    @Metadata(label = "advanced")
-    private HeaderFilterStrategy headerFilterStrategy = new SjmsHeaderFilterStrategy();
     @Metadata(label = "advanced")
     private JmsKeyFormatStrategy jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
     @Metadata(defaultValue = "1")
@@ -78,8 +74,8 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
         if (destinationCreationStrategy != null) {
             endpoint.setDestinationCreationStrategy(destinationCreationStrategy);
         }
-        if (headerFilterStrategy != null) {
-            endpoint.setHeaderFilterStrategy(headerFilterStrategy);
+        if (getHeaderFilterStrategy() != null) {
+            endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
         if (messageCreatedStrategy != null) {
             endpoint.setMessageCreatedStrategy(messageCreatedStrategy);
@@ -152,19 +148,6 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
 
     public ConnectionFactory getConnectionFactory() {
         return connectionFactory;
-    }
-
-    @Override
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        return this.headerFilterStrategy;
-    }
-
-    /**
-     * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
-     */
-    @Override
-    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
-        this.headerFilterStrategy = headerFilterStrategy;
     }
 
     /**

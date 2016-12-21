@@ -41,12 +41,6 @@ public class SjmsComponentConfiguration {
      */
     private ConnectionFactory connectionFactory;
     /**
-     * To use a custom HeaderFilterStrategy to filter header to and from Camel
-     * message.
-     */
-    @NestedConfigurationProperty
-    private HeaderFilterStrategy headerFilterStrategy;
-    /**
      * A ConnectionResource is an interface that allows for customization and
      * container control of the ConnectionFactory. See Plugable Connection
      * Resource Management for further details.
@@ -92,6 +86,12 @@ public class SjmsComponentConfiguration {
      */
     @NestedConfigurationProperty
     private MessageCreatedStrategy messageCreatedStrategy;
+    /**
+     * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+     * header to and from Camel message.
+     */
+    @NestedConfigurationProperty
+    private HeaderFilterStrategy headerFilterStrategy;
 
     public ConnectionFactory getConnectionFactory() {
         return connectionFactory;
@@ -99,15 +99,6 @@ public class SjmsComponentConfiguration {
 
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
-    }
-
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        return headerFilterStrategy;
-    }
-
-    public void setHeaderFilterStrategy(
-            HeaderFilterStrategy headerFilterStrategy) {
-        this.headerFilterStrategy = headerFilterStrategy;
     }
 
     public ConnectionResource getConnectionResource() {
@@ -169,6 +160,15 @@ public class SjmsComponentConfiguration {
     public void setMessageCreatedStrategy(
             MessageCreatedStrategy messageCreatedStrategy) {
         this.messageCreatedStrategy = messageCreatedStrategy;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(
+            HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 
     public static class TimedTaskManagerNestedConfiguration {
