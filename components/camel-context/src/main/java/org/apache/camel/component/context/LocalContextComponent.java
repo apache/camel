@@ -25,6 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,7 @@ public class LocalContextComponent extends DefaultComponent {
     private static final Logger LOG = LoggerFactory.getLogger(LocalContextComponent.class);
 
     private CamelContext localCamelContext;
+    @Metadata(label = "advanced", defaultValue = "direct,seda,mock")
     private List<String> localProtocolSchemes = new ArrayList<String>(Arrays.asList("direct", "seda", "mock"));
 
     public LocalContextComponent(CamelContext localCamelContext) {

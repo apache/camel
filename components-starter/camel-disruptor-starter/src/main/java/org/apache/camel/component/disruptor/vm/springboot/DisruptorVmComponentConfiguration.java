@@ -18,6 +18,7 @@ package org.apache.camel.component.disruptor.vm.springboot;
 
 import org.apache.camel.component.disruptor.DisruptorProducerType;
 import org.apache.camel.component.disruptor.DisruptorWaitStrategy;
+import org.apache.camel.component.disruptor.vm.DisruptorVmComponent;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 
@@ -33,7 +34,7 @@ public class DisruptorVmComponentConfiguration {
     /**
      * To configure the default number of concurrent consumers
      */
-    private Integer defaultConcurrentConsumers;
+    private Integer defaultConcurrentConsumers = 1;
     /**
      * To configure the default value for multiple consumers
      */
@@ -42,17 +43,17 @@ public class DisruptorVmComponentConfiguration {
      * To configure the default value for DisruptorProducerType The default
      * value is Multi.
      */
-    private DisruptorProducerType defaultProducerType;
+    private DisruptorProducerType defaultProducerType = DisruptorProducerType.Multi;
     /**
      * To configure the default value for DisruptorWaitStrategy The default
      * value is Blocking.
      */
-    private DisruptorWaitStrategy defaultWaitStrategy;
+    private DisruptorWaitStrategy defaultWaitStrategy = DisruptorWaitStrategy.Blocking;
     /**
      * To configure the default value for block when full The default value is
      * true.
      */
-    private Boolean defaultBlockWhenFull;
+    private Boolean defaultBlockWhenFull = true;
     /**
      * To configure the ring buffer size
      */
@@ -61,7 +62,7 @@ public class DisruptorVmComponentConfiguration {
     /**
      * To configure the ring buffer size
      */
-    private Integer bufferSize;
+    private Integer bufferSize = 1024;
 
     public Integer getDefaultConcurrentConsumers() {
         return defaultConcurrentConsumers;
