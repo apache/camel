@@ -55,12 +55,12 @@ The EHCache component supports 3 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| cacheManagerFactory | CacheManagerFactory | To use the given CacheManagerFactory for creating the CacheManager. By default the DefaultCacheManagerFactory is used.
-| configuration | CacheConfiguration | Sets the Cache configuration
-| configurationFile | String | Sets the location of the ehcache.xml file to load from classpath or file system. By default the file is loaded from classpath:ehcache.xml
+| Name | Group | Default | Java Type | Description
+| cacheManagerFactory |  |  | CacheManagerFactory | To use the given CacheManagerFactory for creating the CacheManager. By default the DefaultCacheManagerFactory is used.
+| configuration |  |  | CacheConfiguration | Sets the Cache configuration
+| configurationFile |  | classpath:ehcache.xml | String | Sets the location of the ehcache.xml file to load from classpath or file system. By default the file is loaded from classpath:ehcache.xml
 |=======================================================================
 {% endraw %}
 // component options: END

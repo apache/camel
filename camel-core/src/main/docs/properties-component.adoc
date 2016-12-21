@@ -25,25 +25,25 @@ The Properties component supports 16 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| locations | List | A list of locations to load properties. This option will override any default locations and only use the locations from this option.
-| location | String | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option.
-| encoding | String | Encoding to use when loading properties file from the file system or classpath. If no encoding has been set then the properties files is loaded using ISO-8859-1 encoding (latin-1) as documented by link java.util.Propertiesload(java.io.InputStream)
-| propertiesResolver | PropertiesResolver | To use a custom PropertiesResolver
-| propertiesParser | PropertiesParser | To use a custom PropertiesParser
-| cache | boolean | Whether or not to cache loaded properties. The default value is true.
-| propertyPrefix | String | Optional prefix prepended to property names before resolution.
-| propertySuffix | String | Optional suffix appended to property names before resolution.
-| fallbackToUnaugmentedProperty | boolean | If true first attempt resolution of property name augmented with propertyPrefix and propertySuffix before falling back the plain property name specified. If false only the augmented property name is searched.
-| defaultFallbackEnabled | boolean | If false the component does not attempt to find a default for the key by looking after the colon separator.
-| ignoreMissingLocation | boolean | Whether to silently ignore if a location cannot be located such as a properties file not found.
-| prefixToken | String | Sets the value of the prefix token used to identify properties to replace. Setting a value of null restores the default token (link link DEFAULT_PREFIX_TOKEN).
-| suffixToken | String | Sets the value of the suffix token used to identify properties to replace. Setting a value of null restores the default token (link link DEFAULT_SUFFIX_TOKEN).
-| initialProperties | Properties | Sets initial properties which will be used before any locations are resolved.
-| overrideProperties | Properties | Sets a special list of override properties that take precedence and will use first if a property exist.
-| systemPropertiesMode | int | Sets the system property mode.
+| Name | Group | Default | Java Type | Description
+| locations |  |  | List | A list of locations to load properties. This option will override any default locations and only use the locations from this option.
+| location |  |  | String | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option.
+| encoding |  |  | String | Encoding to use when loading properties file from the file system or classpath. If no encoding has been set then the properties files is loaded using ISO-8859-1 encoding (latin-1) as documented by link java.util.Propertiesload(java.io.InputStream)
+| propertiesResolver |  |  | PropertiesResolver | To use a custom PropertiesResolver
+| propertiesParser |  |  | PropertiesParser | To use a custom PropertiesParser
+| cache |  |  | boolean | Whether or not to cache loaded properties. The default value is true.
+| propertyPrefix |  |  | String | Optional prefix prepended to property names before resolution.
+| propertySuffix |  |  | String | Optional suffix appended to property names before resolution.
+| fallbackToUnaugmentedProperty |  |  | boolean | If true first attempt resolution of property name augmented with propertyPrefix and propertySuffix before falling back the plain property name specified. If false only the augmented property name is searched.
+| defaultFallbackEnabled |  |  | boolean | If false the component does not attempt to find a default for the key by looking after the colon separator.
+| ignoreMissingLocation |  |  | boolean | Whether to silently ignore if a location cannot be located such as a properties file not found.
+| prefixToken |  |  | String | Sets the value of the prefix token used to identify properties to replace. Setting a value of null restores the default token (link link DEFAULT_PREFIX_TOKEN).
+| suffixToken |  |  | String | Sets the value of the suffix token used to identify properties to replace. Setting a value of null restores the default token (link link DEFAULT_SUFFIX_TOKEN).
+| initialProperties |  |  | Properties | Sets initial properties which will be used before any locations are resolved.
+| overrideProperties |  |  | Properties | Sets a special list of override properties that take precedence and will use first if a property exist.
+| systemPropertiesMode |  |  | int | Sets the system property mode.
 |=======================================================================
 {% endraw %}
 // component options: END

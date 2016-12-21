@@ -55,16 +55,16 @@ The Quartz component supports 7 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| factory | SchedulerFactory | To use the custom SchedulerFactory which is used to create the Scheduler.
-| scheduler | Scheduler | To use the custom configured Quartz scheduler instead of creating a new Scheduler.
-| properties | Properties | Properties to configure the Quartz scheduler.
-| propertiesFile | String | File name of the properties to load from the classpath
-| startDelayedSeconds | int | Seconds to wait before starting the quartz scheduler.
-| autoStartScheduler | boolean | Whether or not the scheduler should be auto started. This options is default true
-| enableJmx | boolean | Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX. This options is default true
+| Name | Group | Default | Java Type | Description
+| factory |  |  | SchedulerFactory | To use the custom SchedulerFactory which is used to create the Scheduler.
+| scheduler |  |  | Scheduler | To use the custom configured Quartz scheduler instead of creating a new Scheduler.
+| properties |  |  | Properties | Properties to configure the Quartz scheduler.
+| propertiesFile |  |  | String | File name of the properties to load from the classpath
+| startDelayedSeconds |  |  | int | Seconds to wait before starting the quartz scheduler.
+| autoStartScheduler |  | true | boolean | Whether or not the scheduler should be auto started. This options is default true
+| enableJmx |  | true | boolean | Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX. This options is default true
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -52,13 +52,13 @@ The Yammer component supports 4 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| consumerKey | String | The consumer key
-| consumerSecret | String | The consumer secret
-| accessToken | String | The access token
-| config | YammerConfiguration | To use a shared yammer configuration
+| Name | Group | Default | Java Type | Description
+| consumerKey |  |  | String | The consumer key
+| consumerSecret |  |  | String | The consumer secret
+| accessToken |  |  | String | The access token
+| config |  |  | YammerConfiguration | To use a shared yammer configuration
 |=======================================================================
 {% endraw %}
 // component options: END

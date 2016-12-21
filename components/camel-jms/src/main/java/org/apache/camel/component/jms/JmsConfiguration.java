@@ -153,6 +153,7 @@ public class JmsConfiguration implements Cloneable {
                     + " If you use a range for concurrent consumers (eg min < max), then this option can be used to set"
                     + " a value to eg 100 to control how fast the consumers will shrink when less work is required.")
     private int maxMessagesPerTask = -1;
+    @UriParam(label = "consumer", description = "Sets the cache level by ID for the underlying JMS resources. See cacheLevelName option for more details.")
     private int cacheLevel = -1;
     @UriParam(defaultValue = "CACHE_AUTO", enums = "CACHE_AUTO,CACHE_CONNECTION,CACHE_CONSUMER,CACHE_NONE,CACHE_SESSION", label = "consumer",
             description = "Sets the cache level by name for the underlying JMS resources."
