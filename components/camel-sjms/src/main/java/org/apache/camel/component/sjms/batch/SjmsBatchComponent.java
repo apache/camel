@@ -20,11 +20,11 @@ import java.util.Map;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
-public class SjmsBatchComponent extends UriEndpointComponent {
+public class SjmsBatchComponent extends HeaderFilterStrategyComponent {
 
     @Metadata(label = "advanced")
     private ConnectionFactory connectionFactory;

@@ -117,7 +117,7 @@ Component Options and Configurations
 
 
 // component options: START
-The Simple JMS Batch component supports 1 options which are listed below.
+The Simple JMS Batch component supports 2 options which are listed below.
 
 
 
@@ -126,6 +126,7 @@ The Simple JMS Batch component supports 1 options which are listed below.
 |=======================================================================
 | Name | Java Type | Description
 | connectionFactory | ConnectionFactory | A ConnectionFactory is required to enable the SjmsBatchComponent.
+| headerFilterStrategy | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
 |=======================================================================
 {% endraw %}
 // component options: END

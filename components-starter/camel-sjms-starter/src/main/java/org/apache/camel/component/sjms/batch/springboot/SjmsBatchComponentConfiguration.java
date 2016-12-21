@@ -17,7 +17,9 @@
 package org.apache.camel.component.sjms.batch.springboot;
 
 import javax.jms.ConnectionFactory;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
  * The sjms-batch component is a specialized for highly performant transactional
@@ -32,6 +34,12 @@ public class SjmsBatchComponentConfiguration {
      * A ConnectionFactory is required to enable the SjmsBatchComponent.
      */
     private ConnectionFactory connectionFactory;
+    /**
+     * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+     * header to and from Camel message.
+     */
+    @NestedConfigurationProperty
+    private HeaderFilterStrategy headerFilterStrategy;
 
     public ConnectionFactory getConnectionFactory() {
         return connectionFactory;
@@ -39,5 +47,14 @@ public class SjmsBatchComponentConfiguration {
 
     public void setConnectionFactory(ConnectionFactory connectionFactory) {
         this.connectionFactory = connectionFactory;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(
+            HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 }
