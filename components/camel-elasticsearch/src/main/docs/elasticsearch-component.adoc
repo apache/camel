@@ -52,10 +52,10 @@ The Elasticsearch component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| client | Client | To use an existing configured Elasticsearch client instead of creating a client per endpoint.
+| Name | Group | Default | Java Type | Description
+| client |  |  | Client | To use an existing configured Elasticsearch client instead of creating a client per endpoint.
 |=======================================================================
 {% endraw %}
 // component options: END

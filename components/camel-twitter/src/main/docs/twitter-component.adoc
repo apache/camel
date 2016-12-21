@@ -63,17 +63,17 @@ The Twitter component supports 8 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| accessToken | String | The access token
-| accessTokenSecret | String | The access token secret
-| consumerKey | String | The consumer key
-| consumerSecret | String | The consumer secret
-| httpProxyHost | String | The http proxy host which can be used for the camel-twitter.
-| httpProxyUser | String | The http proxy user which can be used for the camel-twitter.
-| httpProxyPassword | String | The http proxy password which can be used for the camel-twitter.
-| httpProxyPort | int | The http proxy port which can be used for the camel-twitter.
+| Name | Group | Default | Java Type | Description
+| accessToken |  |  | String | The access token
+| accessTokenSecret |  |  | String | The access token secret
+| consumerKey |  |  | String | The consumer key
+| consumerSecret |  |  | String | The consumer secret
+| httpProxyHost |  |  | String | The http proxy host which can be used for the camel-twitter.
+| httpProxyUser |  |  | String | The http proxy user which can be used for the camel-twitter.
+| httpProxyPassword |  |  | String | The http proxy password which can be used for the camel-twitter.
+| httpProxyPort |  |  | int | The http proxy port which can be used for the camel-twitter.
 |=======================================================================
 {% endraw %}
 // component options: END

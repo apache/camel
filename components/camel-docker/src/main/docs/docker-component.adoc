@@ -33,10 +33,10 @@ The Docker component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| configuration | DockerConfiguration | To use the shared docker configuration
+| Name | Group | Default | Java Type | Description
+| configuration |  |  | DockerConfiguration | To use the shared docker configuration
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -61,13 +61,13 @@ The ElSQL component supports 4 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| databaseVendor | ElSqlDatabaseVendor | To use a vendor specific com.opengamma.elsql.ElSqlConfig
-| dataSource | DataSource | Sets the DataSource to use to communicate with the database.
-| elSqlConfig | ElSqlConfig | To use a specific configured ElSqlConfig. It may be better to use the databaseVendor option instead.
-| resourceUri | String | The resource file which contains the elsql SQL statements to use. You can specify multiple resources separated by comma. The resources are loaded on the classpath by default you can prefix with file: to load from file system. Notice you can set this option on the component and then you do not have to configure this on the endpoint.
+| Name | Group | Default | Java Type | Description
+| databaseVendor |  |  | ElSqlDatabaseVendor | To use a vendor specific com.opengamma.elsql.ElSqlConfig
+| dataSource |  |  | DataSource | Sets the DataSource to use to communicate with the database.
+| elSqlConfig |  |  | ElSqlConfig | To use a specific configured ElSqlConfig. It may be better to use the databaseVendor option instead.
+| resourceUri |  |  | String | The resource file which contains the elsql SQL statements to use. You can specify multiple resources separated by comma. The resources are loaded on the classpath by default you can prefix with file: to load from file system. Notice you can set this option on the component and then you do not have to configure this on the endpoint.
 |=======================================================================
 {% endraw %}
 // component options: END

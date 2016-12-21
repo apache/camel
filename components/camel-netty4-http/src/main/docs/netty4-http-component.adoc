@@ -86,15 +86,15 @@ The Netty4 HTTP component supports 6 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| nettyHttpBinding | NettyHttpBinding | To use a custom org.apache.camel.component.netty4.http.NettyHttpBinding for binding to/from Netty and Camel Message API.
-| configuration | NettyHttpConfiguration | To use the NettyConfiguration as configuration when creating endpoints.
-| headerFilterStrategy | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter headers.
-| securityConfiguration | NettyHttpSecurityConfiguration | Refers to a org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration for configuring secure web resources.
-| maximumPoolSize | int | The thread pool size for the EventExecutorGroup if its in use. The default value is 16.
-| executorService | EventExecutorGroup | To use the given EventExecutorGroup
+| Name | Group | Default | Java Type | Description
+| nettyHttpBinding |  |  | NettyHttpBinding | To use a custom org.apache.camel.component.netty4.http.NettyHttpBinding for binding to/from Netty and Camel Message API.
+| configuration |  |  | NettyHttpConfiguration | To use the NettyConfiguration as configuration when creating endpoints.
+| headerFilterStrategy |  |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter headers.
+| securityConfiguration |  |  | NettyHttpSecurityConfiguration | Refers to a org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration for configuring secure web resources.
+| maximumPoolSize |  | 16 | int | The thread pool size for the EventExecutorGroup if its in use. The default value is 16.
+| executorService |  |  | EventExecutorGroup | To use the given EventExecutorGroup
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -19,6 +19,7 @@ package org.apache.camel.component.amqp.springboot;
 import javax.jms.ConnectionFactory;
 import javax.jms.ExceptionListener;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.component.amqp.AMQPComponent;
 import org.apache.camel.component.jms.DefaultTaskExecutorType;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.camel.component.jms.JmsKeyFormatStrategy;
@@ -53,7 +54,7 @@ public class AMQPComponentConfiguration {
     /**
      * Specifies whether the consumer accept messages while it is stopping. You
      * may consider enabling this option if you start and stop JMS routes at
-     * runtime while there are still messages enqued on the queue. If this
+     * runtime while there are still messages enqueued on the queue. If this
      * option is false and you stop the JMS route then messages may be rejected
      * and the JMS broker would have to attempt redeliveries which yet again may
      * be rejected and eventually the message may be moved at a dead letter
@@ -73,7 +74,7 @@ public class AMQPComponentConfiguration {
     private Boolean allowReplyManagerQuickStop;
     /**
      * The JMS acknowledgement mode defined as an Integer. Allows you to set
-     * vendor-specific extensions to the acknowledgment mode. For the regular
+     * vendor-specific extensions to the acknowledgment mode.For the regular
      * modes it is preferable to use the acknowledgementModeName instead.
      */
     private Integer acknowledgementMode;
@@ -88,11 +89,11 @@ public class AMQPComponentConfiguration {
      * The JMS acknowledgement name which is one of: SESSION_TRANSACTED
      * CLIENT_ACKNOWLEDGE AUTO_ACKNOWLEDGE DUPS_OK_ACKNOWLEDGE
      */
-    private String acknowledgementModeName;
+    private String acknowledgementModeName = "AUTO_ACKNOWLEDGE";
     /**
      * Specifies whether the consumer container should auto-startup.
      */
-    private Boolean autoStartup;
+    private Boolean autoStartup = true;
     /**
      * Sets the cache level by ID for the underlying JMS resources. See
      * cacheLevelName option for more details.
@@ -104,7 +105,7 @@ public class AMQPComponentConfiguration {
      * CACHE_SESSION. The default setting is CACHE_AUTO. See the Spring
      * documentation and Transactions Cache Levels for more information.
      */
-    private String cacheLevelName;
+    private String cacheLevelName = "CACHE_AUTO";
     /**
      * Sets the cache level by name for the reply consumer when doing
      * request/reply over JMS. This option only applies when using fixed reply
@@ -130,15 +131,16 @@ public class AMQPComponentConfiguration {
      * request/reply over JMS then the option replyToConcurrentConsumers is used
      * to control number of concurrent consumers on the reply message listener.
      */
-    private Integer concurrentConsumers;
+    private Integer concurrentConsumers = 1;
     /**
      * Specifies the default number of concurrent consumers when doing
      * request/reply over JMS. See also the maxMessagesPerTask option to control
      * dynamic scaling up/down of threads.
      */
-    private Integer replyToConcurrentConsumers;
+    private Integer replyToConcurrentConsumers = 1;
     /**
-     * Sets the default connection factory to be use
+     * The connection factory to be use. A connection factory must be configured
+     * either on the component or endpoint.
      */
     private ConnectionFactory connectionFactory;
     /**
@@ -154,11 +156,10 @@ public class AMQPComponentConfiguration {
     /**
      * Specifies whether persistent delivery is used by default.
      */
-    private Boolean deliveryPersistent;
+    private Boolean deliveryPersistent = true;
     /**
-     * Specifies the delivery mode to be used. Possible values are Possibles
-     * values are those defined by javax.jms.DeliveryMode. NON_PERSISTENT = 1
-     * and PERSISTENT = 2.
+     * Specifies the delivery mode to be used. Possibles values are those
+     * defined by javax.jms.DeliveryMode. NON_PERSISTENT = 1 and PERSISTENT = 2.
      */
     private Integer deliveryMode;
     /**
@@ -186,12 +187,12 @@ public class AMQPComponentConfiguration {
      * Allows to configure the default errorHandler logging level for logging
      * uncaught exceptions.
      */
-    private LoggingLevel errorHandlerLoggingLevel;
+    private LoggingLevel errorHandlerLoggingLevel = LoggingLevel.WARN;
     /**
      * Allows to control whether stacktraces should be logged or not by the
      * default errorHandler.
      */
-    private Boolean errorHandlerLogStackTrace;
+    private Boolean errorHandlerLogStackTrace = true;
     /**
      * Set if the deliveryMode priority or timeToLive qualities of service
      * should be used when sending messages. This option is based on Spring's
@@ -200,7 +201,7 @@ public class AMQPComponentConfiguration {
      * option which operates at message granularity reading QoS properties
      * exclusively from the Camel In message headers.
      */
-    private Boolean explicitQosEnabled;
+    private Boolean explicitQosEnabled = false;
     /**
      * Specifies whether the listener session should be exposed when consuming
      * messages.
@@ -213,12 +214,12 @@ public class AMQPComponentConfiguration {
      * case of dynamic scheduling; see the maxConcurrentConsumers setting).
      * There is additional doc available from Spring.
      */
-    private Integer idleTaskExecutionLimit;
+    private Integer idleTaskExecutionLimit = 1;
     /**
      * Specify the limit for the number of consumers that are allowed to be idle
      * at any given time.
      */
-    private Integer idleConsumerLimit;
+    private Integer idleConsumerLimit = 1;
     /**
      * Specifies the maximum number of concurrent consumers when consuming from
      * JMS (not for request/reply over JMS). See also the maxMessagesPerTask
@@ -238,14 +239,14 @@ public class AMQPComponentConfiguration {
      * Specifies the maximum number of concurrent consumers for continue routing
      * when timeout occurred when using request/reply over JMS.
      */
-    private Integer replyOnTimeoutToMaxConcurrentConsumers;
+    private Integer replyOnTimeoutToMaxConcurrentConsumers = 1;
     /**
      * The number of messages per task. -1 is unlimited. If you use a range for
      * concurrent consumers (eg min max) then this option can be used to set a
      * value to eg 100 to control how fast the consumers will shrink when less
      * work is required.
      */
-    private Integer maxMessagesPerTask;
+    private Integer maxMessagesPerTask = -1;
     /**
      * To use a custom Spring
      * org.springframework.jms.support.converter.MessageConverter so you can be
@@ -255,19 +256,24 @@ public class AMQPComponentConfiguration {
     private MessageConverter messageConverter;
     /**
      * Specifies whether Camel should auto map the received JMS message to a
-     * suited payload type such as javax.jms.TextMessage to a String etc. See
-     * section about how mapping works below for more details.
+     * suited payload type such as javax.jms.TextMessage to a String etc.
      */
-    private Boolean mapJmsMessage;
+    private Boolean mapJmsMessage = true;
     /**
-     * When sending specifies whether message IDs should be added.
+     * When sending specifies whether message IDs should be added. This is just
+     * an hint to the JMS broker.If the JMS provider accepts this hint these
+     * messages must have the message ID set to null; if the provider ignores
+     * the hint the message ID must be set to its normal unique value
      */
-    private Boolean messageIdEnabled;
+    private Boolean messageIdEnabled = true;
     /**
      * Specifies whether timestamps should be enabled by default on sending
-     * messages.
+     * messages. This is just an hint to the JMS broker.If the JMS provider
+     * accepts this hint these messages must have the timestamp set to zero; if
+     * the provider ignores the hint the timestamp must be set to its normal
+     * value
      */
-    private Boolean messageTimestampEnabled;
+    private Boolean messageTimestampEnabled = true;
     /**
      * If true Camel will always make a JMS message copy of the message when it
      * is passed to the producer for sending. Copying the message is needed in
@@ -286,7 +292,7 @@ public class AMQPComponentConfiguration {
      * is the lowest priority and 9 is the highest). The explicitQosEnabled
      * option must also be enabled in order for this option to have any effect.
      */
-    private Integer priority;
+    private Integer priority = 4;
     /**
      * Specifies whether to inhibit the delivery of messages published by its
      * own connection.
@@ -295,13 +301,13 @@ public class AMQPComponentConfiguration {
     /**
      * The timeout for receiving messages (in milliseconds).
      */
-    private Long receiveTimeout;
+    private Long receiveTimeout = 1000L;
     /**
      * Specifies the interval between recovery attempts i.e. when a connection
      * is being refreshed in milliseconds. The default is 5000 ms that is 5
      * seconds.
      */
-    private Long recoveryInterval;
+    private Long recoveryInterval = 5000L;
     /**
      * Deprecated: Enabled by default if you specify a durableSubscriptionName
      * and a clientId.
@@ -317,7 +323,7 @@ public class AMQPComponentConfiguration {
      * When sending messages specifies the time-to-live of the message (in
      * milliseconds).
      */
-    private Long timeToLive;
+    private Long timeToLive = -1L;
     /**
      * Specifies whether to use transacted mode
      */
@@ -326,7 +332,7 @@ public class AMQPComponentConfiguration {
      * If true Camel will create a JmsTransactionManager if there is no
      * transactionManager injected when option transacted=true.
      */
-    private Boolean lazyCreateTransactionManager;
+    private Boolean lazyCreateTransactionManager = true;
     /**
      * The Spring transaction manager to use.
      */
@@ -340,7 +346,7 @@ public class AMQPComponentConfiguration {
      * The timeout value of the transaction (in seconds) if using transacted
      * mode.
      */
-    private Integer transactionTimeout;
+    private Integer transactionTimeout = -1;
     /**
      * Specifies whether to test the connection on startup. This ensures that
      * when Camel starts that all the JMS consumers have a valid connection to
@@ -381,7 +387,7 @@ public class AMQPComponentConfiguration {
      * and thus have per message individual timeout values. See also the
      * requestTimeoutCheckerInterval option.
      */
-    private Long requestTimeout;
+    private Long requestTimeout = 20000L;
     /**
      * Configures how often Camel should check for timed out Exchanges when
      * doing request/reply over JMS. By default Camel checks once per second.
@@ -389,7 +395,7 @@ public class AMQPComponentConfiguration {
      * this interval to check more frequently. The timeout is determined by the
      * option requestTimeout.
      */
-    private Long requestTimeoutCheckerInterval;
+    private Long requestTimeoutCheckerInterval = 1000L;
     /**
      * You can transfer the exchange over the wire instead of just the body and
      * headers. The following fields are transferred: In body Out body Fault
@@ -416,12 +422,13 @@ public class AMQPComponentConfiguration {
     /**
      * If enabled and you are using Request Reply messaging (InOut) and an
      * Exchange failed with a SOAP fault (not exception) on the consumer side
-     * then the fault flag on link org.apache.camel.MessageisFault() will be
-     * send back in the response as a JMS header with the key link
-     * JmsConstantsJMS_TRANSFER_FAULT. If the client is Camel the returned fault
-     * flag will be set on the link org.apache.camel.MessagesetFault(boolean).
-     * You may want to enable this when using Camel components that support
-     * faults such as SOAP based such as cxf or spring-ws.
+     * then the fault flag on MessageisFault() will be send back in the response
+     * as a JMS header with the key org.apache.camel.component.jms.
+     * JmsConstantsJMS_TRANSFER_FAULTJMS_TRANSFER_FAULT. If the client is Camel
+     * the returned fault flag will be set on the link
+     * org.apache.camel.MessagesetFault(boolean). You may want to enable this
+     * when using Camel components that support faults such as SOAP based such
+     * as cxf or spring-ws.
      */
     private Boolean transferFault;
     /**
@@ -479,7 +486,7 @@ public class AMQPComponentConfiguration {
      * Whether to allow sending messages with no body. If this option is false
      * and the message body is null then an JMSException is thrown.
      */
-    private Boolean allowNullBody;
+    private Boolean allowNullBody = true;
     /**
      * Only applicable when sending to JMS destination using InOnly (eg fire and
      * forget). Enabling this option will enrich the Camel Exchange with the
@@ -529,12 +536,6 @@ public class AMQPComponentConfiguration {
     @NestedConfigurationProperty
     private QueueBrowseStrategy queueBrowseStrategy;
     /**
-     * To use a custom HeaderFilterStrategy to filter header to and from Camel
-     * message.
-     */
-    @NestedConfigurationProperty
-    private HeaderFilterStrategy headerFilterStrategy;
-    /**
      * To use the given MessageCreatedStrategy which are invoked when Camel
      * creates new instances of javax.jms.Message objects when Camel is sending
      * a JMS message.
@@ -546,12 +547,18 @@ public class AMQPComponentConfiguration {
      * the actual correlation id when doing request/reply over JMS and when the
      * option useMessageIDAsCorrelationID is enabled.
      */
-    private Integer waitForProvisionCorrelationToBeUpdatedCounter;
+    private Integer waitForProvisionCorrelationToBeUpdatedCounter = 50;
     /**
      * Interval in millis to sleep each time while waiting for provisional
      * correlation id to be updated.
      */
-    private Long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime;
+    private Long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime = 100L;
+    /**
+     * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+     * header to and from Camel message.
+     */
+    @NestedConfigurationProperty
+    private HeaderFilterStrategy headerFilterStrategy;
 
     public JmsConfiguration getConfiguration() {
         return configuration;
@@ -1126,15 +1133,6 @@ public class AMQPComponentConfiguration {
         this.queueBrowseStrategy = queueBrowseStrategy;
     }
 
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        return headerFilterStrategy;
-    }
-
-    public void setHeaderFilterStrategy(
-            HeaderFilterStrategy headerFilterStrategy) {
-        this.headerFilterStrategy = headerFilterStrategy;
-    }
-
     public MessageCreatedStrategy getMessageCreatedStrategy() {
         return messageCreatedStrategy;
     }
@@ -1160,5 +1158,14 @@ public class AMQPComponentConfiguration {
     public void setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
             Long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
         this.waitForProvisionCorrelationToBeUpdatedThreadSleepingTime = waitForProvisionCorrelationToBeUpdatedThreadSleepingTime;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(
+            HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 }

@@ -43,21 +43,21 @@ The Jetty Websocket component supports 12 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| staticResources | String | Set a resource path for static resources (such as .html files etc). The resources can be loaded from classpath if you prefix with classpath: otherwise the resources is loaded from file system or from JAR files. For example to load from root classpath use classpath:. or classpath:WEB-INF/static If not configured (eg null) then no static resource is in use.
-| host | String | The hostname. The default value is 0.0.0.0
-| port | Integer | The port number. The default value is 9292
-| sslKeyPassword | String | The password for the keystore when using SSL.
-| sslPassword | String | The password when using SSL.
-| sslKeystore | String | The path to the keystore.
-| enableJmx | boolean | If this option is true Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details.
-| minThreads | Integer | To set a value for minimum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9. The default values for minThreads is 1.
-| maxThreads | Integer | To set a value for maximum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9. The default values for maxThreads is 1 2 noCores.
-| threadPool | ThreadPool | To use a custom thread pool for the server. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9.
-| sslContextParameters | SSLContextParameters | To configure security using SSLContextParameters
-| socketFactory | Map | To configure a map which contains custom WebSocketFactory for sub protocols. The key in the map is the sub protocol. The default key is reserved for the default implementation.
+| Name | Group | Default | Java Type | Description
+| staticResources |  |  | String | Set a resource path for static resources (such as .html files etc). The resources can be loaded from classpath if you prefix with classpath: otherwise the resources is loaded from file system or from JAR files. For example to load from root classpath use classpath:. or classpath:WEB-INF/static If not configured (eg null) then no static resource is in use.
+| host |  | 0.0.0.0 | String | The hostname. The default value is 0.0.0.0
+| port |  | 9292 | Integer | The port number. The default value is 9292
+| sslKeyPassword |  |  | String | The password for the keystore when using SSL.
+| sslPassword |  |  | String | The password when using SSL.
+| sslKeystore |  |  | String | The path to the keystore.
+| enableJmx |  |  | boolean | If this option is true Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details.
+| minThreads |  |  | Integer | To set a value for minimum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9. The default values for minThreads is 1.
+| maxThreads |  |  | Integer | To set a value for maximum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9. The default values for maxThreads is 1 2 noCores.
+| threadPool |  |  | ThreadPool | To use a custom thread pool for the server. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9.
+| sslContextParameters |  |  | SSLContextParameters | To configure security using SSLContextParameters
+| socketFactory |  |  | Map | To configure a map which contains custom WebSocketFactory for sub protocols. The key in the map is the sub protocol. The default key is reserved for the default implementation.
 |=======================================================================
 {% endraw %}
 // component options: END

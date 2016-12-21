@@ -283,7 +283,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     /**
      * Sets the cache level by ID for the underlying JMS resources. See cacheLevelName option for more details.
      */
-    @Metadata(label = "consumer", defaultValue = "true",
+    @Metadata(label = "consumer",
             description = "Sets the cache level by ID for the underlying JMS resources. See cacheLevelName option for more details.")
     public void setCacheLevel(int cacheLevel) {
         getConfiguration().setCacheLevel(cacheLevel);

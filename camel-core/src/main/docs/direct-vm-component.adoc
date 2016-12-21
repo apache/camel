@@ -51,13 +51,13 @@ The Direct VM component supports 4 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| block | boolean | If sending a message to a direct endpoint which has no active consumer then we can tell the producer to block and wait for the consumer to become active.
-| timeout | long | The timeout value to use if block is enabled.
-| headerFilterStrategy | HeaderFilterStrategy | Sets a HeaderFilterStrategy that will only be applied on producer endpoints (on both directions: request and response). Default value: none.
-| propagateProperties | boolean | Whether to propagate or not properties from the producer side to the consumer side and vice versa. Default value: true.
+| Name | Group | Default | Java Type | Description
+| block |  |  | boolean | If sending a message to a direct endpoint which has no active consumer then we can tell the producer to block and wait for the consumer to become active.
+| timeout |  | 30000 | long | The timeout value to use if block is enabled.
+| headerFilterStrategy |  |  | HeaderFilterStrategy | Sets a HeaderFilterStrategy that will only be applied on producer endpoints (on both directions: request and response). Default value: none.
+| propagateProperties |  | true | boolean | Whether to propagate or not properties from the producer side to the consumer side and vice versa. Default value: true.
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -101,7 +101,7 @@ public class JmsComponentConfiguration {
      * Sets the cache level by ID for the underlying JMS resources. See
      * cacheLevelName option for more details.
      */
-    private Integer cacheLevel = true;
+    private Integer cacheLevel;
     /**
      * Sets the cache level by name for the underlying JMS resources. Possible
      * values are: CACHE_AUTO CACHE_CONNECTION CACHE_CONSUMER CACHE_NONE and

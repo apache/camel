@@ -59,15 +59,15 @@ The CometD component supports 6 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| sslKeyPassword | String | The password for the keystore when using SSL.
-| sslPassword | String | The password when using SSL.
-| sslKeystore | String | The path to the keystore.
-| securityPolicy | SecurityPolicy | To use a custom configured SecurityPolicy to control authorization
-| extensions | List | To use a list of custom BayeuxServer.Extension that allows modifying incoming and outgoing requests.
-| sslContextParameters | SSLContextParameters | To configure security using SSLContextParameters
+| Name | Group | Default | Java Type | Description
+| sslKeyPassword |  |  | String | The password for the keystore when using SSL.
+| sslPassword |  |  | String | The password when using SSL.
+| sslKeystore |  |  | String | The path to the keystore.
+| securityPolicy |  |  | SecurityPolicy | To use a custom configured SecurityPolicy to control authorization
+| extensions |  |  | List | To use a list of custom BayeuxServer.Extension that allows modifying incoming and outgoing requests.
+| sslContextParameters |  |  | SSLContextParameters | To configure security using SSLContextParameters
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -20,6 +20,8 @@ public class ComponentOptionModel {
 
     private String name;
     private String kind;
+    private String group;
+    private String required;
     private String type;
     private String javaType;
     private String deprecated;
@@ -41,6 +43,22 @@ public class ComponentOptionModel {
 
     public void setKind(String kind) {
         this.kind = kind;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    public String getRequired() {
+        return required;
+    }
+
+    public void setRequired(String required) {
+        this.required = required;
     }
 
     public String getType() {
