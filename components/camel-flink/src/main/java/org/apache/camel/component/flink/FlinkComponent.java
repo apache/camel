@@ -47,15 +47,15 @@ public class FlinkComponent extends UriEndpointComponent {
         return ds;
     }
 
-    public DataStream getDataStream() {
-        return dataStream;
-    }
-
     /**
      * DataSet to compute against.
      */
     public void setDataSet(DataSet ds) {
         this.ds = ds;
+    }
+
+    public DataStream getDataStream() {
+        return dataStream;
     }
 
     /**
@@ -69,15 +69,15 @@ public class FlinkComponent extends UriEndpointComponent {
         return dataSetCallback;
     }
 
-    public DataStreamCallback getDataStreamCallback() {
-        return dataStreamCallback;
-    }
-
     /**
      * Function performing action against a DataSet.
      */
     public void setDataSetCallback(DataSetCallback dataSetCallback) {
         this.dataSetCallback = dataSetCallback;
+    }
+
+    public DataStreamCallback getDataStreamCallback() {
+        return dataStreamCallback;
     }
 
     /**

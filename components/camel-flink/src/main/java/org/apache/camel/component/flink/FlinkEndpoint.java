@@ -40,13 +40,10 @@ public class FlinkEndpoint extends DefaultEndpoint {
     private DataSet dataSet;
     @UriParam
     private DataSetCallback dataSetCallback;
-
     @UriParam
     private DataStream dataStream;
-
     @UriParam
     private DataStreamCallback dataStreamCallback;
-
     @UriParam(defaultValue = "true")
     private boolean collect = true;
 

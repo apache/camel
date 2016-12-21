@@ -23,6 +23,7 @@ import java.util.Map;
 import com.ibatis.sqlmap.client.SqlMapClient;
 import com.ibatis.sqlmap.client.SqlMapClientBuilder;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ResourceHelper;
 
 /**
@@ -59,8 +60,11 @@ import org.apache.camel.util.ResourceHelper;
  */
 public class IBatisComponent extends UriEndpointComponent {
     private static final String DEFAULT_CONFIG_URI = "classpath:SqlMapConfig.xml";
+    @Metadata(label = "advanced")
     private SqlMapClient sqlMapClient;
+    @Metadata(defaultValue = DEFAULT_CONFIG_URI)
     private String sqlMapConfig = DEFAULT_CONFIG_URI;
+    @Metadata(defaultValue = "true")
     private boolean useTransactions = true;
 
     public IBatisComponent() {

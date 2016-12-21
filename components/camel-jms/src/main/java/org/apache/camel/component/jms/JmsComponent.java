@@ -56,11 +56,18 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
     private static final Logger LOG = LoggerFactory.getLogger(JmsComponent.class);
 
     private static final String KEY_FORMAT_STRATEGY_PARAM = "jmsKeyFormatStrategy";
-    private JmsConfiguration configuration;
-    private ApplicationContext applicationContext;
-    private QueueBrowseStrategy queueBrowseStrategy;
-    private HeaderFilterStrategy headerFilterStrategy;
+
     private ExecutorService asyncStartStopExecutorService;
+    private ApplicationContext applicationContext;
+
+    @Metadata(label = "advanced", description = "To use a shared JMS configuration")
+    private JmsConfiguration configuration;
+    @Metadata(label = "advanced", description = "To use a custom QueueBrowseStrategy when browsing queues")
+    private QueueBrowseStrategy queueBrowseStrategy;
+    @Metadata(label = "advanced", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+    private HeaderFilterStrategy headerFilterStrategy;
+    @Metadata(label = "advanced", description = "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances"
+            + " of javax.jms.Message objects when Camel is sending a JMS message.")
     private MessageCreatedStrategy messageCreatedStrategy;
 
     public JmsComponent() {

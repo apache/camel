@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.jgroups.Channel;
 
 /**
@@ -29,6 +30,7 @@ public class JGroupsComponent extends UriEndpointComponent {
 
     private Channel channel;
     private String channelProperties;
+    @Metadata(label = "consumer")
     private boolean enableViewMessages;
 
     public JGroupsComponent() {

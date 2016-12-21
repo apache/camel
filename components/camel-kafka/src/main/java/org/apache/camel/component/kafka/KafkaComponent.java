@@ -22,9 +22,11 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 
 public class KafkaComponent extends UriEndpointComponent {
 
+    @Metadata(label = "advanced")
     private ExecutorService workerPool;
 
     public KafkaComponent() {

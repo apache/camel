@@ -60,9 +60,9 @@ The InfluxDB component supports 4 endpoint options which are listed below:
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| connectionBean | producer |  | String | *Required* Name of org.influxdb.InfluxDB to use.
-| databaseName | producer |  | String | Setter for databaseName
-| retentionPolicy | producer | default | String | Setter for retentionPolicy
+| connectionBean | producer |  | String | *Required* Connection to the influx database of class InfluxDB.class
+| databaseName | producer |  | String | The name of the database where the time series will be stored
+| retentionPolicy | producer | default | String | The string that defines the retention policy to the data created by the endpoint
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}
