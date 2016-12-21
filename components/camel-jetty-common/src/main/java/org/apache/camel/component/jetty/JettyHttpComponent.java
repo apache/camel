@@ -77,6 +77,7 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
@@ -346,8 +347,23 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                 
                 if (endpoint.getHandlers() != null && !endpoint.getHandlers().isEmpty()) {
                     // As the server is started, we need to stop the server for a while to add the new handler
+                    javax.net.ssl.SSLContext sct = null;
+                    SslConnectionFactory scf = null;
+                    // need to preserve SSLContext before the server is stopped since the SSLContext will be set to null
+                    if (endpoint.getSslContextParameters() != null) {
+                        scf = connectorRef.connector.getConnectionFactory(SslConnectionFactory.class);
+                        if (scf != null) {
+                            sct = scf.getSslContextFactory().getSslContext();
+                        }
+                    }
+
                     connectorRef.server.stop();
                     addJettyHandlers(connectorRef.server, endpoint.getHandlers());
+
+                    // reset SSLContext back before the server is restarted
+                    if (scf != null) {
+                        scf.getSslContextFactory().setSslContext(sct);
+                    }
                     connectorRef.server.start();
                 }
                 // ref track the connector
