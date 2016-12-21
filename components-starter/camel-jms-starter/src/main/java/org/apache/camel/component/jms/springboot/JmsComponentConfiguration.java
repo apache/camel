@@ -533,12 +533,6 @@ public class JmsComponentConfiguration {
     @NestedConfigurationProperty
     private QueueBrowseStrategy queueBrowseStrategy;
     /**
-     * To use a custom HeaderFilterStrategy to filter header to and from Camel
-     * message.
-     */
-    @NestedConfigurationProperty
-    private HeaderFilterStrategy headerFilterStrategy;
-    /**
      * To use the given MessageCreatedStrategy which are invoked when Camel
      * creates new instances of javax.jms.Message objects when Camel is sending
      * a JMS message.
@@ -556,6 +550,12 @@ public class JmsComponentConfiguration {
      * correlation id to be updated.
      */
     private Long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime;
+    /**
+     * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+     * header to and from Camel message.
+     */
+    @NestedConfigurationProperty
+    private HeaderFilterStrategy headerFilterStrategy;
 
     public JmsConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -1131,15 +1131,6 @@ public class JmsComponentConfiguration {
         this.queueBrowseStrategy = queueBrowseStrategy;
     }
 
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        return headerFilterStrategy;
-    }
-
-    public void setHeaderFilterStrategy(
-            HeaderFilterStrategy headerFilterStrategy) {
-        this.headerFilterStrategy = headerFilterStrategy;
-    }
-
     public MessageCreatedStrategy getMessageCreatedStrategy() {
         return messageCreatedStrategy;
     }
@@ -1165,6 +1156,15 @@ public class JmsComponentConfiguration {
     public void setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
             Long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
         this.waitForProvisionCorrelationToBeUpdatedThreadSleepingTime = waitForProvisionCorrelationToBeUpdatedThreadSleepingTime;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(
+            HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 
     public static class JmsConfigurationNestedConfiguration {

@@ -25,9 +25,7 @@ import javax.jms.Session;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -51,7 +49,7 @@ import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
  *
  * @version 
  */
-public class JmsComponent extends UriEndpointComponent implements ApplicationContextAware, HeaderFilterStrategyAware {
+public class JmsComponent extends HeaderFilterStrategyComponent implements ApplicationContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsComponent.class);
 
@@ -64,8 +62,6 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
     private JmsConfiguration configuration;
     @Metadata(label = "advanced", description = "To use a custom QueueBrowseStrategy when browsing queues")
     private QueueBrowseStrategy queueBrowseStrategy;
-    @Metadata(label = "advanced", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
-    private HeaderFilterStrategy headerFilterStrategy;
     @Metadata(label = "advanced", description = "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances"
             + " of javax.jms.Message objects when Camel is sending a JMS message.")
     private MessageCreatedStrategy messageCreatedStrategy;
@@ -834,17 +830,6 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
         this.queueBrowseStrategy = queueBrowseStrategy;
     }
 
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        return headerFilterStrategy;
-    }
-
-    /**
-     * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
-     */
-    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
-        this.headerFilterStrategy = strategy;
-    }
-
     public MessageCreatedStrategy getMessageCreatedStrategy() {
         return messageCreatedStrategy;
     }
@@ -885,8 +870,8 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
 
     @Override
     protected void doStart() throws Exception {
-        if (headerFilterStrategy == null) {
-            headerFilterStrategy = new JmsHeaderFilterStrategy(getConfiguration().isIncludeAllJMSXProperties());
+        if (getHeaderFilterStrategy() == null) {
+            setHeaderFilterStrategy(new JmsHeaderFilterStrategy(getConfiguration().isIncludeAllJMSXProperties()));
         }
     }
 
