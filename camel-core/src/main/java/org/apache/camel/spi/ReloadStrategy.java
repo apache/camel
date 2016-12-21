@@ -29,13 +29,6 @@ import org.apache.camel.StaticService;
 public interface ReloadStrategy extends Service, StaticService, CamelContextAware {
 
     /**
-     * A reload is triggered and the {@link CamelContext} is expected to do a re-start
-     *
-     * @param camelContext  the running CamelContext
-     */
-    void onReloadCamelContext(CamelContext camelContext);
-
-    /**
      * A reload is triggered when a XML resource is changed which contains Camel routes or rest services
      *
      * @param camelContext  the running CamelContext
