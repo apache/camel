@@ -57,7 +57,7 @@ public class SjmsComponentConfiguration {
      * The maximum number of connections available to endpoints started under
      * this component
      */
-    private Integer connectionCount;
+    private Integer connectionCount = 1;
     /**
      * Pluggable strategy for encoding and decoding JMS keys so they can be
      * compliant with the JMS specification. Camel provides one implementation

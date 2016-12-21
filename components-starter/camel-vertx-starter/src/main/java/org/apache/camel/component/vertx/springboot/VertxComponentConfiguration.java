@@ -59,7 +59,7 @@ public class VertxComponentConfiguration {
      * Timeout in seconds to wait for clustered Vertx EventBus to be ready. The
      * default value is 60.
      */
-    private Integer timeout;
+    private Integer timeout = 60;
 
     public VertxFactory getVertxFactory() {
         return vertxFactory;

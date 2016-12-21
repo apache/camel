@@ -72,7 +72,7 @@ The CXF-RS component supports 1 options which are listed below.
 [width="100%",cols="2,1m,7",options="header"]
 |=======================================================================
 | Name | Java Type | Description
-| headerFilterStrategy | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+| headerFilterStrategy | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
 |=======================================================================
 {% endraw %}
 // component options: END

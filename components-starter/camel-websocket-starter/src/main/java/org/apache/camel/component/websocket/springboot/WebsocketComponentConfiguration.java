@@ -44,11 +44,11 @@ public class WebsocketComponentConfiguration {
     /**
      * The hostname. The default value is 0.0.0.0
      */
-    private String host;
+    private String host = "0.0.0.0";
     /**
      * The port number. The default value is 9292
      */
-    private Integer port;
+    private Integer port = 9292;
     /**
      * The password for the keystore when using SSL.
      */

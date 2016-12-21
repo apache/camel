@@ -82,9 +82,6 @@ The Yammer component supports 29 endpoint options which are listed below:
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | function | common |  | YammerFunctionType | *Required* The function to use
-| accessToken | common |  | String | *Required* The access token
-| consumerKey | common |  | String | *Required* The consumer key
-| consumerSecret | common |  | String | *Required* The consumer secret
 | useJson | common | false | boolean | Set to true if you want to use raw JSON rather than converting to POJOs.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | delay | consumer | 5000 | long | Delay between polling in millis
@@ -110,6 +107,9 @@ The Yammer component supports 29 endpoint options which are listed below:
 | startScheduler | scheduler | true | boolean | Whether the scheduler should be auto started.
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
+| accessToken | security |  | String | *Required* The access token
+| consumerKey | security |  | String | *Required* The consumer key
+| consumerSecret | security |  | String | *Required* The consumer secret
 |=======================================================================
 {% endraw %}
 // endpoint options: END
