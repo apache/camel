@@ -68,7 +68,7 @@ The Log component supports 1 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| exchangeFormatter |  |  | ExchangeFormatter | Sets a custom ExchangeFormatter to convert the Exchange to a String suitable for logging. If not specified we default to DefaultExchangeFormatter.
+| exchangeFormatter | advanced |  | ExchangeFormatter | Sets a custom ExchangeFormatter to convert the Exchange to a String suitable for logging. If not specified we default to DefaultExchangeFormatter.
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -77,7 +77,7 @@ The SQL StoredProcedure component supports 1 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| dataSource |  |  | DataSource | Sets the DataSource to use to communicate with the database.
+| dataSource | producer |  | DataSource | Sets the DataSource to use to communicate with the database.
 |=======================================================================
 {% endraw %}
 // component options: END

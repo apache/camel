@@ -44,13 +44,13 @@ The ServiceNow component supports 7 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| configuration |  |  | ServiceNowConfiguration | The ServiceNow default configuration
-| apiUrl |  |  | String | The ServiceNow REST API url
-| userName |  |  | String | ServiceNow user account name
-| password |  |  | String | ServiceNow account password
-| oauthClientId |  |  | String | OAuth2 ClientID
-| oauthClientSecret |  |  | String | OAuth2 ClientSecret
-| oauthTokenUrl |  |  | String | OAuth token Url
+| configuration | advanced |  | ServiceNowConfiguration | The ServiceNow default configuration
+| apiUrl | producer |  | String | The ServiceNow REST API url
+| userName | security |  | String | ServiceNow user account name
+| password | security |  | String | ServiceNow account password
+| oauthClientId | security |  | String | OAuth2 ClientID
+| oauthClientSecret | security |  | String | OAuth2 ClientSecret
+| oauthTokenUrl | security |  | String | OAuth token Url
 |=======================================================================
 {% endraw %}
 // component options: END

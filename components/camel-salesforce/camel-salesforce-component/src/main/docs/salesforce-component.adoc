@@ -462,22 +462,22 @@ The Salesforce component supports 16 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| loginConfig |  |  | SalesforceLoginConfig | To use the shared SalesforceLoginConfig as login configuration
-| config |  |  | SalesforceEndpointConfig | To use the shared SalesforceLoginConfig as configuration
-| httpClientProperties |  |  | Map | Used for configuring HTTP client properties as key/value pairs
-| sslContextParameters |  |  | SSLContextParameters | To configure security using SSLContextParameters
-| httpProxyHost |  |  | String | To configure HTTP proxy host
-| httpProxyPort |  |  | Integer | To configure HTTP proxy port
-| httpProxyUsername |  |  | String | To configure HTTP proxy username
-| httpProxyPassword |  |  | String | To configure HTTP proxy password
-| isHttpProxySocks4 |  | false | boolean | Enable for Socks4 proxy false by default
-| isHttpProxySecure |  | false | boolean | Enable for TLS connections true by default
-| httpProxyIncludedAddresses |  |  | Set | HTTP proxy included addresses
-| httpProxyExcludedAddresses |  |  | Set | HTTP proxy excluded addresses
-| httpProxyAuthUri |  |  | String | HTTP proxy authentication URI
-| httpProxyRealm |  |  | String | HTTP proxy authentication realm
-| httpProxyUseDigestAuth |  | false | boolean | Use HTTP proxy Digest authentication false by default
-| packages |  |  | String[] | Package names to scan for DTO classes (multiple packages can be separated by comma).
+| loginConfig | security |  | SalesforceLoginConfig | To use the shared SalesforceLoginConfig as login configuration
+| config | advanced |  | SalesforceEndpointConfig | To use the shared SalesforceLoginConfig as configuration
+| httpClientProperties | advanced |  | Map | Used for configuring HTTP client properties as key/value pairs
+| sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
+| httpProxyHost | proxy |  | String | To configure HTTP proxy host
+| httpProxyPort | proxy |  | Integer | To configure HTTP proxy port
+| httpProxyUsername | security |  | String | To configure HTTP proxy username
+| httpProxyPassword | security |  | String | To configure HTTP proxy password
+| isHttpProxySocks4 | proxy | false | boolean | Enable for Socks4 proxy false by default
+| isHttpProxySecure | security | false | boolean | Enable for TLS connections true by default
+| httpProxyIncludedAddresses | proxy |  | Set | HTTP proxy included addresses
+| httpProxyExcludedAddresses | proxy |  | Set | HTTP proxy excluded addresses
+| httpProxyAuthUri | security |  | String | HTTP proxy authentication URI
+| httpProxyRealm | security |  | String | HTTP proxy authentication realm
+| httpProxyUseDigestAuth | security | false | boolean | Use HTTP proxy Digest authentication false by default
+| packages | common |  | String[] | Package names to scan for DTO classes (multiple packages can be separated by comma).
 |=======================================================================
 {% endraw %}
 // component options: END

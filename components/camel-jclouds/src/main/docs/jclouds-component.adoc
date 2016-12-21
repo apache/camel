@@ -118,8 +118,8 @@ The JClouds component supports 2 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| blobStores |  |  | List | To use the given BlobStore which must be configured when using blobstore.
-| computeServices |  |  | List | To use the given ComputeService which must be configured when use compute.
+| blobStores | common |  | List | To use the given BlobStore which must be configured when using blobstore.
+| computeServices | common |  | List | To use the given ComputeService which must be configured when use compute.
 |=======================================================================
 {% endraw %}
 // component options: END

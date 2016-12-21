@@ -78,10 +78,10 @@ The Apache Flink component supports 4 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| dataSet |  |  | DataSet | DataSet to compute against.
-| dataStream |  |  | DataStream | DataStream to compute against.
-| dataSetCallback |  |  | DataSetCallback | Function performing action against a DataSet.
-| dataStreamCallback |  |  | DataStreamCallback | Function performing action against a DataStream.
+| dataSet | producer |  | DataSet | DataSet to compute against.
+| dataStream | producer |  | DataStream | DataStream to compute against.
+| dataSetCallback | producer |  | DataSetCallback | Function performing action against a DataSet.
+| dataStreamCallback | producer |  | DataStreamCallback | Function performing action against a DataStream.
 |=======================================================================
 {% endraw %}
 // component options: END

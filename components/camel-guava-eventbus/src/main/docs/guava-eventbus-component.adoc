@@ -59,8 +59,8 @@ The Guava EventBus component supports 2 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| eventBus |  |  | EventBus | To use the given Guava EventBus instance
-| listenerInterface |  |  | Class<?> | The interface with method(s) marked with the Subscribe annotation. Dynamic proxy will be created over the interface so it could be registered as the EventBus listener. Particularly useful when creating multi-event listeners and for handling DeadEvent properly. This option cannot be used together with eventClass option.
+| eventBus | common |  | EventBus | To use the given Guava EventBus instance
+| listenerInterface | common |  | Class<?> | The interface with method(s) marked with the Subscribe annotation. Dynamic proxy will be created over the interface so it could be registered as the EventBus listener. Particularly useful when creating multi-event listeners and for handling DeadEvent properly. This option cannot be used together with eventClass option.
 |=======================================================================
 {% endraw %}
 // component options: END

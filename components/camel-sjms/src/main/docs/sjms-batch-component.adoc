@@ -125,8 +125,8 @@ The Simple JMS Batch component supports 2 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| connectionFactory |  |  | ConnectionFactory | A ConnectionFactory is required to enable the SjmsBatchComponent.
-| headerFilterStrategy |  |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
+| connectionFactory | advanced |  | ConnectionFactory | A ConnectionFactory is required to enable the SjmsBatchComponent.
+| headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
 |=======================================================================
 {% endraw %}
 // component options: END

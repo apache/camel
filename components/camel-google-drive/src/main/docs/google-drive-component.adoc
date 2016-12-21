@@ -76,8 +76,8 @@ The Google Drive component supports 2 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| configuration |  |  | GoogleDriveConfiguration | To use the shared configuration
-| clientFactory |  |  | GoogleDriveClientFactory | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleDriveClientFactory
+| configuration | common |  | GoogleDriveConfiguration | To use the shared configuration
+| clientFactory | advanced |  | GoogleDriveClientFactory | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleDriveClientFactory
 |=======================================================================
 {% endraw %}
 // component options: END

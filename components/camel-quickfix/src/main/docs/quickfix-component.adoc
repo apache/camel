@@ -99,11 +99,11 @@ The QuickFix component supports 5 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| messageFactory |  |  | MessageFactory | To use the given MessageFactory
-| logFactory |  |  | LogFactory | To use the given LogFactory
-| messageStoreFactory |  |  | MessageStoreFactory | To use the given MessageStoreFactory
-| configurations |  |  | Map | To use the given map of pre configured QuickFix configurations mapped to the key
-| lazyCreateEngines |  | false | boolean | If set to true the engines will be created and started when needed (when first message is send)
+| messageFactory | advanced |  | MessageFactory | To use the given MessageFactory
+| logFactory | advanced |  | LogFactory | To use the given LogFactory
+| messageStoreFactory | advanced |  | MessageStoreFactory | To use the given MessageStoreFactory
+| configurations | common |  | Map | To use the given map of pre configured QuickFix configurations mapped to the key
+| lazyCreateEngines | common | false | boolean | If set to true the engines will be created and started when needed (when first message is send)
 |=======================================================================
 {% endraw %}
 // component options: END

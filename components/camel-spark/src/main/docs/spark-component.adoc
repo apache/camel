@@ -69,8 +69,8 @@ The Apache Spark component supports 2 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| rdd |  |  | JavaRDDLike | RDD to compute against.
-| rddCallback |  |  | RddCallback | Function performing action against an RDD.
+| rdd | producer |  | JavaRDDLike | RDD to compute against.
+| rddCallback | producer |  | RddCallback | Function performing action against an RDD.
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -90,11 +90,11 @@ The Netty HTTP component supports 5 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| nettyHttpBinding |  |  | NettyHttpBinding | To use a custom org.apache.camel.component.netty.http.NettyHttpBinding for binding to/from Netty and Camel Message API.
-| configuration |  |  | NettyHttpConfiguration | To use the NettyConfiguration as configuration when creating endpoints.
-| headerFilterStrategy |  |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter headers.
-| securityConfiguration |  |  | NettyHttpSecurityConfiguration | Refers to a org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration for configuring secure web resources.
-| maximumPoolSize |  | 16 | int | The core pool size for the ordered thread pool if its in use. The default value is 16.
+| nettyHttpBinding | advanced |  | NettyHttpBinding | To use a custom org.apache.camel.component.netty.http.NettyHttpBinding for binding to/from Netty and Camel Message API.
+| configuration | common |  | NettyHttpConfiguration | To use the NettyConfiguration as configuration when creating endpoints.
+| headerFilterStrategy | advanced |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter headers.
+| securityConfiguration | security |  | NettyHttpSecurityConfiguration | Refers to a org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration for configuring secure web resources.
+| maximumPoolSize | advanced | 16 | int | The core pool size for the ordered thread pool if its in use. The default value is 16.
 |=======================================================================
 {% endraw %}
 // component options: END

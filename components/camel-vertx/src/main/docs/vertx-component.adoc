@@ -50,12 +50,12 @@ The Vert.x component supports 6 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| vertxFactory |  |  | VertxFactory | To use a custom VertxFactory implementation
-| host |  |  | String | Hostname for creating an embedded clustered EventBus
-| port |  |  | int | Port for creating an embedded clustered EventBus
-| vertxOptions |  |  | VertxOptions | Options to use for creating vertx
-| vertx |  |  | Vertx | To use the given vertx EventBus instead of creating a new embedded EventBus
-| timeout |  | 60 | int | Timeout in seconds to wait for clustered Vertx EventBus to be ready. The default value is 60.
+| vertxFactory | advanced |  | VertxFactory | To use a custom VertxFactory implementation
+| host | common |  | String | Hostname for creating an embedded clustered EventBus
+| port | common |  | int | Port for creating an embedded clustered EventBus
+| vertxOptions | common |  | VertxOptions | Options to use for creating vertx
+| vertx | common |  | Vertx | To use the given vertx EventBus instead of creating a new embedded EventBus
+| timeout | common | 60 | int | Timeout in seconds to wait for clustered Vertx EventBus to be ready. The default value is 60.
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -50,7 +50,7 @@ The JT400 component supports 1 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| connectionPool |  |  | AS400ConnectionPool | Returns the default connection pool used by this component.
+| connectionPool | advanced |  | AS400ConnectionPool | Returns the default connection pool used by this component.
 |=======================================================================
 {% endraw %}
 // component options: END

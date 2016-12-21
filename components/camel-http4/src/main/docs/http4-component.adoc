@@ -65,19 +65,19 @@ The HTTP4 component supports 13 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| httpClientConfigurer |  |  | HttpClientConfigurer | To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.
-| clientConnectionManager |  |  | HttpClientConnectionManager | To use a custom HttpClientConnectionManager to manage connections
-| httpBinding |  |  | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
-| httpConfiguration |  |  | HttpConfiguration | To use the shared HttpConfiguration as base configuration.
-| allowJavaSerializedObject |  | false | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
-| httpContext |  |  | HttpContext | To use a custom org.apache.http.protocol.HttpContext when executing requests.
-| sslContextParameters |  |  | SSLContextParameters | To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances you need to define a new HttpComponent per instance you need.
-| x509HostnameVerifier |  |  | X509HostnameVerifier | To use a custom X509HostnameVerifier such as org.apache.http.conn.ssl.StrictHostnameVerifier or org.apache.http.conn.ssl.AllowAllHostnameVerifier.
-| maxTotalConnections |  | 200 | int | The maximum number of connections.
-| connectionsPerRoute |  | 20 | int | The maximum number of connections per route.
-| connectionTimeToLive |  |  | long | The time for connection to live the time unit is millisecond the default value is always keep alive.
-| cookieStore |  |  | CookieStore | To use a custom org.apache.http.client.CookieStore. By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store. Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy).
-| headerFilterStrategy |  |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
+| httpClientConfigurer | advanced |  | HttpClientConfigurer | To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.
+| clientConnectionManager | advanced |  | HttpClientConnectionManager | To use a custom HttpClientConnectionManager to manage connections
+| httpBinding | producer |  | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
+| httpConfiguration | producer |  | HttpConfiguration | To use the shared HttpConfiguration as base configuration.
+| allowJavaSerializedObject | producer | false | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
+| httpContext | advanced |  | HttpContext | To use a custom org.apache.http.protocol.HttpContext when executing requests.
+| sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances you need to define a new HttpComponent per instance you need.
+| x509HostnameVerifier | security |  | X509HostnameVerifier | To use a custom X509HostnameVerifier such as org.apache.http.conn.ssl.StrictHostnameVerifier or org.apache.http.conn.ssl.AllowAllHostnameVerifier.
+| maxTotalConnections | advanced | 200 | int | The maximum number of connections.
+| connectionsPerRoute | advanced | 20 | int | The maximum number of connections per route.
+| connectionTimeToLive | advanced |  | long | The time for connection to live the time unit is millisecond the default value is always keep alive.
+| cookieStore | producer |  | CookieStore | To use a custom org.apache.http.client.CookieStore. By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store. Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy).
+| headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -65,7 +65,7 @@ The APNS component supports 1 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| apnsService |  |  | ApnsService | *Required* The ApnsService to use. The org.apache.camel.component.apns.factory.ApnsServiceFactory can be used to build a ApnsService
+| apnsService | common |  | ApnsService | *Required* The ApnsService to use. The org.apache.camel.component.apns.factory.ApnsServiceFactory can be used to build a ApnsService
 |=======================================================================
 {% endraw %}
 // component options: END
