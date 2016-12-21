@@ -25,23 +25,23 @@
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 	
 	<bean id="builder"
-		class="org.apache.camel.component.cxf.jaxrs.CxfRsRelayTest.CamelRouteBuilder" />
+		class="org.apache.camel.component.cxf.jaxrs.CxfRsAsyncRelayTest.CamelRouteBuilder" />
 	<camel:camelContext id="cxfrs_context">
 		<camel:routeBuilder ref="builder" />
 		<camel:endpoint id="upload1"
 			uri="cxfrs:bean:rsServer1?bindingStyle=SimpleConsumer" />
 		<camel:endpoint id="upload2"
 			uri="cxfrs:bean:rsServer2?bindingStyle=SimpleConsumer" />
-		<camel:endpoint id="upload2Client"
-			uri="cxfrs:bean:rsClient2?httpClientAPI=false&amp;synchronous=true" />
+		<camel:endpoint id="upload2Client" uri="cxfrs:bean:rsClient2?httpClientAPI=false" />
+		<!--<camel:endpoint id="upload2Client" uri="cxfrs:bean:rsClient2?httpClientAPI=false&amp;synchronous=true" />-->
 	</camel:camelContext>
-	<cxf:rsServer id="rsServer1" address="http://localhost:${CXFTestSupport.port6}/CxfRsRelayTest/rest"
-		serviceClass="org.apache.camel.component.cxf.jaxrs.CxfRsRelayTest.UploadService"
+	<cxf:rsServer id="rsServer1" address="http://localhost:${CXFTestSupport.port6}/CxfRsAsyncRelayTest/rest"
+		serviceClass="org.apache.camel.component.cxf.jaxrs.CxfRsAsyncRelayTest.UploadService"
 		loggingFeatureEnabled="true" loggingSizeLimit="5000" />
-	<cxf:rsServer id="rsServer2" address="http://localhost:${CXFTestSupport.port6}/CxfRsRelayTest/rast"
-		serviceClass="org.apache.camel.component.cxf.jaxrs.CxfRsRelayTest.UploadService"
+	<cxf:rsServer id="rsServer2" address="http://localhost:${CXFTestSupport.port6}/CxfRsAsyncRelayTest/rast"
+		serviceClass="org.apache.camel.component.cxf.jaxrs.CxfRsAsyncRelayTest.UploadService"
 		loggingFeatureEnabled="true" loggingSizeLimit="5000" />
-	<cxf:rsClient id="rsClient2" address="http://localhost:${CXFTestSupport.port6}/CxfRsRelayTest/rast"
-		serviceClass="org.apache.camel.component.cxf.jaxrs.CxfRsRelayTest.UploadService"
+	<cxf:rsClient id="rsClient2" address="http://localhost:${CXFTestSupport.port6}/CxfRsAsyncRelayTest/rast"
+		serviceClass="org.apache.camel.component.cxf.jaxrs.CxfRsAsyncRelayTest.UploadService"
 		loggingFeatureEnabled="true" loggingSizeLimit="5000" />
 </beans>
