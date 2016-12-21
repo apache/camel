@@ -672,7 +672,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     /**
      * Allows you to specify a custom task executor for consuming messages.
      */
-    @Metadata(label = "consumer.advanced",
+    @Metadata(label = "consumer,advanced",
             description = "Allows you to specify a custom task executor for consuming messages.")
     public void setTaskExecutor(TaskExecutor taskExecutor) {
         getConfiguration().setTaskExecutor(taskExecutor);
