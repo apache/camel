@@ -38,7 +38,7 @@ public class DisruptorVmComponentConfiguration {
     /**
      * To configure the default value for multiple consumers
      */
-    private Boolean defaultMultipleConsumers;
+    private Boolean defaultMultipleConsumers = false;
     /**
      * To configure the default value for DisruptorProducerType The default
      * value is Multi.

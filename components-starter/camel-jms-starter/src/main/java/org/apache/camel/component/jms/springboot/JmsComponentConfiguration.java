@@ -64,7 +64,7 @@ public class JmsComponentConfiguration {
      * queue on the JMS broker. To avoid this its recommended to enable this
      * option.
      */
-    private Boolean acceptMessagesWhileStopping;
+    private Boolean acceptMessagesWhileStopping = false;
     /**
      * Whether the DefaultMessageListenerContainer used in the reply managers
      * for request-reply messaging allow the
@@ -74,7 +74,7 @@ public class JmsComponentConfiguration {
      * ability is enabled by default in the regular JMS consumers but to enable
      * for reply managers you must enable this flag.
      */
-    private Boolean allowReplyManagerQuickStop;
+    private Boolean allowReplyManagerQuickStop = false;
     /**
      * The JMS acknowledgement mode defined as an Integer. Allows you to set
      * vendor-specific extensions to the acknowledgment mode. For the regular
@@ -87,7 +87,7 @@ public class JmsComponentConfiguration {
      * but sometimes can catch early any issues with the underlying JMS provider
      * and the use of JMS properties
      */
-    private Boolean eagerLoadingOfProperties;
+    private Boolean eagerLoadingOfProperties = false;
     /**
      * The JMS acknowledgement name which is one of: SESSION_TRANSACTED
      * CLIENT_ACKNOWLEDGE AUTO_ACKNOWLEDGE DUPS_OK_ACKNOWLEDGE
@@ -210,7 +210,7 @@ public class JmsComponentConfiguration {
      * Specifies whether the listener session should be exposed when consuming
      * messages.
      */
-    private Boolean exposeListenerSession;
+    private Boolean exposeListenerSession = false;
     /**
      * Specifies the limit for idle executions of a receive task not having
      * received any message within its execution. If this limit is reached the
@@ -283,12 +283,12 @@ public class JmsComponentConfiguration {
      * (incidentally Camel will set the alwaysCopyMessage option to true if a
      * replyToDestinationSelectorName is set)
      */
-    private Boolean alwaysCopyMessage;
+    private Boolean alwaysCopyMessage = false;
     /**
      * Specifies whether JMSMessageID should always be used as JMSCorrelationID
      * for InOut messages.
      */
-    private Boolean useMessageIDAsCorrelationID;
+    private Boolean useMessageIDAsCorrelationID = false;
     /**
      * Values greater than 1 specify the message priority when sending (where 0
      * is the lowest priority and 9 is the highest). The explicitQosEnabled
@@ -299,7 +299,7 @@ public class JmsComponentConfiguration {
      * Specifies whether to inhibit the delivery of messages published by its
      * own connection.
      */
-    private Boolean pubSubNoLocal;
+    private Boolean pubSubNoLocal = false;
     /**
      * The timeout for receiving messages (in milliseconds).
      */
@@ -315,7 +315,7 @@ public class JmsComponentConfiguration {
      * and a clientId.
      */
     @Deprecated
-    private Boolean subscriptionDurable;
+    private Boolean subscriptionDurable = false;
     /**
      * Allows you to specify a custom task executor for consuming messages.
      */
@@ -329,7 +329,7 @@ public class JmsComponentConfiguration {
     /**
      * Specifies whether to use transacted mode
      */
-    private Boolean transacted;
+    private Boolean transacted = false;
     /**
      * If true Camel will create a JmsTransactionManager if there is no
      * transactionManager injected when option transacted=true.
@@ -356,7 +356,7 @@ public class JmsComponentConfiguration {
      * exception on startup. This ensures that Camel is not started with failed
      * connections. The JMS producers is tested as well.
      */
-    private Boolean testConnectionOnStartup;
+    private Boolean testConnectionOnStartup = false;
     /**
      * Whether to startup the JmsConsumer message listener asynchronously when
      * starting a route. For example if a JmsConsumer cannot get a connection to
@@ -369,19 +369,19 @@ public class JmsComponentConfiguration {
      * will not be able to receive messages; You can then restart the route to
      * retry.
      */
-    private Boolean asyncStartListener;
+    private Boolean asyncStartListener = false;
     /**
      * Whether to stop the JmsConsumer message listener asynchronously when
      * stopping a route.
      */
-    private Boolean asyncStopListener;
+    private Boolean asyncStopListener = false;
     /**
      * When using mapJmsMessage=false Camel will create a new JMS message to
      * send to a new JMS destination if you touch the headers (get or set)
      * during the route. Set this option to true to force Camel to send the
      * original JMS message that was received.
      */
-    private Boolean forceSendOriginalMessage;
+    private Boolean forceSendOriginalMessage = false;
     /**
      * The timeout for waiting for a reply when using the InOut Exchange Pattern
      * (in milliseconds). The default is 20 seconds. You can include the header
@@ -407,7 +407,7 @@ public class JmsComponentConfiguration {
      * enable this option on both the producer and consumer side so Camel knows
      * the payloads is an Exchange and not a regular payload.
      */
-    private Boolean transferExchange;
+    private Boolean transferExchange = false;
     /**
      * If enabled and you are using Request Reply messaging (InOut) and an
      * Exchange failed on the consumer side then the caused Exception will be
@@ -420,7 +420,7 @@ public class JmsComponentConfiguration {
      * wrapped in an outer exception such as
      * org.apache.camel.RuntimeCamelException when returned to the producer.
      */
-    private Boolean transferException;
+    private Boolean transferException = false;
     /**
      * If enabled and you are using Request Reply messaging (InOut) and an
      * Exchange failed with a SOAP fault (not exception) on the consumer side
@@ -431,7 +431,7 @@ public class JmsComponentConfiguration {
      * You may want to enable this when using Camel components that support
      * faults such as SOAP based such as cxf or spring-ws.
      */
-    private Boolean transferFault;
+    private Boolean transferFault = false;
     /**
      * Allows you to use your own implementation of the
      * org.springframework.jms.core.JmsOperations interface. Camel uses
@@ -470,7 +470,7 @@ public class JmsComponentConfiguration {
      * explicitQosEnabled option by contrast will only use options set on the
      * endpoint and not values from the message header.
      */
-    private Boolean preserveMessageQos;
+    private Boolean preserveMessageQos = false;
     /**
      * Whether the JmsConsumer processes the Exchange asynchronously. If enabled
      * then the JmsConsumer may pickup the next message from the JMS queue while
@@ -482,7 +482,7 @@ public class JmsComponentConfiguration {
      * asyncConsumer=true does not run asynchronously as transaction must be
      * executed synchronously (Camel 3.0 may support async transactions).
      */
-    private Boolean asyncConsumer;
+    private Boolean asyncConsumer = false;
     /**
      * Whether to allow sending messages with no body. If this option is false
      * and the message body is null then an JMSException is thrown.
@@ -494,14 +494,14 @@ public class JmsComponentConfiguration {
      * actual JMSMessageID that was used by the JMS client when the message was
      * sent to the JMS destination.
      */
-    private Boolean includeSentJMSMessageID;
+    private Boolean includeSentJMSMessageID = false;
     /**
      * Whether to include all JMSXxxx properties when mapping from JMS to Camel
      * Message. Setting this to true will include properties such as JMSXAppID
      * and JMSXUserID etc. Note: If you are using a custom headerFilterStrategy
      * then this option does not apply.
      */
-    private Boolean includeAllJMSXProperties;
+    private Boolean includeAllJMSXProperties = false;
     /**
      * Specifies what default TaskExecutor type to use in the
      * DefaultMessageListenerContainer for both consumer endpoints and the

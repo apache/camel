@@ -470,13 +470,13 @@ The Salesforce component supports 16 options which are listed below.
 | httpProxyPort |  |  | Integer | To configure HTTP proxy port
 | httpProxyUsername |  |  | String | To configure HTTP proxy username
 | httpProxyPassword |  |  | String | To configure HTTP proxy password
-| isHttpProxySocks4 |  |  | boolean | Enable for Socks4 proxy false by default
-| isHttpProxySecure |  |  | boolean | Enable for TLS connections true by default
+| isHttpProxySocks4 |  | false | boolean | Enable for Socks4 proxy false by default
+| isHttpProxySecure |  | false | boolean | Enable for TLS connections true by default
 | httpProxyIncludedAddresses |  |  | Set | HTTP proxy included addresses
 | httpProxyExcludedAddresses |  |  | Set | HTTP proxy excluded addresses
 | httpProxyAuthUri |  |  | String | HTTP proxy authentication URI
 | httpProxyRealm |  |  | String | HTTP proxy authentication realm
-| httpProxyUseDigestAuth |  |  | boolean | Use HTTP proxy Digest authentication false by default
+| httpProxyUseDigestAuth |  | false | boolean | Use HTTP proxy Digest authentication false by default
 | packages |  |  | String[] | Package names to scan for DTO classes (multiple packages can be separated by comma).
 |=======================================================================
 {% endraw %}

@@ -63,7 +63,7 @@ public class XsltComponentConfiguration {
      * class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to
      * the classpath.
      */
-    private Boolean saxon;
+    private Boolean saxon = false;
 
     public XmlConverterNestedConfiguration getXmlConverter() {
         return xmlConverter;

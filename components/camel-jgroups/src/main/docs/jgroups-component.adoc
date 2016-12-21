@@ -65,7 +65,7 @@ The JGroups component supports 3 options which are listed below.
 | Name | Group | Default | Java Type | Description
 | channel |  |  | Channel | Channel to use
 | channelProperties |  |  | String | Specifies configuration properties of the JChannel used by the endpoint.
-| enableViewMessages |  |  | boolean | If set to true the consumer endpoint will receive org.jgroups.View messages as well (not only org.jgroups.Message instances). By default only regular messages are consumed by the endpoint.
+| enableViewMessages |  | false | boolean | If set to true the consumer endpoint will receive org.jgroups.View messages as well (not only org.jgroups.Message instances). By default only regular messages are consumed by the endpoint.
 |=======================================================================
 {% endraw %}
 // component options: END

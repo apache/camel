@@ -53,7 +53,7 @@ The SCP component supports 1 options which are listed below.
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| verboseLogging |  |  | boolean | JSCH is verbose logging out of the box. Therefore we turn the logging down to DEBUG logging by default. But setting this option to true turns on the verbose logging again.
+| verboseLogging |  | false | boolean | JSCH is verbose logging out of the box. Therefore we turn the logging down to DEBUG logging by default. But setting this option to true turns on the verbose logging again.
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -103,7 +103,7 @@ The QuickFix component supports 5 options which are listed below.
 | logFactory |  |  | LogFactory | To use the given LogFactory
 | messageStoreFactory |  |  | MessageStoreFactory | To use the given MessageStoreFactory
 | configurations |  |  | Map | To use the given map of pre configured QuickFix configurations mapped to the key
-| lazyCreateEngines |  |  | boolean | If set to true the engines will be created and started when needed (when first message is send)
+| lazyCreateEngines |  | false | boolean | If set to true the engines will be created and started when needed (when first message is send)
 |=======================================================================
 {% endraw %}
 // component options: END

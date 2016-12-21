@@ -83,7 +83,7 @@ The XSLT component supports 5 options which are listed below.
 | uriResolverFactory |  |  | XsltUriResolverFactory | To use a custom javax.xml.transform.URIResolver which depends on a dynamic endpoint resource URI or which is a subclass of XsltUriResolver. Do not use in combination with uriResolver. See also link setUriResolver(URIResolver).
 | uriResolver |  |  | URIResolver | To use a custom javax.xml.transform.URIResolver. Do not use in combination with uriResolverFactory. See also link setUriResolverFactory(XsltUriResolverFactory).
 | contentCache |  | true | boolean | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation.
-| saxon |  |  | boolean | Whether to use Saxon as the transformerFactoryClass. If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath.
+| saxon |  | false | boolean | Whether to use Saxon as the transformerFactoryClass. If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath.
 |=======================================================================
 {% endraw %}
 // component options: END

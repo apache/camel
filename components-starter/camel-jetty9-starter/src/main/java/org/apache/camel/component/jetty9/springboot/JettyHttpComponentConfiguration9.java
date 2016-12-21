@@ -99,7 +99,7 @@ public class JettyHttpComponentConfiguration9 {
      * If this option is true Jetty JMX support will be enabled for this
      * endpoint.
      */
-    private Boolean enableJmx;
+    private Boolean enableJmx = false;
     /**
      * To use a custom org.apache.camel.component.jetty.JettyHttpBinding which
      * are used to customize how a response should be written for the producer.
@@ -179,7 +179,7 @@ public class JettyHttpComponentConfiguration9 {
     /**
      * To use the X-Forwarded-For header in HttpServletRequest.getRemoteAddr.
      */
-    private Boolean useXForwardedForHeader;
+    private Boolean useXForwardedForHeader = false;
     /**
      * If the option is true jetty server will send the date header to the
      * client which sends the request. NOTE please make sure there is no any
@@ -194,7 +194,7 @@ public class JettyHttpComponentConfiguration9 {
      * the incoming data from the request to Java and that can be a potential
      * security risk.
      */
-    private Boolean allowJavaSerializedObject;
+    private Boolean allowJavaSerializedObject = false;
     /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
      * header to and from Camel message.

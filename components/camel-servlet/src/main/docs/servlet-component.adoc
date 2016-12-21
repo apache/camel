@@ -56,10 +56,10 @@ The Servlet component supports 7 options which are listed below.
 | Name | Group | Default | Java Type | Description
 | servletName |  |  | String | Default name of servlet to use. The default name is CamelServlet.
 | httpRegistry |  |  | HttpRegistry | To use a custom org.apache.camel.component.servlet.HttpRegistry.
-| attachmentMultipartBinding |  |  | boolean | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.
+| attachmentMultipartBinding |  | false | boolean | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.
 | httpBinding |  |  | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
 | httpConfiguration |  |  | HttpConfiguration | To use the shared HttpConfiguration as base configuration.
-| allowJavaSerializedObject |  |  | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
+| allowJavaSerializedObject |  | false | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
 | headerFilterStrategy |  |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
 |=======================================================================
 {% endraw %}

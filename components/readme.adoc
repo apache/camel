@@ -204,6 +204,9 @@ Components
 | link:camel-google-mail/src/main/docs/google-mail-component.adoc[Google Mail] (camel-google-mail) +
 `google-mail:apiName/methodName` | The google-mail component provides access to Google Mail.
 
+| link:camel-google-pubsub/src/main/docs/google-pubsub-component.adoc[Google Pubsub] (camel-google-pubsub) +
+`google-pubsub:projectId:destinationName` | Messaging client for Google Cloud Platform PubSub Service: https://cloud.google.com/pubsub/
+
 | link:camel-gora/src/main/docs/gora-component.adoc[Gora] (camel-gora) +
 `gora:name` | The gora component allows you to work with NoSQL databases using the Apache Gora framework.
 
@@ -339,6 +342,9 @@ Components
 | link:camel-mongodb/src/main/docs/mongodb-component.adoc[MongoDB] (camel-mongodb) +
 `mongodb:connectionBean` | Component for working with documents stored in MongoDB database.
 
+| link:camel-mongodb3/src/main/docs/mongodb3-component.adoc[MongoDB] (camel-mongodb3) +
+`mongodb3:connectionBean` | Component for working with documents stored in MongoDB database.
+
 | link:camel-mongodb-gridfs/src/main/docs/gridfs-component.adoc[MongoDBGridFS] (camel-mongodb-gridfs) +
 `gridfs:connectionBean` | Component for working with MongoDB GridFS.
 
@@ -377,6 +383,24 @@ Components
 
 | link:camel-openshift/src/main/docs/openshift-component.adoc[OpenShift] (camel-openshift) +
 `openshift:clientId` | *deprecated* To manage your Openshift 2.x applications.
+
+| link:camel-openstack/src/main/docs/openstack-cinder-component.adoc[OpenStack Cinder] (camel-openstack) +
+`openstack-cinder:host` | The openstack-cinder component allows messages to be sent to an OpenStack block storage services.
+
+| link:camel-openstack/src/main/docs/openstack-glance-component.adoc[OpenStack Glance] (camel-openstack) +
+`openstack-glance:host` | The openstack-glance component allows messages to be sent to an OpenStack image services.
+
+| link:camel-openstack/src/main/docs/openstack-keystone-component.adoc[OpenStack Keystone] (camel-openstack) +
+`openstack-keystone:host` | The openstack-keystone component allows messages to be sent to an OpenStack identity services.
+
+| link:camel-openstack/src/main/docs/openstack-neutron-component.adoc[OpenStack Neutron] (camel-openstack) +
+`openstack-neutron:host` | The openstack-neutron component allows messages to be sent to an OpenStack network services.
+
+| link:camel-openstack/src/main/docs/openstack-nova-component.adoc[OpenStack Nova] (camel-openstack) +
+`openstack-nova:host` | The openstack-nova component allows messages to be sent to an OpenStack compute services.
+
+| link:camel-openstack/src/main/docs/openstack-swift-component.adoc[OpenStack Swift] (camel-openstack) +
+`openstack-swift:host` | The openstack-swift component allows messages to be sent to an OpenStack object storage services.
 
 | link:camel-optaplanner/src/main/docs/optaplanner-component.adoc[OptaPlanner] (camel-optaplanner) +
 `optaplanner:configFile` | Solves the planning problem contained in a message with OptaPlanner.

@@ -48,7 +48,7 @@ public class WebsocketComponentConfiguration {
      * may require servlet specific configuration to enable this when using
      * Servlet's.
      */
-    private Boolean attachmentMultipartBinding;
+    private Boolean attachmentMultipartBinding = false;
     /**
      * To use a custom HttpBinding to control the mapping between Camel message
      * and HttpClient.
@@ -67,7 +67,7 @@ public class WebsocketComponentConfiguration {
      * the incoming data from the request to Java and that can be a potential
      * security risk.
      */
-    private Boolean allowJavaSerializedObject;
+    private Boolean allowJavaSerializedObject = false;
     /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
      * header to and from Camel message.

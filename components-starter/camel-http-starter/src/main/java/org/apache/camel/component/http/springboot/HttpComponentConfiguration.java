@@ -61,7 +61,7 @@ public class HttpComponentConfiguration {
      * the incoming data from the request to Java and that can be a potential
      * security risk.
      */
-    private Boolean allowJavaSerializedObject;
+    private Boolean allowJavaSerializedObject = false;
     /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
      * header to and from Camel message.
