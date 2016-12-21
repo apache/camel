@@ -63,7 +63,7 @@ The Quartz2 component supports 9 options which are listed below.
 | Name | Group | Default | Java Type | Description
 | autoStartScheduler |  | true | boolean | Whether or not the scheduler should be auto started. This options is default true
 | startDelayedSeconds |  |  | int | Seconds to wait before starting the quartz scheduler.
-| prefixJobNameWithEndpointId |  |  | boolean | Whether to prefix the quartz job with the endpoint id. This option is default false.
+| prefixJobNameWithEndpointId |  | false | boolean | Whether to prefix the quartz job with the endpoint id. This option is default false.
 | enableJmx |  | true | boolean | Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX. This options is default true
 | properties |  |  | Properties | Properties to configure the Quartz scheduler.
 | propertiesFile |  |  | String | File name of the properties to load from the classpath

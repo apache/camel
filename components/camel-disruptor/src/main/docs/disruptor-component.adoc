@@ -109,7 +109,7 @@ The Disruptor component supports 7 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | defaultConcurrentConsumers |  | 1 | int | To configure the default number of concurrent consumers
-| defaultMultipleConsumers |  |  | boolean | To configure the default value for multiple consumers
+| defaultMultipleConsumers |  | false | boolean | To configure the default value for multiple consumers
 | defaultProducerType |  | Multi | DisruptorProducerType | To configure the default value for DisruptorProducerType The default value is Multi.
 | defaultWaitStrategy |  | Blocking | DisruptorWaitStrategy | To configure the default value for DisruptorWaitStrategy The default value is Blocking.
 | defaultBlockWhenFull |  | true | boolean | To configure the default value for block when full The default value is true.

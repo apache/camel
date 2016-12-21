@@ -34,7 +34,7 @@ public class DirectVmComponentConfiguration {
      * then we can tell the producer to block and wait for the consumer to
      * become active.
      */
-    private Boolean block;
+    private Boolean block = false;
     /**
      * The timeout value to use if block is enabled.
      */

@@ -53,7 +53,7 @@ public class JpaComponentConfiguration {
      * Note in most cases joinTransaction should be set to false as this is not
      * an EXTENDED EntityManager.
      */
-    private Boolean sharedEntityManager;
+    private Boolean sharedEntityManager = false;
 
     public EntityManagerFactory getEntityManagerFactory() {
         return entityManagerFactory;

@@ -77,11 +77,11 @@ public class SalesforceComponentConfiguration {
     /**
      * Enable for Socks4 proxy false by default
      */
-    private Boolean isHttpProxySocks4;
+    private Boolean isHttpProxySocks4 = false;
     /**
      * Enable for TLS connections true by default
      */
-    private Boolean isHttpProxySecure;
+    private Boolean isHttpProxySecure = false;
     /**
      * HTTP proxy included addresses
      */
@@ -101,7 +101,7 @@ public class SalesforceComponentConfiguration {
     /**
      * Use HTTP proxy Digest authentication false by default
      */
-    private Boolean httpProxyUseDigestAuth;
+    private Boolean httpProxyUseDigestAuth = false;
     /**
      * Package names to scan for DTO classes (multiple packages can be separated
      * by comma).

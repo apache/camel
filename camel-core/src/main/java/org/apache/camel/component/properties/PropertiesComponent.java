@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.FilePathResolver;
 import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.ObjectHelper;
@@ -95,19 +96,26 @@ public class PropertiesComponent extends UriEndpointComponent {
     private PropertiesParser propertiesParser = new DefaultPropertiesParser(this);
     private boolean isDefaultCreated;
     private List<PropertiesLocation> locations = Collections.emptyList();
+
     private boolean ignoreMissingLocation;
     private String encoding;
+    @Metadata(defaultValue = "true")
     private boolean cache = true;
     private String propertyPrefix;
     private String propertyPrefixResolved;
     private String propertySuffix;
     private String propertySuffixResolved;
+    @Metadata(defaultValue = "true")
     private boolean fallbackToUnaugmentedProperty = true;
+    @Metadata(defaultValue = "true")
     private boolean defaultFallbackEnabled = true;
+    @Metadata(defaultValue = DEFAULT_PREFIX_TOKEN)
     private String prefixToken = DEFAULT_PREFIX_TOKEN;
+    @Metadata(defaultValue = DEFAULT_SUFFIX_TOKEN)
     private String suffixToken = DEFAULT_SUFFIX_TOKEN;
     private Properties initialProperties;
     private Properties overrideProperties;
+    @Metadata(defaultValue = "" + SYSTEM_PROPERTIES_MODE_OVERRIDE)
     private int systemPropertiesMode = SYSTEM_PROPERTIES_MODE_OVERRIDE;
 
     public PropertiesComponent() {

@@ -69,7 +69,7 @@ The HTTP4 component supports 13 options which are listed below.
 | clientConnectionManager |  |  | HttpClientConnectionManager | To use a custom HttpClientConnectionManager to manage connections
 | httpBinding |  |  | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
 | httpConfiguration |  |  | HttpConfiguration | To use the shared HttpConfiguration as base configuration.
-| allowJavaSerializedObject |  |  | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
+| allowJavaSerializedObject |  | false | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
 | httpContext |  |  | HttpContext | To use a custom org.apache.http.protocol.HttpContext when executing requests.
 | sslContextParameters |  |  | SSLContextParameters | To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances you need to define a new HttpComponent per instance you need.
 | x509HostnameVerifier |  |  | X509HostnameVerifier | To use a custom X509HostnameVerifier such as org.apache.http.conn.ssl.StrictHostnameVerifier or org.apache.http.conn.ssl.AllowAllHostnameVerifier.

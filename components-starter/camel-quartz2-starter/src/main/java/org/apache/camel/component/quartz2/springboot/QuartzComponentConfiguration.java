@@ -43,7 +43,7 @@ public class QuartzComponentConfiguration {
      * Whether to prefix the quartz job with the endpoint id. This option is
      * default false.
      */
-    private Boolean prefixJobNameWithEndpointId;
+    private Boolean prefixJobNameWithEndpointId = false;
     /**
      * Whether to enable Quartz JMX which allows to manage the Quartz scheduler
      * from JMX. This options is default true

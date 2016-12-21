@@ -52,7 +52,7 @@ The Jetty Websocket component supports 12 options which are listed below.
 | sslKeyPassword |  |  | String | The password for the keystore when using SSL.
 | sslPassword |  |  | String | The password when using SSL.
 | sslKeystore |  |  | String | The path to the keystore.
-| enableJmx |  |  | boolean | If this option is true Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details.
+| enableJmx |  | false | boolean | If this option is true Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details.
 | minThreads |  |  | Integer | To set a value for minimum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9. The default values for minThreads is 1.
 | maxThreads |  |  | Integer | To set a value for maximum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9. The default values for maxThreads is 1 2 noCores.
 | threadPool |  |  | ThreadPool | To use a custom thread pool for the server. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9.
