@@ -292,10 +292,10 @@ The JMS component supports 74 options which are listed below.
 | jmsKeyFormatStrategy | JmsKeyFormatStrategy | Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification. Camel provides two implementations out of the box: default and passthrough. The default strategy will safely marshal dots and hyphens (. and -). The passthrough strategy leaves the key as is. Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the notation.
 | applicationContext | ApplicationContext | Sets the Spring ApplicationContext to use
 | queueBrowseStrategy | QueueBrowseStrategy | To use a custom QueueBrowseStrategy when browsing queues
-| headerFilterStrategy | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
 | messageCreatedStrategy | MessageCreatedStrategy | To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of javax.jms.Message objects when Camel is sending a JMS message.
 | waitForProvisionCorrelationToBeUpdatedCounter | int | Number of times to wait for provisional correlation id to be updated to the actual correlation id when doing request/reply over JMS and when the option useMessageIDAsCorrelationID is enabled.
 | waitForProvisionCorrelationToBeUpdatedThreadSleepingTime | long | Interval in millis to sleep each time while waiting for provisional correlation id to be updated.
+| headerFilterStrategy | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
 |=======================================================================
 {% endraw %}
 // component options: END
