@@ -115,5 +115,5 @@ public interface CxfRsBinding {
      * @throws Exception can be thrown if error in the binding process
      * @return the {@link Entity} to use
      */
-    Entity<Object> bindCamelMessageToRequestEntity(Object body, org.apache.camel.Message camelMessage, org.apache.camel.Exchange camelExchange) throws Exception ;
+    Entity<Object> bindCamelMessageToRequestEntity(Object body, org.apache.camel.Message camelMessage, org.apache.camel.Exchange camelExchange) throws Exception;
 }
