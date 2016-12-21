@@ -37,7 +37,7 @@ public class HBaseComponentConfiguration {
      * Maximum number of references to keep for each table in the HTable pool.
      * The default value is 10.
      */
-    private Integer poolMaxSize;
+    private Integer poolMaxSize = 10;
 
     public Configuration getConfiguration() {
         return configuration;

@@ -21,6 +21,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.component.AbstractApiComponent;
 
 /**
@@ -28,7 +29,9 @@ import org.apache.camel.util.component.AbstractApiComponent;
  */
 public class GoogleCalendarComponent extends AbstractApiComponent<GoogleCalendarApiName, GoogleCalendarConfiguration, GoogleCalendarApiCollection> {
 
+    @Metadata(label = "advanced")
     private Calendar client;
+    @Metadata(label = "advanced")
     private GoogleCalendarClientFactory clientFactory;
 
     public GoogleCalendarComponent() {

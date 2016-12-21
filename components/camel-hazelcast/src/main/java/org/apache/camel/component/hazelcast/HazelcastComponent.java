@@ -40,6 +40,7 @@ import org.apache.camel.component.hazelcast.seda.HazelcastSedaEndpoint;
 import org.apache.camel.component.hazelcast.set.HazelcastSetEndpoint;
 import org.apache.camel.component.hazelcast.topic.HazelcastTopicEndpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
@@ -55,6 +56,7 @@ public class HazelcastComponent extends UriEndpointComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastComponent.class);
 
     private final Set<HazelcastInstance> customHazelcastInstances;
+    @Metadata(label = "advanced")
     private HazelcastInstance hazelcastInstance;
 
     public HazelcastComponent() {
