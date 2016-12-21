@@ -36,7 +36,6 @@ import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.XmlLineNumberParser;
 import org.slf4j.Logger;
@@ -63,21 +62,6 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
-    }
-
-    @Override
-    public void onReloadCamelContext(CamelContext camelContext) {
-        log.debug("Reloading CamelContext: {}", camelContext.getName());
-        try {
-            ServiceHelper.stopService(camelContext);
-            ServiceHelper.startService(camelContext);
-        } catch (Exception e) {
-            failed++;
-            throw ObjectHelper.wrapRuntimeCamelException(e);
-        }
-        log.info("Reloaded CamelContext: {}", camelContext.getName());
-
-        succeeded++;
     }
 
     @Override
