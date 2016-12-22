@@ -92,7 +92,7 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
         // find all <route> which are the routes
         NodeList list = dom.getElementsByTagName("route");
 
-        // collect which routes are updated/skpped
+        // collect which routes are updated/skipped
         List<RouteDefinition> routes = new ArrayList<>();
 
         if (list != null && list.getLength() > 0) {
@@ -130,14 +130,20 @@ public abstract class ReloadStrategySupport extends ServiceSupport implements Re
 
         if (!routes.isEmpty()) {
             try {
+                boolean unassignedRouteIds = false;
+
                 CollectionStringBuffer csb = new CollectionStringBuffer(",");
                 // collect route ids and force assign ids if not in use
                 for (RouteDefinition route : routes) {
+                    unassignedRouteIds |= route.hasCustomIdAssigned();
                     String id = route.idOrCreate(camelContext.getNodeIdFactory());
                     csb.append(id);
                 }
                 log.debug("Reloading routes: [{}] from XML resource: {}", csb, name);
 
+                if (unassignedRouteIds) {
+                    log.warn("Routes with no id's detected. Its recommended to assign id's to your routes so Camel can reload the routes correctly.");
+                }
                 // update the routes (add will remove and shutdown first)
                 camelContext.addRouteDefinitions(routes);
 
