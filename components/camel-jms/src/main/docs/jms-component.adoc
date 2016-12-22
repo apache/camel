@@ -243,8 +243,8 @@ The JMS component supports 74 options which are listed below.
 | durableSubscriptionName | common |  | String | The durable subscriber name for specifying durable topic subscriptions. The clientId option must be configured as well.
 | exceptionListener | advanced |  | ExceptionListener | Specifies the JMS Exception Listener that is to be notified of any underlying JMS exceptions.
 | errorHandler | advanced |  | ErrorHandler | Specifies a org.springframework.util.ErrorHandler to be invoked in case of any uncaught exceptions thrown while processing a Message. By default these exceptions will be logged at the WARN level if no errorHandler has been configured. You can configure logging level and whether stack traces should be logged using errorHandlerLoggingLevel and errorHandlerLogStackTrace options. This makes it much easier to configure than having to code a custom errorHandler.
-| errorHandlerLoggingLevel | advanced | WARN | LoggingLevel | Allows to configure the default errorHandler logging level for logging uncaught exceptions.
-| errorHandlerLogStackTrace | advanced | true | boolean | Allows to control whether stacktraces should be logged or not by the default errorHandler.
+| errorHandlerLoggingLevel | logging | WARN | LoggingLevel | Allows to configure the default errorHandler logging level for logging uncaught exceptions.
+| errorHandlerLogStackTrace | logging | true | boolean | Allows to control whether stacktraces should be logged or not by the default errorHandler.
 | explicitQosEnabled | producer | false | boolean | Set if the deliveryMode priority or timeToLive qualities of service should be used when sending messages. This option is based on Spring's JmsTemplate. The deliveryMode priority and timeToLive options are applied to the current endpoint. This contrasts with the preserveMessageQos option which operates at message granularity reading QoS properties exclusively from the Camel In message headers.
 | exposeListenerSession | consumer (advanced) | false | boolean | Specifies whether the listener session should be exposed when consuming messages.
 | idleTaskExecutionLimit | advanced | 1 | int | Specifies the limit for idle executions of a receive task not having received any message within its execution. If this limit is reached the task will shut down and leave receiving to other executing tasks (in the case of dynamic scheduling; see the maxConcurrentConsumers setting). There is additional doc available from Spring.
@@ -378,8 +378,6 @@ The JMS component supports 85 endpoint options which are listed below:
 | asyncStopListener | advanced | false | boolean | Whether to stop the JmsConsumer message listener asynchronously when stopping a route.
 | destinationResolver | advanced |  | DestinationResolver | A pluggable org.springframework.jms.support.destination.DestinationResolver that allows you to use your own resolver (for example to lookup the real destination in a JNDI registry).
 | errorHandler | advanced |  | ErrorHandler | Specifies a org.springframework.util.ErrorHandler to be invoked in case of any uncaught exceptions thrown while processing a Message. By default these exceptions will be logged at the WARN level if no errorHandler has been configured. You can configure logging level and whether stack traces should be logged using errorHandlerLoggingLevel and errorHandlerLogStackTrace options. This makes it much easier to configure than having to code a custom errorHandler.
-| errorHandlerLoggingLevel | advanced | WARN | LoggingLevel | Allows to configure the default errorHandler logging level for logging uncaught exceptions.
-| errorHandlerLogStackTrace | advanced | true | boolean | Allows to control whether stacktraces should be logged or not by the default errorHandler.
 | exceptionListener | advanced |  | ExceptionListener | Specifies the JMS Exception Listener that is to be notified of any underlying JMS exceptions.
 | headerFilterStrategy | advanced |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
 | idleConsumerLimit | advanced | 1 | int | Specify the limit for the number of consumers that are allowed to be idle at any given time.
@@ -404,6 +402,8 @@ The JMS component supports 85 endpoint options which are listed below:
 | useMessageIDAsCorrelationID | advanced | false | boolean | Specifies whether JMSMessageID should always be used as JMSCorrelationID for InOut messages.
 | waitForProvisionCorrelationToBeUpdatedCounter | advanced | 50 | int | Number of times to wait for provisional correlation id to be updated to the actual correlation id when doing request/reply over JMS and when the option useMessageIDAsCorrelationID is enabled.
 | waitForProvisionCorrelationToBeUpdatedThreadSleepingTime | advanced | 100 | long | Interval in millis to sleep each time while waiting for provisional correlation id to be updated.
+| errorHandlerLoggingLevel | logging | WARN | LoggingLevel | Allows to configure the default errorHandler logging level for logging uncaught exceptions.
+| errorHandlerLogStackTrace | logging | true | boolean | Allows to control whether stacktraces should be logged or not by the default errorHandler.
 | password | security |  | String | Password to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory.
 | username | security |  | String | Username to use with the ConnectionFactory. You can also configure username/password directly on the ConnectionFactory.
 | transacted | transaction | false | boolean | Specifies whether to use transacted mode

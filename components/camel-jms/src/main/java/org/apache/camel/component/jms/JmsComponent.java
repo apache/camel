@@ -444,7 +444,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     /**
      * Allows to configure the default errorHandler logging level for logging uncaught exceptions.
      */
-    @Metadata(defaultValue = "WARN", label = "advanced",
+    @Metadata(defaultValue = "WARN", label = "consumer,logging",
             description = "Allows to configure the default errorHandler logging level for logging uncaught exceptions.")
     public void setErrorHandlerLoggingLevel(LoggingLevel errorHandlerLoggingLevel) {
         getConfiguration().setErrorHandlerLoggingLevel(errorHandlerLoggingLevel);
@@ -453,7 +453,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     /**
      * Allows to control whether stacktraces should be logged or not, by the default errorHandler.
      */
-    @Metadata(defaultValue = "true", label = "advanced",
+    @Metadata(defaultValue = "true", label = "consumer,logging",
             description = "Allows to control whether stacktraces should be logged or not, by the default errorHandler.")
     public void setErrorHandlerLogStackTrace(boolean errorHandlerLogStackTrace) {
         getConfiguration().setErrorHandlerLogStackTrace(errorHandlerLogStackTrace);

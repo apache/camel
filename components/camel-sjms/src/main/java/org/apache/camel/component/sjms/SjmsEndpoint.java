@@ -132,9 +132,9 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     private Integer connectionCount;
     @UriParam(label = "advanced")
     private ExceptionListener exceptionListener;
-    @UriParam(defaultValue = "WARN", label = "advanced")
+    @UriParam(defaultValue = "WARN", label = "consumer,logging")
     private LoggingLevel errorHandlerLoggingLevel = LoggingLevel.WARN;
-    @UriParam(defaultValue = "true", label = "advanced")
+    @UriParam(defaultValue = "true", label = "consumer,logging")
     private boolean errorHandlerLogStackTrace = true;
 
     private volatile boolean closeConnectionResource;
