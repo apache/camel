@@ -58,6 +58,9 @@
     <module>camel-cxf-transport</module>
     <module>camel-jms</module>
 
+    <!-- build it first so it can be used by other component to test i.e. ServiceCall EIP -->
+    <module>camel-ribbon</module>
+
     <!-- regular modules in alphabetic order -->
     <module>camel-ahc</module>
     <module>camel-ahc-ws</module>
@@ -213,7 +216,6 @@
     <module>camel-quickfix</module>
     <module>camel-rabbitmq</module>
     <module>camel-restlet</module>
-    <module>camel-ribbon</module>
     <module>camel-rmi</module>
     <module>camel-routebox</module>
     <module>camel-rss</module>

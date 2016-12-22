@@ -21,9 +21,6 @@ Enterprise Integration Patterns
 | link:src/main/docs/eips/circuitBreaker-eip.adoc[Circuit Breaker] +
 `<circuitBreaker>` | Circuit break load balancer
 
-| link:src/main/docs/eips/consulConfiguration-eip.adoc[Consul Configuration] +
-`<consulConfiguration>` | Consul remote service call configuration
-
 | link:src/main/docs/eips/convertBodyTo-eip.adoc[Convert Body To] +
 `<convertBodyTo>` | Converts the message body to another type
 
@@ -33,17 +30,11 @@ Enterprise Integration Patterns
 | link:src/main/docs/eips/delay-eip.adoc[Delay] +
 `<delay>` | Delays processing for a specified length of time
 
-| link:src/main/docs/eips/dnsConfiguration-eip.adoc[Dns Configuration] +
-`<dnsConfiguration>` | DNS remote service call configuration
-
 | link:src/main/docs/eips/dynamicRouter-eip.adoc[Dynamic Router] +
 `<dynamicRouter>` | Routes messages based on dynamic rules
 
 | link:src/main/docs/eips/enrich-eip.adoc[Enrich] +
 `<enrich>` | Enriches a message with data from a secondary resource
-
-| link:src/main/docs/eips/etcdConfiguration-eip.adoc[Etcd Configuration] +
-`<etcdConfiguration>` | Etcd remote service call configuration
 
 | link:src/main/docs/eips/failover-eip.adoc[Failover] +
 `<failover>` | Failover load balancer
@@ -68,9 +59,6 @@ Enterprise Integration Patterns
 
 | link:src/main/docs/eips/inOut-eip.adoc[In Out] +
 `<inOut>` | Marks the exchange pattern for the route to request/reply
-
-| link:src/main/docs/eips/kubernetesConfiguration-eip.adoc[Kubernetes Configuration] +
-`<kubernetesConfiguration>` | Kubernetes remote service call configuration
 
 | link:src/main/docs/eips/loadBalance-eip.adoc[Load Balance] +
 `<loadBalance>` | Balances message processing among a number of nodes
@@ -120,9 +108,6 @@ Enterprise Integration Patterns
 | link:src/main/docs/eips/resequence-eip.adoc[Resequence] +
 `<resequence>` | Resequences (re-order) messages based on an expression
 
-| link:src/main/docs/eips/ribbonConfiguration-eip.adoc[Ribbon Configuration] +
-`<ribbonConfiguration>` | Ribbon remote service call configuration
-
 | link:src/main/docs/eips/rollback-eip.adoc[Rollback] +
 `<rollback>` | Forces a rollback by stopping routing the message
 
@@ -139,7 +124,7 @@ Enterprise Integration Patterns
 `<script>` | Executes a script from a language which does not change the message body.
 
 | link:src/main/docs/eips/serviceCall-eip.adoc[Service Call] +
-`<serviceCall>` | Remote service call
+`<serviceCall>` | Remote service call definition
 
 | link:src/main/docs/eips/serviceCallConfiguration-eip.adoc[Service Call Configuration] +
 `<serviceCallConfiguration>` | Remote service call configuration

@@ -33,7 +33,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.remote.ServiceCallConfigurationDefinition;
+import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
@@ -570,14 +570,13 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     Collection<RestConfiguration> getRestConfigurations();
 
     /**
-     * Gets the service call configuration by the given name. If no name is given and there is only one configuration
-     * which matches the type then this configuration is returned.
+     * Gets the service call configuration by the given name. If no name is given
+     * the default configuration is returned, see <tt>setServiceCallConfiguration</tt>
      *
      * @param serviceName name of service, or <tt>null</tt> to return the default configuration
-     * @param type implementation of the configuration such as kubernetes, ribbon etc.
      * @return the configuration, or <tt>null</tt> if no configuration has been registered
      */
-    <T extends ServiceCallConfigurationDefinition> T getServiceCallConfiguration(String serviceName, Class<T> type);
+    ServiceCallConfigurationDefinition getServiceCallConfiguration(String serviceName);
 
     /**
      * Sets the default service call configuration
@@ -585,6 +584,13 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param configuration the configuration
      */
     void setServiceCallConfiguration(ServiceCallConfigurationDefinition configuration);
+
+    /**
+     * Sets the service call configurations
+     *
+     * @param configurations the configuration list
+     */
+    void setServiceCallConfigurations(List<ServiceCallConfigurationDefinition> configurations);
 
     /**
      * Adds the service call configuration
