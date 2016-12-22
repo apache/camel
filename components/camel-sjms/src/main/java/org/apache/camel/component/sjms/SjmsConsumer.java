@@ -239,6 +239,7 @@ public class SjmsConsumer extends DefaultConsumer {
                 messageHandler = new InOutMessageHandler(getEndpoint(), executor);
             }
         }
+
         messageHandler.setSession(session);
         messageHandler.setProcessor(getAsyncProcessor());
         messageHandler.setSynchronous(isSynchronous());
@@ -259,7 +260,7 @@ public class SjmsConsumer extends DefaultConsumer {
     protected ConnectionResource getOrCreateConnectionResource() {
         ConnectionResource answer = getEndpoint().getConnectionResource();
         if (answer == null) {
-            answer = getEndpoint().createConnectionResource();
+            answer = getEndpoint().createConnectionResource(this);
         }
         return answer;
     }

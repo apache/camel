@@ -287,7 +287,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
     protected ConnectionResource getOrCreateConnectionResource() {
         ConnectionResource answer = getEndpoint().getConnectionResource();
         if (answer == null) {
-            answer = getEndpoint().createConnectionResource();
+            answer = getEndpoint().createConnectionResource(this);
         }
         return answer;
     }

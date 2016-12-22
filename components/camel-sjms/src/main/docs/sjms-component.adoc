@@ -133,7 +133,7 @@ The Simple JMS component supports 9 options which are listed below.
 
 
 // endpoint options: START
-The Simple JMS component supports 33 endpoint options which are listed below:
+The Simple JMS component supports 36 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -162,6 +162,9 @@ The Simple JMS component supports 33 endpoint options which are listed below:
 | connectionFactory | advanced |  | ConnectionFactory | Initializes the connectionFactory for the endpoint which takes precedence over the component's connectionFactory if any
 | connectionResource | advanced |  | ConnectionResource | Initializes the connectionResource for the endpoint which takes precedence over the component's connectionResource if any
 | destinationCreationStrategy | advanced |  | DestinationCreationStrategy | To use a custom DestinationCreationStrategy.
+| errorHandlerLoggingLevel | advanced | WARN | LoggingLevel | Allows to configure the default errorHandler logging level for logging uncaught exceptions.
+| errorHandlerLogStackTrace | advanced | true | boolean | Allows to control whether stacktraces should be logged or not by the default errorHandler.
+| exceptionListener | advanced |  | ExceptionListener | Specifies the JMS Exception Listener that is to be notified of any underlying JMS exceptions.
 | headerFilterStrategy | advanced |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
 | includeAllJMSXProperties | advanced | false | boolean | Whether to include all JMSXxxx properties when mapping from JMS to Camel Message. Setting this to true will include properties such as JMSXAppID and JMSXUserID etc. Note: If you are using a custom headerFilterStrategy then this option does not apply.
 | jmsKeyFormatStrategy | advanced |  | JmsKeyFormatStrategy | Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification. Camel provides two implementations out of the box: default and passthrough. The default strategy will safely marshal dots and hyphens (. and -). The passthrough strategy leaves the key as is. Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the notation.
