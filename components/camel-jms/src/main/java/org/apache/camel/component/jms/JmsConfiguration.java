@@ -99,10 +99,10 @@ public class JmsConfiguration implements Cloneable {
                     + " You can configure logging level and whether stack traces should be logged using errorHandlerLoggingLevel and errorHandlerLogStackTrace options."
                     + " This makes it much easier to configure, than having to code a custom errorHandler.")
     private ErrorHandler errorHandler;
-    @UriParam(defaultValue = "WARN", label = "advanced",
+    @UriParam(defaultValue = "WARN", label = "consumer,logging",
             description = "Allows to configure the default errorHandler logging level for logging uncaught exceptions.")
     private LoggingLevel errorHandlerLoggingLevel = LoggingLevel.WARN;
-    @UriParam(defaultValue = "true", label = "advanced",
+    @UriParam(defaultValue = "true", label = "consumer,logging",
             description = "Allows to control whether stacktraces should be logged or not, by the default errorHandler.")
     private boolean errorHandlerLogStackTrace = true;
     @UriParam(label = "consumer", defaultValue = "true",
