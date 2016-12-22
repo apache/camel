@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.xmpp;
 
-import org.jivesoftware.smack.PacketListener;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.packet.Stanza;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class XmppLogger implements PacketListener {
+public class XmppLogger implements StanzaListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmppLogger.class);
     private String direction;
@@ -30,7 +30,7 @@ public class XmppLogger implements PacketListener {
         this.direction = direction;
     }
 
-    public void processPacket(Packet packet) {
+    public void processPacket(Stanza packet) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("{} : {}", direction, packet.toXML());
         }

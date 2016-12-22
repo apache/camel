@@ -21,13 +21,13 @@ import java.util.Map;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ExchangeHelper;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.packet.Stanza;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with XMPP
  */
 public class XmppMessage extends DefaultMessage {
-    private Packet xmppPacket;
+    private Stanza xmppPacket;
 
     public XmppMessage() {
         this(new Message());
@@ -37,7 +37,7 @@ public class XmppMessage extends DefaultMessage {
         this.xmppPacket = jmsMessage;
     }
 
-    public XmppMessage(Packet jmsMessage) {
+    public XmppMessage(Stanza jmsMessage) {
         this.xmppPacket = jmsMessage;
     }
 
@@ -64,11 +64,11 @@ public class XmppMessage extends DefaultMessage {
     /**
      * Returns the underlying XMPP packet
      */
-    public Packet getXmppPacket() {
+    public Stanza getXmppPacket() {
         return xmppPacket;
     }
 
-    public void setXmppPacket(Packet xmppPacket) {
+    public void setXmppPacket(Stanza xmppPacket) {
         this.xmppPacket = xmppPacket;
     }
 

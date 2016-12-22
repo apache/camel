@@ -23,11 +23,12 @@ import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.impl.DefaultProducer;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.muc.DiscussionHistory;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public class XmppGroupChatProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(XmppGroupChatProducer.class);
     private final XmppEndpoint endpoint;
-    private XMPPConnection connection;
+    private XMPPTCPConnection connection;
     private MultiUserChat chat;
     private String room;
 
@@ -121,7 +122,8 @@ public class XmppGroupChatProducer extends DefaultProducer {
     protected synchronized void initializeChat() throws XMPPException, SmackException {
         if (chat == null) {
             room = endpoint.resolveRoom(connection);
-            chat = new MultiUserChat(connection, room);
+            MultiUserChatManager chatManager = MultiUserChatManager.getInstanceFor(connection);
+            chat = chatManager.getMultiUserChat(room);
             DiscussionHistory history = new DiscussionHistory();
             history.setMaxChars(0); // we do not want any historical messages
             chat.join(endpoint.getNickname(), null, history, SmackConfiguration.getDefaultPacketReplyTimeout());

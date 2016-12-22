@@ -21,14 +21,14 @@ import java.io.IOException;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ObjectHelper;
-import org.jivesoftware.smack.Chat;
-import org.jivesoftware.smack.ChatManager;
-import org.jivesoftware.smack.MessageListener;
+import org.apache.camel.util.StringHelper;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.chat.Chat;
+import org.jivesoftware.smack.chat.ChatManager;
+import org.jivesoftware.smack.chat.ChatMessageListener;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,14 +38,14 @@ import org.slf4j.LoggerFactory;
 public class XmppPrivateChatProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(XmppPrivateChatProducer.class);
     private final XmppEndpoint endpoint;
-    private XMPPConnection connection;
+    private XMPPTCPConnection connection;
     private final String participant;
 
     public XmppPrivateChatProducer(XmppEndpoint endpoint, String participant) {
         super(endpoint);
         this.endpoint = endpoint;
         this.participant = participant;
-        ObjectHelper.notEmpty(participant, "participant");
+        StringHelper.notEmpty(participant, "participant");
 
         LOG.debug("Creating XmppPrivateChatProducer to participant {}", participant);
     }
@@ -104,7 +104,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Creating new chat instance with thread ID {}", thread);
             }
-            chat = chatManager.createChat(participant, thread, new MessageListener() {
+            chat = chatManager.createChat(participant, thread, new ChatMessageListener() {
                 public void processMessage(Chat chat, Message message) {
                     // not here to do conversation
                     if (LOG.isDebugEnabled()) {

@@ -19,8 +19,8 @@ package org.apache.camel.component.xmpp;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.impl.DefaultProducer;
-import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.pubsub.packet.PubSub;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 public class XmppPubSubProducer extends DefaultProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(XmppPrivateChatProducer.class);
     private final XmppEndpoint endpoint;
-    private XMPPConnection connection;
+    private XMPPTCPConnection connection;
 
     public XmppPubSubProducer(XmppEndpoint endpoint) {
         super(endpoint);
@@ -60,7 +60,7 @@ public class XmppPubSubProducer extends DefaultProducer {
                 PubSub pubsubpacket = (PubSub) body;
                 endpoint.getBinding().populateXmppPacket(pubsubpacket, exchange);
                 exchange.getIn().setHeader(XmppConstants.DOC_HEADER, pubsubpacket);
-                connection.sendPacket(pubsubpacket);
+                connection.sendStanza(pubsubpacket);
             } else {
                 throw new Exception("Message does not contain a pubsub packet");
             }

@@ -31,18 +31,20 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.util.ObjectHelper;
-import org.jivesoftware.smack.AccountManager;
+import org.apache.camel.util.StringHelper;
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.XMPPException.XMPPErrorException;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smack.filter.StanzaFilter;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.packet.XMPPError;
+import org.jivesoftware.smack.packet.XMPPError.Condition;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
-import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.jivesoftware.smackx.iqregister.AccountManager;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +56,7 @@ import org.slf4j.LoggerFactory;
 public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
     private static final Logger LOG = LoggerFactory.getLogger(XmppEndpoint.class);
 
-    private volatile XMPPConnection connection;
+    private volatile XMPPTCPConnection connection;
     private XmppBinding binding;
 
     @UriPath @Metadata(required = "true")
@@ -90,7 +92,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     @UriParam(label = "filter")
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
     @UriParam(label = "advanced")
-    private ConnectionConfiguration connectionConfig;
+    private XMPPTCPConnectionConfiguration connectionConfig;
 
     public XmppEndpoint() {
     }
@@ -143,7 +145,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return answer;
     }
 
-    public Exchange createExchange(Packet packet) {
+    public Exchange createExchange(Stanza packet) {
         Exchange exchange = super.createExchange();
         exchange.setProperty(Exchange.BINDING, getBinding());
         exchange.setIn(new XmppMessage(packet));
@@ -159,7 +161,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return true;
     }
 
-    public synchronized XMPPConnection createConnection() throws XMPPException, SmackException, IOException {
+    public synchronized XMPPTCPConnection createConnection() throws XMPPException, SmackException, IOException {
         if (connection != null && connection.isConnected()) {
             // use existing working connection
             return connection;
@@ -169,17 +171,19 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         connection = null;
 
         LOG.trace("Creating new connection ...");
-        XMPPConnection newConnection = createConnectionInternal();
+        XMPPTCPConnection newConnection = createConnectionInternal();
 
         newConnection.connect();
 
-        newConnection.addPacketListener(new XmppLogger("INBOUND"), new PacketFilter() {
-            public boolean accept(Packet packet) {
+        newConnection.addAsyncStanzaListener(new XmppLogger("INBOUND"), new StanzaFilter() {
+            
+            public boolean accept(Stanza stanza) {
                 return true;
             }
         });
-        newConnection.addPacketSendingListener(new XmppLogger("OUTBOUND"), new PacketFilter() {
-            public boolean accept(Packet packet) {
+        newConnection.addAsyncStanzaListener(new XmppLogger("OUTBOUND"), new StanzaFilter() {
+            
+            public boolean accept(Stanza stanza) {
                 return true;
             }
         });
@@ -229,7 +233,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
             port = 5222;
         }
         String sName = getServiceName() == null ? host : getServiceName();
-        ConnectionConfiguration conf = new ConnectionConfiguration(host, port, sName);
+        XMPPTCPConnectionConfiguration conf = XMPPTCPConnectionConfiguration.builder().setHost(host).setPort(port).setServiceName(sName).build();
         return new XMPPTCPConnection(conf);
     }
 
@@ -238,16 +242,16 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
      * return fully qualified JID for the room as room@conference.server.domain
      */
     public String resolveRoom(XMPPConnection connection) throws XMPPException, SmackException {
-        ObjectHelper.notEmpty(room, "room");
+        StringHelper.notEmpty(room, "room");
 
         if (room.indexOf('@', 0) != -1) {
             return room;
         }
 
-        Iterator<String> iterator = MultiUserChat.getServiceNames(connection).iterator();
+        Iterator<String> iterator = MultiUserChatManager.getInstanceFor(connection).getServiceNames().iterator();
         if (!iterator.hasNext()) {
             throw new XMPPErrorException("Cannot find Multi User Chat service",
-                                         new XMPPError(new XMPPError.Condition("Cannot find Multi User Chat service on connection: " + getConnectionMessage(connection))));
+                                         new XMPPError(Condition.item_not_found));
         }
 
         String chatServer = iterator.next();
@@ -430,7 +434,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     /**
      * To use an existing connection configuration
      */
-    public void setConnectionConfig(ConnectionConfiguration connectionConfig) {
+    public void setConnectionConfig(XMPPTCPConnectionConfiguration connectionConfig) {
         this.connectionConfig = connectionConfig;
     }
 

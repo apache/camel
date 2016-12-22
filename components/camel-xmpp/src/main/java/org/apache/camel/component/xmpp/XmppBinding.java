@@ -24,10 +24,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
-import org.jivesoftware.smack.packet.DefaultPacketExtension;
+import org.jivesoftware.smack.packet.DefaultExtensionElement;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.PacketExtension;
+import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
 import org.jivesoftware.smackx.jiveproperties.packet.JivePropertiesExtension;
 import org.jivesoftware.smackx.pubsub.packet.PubSub;
@@ -94,7 +94,7 @@ public class XmppBinding {
     /**
      * Populates the given XMPP packet from the inbound exchange
      */
-    public void populateXmppPacket(Packet packet, Exchange exchange) {
+    public void populateXmppPacket(Stanza packet, Exchange exchange) {
         Set<Map.Entry<String, Object>> entries = exchange.getIn().getHeaders().entrySet();
         for (Map.Entry<String, Object> entry : entries) {
             String name = entry.getKey();
@@ -118,7 +118,7 @@ public class XmppBinding {
     /**
      * Extracts the body from the XMPP message
      */
-    public Object extractBodyFromXmpp(Exchange exchange, Packet xmppPacket) {
+    public Object extractBodyFromXmpp(Exchange exchange, Stanza xmppPacket) {
         return (xmppPacket instanceof Message) ? getMessageBody((Message) xmppPacket) : xmppPacket;
     }
 
@@ -131,15 +131,15 @@ public class XmppBinding {
         return messageBody;
     }
 
-    public Map<String, Object> extractHeadersFromXmpp(Packet xmppPacket, Exchange exchange) {
+    public Map<String, Object> extractHeadersFromXmpp(Stanza xmppPacket, Exchange exchange) {
         Map<String, Object> answer = new HashMap<String, Object>();
 
-        PacketExtension jpe = xmppPacket.getExtension(JivePropertiesExtension.NAMESPACE);
+        ExtensionElement jpe = xmppPacket.getExtension(JivePropertiesExtension.NAMESPACE);
         if (jpe != null && jpe instanceof JivePropertiesExtension) {
             extractHeadersFrom((JivePropertiesExtension)jpe, exchange, answer);
         }
-        if (jpe != null && jpe instanceof DefaultPacketExtension) {
-            extractHeadersFrom((DefaultPacketExtension)jpe, exchange, answer);
+        if (jpe != null && jpe instanceof DefaultExtensionElement) {
+            extractHeadersFrom((DefaultExtensionElement)jpe, exchange, answer);
         }
 
         if (xmppPacket instanceof Message) {
@@ -152,7 +152,7 @@ public class XmppBinding {
             answer.put(XmppConstants.MESSAGE_TYPE, pubsubPacket.getType());
         }
         answer.put(XmppConstants.FROM, xmppPacket.getFrom());
-        answer.put(XmppConstants.PACKET_ID, xmppPacket.getPacketID());
+        answer.put(XmppConstants.PACKET_ID, xmppPacket.getStanzaId());
         answer.put(XmppConstants.TO, xmppPacket.getTo());
 
         return answer;
@@ -167,7 +167,7 @@ public class XmppBinding {
         }
     }
 
-    private void extractHeadersFrom(DefaultPacketExtension jpe, Exchange exchange, Map<String, Object> answer) {
+    private void extractHeadersFrom(DefaultExtensionElement jpe, Exchange exchange, Map<String, Object> answer) {
         for (String name : jpe.getNames()) {
             Object value = jpe.getValue(name);
             if (!headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {

@@ -23,37 +23,40 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.URISupport;
-import org.jivesoftware.smack.Chat;
-import org.jivesoftware.smack.ChatManager;
-import org.jivesoftware.smack.ChatManagerListener;
 import org.jivesoftware.smack.MessageListener;
-import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.StanzaListener;
+import org.jivesoftware.smack.chat.Chat;
+import org.jivesoftware.smack.chat.ChatManager;
+import org.jivesoftware.smack.chat.ChatManagerListener;
+import org.jivesoftware.smack.chat.ChatMessageListener;
 import org.jivesoftware.smack.filter.AndFilter;
 import org.jivesoftware.smack.filter.MessageTypeFilter;
 import org.jivesoftware.smack.filter.OrFilter;
-import org.jivesoftware.smack.filter.PacketTypeFilter;
+import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Message.Type;
-import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.muc.DiscussionHistory;
+import org.jivesoftware.smackx.muc.MUCNotJoinedException;
 import org.jivesoftware.smackx.muc.MultiUserChat;
+import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A {@link org.apache.camel.Consumer Consumer} which listens to XMPP packets
  */
-public class XmppConsumer extends DefaultConsumer implements PacketListener, MessageListener, ChatManagerListener {
+public class XmppConsumer extends DefaultConsumer implements StanzaListener, ChatMessageListener, MessageListener, 
+    ChatManagerListener {
     private static final Logger LOG = LoggerFactory.getLogger(XmppConsumer.class);
     private final XmppEndpoint endpoint;
     private MultiUserChat muc;
     private Chat privateChat;
     private ChatManager chatManager;
-    private XMPPConnection connection;
+    private XMPPTCPConnection connection;
     private ScheduledExecutorService scheduledExecutor;
 
     public XmppConsumer(XmppEndpoint endpoint, Processor processor) {
@@ -84,9 +87,9 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
         OrFilter pubsubPacketFilter = new OrFilter();
         if (endpoint.isPubsub()) {
             //xep-0060: pubsub#notification_type can be 'headline' or 'normal'
-            pubsubPacketFilter.addFilter(new MessageTypeFilter(Type.headline));
-            pubsubPacketFilter.addFilter(new MessageTypeFilter(Type.normal));
-            connection.addPacketListener(this, pubsubPacketFilter);
+            pubsubPacketFilter.addFilter(MessageTypeFilter.HEADLINE);
+            pubsubPacketFilter.addFilter(MessageTypeFilter.NORMAL);
+            connection.addAsyncStanzaListener(this, pubsubPacketFilter);
         }
 
         if (endpoint.getRoom() == null) {
@@ -107,10 +110,10 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             // add the presence packet listener to the connection so we only get packets that concerns us
             // we must add the listener before creating the muc
            
-            final AndFilter packetFilter = new AndFilter(new PacketTypeFilter(Presence.class));
-            connection.addPacketListener(this, packetFilter);
-
-            muc = new MultiUserChat(connection, endpoint.resolveRoom(connection));
+            final AndFilter packetFilter = new AndFilter(new StanzaTypeFilter(Presence.class));
+            connection.addAsyncStanzaListener(this, packetFilter);
+            MultiUserChatManager mucm = MultiUserChatManager.getInstanceFor(connection);
+            muc = mucm.getMultiUserChat(endpoint.resolveRoom(connection));
             muc.addMessageListener(this);
             DiscussionHistory history = new DiscussionHistory();
             history.setMaxChars(0); // we do not want any historical messages
@@ -207,7 +210,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
         }
     }
 
-    public void processPacket(Packet packet) {
+    public void processPacket(Stanza packet) {
         if (packet instanceof Message) {
             processMessage(null, (Message) packet);
         }
@@ -232,9 +235,18 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             // pollMessage is a non blocking method
             // (see http://issues.igniterealtime.org/browse/SMACK-129)
             if (muc != null) {
-                muc.pollMessage();
+                try {
+                    muc.pollMessage();
+                } catch (MUCNotJoinedException e) {
+                    LOG.warn(e.getMessage(), e);
+                }
             }
         }
+    }
+
+    @Override
+    public void processMessage(Message message) {
+        processMessage(null, message);
     }
 
 }
