@@ -25,9 +25,10 @@ public class ComponentOptionModel {
     private String type;
     private String javaType;
     private String deprecated;
+    private String secret;
     private String description;
     private String defaultValue;
-    private String enumValues;
+    private String enums;
 
     public String getName() {
         return name;
@@ -85,6 +86,14 @@ public class ComponentOptionModel {
         this.deprecated = deprecated;
     }
 
+    public String getSecret() {
+        return secret;
+    }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -101,12 +110,12 @@ public class ComponentOptionModel {
         this.defaultValue = defaultValue;
     }
 
-    public String getEnumValues() {
-        return enumValues;
+    public String getEnums() {
+        return enums;
     }
 
-    public void setEnumValues(String enumValues) {
-        this.enumValues = enumValues;
+    public void setEnums(String enums) {
+        this.enums = enums;
     }
 
     public String getShortJavaType() {
