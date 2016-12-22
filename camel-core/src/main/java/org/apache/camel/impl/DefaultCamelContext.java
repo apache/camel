@@ -104,7 +104,7 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.remote.ServiceCallConfigurationDefinition;
+import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
@@ -2598,33 +2598,30 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return config;
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends ServiceCallConfigurationDefinition> T getServiceCallConfiguration(String serviceName, Class<T> type) {
+    @Override
+    public ServiceCallConfigurationDefinition getServiceCallConfiguration(String serviceName) {
         if (serviceName == null) {
             serviceName = "";
         }
 
-        ServiceCallConfigurationDefinition config = serviceCallConfigurations.get(serviceName);
-        if (config == null) {
-            for (ServiceCallConfigurationDefinition candidate : serviceCallConfigurations.values()) {
-                if (type == null || type.isInstance(candidate)) {
-                    config = candidate;
-                    break;
-                }
-            }
-        }
-
-        if (config != null) {
-            return type != null ? type.cast(config) : (T) config;
-        } else {
-            return null;
-        }
+        return serviceCallConfigurations.get(serviceName);
     }
 
+    @Override
     public void setServiceCallConfiguration(ServiceCallConfigurationDefinition configuration) {
         serviceCallConfigurations.put("", configuration);
     }
 
+    @Override
+    public void setServiceCallConfigurations(List<ServiceCallConfigurationDefinition> configurations) {
+        if (configurations != null) {
+            for (ServiceCallConfigurationDefinition configuration : configurations) {
+                serviceCallConfigurations.put(configuration.getId(), configuration);
+            }
+        }
+    }
+
+    @Override
     public void addServiceCallConfiguration(String serviceName, ServiceCallConfigurationDefinition configuration) {
         serviceCallConfigurations.put(serviceName, configuration);
     }

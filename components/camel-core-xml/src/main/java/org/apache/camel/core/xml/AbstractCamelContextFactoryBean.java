@@ -66,6 +66,7 @@ import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
+import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestContainer;
@@ -775,6 +776,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getDependsOn();
 
+    public abstract List<AbstractCamelFactoryBean<?>> getBeansFactory();
+
+    public abstract List<?> getBeans();
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -850,6 +855,15 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getRestConfiguration() != null) {
             ctx.setRestConfiguration(getRestConfiguration().asRestConfiguration(ctx));
+        }
+        if (getBeans() != null) {
+            for (Object bean : getBeans()) {
+                if (bean instanceof ServiceCallConfigurationDefinition) {
+                    @SuppressWarnings("unchecked")
+                    ServiceCallConfigurationDefinition configuration = (ServiceCallConfigurationDefinition)bean;
+                    ctx.addServiceCallConfiguration(configuration.getId(), configuration);
+                }
+            }
         }
     }
 
