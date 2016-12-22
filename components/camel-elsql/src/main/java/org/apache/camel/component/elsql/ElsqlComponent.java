@@ -90,7 +90,7 @@ public class ElsqlComponent extends UriEndpointComponent {
         ElsqlEndpoint endpoint = new ElsqlEndpoint(uri, this, jdbcTemplate, target, elsqlName, resUri);
         endpoint.setElSqlConfig(elSqlConfig);
         endpoint.setDatabaseVendor(databaseVendor);
-        endpoint.setDataSource(ds);
+        endpoint.setDataSource(target);
         endpoint.setDataSourceRef(dataSourceRef);
         endpoint.setOnConsume(onConsume);
         endpoint.setOnConsumeFailed(onConsumeFailed);
