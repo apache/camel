@@ -71,7 +71,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
     private final ConnectionFactory connectionFactory;
     private final String destinationName;
     private ExecutorService jmsConsumerExecutors;
-    private final AtomicBoolean running = new AtomicBoolean(true);
+    private final AtomicBoolean running = new AtomicBoolean(false);
     private final AtomicReference<CountDownLatch> consumersShutdownLatchRef = new AtomicReference<>();
     private Connection connection;
 
@@ -106,7 +106,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
             throw new IllegalArgumentException("consumerCount must be greater than 0");
         }
 
-        SjmsBatchComponent sjmsBatchComponent = (SjmsBatchComponent) sjmsBatchEndpoint.getComponent();
+        SjmsBatchComponent sjmsBatchComponent = sjmsBatchEndpoint.getComponent();
         connectionFactory = ObjectHelper.notNull(sjmsBatchComponent.getConnectionFactory(), "jmsBatchComponent.connectionFactory");
     }
 
@@ -127,32 +127,105 @@ public class SjmsBatchConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        // start up a shared connection
-        connection = connectionFactory.createConnection();
-        connection.start();
+        boolean recovery = getEndpoint().isAsyncStartListener();
+        StartConsumerTask task = new StartConsumerTask(recovery, getEndpoint().getRecoveryInterval());
 
-        LOG.info("Starting {} consumer(s) for {}:{}", consumerCount, destinationName, completionSize);
-        consumersShutdownLatchRef.set(new CountDownLatch(consumerCount));
+        if (recovery) {
+            // use a background thread to keep starting the consumer until
+            getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(task);
+        } else {
+            task.run();
+        }
+    }
 
-        jmsConsumerExecutors = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "SjmsBatchConsumer", consumerCount);
+    /**
+     * Task to startup the consumer either synchronously or using asynchronous with recovery
+     */
+    protected class StartConsumerTask implements Runnable {
 
-        final List<AtomicBoolean> triggers = new ArrayList<>();
-        for (int i = 0; i < consumerCount; i++) {
-            BatchConsumptionLoop loop = new BatchConsumptionLoop();
-            triggers.add(loop.getCompletionTimeoutTrigger());
-            jmsConsumerExecutors.execute(loop);
+        private boolean recoveryEnabled;
+        private int recoveryInterval;
+        private long attempt;
+
+        public StartConsumerTask(boolean recoveryEnabled, int recoveryInterval) {
+            this.recoveryEnabled = recoveryEnabled;
+            this.recoveryInterval = recoveryInterval;
         }
 
-        if (completionInterval > 0) {
-            LOG.info("Using CompletionInterval to run every {} millis.", completionInterval);
-            if (timeoutCheckerExecutorService == null) {
-                setTimeoutCheckerExecutorService(getEndpoint().getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this, SJMS_BATCH_TIMEOUT_CHECKER, 1));
-                shutdownTimeoutCheckerExecutorService = true;
+        @Override
+        public void run() {
+            jmsConsumerExecutors = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "SjmsBatchConsumer", consumerCount);
+            consumersShutdownLatchRef.set(new CountDownLatch(consumerCount));
+
+            if (completionInterval > 0) {
+                LOG.info("Using CompletionInterval to run every {} millis.", completionInterval);
+                if (timeoutCheckerExecutorService == null) {
+                    setTimeoutCheckerExecutorService(getEndpoint().getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this, SJMS_BATCH_TIMEOUT_CHECKER, 1));
+                    shutdownTimeoutCheckerExecutorService = true;
+                }
             }
-            // trigger completion based on interval
-            timeoutCheckerExecutorService.scheduleAtFixedRate(new CompletionIntervalTask(triggers), completionInterval, completionInterval, TimeUnit.MILLISECONDS);
-        }
 
+            // keep loop until we can connect
+            while (isRunAllowed() && !running.get()) {
+                Connection localConnection = null;
+                try {
+                    attempt++;
+
+                    LOG.debug("Attempt #{}. Starting {} consumer(s) for {}:{}", attempt, consumerCount, destinationName, completionSize);
+
+                    // start up a shared connection
+                    localConnection = connectionFactory.createConnection();
+                    localConnection.start();
+
+                    final List<AtomicBoolean> triggers = new ArrayList<>();
+                    for (int i = 0; i < consumerCount; i++) {
+                        BatchConsumptionLoop loop = new BatchConsumptionLoop();
+                        triggers.add(loop.getCompletionTimeoutTrigger());
+                        jmsConsumerExecutors.execute(loop);
+                    }
+
+                    // its success so prepare for exit
+                    connection = localConnection;
+
+                    if (completionInterval > 0) {
+                        // trigger completion based on interval
+                        timeoutCheckerExecutorService.scheduleAtFixedRate(new CompletionIntervalTask(triggers), completionInterval, completionInterval, TimeUnit.MILLISECONDS);
+                    }
+
+                    if (attempt > 1) {
+                        LOG.info("Successfully refreshed connection after {} attempts.", attempt);
+                    }
+
+                    LOG.info("Started {} consumer(s) for {}:{}", consumerCount, destinationName, completionSize);
+                    running.set(true);
+                    return;
+                } catch (Throwable e) {
+                    // we failed so close the local connection as we create a new on next attempt
+                    try {
+                        if (localConnection != null) {
+                            localConnection.close();
+                        }
+                    } catch (Throwable t) {
+                        // ignore
+                    }
+
+                    if (recoveryEnabled) {
+                        getExceptionHandler().handleException("Error starting consumer after " + attempt + " attempts. Will try again in " + recoveryInterval + " millis.", e);
+                    } else {
+                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                    }
+                }
+
+                // sleeping before next attempt
+                try {
+                    LOG.debug("Attempt #{}. Sleeping {} before next attempt to recover", attempt, recoveryInterval);
+                    Thread.sleep(recoveryInterval);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    return;
+                }
+            }
+        }
     }
 
     @Override
