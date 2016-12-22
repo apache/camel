@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.zookeeper.policy;
 
-
 public interface ElectionWatcher {
+
     /**
      * This method is called when there is a potential change to the master.
      * Implementations should call "isMaster" on their ZookeeperElection
