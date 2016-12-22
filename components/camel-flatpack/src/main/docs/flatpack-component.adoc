@@ -55,7 +55,7 @@ The Flatpack component supports 27 endpoint options which are listed below:
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| type | common |  | FlatpackType | Whether to use fixed or delimiter
+| type | common | delim | FlatpackType | Whether to use fixed or delimiter
 | resourceUri | common |  | String | *Required* URL for loading the flatpack mapping file from classpath or file system
 | allowShortLines | common | false | boolean | Allows for lines to be shorter than expected and ignores the extra characters
 | delimiter | common | , | char | The default character delimiter for delimited files.

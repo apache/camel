@@ -294,7 +294,7 @@ public class JmsComponentConfiguration {
      * is the lowest priority and 9 is the highest). The explicitQosEnabled
      * option must also be enabled in order for this option to have any effect.
      */
-    private Integer priority = Integer;
+    private Integer priority = 4;
     /**
      * Specifies whether to inhibit the delivery of messages published by its
      * own connection.
