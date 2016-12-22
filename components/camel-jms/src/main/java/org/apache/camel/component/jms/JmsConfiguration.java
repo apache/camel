@@ -401,7 +401,7 @@ public class JmsConfiguration implements Cloneable {
                     + "  must be executed synchronously (Camel 3.0 may support async transactions).")
     private boolean asyncConsumer;
     // the cacheLevelName of reply manager
-    @UriParam(label = "producer,advanced",
+    @UriParam(label = "producer,advanced", enums = "CACHE_AUTO,CACHE_CONNECTION,CACHE_CONSUMER,CACHE_NONE,CACHE_SESSION",
             description = "Sets the cache level by name for the reply consumer when doing request/reply over JMS."
                     + " This option only applies when using fixed reply queues (not temporary)."
                     + " Camel will by default use: CACHE_CONSUMER for exclusive or shared w/ replyToSelectorName."

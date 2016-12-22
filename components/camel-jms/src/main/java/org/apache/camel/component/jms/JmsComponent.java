@@ -265,7 +265,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     /**
      * The JMS acknowledgement name, which is one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE
      */
-    @Metadata(defaultValue = "AUTO_ACKNOWLEDGE", label = "consumer",
+    @Metadata(defaultValue = "AUTO_ACKNOWLEDGE", label = "consumer", enums = "SESSION_TRANSACTED,CLIENT_ACKNOWLEDGE,AUTO_ACKNOWLEDGE,DUPS_OK_ACKNOWLEDGE",
             description = "The JMS acknowledgement name, which is one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE")
     public void setAcknowledgementModeName(String consumerAcknowledgementMode) {
         getConfiguration().setAcknowledgementModeName(consumerAcknowledgementMode);
@@ -294,7 +294,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
      * Possible values are: CACHE_AUTO, CACHE_CONNECTION, CACHE_CONSUMER, CACHE_NONE, and CACHE_SESSION.
      * The default setting is CACHE_AUTO. See the Spring documentation and Transactions Cache Levels for more information.
      */
-    @Metadata(defaultValue = "CACHE_AUTO", label = "consumer",
+    @Metadata(defaultValue = "CACHE_AUTO", label = "consumer", enums = "CACHE_AUTO,CACHE_CONNECTION,CACHE_CONSUMER,CACHE_NONE,CACHE_SESSION",
             description = "Sets the cache level by name for the underlying JMS resources."
                     + " Possible values are: CACHE_AUTO, CACHE_CONNECTION, CACHE_CONSUMER, CACHE_NONE, and CACHE_SESSION."
                     + " The default setting is CACHE_AUTO. See the Spring documentation and Transactions Cache Levels for more information.")
@@ -311,7 +311,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
      * Note: If using temporary queues then CACHE_NONE is not allowed,
      * and you must use a higher value such as CACHE_CONSUMER or CACHE_SESSION.
      */
-    @Metadata(label = "producer,advanced",
+    @Metadata(label = "producer,advanced", enums = "CACHE_AUTO,CACHE_CONNECTION,CACHE_CONSUMER,CACHE_NONE,CACHE_SESSION",
             description = "Sets the cache level by name for the reply consumer when doing request/reply over JMS."
                     + " This option only applies when using fixed reply queues (not temporary)."
                     + " Camel will by default use: CACHE_CONSUMER for exclusive or shared w/ replyToSelectorName."
@@ -401,7 +401,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
      * Possibles values are those defined by javax.jms.DeliveryMode.
      * NON_PERSISTENT = 1 and PERSISTENT = 2.
      */
-    @Metadata(label = "producer",
+    @Metadata(label = "producer", enums = "1,2",
             description = "Specifies the delivery mode to be used."
                     + " Possibles values are those defined by javax.jms.DeliveryMode."
                     + " NON_PERSISTENT = 1 and PERSISTENT = 2.")
@@ -625,7 +625,7 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
      * Values greater than 1 specify the message priority when sending (where 0 is the lowest priority and 9 is the highest).
      * The explicitQosEnabled option must also be enabled in order for this option to have any effect.
      */
-    @Metadata(defaultValue = "" + Message.DEFAULT_PRIORITY, label = "producer",
+    @Metadata(defaultValue = "" + Message.DEFAULT_PRIORITY, enums = "1,2,3,4,5,6,7,8,9", label = "producer",
             description = "Values greater than 1 specify the message priority when sending (where 0 is the lowest priority and 9 is the highest)."
                     + " The explicitQosEnabled option must also be enabled in order for this option to have any effect.")
     public void setPriority(int priority) {
