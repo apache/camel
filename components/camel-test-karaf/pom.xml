@@ -92,12 +92,6 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.camel.karaf</groupId>
-      <artifactId>apache-camel</artifactId>
-      <version>${project.version}</version>
-      <type>pom</type>
-    </dependency>
 
     <!-- test -->
     <dependency>
