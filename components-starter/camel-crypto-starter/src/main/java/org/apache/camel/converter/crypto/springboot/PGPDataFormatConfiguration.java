@@ -119,6 +119,13 @@ public class PGPDataFormatConfiguration {
      * signature; otherwise an exception (PGPException) is thrown.
      */
     private String signatureVerificationOption;
+    /**
+     * Whether the data format should set the Content-Type header with the type
+     * from the data format if the data format is capable of doing so. For
+     * example application/xml for data formats marshalling to XML or
+     * application/json for data formats marshalling to JSon etc.
+     */
+    private Boolean contentTypeHeader = false;
 
     public String getKeyUserid() {
         return keyUserid;
@@ -231,5 +238,13 @@ public class PGPDataFormatConfiguration {
     public void setSignatureVerificationOption(
             String signatureVerificationOption) {
         this.signatureVerificationOption = signatureVerificationOption;
+    }
+
+    public Boolean getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    public void setContentTypeHeader(Boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 }

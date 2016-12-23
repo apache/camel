@@ -41,6 +41,13 @@ public class BindyFixedLengthDataFormatConfiguration {
      * the JVM platform default locale then use the name default
      */
     private String locale;
+    /**
+     * Whether the data format should set the Content-Type header with the type
+     * from the data format if the data format is capable of doing so. For
+     * example application/xml for data formats marshalling to XML or
+     * application/json for data formats marshalling to JSon etc.
+     */
+    private Boolean contentTypeHeader = false;
 
     public BindyType getType() {
         return type;
@@ -64,5 +71,13 @@ public class BindyFixedLengthDataFormatConfiguration {
 
     public void setLocale(String locale) {
         this.locale = locale;
+    }
+
+    public Boolean getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    public void setContentTypeHeader(Boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 }

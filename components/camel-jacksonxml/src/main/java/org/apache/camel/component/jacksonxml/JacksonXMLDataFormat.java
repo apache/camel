@@ -69,6 +69,7 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
     private String disableFeatures;
     private boolean enableJacksonTypeConverter;
     private boolean allowUnmarshallType;
+    private boolean contentTypeHeader = true;
 
     /**
      * Use the default Jackson {@link XmlMapper} and {@link Map}
@@ -153,6 +154,14 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         this.xmlMapper.writerWithView(jsonView).writeValue(stream, graph);
+
+        if (contentTypeHeader) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            }
+        }
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
@@ -342,6 +351,17 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
      */
     public void setAllowUnmarshallType(boolean allowJacksonUnmarshallType) {
         this.allowUnmarshallType = allowJacksonUnmarshallType;
+    }
+
+    public boolean isContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    /**
+     * If enabled then Jackson will set the Content-Type header to <tt>application/xml</tt> when marshalling.
+     */
+    public void setContentTypeHeader(boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 
     public String getEnableFeatures() {
