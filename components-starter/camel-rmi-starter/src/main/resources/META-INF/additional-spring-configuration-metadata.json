@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.rmi.enabled",
+      "description": "Enable rmi component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

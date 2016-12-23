@@ -24,6 +24,7 @@ import java.util.Map;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 
+import org.apache.camel.Exchange;
 import org.w3c.dom.Document;
 
 import net.sf.json.JSON;
@@ -48,10 +49,12 @@ public class XmlJsonDataFormatTest extends AbstractJsonTestSupport {
 
         MockEndpoint mockJSON = getMockEndpoint("mock:json");
         mockJSON.expectedMessageCount(1);
+        mockJSON.expectedHeaderReceived(Exchange.CONTENT_TYPE, "application/json");
         mockJSON.message(0).body().isInstanceOf(byte[].class);
 
         MockEndpoint mockXML = getMockEndpoint("mock:xml");
         mockXML.expectedMessageCount(1);
+        mockXML.expectedHeaderReceived(Exchange.CONTENT_TYPE, "application/xml");
         mockXML.message(0).body().isInstanceOf(String.class);
 
         Object json = template.requestBody("direct:marshal", in);

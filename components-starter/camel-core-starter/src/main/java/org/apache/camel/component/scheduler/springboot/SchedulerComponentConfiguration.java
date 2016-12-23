@@ -31,7 +31,7 @@ public class SchedulerComponentConfiguration {
      * Number of threads used by the scheduling thread pool. Is by default using
      * a single thread
      */
-    private Integer concurrentTasks;
+    private Integer concurrentTasks = 1;
 
     public Integer getConcurrentTasks() {
         return concurrentTasks;

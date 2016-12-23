@@ -107,7 +107,6 @@ The Spring WebService component supports 24 endpoint options which are listed be
 | endpointDispatcher | consumer |  | CamelEndpointDispatcher | Spring org.springframework.ws.server.endpoint.MessageEndpoint for dispatching messages received by Spring-WS to a Camel endpoint to integrate with existing (legacy) endpoint mappings like PayloadRootQNameEndpointMapping SoapActionEndpointMapping etc.
 | endpointMapping | consumer |  | CamelSpringWSEndpointMapping | Reference to an instance of org.apache.camel.component.spring.ws.bean.CamelEndpointMapping in the Registry/ApplicationContext. Only one bean is required in the registry to serve all Camel/Spring-WS endpoints. This bean is auto-discovered by the MessageDispatcher and used to map requests to Camel endpoints based on characteristics specified on the endpoint (like root QName SOAP action etc)
 | expression | consumer |  | String | The XPath expression to use when option type=xpathresult. Then this option is required to be configured.
-| sslContextParameters | consumer |  | SSLContextParameters | To configure security using SSLContextParameters
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | allowResponseHeaderOverride | producer | false | boolean | Option to override soap response header in in/out exchange with header info from the actual service layer. If the invoked service appends or rewrites the soap header this option when set to true allows the modified soap header to be overwritten in in/out message headers
@@ -123,6 +122,7 @@ The Spring WebService component supports 24 endpoint options which are listed be
 | webServiceTemplate | producer |  | WebServiceTemplate | Option to provide a custom WebServiceTemplate. This allows for full control over client-side web services handling; like adding a custom interceptor or specifying a fault resolver message sender or message factory.
 | wsAddressingAction | producer |  | URI | WS-Addressing 1.0 action header to include when accessing web services. The To header is set to the address of the web service as specified in the endpoint URI (default Spring-WS behavior).
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
 |=======================================================================
 {% endraw %}
 // endpoint options: END

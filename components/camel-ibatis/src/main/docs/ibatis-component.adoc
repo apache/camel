@@ -65,12 +65,12 @@ The iBatis component supports 3 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| sqlMapClient | SqlMapClient | To use the given com.ibatis.sqlmap.client.SqlMapClient
-| sqlMapConfig | String | Location of iBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath
-| useTransactions | boolean | Whether to use transactions. This option is by default true.
+| Name | Group | Default | Java Type | Description
+| sqlMapClient | advanced |  | SqlMapClient | To use the given com.ibatis.sqlmap.client.SqlMapClient
+| sqlMapConfig | common | classpath:SqlMapConfig.xml | String | Location of iBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath
+| useTransactions | common | true | boolean | Whether to use transactions. This option is by default true.
 |=======================================================================
 {% endraw %}
 // component options: END

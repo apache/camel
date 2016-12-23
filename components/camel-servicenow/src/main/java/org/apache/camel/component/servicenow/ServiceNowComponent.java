@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
 
@@ -29,6 +30,7 @@ import org.apache.camel.util.IntrospectionSupport;
  */
 public class ServiceNowComponent extends UriEndpointComponent {
 
+    @Metadata(label = "advanced")
     private ServiceNowConfiguration configuration;
 
     public ServiceNowComponent() {
@@ -57,7 +59,7 @@ public class ServiceNowComponent extends UriEndpointComponent {
         }
 
         Map<String, Object> responseModels = IntrospectionSupport.extractProperties(parameters, "responseModel.");
-        for (Map.Entry<String, Object> entry : requestModels.entrySet()) {
+        for (Map.Entry<String, Object> entry : responseModels.entrySet()) {
             configuration.addResponseModel(
                 entry.getKey(),
                 EndpointHelper.resolveParameter(context, (String)entry.getValue(), Class.class));
@@ -105,6 +107,7 @@ public class ServiceNowComponent extends UriEndpointComponent {
     /**
      * ServiceNow user account name
      */
+    @Metadata(label = "security", secret = true)
     public void setUserName(String userName) {
         configuration.setUserName(userName);
     }
@@ -116,6 +119,7 @@ public class ServiceNowComponent extends UriEndpointComponent {
     /**
      * ServiceNow account password
      */
+    @Metadata(label = "security", secret = true)
     public void setPassword(String password) {
         configuration.setPassword(password);
     }
@@ -127,6 +131,7 @@ public class ServiceNowComponent extends UriEndpointComponent {
     /**
      * OAuth2 ClientID
      */
+    @Metadata(label = "security", secret = true)
     public void setOauthClientId(String oauthClientId) {
         configuration.setOauthClientId(oauthClientId);
     }
@@ -138,6 +143,7 @@ public class ServiceNowComponent extends UriEndpointComponent {
     /**
      * OAuth2 ClientSecret
      */
+    @Metadata(label = "security", secret = true)
     public void setOauthClientSecret(String oauthClientSecret) {
         configuration.setOauthClientSecret(oauthClientSecret);
     }
@@ -149,6 +155,7 @@ public class ServiceNowComponent extends UriEndpointComponent {
     /**
      * OAuth token Url
      */
+    @Metadata(label = "security", secret = true)
     public void setOauthTokenUrl(String oauthTokenUrl) {
         configuration.setOauthTokenUrl(oauthTokenUrl);
     }

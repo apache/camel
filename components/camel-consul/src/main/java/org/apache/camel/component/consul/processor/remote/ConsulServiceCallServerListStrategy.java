@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.consul.processor.remote;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.orbitz.consul.CatalogClient;
 import com.orbitz.consul.Consul;
@@ -31,6 +33,8 @@ import org.apache.camel.impl.remote.DefaultServiceCallServer;
 import org.apache.camel.impl.remote.DefaultServiceCallServerListStrategy;
 import org.apache.camel.spi.ServiceCallServer;
 import org.apache.camel.util.ObjectHelper;
+
+import static org.apache.camel.util.ObjectHelper.ifNotEmpty;
 
 
 abstract class ConsulServiceCallServerListStrategy extends DefaultServiceCallServerListStrategy<ServiceCallServer> {
@@ -98,9 +102,27 @@ abstract class ConsulServiceCallServerListStrategy extends DefaultServiceCallSer
     }
 
     protected ServiceCallServer newServer(CatalogService service) {
+        Map<String, String> meta = new HashMap<>();
+        ifNotEmpty(service.getServiceId(), val -> meta.put("service_id", val));
+        ifNotEmpty(service.getNode(), val -> meta.put("node", val));
+        ifNotEmpty(service.getServiceName(), val -> meta.put("service_name", val));
+
+        List<String> tags = service.getServiceTags();
+        if (tags != null) {
+            for (String tag : service.getServiceTags()) {
+                String[] items = tag.split("=");
+                if (items.length == 1) {
+                    meta.put(items[0], items[0]);
+                } else if (items.length == 2) {
+                    meta.put(items[0], items[1]);
+                }
+            }
+        }
+
         return new DefaultServiceCallServer(
             service.getServiceAddress(),
-            service.getServicePort()
+            service.getServicePort(),
+            meta
         );
     }
 }

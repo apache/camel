@@ -116,11 +116,11 @@ The SQL component supports 2 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| dataSource | DataSource | Sets the DataSource to use to communicate with the database.
-| usePlaceholder | boolean | Sets whether to use placeholder and replace all placeholder characters with sign in the SQL queries. This option is default true
+| Name | Group | Default | Java Type | Description
+| dataSource | common |  | DataSource | Sets the DataSource to use to communicate with the database.
+| usePlaceholder | advanced | true | boolean | Sets whether to use placeholder and replace all placeholder characters with sign in the SQL queries. This option is default true
 |=======================================================================
 {% endraw %}
 // component options: END

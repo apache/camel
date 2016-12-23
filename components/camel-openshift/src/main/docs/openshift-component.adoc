@@ -44,13 +44,13 @@ The OpenShift component supports 4 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| username | String | The username to login to openshift server.
-| password | String | The password for login to openshift server.
-| domain | String | Domain name. If not specified then the default domain is used.
-| server | String | Url to the openshift server. If not specified then the default value from the local openshift configuration file /.openshift/express.conf is used. And if that fails as well then openshift.redhat.com is used.
+| Name | Group | Default | Java Type | Description
+| username | security |  | String | The username to login to openshift server.
+| password | security |  | String | The password for login to openshift server.
+| domain | common |  | String | Domain name. If not specified then the default domain is used.
+| server | common |  | String | Url to the openshift server. If not specified then the default value from the local openshift configuration file /.openshift/express.conf is used. And if that fails as well then openshift.redhat.com is used.
 |=======================================================================
 {% endraw %}
 // component options: END

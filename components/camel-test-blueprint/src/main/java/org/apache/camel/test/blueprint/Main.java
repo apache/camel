@@ -26,7 +26,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.main.MainSupport;
 import org.osgi.framework.BundleContext;
-import org.osgi.service.blueprint.container.BlueprintEvent;
 
 /**
  * A command line tool for booting up a CamelContext using an OSGi Blueprint XML file
@@ -107,8 +106,6 @@ public class Main extends MainSupport {
                 bundleContext = createBundleContext(bundleName);
             }
             Set<Long> eventHistory = new HashSet<>();
-
-            CamelBlueprintHelper.waitForBlueprintContainer(eventHistory, bundleContext, bundleName, BlueprintEvent.CREATED, null);
 
             camelContext = CamelBlueprintHelper.getOsgiService(bundleContext, CamelContext.class);
             if (camelContext == null) {

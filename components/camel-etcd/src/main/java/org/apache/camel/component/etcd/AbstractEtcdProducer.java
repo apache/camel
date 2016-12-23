@@ -17,6 +17,7 @@
 package org.apache.camel.component.etcd;
 
 import mousio.etcd4j.EtcdClient;
+import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultProducer;
 
 /**
@@ -29,7 +30,7 @@ public abstract class AbstractEtcdProducer extends DefaultProducer {
 
     private EtcdClient client;
 
-    protected AbstractEtcdProducer(AbstractEtcdEndpoint endpoint, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
+    protected AbstractEtcdProducer(Endpoint endpoint, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
         super(endpoint);
 
         this.configuration = configuration;

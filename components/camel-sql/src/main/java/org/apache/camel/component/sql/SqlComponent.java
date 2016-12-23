@@ -33,8 +33,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * @version 
  */
 public class SqlComponent extends UriEndpointComponent {
+
     private DataSource dataSource;
-    @Metadata(defaultValue = "true")
+    @Metadata(label = "advanced", defaultValue = "true")
     private boolean usePlaceholder = true;
 
     public SqlComponent() {

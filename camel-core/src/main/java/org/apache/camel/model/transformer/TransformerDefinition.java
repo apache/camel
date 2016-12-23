@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import org.apache.camel.CamelContext;
+import org.apache.camel.model.InputTypeDefinition;
+import org.apache.camel.model.OutputTypeDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Transformer;
 
@@ -44,6 +46,7 @@ import org.apache.camel.spi.Transformer;
 @XmlType(name = "transformer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class TransformerDefinition {
+
     @XmlAttribute
     private String scheme;
     @XmlAttribute
@@ -63,6 +66,7 @@ public abstract class TransformerDefinition {
 
     /**
      * Set a scheme name supported by the transformer.
+     *
      * @param scheme scheme name
      */
     public void setScheme(String scheme) {
@@ -75,6 +79,7 @@ public abstract class TransformerDefinition {
 
     /**
      * Set the 'from' data type .
+     *
      * @param from 'from' data type
      */
     public void setFrom(String from) {
@@ -83,6 +88,7 @@ public abstract class TransformerDefinition {
 
     /**
      * Set the 'from' data type using Java class.
+     *
      * @param clazz 'from' Java class
      */
     public void setFrom(Class<?> clazz) {
@@ -95,6 +101,7 @@ public abstract class TransformerDefinition {
 
     /**
      * Set the 'to' data type.
+     *
      * @param to 'to' data type 
      */
     public void setTo(String to) {
@@ -103,6 +110,7 @@ public abstract class TransformerDefinition {
 
     /**
      * Set the 'to' data type using Java class.
+     *
      * @param clazz 'to' Java class
      */
     public void setTo(Class<?> clazz) {

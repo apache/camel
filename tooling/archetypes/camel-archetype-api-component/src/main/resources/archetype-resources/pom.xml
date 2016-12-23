@@ -25,7 +25,6 @@
   <version>${version}</version>
 
   <name>Camel ${name} Component Parent</name>
-  <url>http://www.myorganization.org</url>
   <description>Parent project for Camel {$name} Component</description>
 
   <properties>
@@ -39,6 +38,7 @@
 
   <dependencyManagement>
     <dependencies>
+      <!-- Camel BOM -->
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>

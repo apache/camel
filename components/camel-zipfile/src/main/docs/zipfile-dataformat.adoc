@@ -21,7 +21,7 @@ ZipFile Options
 
 
 // dataformat options: START
-The Zip File dataformat supports 1 options which are listed below.
+The Zip File dataformat supports 2 options which are listed below.
 
 
 
@@ -30,6 +30,7 @@ The Zip File dataformat supports 1 options which are listed below.
 |=======================================================================
 | Name | Default | Java Type | Description
 | usingIterator | false | Boolean | If the zip file has more then one entry the setting this option to true allows to work with the splitter EIP to split the data using an iterator in a streaming mode.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
 {% endraw %}
 // dataformat options: END

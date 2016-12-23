@@ -17,15 +17,23 @@
 package org.apache.camel.component.dns.processor.remote;
 
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.impl.remote.DefaultServiceCallServer;
 import org.xbill.DNS.SRVRecord;
+
+import static org.apache.camel.util.ObjectHelper.ifNotEmpty;
 
 public class DnsServiceCallServer extends DefaultServiceCallServer {
     public static final Comparator<SRVRecord> COMPARATOR = comparator();
 
     public DnsServiceCallServer(SRVRecord record) {
-        super(record.getTarget().toString(true), record.getPort());
+        super(
+            record.getTarget().toString(true),
+            record.getPort(),
+            getRecordMetaData(record)
+        );
     }
 
     public static Comparator<SRVRecord> comparator() {
@@ -33,5 +41,13 @@ public class DnsServiceCallServer extends DefaultServiceCallServer {
         Comparator<SRVRecord> byWeight = (e1, e2) -> Integer.compare(e2.getWeight(), e1.getWeight());
 
         return byPriority.thenComparing(byWeight);
+    }
+
+    public static Map<String, String> getRecordMetaData(SRVRecord record) {
+        Map<String, String> meta = new HashMap<>();
+        ifNotEmpty(record.getPriority(), val -> meta.put("priority", Integer.toString(val)));
+        ifNotEmpty(record.getWeight(), val -> meta.put("weight", Integer.toString(val)));
+
+        return meta;
     }
 }

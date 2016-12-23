@@ -37,9 +37,9 @@ public class OpenShiftEndpoint extends ScheduledPollEndpoint {
 
     @UriPath @Metadata(required = "true")
     private String clientId;
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = "true", secret = true)
     private String username;
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = "true", secret = true)
     private String password;
     @UriParam
     private String domain;

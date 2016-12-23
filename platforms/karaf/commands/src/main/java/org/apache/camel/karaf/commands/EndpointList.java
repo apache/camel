@@ -30,7 +30,7 @@ import org.apache.karaf.shell.api.action.lifecycle.Service;
 @Service
 public class EndpointList extends CamelControllerImpl implements Action {
 
-    @Argument(index = 0, name = "name", description = "The name of the Camel context", required = true, multiValued = false)
+    @Argument(index = 0, name = "name", description = "The name of the Camel context or a wildcard expression", required = false, multiValued = false)
     @Completion(CamelContextCompleter.class)
     String name;
 

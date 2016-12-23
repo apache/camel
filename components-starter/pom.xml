@@ -206,6 +206,7 @@
     <module>camel-mllp-starter</module>
     <module>camel-mongodb-gridfs-starter</module>
     <module>camel-mongodb-starter</module>
+    <module>camel-mongodb3-starter</module>
     <module>camel-mqtt-starter</module>
     <module>camel-msv-starter</module>
     <module>camel-mustache-starter</module>
@@ -220,6 +221,7 @@
     <module>camel-ognl-starter</module>
     <module>camel-olingo2-starter</module>
     <module>camel-openshift-starter</module>
+    <module>camel-openstack-starter</module>
     <module>camel-optaplanner-starter</module>
     <module>camel-paho-starter</module>
     <module>camel-pdf-starter</module>
@@ -259,6 +261,7 @@
     <module>camel-splunk-starter</module>
     <module>camel-spring-batch-starter</module>
     <module>camel-spring-boot-starter</module>
+    <module>camel-spring-cloud-starter</module>
     <module>camel-spring-dm-starter</module>
     <module>camel-spring-integration-starter</module>
     <module>camel-spring-javaconfig-starter</module>

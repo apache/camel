@@ -111,7 +111,7 @@ public class RestletComponentConfiguration {
      * request input stream into a stream cache and put it into message body if
      * this option is false to support reading the stream multiple times.
      */
-    private Boolean disableStreamCache;
+    private Boolean disableStreamCache = false;
     /**
      * To configure the port number for the restlet consumer routes. This allows
      * to configure this once to reuse the same port for these consumers.
@@ -129,8 +129,8 @@ public class RestletComponentConfiguration {
      */
     private List<String> enabledConverters;
     /**
-     * To use a custom HeaderFilterStrategy to filter header to and from Camel
-     * message.
+     * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+     * header to and from Camel message.
      */
     @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;

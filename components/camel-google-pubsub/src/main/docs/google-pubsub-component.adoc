@@ -68,10 +68,10 @@ The Google Pubsub component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| connectionFactory | GooglePubsubConnectionFactory | Sets the connection factory to use: provides the ability to explicitly manage connection credentials: - the path to the key file - the Service Account Key / Email pair
+| Name | Group | Default | Java Type | Description
+| connectionFactory | common |  | GooglePubsubConnectionFactory | Sets the connection factory to use: provides the ability to explicitly manage connection credentials: - the path to the key file - the Service Account Key / Email pair
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -87,7 +87,7 @@ The Google Pubsub component supports 11 endpoint options which are listed below:
 | destinationName | common |  | String | *Required* Destination Name
 | ackMode | common | AUTO | AckMode | AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack explicitly
 | concurrentConsumers | common | 1 | Integer | The number of parallel streams consuming from the subscription
-| connectionFactory | common |  | GooglePubsubConnectionFactory | ConnectionFactory to obtain connection to PubSub Service. If non provided the default one will be used
+| connectionFactory | common |  | GooglePubsubConnectionFactory | ConnectionFactory to obtain connection to PubSub Service. If non provided the default will be used.
 | loggerId | common |  | String | Logger ID to use when a match to the parent route required
 | maxMessagesPerPoll | common | 1 | Integer | The max number of messages to receive from the server in a single API call
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
@@ -146,3 +146,24 @@ Message Body
 
 The consumer endpoint returns the content of the message as byte[] - exactly as the underlying system sends it.
 It is up for the route to convert/unmarshall the contents.
+
+[[GooglePubsub-RollbackRedelivery]]
+Rollback and Redelivery
+^^^^^^^^^^^^
+
+The rollback for Google PubSub relies on the idea of the Acknowledgement Deadline - the time period where Google PubSub expects to receive the acknowledgement.
+If the acknowledgement has not been received, the message is redelivered.
+
+Google provides an API to extend the deadline for a message.
+
+More information in https://cloud.google.com/pubsub/docs/subscriber#ack_deadline[Google PubSub Documentation]
+
+So, rollback is effectively a deadline extension API call with zero value - i.e. deadline is reached now and message can
+be redelivered to the next consumer.
+
+It is possible to delay the message redelivery by setting the acknowledgement deadline explicitly for the rollback by
+setting the message header
+
+* GooglePubsubConstants.ACK_DEADLINE
+
+to the value in seconds.

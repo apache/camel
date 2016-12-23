@@ -24,7 +24,7 @@
     <!-- Binary Files -->
     <fileSet>
       <directory>..</directory>
-      <outputDirectory>/</outputDirectory>
+      <outputDirectory></outputDirectory>
       <includes>
         <include>**/*</include>
       </includes>

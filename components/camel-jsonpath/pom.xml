@@ -31,8 +31,16 @@
   <description>Camel JSON Path Language</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.jsonpath.*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>
+      org.apache.camel.jsonpath,
+      !org.apache.camel.jsonpath.jackson
+    </camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.LanguageResolver;language=jsonpath</camel.osgi.export.service>
+    <camel.osgi.import>
+      com.fasterxml.jackson.databind;resolution:=optional,
+      com.fasterxml.jackson.module.jaxb;resolution:=optional,
+      *
+    </camel.osgi.import>
   </properties>
 
   <dependencies>
@@ -49,6 +57,16 @@
       <groupId>net.minidev</groupId>
       <artifactId>json-smart</artifactId>
       <version>${json-smart-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-jaxb-annotations</artifactId>
+      <optional>true</optional>
     </dependency>
 
     <!-- testing -->

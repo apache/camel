@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.stax.enabled",
+      "description": "Enable stax component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

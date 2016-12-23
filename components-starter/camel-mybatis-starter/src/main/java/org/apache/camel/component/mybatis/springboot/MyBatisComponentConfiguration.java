@@ -38,7 +38,7 @@ public class MyBatisComponentConfiguration {
      * Location of MyBatis xml configuration file. The default value is:
      * SqlMapConfig.xml loaded from the classpath
      */
-    private String configurationUri;
+    private String configurationUri = "SqlMapConfig.xml";
 
     public SqlSessionFactory getSqlSessionFactory() {
         return sqlSessionFactory;

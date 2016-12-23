@@ -33,7 +33,7 @@
 		<camel:endpoint id="upload2"
 			uri="cxfrs:bean:rsServer2?bindingStyle=SimpleConsumer" />
 		<camel:endpoint id="upload2Client"
-			uri="cxfrs:bean:rsClient2?httpClientAPI=false" />
+			uri="cxfrs:bean:rsClient2?httpClientAPI=false&amp;synchronous=true" />
 	</camel:camelContext>
 	<cxf:rsServer id="rsServer1" address="http://localhost:${CXFTestSupport.port6}/CxfRsRelayTest/rest"
 		serviceClass="org.apache.camel.component.cxf.jaxrs.CxfRsRelayTest.UploadService"

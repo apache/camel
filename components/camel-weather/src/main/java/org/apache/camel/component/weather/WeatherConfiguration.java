@@ -80,9 +80,9 @@ public class WeatherConfiguration {
     private Integer proxyPort;
     @UriParam(label = "proxy")
     private String proxyAuthMethod;
-    @UriParam(label = "proxy")
+    @UriParam(label = "proxy", secret = true)
     private String proxyAuthUsername;
-    @UriParam(label = "proxy")
+    @UriParam(label = "proxy", secret = true)
     private String proxyAuthPassword;
     @UriParam(label = "proxy")
     private String proxyAuthDomain;
@@ -90,7 +90,6 @@ public class WeatherConfiguration {
     private String proxyAuthHost;
     @UriParam(label = "advanced")
     private HttpConnectionManager httpConnectionManager;
-
 
     public WeatherConfiguration(WeatherComponent component) {
         this.component = notNull(component, "component");
@@ -366,7 +365,7 @@ public class WeatherConfiguration {
     }
 
     public List<String> getIds() {
-        return (List<String>) ids;
+        return ids;
     }
 
     /**

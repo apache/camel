@@ -39,12 +39,12 @@ The Stub component supports 3 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| queueSize | int | Sets the default maximum capacity of the SEDA queue (i.e. the number of messages it can hold).
-| concurrentConsumers | int | Sets the default number of concurrent threads processing exchanges.
-| defaultQueueFactory | Exchange> | Sets the default queue factory.
+| Name | Group | Default | Java Type | Description
+| queueSize | advanced |  | int | Sets the default maximum capacity of the SEDA queue (i.e. the number of messages it can hold).
+| concurrentConsumers | consumer | 1 | int | Sets the default number of concurrent threads processing exchanges.
+| defaultQueueFactory | advanced |  | Exchange> | Sets the default queue factory.
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -25,6 +25,7 @@ import com.codahale.metrics.Slf4jReporter;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -41,6 +42,7 @@ public class MetricsComponent extends UriEndpointComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(MetricsComponent.class);
 
+    @Metadata(label = "advanced")
     private MetricRegistry metricRegistry;
 
     public MetricsComponent() {

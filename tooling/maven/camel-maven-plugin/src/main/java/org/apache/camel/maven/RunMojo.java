@@ -64,7 +64,7 @@ import org.codehaus.mojo.exec.Property;
  *
  * @goal run
  * @requiresDependencyResolution compile+runtime
- * @execute phase="test-compile"
+ * @execute phase="prepare-package"
  */
 public class RunMojo extends AbstractExecMojo {
 
@@ -217,6 +217,14 @@ public class RunMojo extends AbstractExecMojo {
     private String configAdminFileName;
 
     /**
+     * To watch the directory for file changes which triggers
+     * a live reload of the Camel routes on-the-fly.
+     *
+     * @parameter property="camel.fileWatcherDirectory"
+     */
+    private String fileWatcherDirectory;
+
+    /**
      * The class arguments.
      *
      * @parameter property="camel.arguments"
@@ -358,9 +366,16 @@ public class RunMojo extends AbstractExecMojo {
      * @throws MojoFailureException something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
+
+        String skip = System.getProperties().getProperty("maven.test.skip");
+        if (skip == null || "false".equals(skip)) {
+            // lets log a INFO about how to skip tests if you want to so you can run faster
+            getLog().info("You can skip tests from the command line using: mvn camel:run -Dmaven.test.skip=true");
+        }
+
         boolean usingSpringJavaConfigureMain = false;
 
-        boolean useCdiMain = false;
+        boolean useCdiMain;
         if (useCDI != null) {
             // use configured value
             useCdiMain = useCDI;
@@ -368,7 +383,7 @@ public class RunMojo extends AbstractExecMojo {
             // auto detect if we have cdi
             useCdiMain = detectCDIOnClassPath();
         }
-        boolean usingBlueprintMain = false;
+        boolean usingBlueprintMain;
         if (useBlueprint != null) {
             // use configured value
             usingBlueprintMain = useBlueprint;
@@ -385,6 +400,10 @@ public class RunMojo extends AbstractExecMojo {
         List<String> args = new ArrayList<String>();
         if (trace) {
             args.add("-t");
+        }
+        if (fileWatcherDirectory != null) {
+            args.add("-watch");
+            args.add(fileWatcherDirectory);
         }
 
         if (applicationContextUri != null) {

@@ -23,10 +23,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.cxf.configuration.security.ProxyAuthorizationPolicy;
+import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 
 @UriParams
 public class ServiceNowConfiguration implements Cloneable {
@@ -39,9 +41,9 @@ public class ServiceNowConfiguration implements Cloneable {
             JsonInclude.Include.NON_NULL
         );
 
-    @UriParam(label = "security", secret = true) @Metadata(required = "true")
+    @UriParam(label = "security", secret = true)
     private String userName;
-    @UriParam(label = "security", secret = true) @Metadata(required = "true")
+    @UriParam(label = "security", secret = true)
     private String password;
     @UriParam(label = "security", secret = true)
     private String oauthClientId;
@@ -93,6 +95,8 @@ public class ServiceNowConfiguration implements Cloneable {
     private String displayValue = "false";
     @UriParam
     private Boolean inputDisplayValue = false;
+    @UriParam(prefix = "model.", multiValue = true, javaType = "java.lang.String", description = "Defines both request and response models")
+    private transient Map<String, Class<?>> models; // field not in use as its a shortcut for both requestModels/responseModels
     @UriParam(prefix = "request-model.", multiValue = true, javaType = "java.lang.String")
     private Map<String, Class<?>> requestModels;
     @UriParam(prefix = "response-model.", multiValue = true, javaType = "java.lang.String")
@@ -101,7 +105,20 @@ public class ServiceNowConfiguration implements Cloneable {
     private ObjectMapper mapper = MAPPER;
     @UriParam(defaultValue = "HELSINKI", enums = "FUJI,GENEVA,HELSINKI")
     private ServiceNowRelease release = ServiceNowRelease.HELSINKI;
-
+    @UriParam(label = "security")
+    private SSLContextParameters sslContextParameters;
+    @UriParam(label = "advanced")
+    private HTTPClientPolicy httpClientPolicy;
+    @UriParam(label = "advanced")
+    private ProxyAuthorizationPolicy proxyAuthorizationPolicy;
+    @UriParam(label = "proxy")
+    private String proxyHost;
+    @UriParam(label = "proxy")
+    private Integer proxyPort;
+    @UriParam(label = "proxy,security")
+    private String proxyUserName;
+    @UriParam(label = "proxy,security")
+    private String proxyPassword;
 
     public String getUserName() {
         return userName;
@@ -471,6 +488,83 @@ public class ServiceNowConfiguration implements Cloneable {
      */
     public void setTopLevelOnly(Boolean topLevelOnly) {
         this.topLevelOnly = topLevelOnly;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * To configure security using SSLContextParameters. See http://camel.apache.org/camel-configuration-utilities.html
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
+    }
+
+    public HTTPClientPolicy getHttpClientPolicy() {
+        return httpClientPolicy;
+    }
+
+    /**
+     * To configure http-client
+     */
+    public void setHttpClientPolicy(HTTPClientPolicy httpClientPolicy) {
+        this.httpClientPolicy = httpClientPolicy;
+    }
+
+    public ProxyAuthorizationPolicy getProxyAuthorizationPolicy() {
+        return proxyAuthorizationPolicy;
+    }
+
+    /**
+     * To configure proxy authentication
+     */
+    public void setProxyAuthorizationPolicy(ProxyAuthorizationPolicy proxyAuthorizationPolicy) {
+        this.proxyAuthorizationPolicy = proxyAuthorizationPolicy;
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    /**
+     * The proxy host name
+     */
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    /**
+     * The proxy port number
+     */
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+
+    public String getProxyUserName() {
+        return proxyUserName;
+    }
+
+    /**
+     * Username for proxy authentication
+     */
+    public void setProxyUserName(String proxyUserName) {
+        this.proxyUserName = proxyUserName;
+    }
+
+    public String getProxyPassword() {
+        return proxyPassword;
+    }
+
+    /**
+     * Password for proxy authentication
+     */
+    public void setProxyPassword(String proxyPassword) {
+        this.proxyPassword = proxyPassword;
     }
 
     // *************************************************

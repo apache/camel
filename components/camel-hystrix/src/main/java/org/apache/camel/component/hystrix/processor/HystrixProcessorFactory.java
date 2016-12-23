@@ -206,6 +206,9 @@ public class HystrixProcessorFactory implements ProcessorFactory {
         if (config.getCorePoolSize() != null) {
             threadPool.withCoreSize(config.getCorePoolSize());
         }
+        if (config.getMaximumSize() != null) {
+            threadPool.withMaximumSize(config.getMaximumSize());
+        }
         if (config.getKeepAliveTime() != null) {
             threadPool.withKeepAliveTimeMinutes(config.getKeepAliveTime());
         }
@@ -220,6 +223,9 @@ public class HystrixProcessorFactory implements ProcessorFactory {
         }
         if (config.getThreadPoolRollingNumberStatisticalWindowBuckets() != null) {
             threadPool.withMetricsRollingStatisticalWindowBuckets(config.getThreadPoolRollingNumberStatisticalWindowBuckets());
+        }
+        if (config.getAllowMaximumSizeToDivergeFromCoreSize() != null) {
+            threadPool.withAllowMaximumSizeToDivergeFromCoreSize(config.getAllowMaximumSizeToDivergeFromCoreSize());
         }
     }
 }

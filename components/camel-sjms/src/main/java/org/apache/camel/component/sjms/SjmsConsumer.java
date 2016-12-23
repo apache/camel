@@ -105,11 +105,8 @@ public class SjmsConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        if (getConnectionResource() == null) {
-            throw new IllegalArgumentException(String.format("ConnectionResource or ConnectionFactory must be configured for %s", this));
-        }
-
         super.doStart();
+
         this.executor = getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsConsumer");
         if (consumers == null) {
             consumers = new GenericObjectPool<MessageConsumerResources>(new MessageConsumerResourcesFactory());
@@ -183,7 +180,8 @@ public class SjmsConsumer extends DefaultConsumer {
      */
     private MessageConsumerResources createConsumer() throws Exception {
         MessageConsumerResources answer;
-        Connection conn = getConnectionResource().borrowConnection();
+        ConnectionResource connectionResource = getOrCreateConnectionResource();
+        Connection conn = connectionResource.borrowConnection();
         try {
             Session session = conn.createSession(isTransacted(), isTransacted() ? Session.SESSION_TRANSACTED : Session.AUTO_ACKNOWLEDGE);
             Destination destination = getEndpoint().getDestinationCreationStrategy().createDestination(session, getDestinationName(), isTopic());
@@ -196,7 +194,7 @@ public class SjmsConsumer extends DefaultConsumer {
             log.error("Unable to create the MessageConsumer", e);
             throw e;
         } finally {
-            getConnectionResource().returnConnection(conn);
+            connectionResource.returnConnection(conn);
         }
         return answer;
     }
@@ -241,6 +239,7 @@ public class SjmsConsumer extends DefaultConsumer {
                 messageHandler = new InOutMessageHandler(getEndpoint(), executor);
             }
         }
+
         messageHandler.setSession(session);
         messageHandler.setProcessor(getAsyncProcessor());
         messageHandler.setSynchronous(isSynchronous());
@@ -250,8 +249,20 @@ public class SjmsConsumer extends DefaultConsumer {
         return messageHandler;
     }
 
+    /**
+     * @deprecated use {@link #getOrCreateConnectionResource()}
+     */
+    @Deprecated
     protected ConnectionResource getConnectionResource() {
         return getEndpoint().getConnectionResource();
+    }
+
+    protected ConnectionResource getOrCreateConnectionResource() {
+        ConnectionResource answer = getEndpoint().getConnectionResource();
+        if (answer == null) {
+            answer = getEndpoint().createConnectionResource(this);
+        }
+        return answer;
     }
 
     public int getAcknowledgementMode() {

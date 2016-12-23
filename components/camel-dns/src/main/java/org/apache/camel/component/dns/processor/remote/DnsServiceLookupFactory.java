@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.dns.processor.remote;
 
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -28,23 +28,16 @@ import org.xbill.DNS.Type;
 
 public class DnsServiceLookupFactory implements Function<String, Lookup> {
     private final DnsConfiguration configuration;
-    private final Map<String, Lookup> cache;
+    private final ConcurrentHashMap<String, Lookup> cache;
 
-    public  DnsServiceLookupFactory(DnsConfiguration configuration) {
+    public DnsServiceLookupFactory(DnsConfiguration configuration) {
         this.configuration = configuration;
-        cache = new ConcurrentHashMap<>();
+        this.cache = new ConcurrentHashMap<>();
     }
 
     @Override
     public Lookup apply(String name) {
-        Lookup lookup = cache.get(name);
-        if (lookup == null) {
-            synchronized (cache) {
-                lookup = cache.computeIfAbsent(name, this::createLookup);
-            }
-        }
-
-        return lookup;
+        return cache.computeIfAbsent(name, this::createLookup);
     }
 
     private Lookup createLookup(String name) {

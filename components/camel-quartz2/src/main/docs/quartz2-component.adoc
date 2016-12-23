@@ -58,18 +58,18 @@ The Quartz2 component supports 9 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| autoStartScheduler | boolean | Whether or not the scheduler should be auto started. This options is default true
-| startDelayedSeconds | int | Seconds to wait before starting the quartz scheduler.
-| prefixJobNameWithEndpointId | boolean | Whether to prefix the quartz job with the endpoint id. This option is default false.
-| enableJmx | boolean | Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX. This options is default true
-| properties | Properties | Properties to configure the Quartz scheduler.
-| propertiesFile | String | File name of the properties to load from the classpath
-| prefixInstanceName | boolean | Whether to prefix the Quartz Scheduler instance name with the CamelContext name. This is enabled by default to let each CamelContext use its own Quartz scheduler instance by default. You can set this option to false to reuse Quartz scheduler instances between multiple CamelContext's.
-| schedulerFactory | SchedulerFactory | To use the custom SchedulerFactory which is used to create the Scheduler.
-| scheduler | Scheduler | To use the custom configured Quartz scheduler instead of creating a new Scheduler.
+| Name | Group | Default | Java Type | Description
+| autoStartScheduler | scheduler | true | boolean | Whether or not the scheduler should be auto started. This options is default true
+| startDelayedSeconds | scheduler |  | int | Seconds to wait before starting the quartz scheduler.
+| prefixJobNameWithEndpointId | consumer | false | boolean | Whether to prefix the quartz job with the endpoint id. This option is default false.
+| enableJmx | consumer | true | boolean | Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX. This options is default true
+| properties | consumer |  | Properties | Properties to configure the Quartz scheduler.
+| propertiesFile | consumer |  | String | File name of the properties to load from the classpath
+| prefixInstanceName | consumer | true | boolean | Whether to prefix the Quartz Scheduler instance name with the CamelContext name. This is enabled by default to let each CamelContext use its own Quartz scheduler instance by default. You can set this option to false to reuse Quartz scheduler instances between multiple CamelContext's.
+| schedulerFactory | advanced |  | SchedulerFactory | To use the custom SchedulerFactory which is used to create the Scheduler.
+| scheduler | advanced |  | Scheduler | To use the custom configured Quartz scheduler instead of creating a new Scheduler.
 |=======================================================================
 {% endraw %}
 // component options: END

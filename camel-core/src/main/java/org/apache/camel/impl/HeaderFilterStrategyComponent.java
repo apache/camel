@@ -20,12 +20,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Base class for components to support configuring a {@link org.apache.camel.spi.HeaderFilterStrategy}.
  */
 public abstract class HeaderFilterStrategyComponent extends UriEndpointComponent implements HeaderFilterStrategyAware {
-    
+
+    @Metadata(label = "filter", description = "To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
     
     public HeaderFilterStrategyComponent(Class<? extends Endpoint> endpointClass) {

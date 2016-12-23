@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.etcd.processor.remote;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
 
@@ -28,7 +27,6 @@ public class EtcdServiceCallServer extends DefaultServiceCallServer {
     public static final Comparator<EtcdServiceCallServer> COMPARATOR = comparator();
 
     private final String name;
-    private final Map<String, String> tags;
 
     @JsonCreator
     public EtcdServiceCallServer(
@@ -36,18 +34,13 @@ public class EtcdServiceCallServer extends DefaultServiceCallServer {
         @JsonProperty("address") final String address,
         @JsonProperty("port") final Integer port,
         @JsonProperty("tags") final Map<String, String> tags) {
-        super(address, port);
+        super(address, port, tags);
 
         this.name = name;
-        this.tags = Collections.unmodifiableMap(tags != null ? tags : Collections.EMPTY_MAP);
     }
 
     public String getName() {
         return name;
-    }
-
-    public Map<String, String> getTags() {
-        return tags;
     }
 
     public static Comparator<EtcdServiceCallServer> comparator() {

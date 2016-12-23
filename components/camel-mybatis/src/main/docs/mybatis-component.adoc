@@ -55,11 +55,11 @@ The MyBatis component supports 2 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| sqlSessionFactory | SqlSessionFactory | To use the SqlSessionFactory
-| configurationUri | String | Location of MyBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath
+| Name | Group | Default | Java Type | Description
+| sqlSessionFactory | advanced |  | SqlSessionFactory | To use the SqlSessionFactory
+| configurationUri | common | SqlMapConfig.xml | String | Location of MyBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -70,7 +70,7 @@ The MyBatis component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The MyBatis component supports 29 endpoint options which are listed below:
+The MyBatis component supports 30 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -89,6 +89,7 @@ The MyBatis component supports 29 endpoint options which are listed below:
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
+| processingStrategy | consumer (advanced) |  | MyBatisProcessingStrategy | To use a custom MyBatisProcessingStrategy
 | executorType | producer | SIMPLE | ExecutorType | The executor type to be used while executing statements. simple - executor does nothing special. reuse - executor reuses prepared statements. batch - executor reuses statements and batches updates.
 | statementType | producer |  | StatementType | Mandatory to specify for the producer to control which kind of operation to invoke.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).

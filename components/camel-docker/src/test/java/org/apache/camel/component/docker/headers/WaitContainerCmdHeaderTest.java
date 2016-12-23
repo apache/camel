@@ -56,8 +56,8 @@ public class WaitContainerCmdHeaderTest extends BaseDockerHeaderTest<WaitContain
     @Override
     protected void setupMocks() {
         Mockito.when(dockerClient.waitContainerCmd(Matchers.anyString())).thenReturn(mockObject);
-        Mockito.when(mockObject.exec(Mockito.anyObject())).thenReturn(callback);
-        Mockito.when(callback.awaitStatusCode()).thenReturn(Mockito.anyInt());
+        Mockito.when(mockObject.exec(Matchers.anyObject())).thenReturn(callback);
+        Mockito.when(callback.awaitStatusCode()).thenReturn(Matchers.anyInt());
     }
 
     @Override

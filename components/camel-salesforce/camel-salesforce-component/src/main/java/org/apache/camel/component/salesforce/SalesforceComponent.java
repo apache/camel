@@ -39,6 +39,7 @@ import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.EndpointCompleter;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
@@ -66,28 +67,43 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
     private static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
     private static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
 
+    @Metadata(label = "security")
     private SalesforceLoginConfig loginConfig;
+    @Metadata(label = "advanced")
     private SalesforceEndpointConfig config;
 
     // HTTP client parameters, map of property-name to value
+    @Metadata(label = "advanced")
     private Map<String, Object> httpClientProperties;
 
     // SSL parameters
+    @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
 
     // Proxy host and port
+    @Metadata(label = "proxy")
     private String httpProxyHost;
+    @Metadata(label = "proxy")
     private Integer httpProxyPort;
+    @Metadata(label = "proxy")
     private boolean isHttpProxySocks4;
+    @Metadata(label = "proxy,security")
     private boolean isHttpProxySecure = true;
+    @Metadata(label = "proxy")
     private Set<String> httpProxyIncludedAddresses;
+    @Metadata(label = "proxy")
     private Set<String> httpProxyExcludedAddresses;
 
     // Proxy basic authentication
+    @Metadata(label = "proxy,security", secret = true)
     private String httpProxyUsername;
+    @Metadata(label = "proxy,security", secret = true)
     private String httpProxyPassword;
+    @Metadata(label = "proxy,security")
     private String httpProxyAuthUri;
+    @Metadata(label = "proxy,security")
     private String httpProxyRealm;
+    @Metadata(label = "proxy,security")
     private boolean httpProxyUseDigestAuth;
 
     // DTO packages to scan

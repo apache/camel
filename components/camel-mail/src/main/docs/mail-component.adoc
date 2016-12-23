@@ -85,11 +85,11 @@ The Mail component supports 2 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| configuration | MailConfiguration | Sets the Mail configuration
-| contentTypeResolver | ContentTypeResolver | Resolver to determine Content-Type for file attachments.
+| Name | Group | Default | Java Type | Description
+| configuration | advanced |  | MailConfiguration | Sets the Mail configuration
+| contentTypeResolver | advanced |  | ContentTypeResolver | Resolver to determine Content-Type for file attachments.
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -499,7 +498,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                     processors.add(processor);
                 }
             }
-            Collections.sort(processors, new OrderProcessorMBeans());
+            processors.sort(new OrderProcessorMBeans());
 
             // loop the routes, and append the processor stats if needed
             sb.append("  <routeStats>\n");

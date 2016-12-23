@@ -27,9 +27,10 @@ public class SpringBatchComponent extends UriEndpointComponent {
 
     private static final String DEFAULT_JOB_LAUNCHER_REF_NAME = "jobLauncher";
 
-    private JobLauncher jobLauncher;
     private JobLauncher defaultResolvedJobLauncher;
     private Map<String, JobLauncher> allResolvedJobLaunchers;
+
+    private JobLauncher jobLauncher;
     private JobRegistry jobRegistry;
 
     public SpringBatchComponent() {

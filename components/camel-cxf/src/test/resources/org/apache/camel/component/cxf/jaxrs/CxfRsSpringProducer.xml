@@ -49,11 +49,11 @@
     <endpoint id="fromEndpoint" uri="jetty://http://localhost:${CxfRsProducerTest.jetty}/CxfRsProducerTest/testQuery"/>
     <route>
        <from uri="direct://proxy"/>
-       <to uri="cxfrs://bean://rsClientProxy"/>
+       <to uri="cxfrs://bean://rsClientProxy?synchronous=true"/>
     </route>
     <route>
        <from uri="direct://http"/>
-       <to uri="cxfrs://bean://rsClientHttp"/>
+       <to uri="cxfrs://bean://rsClientHttp?synchronous=true"/>
     </route>
     <route>
        <from ref="fromEndpoint"/>

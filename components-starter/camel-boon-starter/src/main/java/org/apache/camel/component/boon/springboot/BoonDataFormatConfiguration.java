@@ -34,6 +34,13 @@ public class BoonDataFormatConfiguration {
      * To unarmshal to a List of Map or a List of Pojo.
      */
     private Boolean useList = false;
+    /**
+     * Whether the data format should set the Content-Type header with the type
+     * from the data format if the data format is capable of doing so. For
+     * example application/xml for data formats marshalling to XML or
+     * application/json for data formats marshalling to JSon etc.
+     */
+    private Boolean contentTypeHeader = false;
 
     public String getUnmarshalTypeName() {
         return unmarshalTypeName;
@@ -49,5 +56,13 @@ public class BoonDataFormatConfiguration {
 
     public void setUseList(Boolean useList) {
         this.useList = useList;
+    }
+
+    public Boolean getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    public void setContentTypeHeader(Boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 }

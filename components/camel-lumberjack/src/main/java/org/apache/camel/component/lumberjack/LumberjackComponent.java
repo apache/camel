@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
@@ -28,6 +29,7 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 public class LumberjackComponent extends UriEndpointComponent {
     static final int DEFAULT_PORT = 5044;
 
+    @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
 
     public LumberjackComponent() {

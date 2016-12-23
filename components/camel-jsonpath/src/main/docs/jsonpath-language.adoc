@@ -81,6 +81,31 @@ Syntax
 See the https://code.google.com/p/json-path/[JSonPath] project page for
 further examples.
 
+[[JSonPath-SupportedType]]
+Supported message body types
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Camel JSonPath supports message body using the following types:
+
+{% raw %}
+[width="100%",cols="3m,7",options="header"]
+|=======================================================================
+| Type | Comment
+| File | Reading from files
+| String | Plain strings
+| Map | Message bodies as `java.util.Map` types
+| List | Message bodies as `java.util.List` types
+| POJO | *Optional* If Jackson is on the classpath, then camel-jsonpath
+  is able to use Jackson to read the message body as POJO and convert to `java.util.Map`
+  which is supported by JSonPath. For example you can add `camel-jackson` as dependency to include Jackson.
+| InputStream | If none of the above types matches, then Camel will attempt to read the message body as an `java.io.InputStream`.
+|=======================================================================
+{% endraw %}
+
+If a message body is of unsupported type then an exception is thrown by default, however you
+can configure JSonPath to suppress exceptions (see below)
+
+
 [[JSonPath-Suppressexceptions]]
 Suppress exceptions
 ~~~~~~~~~~~~~~~~~~~

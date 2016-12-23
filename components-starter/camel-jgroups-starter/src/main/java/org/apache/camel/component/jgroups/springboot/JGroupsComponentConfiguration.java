@@ -43,7 +43,7 @@ public class JGroupsComponentConfiguration {
      * messages as well (not only org.jgroups.Message instances). By default
      * only regular messages are consumed by the endpoint.
      */
-    private Boolean enableViewMessages;
+    private Boolean enableViewMessages = false;
 
     public Channel getChannel() {
         return channel;

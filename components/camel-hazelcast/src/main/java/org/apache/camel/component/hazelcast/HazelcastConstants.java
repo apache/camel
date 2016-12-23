@@ -131,6 +131,8 @@ public final class HazelcastConstants {
     public static final String OPERATION_PARAM = "operation";
     public static final String HAZELCAST_INSTANCE_NAME_PARAM = "hazelcastInstanceName";
     public static final String HAZELCAST_INSTANCE_PARAM = "hazelcastInstance";
+    public static final String HAZELCAST_CONFIGU_PARAM = "hazelcastConfig";
+    public static final String HAZELCAST_CONFIGU_URI_PARAM = "hazelcastConfigUri";
 
 
     private HazelcastConstants() {

@@ -72,9 +72,9 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
     private int startDelayedSeconds;
     @UriParam
     private boolean usingFixedCamelContextName;
-    @UriParam(prefix = "trigger.", multiValue = true)
+    @UriParam(label = "advanced", prefix = "trigger.", multiValue = true)
     private Map<String, Object> triggerParameters;
-    @UriParam(prefix = "job.", multiValue = true)
+    @UriParam(label = "advanced", prefix = "job.", multiValue = true)
     private Map<String, Object> jobParameters;
 
     public QuartzEndpoint(final String endpointUri, final QuartzComponent component) {

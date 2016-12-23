@@ -52,15 +52,15 @@ The AHC Websocket component supports 6 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| client | AsyncHttpClient | To use a custom AsyncHttpClient
-| binding | AhcBinding | To use a custom AhcBinding which allows to control how to bind between AHC and Camel.
-| clientConfig | AsyncHttpClientConfig | To configure the AsyncHttpClient to use a custom com.ning.http.client.AsyncHttpClientConfig instance.
-| sslContextParameters | SSLContextParameters | Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level.
-| allowJavaSerializedObject | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
-| headerFilterStrategy | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+| Name | Group | Default | Java Type | Description
+| client | advanced |  | AsyncHttpClient | To use a custom AsyncHttpClient
+| binding | advanced |  | AhcBinding | To use a custom AhcBinding which allows to control how to bind between AHC and Camel.
+| clientConfig | advanced |  | AsyncHttpClientConfig | To configure the AsyncHttpClient to use a custom com.ning.http.client.AsyncHttpClientConfig instance.
+| sslContextParameters | security |  | SSLContextParameters | Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level.
+| allowJavaSerializedObject | advanced | false | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
+| headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -69,14 +69,13 @@ The AHC Websocket component supports 6 options which are listed below.
 
 
 // endpoint options: START
-The AHC Websocket component supports 18 endpoint options which are listed below:
+The AHC Websocket component supports 19 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | httpUri | common |  | URI | *Required* The URI to use such as http://hostname:port/path
-| binding | common |  | AhcBinding | To use a custom AhcBinding which allows to control how to bind between AHC and Camel.
 | bridgeEndpoint | common | false | boolean | If the option is true then the Exchange.HTTP_URI header is ignored and use the endpoint's URI for request. You may also set the throwExceptionOnFailure to be false to let the AhcProducer send all the fault response back.
 | bufferSize | common | 4096 | int | The initial in-memory buffer size used when transferring data between Camel and AHC Client.
 | headerFilterStrategy | common |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
@@ -89,9 +88,11 @@ The AHC Websocket component supports 18 endpoint options which are listed below:
 | connectionClose | producer | false | boolean | Define if the Connection Close header has to be added to HTTP Request. This parameter is false by default
 | cookieHandler | producer |  | CookieHandler | Configure a cookie handler to maintain a HTTP session
 | useStreaming | producer | false | boolean | To enable streaming to send data as multiple text fragments.
+| binding | advanced |  | AhcBinding | To use a custom AhcBinding which allows to control how to bind between AHC and Camel.
 | clientConfig | advanced |  | AsyncHttpClientConfig | To configure the AsyncHttpClient to use a custom com.ning.http.client.AsyncHttpClientConfig instance.
 | clientConfigOptions | advanced |  | Map | To configure the AsyncHttpClientConfig using the key/values from the Map.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| clientConfigRealmOptions | security |  | Map | To configure the AsyncHttpClientConfig Realm using the key/values from the Map.
 | sslContextParameters | security |  | SSLContextParameters | Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. This reference overrides any configured SSLContextParameters at the component level. See Using the JSSE Configuration Utility. Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level.
 |=======================================================================
 {% endraw %}

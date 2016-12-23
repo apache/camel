@@ -69,6 +69,7 @@
     <module>camel-example-netty-http</module>
     <module>camel-example-osgi-rmi</module>
     <module>camel-example-pojo-messaging</module>
+    <module>camel-example-reload</module>
     <module>camel-example-reportincident</module>
     <module>camel-example-reportincident-wssecurity</module>
     <module>camel-example-restlet-jdbc</module>
@@ -137,6 +138,19 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <!-- to validate Camel endpoints: mvn camel:validate -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <failOnError>false</failOnError>
+          <includeTest>true</includeTest>
+          <includeXml>true</includeXml>
+          <ignoreLenientProperties>false</ignoreLenientProperties>
+        </configuration>
       </plugin>
 
       <plugin>

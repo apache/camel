@@ -28,6 +28,7 @@ public class EndpointOptionModel {
     private String prefix;
     private String multiValue;
     private String deprecated;
+    private String secret;
     private String defaultValue;
     private String description;
     private String enumValues;
@@ -110,6 +111,14 @@ public class EndpointOptionModel {
 
     public void setDeprecated(String deprecated) {
         this.deprecated = deprecated;
+    }
+
+    public String getSecret() {
+        return secret;
+    }
+
+    public void setSecret(String secret) {
+        this.secret = secret;
     }
 
     public String getDefaultValue() {

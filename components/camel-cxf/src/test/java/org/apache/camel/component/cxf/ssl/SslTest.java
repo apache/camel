@@ -45,7 +45,7 @@ public class SslTest extends CamelSpringTestSupport {
 
     @AfterClass
     public static void cleanUp() {
-        //System.getProperties().remove("cxf.config.file");
+        //System.clearProperty("cxf.config.file");
     }
 
     @BeforeClass

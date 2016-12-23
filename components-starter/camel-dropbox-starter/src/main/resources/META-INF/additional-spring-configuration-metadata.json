@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.dropbox.enabled",
+      "description": "Enable dropbox component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

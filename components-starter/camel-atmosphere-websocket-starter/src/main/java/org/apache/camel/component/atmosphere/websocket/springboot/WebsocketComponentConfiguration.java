@@ -42,10 +42,13 @@ public class WebsocketComponentConfiguration {
     private HttpRegistry httpRegistry;
     /**
      * Whether to automatic bind multipart/form-data as attachments on the Camel
-     * Exchange. This is turn off by default as this may require servlet
-     * specific configuration to enable this when using Servlet's.
+     * Exchange. The options attachmentMultipartBinding=true and
+     * disableStreamCache=false cannot work together. Remove disableStreamCache
+     * to use AttachmentMultipartBinding. This is turn off by default as this
+     * may require servlet specific configuration to enable this when using
+     * Servlet's.
      */
-    private Boolean attachmentMultipartBinding;
+    private Boolean attachmentMultipartBinding = false;
     /**
      * To use a custom HttpBinding to control the mapping between Camel message
      * and HttpClient.
@@ -64,10 +67,10 @@ public class WebsocketComponentConfiguration {
      * the incoming data from the request to Java and that can be a potential
      * security risk.
      */
-    private Boolean allowJavaSerializedObject;
+    private Boolean allowJavaSerializedObject = false;
     /**
-     * To use a custom HeaderFilterStrategy to filter header to and from Camel
-     * message.
+     * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+     * header to and from Camel message.
      */
     @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;

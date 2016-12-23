@@ -24,7 +24,7 @@ TidyMarkup Options
 
 
 // dataformat options: START
-The TidyMarkup dataformat supports 2 options which are listed below.
+The TidyMarkup dataformat supports 3 options which are listed below.
 
 
 
@@ -34,6 +34,7 @@ The TidyMarkup dataformat supports 2 options which are listed below.
 | Name | Default | Java Type | Description
 | dataObjectType | org.w3c.dom.Node | String | What data type to unmarshal as can either be org.w3c.dom.Node or java.lang.String. Is by default org.w3c.dom.Node
 | omitXmlDeclaration | false | Boolean | When returning a String do we omit the XML declaration in the top.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
 {% endraw %}
 // dataformat options: END

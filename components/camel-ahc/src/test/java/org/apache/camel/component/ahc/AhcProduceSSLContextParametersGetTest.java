@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.ahc;
 
-
 public class AhcProduceSSLContextParametersGetTest extends AhcProduceGetTest {
 
     protected String getTestServerEndpointUri() {

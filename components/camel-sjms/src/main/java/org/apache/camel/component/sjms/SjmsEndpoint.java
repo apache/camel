@@ -17,6 +17,7 @@
 package org.apache.camel.component.sjms;
 
 import javax.jms.ConnectionFactory;
+import javax.jms.ExceptionListener;
 import javax.jms.Message;
 import javax.jms.Session;
 
@@ -25,6 +26,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -47,7 +49,9 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,6 +130,13 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     private ConnectionFactory connectionFactory;
     @UriParam(label = "advanced")
     private Integer connectionCount;
+    @UriParam(label = "advanced")
+    private ExceptionListener exceptionListener;
+    @UriParam(defaultValue = "WARN", label = "consumer,logging")
+    private LoggingLevel errorHandlerLoggingLevel = LoggingLevel.WARN;
+    @UriParam(defaultValue = "true", label = "consumer,logging")
+    private boolean errorHandlerLogStackTrace = true;
+
     private volatile boolean closeConnectionResource;
 
     public SjmsEndpoint() {
@@ -146,17 +157,18 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (getConnectionResource() == null) {
-            if (getConnectionFactory() != null) {
-                // We always use a connection pool, even for a pool of 1
-                ConnectionFactoryResource connections = new ConnectionFactoryResource(getConnectionCount(), getConnectionFactory());
-                connections.fillPool();
-                connectionResource = connections;
-                // we created the resource so we should close it when stopping
-                closeConnectionResource = true;
+
+        if (!isAsyncStartListener()) {
+            // if we are not async starting then create connection eager
+            if (getConnectionResource() == null) {
+                if (getConnectionFactory() != null) {
+                    connectionResource = createConnectionResource(this);
+                    // we created the resource so we should close it when stopping
+                    closeConnectionResource = true;
+                }
+            } else if (getConnectionResource() instanceof ConnectionFactoryResource) {
+                ((ConnectionFactoryResource) getConnectionResource()).fillPool();
             }
-        } else if (getConnectionResource() instanceof ConnectionFactoryResource) {
-            ((ConnectionFactoryResource) getConnectionResource()).fillPool();
         }
     }
 
@@ -198,6 +210,29 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     @Override
     public boolean isSingleton() {
         return true;
+    }
+
+    protected ConnectionResource createConnectionResource(Object source) {
+        if (getConnectionFactory() == null) {
+            throw new IllegalArgumentException(String.format("ConnectionResource or ConnectionFactory must be configured for %s", this));
+        }
+
+        try {
+            logger.debug("Creating ConnectionResource with connectionCount: {} using ConnectionFactory", getConnectionCount(), getConnectionFactory());
+            // We always use a connection pool, even for a pool of 1
+            ConnectionFactoryResource connections = new ConnectionFactoryResource(getConnectionCount(), getConnectionFactory());
+            if (exceptionListener != null) {
+                connections.setExceptionListener(exceptionListener);
+            } else {
+                // add a exception listener that logs so we can see any errors that happens
+                ExceptionListener listener = new SjmsLoggingExceptionListener(new LoggingExceptionHandler(getCamelContext(), source.getClass()), isErrorHandlerLogStackTrace());
+                connections.setExceptionListener(listener);
+            }
+            connections.fillPool();
+            return connections;
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
     public Exchange createExchange(Message message, Session session) {
@@ -267,10 +302,14 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
     }
 
     public ConnectionResource getConnectionResource() {
+        ConnectionResource answer = null;
         if (connectionResource != null) {
-            return connectionResource;
+            answer = connectionResource;
         }
-        return getComponent().getConnectionResource();
+        if (answer == null) {
+            answer = getComponent().getConnectionResource();
+        }
+        return answer;
     }
 
     /**
@@ -614,5 +653,38 @@ public class SjmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Mult
      */
     public void setConnectionCount(Integer connectionCount) {
         this.connectionCount = connectionCount;
+    }
+
+    public ExceptionListener getExceptionListener() {
+        return exceptionListener;
+    }
+
+    /**
+     * Specifies the JMS Exception Listener that is to be notified of any underlying JMS exceptions.
+     */
+    public void setExceptionListener(ExceptionListener exceptionListener) {
+        this.exceptionListener = exceptionListener;
+    }
+
+    public LoggingLevel getErrorHandlerLoggingLevel() {
+        return errorHandlerLoggingLevel;
+    }
+
+    /**
+     * Allows to configure the default errorHandler logging level for logging uncaught exceptions.
+     */
+    public void setErrorHandlerLoggingLevel(LoggingLevel errorHandlerLoggingLevel) {
+        this.errorHandlerLoggingLevel = errorHandlerLoggingLevel;
+    }
+
+    public boolean isErrorHandlerLogStackTrace() {
+        return errorHandlerLogStackTrace;
+    }
+
+    /**
+     * Allows to control whether stacktraces should be logged or not, by the default errorHandler.
+     */
+    public void setErrorHandlerLogStackTrace(boolean errorHandlerLogStackTrace) {
+        this.errorHandlerLogStackTrace = errorHandlerLogStackTrace;
     }
 }
