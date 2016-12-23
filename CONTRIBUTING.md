@@ -16,6 +16,13 @@ There are many ways you can help make Camel a better piece of software - please 
 - [Working on the code](#working-on-the-code)
 - [Running checkstyle](#running-checkstyle)
 — [Apache Camel committers should work on the ASF git repo](#apache-camel-committers-should-work-on-the—asf-git-repo)
+- [Creating patches](#creating-patches)
+- [Pull request at Github](#pull-request-at-github)
+- [Manual patch files](#manual-patch-files)
+- [Submitting patches](#submitting-patches)
+- [Using the issue tracker](#using-the-issue-tracker)
+- [Becoming a committer)(#becoming-a-committer)
+- [More resources](#more-resources)
 
 ## Getting in touch
 There are various ways of communicating with the Camel community.
@@ -82,7 +89,8 @@ We recommend you create patches as github PRs which is much easier for us to acc
 ## Pull request at Github
 There is also a Git repository at Github which you could fork. Then you submit patches as any other github project - eg work on a new feature branch and send a pull request. One of the committers then needs to accept your pull request to bring the code  to the ASF codebase. After the code has been included into the ASF codebase, you need to close the pull request because we can't do that...
 	
-	When providing code patches then please include the Camel JIRA ticket number in the commit messages. We favor using the syntax:
+	When providing code patches then please include the Camel JIRA ticket number in the commit messages. 
+We favor using the syntax:
 	CAMEL-9999: Some message goes here
 
 ## Manual patch files
@@ -111,13 +119,13 @@ We prefer patches has unit tests as well and that these unit tests have proper a
 Before you can raise an issue in the [issue tracker](http://issues.apache.org/activemq/browse/CAMEL) you need to register with it. This is quick & painless.
 If you want to have a go at fixing an issue you need to be in the list of camel-developers on the issue tracker. To join the group, please mail the `dev@camel.apache.org` mail list with the email address you used to register with the issue tracker and we'll add you to the group.
 
-## More resources
-Git is not a brand new technology and therefore Camel is not the only ASF project thinking about using it. So here are some more resources you mind find useful:
-[http://wiki.apache.org/general/GitAtApache](http://wiki.apache.org/general/GitAtApache): Some basic notes about git@asf
-[http://git.apache.org/](http://git.apache.org/): List of mgit-mirrors at ASF
-[https://git-wip-us.apache.org/](https://git-wip-us.apache.org/): More Git infos from Apache
-
 ## Becoming a committer
 Once you've got involved as above, we may well invite you to be a committer. See [How do I become a committer](http://camel.apache.org/how-do-i-become-a-committer.html) for more details.
 
 The first step is contributing to the project; if you want to take that a step forward and become a fellow committer on the project then see the [Committer Guide](http://activemq.apache.org/becoming-a-committer.html)
+
+## More resources
+Git is not a brand new technology and therefore Camel is not the only ASF project thinking about using it. So here are some more resources you mind find useful:
+- [http://wiki.apache.org/general/GitAtApache](http://wiki.apache.org/general/GitAtApache): Some basic notes about git@asf
+- [http://git.apache.org/](http://git.apache.org/): List of mgit-mirrors at ASF
+- [https://git-wip-us.apache.org/](https://git-wip-us.apache.org/): More Git infos from Apache
