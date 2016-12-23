@@ -11,7 +11,9 @@ There are many ways you can help make Camel a better piece of software - please 
 ## Table of Contents
 
 - [Getting in touch](#getting-in-touch)
+
 - [Improving the documentation](#improving-the-documentation)
+
 - [If you find a bug or problem](#if-you-find-a-bug-or-problem)
 - [Working on the code](#working-on-the-code)
 - [Running checkstyle](#running-checkstyle)
