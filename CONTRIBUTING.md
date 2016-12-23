@@ -11,11 +11,11 @@ There are many ways you can help make Camel a better piece of software - please 
 ## Table of Contents
 
 - [Getting in touch](#getting-in-touch)
-— [Improving the documentation](#improving-the-documentation)
+- [Improving the documentation](#improving-the-documentation)
 - [If you find a bug or problem](#if-you-find-a-bug-or-problem)
 - [Working on the code](#working-on-the-code)
 - [Running checkstyle](#running-checkstyle)
-— [Apache Camel committers should work on the ASF git repo](#apache-camel-committers-should-work-on-the—asf-git-repo)
+- [Apache Camel committers should work on the ASF git repo](#apache-camel-committers-should-work-on-the—asf-git-repo)
 - [Creating patches](#creating-patches)
 - [Pull request at Github](#pull-request-at-github)
 - [Manual patch files](#manual-patch-files)
