@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -110,6 +112,12 @@ public class JsonPathEngine {
         if (json instanceof String) {
             String str = (String) json;
             return path.read(str, configuration);
+        } else if (json instanceof Map) {
+            Map map = (Map) json;
+            return path.read(map, configuration);
+        } else if (json instanceof List) {
+            List list = (List) json;
+            return path.read(list, configuration);
         } else {
             InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
             String jsonEncoding = exchange.getIn().getHeader(JsonPathConstants.HEADER_JSON_ENCODING, String.class);
