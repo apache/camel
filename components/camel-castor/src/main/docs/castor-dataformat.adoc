@@ -113,7 +113,7 @@ Options
 ^^^^^^^
 
 // dataformat options: START
-The Castor dataformat supports 5 options which are listed below.
+The Castor dataformat supports 6 options which are listed below.
 
 
 
@@ -126,6 +126,7 @@ The Castor dataformat supports 5 options which are listed below.
 | encoding | UTF-8 | String | Encoding to use when marshalling an Object to XML. Is by default UTF-8
 | packages |  | String[] | Add additional packages to Castor XmlContext
 | classes |  | String[] | Add additional class names to Castor XmlContext
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
 {% endraw %}
 // dataformat options: END

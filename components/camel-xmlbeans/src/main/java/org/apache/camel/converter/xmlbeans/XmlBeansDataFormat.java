@@ -34,6 +34,8 @@ import org.apache.xmlbeans.XmlObject;
  */
 public class XmlBeansDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
 
+    private boolean contentTypeHeader = true;
+
     @Override
     public String getDataFormatName() {
         return "xmlBeans";
@@ -49,6 +51,13 @@ public class XmlBeansDataFormat extends ServiceSupport implements DataFormat, Da
             }
         }, exchange);
 
+        if (contentTypeHeader) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            }
+        }
     }
 
     public Object unmarshal(final Exchange exchange, final InputStream stream) throws Exception {
@@ -69,4 +78,17 @@ public class XmlBeansDataFormat extends ServiceSupport implements DataFormat, Da
     protected void doStop() throws Exception {
         // noop
     }
+
+
+    public boolean isContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    /**
+     * If enabled then XmlBeans will set the Content-Type header to <tt>application/xml</tt> when marshalling.
+     */
+    public void setContentTypeHeader(boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
+    }
+
 }

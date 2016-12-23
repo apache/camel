@@ -25,4 +25,20 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "camel.dataformat.rss")
 public class RssDataFormatConfiguration {
+
+    /**
+     * Whether the data format should set the Content-Type header with the type
+     * from the data format if the data format is capable of doing so. For
+     * example application/xml for data formats marshalling to XML or
+     * application/json for data formats marshalling to JSon etc.
+     */
+    private Boolean contentTypeHeader = false;
+
+    public Boolean getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    public void setContentTypeHeader(Boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
+    }
 }

@@ -60,6 +60,13 @@ public class BeanIODataFormatConfiguration {
      * you use a custom error handler.
      */
     private String beanReaderErrorHandlerType;
+    /**
+     * Whether the data format should set the Content-Type header with the type
+     * from the data format if the data format is capable of doing so. For
+     * example application/xml for data formats marshalling to XML or
+     * application/json for data formats marshalling to JSon etc.
+     */
+    private Boolean contentTypeHeader = false;
 
     public String getMapping() {
         return mapping;
@@ -115,5 +122,13 @@ public class BeanIODataFormatConfiguration {
 
     public void setBeanReaderErrorHandlerType(String beanReaderErrorHandlerType) {
         this.beanReaderErrorHandlerType = beanReaderErrorHandlerType;
+    }
+
+    public Boolean getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    public void setContentTypeHeader(Boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 }

@@ -107,6 +107,13 @@ public class JacksonXMLDataFormatConfiguration {
      * only be enabled when desired to be used.
      */
     private Boolean allowUnmarshallType = false;
+    /**
+     * Whether the data format should set the Content-Type header with the type
+     * from the data format if the data format is capable of doing so. For
+     * example application/xml for data formats marshalling to XML or
+     * application/json for data formats marshalling to JSon etc.
+     */
+    private Boolean contentTypeHeader = false;
 
     public String getXmlMapper() {
         return xmlMapper;
@@ -218,5 +225,13 @@ public class JacksonXMLDataFormatConfiguration {
 
     public void setAllowUnmarshallType(Boolean allowUnmarshallType) {
         this.allowUnmarshallType = allowUnmarshallType;
+    }
+
+    public Boolean getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    public void setContentTypeHeader(Boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 }

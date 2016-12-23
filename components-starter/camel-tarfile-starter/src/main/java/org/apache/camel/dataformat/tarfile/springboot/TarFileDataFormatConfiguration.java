@@ -32,6 +32,13 @@ public class TarFileDataFormatConfiguration {
      * in a streaming mode.
      */
     private Boolean usingIterator = false;
+    /**
+     * Whether the data format should set the Content-Type header with the type
+     * from the data format if the data format is capable of doing so. For
+     * example application/xml for data formats marshalling to XML or
+     * application/json for data formats marshalling to JSon etc.
+     */
+    private Boolean contentTypeHeader = false;
 
     public Boolean getUsingIterator() {
         return usingIterator;
@@ -39,5 +46,13 @@ public class TarFileDataFormatConfiguration {
 
     public void setUsingIterator(Boolean usingIterator) {
         this.usingIterator = usingIterator;
+    }
+
+    public Boolean getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    public void setContentTypeHeader(Boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 }

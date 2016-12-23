@@ -54,6 +54,7 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFo
     private boolean serializeNulls;
     private boolean prettyPrint;
     private String dateFormatPattern;
+    private boolean contentTypeHeader = true;
 
     public GsonDataFormat() {
         this(Object.class);
@@ -125,6 +126,14 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFo
         try (final OutputStreamWriter osw = new OutputStreamWriter(stream, IOHelper.getCharsetName(exchange));
              final BufferedWriter writer = IOHelper.buffered(osw)) {
             gson.toJson(graph, writer);
+        }
+
+        if (contentTypeHeader) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            }
         }
     }
 
@@ -280,6 +289,18 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     public void setDateFormatPattern(String dateFormatPattern) {
         this.dateFormatPattern = dateFormatPattern;
+    }
+
+
+    public boolean isContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    /**
+     * If enabled then Gson will set the Content-Type header to <tt>application/json</tt> when marshalling.
+     */
+    public void setContentTypeHeader(boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 
     public Gson getGson() {

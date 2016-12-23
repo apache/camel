@@ -35,6 +35,13 @@ public class TidyMarkupDataFormatConfiguration {
      * When returning a String do we omit the XML declaration in the top.
      */
     private Boolean omitXmlDeclaration = false;
+    /**
+     * Whether the data format should set the Content-Type header with the type
+     * from the data format if the data format is capable of doing so. For
+     * example application/xml for data formats marshalling to XML or
+     * application/json for data formats marshalling to JSon etc.
+     */
+    private Boolean contentTypeHeader = false;
 
     public String getDataObjectType() {
         return dataObjectType;
@@ -50,5 +57,13 @@ public class TidyMarkupDataFormatConfiguration {
 
     public void setOmitXmlDeclaration(Boolean omitXmlDeclaration) {
         this.omitXmlDeclaration = omitXmlDeclaration;
+    }
+
+    public Boolean getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    public void setContentTypeHeader(Boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 }

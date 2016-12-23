@@ -56,6 +56,7 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat, Dat
     private Boolean removeNamespacePrefixes;
     private List<String> expandableProperties;
     private TypeHintsEnum typeHints;
+    private boolean contentTypeHeader = true;
 
     public XmlJsonDataFormat() {
     }
@@ -173,6 +174,13 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat, Dat
         json.write(osw);
         osw.flush();
 
+        if (contentTypeHeader) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            }
+        }
     }
 
     /**
@@ -191,7 +199,17 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat, Dat
             toConvert = JSONSerializer.toJSON(jsonString);
         }
 
-        return convertToXMLUsingEncoding(toConvert);
+        Object answer = convertToXMLUsingEncoding(toConvert);
+
+        if (contentTypeHeader) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            }
+        }
+
+        return answer;
     }
 
     private String convertToXMLUsingEncoding(JSON json) {
@@ -332,6 +350,19 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat, Dat
 
     public String getArrayName() {
         return arrayName;
+    }
+
+
+    public boolean isContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    /**
+     * If enabled then XmlJson will set the Content-Type header to <tt>application/json</tt> when marshalling,
+     * and <tt>application/xml</tt> when unmarshalling.
+     */
+    public void setContentTypeHeader(boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 
     /**
