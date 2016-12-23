@@ -21,7 +21,7 @@ There are many ways you can help make Camel a better piece of software - please 
 - [Manual patch files](#manual-patch-files)
 - [Submitting patches](#submitting-patches)
 - [Using the issue tracker](#using-the-issue-tracker)
-- [Becoming a committer)(#becoming-a-committer)
+- [Becoming a committer](#becoming-a-committer)
 - [More resources](#more-resources)
 
 ## Getting in touch
