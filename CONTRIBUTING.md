@@ -10,10 +10,10 @@ There are many ways you can help make Camel a better piece of software - please 
 
 ## Table of Contents
 
-- [Getting in touch](#getting in touch)
+- [Getting in touch](#Getting in touch)
 
 ## Getting in touch
 There are various ways of communicating with the Camel community.
-- Join us on the Discussion Forums and take part in any conversations
-- Pop by on IRC and say hi
-- Add some comments to the wiki:
+- Join us on the [Discussion Forums](http://camel.apache.org/discussion-forums.html) and take part in any conversations
+- Pop by on [IRC](http://camel.apache.org/irc-room.html) and say hi
+- Add some comments to the [wiki](http://camel.apache.org/navigation.html)
