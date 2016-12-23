@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * To configure transforms.
+ * To configure transformers.
  */
 @Metadata(label = "transformation", title = "Transformations")
 @XmlRootElement(name = "transformers")
@@ -41,7 +41,7 @@ public class TransformersDefinition {
     private List<TransformerDefinition> transforms;
 
     /**
-     * A list holding the configured transformations
+     * The configured transformers
      */
     public void setTransformers(List<TransformerDefinition> transforms) {
         this.transforms = transforms;
