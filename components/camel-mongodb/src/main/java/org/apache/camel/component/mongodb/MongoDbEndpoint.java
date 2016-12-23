@@ -295,8 +295,8 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     protected void doStop() throws Exception {
         super.doStop();
         if (mongoConnection != null) {
-        	LOG.debug("Closing connection");
-        	mongoConnection.close();
+            LOG.debug("Closing connection");
+            mongoConnection.close();
         }
     }
 
