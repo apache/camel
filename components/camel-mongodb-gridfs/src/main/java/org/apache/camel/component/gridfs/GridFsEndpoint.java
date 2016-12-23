@@ -19,6 +19,7 @@ package org.apache.camel.component.gridfs;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.Mongo;
+import com.mongodb.MongoClient;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import com.mongodb.gridfs.GridFS;
@@ -30,6 +31,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.CamelContextHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,10 +132,21 @@ public class GridFsEndpoint extends DefaultEndpoint {
                     + ", " + writeConcernRef + ". Aborting initialization.";
             throw new IllegalArgumentException(msg);
         }
-
+        mongoConnection = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, MongoClient.class);
+        LOG.debug("Resolved the connection with the name {} as {}", connectionBean, mongoConnection);
         setWriteReadOptionsOnConnection();
         super.doStart();
     }
+    
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (mongoConnection != null) {
+            LOG.debug("Closing connection");
+            mongoConnection.close();
+        }
+    }
+    
     private void setWriteReadOptionsOnConnection() {
         // Set the WriteConcern
         if (writeConcern != null) {
