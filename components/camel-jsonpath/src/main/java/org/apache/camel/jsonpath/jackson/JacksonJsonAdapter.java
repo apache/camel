@@ -19,8 +19,9 @@ package org.apache.camel.jsonpath.jackson;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.jsonpath.JsonPathAdapter;
 import org.apache.camel.spi.Registry;
@@ -31,13 +32,28 @@ import org.apache.camel.spi.Registry;
  */
 public class JacksonJsonAdapter implements JsonPathAdapter {
 
+    private static final String JACKSON_JAXB_MODULE = "com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule";
+
     private final ObjectMapper defaultMapper;
+    private CamelContext camelContext;
 
     public JacksonJsonAdapter() {
         defaultMapper = new ObjectMapper();
-        // Enables JAXB processing so we can easily convert JAXB annotated pojos also
-        JaxbAnnotationModule module = new JaxbAnnotationModule();
-        defaultMapper.registerModule(module);
+    }
+
+    @Override
+    public void init(CamelContext camelContext) {
+        this.camelContext = camelContext;
+
+        // Attempt to enables JAXB processing so we can easily convert JAXB annotated pojos also
+        Class<?> clazz = camelContext.getClassResolver().resolveClass(JACKSON_JAXB_MODULE);
+        if (clazz != null) {
+            Object obj = camelContext.getInjector().newInstance(clazz);
+            if (obj instanceof Module) {
+                Module module = (Module) obj;
+                defaultMapper.registerModule(module);
+            }
+        }
     }
 
     @Override

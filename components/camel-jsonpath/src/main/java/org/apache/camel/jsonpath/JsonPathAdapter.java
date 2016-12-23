@@ -18,9 +18,17 @@ package org.apache.camel.jsonpath;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 
 public interface JsonPathAdapter {
+
+    /**
+     * Initializes the adapter
+     *
+     * @param camelContext the CamelContext
+     */
+    void init(CamelContext camelContext);
 
     /**
      * Attempt to read/convert the message body into a {@link Map} type

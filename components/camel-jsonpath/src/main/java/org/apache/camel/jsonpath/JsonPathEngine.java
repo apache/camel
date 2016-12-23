@@ -191,6 +191,7 @@ public class JsonPathEngine {
                     Object obj = exchange.getContext().getInjector().newInstance(clazz);
                     if (obj instanceof JsonPathAdapter) {
                         adapter = (JsonPathAdapter) obj;
+                        adapter.init(exchange.getContext());
                         LOG.debug("JacksonJsonAdapter found on classpath and enabled for camel-jsonpath: {}", adapter);
                     }
                 }
