@@ -42,4 +42,8 @@ Then we can add your issue to Subversion and then we'll know when its really fix
 We recommend to work on the code from [github](https://github.com/apache/camel/).
 
         git clone https://github.com/apache/camel.git
-	cd camel
+        cd camel
+
+Build the project (without testing).
+
+        mvn clean install -Dtest=**false**
