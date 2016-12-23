@@ -21,6 +21,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.spi.Metadata;
+
+@Metadata(label = "dataformat,transformation,yaml", title = "YAML Type Filter")
 @XmlRootElement(name = "typeFilter")
 @XmlAccessorType(XmlAccessType.FIELD)
 public final class YAMLTypeFilterDefinition {
@@ -33,6 +36,9 @@ public final class YAMLTypeFilterDefinition {
         return value;
     }
 
+    /**
+     * Value of type such as class name or regular expression
+     */
     public void setValue(String value) {
         this.value = value;
     }
@@ -41,6 +47,9 @@ public final class YAMLTypeFilterDefinition {
         return type;
     }
 
+    /**
+     * Whether to filter by class type or regular expression
+     */
     public void setType(YAMLTypeFilterType type) {
         this.type = type;
     }
