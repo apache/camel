@@ -41,6 +41,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -292,6 +293,22 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         message.setHeader(MongoDbConstants.FROM_TAILABLE, true);
         message.setBody(dbObj);
         return exchange;
+    }
+    
+    @Override
+    protected void doStart() throws Exception {
+        mongoConnection = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, MongoClient.class);
+        LOG.debug("Resolved the connection with the name {} as {}", connectionBean, mongoConnection);
+        super.doStart();
+    }
+    
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (mongoConnection != null) {
+            LOG.debug("Closing connection");
+            mongoConnection.close();
+        }
     }
 
     // ======= Getters and setters
