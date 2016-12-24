@@ -1,4 +1,4 @@
-## Contributing to Camel
+## Contributing to Apache Camel
 
 There are many ways you can help make Camel a better piece of software - please dive in and help!
 - Try surf the documentation - if somethings confusing or not clear, let us know. 
