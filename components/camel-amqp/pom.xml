@@ -67,7 +67,10 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-amqp</artifactId>
+      <!-- TODO: ActiveMQ 5.14.3 causes an error when testing
       <version>${activemq-version}</version>
+      -->
+      <version>5.14.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
