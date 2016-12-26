@@ -66,7 +66,7 @@ public class HystrixConfigurationDefinition extends IdentifiedType {
     @Metadata(label = "command", defaultValue = "20")
     private Integer executionIsolationSemaphoreMaxConcurrentRequests;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "THREAD")
+    @Metadata(label = "command", defaultValue = "THREAD", enums = "THREAD,SEMAPHORE")
     private String executionIsolationStrategy;
     @XmlAttribute
     @Metadata(label = "command", defaultValue = "true")
