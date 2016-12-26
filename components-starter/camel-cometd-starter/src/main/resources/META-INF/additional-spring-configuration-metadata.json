@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.cometd.enabled",
+      "description": "Enable cometd component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

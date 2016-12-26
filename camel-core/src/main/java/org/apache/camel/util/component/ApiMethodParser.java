@@ -19,7 +19,6 @@ package org.apache.camel.util.component;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -170,7 +169,7 @@ public abstract class ApiMethodParser<T> {
         }
         allArguments.clear();
 
-        Collections.sort(result, new Comparator<ApiMethodModel>() {
+        result.sort(new Comparator<ApiMethodModel>() {
             @Override
             public int compare(ApiMethodModel model1, ApiMethodModel model2) {
                 final int nameCompare = model1.name.compareTo(model2.name);

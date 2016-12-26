@@ -79,7 +79,8 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(defaultValue = "AUTO_ACKNOWLEDGE", enums = "SESSION_TRANSACTED,CLIENT_ACKNOWLEDGE,AUTO_ACKNOWLEDGE,DUPS_OK_ACKNOWLEDGE", label = "consumer",
             description = "The JMS acknowledgement name, which is one of: SESSION_TRANSACTED, CLIENT_ACKNOWLEDGE, AUTO_ACKNOWLEDGE, DUPS_OK_ACKNOWLEDGE")
     private String acknowledgementModeName;
-    @UriParam(label = "advanced")
+    @UriParam(label = "advanced", description = "A pluggable org.springframework.jms.support.destination.DestinationResolver that allows you to use your own resolver"
+            + " (for example, to lookup the real destination in a JNDI registry).")
     private DestinationResolver destinationResolver;
     // Used to configure the spring Container
     @UriParam(label = "advanced",
@@ -98,10 +99,10 @@ public class JmsConfiguration implements Cloneable {
                     + " You can configure logging level and whether stack traces should be logged using errorHandlerLoggingLevel and errorHandlerLogStackTrace options."
                     + " This makes it much easier to configure, than having to code a custom errorHandler.")
     private ErrorHandler errorHandler;
-    @UriParam(defaultValue = "WARN", label = "advanced",
+    @UriParam(defaultValue = "WARN", label = "consumer,logging",
             description = "Allows to configure the default errorHandler logging level for logging uncaught exceptions.")
     private LoggingLevel errorHandlerLoggingLevel = LoggingLevel.WARN;
-    @UriParam(defaultValue = "true", label = "advanced",
+    @UriParam(defaultValue = "true", label = "consumer,logging",
             description = "Allows to control whether stacktraces should be logged or not, by the default errorHandler.")
     private boolean errorHandlerLogStackTrace = true;
     @UriParam(label = "consumer", defaultValue = "true",
@@ -116,7 +117,7 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(label = "consumer,advanced",
             description = "Specifies whether the consumer accept messages while it is stopping."
                     + " You may consider enabling this option, if you start and stop JMS routes at runtime, while there are still messages"
-                    + " enqued on the queue. If this option is false, and you stop the JMS route, then messages may be rejected,"
+                    + " enqueued on the queue. If this option is false, and you stop the JMS route, then messages may be rejected,"
                     + " and the JMS broker would have to attempt redeliveries, which yet again may be rejected, and eventually the message"
                     + " may be moved at a dead letter queue on the JMS broker. To avoid this its recommended to enable this option.")
     private boolean acceptMessagesWhileStopping;    
@@ -131,6 +132,8 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(label = "consumer,advanced",
             description = "Specifies whether the listener session should be exposed when consuming messages.")
     private boolean exposeListenerSession = true;
+    @UriParam(label = "consumer,advanced",
+            description = "Allows you to specify a custom task executor for consuming messages.")
     private TaskExecutor taskExecutor;
     @UriParam(label = "advanced",
             description = "Specifies whether to inhibit the delivery of messages published by its own connection.")
@@ -150,6 +153,7 @@ public class JmsConfiguration implements Cloneable {
                     + " If you use a range for concurrent consumers (eg min < max), then this option can be used to set"
                     + " a value to eg 100 to control how fast the consumers will shrink when less work is required.")
     private int maxMessagesPerTask = -1;
+    @UriParam(label = "consumer", description = "Sets the cache level by ID for the underlying JMS resources. See cacheLevelName option for more details.")
     private int cacheLevel = -1;
     @UriParam(defaultValue = "CACHE_AUTO", enums = "CACHE_AUTO,CACHE_CONNECTION,CACHE_CONSUMER,CACHE_NONE,CACHE_SESSION", label = "consumer",
             description = "Sets the cache level by name for the underlying JMS resources."
@@ -397,7 +401,7 @@ public class JmsConfiguration implements Cloneable {
                     + "  must be executed synchronously (Camel 3.0 may support async transactions).")
     private boolean asyncConsumer;
     // the cacheLevelName of reply manager
-    @UriParam(label = "producer,advanced",
+    @UriParam(label = "producer,advanced", enums = "CACHE_AUTO,CACHE_CONNECTION,CACHE_CONSUMER,CACHE_NONE,CACHE_SESSION",
             description = "Sets the cache level by name for the reply consumer when doing request/reply over JMS."
                     + " This option only applies when using fixed reply queues (not temporary)."
                     + " Camel will by default use: CACHE_CONSUMER for exclusive or shared w/ replyToSelectorName."
@@ -807,7 +811,7 @@ public class JmsConfiguration implements Cloneable {
     /**
      * Specifies whether the consumer accept messages while it is stopping.
      * You may consider enabling this option, if you start and stop JMS routes at runtime, while there are still messages
-     * enqued on the queue. If this option is false, and you stop the JMS route, then messages may be rejected,
+     * enqueued on the queue. If this option is false, and you stop the JMS route, then messages may be rejected,
      * and the JMS broker would have to attempt redeliveries, which yet again may be rejected, and eventually the message
      * may be moved at a dead letter queue on the JMS broker. To avoid this its recommended to enable this option.
      */
@@ -817,7 +821,7 @@ public class JmsConfiguration implements Cloneable {
 
     /**
      * Whether the {@link DefaultMessageListenerContainer} used in the reply managers for request-reply messaging allow 
-     * the {@link DefaultMessageListenerContainer.runningAllowed} flag to quick stop in case {@link JmsConfiguration#isAcceptMessagesWhileStopping()} 
+     * the {@link DefaultMessageListenerContainer#runningAllowed()} flag to quick stop in case {@link JmsConfiguration#isAcceptMessagesWhileStopping()}
      * is enabled, and {@link org.apache.camel.CamelContext} is currently being stopped. This quick stop ability is enabled by
      * default in the regular JMS consumers but to enable for reply managers you must enable this flag.
      */

@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.hl7.enabled",
+      "description": "Enable hl7 dataformat",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.language.terser.enabled",
+      "description": "Enable terser language",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -38,6 +38,7 @@ import org.w3c.dom.Node;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.NamedNode;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.NamespaceAware;
@@ -83,7 +84,14 @@ public final class ModelHelper {
         StringWriter buffer = new StringWriter();
         marshaller.marshal(definition, buffer);
 
-        Document dom = context.getTypeConverter().convertTo(Document.class, buffer.toString());
+        XmlConverter xmlConverter = newXmlConverter(context);
+        String xml = buffer.toString();
+        Document dom;
+        try {
+            dom = xmlConverter.toDOMDocument(xml, null);
+        } catch (Exception e) {
+            throw new TypeConversionException(xml, Document.class, e);
+        }
 
         // Add additional namespaces to the document root element
         Element documentElement = dom.getDocumentElement();
@@ -92,9 +100,6 @@ public final class ModelHelper {
         }
 
         // We invoke the type converter directly because we need to pass some custom XML output options
-        TypeConverterRegistry registry = context.getTypeConverterRegistry();
-        XmlConverter xmlConverter = registry.getInjector().newInstance(XmlConverter.class);
-
         Properties outputProperties = new Properties();
         outputProperties.put(OutputKeys.INDENT, "yes");
         outputProperties.put(OutputKeys.STANDALONE, "yes");
@@ -103,7 +108,6 @@ public final class ModelHelper {
         } catch (TransformerException e) {
             throw new IllegalStateException("Failed converting document object to string", e);
         }
-
     }
 
     /**
@@ -116,7 +120,7 @@ public final class ModelHelper {
      * @throws javax.xml.bind.JAXBException is thrown if error unmarshalling from xml to model
      */
     public static <T extends NamedNode> T createModelFromXml(CamelContext context, String xml, Class<T> type) throws JAXBException {
-        return modelToXml(context, xml, type);
+        return modelToXml(context, null, xml, type);
     }
 
     /**
@@ -129,7 +133,7 @@ public final class ModelHelper {
      * @throws javax.xml.bind.JAXBException is thrown if error unmarshalling from xml to model
      */
     public static <T extends NamedNode> T createModelFromXml(CamelContext context, InputStream stream, Class<T> type) throws JAXBException {
-        return modelToXml(context, stream, type);
+        return modelToXml(context, stream, null, type);
     }
 
     /**
@@ -140,14 +144,28 @@ public final class ModelHelper {
      * @throws Exception is thrown if an error is encountered unmarshalling from xml to model
      */
     public static RoutesDefinition loadRoutesDefinition(CamelContext context, InputStream inputStream) throws Exception {
+        XmlConverter xmlConverter = newXmlConverter(context);
+        Document dom = xmlConverter.toDOMDocument(inputStream, null);
+        return loadRoutesDefinition(context, dom);
+    }
+
+    /**
+     * Marshal the xml to the model definition
+     *
+     * @param context the CamelContext, if <tt>null</tt> then {@link org.apache.camel.spi.ModelJAXBContextFactory} is not in use
+     * @param node the xml node
+     * @throws Exception is thrown if an error is encountered unmarshalling from xml to model
+     */
+    public static RoutesDefinition loadRoutesDefinition(CamelContext context, Node node) throws Exception {
         JAXBContext jaxbContext = getJAXBContext(context);
 
         Map<String, String> namespaces = new LinkedHashMap<>();
-        Document dom = context.getTypeConverter().mandatoryConvertTo(Document.class, inputStream);
+
+        Document dom = node instanceof Document ? (Document) node : node.getOwnerDocument();
         extractNamespaces(dom, namespaces);
 
         Binder<Node> binder = jaxbContext.createBinder();
-        Object result = binder.unmarshal(dom);
+        Object result = binder.unmarshal(node);
 
         if (result == null) {
             throw new JAXBException("Cannot unmarshal to RoutesDefinition using JAXB");
@@ -172,11 +190,25 @@ public final class ModelHelper {
         return answer;
     }
 
-    private static <T extends NamedNode> T modelToXml(CamelContext context, Object object, Class<T> type) throws JAXBException {
+    private static <T extends NamedNode> T modelToXml(CamelContext context, InputStream is, String xml, Class<T> type) throws JAXBException {
         JAXBContext jaxbContext = getJAXBContext(context);
 
+        XmlConverter xmlConverter = newXmlConverter(context);
+        Document dom = null;
+        try {
+            if (is != null) {
+                dom = xmlConverter.toDOMDocument(is, null);
+            } else if (xml != null) {
+                dom = xmlConverter.toDOMDocument(xml, null);
+            }
+        } catch (Exception e) {
+            throw new TypeConversionException(xml, Document.class, e);
+        }
+        if (dom == null) {
+            throw new IllegalArgumentException("InputStream and XML is both null");
+        }
+
         Map<String, String> namespaces = new LinkedHashMap<>();
-        Document dom = context.getTypeConverter().convertTo(Document.class, object);
         extractNamespaces(dom, namespaces);
 
         Binder<Node> binder = jaxbContext.createBinder();
@@ -284,4 +316,22 @@ public final class ModelHelper {
             }
         }
     }
+
+    /**
+     * Creates a new {@link XmlConverter}
+     *
+     * @param context CamelContext if provided
+     * @return a new XmlConverter instance
+     */
+    private static XmlConverter newXmlConverter(CamelContext context) {
+        XmlConverter xmlConverter;
+        if (context != null) {
+            TypeConverterRegistry registry = context.getTypeConverterRegistry();
+            xmlConverter = registry.getInjector().newInstance(XmlConverter.class);
+        } else {
+            xmlConverter = new XmlConverter();
+        }
+        return xmlConverter;
+    }
+
 }

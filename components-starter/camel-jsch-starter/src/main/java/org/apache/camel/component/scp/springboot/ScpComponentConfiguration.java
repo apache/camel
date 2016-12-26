@@ -31,7 +31,7 @@ public class ScpComponentConfiguration {
      * down to DEBUG logging by default. But setting this option to true turns
      * on the verbose logging again.
      */
-    private Boolean verboseLogging;
+    private Boolean verboseLogging = false;
 
     public Boolean getVerboseLogging() {
         return verboseLogging;

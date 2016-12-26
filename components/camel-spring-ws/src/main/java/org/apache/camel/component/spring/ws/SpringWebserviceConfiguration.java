@@ -46,6 +46,8 @@ public class SpringWebserviceConfiguration {
     /* Common configuration */
     @UriParam
     private MessageFilter messageFilter;
+    @UriParam(label = "security")
+    private SSLContextParameters sslContextParameters;
 
     /* Producer configuration */
     @UriParam(label = "producer")
@@ -80,8 +82,6 @@ public class SpringWebserviceConfiguration {
     private CamelSpringWSEndpointMapping endpointMapping;
     @UriParam(label = "consumer")
     private CamelEndpointDispatcher endpointDispatcher;
-    @UriParam(label = "consumer")
-    private SSLContextParameters sslContextParameters;
     @UriParam(label = "consumer")
     private String expression;
 

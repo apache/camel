@@ -60,11 +60,11 @@ The MSV component supports 2 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| schemaFactory | SchemaFactory | To use the javax.xml.validation.SchemaFactory.
-| resourceResolverFactory | ValidatorResourceResolverFactory | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI
+| Name | Group | Default | Java Type | Description
+| schemaFactory | advanced |  | SchemaFactory | To use the javax.xml.validation.SchemaFactory.
+| resourceResolverFactory | advanced |  | ValidatorResourceResolverFactory | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -105,16 +105,16 @@ The Disruptor component supports 7 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| defaultConcurrentConsumers | int | To configure the default number of concurrent consumers
-| defaultMultipleConsumers | boolean | To configure the default value for multiple consumers
-| defaultProducerType | DisruptorProducerType | To configure the default value for DisruptorProducerType The default value is Multi.
-| defaultWaitStrategy | DisruptorWaitStrategy | To configure the default value for DisruptorWaitStrategy The default value is Blocking.
-| defaultBlockWhenFull | boolean | To configure the default value for block when full The default value is true.
-| queueSize | int | To configure the ring buffer size
-| bufferSize | int | To configure the ring buffer size
+| Name | Group | Default | Java Type | Description
+| defaultConcurrentConsumers | consumer | 1 | int | To configure the default number of concurrent consumers
+| defaultMultipleConsumers | consumer | false | boolean | To configure the default value for multiple consumers
+| defaultProducerType | producer | Multi | DisruptorProducerType | To configure the default value for DisruptorProducerType The default value is Multi.
+| defaultWaitStrategy | consumer | Blocking | DisruptorWaitStrategy | To configure the default value for DisruptorWaitStrategy The default value is Blocking.
+| defaultBlockWhenFull | producer | true | boolean | To configure the default value for block when full The default value is true.
+| queueSize | common |  | int | To configure the ring buffer size
+| bufferSize | common | 1024 | int | To configure the ring buffer size
 |=======================================================================
 {% endraw %}
 // component options: END

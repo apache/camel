@@ -260,7 +260,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
         }
 
         // sort interceptors according to ordered
-        Collections.sort(interceptors, new OrderedComparator());
+        interceptors.sort(new OrderedComparator());
         // then reverse list so the first will be wrapped last, as it would then be first being invoked
         Collections.reverse(interceptors);
         // wrap the output with the configured interceptors

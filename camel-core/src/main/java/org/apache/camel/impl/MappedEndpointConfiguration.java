@@ -17,7 +17,6 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -129,7 +128,7 @@ public final class MappedEndpointConfiguration extends DefaultEndpointConfigurat
             }
         }
 
-        Collections.sort(queryParams);
+        queryParams.sort(null);
         String q = "";
         for (String entry : queryParams) {
             q += q.length() == 0 ? "" : "&";

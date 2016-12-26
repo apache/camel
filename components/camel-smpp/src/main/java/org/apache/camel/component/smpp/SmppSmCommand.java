@@ -75,12 +75,20 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
         return config.getSplittingPolicy();
     }
 
-    protected SmppSplitter createSplitter(Message message) {
-        Alphabet alphabet = determineAlphabet(message);
-
-        String body = message.getBody(String.class);
+    protected SmppSplitter createSplitter(Message message) throws SmppException {
 
         SmppSplitter splitter;
+        // use the splitter if provided via header
+        if (message.getHeaders().containsKey(SmppConstants.DATA_SPLITTER)) {
+            splitter = message.getHeader(SmppConstants.DATA_SPLITTER, SmppSplitter.class);
+            if (null != splitter) {
+                return splitter;
+            }
+            throw new SmppException("Invalid splitter given. Must be instance of SmppSplitter");
+        }
+        Alphabet alphabet = determineAlphabet(message);
+        String body = message.getBody(String.class);
+
         if (SmppUtils.is8Bit(alphabet)) {
             splitter = new Smpp8BitSplitter(body.length());
         } else if (alphabet == Alphabet.ALPHA_UCS2) {
@@ -88,7 +96,6 @@ public abstract class SmppSmCommand extends AbstractSmppCommand {
         } else {
             splitter = new SmppDefaultSplitter(body.length());
         }
-
         return splitter;
     }
 

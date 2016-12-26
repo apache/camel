@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.ehcache.enabled",
+      "description": "Enable ehcache component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

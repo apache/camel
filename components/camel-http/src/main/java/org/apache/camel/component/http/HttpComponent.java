@@ -33,6 +33,7 @@ import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.http.common.HttpRestHeaderFilterStrategy;
 import org.apache.camel.http.common.UrlRewrite;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.FileUtil;
@@ -52,7 +53,10 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
  * @version 
  */
 public class HttpComponent extends HttpCommonComponent implements RestProducerFactory {
+
+    @Metadata(label = "advanced")
     protected HttpClientConfigurer httpClientConfigurer;
+    @Metadata(label = "advanced")
     protected HttpConnectionManager httpConnectionManager;
 
     public HttpComponent() {

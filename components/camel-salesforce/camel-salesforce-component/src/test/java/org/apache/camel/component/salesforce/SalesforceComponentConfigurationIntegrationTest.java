@@ -27,6 +27,8 @@ import org.apache.camel.Component;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.dto.generated.Account;
+import org.apache.camel.component.salesforce.dto.generated.Asset;
+import org.apache.camel.component.salesforce.dto.generated.Contact;
 import org.apache.camel.component.salesforce.dto.generated.Document;
 import org.apache.camel.component.salesforce.dto.generated.Line_Item__c;
 import org.apache.camel.component.salesforce.dto.generated.MSPTest;
@@ -106,7 +108,8 @@ public class SalesforceComponentConfigurationIntegrationTest extends CamelTestSu
             "query", "queryMore", "queryAll", "search", "apexCall", "recent", "createJob", "getJob", "closeJob", "abortJob",
             "createBatch", "getBatch", "getAllBatches", "getRequest", "getResults", "createBatchQuery", "getQueryResultIds",
             "getQueryResult", "getRecentReports", "getReportDescription", "executeSyncReport", "executeAsyncReport",
-            "getReportInstances", "getReportResults", "limits", "approval", "approvals", "[PushTopicName]"
+            "getReportInstances", "getReportResults", "limits", "approval", "approvals", "composite-batch", "composite-tree",
+            "[PushTopicName]"
         );
 
         // get filtered operation names
@@ -153,7 +156,7 @@ public class SalesforceComponentConfigurationIntegrationTest extends CamelTestSu
 
         // get sObjectName values, from scanned DTO packages
         assertCompletionOptions(configuration.completeEndpointPath("getSObject?sObjectName="),
-            "Account", "Tasks__c", "Line_Item__c", "Merchandise__c", "Document", "MSPTest");
+            "Account", "Asset", "Contact", "Tasks__c", "Line_Item__c", "Merchandise__c", "Document", "MSPTest");
 
         // get sObjectFields values, from scanned DTO
         assertCompletionOptions(
@@ -165,6 +168,8 @@ public class SalesforceComponentConfigurationIntegrationTest extends CamelTestSu
         // get sObjectClass values, from scanned DTO packages
         assertCompletionOptions(configuration.completeEndpointPath("getSObject?sObjectClass="),
             Account.class.getName(),
+            Asset.class.getName(),
+            Contact.class.getName(),
             Tasks__c.class.getName(),
             Line_Item__c.class.getName(),
             Merchandise__c.class.getName(),

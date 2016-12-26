@@ -16,8 +16,14 @@
  */
 package org.apache.camel.component.ribbon.processor;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.netflix.loadbalancer.Server;
 import org.apache.camel.spi.ServiceCallServer;
+
+import static org.apache.camel.util.ObjectHelper.ifNotEmpty;
 
 public class RibbonServer extends Server implements ServiceCallServer {
 
@@ -27,7 +33,27 @@ public class RibbonServer extends Server implements ServiceCallServer {
 
     @Override
     public String getIp() {
-        return getHost();
+        return super.getHost();
     }
 
+    @Override
+    public int getPort() {
+        return super.getPort();
+    }
+
+    @Override
+    public Map<String, String> getMetadata() {
+        Map<String, String> meta = new HashMap<>();
+        ifNotEmpty(super.getId(), val -> meta.put("id", val));
+        ifNotEmpty(super.getZone(), val -> meta.put("zone", val));
+
+        if (super.getMetaInfo() != null) {
+            ifNotEmpty(super.getMetaInfo().getAppName(), val -> meta.put("app_name", val));
+            ifNotEmpty(super.getMetaInfo().getServiceIdForDiscovery(),  val -> meta.put("discovery_id", val));
+            ifNotEmpty(super.getMetaInfo().getInstanceId(),  val -> meta.put("instance_id", val));
+            ifNotEmpty(super.getMetaInfo().getServerGroup(), val -> meta.put("server_group", val));
+        }
+
+        return Collections.unmodifiableMap(meta);
+    }
 }

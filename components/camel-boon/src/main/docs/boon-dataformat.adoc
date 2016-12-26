@@ -20,7 +20,7 @@ Options
 
 
 // dataformat options: START
-The Boon dataformat supports 2 options which are listed below.
+The Boon dataformat supports 3 options which are listed below.
 
 
 
@@ -30,6 +30,7 @@ The Boon dataformat supports 2 options which are listed below.
 | Name | Default | Java Type | Description
 | unmarshalTypeName |  | String | Class name of the java type to use when unarmshalling
 | useList | false | Boolean | To unarmshal to a List of Map or a List of Pojo.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
 {% endraw %}
 // dataformat options: END

@@ -104,6 +104,13 @@ public class UniVocityCsvDataFormatConfiguration {
      * collected). The default value is false
      */
     private Boolean asMap = false;
+    /**
+     * Whether the data format should set the Content-Type header with the type
+     * from the data format if the data format is capable of doing so. For
+     * example application/xml for data formats marshalling to XML or
+     * application/json for data formats marshalling to JSon etc.
+     */
+    private Boolean contentTypeHeader = false;
 
     public Boolean getQuoteAllFields() {
         return quoteAllFields;
@@ -239,5 +246,13 @@ public class UniVocityCsvDataFormatConfiguration {
 
     public void setAsMap(Boolean asMap) {
         this.asMap = asMap;
+    }
+
+    public Boolean getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    public void setContentTypeHeader(Boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 }

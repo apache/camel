@@ -69,6 +69,19 @@ public class JsonDataFormat extends AbstractXStreamWrapper {
     }
 
     @Override
+    public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
+        super.marshal(exchange, body, stream);
+
+        if (isContentTypeHeader()) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            }
+        }
+    }
+
+    @Override
     protected XStream createXStream(ClassResolver resolver, ClassLoader classLoader) {
         XStream xs = super.createXStream(resolver, classLoader);
         if (getMode() != null) {

@@ -22,7 +22,6 @@ import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -583,7 +582,7 @@ public final class URISupport {
         } else {
             // reorder parameters a..z
             List<String> keys = new ArrayList<String>(parameters.keySet());
-            Collections.sort(keys);
+            keys.sort(null);
 
             Map<String, Object> sorted = new LinkedHashMap<String, Object>(parameters.size());
             for (String key : keys) {

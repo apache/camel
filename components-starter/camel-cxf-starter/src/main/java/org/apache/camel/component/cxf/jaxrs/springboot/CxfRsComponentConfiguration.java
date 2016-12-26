@@ -29,8 +29,8 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 public class CxfRsComponentConfiguration {
 
     /**
-     * To use a custom HeaderFilterStrategy to filter header to and from Camel
-     * message.
+     * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+     * header to and from Camel message.
      */
     @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;

@@ -41,6 +41,13 @@ public class Base64DataFormatConfiguration {
      * modes. Is by default false.
      */
     private Boolean urlSafe = false;
+    /**
+     * Whether the data format should set the Content-Type header with the type
+     * from the data format if the data format is capable of doing so. For
+     * example application/xml for data formats marshalling to XML or
+     * application/json for data formats marshalling to JSon etc.
+     */
+    private Boolean contentTypeHeader = false;
 
     public Integer getLineLength() {
         return lineLength;
@@ -64,5 +71,13 @@ public class Base64DataFormatConfiguration {
 
     public void setUrlSafe(Boolean urlSafe) {
         this.urlSafe = urlSafe;
+    }
+
+    public Boolean getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    public void setContentTypeHeader(Boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 }

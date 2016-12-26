@@ -31,18 +31,7 @@
   <description>An example which demonstrates the use of the Camel CXF component</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.example.*
-    </camel.osgi.export.pkg>
-    <camel.osgi.import.additional>
-      org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool
-    </camel.osgi.import.additional>
-    <camel.osgi.private.pkg>
-      org.apache.hello_world_soap_http,
-      org.apache.hello_world_soap_http.types
-    </camel.osgi.private.pkg>
-    <!-- to avoid importing a bunch of cxf packages -->
-    <camel.osgi.dynamic>*</camel.osgi.dynamic>
+    <jetty9-version>${jetty92-version}</jetty9-version>
   </properties>
 
   <dependencies>
@@ -67,14 +56,39 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jetty9</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-http-jetty</artifactId>
       <version>${cxf-version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-server</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-util</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-io</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-security</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-continuation</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.eclipse.jetty</groupId>
+          <artifactId>jetty-http</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jetty9</artifactId>
     </dependency>
 
     <dependency>

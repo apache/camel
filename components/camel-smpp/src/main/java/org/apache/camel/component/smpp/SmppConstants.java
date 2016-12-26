@@ -27,6 +27,7 @@ public interface SmppConstants {
     String COMMAND_ID = "CamelSmppCommandId";
     String COMMAND_STATUS = "CamelSmppCommandStatus";
     String DATA_CODING = "CamelSmppDataCoding";
+    String DATA_SPLITTER = "CamelSmppSplitter";
     String DELIVERED = "CamelSmppDelivered";
     String DEST_ADDR = "CamelSmppDestAddr";
     String DEST_ADDR_NPI = "CamelSmppDestAddrNpi";
@@ -34,6 +35,7 @@ public interface SmppConstants {
     String DONE_DATE = "CamelSmppDoneDate";
     String ENCODING = "CamelSmppEncoding";
     String ERROR = "CamelSmppError";
+    String ESM_CLASS = "CamelSmppClass";
     String ESME_ADDR = "CamelSmppEsmeAddr";
     String ESME_ADDR_NPI = "CamelSmppEsmeAddrNpi";
     String ESME_ADDR_TON = "CamelSmppEsmeAddrTon";

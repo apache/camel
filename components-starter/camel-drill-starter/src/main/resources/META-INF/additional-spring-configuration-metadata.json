@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.drill.enabled",
+      "description": "Enable drill component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

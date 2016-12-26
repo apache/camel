@@ -68,6 +68,13 @@ public class CryptoDataFormatConfiguration {
      * encrypted data stream. Is by default false.
      */
     private Boolean inline = false;
+    /**
+     * Whether the data format should set the Content-Type header with the type
+     * from the data format if the data format is capable of doing so. For
+     * example application/xml for data formats marshalling to XML or
+     * application/json for data formats marshalling to JSon etc.
+     */
+    private Boolean contentTypeHeader = false;
 
     public String getAlgorithm() {
         return algorithm;
@@ -139,5 +146,13 @@ public class CryptoDataFormatConfiguration {
 
     public void setInline(Boolean inline) {
         this.inline = inline;
+    }
+
+    public Boolean getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    public void setContentTypeHeader(Boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 }

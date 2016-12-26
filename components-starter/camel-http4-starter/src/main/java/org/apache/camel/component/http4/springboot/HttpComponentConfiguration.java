@@ -65,7 +65,7 @@ public class HttpComponentConfiguration {
      * the incoming data from the request to Java and that can be a potential
      * security risk.
      */
-    private Boolean allowJavaSerializedObject;
+    private Boolean allowJavaSerializedObject = false;
     /**
      * To use a custom org.apache.http.protocol.HttpContext when executing
      * requests.
@@ -90,11 +90,11 @@ public class HttpComponentConfiguration {
     /**
      * The maximum number of connections.
      */
-    private Integer maxTotalConnections;
+    private Integer maxTotalConnections = 200;
     /**
      * The maximum number of connections per route.
      */
-    private Integer connectionsPerRoute;
+    private Integer connectionsPerRoute = 20;
     /**
      * The time for connection to live the time unit is millisecond the default
      * value is always keep alive.
@@ -110,8 +110,8 @@ public class HttpComponentConfiguration {
     @NestedConfigurationProperty
     private CookieStore cookieStore;
     /**
-     * To use a custom HeaderFilterStrategy to filter header to and from Camel
-     * message.
+     * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
+     * header to and from Camel message.
      */
     @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;

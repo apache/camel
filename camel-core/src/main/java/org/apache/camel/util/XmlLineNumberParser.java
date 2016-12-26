@@ -72,20 +72,36 @@ public final class XmlLineNumberParser {
      * @throws Exception is thrown if error parsing
      */
     public static Document parseXml(final InputStream is) throws Exception {
-        return parseXml(is, new NoopTransformer());
+        return parseXml(is, null);
     }
 
     /**
      * Parses the XML.
      *
-     * @param is the XML content as an input stream
+     * @param is             the XML content as an input stream
+     * @param xmlTransformer the XML transformer
      * @return the DOM model
      * @throws Exception is thrown if error parsing
      */
-    public static Document parseXml(final InputStream is, final XmlTextTransformer transformer) throws Exception {
-        ObjectHelper.notNull(is, "is");
-        ObjectHelper.notNull(transformer, "transformer");
+    public static Document parseXml(final InputStream is, final XmlTextTransformer xmlTransformer) throws Exception {
+        return parseXml(is, xmlTransformer, null, null);
+    }
 
+    /**
+     * Parses the XML.
+     *
+     * @param is              the XML content as an input stream
+     * @param xmlTransformer  the XML transformer
+     * @param rootNames       one or more root names that is used as baseline for beginning the parsing, for example camelContext to start parsing
+     *                        when Camel is discovered. Multiple names can be defined separated by comma
+     * @param forceNamespace  an optional namespaces to force assign to each node. This may be needed for JAXB unmarshalling from XML -> POJO.
+     * @return the DOM model
+     * @throws Exception is thrown if error parsing
+     */
+    public static Document parseXml(final InputStream is, XmlTextTransformer xmlTransformer, String rootNames, final String forceNamespace) throws Exception {
+        ObjectHelper.notNull(is, "is");
+
+        final XmlTextTransformer transformer = xmlTransformer == null ? new NoopTransformer() : xmlTransformer;
         final Document doc;
         SAXParser parser;
         final SAXParserFactory factory = SAXParserFactory.newInstance();
@@ -112,25 +128,52 @@ public final class XmlLineNumberParser {
             @Override
             public void setDocumentLocator(final Locator locator) {
                 this.locator = locator; // Save the locator, so that it can be used later for line tracking when traversing nodes.
+                this.found = rootNames == null;
+            }
+
+            private boolean isRootName(String qName) {
+                for (String root : rootNames.split(",")) {
+                    if (qName.equals(root)) {
+                        return true;
+                    }
+                }
+                return false;
             }
 
             @Override
             public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) throws SAXException {
                 addTextIfNeeded();
 
-                Element el = doc.createElement(qName);
-
-                for (int i = 0; i < attributes.getLength(); i++) {
-                    el.setAttribute(transformer.transform(attributes.getQName(i)), transformer.transform(attributes.getValue(i)));
+                if (rootNames != null && !found) {
+                    if (isRootName(qName)) {
+                        found = true;
+                    }
                 }
 
-                el.setUserData(LINE_NUMBER, String.valueOf(this.locator.getLineNumber()), null);
-                el.setUserData(COLUMN_NUMBER, String.valueOf(this.locator.getColumnNumber()), null);
-                elementStack.push(el);
+                if (found) {
+                    Element el;
+                    if (forceNamespace != null) {
+                        el = doc.createElementNS(forceNamespace, qName);
+                    } else {
+                        el = doc.createElement(qName);
+                    }
+
+                    for (int i = 0; i < attributes.getLength(); i++) {
+                        el.setAttribute(transformer.transform(attributes.getQName(i)), transformer.transform(attributes.getValue(i)));
+                    }
+
+                    el.setUserData(LINE_NUMBER, String.valueOf(this.locator.getLineNumber()), null);
+                    el.setUserData(COLUMN_NUMBER, String.valueOf(this.locator.getColumnNumber()), null);
+                    elementStack.push(el);
+                }
             }
 
             @Override
             public void endElement(final String uri, final String localName, final String qName) {
+                if (!found) {
+                    return;
+                }
+
                 addTextIfNeeded();
 
                 final Element closedEl = elementStack.isEmpty() ? null : elementStack.pop();

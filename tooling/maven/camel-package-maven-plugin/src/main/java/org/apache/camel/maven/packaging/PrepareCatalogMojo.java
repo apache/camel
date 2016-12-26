@@ -265,7 +265,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 for (Map<String, String> row : rows) {
                     String name = row.get("name");
                     // skip checking these as they have no documentation
-                    if ("outputs".equals(name)) {
+                    if ("outputs".equals(name) || "transforms".equals(name)) {
                         continue;
                     }
 

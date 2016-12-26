@@ -46,6 +46,13 @@ public class CastorDataFormatConfiguration {
      * Add additional class names to Castor XmlContext
      */
     private String[] classes;
+    /**
+     * Whether the data format should set the Content-Type header with the type
+     * from the data format if the data format is capable of doing so. For
+     * example application/xml for data formats marshalling to XML or
+     * application/json for data formats marshalling to JSon etc.
+     */
+    private Boolean contentTypeHeader = false;
 
     public String getMappingFile() {
         return mappingFile;
@@ -85,5 +92,13 @@ public class CastorDataFormatConfiguration {
 
     public void setClasses(String[] classes) {
         this.classes = classes;
+    }
+
+    public Boolean getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    public void setContentTypeHeader(Boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 }

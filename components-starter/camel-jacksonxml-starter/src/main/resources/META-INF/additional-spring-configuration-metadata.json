@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.jacksonxml.enabled",
+      "description": "Enable jacksonxml dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

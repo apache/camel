@@ -34,7 +34,7 @@ public class DirectVmComponentConfiguration {
      * then we can tell the producer to block and wait for the consumer to
      * become active.
      */
-    private Boolean block;
+    private Boolean block = false;
     /**
      * The timeout value to use if block is enabled.
      */
@@ -48,7 +48,7 @@ public class DirectVmComponentConfiguration {
     private HeaderFilterStrategy headerFilterStrategy;
     /**
      * Whether to propagate or not properties from the producer side to the
-     * consumer side and viceversa. Default value: true.
+     * consumer side and vice versa. Default value: true.
      */
     private Boolean propagateProperties = true;
 

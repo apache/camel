@@ -38,7 +38,6 @@ import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * <code>CuratorLeaderElection</code> uses the leader election capabilities of a
  * ZooKeeper cluster to control which nodes are enabled. It is typically used in
@@ -55,7 +54,6 @@ import org.slf4j.LoggerFactory;
 public class CuratorLeaderElection {
 
     private static final Logger LOG = LoggerFactory.getLogger(CuratorLeaderElection.class);
-    private final ProducerTemplate producerTemplate;
     private final CamelContext camelContext;
     private final String uri;
 
@@ -71,12 +69,7 @@ public class CuratorLeaderElection {
     private CuratorFramework client;
 
     public CuratorLeaderElection(CamelContext camelContext, String uri) {
-        this(camelContext.createProducerTemplate(), camelContext, uri);
-    }
-
-    public CuratorLeaderElection(ProducerTemplate producerTemplate, CamelContext camelContext, String uri) {
         this.camelContext = camelContext;
-        this.producerTemplate = producerTemplate;
         this.uri = uri;
         this.candidateName = createCandidateName();
 

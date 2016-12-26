@@ -30,6 +30,7 @@ import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.EndpointCompleter;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
@@ -39,6 +40,7 @@ import org.apache.camel.util.ObjectHelper;
 public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S extends ApiCollection<E, T>>
         extends UriEndpointComponent implements EndpointCompleter {
 
+    @Metadata(label = "advanced")
     protected T configuration;
 
     // API collection

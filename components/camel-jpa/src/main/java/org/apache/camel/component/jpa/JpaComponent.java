@@ -22,6 +22,7 @@ import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,11 +36,14 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class JpaComponent extends UriEndpointComponent {
     private static final Logger LOG = LoggerFactory.getLogger(JpaComponent.class);
+
+    private ExecutorService pollingConsumerExecutorService;
+
     private EntityManagerFactory entityManagerFactory;
     private PlatformTransactionManager transactionManager;
+    @Metadata(defaultValue = "true")
     private boolean joinTransaction = true;
     private boolean sharedEntityManager;
-    private ExecutorService pollingConsumerExecutorService;
 
     public JpaComponent() {
         super(JpaEndpoint.class);

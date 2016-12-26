@@ -38,11 +38,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +58,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbEndpoint.class);
 
     private MongoClient mongoConnection;
-
+    
     @UriPath @Metadata(required = "true")
     private String connectionBean;
     @UriParam
@@ -111,11 +113,6 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     public MongoDbEndpoint(String uri, MongoDbComponent component) {
         super(uri, component);
-    }
-
-    @SuppressWarnings("deprecation")
-    public MongoDbEndpoint(String endpointUri) {
-        super(endpointUri);
     }
 
     // ======= Implementation methods =====================================
@@ -288,9 +285,19 @@ public class MongoDbEndpoint extends DefaultEndpoint {
                     + ", " + writeConcernRef + ". Aborting initialization.";
             throw new IllegalArgumentException(msg);
         }
-
+        mongoConnection = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, MongoClient.class);
+        LOG.debug("Resolved the connection with the name {} as {}", connectionBean, mongoConnection);
         setWriteReadOptionsOnConnection();
         super.doStart();
+    }
+    
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (mongoConnection != null) {
+            LOG.debug("Closing connection");
+            mongoConnection.close();
+        }
     }
 
     public Exchange createMongoDbExchange(DBObject dbObj) {

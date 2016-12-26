@@ -70,11 +70,11 @@ The Google Mail component supports 2 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| configuration | GoogleMailConfiguration | To use the shared configuration
-| clientFactory | GoogleMailClientFactory | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleMailClientFactory
+| Name | Group | Default | Java Type | Description
+| configuration | common |  | GoogleMailConfiguration | To use the shared configuration
+| clientFactory | advanced |  | GoogleMailClientFactory | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleMailClientFactory
 |=======================================================================
 {% endraw %}
 // component options: END

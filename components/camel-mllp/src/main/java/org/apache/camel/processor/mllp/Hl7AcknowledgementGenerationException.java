@@ -17,6 +17,7 @@
 package org.apache.camel.processor.mllp;
 
 public class Hl7AcknowledgementGenerationException extends Exception {
+
     private final byte[] hl7Message;
 
     public Hl7AcknowledgementGenerationException(String message) {
@@ -33,7 +34,6 @@ public class Hl7AcknowledgementGenerationException extends Exception {
         super(message, cause);
         this.hl7Message = hl7Message;
     }
-
 
     public byte[] getHl7Message() {
         return hl7Message;

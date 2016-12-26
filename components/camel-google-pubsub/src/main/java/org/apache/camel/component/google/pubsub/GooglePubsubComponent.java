@@ -21,9 +21,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 /**
  * Represents the component that manages {@link GooglePubsubEndpoint}.
@@ -31,7 +28,6 @@ import org.slf4j.LoggerFactory;
 public class GooglePubsubComponent extends UriEndpointComponent {
 
     private GooglePubsubConnectionFactory connectionFactory;
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     public GooglePubsubComponent() {
         super(GooglePubsubEndpoint.class);

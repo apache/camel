@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Map;
+
 /**
  * Represents a server that host a service for the Service Call EIP.
  *
@@ -23,7 +25,6 @@ package org.apache.camel.spi;
  * @see ServiceCallServerListStrategy
  */
 public interface ServiceCallServer {
-
     /**
      * Gets the IP or hostname of the server hosting the service
      */
@@ -33,4 +34,9 @@ public interface ServiceCallServer {
      * Gets the port number of the server hosting the service
      */
     int getPort();
+
+    /**
+     * Gets a key/value metadata associated with the service
+     */
+    Map<String, String> getMetadata();
 }

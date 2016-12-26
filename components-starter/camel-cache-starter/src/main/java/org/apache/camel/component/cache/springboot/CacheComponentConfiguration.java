@@ -46,7 +46,7 @@ public class CacheComponentConfiguration {
      * Sets the location of the ehcache.xml file to load from classpath or file
      * system. By default the file is loaded from classpath:ehcache.xml
      */
-    private String configurationFile;
+    private String configurationFile = "classpath:ehcache.xml";
 
     public CacheManagerFactory getCacheManagerFactory() {
         return cacheManagerFactory;

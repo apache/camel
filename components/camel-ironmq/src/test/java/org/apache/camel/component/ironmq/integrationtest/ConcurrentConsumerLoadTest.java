@@ -70,7 +70,7 @@ public class ConcurrentConsumerLoadTest extends CamelTestSupport {
         }
         long delta = System.currentTimeMillis() - start;
         int seconds = (int)delta / 1000;
-        int msgPrSec = (int)(NO_OF_MESSAGES / seconds);
+        int msgPrSec = NO_OF_MESSAGES / seconds;
         log.info("IronMQPerformanceTest: Took: " + seconds + " seconds to produce " + NO_OF_MESSAGES + " messages. Which is " + msgPrSec + " messages pr. second");
     }
 
@@ -83,7 +83,7 @@ public class ConcurrentConsumerLoadTest extends CamelTestSupport {
         assertMockEndpointsSatisfied(4, TimeUnit.MINUTES);
         long delta = System.currentTimeMillis() - start;
         int seconds = (int)delta / 1000;
-        int msgPrSec = (int)(NO_OF_MESSAGES / seconds);
+        int msgPrSec = NO_OF_MESSAGES / seconds;
         log.info("IronmqPerformanceTest: Took: " + seconds + " seconds to consume " + NO_OF_MESSAGES + " messages. Which is " + msgPrSec + " messages pr. second");
     }
 

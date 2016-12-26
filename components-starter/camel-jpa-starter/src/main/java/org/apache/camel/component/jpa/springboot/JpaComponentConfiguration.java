@@ -47,13 +47,13 @@ public class JpaComponentConfiguration {
      * also be set globally on the JpaComponent instead of having to set it on
      * all endpoints.
      */
-    private Boolean joinTransaction;
+    private Boolean joinTransaction = true;
     /**
      * Whether to use Spring's SharedEntityManager for the consumer/producer.
      * Note in most cases joinTransaction should be set to false as this is not
      * an EXTENDED EntityManager.
      */
-    private Boolean sharedEntityManager;
+    private Boolean sharedEntityManager = false;
 
     public EntityManagerFactory getEntityManagerFactory() {
         return entityManagerFactory;

@@ -63,17 +63,17 @@ The Twitter component supports 8 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| accessToken | String | The access token
-| accessTokenSecret | String | The access token secret
-| consumerKey | String | The consumer key
-| consumerSecret | String | The consumer secret
-| httpProxyHost | String | The http proxy host which can be used for the camel-twitter.
-| httpProxyUser | String | The http proxy user which can be used for the camel-twitter.
-| httpProxyPassword | String | The http proxy password which can be used for the camel-twitter.
-| httpProxyPort | int | The http proxy port which can be used for the camel-twitter.
+| Name | Group | Default | Java Type | Description
+| accessToken | security |  | String | The access token
+| accessTokenSecret | security |  | String | The access token secret
+| consumerKey | security |  | String | The consumer key
+| consumerSecret | security |  | String | The consumer secret
+| httpProxyHost | proxy |  | String | The http proxy host which can be used for the camel-twitter.
+| httpProxyUser | proxy |  | String | The http proxy user which can be used for the camel-twitter.
+| httpProxyPassword | proxy |  | String | The http proxy password which can be used for the camel-twitter.
+| httpProxyPort | proxy |  | int | The http proxy port which can be used for the camel-twitter.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -159,10 +159,6 @@ The Twitter component supports 43 endpoint options which are listed below:
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | kind | common |  | String | *Required* What polling mode to use direct polling or event based. The event mode is only supported when the endpoint kind is event based.
-| accessToken | common |  | String | The access token. Can also be configured on the TwitterComponent level instead.
-| accessTokenSecret | common |  | String | The access secret. Can also be configured on the TwitterComponent level instead.
-| consumerKey | common |  | String | The consumer key. Can also be configured on the TwitterComponent level instead.
-| consumerSecret | common |  | String | The consumer secret. Can also be configured on the TwitterComponent level instead.
 | user | common |  | String | Username used for user timeline consumption direct message production etc.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
@@ -201,6 +197,10 @@ The Twitter component supports 43 endpoint options which are listed below:
 | httpProxyPassword | proxy |  | String | The http proxy password which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
 | httpProxyPort | proxy |  | Integer | The http proxy port which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
 | httpProxyUser | proxy |  | String | The http proxy user which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
+| accessToken | security |  | String | The access token. Can also be configured on the TwitterComponent level instead.
+| accessTokenSecret | security |  | String | The access secret. Can also be configured on the TwitterComponent level instead.
+| consumerKey | security |  | String | The consumer key. Can also be configured on the TwitterComponent level instead.
+| consumerSecret | security |  | String | The consumer secret. Can also be configured on the TwitterComponent level instead.
 |=======================================================================
 {% endraw %}
 // endpoint options: END

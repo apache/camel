@@ -30,6 +30,13 @@ public class ProtobufDataFormatConfiguration {
      * Name of class to use when unarmshalling
      */
     private String instanceClass;
+    /**
+     * Whether the data format should set the Content-Type header with the type
+     * from the data format if the data format is capable of doing so. For
+     * example application/xml for data formats marshalling to XML or
+     * application/json for data formats marshalling to JSon etc.
+     */
+    private Boolean contentTypeHeader = false;
 
     public String getInstanceClass() {
         return instanceClass;
@@ -37,5 +44,13 @@ public class ProtobufDataFormatConfiguration {
 
     public void setInstanceClass(String instanceClass) {
         this.instanceClass = instanceClass;
+    }
+
+    public Boolean getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    public void setContentTypeHeader(Boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 }

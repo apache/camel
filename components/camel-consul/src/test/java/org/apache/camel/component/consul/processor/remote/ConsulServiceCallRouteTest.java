@@ -28,7 +28,7 @@ import org.apache.camel.component.consul.ConsulTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
+@Ignore("A consul server is needed for this test ")
 public class ConsulServiceCallRouteTest extends ConsulTestSupport {
     private static final String SERVICE_NAME = "http-service";
     private static final int SERVICE_COUNT = 5;

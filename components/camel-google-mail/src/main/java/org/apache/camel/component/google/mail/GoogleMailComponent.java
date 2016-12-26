@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiCollection;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.component.AbstractApiComponent;
 
 /**
@@ -29,7 +30,9 @@ import org.apache.camel.util.component.AbstractApiComponent;
  */
 public class GoogleMailComponent extends AbstractApiComponent<GoogleMailApiName, GoogleMailConfiguration, GoogleMailApiCollection> {
 
+    @Metadata(label = "advanced")
     private Gmail client;
+    @Metadata(label = "advanced")
     private GoogleMailClientFactory clientFactory;
 
     public GoogleMailComponent() {

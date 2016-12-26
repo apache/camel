@@ -29,8 +29,10 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.etcd.EtcdHelper;
 import org.apache.camel.component.etcd.EtcdTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("An etcd server is needed for this test ")
 public class EtcdServiceCallRouteTest extends EtcdTestSupport {
     private static final ObjectMapper MAPPER = EtcdHelper.createObjectMapper();
     private static final String SERVICE_NAME = "http-service";

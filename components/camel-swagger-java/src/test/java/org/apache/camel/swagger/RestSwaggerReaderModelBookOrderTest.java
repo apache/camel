@@ -49,6 +49,8 @@ public class RestSwaggerReaderModelBookOrderTest extends CamelTestSupport {
                     .get("/{id}").description("Find order by id").outType(BookOrder.class)
                         .responseMessage().message("The order returned").endResponseMessage()
                         .param().name("id").type(RestParamType.path).description("The id of the order to get").dataType("integer").endParam()
+                        .to("bean:bookService?method=getOrder(${header.id})")
+                    .get("/books/{id}/line/{lineNum}").outType(LineItem.class)
                         .to("bean:bookService?method=getOrder(${header.id})");
             }
         };
@@ -83,8 +85,7 @@ public class RestSwaggerReaderModelBookOrderTest extends CamelTestSupport {
         assertTrue(json.contains("\"$ref\" : \"#/definitions/LineItem\""));
         assertTrue(json.contains("\"x-className\""));
         assertTrue(json.contains("\"format\" : \"org.apache.camel.swagger.BookOrder\""));
-        // TODO: we do not yet have the classname of nested types
-        // assertTrue(json.contains("\"format\" : \"org.apache.camel.swagger.LineItem\""));
+        assertTrue(json.contains("\"format\" : \"org.apache.camel.swagger.LineItem\""));
 
         context.stop();
     }

@@ -97,6 +97,13 @@ public class XMLSecurityDataFormatConfiguration {
      * KeyValue in the EncryptedKey structure or not.
      */
     private Boolean addKeyValueForEncryptedKey = true;
+    /**
+     * Whether the data format should set the Content-Type header with the type
+     * from the data format if the data format is capable of doing so. For
+     * example application/xml for data formats marshalling to XML or
+     * application/json for data formats marshalling to JSon etc.
+     */
+    private Boolean contentTypeHeader = false;
 
     public String getXmlCipherAlgorithm() {
         return xmlCipherAlgorithm;
@@ -185,5 +192,13 @@ public class XMLSecurityDataFormatConfiguration {
 
     public void setAddKeyValueForEncryptedKey(Boolean addKeyValueForEncryptedKey) {
         this.addKeyValueForEncryptedKey = addKeyValueForEncryptedKey;
+    }
+
+    public Boolean getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    public void setContentTypeHeader(Boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 }

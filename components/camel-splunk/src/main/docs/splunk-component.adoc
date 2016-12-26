@@ -101,10 +101,10 @@ The Splunk component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| splunkConfigurationFactory | SplunkConfigurationFactory | To use the SplunkConfigurationFactory
+| Name | Group | Default | Java Type | Description
+| splunkConfigurationFactory | advanced |  | SplunkConfigurationFactory | To use the SplunkConfigurationFactory
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -124,12 +124,8 @@ The Splunk component supports 43 endpoint options which are listed below:
 | connectionTimeout | common | 5000 | int | Timeout in MS when connecting to Splunk server
 | host | common | localhost | String | Splunk host.
 | owner | common |  | String | Splunk owner
-| password | common |  | String | Password for Splunk
 | port | common | 8089 | int | Splunk port
 | scheme | common | https | String | Splunk scheme
-| sslProtocol | common | TLSv1.2 | SSLSecurityProtocol | Set the ssl protocol to use
-| username | common |  | String | Username for Splunk
-| useSunHttpsHandler | common | false | boolean | Use sun.net.www.protocol.https.Handler Https handler to establish the Splunk Connection. Can be useful when running in application servers to avoid app. server https handling.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | count | consumer |  | int | A number that indicates the maximum number of entities to return.
 | earliestTime | consumer |  | String | Earliest time of the search time window.
@@ -162,6 +158,10 @@ The Splunk component supports 43 endpoint options which are listed below:
 | startScheduler | scheduler | true | boolean | Whether the scheduler should be auto started.
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
+| password | security |  | String | Password for Splunk
+| sslProtocol | security | TLSv1.2 | SSLSecurityProtocol | Set the ssl protocol to use
+| username | security |  | String | Username for Splunk
+| useSunHttpsHandler | security | false | boolean | Use sun.net.www.protocol.https.Handler Https handler to establish the Splunk Connection. Can be useful when running in application servers to avoid app. server https handling.
 |=======================================================================
 {% endraw %}
 // endpoint options: END

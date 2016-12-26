@@ -19,7 +19,6 @@ package org.apache.camel.component.websocket;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +28,7 @@ import javax.servlet.DispatcherType;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.jmx.MBeanContainer;
@@ -61,23 +61,32 @@ public class WebsocketComponent extends UriEndpointComponent {
     protected static final Logger LOG = LoggerFactory.getLogger(WebsocketComponent.class);
     protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<String, ConnectorRef>();
 
-    protected SSLContextParameters sslContextParameters;
-    protected MBeanContainer mbContainer;
-    protected ThreadPool threadPool;
-
-    protected Integer port = 9292;
-    protected Integer minThreads;
-    protected Integer maxThreads;
-
-    protected boolean enableJmx;
-
-    protected String host = "0.0.0.0";
-    protected String staticResources;
+    protected Map<String, WebSocketFactory> socketFactory;
     protected Server staticResourcesServer;
+    protected MBeanContainer mbContainer;
+
+    @Metadata(label = "security")
+    protected SSLContextParameters sslContextParameters;
+    @Metadata(label = "advanced")
+    protected ThreadPool threadPool;
+    @Metadata(defaultValue = "9292")
+    protected Integer port = 9292;
+    @Metadata(label = "advanced")
+    protected Integer minThreads;
+    @Metadata(label = "advanced")
+    protected Integer maxThreads;
+    @Metadata(label = "advanced")
+    protected boolean enableJmx;
+    @Metadata(defaultValue = "0.0.0.0")
+    protected String host = "0.0.0.0";
+    @Metadata(label = "consumer")
+    protected String staticResources;
+    @Metadata(label = "security", secret = true)
     protected String sslKeyPassword;
+    @Metadata(label = "security", secret = true)
     protected String sslPassword;
+    @Metadata(label = "security", secret = true)
     protected String sslKeystore;
-    protected Map<String, WebSocketFactory> socketFactory; 
 
     /**
      * Map for storing servlets. {@link WebsocketComponentServlet} is identified by pathSpec {@link String}.
@@ -393,10 +402,7 @@ public class WebsocketComponent extends UriEndpointComponent {
             }
 
             if (resources[0].equals("classpath")) {
-                // Does not work when deployed as a bundle
-                // context.setBaseResource(new JettyClassPathResource(getCamelContext().getClassResolver(), resources[1]));
-                URL url = this.getCamelContext().getClassResolver().loadResourceAsURL(resources[1]);
-                context.setBaseResource(Resource.newResource(url));
+                context.setBaseResource(new JettyClassPathResource(getCamelContext().getClassResolver(), resources[1]));
             } else if (resources[0].equals("file")) {
                 context.setBaseResource(Resource.newResource(resources[1]));
             }

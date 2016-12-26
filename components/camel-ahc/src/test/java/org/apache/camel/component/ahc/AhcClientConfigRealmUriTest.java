@@ -24,8 +24,8 @@ public class AhcClientConfigRealmUriTest extends BaseAhcTest {
     @Test
     public void testAhcProduce() throws Exception {
         Object out = template.requestBody(getAhcEndpointUri()
-                + "?realm.scheme=DIGEST&realm.principal=someUser"
-                + "&realm.password=somePass&realm.usePreemptiveAuth=true", null, String.class);
+                + "?clientConfig.realm.scheme=DIGEST&clientConfig.realm.principal=someUser"
+                + "&clientConfig.realm.password=somePass&clientConfig.realm.usePreemptiveAuth=true", null, String.class);
         assertEquals("Bye World", out);
     }
 

@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.snakeyaml.springboot;
 
+import java.util.List;
 import org.apache.camel.component.snakeyaml.SnakeYAMLDataFormat;
 import org.apache.camel.model.dataformat.YAMLLibrary;
+import org.apache.camel.model.dataformat.YAMLTypeFilterDefinition;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -61,6 +63,21 @@ public class SnakeYAMLDataFormatConfiguration {
      * style.
      */
     private Boolean prettyFlow = false;
+    /**
+     * Allow any class to be un-marshaled
+     */
+    private Boolean allowAnyType = false;
+    /**
+     * Set the types SnakeYAML is allowed to un-marshall
+     */
+    private List<YAMLTypeFilterDefinition> typeFilter;
+    /**
+     * Whether the data format should set the Content-Type header with the type
+     * from the data format if the data format is capable of doing so. For
+     * example application/xml for data formats marshalling to XML or
+     * application/json for data formats marshalling to JSon etc.
+     */
+    private Boolean contentTypeHeader = false;
 
     public YAMLLibrary getLibrary() {
         return library;
@@ -125,5 +142,29 @@ public class SnakeYAMLDataFormatConfiguration {
 
     public void setPrettyFlow(Boolean prettyFlow) {
         this.prettyFlow = prettyFlow;
+    }
+
+    public Boolean getAllowAnyType() {
+        return allowAnyType;
+    }
+
+    public void setAllowAnyType(Boolean allowAnyType) {
+        this.allowAnyType = allowAnyType;
+    }
+
+    public List<YAMLTypeFilterDefinition> getTypeFilter() {
+        return typeFilter;
+    }
+
+    public void setTypeFilter(List<YAMLTypeFilterDefinition> typeFilter) {
+        this.typeFilter = typeFilter;
+    }
+
+    public Boolean getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    public void setContentTypeHeader(Boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 }

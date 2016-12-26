@@ -51,7 +51,7 @@ public class NettyComponentConfiguration {
      * The core pool size for the ordered thread pool if its in use. The default
      * value is 16.
      */
-    private Integer maximumPoolSize;
+    private Integer maximumPoolSize = 16;
 
     public NettyConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -189,6 +189,7 @@ public class NettyComponentConfiguration {
          * To use a custom ClientPipelineFactory
          */
         private ClientPipelineFactory clientPipelineFactory;
+        @Deprecated
         private Integer maximumPoolSize;
         /**
          * Whether to use ordered thread pool, to ensure events are processed
@@ -597,10 +598,13 @@ public class NettyComponentConfiguration {
             this.clientPipelineFactory = clientPipelineFactory;
         }
 
+        @Deprecated
+        @DeprecatedConfigurationProperty
         public Integer getMaximumPoolSize() {
             return maximumPoolSize;
         }
 
+        @Deprecated
         public void setMaximumPoolSize(Integer maximumPoolSize) {
             this.maximumPoolSize = maximumPoolSize;
         }

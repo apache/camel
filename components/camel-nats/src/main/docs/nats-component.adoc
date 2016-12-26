@@ -59,7 +59,6 @@ The Nats component supports 23 endpoint options which are listed below:
 | pingInterval | common | 4000 | int | Ping interval to be aware if connection is still alive (in milliseconds)
 | reconnect | common | true | boolean | Whether or not using reconnection feature
 | reconnectTimeWait | common | 2000 | int | Waiting time before attempts reconnection (in milliseconds)
-| ssl | common | false | boolean | Whether or not using SSL
 | topic | common |  | String | *Required* The name of topic we want to use
 | verbose | common | false | boolean | Whether or not running in verbose mode
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
@@ -71,6 +70,7 @@ The Nats component supports 23 endpoint options which are listed below:
 | replySubject | producer |  | String | the subject to which subscribers should send response
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | secure | security | false | boolean | Set secure option indicating TLS is required
+| ssl | security | false | boolean | Whether or not using SSL
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
 | tlsDebug | security | false | boolean | TLS Debug it will add additional console output
 |=======================================================================

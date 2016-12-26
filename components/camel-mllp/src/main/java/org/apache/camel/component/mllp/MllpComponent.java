@@ -22,10 +22,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 
+import static org.apache.camel.component.mllp.MllpEndpoint.END_OF_BLOCK;
+import static org.apache.camel.component.mllp.MllpEndpoint.START_OF_BLOCK;
+
 /**
  * Represents the component that manages {@link MllpEndpoint}.
  */
 public class MllpComponent extends UriEndpointComponent {
+
     public static final String MLLP_LOG_PHI_PROPERTY = "org.apache.camel.component.mllp.logPHI";
 
     public MllpComponent() {
@@ -62,6 +66,40 @@ public class MllpComponent extends UriEndpointComponent {
         }
 
         return endpoint;
+    }
+
+    public static boolean isLogPhi() {
+        String logPhiProperty = System.getProperty(MllpComponent.MLLP_LOG_PHI_PROPERTY, "true");
+        return Boolean.valueOf(logPhiProperty);
+    }
+
+    public static String covertToPrintFriendlyString(String hl7Message) {
+        if (hl7Message == null) {
+            return "null";
+        } else if (hl7Message.isEmpty()) {
+            return "empty";
+        }
+
+        return hl7Message.replaceAll("" + START_OF_BLOCK, "<VT>").replaceAll("" + END_OF_BLOCK, "<FS>").replaceAll("\r", "<CR>").replaceAll("\n", "<LF>");
+    }
+
+    public static String covertBytesToPrintFriendlyString(byte[] hl7Bytes) {
+        if (hl7Bytes == null) {
+            return "null";
+        } else if (hl7Bytes.length == 0) {
+            return "";
+        }
+
+        return covertBytesToPrintFriendlyString(hl7Bytes, 0, hl7Bytes.length);
+    }
+
+    public static String covertBytesToPrintFriendlyString(byte[] hl7Bytes, int startPosition, int length) {
+        if (null == hl7Bytes) {
+            return "null";
+        } else if (hl7Bytes.length == 0) {
+            return "";
+        }
+        return covertToPrintFriendlyString(new String(hl7Bytes, startPosition, length));
     }
 
 }

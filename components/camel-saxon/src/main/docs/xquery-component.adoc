@@ -22,10 +22,10 @@ The XQuery component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| moduleURIResolver | ModuleURIResolver | To use the custom ModuleURIResolver
+| Name | Group | Default | Java Type | Description
+| moduleURIResolver | advanced |  | ModuleURIResolver | To use the custom ModuleURIResolver
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -42,21 +42,21 @@ The XQuery component supports 31 endpoint options which are listed below:
 | Name | Group | Default | Java Type | Description
 | resourceUri | common |  | String | *Required* The name of the template to load from classpath or file system
 | allowStAX | common | false | boolean | Whether to allow using StAX mode
-| configuration | common |  | Configuration | To use a custom Saxon configuration
 | headerName | common |  | String | To use a Camel Message header as the input source instead of Message body.
-| moduleURIResolver | common |  | ModuleURIResolver | To use the custom ModuleURIResolver
 | namespacePrefixes | common |  | Map | Allows to control which namespace prefixes to use for a set of namespace mappings
-| parameters | common |  | Map | Additional parameters
-| properties | common |  | Properties | Properties to configure the serialization parameters
 | resultsFormat | common | DOM | ResultFormat | What output result to use
 | resultType | common |  | Class<?> | What output result to use defined as a class
-| staticQueryContext | common |  | StaticQueryContext | To use a custom Saxon StaticQueryContext
 | stripsAllWhiteSpace | common | true | boolean | Whether to strip all whitespaces
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
+| configuration | advanced |  | Configuration | To use a custom Saxon configuration
+| moduleURIResolver | advanced |  | ModuleURIResolver | To use the custom ModuleURIResolver
+| parameters | advanced |  | Map | Additional parameters
+| properties | advanced |  | Properties | Properties to configure the serialization parameters
+| staticQueryContext | advanced |  | StaticQueryContext | To use a custom Saxon StaticQueryContext
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | backoffErrorThreshold | scheduler |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
 | backoffIdleThreshold | scheduler |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.

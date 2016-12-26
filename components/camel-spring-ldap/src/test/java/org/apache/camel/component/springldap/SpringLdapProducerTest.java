@@ -18,6 +18,7 @@ package org.apache.camel.component.springldap;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 import javax.naming.directory.BasicAttribute;
 import javax.naming.directory.BasicAttributes;
@@ -89,7 +90,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         Message in = new DefaultMessage();
 
         Map<String, Object> body = new HashMap<String, Object>();
-        body.put(SpringLdapProducer.FUNCTION, Mockito.mock(LdapOperationsFunction.class));
+        body.put(SpringLdapProducer.FUNCTION, Mockito.mock(BiFunction.class));
 
         when(ldapEndpoint.getOperation()).thenReturn(LdapOperation.FUNCTION_DRIVEN);
 
@@ -230,13 +231,6 @@ public class SpringLdapProducerTest extends CamelTestSupport {
     @Test
     public void testFunctionDriven() throws Exception {
         String dn = "cn=dn";
-        LdapOperationsFunction<String, Void> function = new LdapOperationsFunction<String, Void>() {
-            @Override
-            public Void apply(LdapOperations ldapOperations, String request) {
-                ldapOperations.lookup(request);
-                return null;
-            }
-        };
 
         Exchange exchange = new DefaultExchange(context);
         Message in = new DefaultMessage();
@@ -244,7 +238,10 @@ public class SpringLdapProducerTest extends CamelTestSupport {
         Map<String, Object> body = new HashMap<String, Object>();
         body.put(SpringLdapProducer.DN, dn);
         body.put(SpringLdapProducer.REQUEST, dn);
-        body.put(SpringLdapProducer.FUNCTION, function);
+        body.put(SpringLdapProducer.FUNCTION, (BiFunction<LdapOperations, String, Void>)(l, q) -> {
+            l.lookup(q);
+            return null;
+        });
 
         when(ldapEndpoint.getOperation()).thenReturn(LdapOperation.FUNCTION_DRIVEN);
 

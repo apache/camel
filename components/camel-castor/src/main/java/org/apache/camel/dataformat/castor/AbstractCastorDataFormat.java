@@ -56,6 +56,7 @@ public abstract class AbstractCastorDataFormat extends ServiceSupport implements
     private String[] packages;
     private boolean validation;
     private volatile XMLContext xmlContext;
+    private boolean contentTypeHeader = true;
 
     public AbstractCastorDataFormat() {
     }
@@ -75,6 +76,14 @@ public abstract class AbstractCastorDataFormat extends ServiceSupport implements
         Marshaller marshaller = createMarshaller(exchange);
         marshaller.setWriter(writer);
         marshaller.marshal(body);
+
+        if (contentTypeHeader) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            }
+        }
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
@@ -172,6 +181,18 @@ public abstract class AbstractCastorDataFormat extends ServiceSupport implements
 
     public void setValidation(boolean validation) {
         this.validation = validation;
+    }
+
+
+    public boolean isContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    /**
+     * If enabled then Castor will set the Content-Type header to <tt>application/xml</tt> when marshalling.
+     */
+    public void setContentTypeHeader(boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 
     @Override

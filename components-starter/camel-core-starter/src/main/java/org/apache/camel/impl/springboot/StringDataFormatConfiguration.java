@@ -31,6 +31,13 @@ public class StringDataFormatConfiguration {
      * charset.
      */
     private String charset;
+    /**
+     * Whether the data format should set the Content-Type header with the type
+     * from the data format if the data format is capable of doing so. For
+     * example application/xml for data formats marshalling to XML or
+     * application/json for data formats marshalling to JSon etc.
+     */
+    private Boolean contentTypeHeader = false;
 
     public String getCharset() {
         return charset;
@@ -38,5 +45,13 @@ public class StringDataFormatConfiguration {
 
     public void setCharset(String charset) {
         this.charset = charset;
+    }
+
+    public Boolean getContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    public void setContentTypeHeader(Boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 }

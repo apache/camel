@@ -484,10 +484,12 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     /**
      * The core pool size for the ordered thread pool, if its in use.
      */
+    @Deprecated
     public int getMaximumPoolSize() {
         return maximumPoolSize;
     }
 
+    @Deprecated
     public void setMaximumPoolSize(int maximumPoolSize) {
         this.maximumPoolSize = maximumPoolSize;
     }

@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.flink.enabled",
+      "description": "Enable flink component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

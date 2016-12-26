@@ -26,7 +26,6 @@
   <version>${version}</version>
 
   <name>Camel route using CDI in a standalone Java Container</name>
-  <url>http://www.myorganization.org</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -35,6 +34,7 @@
 
   <dependencyManagement>
     <dependencies>
+      <!-- Camel BOM -->
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
@@ -61,7 +61,6 @@
       <artifactId>camel-cdi</artifactId>
     </dependency>
 
-    
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>

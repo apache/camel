@@ -117,7 +117,7 @@ include/exclude certain fields. The annotation also works on getters.
 Finally use the Camel `JacksonDataFormat` to marshall the above POJO to
 JSON.
 
-Note that the weight field is missing in the resulting JSON:
+Note that the height field is missing in the resulting JSON:
 
 [source,java]
 -----------------------

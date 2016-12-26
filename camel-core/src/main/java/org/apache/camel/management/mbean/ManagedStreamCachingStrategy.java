@@ -34,10 +34,6 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
         this.streamCachingStrategy = streamCachingStrategy;
     }
 
-    public void init(ManagementStrategy strategy) {
-        // do nothing
-    }
-
     public CamelContext getCamelContext() {
         return camelContext;
     }

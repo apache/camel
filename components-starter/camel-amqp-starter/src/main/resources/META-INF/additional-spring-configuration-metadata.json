@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.amqp.enabled",
+      "description": "Enable amqp component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

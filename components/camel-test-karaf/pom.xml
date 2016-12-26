@@ -93,12 +93,6 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.apache.camel.karaf</groupId>
-      <artifactId>apache-camel</artifactId>
-      <version>${project.version}</version>
-      <type>pom</type>
-    </dependency>
 
     <!-- test -->
     <dependency>
@@ -215,14 +209,6 @@
           </plugin>
         </plugins>
       </build>
-    </profile>
-
-    <!-- test with older karaf 3.x -->
-    <profile>
-      <id>karaf3</id>
-      <properties>
-        <karf-test-version>${karaf3-version}</karf-test-version>
-      </properties>
     </profile>
 
   </profiles>

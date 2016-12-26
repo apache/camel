@@ -43,11 +43,11 @@ The EJB component supports 2 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| context | Context | The Context to use for looking up the EJBs
-| properties | Properties | Properties for creating javax.naming.Context if a context has not been configured.
+| Name | Group | Default | Java Type | Description
+| context | producer |  | Context | The Context to use for looking up the EJBs
+| properties | producer |  | Properties | Properties for creating javax.naming.Context if a context has not been configured.
 |=======================================================================
 {% endraw %}
 // component options: END

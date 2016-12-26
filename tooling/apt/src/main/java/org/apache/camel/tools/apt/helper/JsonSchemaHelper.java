@@ -69,7 +69,8 @@ public final class JsonSchemaHelper {
 
         sb.append(", \"type\": ");
         if ("enum".equals(typeName)) {
-            sb.append(Strings.doubleQuote("string"));
+            String actualType = JsonSchemaHelper.getType(type, false);
+            sb.append(Strings.doubleQuote(actualType));
             sb.append(", \"javaType\": \"" + type + "\"");
             CollectionStringBuffer enumValues = new CollectionStringBuffer();
             for (Object value : enums) {

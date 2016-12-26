@@ -24,16 +24,14 @@ import javax.inject.Inject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.cdi.CdiCamelExtension;
 import org.apache.camel.cdi.ContextName;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.CamelContextHelper;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -71,14 +69,17 @@ public class CamelCdiTest {
 
     @Deployment
     public static JavaArchive createDeployment() {
-        return ShrinkWrap.create(JavaArchive.class)
-            .addPackage(CdiCamelExtension.class.getPackage())
+        return Maven.configureResolver().workOffline()
+            .loadPomFromFile("pom.xml")
+            .resolve("org.apache.camel:camel-cdi")
+            .withoutTransitivity()
+            .asSingle(JavaArchive.class)
             .addClasses(
                 RoutesContextA.class,
                 RoutesContextB.class,
                 RoutesContextC.class,
-                RoutesContextD.class)
-            .addAsManifestResource(EmptyAsset.INSTANCE, "beans.xml");
+                RoutesContextD.class
+            );
     }
 
     @Test
