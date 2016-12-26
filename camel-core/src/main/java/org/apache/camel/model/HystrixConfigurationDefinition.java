@@ -93,7 +93,7 @@ public class HystrixConfigurationDefinition extends IdentifiedType {
     @Metadata(label = "command", defaultValue = "true")
     private Boolean metricsRollingPercentileEnabled;
     @XmlAttribute
-    @Metadata(label = "command", defaultValue = "false")
+    @Metadata(label = "command", defaultValue = "10000")
     private Integer metricsRollingPercentileWindowInMilliseconds;
     @XmlAttribute
     @Metadata(label = "command", defaultValue = "6")
