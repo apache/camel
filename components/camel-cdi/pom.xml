@@ -186,6 +186,7 @@
             <configuration>
               <excludes>
                 <exclude>**/*Cdi12Test.java</exclude>
+                <exclude>**/*Cdi20Test.java</exclude>
               </excludes>
             </configuration>
           </plugin>
@@ -231,6 +232,20 @@
 
     <profile>
       <id>weld-1.2</id>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <excludes>
+                <exclude>**/*Cdi20Test.java</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
 
       <dependencies>
 
@@ -307,6 +322,7 @@
             <configuration>
               <excludes>
                 <exclude>**/*Cdi12Test.java</exclude>
+                <exclude>**/*Cdi20Test.java</exclude>
                 <!-- OWB does not call the InjectionTarget#preDestroy method -->
                 <exclude>**/UnstoppedCamelContext*Test.java</exclude>
                 <!-- Reactivate when OWB-1155 is fixed -->
@@ -373,6 +389,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <excludes>
+                <exclude>**/*Cdi20Test.java</exclude>
                 <!-- Reactivate when OWB-1155 is fixed -->
                 <exclude>**/ProgrammaticLookupTest.java</exclude>
                 <!-- Reactivate when OWB-1126 is fixed -->
