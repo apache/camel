@@ -83,6 +83,8 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     private Integer cacheSize;
     @XmlAttribute
     private Boolean parallelAggregate;
+    @XmlAttribute
+    private Boolean stopOnAggregateException;
 
     public RecipientListDefinition() {
     }
@@ -115,6 +117,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         boolean isShareUnitOfWork = getShareUnitOfWork() != null && getShareUnitOfWork();
         boolean isStopOnException = getStopOnException() != null && getStopOnException();
         boolean isIgnoreInvalidEndpoints = getIgnoreInvalidEndpoints() != null && getIgnoreInvalidEndpoints();
+        boolean isStopOnAggregateException = getStopOnAggregateException() != null && getStopOnAggregateException();
 
         RecipientList answer;
         if (delimiter != null) {
@@ -129,6 +132,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         answer.setShareUnitOfWork(isShareUnitOfWork);
         answer.setStopOnException(isStopOnException);
         answer.setIgnoreInvalidEndpoints(isIgnoreInvalidEndpoints);
+        answer.setStopOnAggregateException(isStopOnAggregateException);
         if (getCacheSize() != null) {
             answer.setCacheSize(getCacheSize());
         }
@@ -318,6 +322,20 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
      */
     public RecipientListDefinition<Type> parallelAggregate() {
         setParallelAggregate(true);
+        return this;
+    }
+
+    /**
+     * If enabled, unwind exceptions occurring at aggregation time to the error handler when parallelProcessing is used.
+     * Currently, aggregation time exceptions do not stop the route processing when parallelProcessing is used.
+     * Enabling this option allows to work around this behavior.
+     *
+     * The default value is <code>false</code> for the sake of backward compatibility.
+     *
+     * @return the builder
+     */
+    public RecipientListDefinition<Type> stopOnAggregateException() {
+        setStopOnAggregateException(true);
         return this;
     }
 
@@ -598,5 +616,13 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
 
     public void setParallelAggregate(Boolean parallelAggregate) {
         this.parallelAggregate = parallelAggregate;
+    }
+
+    public Boolean getStopOnAggregateException() {
+        return stopOnAggregateException;
+    }
+
+    public void setStopOnAggregateException(Boolean stopOnAggregateException) {
+        this.stopOnAggregateException = stopOnAggregateException;
     }
 }

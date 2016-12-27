@@ -163,6 +163,7 @@ public class MethodInfo {
                 && matchContext(recipientListAnnotation.context())) {
             recipientList = new RecipientList(camelContext, recipientListAnnotation.delimiter());
             recipientList.setStopOnException(recipientListAnnotation.stopOnException());
+            recipientList.setStopOnAggregateException(recipientListAnnotation.stopOnAggregateException());
             recipientList.setIgnoreInvalidEndpoints(recipientListAnnotation.ignoreInvalidEndpoints());
             recipientList.setParallelProcessing(recipientListAnnotation.parallelProcessing());
             recipientList.setParallelAggregate(recipientListAnnotation.parallelAggregate());

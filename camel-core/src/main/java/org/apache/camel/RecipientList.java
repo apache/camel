@@ -48,6 +48,7 @@ public @interface RecipientList {
     boolean parallelProcessing() default false;
     boolean parallelAggregate() default false;
     boolean stopOnException() default false;
+    boolean stopOnAggregateException() default false;
     boolean streaming() default false;
     boolean ignoreInvalidEndpoints() default false;
     String strategyRef() default "";

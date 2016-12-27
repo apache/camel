@@ -67,7 +67,7 @@ public class ManagedMulticastTest extends ManagementTestSupport {
 
         data = (TabularData) mbeanServer.invoke(name, "explain", new Object[]{true}, new String[]{"boolean"});
         assertNotNull(data);
-        assertEquals(14, data.size());
+        assertEquals(15, data.size());
 
         String json = (String) mbeanServer.invoke(name, "informationJson", null, null);
         assertNotNull(json);
