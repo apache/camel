@@ -75,7 +75,7 @@ public class ManagedSplitterTest extends ManagementTestSupport {
 
         data = (TabularData) mbeanServer.invoke(on, "explain", new Object[]{true}, new String[]{"boolean"});
         assertNotNull(data);
-        assertEquals(15, data.size());
+        assertEquals(16, data.size());
 
         String json = (String) mbeanServer.invoke(on, "informationJson", null, null);
         assertNotNull(json);
