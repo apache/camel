@@ -210,6 +210,14 @@ public interface CamelCatalog {
     String componentAsciiDoc(String name);
 
     /**
+     * Returns the component documentation as HTML format.
+     *
+     * @param name the component name
+     * @return component documentation in html format.
+     */
+    String componentHtmlDoc(String name);
+
+    /**
      * Returns the data format documentation as Ascii doc format.
      *
      * @param name the data format name
@@ -218,12 +226,28 @@ public interface CamelCatalog {
     String dataFormatAsciiDoc(String name);
 
     /**
+     * Returns the data format documentation as HTML format.
+     *
+     * @param name the data format name
+     * @return data format documentation in HTML format.
+     */
+    String dataFormatHtmlDoc(String name);
+
+    /**
      * Returns the language documentation as Ascii doc format.
      *
      * @param name the language name
      * @return language documentation in ascii doc format.
      */
     String languageAsciiDoc(String name);
+
+    /**
+     * Returns the language documentation as HTML format.
+     *
+     * @param name the language name
+     * @return language documentation in HTML format.
+     */
+    String languageHtmlDoc(String name);
 
     /**
      * Find all the unique label names all the components are using.

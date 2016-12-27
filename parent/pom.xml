@@ -56,6 +56,7 @@
     <arquillian-container-se-managed-version>1.0.0.Final</arquillian-container-se-managed-version>
     <arquillian-version>1.1.11.Final</arquillian-version>
     <arquillian-weld-embedded-version>2.0.0.Beta4</arquillian-weld-embedded-version>
+    <asciidoctorj-version>1.5.4.1</asciidoctorj-version>
     <asm-version>5.0.4</asm-version>
     <aspectj-version>1.8.9</aspectj-version>
     <asterisk-java-version>1.0.0-final</asterisk-java-version>
