@@ -589,8 +589,9 @@ public class HystrixConfigurationDefinition extends IdentifiedType {
     }
 
     /**
-     * Duration of statistical rolling window in milliseconds.
-     * This is passed into HystrixRollingNumber inside HystrixCommandMetrics.
+     * This property sets the duration of the statistical rolling window, in milliseconds. This is how long metrics are kept for the thread pool.
+     *
+     * The window is divided into buckets and “rolls” by those increments.
      */
     public HystrixConfigurationDefinition metricsRollingStatisticalWindowInMilliseconds(Integer metricsRollingStatisticalWindowInMilliseconds) {
         this.metricsRollingStatisticalWindowInMilliseconds = metricsRollingStatisticalWindowInMilliseconds;
@@ -642,8 +643,9 @@ public class HystrixConfigurationDefinition extends IdentifiedType {
     }
     
     /**
-     * Maximum thread-pool size that gets passed to {@link ThreadPoolExecutor#setMaximumPoolSize(int)}
-     *
+     * Maximum thread-pool size that gets passed to {@link ThreadPoolExecutor#setMaximumPoolSize(int)}.
+     * This is the maximum amount of concurrency that can be supported without starting to reject HystrixCommands.
+     * Please note that this setting only takes effect if you also set allowMaximumSizeToDivergeFromCoreSize
      */
     public HystrixConfigurationDefinition maximumSize(Integer maximumSize) {
         this.maximumSize = maximumSize;
