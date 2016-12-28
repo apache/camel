@@ -19,6 +19,7 @@ package org.apache.camel.component.influxdb;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.influxdb.InfluxDB;
+import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,18 +60,30 @@ public class InfluxDbProducer extends DefaultProducer {
 
         String dataBaseName = calculateDatabaseName(exchange);
         String retentionPolicy = calculateRetentionPolicy(exchange);
-        Point p = exchange.getIn().getMandatoryBody(Point.class);
+        if (!endpoint.isBatch()) {
+            Point p = exchange.getIn().getMandatoryBody(Point.class);
 
+            try {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Writing point {}", p.lineProtocol());
+                }
 
-
-        try {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Writing point {}", p.lineProtocol());
+                connection.write(dataBaseName, retentionPolicy, p);
+            } catch (Exception ex) {
+                exchange.setException(new CamelInfluxDbException(ex));
             }
+        } else {
+            BatchPoints batchPoints = exchange.getIn().getMandatoryBody(BatchPoints.class);
 
-            connection.write(dataBaseName, retentionPolicy, p);
-        } catch (Exception ex) {
-            exchange.setException(new CamelInfluxDbException(ex));
+            try {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Writing BatchPoints {}", batchPoints.lineProtocol());
+                }
+
+                connection.write(batchPoints);
+            } catch (Exception ex) {
+                exchange.setException(new CamelInfluxDbException(ex));
+            }
         }
     }
 
