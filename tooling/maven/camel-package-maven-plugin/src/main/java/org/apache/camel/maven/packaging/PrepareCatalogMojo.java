@@ -830,6 +830,24 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 asciidoctor.convertFile(file, OptionsBuilder.options().toFile(toHtml));
 
                 converted++;
+
+                try {
+                    // now fix the html file because we don't want to include certain lines
+                    List<String> lines = FileUtils.readLines(toHtml);
+                    List<String> output = new ArrayList<>();
+                    for (String line : lines) {
+                        // skip these lines
+                        if (line.contains("% raw %") || line.contains("% endraw %")) {
+                            continue;
+                        }
+                        output.add(line);
+                    }
+                    if (lines.size() != output.size()) {
+                        FileUtils.writeLines(toHtml, output, false);
+                    }
+                } catch (IOException e) {
+                    // ignore
+                }
             }
         }
 
