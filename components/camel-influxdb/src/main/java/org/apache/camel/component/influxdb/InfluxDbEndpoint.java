@@ -45,6 +45,8 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
     private String databaseName;
     @UriParam(defaultValue = "default")
     private String retentionPolicy = "default";
+    @UriParam(defaultValue = "false")
+    private boolean batch;
 
     public InfluxDbEndpoint(String uri, InfluxDbComponent influxDbComponent, InfluxDB dbConn) {
         super(uri, influxDbComponent);
@@ -116,5 +118,16 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
      */
     public void setConnectionBean(String connectionBean) {
         this.connectionBean = connectionBean;
+    }
+
+    public boolean isBatch() {
+        return batch;
+    }
+
+    /**
+     * Define if this operation is a batch operation or not
+     */
+    public void setBatch(boolean batch) {
+        this.batch = batch;
     }
 }
