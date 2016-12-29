@@ -61,6 +61,7 @@ public class HystrixProcessorCommand extends HystrixCommand {
             // give the rest of the pipeline another chance
             exchange.setProperty(Exchange.EXCEPTION_HANDLED, true);
             exchange.setProperty(Exchange.EXCEPTION_CAUGHT, exception);
+            exchange.removeProperty(Exchange.ROUTE_STOP);
             exchange.setException(null);
             // and we should not be regarded as exhausted as we are in a try .. catch block
             exchange.removeProperty(Exchange.REDELIVERY_EXHAUSTED);
