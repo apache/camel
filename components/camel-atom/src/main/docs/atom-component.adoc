@@ -51,7 +51,7 @@ The Atom component supports 28 endpoint options which are listed below:
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | feedUri | consumer |  | String | *Required* The URI to the feed to poll.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | feedHeader | consumer | true | boolean | Sets whether to add the feed object as a header
 | filter | consumer | true | boolean | Sets whether to use filtering or not of the entries.
 | lastUpdate | consumer |  | Date | Sets the timestamp to be used for filtering entries from the atom feeds. This options is only in conjunction with the splitEntries.
@@ -61,7 +61,7 @@ The Atom component supports 28 endpoint options which are listed below:
 | splitEntries | consumer | true | boolean | Sets whether or not entries should be sent individually or whether the entire feed should be sent as a single message
 | throttleEntries | consumer | true | boolean | Sets whether all entries identified in a single feed poll should be delivered immediately. If true only one entry is processed per consumer.delay. Only applicable when splitEntries = true.
 | username | consumer |  | String | Sets the username to be used for basic authentication when polling from a HTTP feed
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).

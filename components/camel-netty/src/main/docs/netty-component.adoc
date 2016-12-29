@@ -98,7 +98,7 @@ The Netty component supports 70 endpoint options which are listed below:
 | reuseAddress | common | true | boolean | Setting to facilitate socket multiplexing
 | sync | common | true | boolean | Setting to set endpoint as one-way or request-response
 | tcpNoDelay | common | true | boolean | Setting to improve TCP protocol performance
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | broadcast | consumer | false | boolean | Setting to choose Multicast over UDP
 | clientMode | consumer | false | boolean | If the clientMode is true netty consumer will connect the address as a TCP client.
 | backlog | consumer (advanced) |  | int | Allows to configure a backlog for netty consumer (server). Note the backlog is just a best effort depending on the OS. Setting this option to a value such as 200 500 or 1000 tells the TCP stack how long the accept queue can be If this option is not configured then the backlog depends on OS setting.
@@ -106,7 +106,7 @@ The Netty component supports 70 endpoint options which are listed below:
 | bossPool | consumer (advanced) |  | BossPool | To use a explicit org.jboss.netty.channel.socket.nio.BossPool as the boss thread pool. For example to share a thread pool with multiple consumers. By default each consumer has their own boss pool with 1 core thread.
 | channelGroup | consumer (advanced) |  | ChannelGroup | To use a explicit ChannelGroup.
 | disconnectOnNoReply | consumer (advanced) | true | boolean | If sync is enabled then this option dictates NettyConsumer if it should disconnect where there is no reply to send back.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | maxChannelMemorySize | consumer (advanced) | 10485760 | long | The maximum total size of the queued events per channel when using orderedThreadPoolExecutor. Specify 0 to disable.
 | maxTotalMemorySize | consumer (advanced) | 209715200 | long | The maximum total size of the queued events for this pool when using orderedThreadPoolExecutor. Specify 0 to disable.

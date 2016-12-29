@@ -20,12 +20,12 @@ The JCache component supports 23 endpoint options which are listed below:
 | statisticsEnabled | common | false | boolean | Whether statistics gathering is enabled
 | storeByValue | common | true | boolean | If cache should use store-by-value or store-by-reference semantics
 | writeThrough | common | false | boolean | If write-through caching should be used
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | filteredEvents | consumer |  | List | Events a consumer should filter. If using filteredEvents option then eventFilters one will be ignored
 | oldValueRequired | consumer | false | boolean | if the old value is required for events
 | synchronous | consumer | false | boolean | if the the event listener should block the thread causing the event
 | eventFilters | consumer (advanced) |  | List | The CacheEntryEventFilter. If using eventFilters option then filteredEvents one will be ignored
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | action | producer |  | String | To configure using a cache operation by default. If an operation in the message header then the operation from the header takes precedence.
 | cacheConfiguration | advanced |  | Configuration | A Configuration for the Cache
