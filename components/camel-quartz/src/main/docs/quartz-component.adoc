@@ -81,7 +81,7 @@ The Quartz component supports 15 endpoint options which are listed below:
 | Name | Group | Default | Java Type | Description
 | groupName | consumer | Camel | String | The quartz group name to use. The combination of group name and timer name should be unique.
 | timerName | consumer |  | String | *Required* The quartz timer name to use. The combination of group name and timer name should be unique.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | cron | consumer |  | String | Specifies a cron expression to define when to trigger.
 | deleteJob | consumer | true | boolean | If set to true then the trigger automatically delete when route stop. Else if set to false it will remain in scheduler. When set to false it will also mean user may reuse pre-configured trigger with camel Uri. Just ensure the names match. Notice you cannot have both deleteJob and pauseJob set to true.
 | fireNow | consumer | false | boolean | Whether to fire the scheduler asap when its started using the simple trigger (this option does not support cron)
@@ -89,7 +89,7 @@ The Quartz component supports 15 endpoint options which are listed below:
 | startDelayedSeconds | consumer |  | int | Seconds to wait before starting the quartz scheduler.
 | stateful | consumer | false | boolean | Uses a Quartz StatefulJob instead of the default job.
 | usingFixedCamelContextName | consumer | false | boolean | If it is true JobDataMap uses the CamelContext name directly to reference the CamelContext if it is false JobDataMap uses use the CamelContext management name which could be changed during the deploy time.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | jobParameters | advanced |  | Map | To configure additional options on the job.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).

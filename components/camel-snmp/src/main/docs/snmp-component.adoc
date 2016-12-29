@@ -65,7 +65,7 @@ The SNMP component supports 36 endpoint options which are listed below:
 | Name | Group | Default | Java Type | Description
 | host | consumer |  | String | *Required* Hostname of the SNMP enabled device
 | port | consumer |  | Integer | *Required* Port number of the SNMP enabled device
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | delay | consumer | 60000 | long | Sets update rate in seconds
 | oids | consumer |  | String | Defines which values you are interested in. Please have a look at the Wikipedia to get a better understanding. You may provide a single OID or a coma separated list of OIDs. Example: oids=1.3.6.1.2.1.1.3.01.3.6.1.2.1.25.3.2.1.5.11.3.6.1.2.1.25.3.5.1.1.11.3.6.1.2.1.43.5.1.1.11.1
 | protocol | consumer | udp | String | Here you can select which protocol to use. You can use either udp or tcp.
@@ -77,7 +77,7 @@ The SNMP component supports 36 endpoint options which are listed below:
 | snmpVersion | consumer | 0 | int | Sets the snmp version for the request. The value 0 means SNMPv1 1 means SNMPv2c and the value 3 means SNMPv3
 | timeout | consumer | 1500 | int | Sets the timeout value for the request in millis.
 | type | consumer |  | SnmpActionType | Which operation to perform such as poll trap etc.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).

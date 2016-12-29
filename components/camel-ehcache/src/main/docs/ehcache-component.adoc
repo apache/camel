@@ -59,11 +59,11 @@ The Ehcache component supports 16 endpoint options which are listed below:
 | cacheManager | common |  | CacheManager | The cache manager
 | configUri | common |  | String | URI pointing to the Ehcache XML configuration file's location
 | createCacheIfNotExist | common | true | boolean | Configure if a cache need to be created if it does exist or can't be pre-configured.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | eventFiring | consumer | ASYNCHRONOUS | EventFiring | Set the the delivery mode (synchronous asynchronous)
 | eventOrdering | consumer | ORDERED | EventOrdering | Set the the delivery mode (ordered unordered)
 | eventTypes | consumer | EVICTED,EXPIRED,REMOVED,CREATED,UPDATED | Set | Set the type of events to listen for
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | action | producer |  | String | To configure the default cache action. If an action is set in the message header then the operation from the header takes precedence.
 | key | producer |  | Object | To configure the default action key. If a key is set in the message header then the key from the header takes precedence.

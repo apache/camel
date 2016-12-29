@@ -103,7 +103,7 @@ The Gora component supports 22 endpoint options which are listed below:
 | dataStoreClass | common |  | String | The type of the dataStore
 | keyClass | common |  | String | The type class of the key
 | valueClass | common |  | String | The type of the value
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | concurrentConsumers | consumer | 1 | int | Number of concurrent consumers
 | endKey | consumer |  | Object | The End Key
 | endTime | consumer |  | long | The End Time
@@ -116,7 +116,7 @@ The Gora component supports 22 endpoint options which are listed below:
 | timeRangeFrom | consumer |  | long | The Time Range From
 | timeRangeTo | consumer |  | long | The Time Range To
 | timestamp | consumer |  | long | The Timestamp
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | flushOnEveryOperation | producer | true | boolean | Flush on every operation
 | hadoopConfiguration | advanced |  | Configuration | Hadoop Configuration
