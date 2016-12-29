@@ -17,6 +17,7 @@
 package org.apache.camel.component.hystrix.processor;
 
 import com.netflix.hystrix.HystrixCommand;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -45,10 +46,10 @@ public class HystrixProcessorCommand extends HystrixCommand {
 
     @Override
     protected Message getFallback() {
-        // grab the exception that caused the error (can be failure in run, or from hystrix if short circuited)
-        Throwable exception = getExecutionException();
-
         if (fallback != null || fallbackCommand != null) {
+            // grab the exception that caused the error (can be failure in run, or from hystrix if short circuited)
+            Throwable exception = getExecutionException();
+
             if (exception != null) {
                 LOG.debug("Error occurred processing. Will now run fallback. Exception class: {} message: {}.", exception.getClass().getName(), exception.getMessage());
             } else {
@@ -100,13 +101,20 @@ public class HystrixProcessorCommand extends HystrixCommand {
         // is fallback enabled
         Boolean fallbackEnabled = getProperties().fallbackEnabled().get();
 
+        // execution exception must take precedence over exchange exception
+        // because hystrix may have caused this command to fail due timeout or something else
+        Throwable exception = getExecutionException();
+        if (exception != null) {
+            exchange.setException(new CamelExchangeException("Hystrix execution exception occurred while processing Exchange", exchange, exception));
+        }
+
         // if we failed then throw an exception if fallback is enabled
         if (fallbackEnabled == null || fallbackEnabled && exchange.getException() != null) {
             throw exchange.getException();
         }
 
-        LOG.debug("Running processor: {} with exchange: {} done", processor, exchange);
         // no fallback then we are done
+        LOG.debug("Running processor: {} with exchange: {} done", processor, exchange);
         return exchange.hasOut() ? exchange.getOut() : exchange.getIn();
     }
 }
