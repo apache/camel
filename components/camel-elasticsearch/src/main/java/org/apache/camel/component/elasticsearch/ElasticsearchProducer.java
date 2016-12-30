@@ -170,7 +170,7 @@ public class ElasticsearchProducer extends DefaultProducer {
             MultiSearchRequest multiSearchRequest = message.getBody(MultiSearchRequest.class);
             message.setBody(client.multiSearch(multiSearchRequest));
         } else if (ElasticsearchConstants.OPERATION_DELETE_INDEX.equals(operation)) {
-        	DeleteIndexRequest deleteIndexRequest = message.getBody(DeleteIndexRequest.class);
+            DeleteIndexRequest deleteIndexRequest = message.getBody(DeleteIndexRequest.class);
             message.setBody(client.admin().indices().delete(deleteIndexRequest).actionGet());
         } else {
             throw new IllegalArgumentException(ElasticsearchConstants.PARAM_OPERATION + " value '" + operation + "' is not supported");
