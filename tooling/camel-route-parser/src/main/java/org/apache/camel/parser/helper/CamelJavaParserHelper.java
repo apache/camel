@@ -242,6 +242,16 @@ public final class CamelJavaParserHelper {
                     }
                 }
             }
+            if ("interceptFrom".equals(name)) {
+                List args = mi.arguments();
+                // the first argument is where the uri is
+                if (args != null && args.size() >= 1) {
+                    Object arg = args.get(0);
+                    if (isValidArgument(name, arg)) {
+                        extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
+                    }
+                }
+            }
             if ("pollEnrich".equals(name)) {
                 List args = mi.arguments();
                 // the first argument is where the uri is
