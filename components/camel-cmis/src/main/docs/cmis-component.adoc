@@ -26,24 +26,42 @@ CMIS Options
 
 
 // component options: START
-The CMIS component has no options.
+The CMIS component supports 1 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2,1m,7",options="header"]
+|=======================================================================
+| Name | Java Type | Description
+| sessionFacadeFactory | CMISSessionFacadeFactory | To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade instances
+|=======================================================================
+{% endraw %}
 // component options: END
 
 
 
 // endpoint options: START
-The CMIS component supports 6 endpoint options which are listed below:
+The CMIS component supports 14 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| url | common |  | String | *Required* the cmis url
+| cmsUrl | common |  | String | *Required* URL to the cmis repository
+| pageSize | common | 100 | int | Number of nodes to retrieve per page
+| readContent | common | false | boolean | If set to true the content of document node will be retrieved in addition to the properties
+| readCount | common |  | int | Max number of nodes to read
+| repositoryId | common |  | String | The Id of the repository to use. If not specified the first available repository is used
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| query | consumer |  | String | The cmis query to execute against the repository. If not specified the consumer will retrieve every node from the content repository by iterating the content tree recursively
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | queryMode | producer | false | boolean | If true will execute the cmis query from the message body and return result otherwise will create a node in the cmis repository
+| sessionFacadeFactory | advanced |  | CMISSessionFacadeFactory | To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade instances
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| password | security |  | String | Password for the cmis repository
+| username | security |  | String | Username for the cmis repository
 |=======================================================================
 {% endraw %}
 // endpoint options: END
