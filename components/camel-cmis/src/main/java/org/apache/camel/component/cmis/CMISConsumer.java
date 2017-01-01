@@ -19,6 +19,7 @@ package org.apache.camel.component.cmis;
 import java.io.InputStream;
 import java.util.Map;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
@@ -38,6 +39,11 @@ public class CMISConsumer extends ScheduledPollConsumer {
         super(cmisEndpoint, processor);
         this.sessionFacadeFactory = sessionFacadeFactory;
         this.sessionFacade = null;
+    }
+
+    @Override
+    public CMISEndpoint getEndpoint() {
+        return (CMISEndpoint) super.getEndpoint();
     }
 
     @Override
@@ -61,10 +67,11 @@ public class CMISConsumer extends ScheduledPollConsumer {
 
     private CMISSessionFacade getSessionFacade() throws Exception {
         if (sessionFacade == null) {
-            sessionFacade = sessionFacadeFactory.create();
+            sessionFacade = sessionFacadeFactory.create(getEndpoint());
             sessionFacade.initSession();
         }
 
         return sessionFacade;
     }
+
 }

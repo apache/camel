@@ -16,7 +16,23 @@
  */
 package org.apache.camel.component.cmis;
 
-interface CMISSessionFacadeFactory {
+import java.util.HashMap;
+import java.util.Map;
 
-    CMISSessionFacade create(CMISEndpoint endpoint) throws Exception;
+import org.apache.camel.util.EndpointHelper;
+
+public class DefaultCMISSessionFacadeFactory implements CMISSessionFacadeFactory {
+
+    @Override
+    public CMISSessionFacade create(CMISEndpoint endpoint) throws Exception {
+        CMISSessionFacade facade = new CMISSessionFacade(endpoint.getCmsUrl());
+
+        // must use a copy of the properties
+        Map<String, Object> copy = new HashMap<>(endpoint.getProperties());
+        // which we then set on the newly created facade
+        EndpointHelper.setReferenceProperties(endpoint.getCamelContext(), facade, copy);
+        EndpointHelper.setProperties(endpoint.getCamelContext(), facade, copy);
+
+        return facade;
+    }
 }
