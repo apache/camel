@@ -1389,6 +1389,24 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Ends the current block and returns back to the {@link HystrixDefinition hystrix()} DSL.
+     *
+     * @return the builder
+     */
+    public HystrixDefinition endHystrix() {
+        ProcessorDefinition<?> def = this;
+
+        // are we already a try?
+        if (def instanceof HystrixDefinition) {
+            return (HystrixDefinition) def;
+        }
+
+        // okay end this and get back to the try
+        def = end();
+        return (HystrixDefinition) def;
+    }
+
+    /**
      * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent consumer EIP:</a>
      * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer IdempotentConsumer}
      * to avoid duplicate messages
