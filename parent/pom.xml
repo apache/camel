@@ -418,7 +418,7 @@
         https://github.com/checkstyle/checkstyle/issues/1903
      -->
     <maven-checkstyle-version>6.17</maven-checkstyle-version>
-    <maven-owasp-plugin-version>1.4.4</maven-owasp-plugin-version>
+    <maven-owasp-plugin-version>1.4.4.1</maven-owasp-plugin-version>
     <maven-eclipse-plugin-version>2.10</maven-eclipse-plugin-version>
     <maven-jar-plugin-version>2.6</maven-jar-plugin-version>
     <maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
