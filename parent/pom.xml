@@ -58,7 +58,7 @@
     <arquillian-weld-embedded-version>2.0.0.Beta4</arquillian-weld-embedded-version>
     <asciidoctorj-version>1.5.4.1</asciidoctorj-version>
     <asm-version>5.0.4</asm-version>
-    <aspectj-version>1.8.9</aspectj-version>
+    <aspectj-version>1.8.10</aspectj-version>
     <asterisk-java-version>1.0.0-final</asterisk-java-version>
     <asterisk-java-bundle-version>1.0.0-final_1</asterisk-java-bundle-version>
     <atmos-client-version>2.2.2</atmos-client-version>
