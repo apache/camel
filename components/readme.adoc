@@ -100,7 +100,7 @@ Components
 `cm-sms:host` | The influxdb component allows to integrate with CM SMS Gateway.
 
 | link:camel-cmis/src/main/docs/cmis-component.adoc[CMIS] (camel-cmis) +
-`cmis:url` | The cmis component uses the Apache Chemistry client API and allows you to add/read nodes to/from a CMIS compliant content repositories.
+`cmis:cmsUrl` | The cmis component uses the Apache Chemistry client API and allows you to add/read nodes to/from a CMIS compliant content repositories.
 
 | link:camel-coap/src/main/docs/coap-component.adoc[CoAP] (camel-coap) +
 `coap:uri` | The coap component is used for sending and receiving messages from COAP capable devices.
