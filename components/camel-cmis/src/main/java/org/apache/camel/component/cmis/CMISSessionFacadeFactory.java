@@ -16,7 +16,13 @@
  */
 package org.apache.camel.component.cmis;
 
-interface CMISSessionFacadeFactory {
+/**
+ * Factory to create {@link CMISSessionFacade} instances.
+ */
+public interface CMISSessionFacadeFactory {
 
+    /**
+     * Creates a new instance of CMISSessionFacade
+     */
     CMISSessionFacade create(CMISEndpoint endpoint) throws Exception;
 }
