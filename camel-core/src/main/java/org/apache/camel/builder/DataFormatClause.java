@@ -51,6 +51,7 @@ import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.SoapJaxbDataFormat;
 import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.model.dataformat.SyslogDataFormat;
+import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
@@ -1068,8 +1069,16 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, namespaces, secureTagContents, recipientKeyAlias, xmlCipherAlgorithm, 
                 keyCipherAlgorithm, keyOrTrustStoreParameters, keyPassword, digestAlgorithm);
         return dataFormat(xsdf);
-    }   
-    
+    }
+
+    /**
+     * Uses the Tar file data format
+     */
+    public T tarFile() {
+        TarFileDataFormat tfdf = new TarFileDataFormat();
+        return dataFormat(tfdf);
+    }
+
     /**
      * Uses the xmlBeans data format
      */
