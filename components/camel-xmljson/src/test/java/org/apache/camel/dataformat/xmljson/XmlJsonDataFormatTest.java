@@ -24,7 +24,6 @@ import java.util.Map;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 
-import org.apache.camel.Exchange;
 import org.w3c.dom.Document;
 
 import net.sf.json.JSON;
@@ -32,6 +31,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONSerializer;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
