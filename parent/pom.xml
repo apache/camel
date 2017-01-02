@@ -612,7 +612,7 @@
     <tinybundles-version>2.1.1</tinybundles-version>
     <twitter4j-bundle-version>4.0.5_1</twitter4j-bundle-version>
     <twitter4j-version>4.0.5</twitter4j-version>
-    <undertow-version>1.4.7.Final</undertow-version>
+    <undertow-version>1.4.8.Final</undertow-version>
     <univocity-parsers-version>2.3.0</univocity-parsers-version>
     <unix-socket-factory-version>2015-01-27T15-02-14</unix-socket-factory-version>
     <unix-socket-factory-bundle-version>1.0.0</unix-socket-factory-bundle-version>
