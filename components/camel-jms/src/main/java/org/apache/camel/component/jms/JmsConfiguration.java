@@ -333,6 +333,11 @@ public class JmsConfiguration implements Cloneable {
                     + " You must enable this option on both the producer and consumer side, so Camel knows the payloads is an Exchange and not a regular payload.")
     private boolean transferExchange;
     @UriParam(label = "advanced",
+            description = "Controls whether or not to include serialized headers."
+                + " Applies only when {@code transferExchange} is {@code true}."
+                + " This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level.")
+    private boolean allowSerializedHeaders;
+    @UriParam(label = "advanced",
             description = "If enabled and you are using Request Reply messaging (InOut) and an Exchange failed on the consumer side,"
                     + " then the caused Exception will be send back in response as a javax.jms.ObjectMessage."
                     + " If the client is Camel, the returned Exception is rethrown. This allows you to use Camel JMS as a bridge"
@@ -1816,6 +1821,19 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setTransferExchange(boolean transferExchange) {
         this.transferExchange = transferExchange;
+    }
+
+    public boolean isAllowSerializedHeaders() {
+        return allowSerializedHeaders;
+    }
+
+    /**
+     * Controls whether or not to include serialized headers.
+     * Applies only when {@link #isTransferExchange()} is {@code true}.
+     * This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level.
+     */
+    public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
+        this.allowSerializedHeaders = allowSerializedHeaders;
     }
 
     public boolean isTransferException() {
