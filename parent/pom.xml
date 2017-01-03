@@ -489,7 +489,7 @@
     <pax-logging-version>1.8.6</pax-logging-version>
     <pdfbox-version>1.8.13</pdfbox-version>
     <pgjdbc-ng-driver-version>0.6</pgjdbc-ng-driver-version>
-    <powermock-version>1.6.1</powermock-version>
+    <powermock-version>1.6.6</powermock-version>
     <protobuf-version>3.1.0</protobuf-version>
     <qpid-bundle-version>0.28_1</qpid-bundle-version>
     <qpid-proton-j-version>0.16.0</qpid-proton-j-version>
