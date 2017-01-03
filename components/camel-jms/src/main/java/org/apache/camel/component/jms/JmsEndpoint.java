@@ -1106,6 +1106,16 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     }
 
     @ManagedAttribute
+    public boolean isAllowSerializedHeaders() {
+        return getConfiguration().isAllowSerializedHeaders();
+    }
+
+    @ManagedAttribute
+    public void setAllowSerializedHeaders(boolean allowSerializedHeaders) {
+        getConfiguration().setAllowSerializedHeaders(allowSerializedHeaders);
+    }
+
+    @ManagedAttribute
     public boolean isTransferException() {
         return getConfiguration().isTransferException();
     }
