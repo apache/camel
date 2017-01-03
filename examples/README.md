@@ -46,6 +46,7 @@ All examples have been sort by type/category
 ##### Other Languages
 
 * [camel-example-groovy](camel-example-groovy/ReadMe.md)
+* [camel-example-kotlin](camel-example-kotlin/ReadMe.md)
 * [camel-example-scala](camel-example-scala/ReadMe.md)
 
 ##### CDI
