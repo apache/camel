@@ -43,6 +43,10 @@ All examples have been sort by type/category
 * [camel-example-reportincident-wssecurity](camel-example-reportincident-wssecurity/README.md)
 * [camel-example-cafe](camel-example-cafe/README.md)
 
+##### Other Languages
+
+* [camel-example-groovy](camel-example-groovt/ReadMe.md)
+
 ##### CDI
 
 * [camel-example-cdi](camel-example-cdi/README.md)
