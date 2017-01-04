@@ -219,7 +219,16 @@ public abstract class AbstractFeatureTest {
         return mavenBundle().
                 groupId("org.apache.camel.karaf").
                 artifactId("apache-camel").
-                versionAsInProject().type("xml/features");
+                version(getCamelKarafFeatureVersion()).
+                type("xml/features");
+    }
+
+    private static String getCamelKarafFeatureVersion() {
+        String camelKarafFeatureVersion = System.getProperty("camelKarafFeatureVersion");
+        if (camelKarafFeatureVersion == null) {
+            throw new RuntimeException("Please specify the maven artifact version to use for org.apache.camel.karaf/apache-camel through the camelKarafFeatureVersion System property");
+        }
+        return camelKarafFeatureVersion;
     }
 
     private static void switchPlatformEncodingToUTF8() {

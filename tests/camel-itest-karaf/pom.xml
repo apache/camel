@@ -231,6 +231,7 @@
               <argLine>-Dorg.ops4j.pax.url.mvn.localRepository=${maven.repo.local}</argLine>
               <systemPropertyVariables>
                 <karafVersion>${karaf-version}</karafVersion>
+                <camelKarafFeatureVersion>${project.version}</camelKarafFeatureVersion>
               </systemPropertyVariables>
             </configuration>
           </plugin>
