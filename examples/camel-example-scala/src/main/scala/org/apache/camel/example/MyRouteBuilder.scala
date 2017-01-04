@@ -30,7 +30,7 @@ class MyRouteBuilder(override val context : CamelContext) extends ScalaRouteBuil
    }
    
    // a route using Scala blocks
-   "timer://foo?period=5s" ==> {
+   from("timer://foo?period=5000") ==> {
       process(myProcessorMethod)
       to("log:block")
    }
