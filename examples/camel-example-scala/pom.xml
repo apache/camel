@@ -144,7 +144,7 @@
         <artifactId>exec-maven-plugin</artifactId>
         <version>${exec-maven-plugin-version}</version>
         <configuration>
-          <mainClass>org.apache.camel.MyRouteMain</mainClass>
+          <mainClass>org.apache.camel.example.MyRouteMain</mainClass>
         </configuration>
       </plugin>
     </plugins>
