@@ -73,6 +73,7 @@ import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
@@ -1250,6 +1251,12 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the resolved data format, or <tt>null</tt> if not found
      */
     Transformer resolveTransformer(DataType from, DataType to);
+
+    /**
+     * Gets the {@link org.apache.camel.spi.TransformerRegistry}
+     * @return the TransformerRegistry
+     */
+    TransformerRegistry getTransformerRegistry();
 
     /**
      * Sets the properties that can be referenced in the camel context

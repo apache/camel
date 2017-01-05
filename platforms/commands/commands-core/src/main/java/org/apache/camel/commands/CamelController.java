@@ -368,4 +368,12 @@ public interface CamelController {
      */
     String catalogLanguageAsciiDoc(String name) throws Exception;
 
+    /**
+     * Return the transformers
+     *
+     * @param camelContextName the Camel context.
+     * @return a list of key/value pairs with transformer information
+     * @throws java.lang.Exception can be thrown
+     */
+    List<Map<String, String>> getTransformers(String camelContextName) throws Exception;
 }
