@@ -24,14 +24,13 @@ public class NetWeaverFlightDataVelocityTest extends CamelTestSupport {
 
     private String username = "P1909969254";
     private String password = "TODO";
-    private String url = "https://sapes1.sapdevcenter.com/sap/opu/odata/IWBEP/RMTSAMPLEFLIGHT_2/";
-    private String command = "FlightCollection(AirLineID='AA',FlightConnectionID='0017',FlightDate=datetime'2012-08-29T00%3A00%3A00')";
 
     @Test
     public void testNetWeaverFlight() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:start", "Dummy", NetWeaverConstants.COMMAND, command);
+        template.sendBodyAndHeader("direct:start", "Dummy", NetWeaverConstants.COMMAND,
+            NetWeaverTestConstants.NETWEAVER_FLIGHT_COMMAND);
 
         assertMockEndpointsSatisfied();
     }
@@ -42,7 +41,7 @@ public class NetWeaverFlightDataVelocityTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .toF("sap-netweaver:%s?username=%s&password=%s", url, username, password)
+                    .toF("sap-netweaver:%s?username=%s&password=%s", NetWeaverTestConstants.NETWEAVER_GATEWAY_URL, username, password)
                     .to("log:response")
                     .to("velocity:flight-info.vm")
                     .to("log:info")
