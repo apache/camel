@@ -3571,6 +3571,11 @@
         <artifactId>activemq-jaas</artifactId>
         <version>${activemq-version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.apache.activemq</groupId>
+        <artifactId>activemq-mqtt</artifactId>
+        <version>${activemq-version}</version>
+      </dependency>
 
       <dependency>
         <groupId>org.apache.xbean</groupId>
