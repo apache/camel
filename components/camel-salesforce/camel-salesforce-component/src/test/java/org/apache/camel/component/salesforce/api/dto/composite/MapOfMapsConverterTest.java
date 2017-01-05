@@ -44,7 +44,6 @@ public class MapOfMapsConverterTest {
     public MapOfMapsConverterTest() throws XmlPullParserException {
         final XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
         parser = factory.newPullParser();
-
     }
 
     @Test
