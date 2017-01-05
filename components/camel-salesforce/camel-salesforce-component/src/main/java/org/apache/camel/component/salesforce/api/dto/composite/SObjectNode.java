@@ -63,6 +63,10 @@ import org.apache.camel.util.ObjectHelper;
 @XStreamConverter(SObjectNodeXStreamConverter.class)
 public final class SObjectNode implements Serializable {
 
+    private static final String CHILD_PARAM = "child";
+
+    private static final String SOBJECT_TYPE_PARAM = "type";
+
     private static final long serialVersionUID = 1L;
 
     @JsonProperty
@@ -113,7 +117,7 @@ public final class SObjectNode implements Serializable {
      * @return the newly created node, used in builder fashion to add more child objects to it (on the next level)
      */
     public SObjectNode addChild(final AbstractDescribedSObjectBase child) {
-        ObjectHelper.notNull(child, "child");
+        ObjectHelper.notNull(child, CHILD_PARAM);
 
         return addChild(pluralOf(child), child);
     }
@@ -130,7 +134,7 @@ public final class SObjectNode implements Serializable {
      */
     public SObjectNode addChild(final String labelPlural, final AbstractSObjectBase child) {
         ObjectHelper.notNull(labelPlural, "labelPlural");
-        ObjectHelper.notNull(child, "child");
+        ObjectHelper.notNull(child, CHILD_PARAM);
 
         final SObjectNode node = new SObjectNode(referenceGenerator, typeOf(child), child);
 
@@ -194,7 +198,7 @@ public final class SObjectNode implements Serializable {
      * @return children of this node of specified type
      */
     public Stream<SObjectNode> getChildNodesOfType(final String type) {
-        ObjectHelper.notNull(type, "type");
+        ObjectHelper.notNull(type, SOBJECT_TYPE_PARAM);
 
         return records.getOrDefault(type, Collections.emptyList()).stream();
     }
@@ -217,7 +221,7 @@ public final class SObjectNode implements Serializable {
      * @return child SObjects of this node
      */
     public Stream<AbstractSObjectBase> getChildrenOfType(final String type) {
-        ObjectHelper.notNull(type, "type");
+        ObjectHelper.notNull(type, SOBJECT_TYPE_PARAM);
 
         return records.getOrDefault(type, Collections.emptyList()).stream().map(SObjectNode::getObject);
     }
