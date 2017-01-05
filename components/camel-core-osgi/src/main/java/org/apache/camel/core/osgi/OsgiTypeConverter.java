@@ -67,6 +67,15 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
     public Object addingService(ServiceReference<TypeConverterLoader> serviceReference) {
         LOG.trace("AddingService: {}, Bundle: {}", serviceReference, serviceReference.getBundle());        
         TypeConverterLoader loader = bundleContext.getService(serviceReference);
+        try {
+            LOG.debug("loading type converter from bundle: {}", serviceReference.getBundle().getSymbolicName());
+            if (delegate != null) {
+                loader.load(delegate);
+            }
+        } catch (Throwable t) {
+            throw new RuntimeCamelException("Error loading type converters from service: " + serviceReference + " due: " + t.getMessage(), t);
+        }
+       
         return loader;
     }
 
