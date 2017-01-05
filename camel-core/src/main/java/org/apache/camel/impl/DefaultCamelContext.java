@@ -4292,6 +4292,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return resolveTransformer(getTransformerKey(from, to));
     }
 
+    @Override
+    public TransformerRegistry getTransformerRegistry() {
+        return transformerRegistry;
+    }
+
     protected Map<String, RouteService> getRouteServices() {
         return routeServices;
     }
