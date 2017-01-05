@@ -5,7 +5,7 @@ Ref Expression Language
 *Available as of Camel 2.8*
 
 The Ref Expression Language is really just a way to lookup a custom
-link:expression.html[Expression] from the link:registry.html[Registry].
+link:expression.html[Expression] or link:predicate.html[Predicate] from the link:registry.html[Registry].
 
 This is particular useable in XML DSLs.
 
@@ -65,4 +65,4 @@ from("seda:a").split().ref("myExpression").to("seda:b");
 Dependencies
 ^^^^^^^^^^^^
 
-The Constant language is part of *camel-core*.
+The Ref language is part of *camel-core*.

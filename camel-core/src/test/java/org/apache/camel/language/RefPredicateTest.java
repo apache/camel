@@ -18,44 +18,43 @@ package org.apache.camel.language;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
+import org.apache.camel.Predicate;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.support.ExpressionAdapter;
 
-public class RefTest extends LanguageTestSupport {
+public class RefPredicateTest extends LanguageTestSupport {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myExp", new MyExpression());
+        jndi.bind("myPredicate", new MyPredicate());
         return jndi;
     }
 
-    public void testRefExpressions() throws Exception {
-        assertExpression("myExp", "Hello World");
+    public void testExpression() throws Exception {
+        exchange.getIn().setBody("Hello World");
+        assertExpression("myPredicate", "true");
+
+        exchange.getIn().setBody("Bye World");
+        assertExpression("myPredicate", "false");
     }
  
-    public void testRefExpressionsNotFound() throws Exception {
-        try {
-            assertExpression("foo", "Hello World");
-            fail("Should have thrown exception");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Cannot find expression or predicate in registry with ref: foo", e.getMessage());
-        }
-    }
-
     public void testPredicates() throws Exception {
-        assertPredicate("myExp");
+        exchange.getIn().setBody("Hello World");
+        assertPredicate("myPredicate", true);
+
+        exchange.getIn().setBody("Bye World");
+        assertPredicate("myPredicate", false);
     }
 
     protected String getLanguageName() {
         return "ref";
     }
 
-    private static class MyExpression extends ExpressionAdapter {
+    private static class MyPredicate implements Predicate {
 
         @Override
-        public Object evaluate(Exchange exchange) {
-            return "Hello World";
+        public boolean matches(Exchange exchange) {
+            return exchange.getIn().getBody().equals("Hello World");
         }
     }
 }
