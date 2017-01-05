@@ -31,7 +31,6 @@ import org.eclipse.jetty.server.handler.HandlerCollection;
 /**
  * Ported from {@link org.apache.camel.component.http4.BaseHttpTest}.
  *
- * @version 
  */
 public abstract class BaseHttpTest extends CamelTestSupport {
 

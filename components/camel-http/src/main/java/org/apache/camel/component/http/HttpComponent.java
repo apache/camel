@@ -50,7 +50,6 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
 /**
  * The <a href="http://camel.apache.org/http.html">HTTP Component</a>
  *
- * @version 
  */
 public class HttpComponent extends HttpCommonComponent implements RestProducerFactory {
 
