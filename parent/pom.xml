@@ -122,7 +122,7 @@
     <commons-beanutils-bundle-version>1.8.3_1</commons-beanutils-bundle-version>
     <commons-codec-version>1.10</commons-codec-version>
     <commons-collections-version>3.2.2</commons-collections-version>
-    <commons-compress-version>1.12</commons-compress-version>
+    <commons-compress-version>1.13</commons-compress-version>
     <commons-configuration-version>1.9</commons-configuration-version>
     <commons-configuration-bundle-version>1.9_1</commons-configuration-bundle-version>
     <commons-csv-version>1.4</commons-csv-version>
