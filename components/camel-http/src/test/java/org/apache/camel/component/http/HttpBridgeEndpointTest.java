@@ -29,7 +29,6 @@ import org.junit.Test;
 /**
  * Tests ported from {@link org.apache.camel.component.http4.HttpBridgeEndpointTest}.
  *
- * @version 
  */
 public class HttpBridgeEndpointTest extends BaseHttpTest {
 
