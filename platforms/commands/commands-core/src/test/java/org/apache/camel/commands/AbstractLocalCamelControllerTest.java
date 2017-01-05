@@ -20,9 +20,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
+import org.apache.camel.model.transformer.CustomTransformerDefinition;
+import org.apache.camel.spi.DataType;
+import org.apache.camel.spi.Transformer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,6 +53,11 @@ public class AbstractLocalCamelControllerTest {
             }
         });
 
+        CustomTransformerDefinition def = new CustomTransformerDefinition();
+        def.setType(DummyTransformer.class.getName());
+        def.setFrom("xml:foo");
+        def.setTo("json:bar");
+        context.getTransformers().add(def);
         localCamelController = new DummyCamelController(context);
     }
 
@@ -107,5 +116,25 @@ public class AbstractLocalCamelControllerTest {
         final List<Map<String, Object>> inflightExchanges = localCamelController.browseInflightExchanges("context1", "route2", 0, false);
 
         assertEquals("Context should contain one inflight exchange for specific route", 1, inflightExchanges.size());
+    }
+
+    @Test
+    public void testTransformer() throws Exception {
+        context.resolveTransformer(new DataType("xml:foo"), new DataType("json:bar"));
+        List<Map<String, String>> transformers = localCamelController.getTransformers("context1");
+        assertEquals(1, transformers.size());
+        Map<String, String> dummyTransformer = transformers.get(0);
+        assertEquals("context1", dummyTransformer.get("camelContextName"));
+        assertEquals("DummyTransformer[scheme='null', from='xml:foo', to='json:bar']", dummyTransformer.get("description"));
+        assertEquals(null, dummyTransformer.get("scheme"));
+        assertEquals("xml:foo", dummyTransformer.get("from"));
+        assertEquals("json:bar", dummyTransformer.get("to"));
+        assertEquals("Started", dummyTransformer.get("state"));
+    }
+
+    public static class DummyTransformer extends Transformer {
+        @Override
+        public void transform(Message message, DataType from, DataType to) throws Exception {
+        }
     }
 }

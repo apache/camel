@@ -116,7 +116,7 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
 
     @Override
     public String toString() {
-        return String.format("%s[model='%s', from='%s', to='%s']", this.getClass().getSimpleName(), from, to);
+        return String.format("%s[scheme='%s', from='%s', to='%s']", this.getClass().getSimpleName(), model, from, to);
     }
 
     @Override
