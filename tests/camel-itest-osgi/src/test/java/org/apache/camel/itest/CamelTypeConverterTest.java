@@ -16,6 +16,7 @@
  */
 package org.apache.camel.itest;
 
+import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.util.Locale;
 
@@ -47,12 +48,11 @@ public class CamelTypeConverterTest extends AbstractFeatureTest {
         // install the camel blueprint xml file and the Camel converter we use in this test
         TinyBundle bundle = TinyBundles.bundle();
         // install blueprint
-        URL blueprintUrl = ObjectHelper.loadResourceAsURL("org/apache/camel/itest/CamelJacksonFallbackConverterTest.xml", CamelJacksonFallbackConverterTest.class.getClassLoader());
-        String name = "CamelJacksonFallbackConverterTest";
+        URL blueprintUrl = ObjectHelper.loadResourceAsURL("org/apache/camel/itest/CamelTypeConverterTest.xml", CamelTypeConverterTest.class.getClassLoader());
+        String name = "CamelTypeConverterTest";
         bundle.add("OSGI-INF/blueprint/blueprint-" + name.toLowerCase(Locale.ENGLISH) + ".xml", blueprintUrl);
         // install converter
-        URL converterDeclaration = ObjectHelper.loadResourceAsURL("org/apache/camel/itest/TypeConverter", CamelJacksonFallbackConverterTest.class.getClassLoader());
-        bundle.add("META-INF/services/org/apache/camel/TypeConverter", converterDeclaration);
+        bundle.add("META-INF/services/org/apache/camel/TypeConverter", new ByteArrayInputStream("org.apache.camel.itest.typeconverter.MyConverter".getBytes()));
         bundle.add(MyConverter.class, InnerClassStrategy.NONE);
         // set bundle headers
         bundle.set("Manifest-Version", "2")
