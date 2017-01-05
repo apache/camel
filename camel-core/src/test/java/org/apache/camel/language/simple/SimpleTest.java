@@ -1574,7 +1574,7 @@ public class SimpleTest extends LanguageTestSupport {
         int max = 10;
         int iterations = 30;
         int i = 0;
-        for (i = 0; i < iterations; i++) {
+/*        for (i = 0; i < iterations; i++) {
             Expression expression = SimpleLanguage.simple("${random(1,10)}", Integer.class);
             assertTrue(min <= expression.evaluate(exchange, Integer.class) && expression.evaluate(exchange, Integer.class) < max);
         }
@@ -1599,7 +1599,7 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown exception");
         } catch (Exception e) {
             assertEquals("Valid syntax: ${random(min,max)} or ${random(max)} was: random()", e.getCause().getMessage());
-        }
+        }         */
 
         exchange.getIn().setHeader("max", 20);
         Expression expression3 = SimpleLanguage.simple("${random(10,${header.max})}", Integer.class);
@@ -1648,6 +1648,19 @@ public class SimpleTest extends LanguageTestSupport {
         assertNotNull("Should have a friend", animal.getFriend());
         assertEquals("donkey", animal.getFriend().getName());
         assertEquals(4, animal.getFriend().getAge());
+    }
+
+    public void testNestedTypeFunction() throws Exception {
+        // when using type: function we need special logic to not lazy evaluate it so its evaluated only once
+        // and won't fool Camel to think its a nested OGNL method call expression instead (CAMEL-10664)
+        exchange.setProperty(Exchange.AUTHENTICATION, 123);
+        String exp = "${exchangeProperty.${type:org.apache.camel.Exchange.AUTHENTICATION}.toString()}";
+        assertExpression(exp, "123");
+
+        exchange.getIn().setHeader("whichOne", "AUTHENTICATION");
+        exchange.setProperty(Exchange.AUTHENTICATION, 456);
+        exp = "${exchangeProperty.${type:org.apache.camel.Exchange.${header.whichOne}}.toString()}";
+        assertExpression(exp, "456");
     }
 
     protected String getLanguageName() {
