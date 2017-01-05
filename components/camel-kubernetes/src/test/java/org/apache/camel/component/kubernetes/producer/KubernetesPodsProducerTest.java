@@ -132,7 +132,7 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
                 exchange.getIn().setHeader(
                         KubernetesConstants.KUBERNETES_PODS_LABELS, labels);
                 PodSpec podSpec = new PodSpec();
-                podSpec.setHost("172.28.128.4");
+                podSpec.setHostname("localhost");
                 Container cont = new Container();
                 cont.setImage("docker.io/jboss/wildfly:latest");
                 cont.setName("pippo");
