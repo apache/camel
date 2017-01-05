@@ -28,6 +28,8 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 public class MapOfMapsConverter implements Converter {
 
+    private static final String ATTRIBUTES_PROPERTY = "attributes";
+
     @Override
     public boolean canConvert(final Class type) {
         return true;
@@ -56,24 +58,22 @@ public class MapOfMapsConverter implements Converter {
 
             final Map<String, String> attributes = new HashMap<>();
             final Iterator attributeNames = reader.getAttributeNames();
-            if (attributeNames.hasNext()) {
-                while (attributeNames.hasNext()) {
-                    final String attributeName = (String) attributeNames.next();
-                    attributes.put(attributeName, reader.getAttribute(attributeName));
-                }
+            while (attributeNames.hasNext()) {
+                final String attributeName = (String)attributeNames.next();
+                attributes.put(attributeName, reader.getAttribute(attributeName));
             }
 
             Object nested = readMap(reader, new HashMap<>());
             if (!attributes.isEmpty()) {
                 if (nested instanceof String) {
-                    HashMap<Object, Object> newNested = new HashMap<>();
+                    final Map<Object, Object> newNested = new HashMap<>();
                     newNested.put(key, nested);
-                    newNested.put("attributes", attributes);
+                    newNested.put(ATTRIBUTES_PROPERTY, attributes);
                     nested = newNested;
                 } else {
                     @SuppressWarnings("unchecked")
-                    final Map<String, Object> nestedMap = (Map<String, Object>) nested;
-                    nestedMap.put("attributes", attributes);
+                    final Map<String, Object> nestedMap = (Map<String, Object>)nested;
+                    nestedMap.put(ATTRIBUTES_PROPERTY, attributes);
                 }
             }
 

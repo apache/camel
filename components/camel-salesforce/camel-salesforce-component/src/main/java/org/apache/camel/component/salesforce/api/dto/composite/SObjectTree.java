@@ -181,7 +181,7 @@ public final class SObjectTree implements Serializable {
     public void setErrorFor(final String referenceId, final List<RestError> errors) {
         for (final SObjectNode node : records) {
             if (setErrorFor(node, referenceId, errors)) {
-                break;
+                return;
             }
         }
     }
@@ -197,7 +197,7 @@ public final class SObjectTree implements Serializable {
     public void setIdFor(final String referenceId, final String id) {
         for (final SObjectNode node : records) {
             if (setIdFor(node, referenceId, id)) {
-                break;
+                return;
             }
         }
     }
@@ -248,7 +248,7 @@ public final class SObjectTree implements Serializable {
             final Object object = node.getObject();
 
             if (object instanceof AbstractSObjectBase) {
-                return updateBaseObjectId(id, object);
+                return updateBaseObjectId(id, (AbstractSObjectBase) object);
             } else {
                 return updateGeneralObjectId(id, object);
             }
@@ -258,8 +258,8 @@ public final class SObjectTree implements Serializable {
             .anyMatch(n -> setIdFor(n, referenceId, id));
     }
 
-    boolean updateBaseObjectId(final String id, final Object object) {
-        ((AbstractSObjectBase) object).setId(id);
+    boolean updateBaseObjectId(final String id, final AbstractSObjectBase object) {
+        object.setId(id);
 
         return true;
     }

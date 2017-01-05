@@ -72,6 +72,8 @@ import static org.apache.camel.util.StringHelper.notEmpty;
 @XStreamAlias("batch")
 public final class SObjectBatch implements Serializable {
 
+    private static final String SOBJECT_TYPE_PARAM = "type";
+
     public enum Method {
         DELETE, GET, PATCH, POST
     }
@@ -406,12 +408,12 @@ public final class SObjectBatch implements Serializable {
     }
 
     String rowBaseUrl(final String type, final String id) {
-        return apiPrefix + "/sobjects/" + notEmpty(type, "type") + "/" + notEmpty(id, "id");
+        return apiPrefix + "/sobjects/" + notEmpty(type, SOBJECT_TYPE_PARAM) + "/" + notEmpty(id, "id");
     }
 
     String rowBaseUrl(final String type, final String fieldName, final String fieldValue) {
         try {
-            return apiPrefix + "/sobjects/" + notEmpty(type, "type") + "/" + notEmpty(fieldName, "fieldName") + "/"
+            return apiPrefix + "/sobjects/" + notEmpty(type, SOBJECT_TYPE_PARAM) + "/" + notEmpty(fieldName, "fieldName") + "/"
                 + URLEncoder.encode(notEmpty(fieldValue, "fieldValue"), StandardCharsets.UTF_8.name());
         } catch (final UnsupportedEncodingException e) {
             throw new IllegalStateException(e);
