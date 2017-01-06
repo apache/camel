@@ -17,18 +17,30 @@
 package org.apache.camel.management;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.TabularData;
 
+import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.dataformat.StringDataFormat;
+import org.apache.camel.model.transformer.CustomTransformerDefinition;
+import org.apache.camel.model.transformer.DataFormatTransformerDefinition;
+import org.apache.camel.model.transformer.EndpointTransformerDefinition;
+import org.apache.camel.spi.DataType;
+import org.apache.camel.spi.Transformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version 
  */
 public class ManagedTransformerRegistryTest extends ManagementTestSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(ManagedTransformerRegistryTest.class);
 
     public void testManageTransformerRegistry() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
@@ -60,20 +72,46 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
         assertEquals(1000, max.intValue());
 
         Integer current = (Integer) mbeanServer.getAttribute(on, "Size");
-        assertEquals(0, current.intValue());
+        assertEquals(3, current.intValue());
 
         current = (Integer) mbeanServer.getAttribute(on, "StaticSize");
         assertEquals(0, current.intValue());
 
         current = (Integer) mbeanServer.getAttribute(on, "DynamicSize");
-        assertEquals(0, current.intValue());
+        assertEquals(3, current.intValue());
 
         String source = (String) mbeanServer.getAttribute(on, "Source");
         assertTrue(source.startsWith("TransformerRegistry"));
         assertTrue(source.endsWith("capacity: 1000"));
 
+        
         TabularData data = (TabularData) mbeanServer.invoke(on, "listTransformers", null, null);
-        assertEquals(0, data.size());
+        for (Object row : data.values()) {
+            CompositeData composite = (CompositeData)row;
+            String scheme = (String)composite.get("scheme");
+            String from = (String)composite.get("from");
+            String to = (String)composite.get("to");
+            String description = (String)composite.get("description");
+            boolean isStatic = (boolean)composite.get("static");
+            boolean isDynamic = (boolean)composite.get("dynamic");
+            LOG.info("[{}][{}][{}][{}][{}][{}]", scheme, from, to, isStatic, isDynamic, description);
+            if (description.startsWith("ProcessorTransformer")) {
+                assertEquals(null, scheme);
+                assertEquals("xml:foo", from);
+                assertEquals("json:bar", to);
+            } else if (description.startsWith("DataFormatTransformer")) {
+                assertEquals(null, scheme);
+                assertEquals("java:" + ManagedTransformerRegistryTest.class.getName(), from);
+                assertEquals("xml:test", to);
+            } else if (description.startsWith("MyTransformer")) {
+                assertEquals("custom", scheme);
+                assertEquals("null:null", from);
+                assertEquals("null:null", to);
+            } else {
+                fail("Unexpected transformer:" + description);
+            }
+        }
+        assertEquals(3, data.size());
     }
 
     @Override
@@ -82,8 +120,32 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").to("mock:result");
+                
+                EndpointTransformerDefinition etd = new EndpointTransformerDefinition();
+                etd.setFrom("xml:foo");
+                etd.setTo("json:bar");
+                etd.setUri("direct:transformer");
+                context.getTransformers().add(etd);
+                context.resolveTransformer(new DataType("xml:foo"), new DataType("json:bar"));
+                DataFormatTransformerDefinition dftd = new DataFormatTransformerDefinition();
+                dftd.setFrom(ManagedTransformerRegistryTest.class);
+                dftd.setTo("xml:test");
+                dftd.setDataFormatType(new StringDataFormat());
+                context.getTransformers().add(dftd);
+                context.resolveTransformer(new DataType(ManagedTransformerRegistryTest.class), new DataType("xml:test"));
+                CustomTransformerDefinition ctd = new CustomTransformerDefinition();
+                ctd.setScheme("custom");
+                ctd.setType(MyTransformer.class.getName());
+                context.getTransformers().add(ctd);
+                context.resolveTransformer("custom");
             }
         };
     }
 
+    public static class MyTransformer extends Transformer {
+        @Override
+        public void transform(Message message, DataType from, DataType to) throws Exception {
+            return;
+        }
+    }
 }

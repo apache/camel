@@ -62,18 +62,36 @@ public interface TransformerRegistry<K> extends Map<K, Transformer>, StaticServi
     /**
      * Whether the given transformer is stored in the static cache
      *
-     * @param key  the transformer key
+     * @param scheme the scheme supported by this transformer
      * @return <tt>true</tt> if in static cache, <tt>false</tt> if not
      */
-    boolean isStatic(String key);
+    boolean isStatic(String scheme);
+
+    /**
+     * Whether the given transformer is stored in the static cache
+     *
+     * @param from  'from' data type
+     * @param to 'to' data type
+     * @return <tt>true</tt> if in static cache, <tt>false</tt> if not
+     */
+    boolean isStatic(DataType from, DataType to);
 
     /**
      * Whether the given transformer is stored in the dynamic cache
      *
-     * @param key  the transformer key
+     * @param scheme the scheme supported by this transformer
      * @return <tt>true</tt> if in dynamic cache, <tt>false</tt> if not
      */
-    boolean isDynamic(String key);
+    boolean isDynamic(String scheme);
+
+    /**
+     * Whether the given transformer is stored in the dynamic cache
+     *
+     * @param from 'from' data type
+     * @param to 'to' data type
+     * @return <tt>true</tt> if in dynamic cache, <tt>false</tt> if not
+     */
+    boolean isDynamic(DataType from, DataType to);
 
     /**
      * Cleanup the cache (purging stale entries)

@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedTransformerRegistryMBean;
+import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
@@ -83,11 +84,15 @@ public class ManagedTransformerRegistry extends ManagedService implements Manage
             Collection<Transformer> transformers = transformerRegistry.values();
             for (Transformer transformer : transformers) {
                 CompositeType ct = CamelOpenMBeanTypes.listTransformersCompositeType();
-                String transformerString = transformer.toString();
-                boolean fromStatic = transformerRegistry.isStatic(transformerString);
-                boolean fromDynamic = transformerRegistry.isDynamic(transformerString);
+                String scheme = transformer.getModel();
+                DataType from = transformer.getFrom();
+                DataType to = transformer.getTo();
+                String desc = transformer.toString();
+                boolean fromStatic = scheme != null ? transformerRegistry.isStatic(scheme) : transformerRegistry.isStatic(from, to);
+                boolean fromDynamic = scheme != null ? transformerRegistry.isDynamic(scheme) : transformerRegistry.isDynamic(from, to);
 
-                CompositeData data = new CompositeDataSupport(ct, new String[]{"string", "static", "dynamic"}, new Object[]{transformerString, fromStatic, fromDynamic});
+                CompositeData data = new CompositeDataSupport(ct, new String[]{"scheme", "from", "to", "static", "dynamic", "description"},
+                                                              new Object[]{scheme, from.toString(), to.toString(), fromStatic, fromDynamic, desc});
                 answer.put(data);
             }
             return answer;
