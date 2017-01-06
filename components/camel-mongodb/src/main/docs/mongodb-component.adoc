@@ -66,7 +66,7 @@ The MongoDB component has no options.
 
 
 // endpoint options: START
-The MongoDB component supports 22 endpoint options which are listed below:
+The MongoDB component supports 24 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -90,10 +90,12 @@ The MongoDB component supports 22 endpoint options which are listed below:
 | writeResultAsHeader | advanced | false | boolean | In write operations it determines whether instead of returning WriteResult as the body of the OUT message we transfer the IN message to the OUT and attach the WriteResult as a header.
 | persistentId | tail |  | String | One tail tracking collection can host many trackers for several tailable consumers. To keep them separate each tracker should have its own unique persistentId.
 | persistentTailTracking | tail | false | boolean | Enable persistent tail tracking which is a mechanism to keep track of the last consumed message across system restarts. The next time the system is up the endpoint will recover the cursor from the point where it last stopped slurping records.
+| persistRecords | tail | 100 | int | Sets the number of tailed records after which the tail tracking data is persisted to MongoDB.
 | tailTrackCollection | tail |  | String | Collection where tail tracking information will be persisted. If not specified link MongoDbTailTrackingConfigDEFAULT_COLLECTION will be used by default.
 | tailTrackDb | tail |  | String | Indicates what database the tail tracking mechanism will persist to. If not specified the current database will be picked by default. Dynamicity will not be taken into account even if enabled i.e. the tail tracking database will not vary past endpoint initialisation.
 | tailTrackField | tail |  | String | Field where the last tracked value will be placed. If not specified link MongoDbTailTrackingConfigDEFAULT_FIELD will be used by default.
 | tailTrackIncreasingField | tail |  | String | Correlation field in the incoming record which is of increasing nature and will be used to position the tailing cursor every time it is generated. The cursor will be (re)created with a query of type: tailTrackIncreasingField lastValue (possibly recovered from persistent tail tracking). Can be of type Integer Date String etc. NOTE: No support for dot notation at the current time so the field should be at the top level of the document.
+| tailTrackingStrategy | tail | LITERAL | MongoDBTailTrackingEnum | Sets the strategy used to extract the increasing field value and to create the query to position the tail cursor.
 |=======================================================================
 {% endraw %}
 // endpoint options: END
@@ -811,6 +813,122 @@ from("mongodb:myDb?database=flights&collection=cancellations&tailTrackIncreasing
     .autoStartup(false)
     .to("mock:test");
 -----------------------------------------------------------------------------------------------------------------------------------
+
+[[MongoDB-TailtrackingOnOplog]]
+Oplog Tail Tracking
+^^^^^^^^^^^^^^^^^^^
+
+The *oplog* collection tracking feature allows to implement trigger like functionality in MongoDB.
+In order to activate this collection you will have first to activate a replica set. For more
+information on this topic please check https://docs.mongodb.com/manual/tutorial/deploy-replica-set/ .
+
+Below you can find an example of a Java DSL based route demonstrating how you can use the component to track the *oplog*
+collection. In this specific case we are filtering the events which affect a collection *customers* in
+database *optlog_test*. Note that the `tailTrackIncreasingField` is a timestamp field ('ts') which implies
+that you have to use the `tailTrackingStrategy` parameter with the *TIMESTAMP* value.
+
+[source,java]
+-----------------------------------------------------------------------------------------------------------------------------------
+import com.mongodb.BasicDBObject;
+import com.mongodb.MongoClient;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mongodb.MongoDBTailTrackingEnum;
+import org.apache.camel.main.Main;
+
+import java.io.InputStream;
+
+/**
+ * For this to work you need to turn on the replica set
+ * <p>
+ * Commands to create a replica set:
+ * <p>
+ * rs.initiate( {
+ * _id : "rs0",
+ * members: [ { _id : 0, host : "localhost:27017" } ]
+ * })
+ */
+public class MongoDbTracker {
+
+    private final String database;
+
+    private final String collection;
+
+    private final String increasingField;
+
+    private MongoDBTailTrackingEnum trackingStrategy;
+
+    private int persistRecords = -1;
+
+    private boolean persistenTailTracking;
+
+    public MongoDbTracker(String database, String collection, String increasingField) {
+        this.database = database;
+        this.collection = collection;
+        this.increasingField = increasingField;
+    }
+
+    public static void main(String[] args) throws Exception {
+        final MongoDbTracker mongoDbTracker = new MongoDbTracker("local", "oplog.rs", "ts");
+        mongoDbTracker.setTrackingStrategy(MongoDBTailTrackingEnum.TIMESTAMP);
+        mongoDbTracker.setPersistRecords(5);
+        mongoDbTracker.setPersistenTailTracking(true);
+        mongoDbTracker.startRouter();
+        // run until you terminate the JVM
+        System.out.println("Starting Camel. Use ctrl + c to terminate the JVM.\n");
+
+    }
+
+    public void setTrackingStrategy(MongoDBTailTrackingEnum trackingStrategy) {
+        this.trackingStrategy = trackingStrategy;
+    }
+
+    public void setPersistRecords(int persistRecords) {
+        this.persistRecords = persistRecords;
+    }
+
+    public void setPersistenTailTracking(boolean persistenTailTracking) {
+        this.persistenTailTracking = persistenTailTracking;
+    }
+
+    void startRouter() throws Exception {
+        // create a Main instance
+        Main main = new Main();
+        main.bind(MongoConstants.CONN_NAME, new MongoClient("localhost", 27017));
+        main.addRouteBuilder(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                getContext().getTypeConverterRegistry().addTypeConverter(InputStream.class, BasicDBObject.class,
+                        new MongoToInputStreamConverter());
+                from("mongodb://" + MongoConstants.CONN_NAME + "?database=" + database
+                        + "&collection=" + collection
+                        + "&persistentTailTracking=" + persistenTailTracking
+                        + "&persistentId=trackerName" + "&tailTrackDb=local"
+                        + "&tailTrackCollection=talendTailTracking"
+                        + "&tailTrackField=lastTrackingValue"
+                        + "&tailTrackIncreasingField=" + increasingField
+                        + "&tailTrackingStrategy=" + trackingStrategy.toString()
+                        + "&persistRecords=" + persistRecords
+                        + "&cursorRegenerationDelay=1000")
+                        .filter().jsonpath("$[?(@.ns=='optlog_test.customers')]")
+                        .id("logger")
+                        .to("log:logger?level=WARN")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                Message message = exchange.getIn();
+                                System.out.println(message.getBody().toString());
+                                exchange.getOut().setBody(message.getBody().toString());
+                            }
+                        });
+            }
+        });
+        main.run();
+    }
+}
+-----------------------------------------------------------------------------------------------------------------------------------
+
 
 [[MongoDB-Typeconversions]]
 Type conversions
