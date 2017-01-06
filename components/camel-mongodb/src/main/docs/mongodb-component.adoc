@@ -66,7 +66,7 @@ The MongoDB component has no options.
 
 
 // endpoint options: START
-The MongoDB component supports 22 endpoint options which are listed below:
+The MongoDB component supports 24 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -90,10 +90,12 @@ The MongoDB component supports 22 endpoint options which are listed below:
 | writeResultAsHeader | advanced | false | boolean | In write operations it determines whether instead of returning WriteResult as the body of the OUT message we transfer the IN message to the OUT and attach the WriteResult as a header.
 | persistentId | tail |  | String | One tail tracking collection can host many trackers for several tailable consumers. To keep them separate each tracker should have its own unique persistentId.
 | persistentTailTracking | tail | false | boolean | Enable persistent tail tracking which is a mechanism to keep track of the last consumed message across system restarts. The next time the system is up the endpoint will recover the cursor from the point where it last stopped slurping records.
+| persistRecords | tail | 100 | int | Sets the number of tailed records after which the tail tracking data is persisted to MongoDB.
 | tailTrackCollection | tail |  | String | Collection where tail tracking information will be persisted. If not specified link MongoDbTailTrackingConfigDEFAULT_COLLECTION will be used by default.
 | tailTrackDb | tail |  | String | Indicates what database the tail tracking mechanism will persist to. If not specified the current database will be picked by default. Dynamicity will not be taken into account even if enabled i.e. the tail tracking database will not vary past endpoint initialisation.
 | tailTrackField | tail |  | String | Field where the last tracked value will be placed. If not specified link MongoDbTailTrackingConfigDEFAULT_FIELD will be used by default.
 | tailTrackIncreasingField | tail |  | String | Correlation field in the incoming record which is of increasing nature and will be used to position the tailing cursor every time it is generated. The cursor will be (re)created with a query of type: tailTrackIncreasingField lastValue (possibly recovered from persistent tail tracking). Can be of type Integer Date String etc. NOTE: No support for dot notation at the current time so the field should be at the top level of the document.
+| tailTrackingStrategy | tail | LITERAL | MongoDBTailTrackingEnum | Sets the strategy used to extract the increasing field value and to create the query to position the tail cursor.
 |=======================================================================
 {% endraw %}
 // endpoint options: END
