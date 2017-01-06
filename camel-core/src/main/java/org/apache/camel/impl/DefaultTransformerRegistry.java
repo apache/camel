@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.transformer.TransformerKey;
+import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
@@ -190,13 +191,23 @@ public class DefaultTransformerRegistry extends LRUCache<TransformerKey, Transfo
     }
 
     @Override
-    public boolean isStatic(String key) {
-        return staticMap.containsKey(new EndpointKey(key));
+    public boolean isStatic(String scheme) {
+        return staticMap.containsKey(new TransformerKey(scheme));
     }
 
     @Override
-    public boolean isDynamic(String key) {
-        return super.containsKey(new EndpointKey(key));
+    public boolean isStatic(DataType from, DataType to) {
+        return staticMap.containsKey(new TransformerKey(from, to));
+    }
+
+    @Override
+    public boolean isDynamic(String scheme) {
+        return super.containsKey(new TransformerKey(scheme));
+    }
+
+    @Override
+    public boolean isDynamic(DataType from, DataType to) {
+        return super.containsKey(new TransformerKey(from, to));
     }
 
     @Override
