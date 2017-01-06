@@ -153,6 +153,7 @@ public class MongoDbTailingProcess implements Runnable {
     private void doRun() {
         int counter = 0;
         int persistRecords = endpoint.getPersistRecords();
+        boolean persistRegularly = persistRecords > 0;
         // while the cursor has more values, keepRunning is true and the cursorId is not 0, which symbolizes that the cursor is dead
         try {
             while (cursor.hasNext() && keepRunning) { //cursor.getCursorId() != 0 &&
@@ -167,7 +168,7 @@ public class MongoDbTailingProcess implements Runnable {
                     // do nothing
                 }
                 tailTracking.setLastVal(dbObj);
-                if (counter++ % persistRecords == 0) {
+                if (persistRegularly && counter++ % persistRecords == 0) {
                     tailTracking.persistToStore();
                 }
             }
