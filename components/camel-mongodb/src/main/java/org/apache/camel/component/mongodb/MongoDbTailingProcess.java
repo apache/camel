@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -151,6 +151,8 @@ public class MongoDbTailingProcess implements Runnable {
      * The heart of the tailing process.
      */
     private void doRun() {
+        int counter = 0;
+        int persistRecords = endpoint.getPersistRecords();
         // while the cursor has more values, keepRunning is true and the cursorId is not 0, which symbolizes that the cursor is dead
         try {
             while (cursor.hasNext() && keepRunning) { //cursor.getCursorId() != 0 &&
@@ -165,6 +167,9 @@ public class MongoDbTailingProcess implements Runnable {
                     // do nothing
                 }
                 tailTracking.setLastVal(dbObj);
+                if (counter++ % persistRecords == 0) {
+                    tailTracking.persistToStore();
+                }
             }
         } catch (MongoCursorNotFoundException e) {
             // we only log the warning if we are not stopping, otherwise it is expected because the stop() method kills the cursor just in case it is blocked
@@ -187,7 +192,8 @@ public class MongoDbTailingProcess implements Runnable {
         if (lastVal == null) {
             answer = dbCol.find().cursorType(CursorType.TailableAwait).iterator();
         } else {
-            BasicDBObject queryObj = new BasicDBObject(tailTracking.getIncreasingFieldName(), new BasicDBObject("$gt", lastVal));
+            final String increasingFieldName = tailTracking.getIncreasingFieldName();
+            BasicDBObject queryObj = endpoint.getTailTrackingStrategy().createQuery(lastVal, increasingFieldName);
             answer = dbCol.find(queryObj).cursorType(CursorType.TailableAwait).iterator();
         }
         return answer;
