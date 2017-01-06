@@ -20,15 +20,7 @@ public class MongoDbTailTrackingConfig {
     
     static final String DEFAULT_COLLECTION = "camelTailTracking";
     static final String DEFAULT_FIELD = "lastTrackingValue";
-    
-    /**
-     * See {@link MongoDbEndpoint#setTailTrackIncreasingField(String)}
-     */
-    final String increasingField;
-    /**
-     * See {@link MongoDbEndpoint#setPersistentTailTracking(boolean)}
-     */
-    final boolean persistent;
+
     /**
      * See {@link MongoDbEndpoint#setTailTrackDb(String)}
      */
@@ -37,6 +29,14 @@ public class MongoDbTailTrackingConfig {
      * See {@link MongoDbEndpoint#setTailTrackCollection(String)}
      */
     public final String collection;
+    /**
+     * See {@link MongoDbEndpoint#setTailTrackIncreasingField(String)}
+     */
+    final String increasingField;
+    /**
+     * See {@link MongoDbEndpoint#setPersistentTailTracking(boolean)}
+     */
+    final boolean persistent;
     /**
      * See {@link MongoDbEndpoint#setTailTrackField(String)}
      */
