@@ -106,7 +106,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     @UriParam(label = "tail", defaultValue = "LITERAL")
     private MongoDBTailTrackingEnum tailTrackingStrategy;
 
-    @UriParam(label = "tail", defaultValue = "100")
+    @UriParam(label = "tail", defaultValue = "-1")
     private int persistRecords;
 
     private MongoDatabase mongoDatabase;
