@@ -1,0 +1,165 @@
+[[Firebase-FirebaseComponent]]
+Firebase Component
+~~~~~~~~~~~~~~~~~
+
+*Available as of Camel 2.19*
+
+The *Firebase* component enables you to save, modify data in Google Firebase database.
+Furthermore it allows you to consume and process all child events mapped to a specific Firebase reference.
+
+This component supports producer and event based consumer endpoints.
+
+The Firebase consumer is an event based consumer and can be used to listen
+and respond to five types of Firebase events: add, change, remove, move and cancel 
+
+Maven users will need to add the following dependency to
+their `pom.xml` for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-firebase</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+[[Firebase-URIformat]]
+URI format
+^^^^^^^^^^
+
+[source,java]
+-----------------------------
+firebase://[endpoint]?[options]
+-----------------------------
+
+You can append query options to the URI in the following
+format, `?option=value&option=value1&...`
+
+Do not forget to URL encode the option values.
+
+[[Firebase-Options]]
+Options
+^^^^^^^
+
+// endpoint options: START
+The Firebase component supports 9 endpoint options which are listed below:
+
+{% raw %}
+[width="100%",cols="2,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| databaseUrl | common |  | String | *Required* The Firebase database URL. Always uses https
+| keyName | common | firebaseKey | String | The Camel exchange header name in which the Firebase key is specified. Only needed in case you are saving or updating data
+| reply | common | reply | boolean | If true the save or update request (set value in Firebase terms) is fired and the reply will be ignored else the routing thread will wait and the reply will be saved in the exchange message
+| rootReference | common |  | String | *Required* The path in the database tree where the key value pairs are to be stored
+| serviceAccountFile | common |  | String | *Required* The path to the JSON file which provided the keys used to connect to Firebase. This file is typically generated when you create the database
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+|=======================================================================
+{% endraw %}
+// endpoint options: END
+
+
+[[Firebase-MessageHeadersCamel]]
+Message Headers Camel 
+++++++++++++++++++++++
+
+
+[width="100%",cols="20%,10%,70%",options="header"]
+|=======================================================================
+| Header | Type | Description
+| firebaseKey | `String` | The Firebase key to which a child listener is attached. This name of this parameter can be overriden using the *firebaseKey* option
+|=======================================================================
+
+[[Firebase-Usageexamples]]
+
+Usage examples
+^^^^^^^^^^^^^^
+
+[[Firebase-Consumer]]
+Firebase Consumer
++++++++++++++++++
+
+The code below demonstrates how you can create a route which consumes the messages coming from a Firebase listener.
+
+[source,java]
+--------------------------------------------------------------------------------------
+@Override
+protected RouteBuilder createRouteBuilder() throws Exception {
+    final String databaseUrl = "gil-sample-app.firebaseio.com";
+    final String originalRootReference = "server/saving-data";
+    String serviceAccountFile = ConfigurationProvider.createFirebaseConfigLink();
+    String rootReference = URLEncoder.encode(originalRootReference, "UTF-8");
+    insertDummyData(String.format("https://%s", databaseUrl), originalRootReference, serviceAccountFile);
+
+    return new RouteBuilder() {
+        public void configure() {
+            try {
+                from(String.format("firebase://" + databaseUrl + "?rootReference=%s&serviceAccountFile=%s",
+                        rootReference, serviceAccountFile))
+                        .to("log:firebasetest?level=WARN")
+                        .to("mock:result");
+            } catch (Exception e) {
+                fail(e.toString());
+            }
+        }
+    };
+}
+--------------------------------------------------------------------------------------
+
+[[Firebase-Producer]]
+Firebase Producer
++++++++++++++++++
+
+The example below shows how you can send data to Firebase.
+
+[source,java]
+--------------------------------------
+CamelContext context = new DefaultCamelContext();
+context.addRoutes(new RouteBuilder() {
+    @Override
+    public void configure() throws Exception {
+        String rootReference = URLEncoder.encode("server/saving-data", "UTF-8");
+        String serviceAccountFile = "firebase-admin-connection.json";
+        from(sampleInputProvider.getTargetFolder().toUri().toString())
+            .process(exchange -> {
+                GenericFile file = (GenericFile) exchange.getIn().getBody();
+                String content = new String(Files.readAllBytes(Paths.get(file.getAbsoluteFilePath())), "UTF-8");
+                String[] keyValue = content.split("=");
+                final Message out = exchange.getOut();
+                out.setHeader("firebaseKey", keyValue[0]);
+                out.setBody(keyValue[1].trim());
+            })
+            .to(String.format("firebase://%s?rootReference=%s&serviceAccountFile=%s&reply=%b",
+                    "gil-sample-app.firebaseio.com", rootReference, serviceAccountFile, reply))
+            .to("log:whenFirebaseSet?level=WARN")
+            .process(exchange1 -> {
+                assertThat(exchange1.getIn().getBody().getClass()).isEqualTo(expectedBodyClass);
+                if (reply) {
+                    assertThat(exchange1.getIn().getHeader("firebaseKey")).isNotNull();
+                }
+                try {
+                    reentrantLock.lock();
+                    wake.signal();
+                } finally {
+                    reentrantLock.unlock();
+                }
+            });
+    }
+});
+--------------------------------------
+
+[[Exec-SeeAlso]]
+See Also
+^^^^^^^^
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]
+* link:https://firebase.google.com/[Firebase]
+* link:https://console.firebase.google.com/[Firebase console]
