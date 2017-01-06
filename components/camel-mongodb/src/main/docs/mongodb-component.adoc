@@ -820,11 +820,12 @@ Oplog Tail Tracking
 
 The *oplog* collection tracking feature allows to implement trigger like functionality in MongoDB.
 In order to activate this collection you will have first to activate a replica set. For more
-information on this topic please check https://docs.mongodb.com/manual/tutorial/deploy-replica-set/
+information on this topic please check https://docs.mongodb.com/manual/tutorial/deploy-replica-set/ .
 
-Here is an example of a Java based DSL route demonstrating how you can use the component to track the oplog
+Below you can find an example of a Java DSL based route demonstrating how you can use the component to track the *oplog*
 collection. In this specific case we are filtering the events which affect a collection *customers* in
-database *optlog_test*:
+database *optlog_test*. Note that the `tailTrackIncreasingField` is a timestamp field ('ts') which implies
+that you have to use the `tailTrackingStrategy` parameter with the *TIMESTAMP* value.
 
 [source,java]
 -----------------------------------------------------------------------------------------------------------------------------------
