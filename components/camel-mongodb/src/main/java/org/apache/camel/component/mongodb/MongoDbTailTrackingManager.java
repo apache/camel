@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,10 +26,10 @@ import org.slf4j.LoggerFactory;
 
 public class MongoDbTailTrackingManager {
 
+    public Object lastVal;
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbTailTrackingManager.class);
     private final MongoClient connection;
     private final MongoDbTailTrackingConfig config;
-    public Object lastVal;
     private MongoCollection<BasicDBObject> dbCol;
     private BasicDBObject trackingObj;
 
@@ -86,7 +86,7 @@ public class MongoDbTailTrackingManager {
         if (config.increasingField == null) {
             return;
         }
-        lastVal = (config.mongoDBTailTrackingStrategy.extractLastVal(o, config.increasingField));
+        lastVal = config.mongoDBTailTrackingStrategy.extractLastVal(o, config.increasingField);
     }
 
     public String getIncreasingFieldName() {
