@@ -20,20 +20,22 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.model.InputTypeDefinition;
+import org.apache.camel.model.OutputTypeDefinition;
 import org.apache.camel.support.ServiceSupport;
 
 /**
  * <a href="http://camel.apache.org/transformer.html">Transformer</a>
  * performs message transformation according to the declared data type.
- * There are two Exchange property indicates current message type, {@link Exchange.INPUT_TYPE}
- * holds input message type and {@link Exchange.OUTPUT_TYPE} holds output message type. If the
+ * There are two Exchange property indicates current message type, {@link Exchange#INPUT_TYPE}
+ * holds input message type and {@link Exchange#OUTPUT_TYPE} holds output message type. If the
  * input type and/or output type declared by {@link InputTypeDefinition}
  * and/or {@link OutputTypeDefinition} in the route definition is different from those property
  * at runtime, camel internal processor look for a Transformer which transforms from
  * the current message type to the expected message type.
  *  
- *  {@see InputTypeDefinition}
- *  {@see OutputTypeDefinition}
+ * @see InputTypeDefinition
+ * @see OutputTypeDefinition
  */
 public abstract class Transformer extends ServiceSupport implements CamelContextAware {
 
@@ -44,6 +46,7 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
 
     /**
      * Perform data transformation with specified from/to type.
+     *
      * @param message message to apply transformation
      * @param from 'from' data type
      * @param to 'to' data type
@@ -52,7 +55,6 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
 
     /**
      * Get a data model which is supported by this transformer.
-     * @return data model
      */
     public String getModel() {
         return model;
@@ -60,7 +62,6 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
 
     /**
      * Get 'from' data type.
-     * @return 'from' data type
      */
     public DataType getFrom() {
         return from;
@@ -68,7 +69,6 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
 
     /**
      * Get 'to' data type.
-     * @return 'to' data type
      */
     public DataType getTo() {
         return to;
@@ -76,8 +76,8 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
 
     /**
      * Set data model.
+     *
      * @param model data model
-     * @return this Transformer instance
      */
     public Transformer setModel(String model) {
         this.model = model;
@@ -86,8 +86,8 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
 
     /**
      * Set 'from' data type.
+     *
      * @param from 'from' data type
-     * @return this Transformer instance
      */
     public Transformer setFrom(String from) {
         this.from = new DataType(from);
@@ -96,8 +96,8 @@ public abstract class Transformer extends ServiceSupport implements CamelContext
 
     /**
      * Set 'to' data type.
+     *
      * @param to 'to' data type
-     * @return this Transformer instance
      */
     public Transformer setTo(String to) {
         this.to = new DataType(to);
