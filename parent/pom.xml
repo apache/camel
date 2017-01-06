@@ -146,8 +146,8 @@
     <commons-pool2-version>2.4.2</commons-pool2-version>
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <compress-lzf-version>1.0.3</compress-lzf-version>
-    <consul-client-version>0.13.3</consul-client-version>
-    <consul-client-bundle-version>0.13.3_1</consul-client-bundle-version>
+    <consul-client-version>0.13.8</consul-client-version>
+    <consul-client-bundle-version>0.13.8_1</consul-client-bundle-version>
     <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
     <curator-version>2.11.0</curator-version>
     <cxf-version>3.1.9</cxf-version>
