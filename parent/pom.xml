@@ -386,7 +386,7 @@
     <karaf4-version>4.0.8</karaf4-version>
     <kie-version>6.5.0.Final</kie-version>
     <krati-version>0.4.9</krati-version>
-    <kubernetes-client-version>1.4.31</kubernetes-client-version>
+    <kubernetes-client-version>1.4.33</kubernetes-client-version>
     <kubernetes-model-version>1.0.65</kubernetes-model-version>
     <kxml2-bundle-version>2.3.0_3</kxml2-bundle-version>
     <leveldbjni-version>1.8</leveldbjni-version>
@@ -474,7 +474,6 @@
     <openhft-lang-version>6.8.2</openhft-lang-version>
     <openjpa-version>2.4.1</openjpa-version>
     <openshift-java-client-version>2.7.0.Final</openshift-java-client-version>
-    <openshift-client-version>1.4.31</openshift-client-version>
     <openstack4j-version>3.0.2</openstack4j-version>
     <openstack4j-guava-version>17.0</openstack4j-guava-version>
     <ops4j-base-version>1.5.0</ops4j-base-version>
