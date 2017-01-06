@@ -103,6 +103,12 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     @UriParam
     private MongoDbOutputType outputType;
 
+    @UriParam(label = "tail", defaultValue = "LITERAL")
+    private MongoDBTailTrackingEnum tailTrackingStrategy;
+
+    @UriParam(label = "tail", defaultValue = "100")
+    private int persistRecords;
+
     private MongoDatabase mongoDatabase;
     private MongoCollection<BasicDBObject> mongoCollection;
 
@@ -178,6 +184,9 @@ public class MongoDbEndpoint extends DefaultEndpoint {
             if (consumerType == MongoDbConsumerType.tailable) {
                 if (tailTrackIncreasingField == null) {
                     throw new IllegalArgumentException("tailTrackIncreasingField option must be set for tailable cursor MongoDB consumer endpoint");
+                }
+                if (persistentTailTracking && (ObjectHelper.isEmpty(persistentId))) {
+                    throw new IllegalArgumentException("persistentId is compulsory for persistent tail tracking");
                 }
                 if (persistentTailTracking && (ObjectHelper.isEmpty(persistentId))) {
                     throw new IllegalArgumentException("persistentId is compulsory for persistent tail tracking");
@@ -586,7 +595,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     public MongoDbTailTrackingConfig getTailTrackingConfig() {
         if (tailTrackingConfig == null) {
             tailTrackingConfig = new MongoDbTailTrackingConfig(persistentTailTracking, tailTrackIncreasingField, tailTrackDb == null ? database : tailTrackDb, tailTrackCollection,
-                    tailTrackField, getPersistentId());
+                    tailTrackField, getPersistentId(), tailTrackingStrategy);
         }
         return tailTrackingConfig;
     }
@@ -654,5 +663,31 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     public MongoCollection<BasicDBObject> getMongoCollection() {
         return mongoCollection;
+    }
+
+    public MongoDBTailTrackingEnum getTailTrackingStrategy() {
+        return tailTrackingStrategy;
+    }
+
+    /**
+     * Sets the strategy used to extract the increasing field value and to create the query to position the
+     * tail cursor.
+     * @param tailTrackingStrategy The strategy used to extract the increasing field value and to create the query to position the
+     * tail cursor.
+     */
+    public void setTailTrackingStrategy(MongoDBTailTrackingEnum tailTrackingStrategy) {
+        this.tailTrackingStrategy = tailTrackingStrategy;
+    }
+
+    public int getPersistRecords() {
+        return persistRecords;
+    }
+
+    /**
+     * Sets the number of tailed records after which the tail tracking data is persisted to MongoDB.
+     * @param persistRecords The number of tailed records after which the tail tracking data is persisted to MongoDB.
+     */
+    public void setPersistRecords(int persistRecords) {
+        this.persistRecords = persistRecords;
     }
 }
