@@ -58,7 +58,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbEndpoint.class);
 
     private MongoClient mongoConnection;
-    
+
     @UriPath @Metadata(required = "true")
     private String connectionBean;
     @UriParam
@@ -299,7 +299,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         setWriteReadOptionsOnConnection();
         super.doStart();
     }
-    
+
     @Override
     protected void doStop() throws Exception {
         super.doStop();
