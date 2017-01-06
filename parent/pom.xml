@@ -271,8 +271,9 @@
     <ignite-version>1.8.0</ignite-version>
     <ignite-version-range>[1.5.0-b1,1.6)</ignite-version-range>
     <infinispan-version>8.2.5.Final</infinispan-version>
-    <influx-java-driver-version>2.4</influx-java-driver-version>
-    <influx-java-driver-bundle-version>2.4_2</influx-java-driver-bundle-version>
+    <influx-java-driver-version>2.5</influx-java-driver-version>
+    <influx-java-driver-bundle-version>2.5_1</influx-java-driver-bundle-version>
+    <influx-guava-version>20.0</influx-guava-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
     <ironmq-version>3.0.4</ironmq-version>
