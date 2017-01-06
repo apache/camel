@@ -263,8 +263,8 @@
     <httpclient4-version>4.5.2</httpclient4-version>
     <httpasyncclient-version>4.1.2</httpasyncclient-version>
     <httpclient-version>3.1</httpclient-version>
-    <hystrix-version>1.5.8</hystrix-version>
-    <hystrix-bundle-version>1.5.6_1</hystrix-bundle-version>
+    <hystrix-version>1.5.9</hystrix-version>
+    <hystrix-bundle-version>1.5.9_1</hystrix-bundle-version>
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
     <ical4j-version>1.0.7</ical4j-version>
