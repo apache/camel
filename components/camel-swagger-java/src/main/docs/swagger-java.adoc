@@ -212,7 +212,7 @@ web.xml.
   <!-- enable CORS filter so people can use swagger ui to browse and test the apis -->
   <filter>
     <filter-name>RestSwaggerCorsFilter</filter-name>
-    <filter-class>org.apache.camel.swagger.rest.RestSwaggerCorsFilter</filter-class>
+    <filter-class>org.apache.camel.swagger.servlet.RestSwaggerCorsFilter</filter-class>
   </filter>
 
 
