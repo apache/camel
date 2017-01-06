@@ -345,8 +345,8 @@
     <jodatime-bundle-version>1.6.2</jodatime-bundle-version>
     <jodatime2-bundle-version>2.9.7</jodatime2-bundle-version>
     <jolokia-version>1.3.5</jolokia-version>
-    <jolt-version>0.0.24</jolt-version>
-    <jolt-bundle-version>0.0.24_1</jolt-bundle-version>
+    <jolt-version>0.1.0</jolt-version>
+    <jolt-bundle-version>0.1.0_1</jolt-bundle-version>
     <johnzon-version>1.0.0</johnzon-version>
     <josql-bundle-version>1.5_5</josql-bundle-version>
     <josql-version>1.5</josql-version>
