@@ -1142,7 +1142,7 @@
     <bundle dependency='true'>mvn:io.fabric8/zjsonpatch/${zjsonpatch-version}</bundle>
     <bundle dependency='true'>mvn:io.fabric8/kubernetes-model/${kubernetes-model-version}</bundle>
     <bundle dependency='true'>mvn:io.fabric8/kubernetes-client/${kubernetes-client-version}/jar/bundle</bundle>
-    <bundle dependency='true'>mvn:io.fabric8/openshift-client/${openshift-client-version}/jar/bundle</bundle>
+    <bundle dependency='true'>mvn:io.fabric8/openshift-client/${kubernetes-client-version}/jar/bundle</bundle>
     <bundle>mvn:org.apache.camel/camel-kubernetes/${project.version}</bundle>
   </feature>
   <feature name='camel-ldap' version='${project.version}' resolver='(obr)' start-level='50'>
