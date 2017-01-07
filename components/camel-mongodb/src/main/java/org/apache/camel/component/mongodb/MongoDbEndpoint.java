@@ -58,7 +58,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbEndpoint.class);
 
     private MongoClient mongoConnection;
-    
+
     @UriPath @Metadata(required = "true")
     private String connectionBean;
     @UriParam
@@ -102,6 +102,12 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     @UriParam
     private MongoDbOutputType outputType;
+
+    @UriParam(label = "tail", defaultValue = "LITERAL")
+    private MongoDBTailTrackingEnum tailTrackingStrategy;
+
+    @UriParam(label = "tail", defaultValue = "-1")
+    private int persistRecords;
 
     private MongoDatabase mongoDatabase;
     private MongoCollection<BasicDBObject> mongoCollection;
@@ -290,7 +296,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         setWriteReadOptionsOnConnection();
         super.doStart();
     }
-    
+
     @Override
     protected void doStop() throws Exception {
         super.doStop();
@@ -460,7 +466,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
      * Sets a MongoDB {@link ReadPreference} on the Mongo connection. Read preferences set directly on the connection will be
      * overridden by this setting.
      * <p/>
-     * The {@link com.mongodb.ReadPreference#valueOf(String)} utility method is used to resolve the passed {@code readPreference}
+     * The {@link ReadPreference#valueOf(String)} utility method is used to resolve the passed {@code readPreference}
      * value. Some examples for the possible values are {@code nearest}, {@code primary} or {@code secondary} etc.
      * 
      * @param readPreference the name of the read preference to set
@@ -586,7 +592,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     public MongoDbTailTrackingConfig getTailTrackingConfig() {
         if (tailTrackingConfig == null) {
             tailTrackingConfig = new MongoDbTailTrackingConfig(persistentTailTracking, tailTrackIncreasingField, tailTrackDb == null ? database : tailTrackDb, tailTrackCollection,
-                    tailTrackField, getPersistentId());
+                    tailTrackField, getPersistentId(), tailTrackingStrategy);
         }
         return tailTrackingConfig;
     }
@@ -654,5 +660,34 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     public MongoCollection<BasicDBObject> getMongoCollection() {
         return mongoCollection;
+    }
+
+    public MongoDBTailTrackingEnum getTailTrackingStrategy() {
+        if(tailTrackingStrategy == null) {
+            tailTrackingStrategy = MongoDBTailTrackingEnum.LITERAL;
+        }
+        return tailTrackingStrategy;
+    }
+
+    /**
+     * Sets the strategy used to extract the increasing field value and to create the query to position the
+     * tail cursor.
+     * @param tailTrackingStrategy The strategy used to extract the increasing field value and to create the query to position the
+     * tail cursor.
+     */
+    public void setTailTrackingStrategy(MongoDBTailTrackingEnum tailTrackingStrategy) {
+        this.tailTrackingStrategy = tailTrackingStrategy;
+    }
+
+    public int getPersistRecords() {
+        return persistRecords;
+    }
+
+    /**
+     * Sets the number of tailed records after which the tail tracking data is persisted to MongoDB.
+     * @param persistRecords The number of tailed records after which the tail tracking data is persisted to MongoDB.
+     */
+    public void setPersistRecords(int persistRecords) {
+        this.persistRecords = persistRecords;
     }
 }
