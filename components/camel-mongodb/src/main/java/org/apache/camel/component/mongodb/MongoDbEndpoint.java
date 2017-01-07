@@ -663,6 +663,9 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     public MongoDBTailTrackingEnum getTailTrackingStrategy() {
+        if(tailTrackingStrategy == null) {
+            tailTrackingStrategy = MongoDBTailTrackingEnum.LITERAL;
+        }
         return tailTrackingStrategy;
     }
 
