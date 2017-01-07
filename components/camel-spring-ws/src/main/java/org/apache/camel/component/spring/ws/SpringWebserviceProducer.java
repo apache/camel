@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.client.core.WebServiceMessageCallback;
 import org.springframework.ws.client.core.WebServiceTemplate;
+import org.springframework.ws.mime.Attachment;
 import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapMessage;
@@ -98,21 +99,30 @@ public class SpringWebserviceProducer extends DefaultProducer {
             public void doWithMessage(WebServiceMessage responseMessage) throws IOException, TransformerException {
                 SoapMessage soapMessage = (SoapMessage) responseMessage;
                 if (ExchangeHelper.isOutCapable(exchange)) {
-                    exchange.getOut().copyFromWithNewBody(exchange.getIn(), responseMessage.getPayloadSource());
-                    if (soapMessage.getSoapHeader() != null && getEndpoint().getConfiguration().isAllowResponseHeaderOverride()) {
-                        populateMessageHeaderFromResponse(exchange.getOut(), soapMessage.getSoapHeader());
-                    }
+                    exchange.getOut().copyFromWithNewBody(exchange.getIn(), soapMessage.getPayloadSource());
+                    processHeaderAndAttachments(exchange.getOut(), soapMessage);
                 } else {
-                    exchange.getIn().setBody(responseMessage.getPayloadSource());
-                    if (soapMessage.getSoapHeader() != null && getEndpoint().getConfiguration().isAllowResponseHeaderOverride()) {
-                        populateMessageHeaderFromResponse(exchange.getIn(), soapMessage.getSoapHeader());
-                    }
+                    exchange.getIn().setBody(soapMessage.getPayloadSource());
+                    processHeaderAndAttachments(exchange.getIn(), soapMessage);
                 }
 
             }
         });
     }
-
+    /**
+     * Populates soap message headers and attachments from soap response
+     * @param inOrOut {@link Message}
+     * @param soapMessage {@link SoapMessage}
+     */
+    private void processHeaderAndAttachments(Message inOrOut, SoapMessage soapMessage) {
+    	 if (soapMessage.getSoapHeader() != null && getEndpoint().getConfiguration().isAllowResponseHeaderOverride()) { 
+    		 populateMessageHeaderFromResponse(inOrOut, soapMessage.getSoapHeader());
+    	 }
+    	 if (soapMessage.getAttachments() != null && getEndpoint().getConfiguration().isAllowResponseAttachmentOverride()) {
+    		 populateMessageAttachmentsFromResponse(inOrOut, soapMessage.getAttachments());
+    	 }
+    }
+    
     /**
      * Populates message headers from soapHeader response
      * 
@@ -139,7 +149,18 @@ public class SpringWebserviceProducer extends DefaultProducer {
 
         }
     }
-
+    /**
+     * Populates message attachments from soap response attachments 
+     * @param inOrOut {@link Message}
+     * @param soapMessage {@link SoapMessage}
+     */
+    private void populateMessageAttachmentsFromResponse(Message inOrOut, Iterator<Attachment> attachments) {
+    	while (attachments.hasNext()) {
+    		Attachment attachment = attachments.next();
+    		inOrOut.getAttachments().put(attachment.getContentId(), attachment.getDataHandler());
+    	}
+    }    
+    
     private void prepareMessageSenders(SpringWebserviceConfiguration configuration) {
         // Skip this whole thing if none of the relevant config options are set.
         if (!(configuration.getTimeout() > -1) && configuration.getSslContextParameters() == null) {

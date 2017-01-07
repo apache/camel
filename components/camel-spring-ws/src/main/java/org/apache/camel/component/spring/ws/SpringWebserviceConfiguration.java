@@ -72,7 +72,9 @@ public class SpringWebserviceConfiguration {
     private int timeout = -1;
     @UriParam(label = "producer")
     private boolean allowResponseHeaderOverride;
-
+    @UriParam(label = "producer")
+    private boolean allowResponseAttachmentOverride;
+    
     /* Consumer configuration */
     @UriParam(label = "consumer")
     private EndpointMappingKey endpointMappingKey;
@@ -401,5 +403,22 @@ public class SpringWebserviceConfiguration {
     public void setAllowResponseHeaderOverride(boolean allowResponseHeaderOverride) {
         this.allowResponseHeaderOverride = allowResponseHeaderOverride;
     }
+    /**
+     * @return boolean - true, will override attachments with spring-ws response message attachments
+     */
+    public boolean isAllowResponseAttachmentOverride() {
+        return allowResponseAttachmentOverride;
+    }
 
+    /**
+     * Option to override soap response attachments in in/out exchange with attachments info the actual service layer.
+     * If the invoked service appends or rewrites the soap attachments this option when set to true, allows the modified
+     * soap attachments to be overwritten in in/out message attachments
+     * 
+     * @param allowResponseAttachmentOverride
+     *            - true, will override attachments with spring-ws response message attachments
+     */
+    public void setAllowResponseAttachmentOverride(boolean allowResponseAttachmentOverride) {
+        this.allowResponseAttachmentOverride = allowResponseAttachmentOverride;
+    }
 }
