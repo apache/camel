@@ -188,9 +188,6 @@ public class MongoDbEndpoint extends DefaultEndpoint {
                 if (persistentTailTracking && (ObjectHelper.isEmpty(persistentId))) {
                     throw new IllegalArgumentException("persistentId is compulsory for persistent tail tracking");
                 }
-                if (persistentTailTracking && (ObjectHelper.isEmpty(persistentId))) {
-                    throw new IllegalArgumentException("persistentId is compulsory for persistent tail tracking");
-                }
             }
 
         } else {
