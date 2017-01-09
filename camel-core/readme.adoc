@@ -143,7 +143,7 @@ Expression Languages
 
 | link:src/main/docs/header-language.adoc[Header] (camel-core) | An expression which extracts the named exchange header
 
-| link:src/main/docs/ref-language.adoc[Ref] (camel-core) | For using a custom expression
+| link:src/main/docs/ref-language.adoc[Ref] (camel-core) | For using a custom expression or predicate
 
 | link:src/main/docs/simple-language.adoc[Simple] (camel-core) | For expressions and predicates using the simple language
 
