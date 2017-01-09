@@ -1796,21 +1796,31 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public SimpleValidationResult validateSimpleExpression(String simple) {
-        return doValidateSimple(simple, false);
+        return doValidateSimple(DefaultCamelCatalog.class.getClassLoader(), simple, false);
+    }
+
+    @Override
+    public SimpleValidationResult validateSimpleExpression(ClassLoader classLoader, String simple) {
+        return doValidateSimple(classLoader, simple, false);
     }
 
     @Override
     public SimpleValidationResult validateSimplePredicate(String simple) {
-        return doValidateSimple(simple, true);
+        return doValidateSimple(DefaultCamelCatalog.class.getClassLoader(), simple, true);
     }
 
-    private SimpleValidationResult doValidateSimple(String simple, boolean predicate) {
+    @Override
+    public SimpleValidationResult validateSimplePredicate(ClassLoader classLoader, String simple) {
+        return doValidateSimple(classLoader, simple, true);
+    }
+
+    private SimpleValidationResult doValidateSimple(ClassLoader classLoader, String simple, boolean predicate) {
         SimpleValidationResult answer = new SimpleValidationResult(simple);
 
         Object instance = null;
         Class clazz = null;
         try {
-            clazz = DefaultCamelCatalog.class.getClassLoader().loadClass("org.apache.camel.language.simple.SimpleLanguage");
+            clazz = classLoader.loadClass("org.apache.camel.language.simple.SimpleLanguage");
             instance = clazz.newInstance();
         } catch (Exception e) {
             // ignore
