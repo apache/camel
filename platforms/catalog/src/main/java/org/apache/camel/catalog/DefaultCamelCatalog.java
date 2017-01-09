@@ -54,10 +54,12 @@ import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyPrefix;
 import static org.apache.camel.catalog.JSonSchemaHelper.getRow;
 import static org.apache.camel.catalog.JSonSchemaHelper.isComponentLenientProperties;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyBoolean;
+import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyConsumerOnly;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyInteger;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyMultiValue;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyNumber;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyObject;
+import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyProducerOnly;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyRequired;
 import static org.apache.camel.catalog.JSonSchemaHelper.stripOptionalPrefixFromName;
 import static org.apache.camel.catalog.URISupport.createQueryString;
@@ -960,11 +962,16 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public EndpointValidationResult validateEndpointProperties(String uri) {
-        return validateEndpointProperties(uri, false);
+        return validateEndpointProperties(uri, false, false, false);
     }
 
     @Override
     public EndpointValidationResult validateEndpointProperties(String uri, boolean ignoreLenientProperties) {
+        return validateEndpointProperties(uri, ignoreLenientProperties,false, false);
+    }
+
+    @Override
+    public EndpointValidationResult validateEndpointProperties(String uri, boolean ignoreLenientProperties, boolean consumerOnly, boolean producerOnly) {
         EndpointValidationResult result = new EndpointValidationResult(uri);
 
         Map<String, String> properties;
@@ -1057,6 +1064,23 @@ public class DefaultCamelCatalog implements CamelCatalog {
                     }
                 }
             } else {
+                if ("parameter".equals(kind)) {
+                    // consumer only or producer only mode for parameters
+                    if (consumerOnly) {
+                        boolean producer = isPropertyProducerOnly(rows, name);
+                        if (producer) {
+                            // the option is only for producer so you cannot use it in consumer mode
+                            result.addNotConsumerOnly(name);
+                        }
+                    } else if (producerOnly) {
+                        boolean consumer = isPropertyConsumerOnly(rows, name);
+                        if (consumer) {
+                            // the option is only for consumer so you cannot use it in producer mode
+                            result.addNotProducerOnly(name);
+                        }
+                    }
+                }
+
                 // default value
                 String defaultValue = getPropertyDefaultValue(rows, name);
                 if (defaultValue != null) {
@@ -1096,8 +1120,8 @@ public class DefaultCamelCatalog implements CamelCatalog {
                     }
                 }
 
-                // is reference lookup of bean (not applicable for @UriPath, or multi-valued)
-                if (!mulitValue && !"path".equals(kind) && isPropertyObject(rows, name)) {
+                // is reference lookup of bean (not applicable for @UriPath, enums, or multi-valued)
+                if (!mulitValue && enums == null && !"path".equals(kind) && isPropertyObject(rows, name)) {
                     // must start with # and be at least 2 characters
                     if (!value.startsWith("#") || value.length() <= 1) {
                         result.addInvalidReference(name, value);
