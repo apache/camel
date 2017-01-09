@@ -878,4 +878,30 @@ public class CamelCatalogTest {
         assertTrue(result.isSuccess());
     }
 
+    @Test
+    public void testValidateEndpointConsumerOnly() throws Exception {
+        String uri = "file:inbox?bufferSize=4096&readLock=changed&delete=true";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertTrue(result.isSuccess());
+
+        uri = "file:inbox?bufferSize=4096&readLock=changed&delete=true&fileExist=Append";
+        result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertFalse(result.isSuccess());
+
+        assertEquals("fileExist", result.getNotConsumerOnly().iterator().next());
+    }
+
+    @Test
+    public void testValidateEndpointProducerOnly() throws Exception {
+        String uri = "file:outbox?bufferSize=4096&fileExist=Append";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertTrue(result.isSuccess());
+
+        uri = "file:outbox?bufferSize=4096&fileExist=Append&delete=true";
+        result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertFalse(result.isSuccess());
+
+        assertEquals("delete", result.getNotProducerOnly().iterator().next());
+    }
+
 }
