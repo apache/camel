@@ -363,6 +363,17 @@ public interface CamelCatalog {
     SimpleValidationResult validateSimpleExpression(String simple);
 
     /**
+     * Parses and validates the simple expression.
+     * <p/>
+     * <b>Important:</b> This requires having <tt>camel-core</tt> on the classpath
+     *
+     * @param classLoader a custom classloader to use for loading the simple language from the classpath
+     * @param simple  the simple expression
+     * @return validation result
+     */
+    SimpleValidationResult validateSimpleExpression(ClassLoader classLoader, String simple);
+
+    /**
      * Parses and validates the simple predicate
      * <p/>
      * <b>Important:</b> This requires having <tt>camel-core</tt> on the classpath
@@ -371,6 +382,17 @@ public interface CamelCatalog {
      * @return validation result
      */
     SimpleValidationResult validateSimplePredicate(String simple);
+
+    /**
+     * Parses and validates the simple predicate
+     * <p/>
+     * <b>Important:</b> This requires having <tt>camel-core</tt> on the classpath
+     *
+     * @param classLoader a custom classloader to use for loading the simple language from the classpath
+     * @param simple  the simple predicate
+     * @return validation result
+     */
+    SimpleValidationResult validateSimplePredicate(ClassLoader classLoader, String simple);
 
     /**
      * Returns the component name from the given endpoint uri
