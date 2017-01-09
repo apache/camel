@@ -1610,6 +1610,13 @@ public class JmsComponentConfiguration {
          */
         private Boolean transferExchange;
         /**
+         * Controls whether or not to include serialized headers. Applies only
+         * when {@link #isTransferExchange()} is {@code true} . This requires
+         * that the objects are serializable. Camel will exclude any
+         * non-serializable objects and log it at WARN level.
+         */
+        private Boolean allowSerializedHeaders;
+        /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
          * be send back in response as a javax.jms.ObjectMessage. If the client
@@ -2337,6 +2344,14 @@ public class JmsComponentConfiguration {
 
         public void setTransferExchange(Boolean transferExchange) {
             this.transferExchange = transferExchange;
+        }
+
+        public Boolean getAllowSerializedHeaders() {
+            return allowSerializedHeaders;
+        }
+
+        public void setAllowSerializedHeaders(Boolean allowSerializedHeaders) {
+            this.allowSerializedHeaders = allowSerializedHeaders;
         }
 
         public Boolean getTransferException() {
