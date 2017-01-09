@@ -74,7 +74,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
     private ExecutorService jmsConsumerExecutors;
     private final AtomicBoolean running = new AtomicBoolean(true);
     private final AtomicReference<CountDownLatch> consumersShutdownLatchRef = new AtomicReference<>();
-    private Connection connection;
+    private volatile Connection connection;
 
     public SjmsBatchConsumer(SjmsBatchEndpoint sjmsBatchEndpoint, Processor processor) {
         super(sjmsBatchEndpoint, processor);
@@ -144,7 +144,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
         for (int i = 0; i < consumerCount; i++) {
             BatchConsumptionLoop loop = new BatchConsumptionLoop();
             triggers.add(loop.getCompletionTimeoutTrigger());
-            jmsConsumerExecutors.execute(loop);
+            jmsConsumerExecutors.submit(loop);
         }
 
         if (completionInterval > 0) {

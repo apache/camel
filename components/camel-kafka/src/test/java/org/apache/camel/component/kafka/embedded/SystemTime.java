@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.kafka.embedded;
 
+import java.util.concurrent.TimeUnit;
+
 import kafka.utils.Time;
 
 class SystemTime implements Time {
@@ -33,5 +35,10 @@ class SystemTime implements Time {
         } catch (InterruptedException e) {
             // Ignore
         }
+    }
+
+    @Override
+    public long hiResClockMs() {
+        return TimeUnit.NANOSECONDS.toMillis(nanoseconds());
     }
 }

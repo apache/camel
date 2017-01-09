@@ -313,6 +313,22 @@ public interface CamelCatalog {
     EndpointValidationResult validateEndpointProperties(String uri, boolean ignoreLenientProperties);
 
     /**
+     * Parses and validates the endpoint uri and constructs a key/value properties of each option.
+     * <p/>
+     * The option ignoreLenientProperties can be used to ignore components that uses lenient properties.
+     * When this is true, then the uri validation is stricter but would fail on properties that are not part of the component
+     * but in the uri because of using lenient properties.
+     * For example using the HTTP components to provide query parameters in the endpoint uri.
+     *
+     * @param uri  the endpoint uri
+     * @param ignoreLenientProperties  whether to ignore components that uses lenient properties.
+     * @param consumerOnly whether the endpoint is only used as a consumer
+     * @param producerOnly whether the endpoint is only used as a producer
+     * @return validation result
+     */
+    EndpointValidationResult validateEndpointProperties(String uri, boolean ignoreLenientProperties, boolean consumerOnly, boolean producerOnly);
+
+    /**
      * Parses and validates the simple expression.
      * <p/>
      * <b>Important:</b> This requires having <tt>camel-core</tt> on the classpath

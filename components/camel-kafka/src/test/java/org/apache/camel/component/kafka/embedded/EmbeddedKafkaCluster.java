@@ -29,6 +29,7 @@ import kafka.server.KafkaConfig;
 import kafka.server.KafkaServer;
 import kafka.utils.ZkUtils;
 import scala.Option;
+import scala.collection.mutable.ArraySeq;
 
 public class EmbeddedKafkaCluster {
     private final List<Integer> ports;
@@ -123,7 +124,7 @@ public class EmbeddedKafkaCluster {
 
 
     private KafkaServer startBroker(Properties props) {
-        KafkaServer server = new KafkaServer(new KafkaConfig(props), new SystemTime(), Option.<String>empty());
+        KafkaServer server = new KafkaServer(new KafkaConfig(props), new SystemTime(), Option.<String>empty(), new ArraySeq<>(0));
         server.startup();
         return server;
     }
