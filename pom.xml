@@ -280,6 +280,7 @@
                 <exclude>**/MerchandiseRestResource.apxc</exclude>
                 <exclude>**/file-sig-api.txt</exclude>
                 <exclude>**/Tasks__c.java</exclude>
+                <exclude>**/additional-spring-configuration-metadata.json</exclude>
               </excludes>
             </configuration>
           </plugin>
