@@ -22,6 +22,7 @@ public class SimpleValidationResult implements Serializable {
 
     private final String simple;
     private String error;
+    private int index;
 
     public SimpleValidationResult(String simple) {
         this.simple = simple;
@@ -41,5 +42,13 @@ public class SimpleValidationResult implements Serializable {
 
     public String getError() {
         return error;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 }

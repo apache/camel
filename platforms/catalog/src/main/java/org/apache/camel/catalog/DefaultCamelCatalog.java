@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -1827,6 +1828,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
         }
 
         if (clazz != null && instance != null) {
+            Throwable cause = null;
             try {
                 if (predicate) {
                     instance.getClass().getMethod("createPredicate", String.class).invoke(instance, simple);
@@ -1834,9 +1836,29 @@ public class DefaultCamelCatalog implements CamelCatalog {
                     instance.getClass().getMethod("createExpression", String.class).invoke(instance, simple);
                 }
             } catch (InvocationTargetException e) {
-                answer.setError(e.getTargetException().getMessage());
+                cause = e.getTargetException();
             } catch (Exception e) {
-                answer.setError(e.getMessage());
+                cause = e;
+            }
+
+            if (cause != null) {
+                answer.setError(cause.getMessage());
+
+                // is it simple parser exception then we can grab the index where the problem is
+                if (cause.getClass().getName().equals("org.apache.camel.language.simple.types.SimpleIllegalSyntaxException")
+                    || cause.getClass().getName().equals("org.apache.camel.language.simple.types.SimpleParserException")) {
+                    try {
+                        // we need to grab the index field from those simple parser exceptions
+                        Method method = cause.getClass().getMethod("getIndex");
+                        Object result = method.invoke(cause);
+                        if (result != null) {
+                            int index = (int) result;
+                            answer.setIndex(index);
+                        }
+                    } catch (Throwable i) {
+                        // ignore
+                    }
+                }
             }
         }
 

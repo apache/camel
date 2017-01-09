@@ -802,6 +802,7 @@ public class CamelCatalogTest {
         assertEquals("${body", result.getSimple());
         LOG.info(result.getError());
         assertTrue(result.getError().startsWith("expected symbol functionEnd but was eol at location 5"));
+        assertEquals(5, result.getIndex());
     }
 
     @Test
@@ -815,6 +816,7 @@ public class CamelCatalogTest {
         assertEquals("${body} > ${header.size", result.getSimple());
         LOG.info(result.getError());
         assertTrue(result.getError().startsWith("expected symbol functionEnd but was eol at location 22"));
+        assertEquals(22, result.getIndex());
     }
 
     @Test
