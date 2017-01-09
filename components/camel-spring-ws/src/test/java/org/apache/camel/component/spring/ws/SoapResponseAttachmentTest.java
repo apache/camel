@@ -46,7 +46,7 @@ public class SoapResponseAttachmentTest extends AbstractJUnit4SpringContextTests
      * @throws Exception
      */
     @Test()
-    public void consumeStockQuoteWebserviceWithSoapHeader() throws Exception {
+    public void consumeStockQuoteWebserviceWithSoapResponseAttachment() throws Exception {
         Exchange result = template.request("direct:stockQuoteWebservice", new Processor() {
 
             @Override
