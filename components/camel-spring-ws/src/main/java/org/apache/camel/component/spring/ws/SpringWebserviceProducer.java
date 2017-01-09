@@ -100,29 +100,33 @@ public class SpringWebserviceProducer extends DefaultProducer {
                 SoapMessage soapMessage = (SoapMessage) responseMessage;
                 if (ExchangeHelper.isOutCapable(exchange)) {
                     exchange.getOut().copyFromWithNewBody(exchange.getIn(), soapMessage.getPayloadSource());
-                    processHeaderAndAttachments(exchange.getOut(), soapMessage);
+                    populateHeaderAndAttachmentsFromResponse(exchange.getOut(), soapMessage);
                 } else {
                     exchange.getIn().setBody(soapMessage.getPayloadSource());
-                    processHeaderAndAttachments(exchange.getIn(), soapMessage);
+                    populateHeaderAndAttachmentsFromResponse(exchange.getIn(), soapMessage);
                 }
 
             }
         });
     }
+ 
     /**
      * Populates soap message headers and attachments from soap response
-     * @param inOrOut {@link Message}
-     * @param soapMessage {@link SoapMessage}
+     * 
+     * @param inOrOut
+     *            {@link Message}
+     * @param soapMessage
+     *            {@link SoapMessage}
      */
-    private void processHeaderAndAttachments(Message inOrOut, SoapMessage soapMessage) {
-    	 if (soapMessage.getSoapHeader() != null && getEndpoint().getConfiguration().isAllowResponseHeaderOverride()) { 
-    		 populateMessageHeaderFromResponse(inOrOut, soapMessage.getSoapHeader());
-    	 }
-    	 if (soapMessage.getAttachments() != null && getEndpoint().getConfiguration().isAllowResponseAttachmentOverride()) {
-    		 populateMessageAttachmentsFromResponse(inOrOut, soapMessage.getAttachments());
-    	 }
+    private void populateHeaderAndAttachmentsFromResponse(Message inOrOut, SoapMessage soapMessage) {
+        if (soapMessage.getSoapHeader() != null && getEndpoint().getConfiguration().isAllowResponseHeaderOverride()) {
+            populateMessageHeaderFromResponse(inOrOut, soapMessage.getSoapHeader());
+        }
+        if (soapMessage.getAttachments() != null && getEndpoint().getConfiguration().isAllowResponseAttachmentOverride()) {
+            populateMessageAttachmentsFromResponse(inOrOut, soapMessage.getAttachments());
+        }
     }
-    
+
     /**
      * Populates message headers from soapHeader response
      * 
@@ -155,12 +159,12 @@ public class SpringWebserviceProducer extends DefaultProducer {
      * @param soapMessage {@link SoapMessage}
      */
     private void populateMessageAttachmentsFromResponse(Message inOrOut, Iterator<Attachment> attachments) {
-    	while (attachments.hasNext()) {
-    		Attachment attachment = attachments.next();
-    		inOrOut.getAttachments().put(attachment.getContentId(), attachment.getDataHandler());
-    	}
+        while (attachments.hasNext()) {
+            Attachment attachment = attachments.next();
+            inOrOut.getAttachments().put(attachment.getContentId(), attachment.getDataHandler());
+        }
     }    
-    
+      
     private void prepareMessageSenders(SpringWebserviceConfiguration configuration) {
         // Skip this whole thing if none of the relevant config options are set.
         if (!(configuration.getTimeout() > -1) && configuration.getSslContextParameters() == null) {

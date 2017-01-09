@@ -15,18 +15,18 @@
  * limitations under the License.
  */
 package org.apache.camel.component.spring.ws;
-
-import static org.junit.Assert.assertNotNull;
-
 import javax.activation.DataHandler;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
+
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+
+import static org.junit.Assert.assertNotNull;
 
 @ContextConfiguration
 public class SoapResponseAttachmentTest extends AbstractJUnit4SpringContextTests {
@@ -46,7 +46,7 @@ public class SoapResponseAttachmentTest extends AbstractJUnit4SpringContextTests
      * @throws Exception
      */
     @Test()
-    public void consumeStockQuoteWebserviceWithSoapHeader() throws Exception {
+    public void consumeStockQuoteWebserviceWithSoapResponseAttachment() throws Exception {
         Exchange result = template.request("direct:stockQuoteWebservice", new Processor() {
 
             @Override
