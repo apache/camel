@@ -93,7 +93,7 @@ The Spring WebService component has no options.
 
 
 // endpoint options: START
-The Spring WebService component supports 24 endpoint options which are listed below:
+The Spring WebService component supports 21 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -103,12 +103,10 @@ The Spring WebService component supports 24 endpoint options which are listed be
 | lookupKey | consumer |  | String | Endpoint mapping key if endpoint mapping is used
 | webServiceEndpointUri | producer |  | String | The default Web Service endpoint uri to use for the producer.
 | messageFilter | common |  | MessageFilter | Option to provide a custom MessageFilter. For example when you want to process your headers or attachments by your own.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | endpointDispatcher | consumer |  | CamelEndpointDispatcher | Spring org.springframework.ws.server.endpoint.MessageEndpoint for dispatching messages received by Spring-WS to a Camel endpoint to integrate with existing (legacy) endpoint mappings like PayloadRootQNameEndpointMapping SoapActionEndpointMapping etc.
 | endpointMapping | consumer |  | CamelSpringWSEndpointMapping | Reference to an instance of org.apache.camel.component.spring.ws.bean.CamelEndpointMapping in the Registry/ApplicationContext. Only one bean is required in the registry to serve all Camel/Spring-WS endpoints. This bean is auto-discovered by the MessageDispatcher and used to map requests to Camel endpoints based on characteristics specified on the endpoint (like root QName SOAP action etc)
 | expression | consumer |  | String | The XPath expression to use when option type=xpathresult. Then this option is required to be configured.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| allowResponseAttachmentOverride | producer | false | boolean | Option to override soap response attachments in in/out exchange with attachments from the actual service layer. If the invoked service appends or rewrites the soap attachments this option when set to true allows the modified soap attachments to be overwritten in in/out message attachments
 | allowResponseHeaderOverride | producer | false | boolean | Option to override soap response header in in/out exchange with header info from the actual service layer. If the invoked service appends or rewrites the soap header this option when set to true allows the modified soap header to be overwritten in in/out message headers
 | faultAction | producer |  | URI | Signifies the value for the faultAction response WS-Addressing Fault Action header that is provided by the method.
 | faultTo | producer |  | URI | Signifies the value for the faultAction response WS-Addressing FaultTo header that is provided by the method.
@@ -121,7 +119,6 @@ The Spring WebService component supports 24 endpoint options which are listed be
 | timeout | producer |  | int | Sets the socket read timeout (in milliseconds) while invoking a webservice using the producer see URLConnection.setReadTimeout() and CommonsHttpMessageSender.setReadTimeout(). This option works when using the built-in message sender implementations: CommonsHttpMessageSender and HttpUrlConnectionMessageSender. One of these implementations will be used by default for HTTP based services unless you customize the Spring WS configuration options supplied to the component. If you are using a non-standard sender it is assumed that you will handle your own timeout configuration. The built-in message sender HttpComponentsMessageSender is considered instead of CommonsHttpMessageSender which has been deprecated see HttpComponentsMessageSender.setReadTimeout().
 | webServiceTemplate | producer |  | WebServiceTemplate | Option to provide a custom WebServiceTemplate. This allows for full control over client-side web services handling; like adding a custom interceptor or specifying a fault resolver message sender or message factory.
 | wsAddressingAction | producer |  | URI | WS-Addressing 1.0 action header to include when accessing web services. The To header is set to the address of the web service as specified in the endpoint URI (default Spring-WS behavior).
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
 |=======================================================================
 {% endraw %}
