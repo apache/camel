@@ -385,9 +385,6 @@ public class SpringWebserviceConfiguration {
         this.messageIdStrategy = messageIdStrategy;
     }
 
-    /**
-     * @return boolean - true, will override header with spring-ws response message header
-     */
     public boolean isAllowResponseHeaderOverride() {
         return allowResponseHeaderOverride;
     }
@@ -397,15 +394,12 @@ public class SpringWebserviceConfiguration {
      * If the invoked service appends or rewrites the soap header this option when set to true, allows the modified
      * soap header to be overwritten in in/out message headers
      * 
-     * @param allowResponseHeaderOverride
-     *            - true, will override header with spring-ws response message header
+     * @param allowResponseHeaderOverride - true, will override header with spring-ws response message header
      */
     public void setAllowResponseHeaderOverride(boolean allowResponseHeaderOverride) {
         this.allowResponseHeaderOverride = allowResponseHeaderOverride;
     }
-    /**
-     * @return boolean - true, will override attachments with spring-ws response message attachments
-     */
+
     public boolean isAllowResponseAttachmentOverride() {
         return allowResponseAttachmentOverride;
     }
@@ -415,8 +409,7 @@ public class SpringWebserviceConfiguration {
      * If the invoked service appends or rewrites the soap attachments this option when set to true, allows the modified
      * soap attachments to be overwritten in in/out message attachments
      * 
-     * @param allowResponseAttachmentOverride
-     *            - true, will override attachments with spring-ws response message attachments
+     * @param allowResponseAttachmentOverride - true, will override attachments with spring-ws response message attachments
      */
     public void setAllowResponseAttachmentOverride(boolean allowResponseAttachmentOverride) {
         this.allowResponseAttachmentOverride = allowResponseAttachmentOverride;
