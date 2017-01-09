@@ -109,18 +109,22 @@ public class SpringWebserviceProducer extends DefaultProducer {
             }
         });
     }
+ 
     /**
      * Populates soap message headers and attachments from soap response
-     * @param inOrOut {@link Message}
-     * @param soapMessage {@link SoapMessage}
+     * 
+     * @param inOrOut
+     *            {@link Message}
+     * @param soapMessage
+     *            {@link SoapMessage}
      */
     private void populateHeaderAndAttachmentsFromResponse(Message inOrOut, SoapMessage soapMessage) {
-    	 if (soapMessage.getSoapHeader() != null && getEndpoint().getConfiguration().isAllowResponseHeaderOverride()) { 
-    		 populateMessageHeaderFromResponse(inOrOut, soapMessage.getSoapHeader());
-    	 }
-    	 if (soapMessage.getAttachments() != null && getEndpoint().getConfiguration().isAllowResponseAttachmentOverride()) {
-    		 populateMessageAttachmentsFromResponse(inOrOut, soapMessage.getAttachments());
-    	 }
+        if (soapMessage.getSoapHeader() != null && getEndpoint().getConfiguration().isAllowResponseHeaderOverride()) {
+            populateMessageHeaderFromResponse(inOrOut, soapMessage.getSoapHeader());
+        }
+        if (soapMessage.getAttachments() != null && getEndpoint().getConfiguration().isAllowResponseAttachmentOverride()) {
+            populateMessageAttachmentsFromResponse(inOrOut, soapMessage.getAttachments());
+        }
     }
 
     /**
@@ -155,10 +159,10 @@ public class SpringWebserviceProducer extends DefaultProducer {
      * @param soapMessage {@link SoapMessage}
      */
     private void populateMessageAttachmentsFromResponse(Message inOrOut, Iterator<Attachment> attachments) {
-    	while (attachments.hasNext()) {
-    		Attachment attachment = attachments.next();
-    		inOrOut.getAttachments().put(attachment.getContentId(), attachment.getDataHandler());
-    	}
+        while (attachments.hasNext()) {
+            Attachment attachment = attachments.next();
+            inOrOut.getAttachments().put(attachment.getContentId(), attachment.getDataHandler());
+        }
     }    
     
     private void prepareMessageSenders(SpringWebserviceConfiguration configuration) {
