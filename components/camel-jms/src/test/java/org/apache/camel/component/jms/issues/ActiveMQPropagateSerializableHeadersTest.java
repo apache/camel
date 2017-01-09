@@ -16,6 +16,13 @@
  */
 package org.apache.camel.component.jms.issues;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import javax.jms.ConnectionFactory;
+
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -29,14 +36,8 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.jms.ConnectionFactory;
-import java.util.*;
-
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-/**
- * @version 
- */
 public class ActiveMQPropagateSerializableHeadersTest extends CamelTestSupport {
 
     protected Object expectedBody = "<time>" + new Date() + "</time>";
@@ -47,9 +48,9 @@ public class ActiveMQPropagateSerializableHeadersTest extends CamelTestSupport {
     private Map<String, Object> mapValue;
 
     @Before
-    public void setup () {
+    public void setup() {
         calValue = Calendar.getInstance();
-        mapValue = new LinkedHashMap<String,Object>();
+        mapValue = new LinkedHashMap<String, Object>();
         mapValue.put("myStringEntry", "stringValue");
         mapValue.put("myCalEntry", Calendar.getInstance());
         mapValue.put("myIntEntry", 123);
@@ -79,7 +80,7 @@ public class ActiveMQPropagateSerializableHeadersTest extends CamelTestSupport {
             assertEquals("myCal", calValue, headerValue);
         }
         {
-            Map<String,Object> headerValue = exchange.getIn().getHeader("myMap", Map.class);
+            Map<String, Object> headerValue = exchange.getIn().getHeader("myMap", Map.class);
             assertEquals("myMap", mapValue, headerValue);
         }
     }
