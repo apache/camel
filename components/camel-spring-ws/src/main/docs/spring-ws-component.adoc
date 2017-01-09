@@ -93,7 +93,7 @@ The Spring WebService component has no options.
 
 
 // endpoint options: START
-The Spring WebService component supports 24 endpoint options which are listed below:
+The Spring WebService component supports 25 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -110,6 +110,7 @@ The Spring WebService component supports 24 endpoint options which are listed be
 | sslContextParameters | consumer |  | SSLContextParameters | To configure security using SSLContextParameters
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| allowResponseAttachmentOverride | producer | false | boolean | Option to override soap response attachments in in/out exchange with attachments from the actual service layer. If the invoked service appends or rewrites the soap attachments this option when set to true allows the modified soap attachments to be overwritten in in/out message attachments
 | allowResponseHeaderOverride | producer | false | boolean | Option to override soap response header in in/out exchange with header info from the actual service layer. If the invoked service appends or rewrites the soap header this option when set to true allows the modified soap header to be overwritten in in/out message headers
 | faultAction | producer |  | URI | Signifies the value for the faultAction response WS-Addressing Fault Action header that is provided by the method.
 | faultTo | producer |  | URI | Signifies the value for the faultAction response WS-Addressing FaultTo header that is provided by the method.
