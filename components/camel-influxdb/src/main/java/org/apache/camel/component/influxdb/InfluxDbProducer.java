@@ -64,9 +64,7 @@ public class InfluxDbProducer extends DefaultProducer {
             Point p = exchange.getIn().getMandatoryBody(Point.class);
 
             try {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Writing point {}", p.lineProtocol());
-                }
+                LOG.debug("Writing point {}", p.lineProtocol());
 
                 connection.write(dataBaseName, retentionPolicy, p);
             } catch (Exception ex) {
@@ -76,9 +74,7 @@ public class InfluxDbProducer extends DefaultProducer {
             BatchPoints batchPoints = exchange.getIn().getMandatoryBody(BatchPoints.class);
 
             try {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Writing BatchPoints {}", batchPoints.lineProtocol());
-                }
+                LOG.debug("Writing BatchPoints {}", batchPoints.lineProtocol());
 
                 connection.write(batchPoints);
             } catch (Exception ex) {
