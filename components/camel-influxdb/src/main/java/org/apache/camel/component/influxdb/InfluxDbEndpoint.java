@@ -65,10 +65,9 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
     
     @Override
     protected void doStart() throws Exception {
-    	influxDB = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, InfluxDB.class);
-    	LOG.debug("Resolved the connection with the name {} as {}", connectionBean, influxDB);
-        super.doStart();
-        
+        influxDB = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, InfluxDB.class);
+        LOG.debug("Resolved the connection with the name {} as {}", connectionBean, influxDB);
+        super.doStart();  
     }
     
     @Override
