@@ -20,8 +20,6 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.util.CamelContextHelper;
-import org.influxdb.InfluxDB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +33,8 @@ public class InfluxDbComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        InfluxDB influxDbConnection = CamelContextHelper.mandatoryLookup(getCamelContext(), remaining, InfluxDB.class);
-        return new InfluxDbEndpoint(uri, this, influxDbConnection);
+        InfluxDbEndpoint endpoint = new InfluxDbEndpoint(uri, this);
+        endpoint.setConnectionBean(remaining);
+        return endpoint;
     }
 }
