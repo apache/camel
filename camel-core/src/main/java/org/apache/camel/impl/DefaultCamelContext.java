@@ -1376,7 +1376,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // where the documentation exists as well
         FactoryFinder finder = getFactoryFinder(DefaultComponentResolver.RESOURCE_PATH);
         try {
-            Class<?> clazz = finder.findClass(componentName);
+            Class<?> clazz = null;
+            try {
+                finder.findClass(componentName);
+            } catch (NoFactoryAvailableException e) {
+                // ignore, i.e. if a component is an auto-configured spring-boot
+                // components
+            }
+
             if (clazz == null) {
                 // fallback and find existing component
                 Component existing = hasComponent(componentName);
@@ -1417,7 +1424,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // where the documentation exists as well
         FactoryFinder finder = getFactoryFinder(DefaultComponentResolver.RESOURCE_PATH);
         try {
-            Class<?> clazz = finder.findClass(componentName);
+            Class<?> clazz = null;
+            try {
+                clazz = finder.findClass(componentName);
+            } catch (NoFactoryAvailableException e) {
+                // ignore, i.e. if a component is an auto-configured spring-boot
+                // component
+            }
+
             if (clazz == null) {
                 // fallback and find existing component
                 Component existing = hasComponent(componentName);
@@ -1458,7 +1472,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // where the documentation exists as well
         FactoryFinder finder = getFactoryFinder(DefaultDataFormatResolver.DATAFORMAT_RESOURCE_PATH);
         try {
-            Class<?> clazz = finder.findClass(dataFormatName);
+            Class<?> clazz = null;
+            try {
+                finder.findClass(dataFormatName);
+            } catch (NoFactoryAvailableException e) {
+                // ignore, i.e. if a component is an auto-configured spring-boot
+                // data-formats
+            }
+
             if (clazz == null) {
                 return null;
             }
@@ -1489,7 +1510,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // where the documentation exists as well
         FactoryFinder finder = getFactoryFinder(DefaultLanguageResolver.LANGUAGE_RESOURCE_PATH);
         try {
-            Class<?> clazz = finder.findClass(languageName);
+            Class<?> clazz = null;
+            try {
+                finder.findClass(languageName);
+            } catch (NoFactoryAvailableException e) {
+                // ignore, i.e. if a component is an auto-configured spring-boot
+                // languages
+            }
+
             if (clazz == null) {
                 return null;
             }
