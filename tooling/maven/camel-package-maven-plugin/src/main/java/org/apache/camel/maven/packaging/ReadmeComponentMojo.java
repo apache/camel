@@ -46,7 +46,7 @@ import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 import static org.apache.camel.maven.packaging.StringHelper.isEmpty;
 
 /**
- * Generate or updates the component/dataformat/language readme.md file in the project root directory.
+ * Generate or updates the component/dataformat/language readme.md and .adoc files in the project root directory.
  *
  * @goal update-readme
  */
@@ -130,6 +130,9 @@ public class ReadmeComponentMojo extends AbstractMojo {
 
                     boolean exists = file.exists();
                     boolean updated = false;
+
+                    updated |= updateTitle(file, model.getTitle() + " Component");
+
                     if (model.getComponentOptions() != null) {
                         String options = templateComponentOptions(model);
                         updated |= updateComponentOptions(file, options);
@@ -178,6 +181,9 @@ public class ReadmeComponentMojo extends AbstractMojo {
 
                     boolean exists = file.exists();
                     boolean updated = false;
+
+                    updated |= updateTitle(file, model.getTitle() + " DataFormat");
+
                     if (model.getDataFormatOptions() != null) {
                         String options = templateDataFormatOptions(model);
                         updated |= updateDataFormatOptions(file, options);
@@ -253,6 +259,9 @@ public class ReadmeComponentMojo extends AbstractMojo {
 
                     boolean exists = file.exists();
                     boolean updated = false;
+
+                    updated |= updateTitle(file, model.getTitle() + " Language");
+
                     if (model.getLanguageOptions() != null) {
                         String options = templateLanguageOptions(model);
                         updated |= updateLanguageOptions(file, options);
@@ -271,6 +280,73 @@ public class ReadmeComponentMojo extends AbstractMojo {
                 }
             }
         }
+    }
+
+    private boolean updateTitle(File file, String title) throws MojoExecutionException {
+        if (!file.exists()) {
+            return false;
+        }
+
+        // they may be in old title format which we want to avoid
+        // [[Bean-BeanComponent]]
+        // Bean Component
+        // ~~~~~~~~~~~~~~
+
+        try {
+            String text = loadText(new FileInputStream(file));
+
+            // grab the first 3 lines which can have old legacy format
+            String before = StringHelper.before(text, "\n");
+            text = StringHelper.after(text, "\n");
+            String before2 = StringHelper.before(text, "\n");
+            text = StringHelper.after(text, "\n");
+            String before3 = StringHelper.before(text, "\n");
+            text = StringHelper.after(text, "\n");
+
+            // skip old title format
+            if (before3 != null && before3.startsWith("~~~")) {
+                before = null;
+                before2 = null;
+                before3 = null;
+            }
+            if (before2 != null && before2.startsWith("~~~")) {
+                before = null;
+                before2 = null;
+            }
+
+            String oldTitle = before;
+            if (oldTitle == null) {
+                oldTitle = before2;
+            }
+            if (oldTitle == null) {
+                oldTitle = before3;
+            }
+
+            String changed = "# " + title;
+            if (!changed.equals(oldTitle)) {
+                // insert title in top of file
+                String newText = changed + "\n";
+                // keep the before lines that was okay to keep
+                if (before != null) {
+                    newText += before + "\n";
+                }
+                if (before2 != null) {
+                    newText += before2 + "\n";
+                }
+                if (before3 != null) {
+                    newText += before3 + "\n";
+                }
+                // and remember the doc body
+                newText += text;
+
+                writeText(file, newText);
+                return true;
+            }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
+        }
+
+        return false;
     }
 
     private boolean updateComponentOptions(File file, String changed) throws MojoExecutionException {
