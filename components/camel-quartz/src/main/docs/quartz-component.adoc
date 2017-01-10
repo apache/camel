@@ -1,6 +1,4 @@
-[[Quartz-QuartzComponent]]
-Quartz Component
-~~~~~~~~~~~~~~~~
+# Quartz Component
 
 The *quartz:* component provides a scheduled delivery of messages using
 the http://www.quartz-scheduler.org/[Quartz Scheduler 1.x].  +

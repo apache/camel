@@ -1,6 +1,4 @@
-[[OGNL-OGNL]]
-OGNL
-~~~~
+# OGNL Language
 
 Camel allows http://commons.apache.org/proper/commons-ognl/[OGNL] to be
 used as an link:expression.html[Expression] or

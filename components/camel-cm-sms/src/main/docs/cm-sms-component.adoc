@@ -1,6 +1,4 @@
-[[CM-SMS]]
-CM-SMS
-~~~~~~
+# CM SMS Gateway Component
 
 *Available as of Camel 2.18*
 

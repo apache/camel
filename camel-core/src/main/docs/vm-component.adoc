@@ -1,6 +1,4 @@
-[[VM-VMComponent]]
-VM Component
-~~~~~~~~~~~~
+# VM Component
 
 The *vm:* component provides asynchronous
 http://www.eecs.harvard.edu/~mdw/proj/seda/[SEDA] behavior, exchanging

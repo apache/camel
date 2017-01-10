@@ -1,6 +1,4 @@
-[[Ganglia-Gangliacomponent]]
-Ganglia component
-~~~~~~~~~~~~~~~~~
+# Ganglia Component
 
 [[Ganglia-AvailableasofCamel2.15.0]]
 Available as of Camel 2.15.0

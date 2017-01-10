@@ -1,6 +1,4 @@
-[[SSH-SSH]]
-SSH
-~~~
+# SSH Component
 
 *Available as of Camel 2.10*
 

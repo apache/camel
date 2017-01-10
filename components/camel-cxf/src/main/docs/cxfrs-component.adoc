@@ -1,6 +1,4 @@
-[[CXFRS-CXFRSComponent]]
-CXFRS Component
-~~~~~~~~~~~~~~~
+# CXF-RS Component
 
 [Note]
 ====

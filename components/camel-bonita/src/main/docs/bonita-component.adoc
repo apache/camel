@@ -1,6 +1,4 @@
-[[Bonita-CamelComponent]]
-Camel Bonita component
-~~~~~~~~~~~~~~~~~~~~~~
+# Bonita Component
 
 *Available as of Camel 2.19*
 

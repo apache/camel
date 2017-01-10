@@ -1,6 +1,4 @@
-[[Pax-Logging-PaxLoggingcomponent]]
-PaxLogging component
-~~~~~~~~~~~~~~~~~~~~
+# OSGi PAX Logging Component
 
 *Available in Camel 2.6*
 

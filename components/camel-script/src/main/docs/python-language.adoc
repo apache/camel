@@ -1,6 +1,4 @@
-[[Python-Python]]
-Python
-~~~~~~
+# Python Language
 
 Camel supports http://www.python.org/[Python] among other
 link:scripting-languages.html[Scripting Languages] to allow an

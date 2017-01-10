@@ -1,6 +1,4 @@
-[[JIRA-JIRA]]
-JIRA
-~~~~
+# JIRA Component
 
 *Available as of Camel 2.15*
 

@@ -1,6 +1,4 @@
-[[Git-GitComponent]]
-Git Component
-~~~~~~~~~~~~~
+# Git Component
 
 *Available as of Camel 2.16*
 

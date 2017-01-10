@@ -1,6 +1,4 @@
-[[AWS-SNS-SNSComponent]]
-SNS Component
-~~~~~~~~~~~~~
+# AWS Simple Notification System Component
 
 *Available as of Camel 2.8*
 

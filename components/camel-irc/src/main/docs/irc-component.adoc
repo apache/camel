@@ -1,6 +1,4 @@
-[[IRC-IRCComponent]]
-IRC Component
-~~~~~~~~~~~~~
+# IRC Component
 
 The *irc* component implements an
 http://en.wikipedia.org/wiki/Internet_Relay_Chat[IRC] (Internet Relay

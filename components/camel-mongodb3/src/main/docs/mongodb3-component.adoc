@@ -1,6 +1,4 @@
-[[MongoDB-CamelMongoDB3component]]
-Camel MongoDB3 component
-~~~~~~~~~~~~~~~~~~~~~~~
+# MongoDB Component
 
 *Available as of Camel 2.19*
 

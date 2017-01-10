@@ -1,6 +1,4 @@
-[[ServiceNow-ServiceNowComponent]]
-ServiceNow Component
-~~~~~~~~~~~~~~~~~~~~
+# ServiceNow Component
 
 *Available as of Camel 2.18*
 

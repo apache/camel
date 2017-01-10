@@ -1,6 +1,4 @@
-[[Mvel-Mvel]]
-Mvel
-~~~~
+# MVEL Language
 
 Camel allows Mvel to be used as an link:expression.html[Expression] or
 link:predicate.html[Predicate] the link:dsl.html[DSL] or

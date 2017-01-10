@@ -1,6 +1,4 @@
-[[Docker-CamelDockercomponent]]
-Camel Docker component
-~~~~~~~~~~~~~~~~~~~~~~
+# Docker Component
 
 *Available as of Camel 2.15*
 

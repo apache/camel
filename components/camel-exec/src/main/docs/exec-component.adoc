@@ -1,6 +1,4 @@
-[[Exec-Execcomponent]]
-Exec component
-~~~~~~~~~~~~~~
+# Exec Component
 
 *Available in Camel 2.3*
 

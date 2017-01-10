@@ -1,6 +1,4 @@
-[[Grape-GrapeComponent]]
-Grape Component
-~~~~~~~~~~~~~~~
+# Grape Component
 
 Available as of Camel 2.16 
 

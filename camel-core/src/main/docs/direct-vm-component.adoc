@@ -1,6 +1,4 @@
-[[Direct-VM-DirectVMComponent]]
-Direct VM Component
-~~~~~~~~~~~~~~~~~~~
+# Direct VM Component
 
 *Available as of Camel 2.10*
 

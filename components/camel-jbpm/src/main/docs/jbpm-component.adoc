@@ -1,6 +1,4 @@
-[[jBPM-jBPMComponent]]
-jBPM Component
-~~~~~~~~~~~~~~
+# JBPM Component
 
 *Available as of Camel 2.16*
 

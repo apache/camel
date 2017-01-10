@@ -1,6 +1,4 @@
-[[Scheduler-SchedulerComponent]]
-Scheduler Component
-~~~~~~~~~~~~~~~~~~~
+# Scheduler Component
 
 *Available as of Camel 2.15*
 

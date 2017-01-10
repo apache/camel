@@ -1,6 +1,4 @@
-[[SQL-SQLLanguage]]
-SQL Language
-~~~~~~~~~~~~
+# SQL Language
 
 The SQL support is added by http://josql.sourceforge.net/[JoSQL] and is
 primarily used for performing SQL queries on in-memory objects. If you

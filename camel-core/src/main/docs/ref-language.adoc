@@ -1,6 +1,4 @@
-[[RefLanguage-RefExpressionLanguage]]
-Ref Expression Language
-~~~~~~~~~~~~~~~~~~~~~~~
+# Ref Language
 
 *Available as of Camel 2.8*
 

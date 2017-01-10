@@ -1,6 +1,4 @@
-[[ICal-ICalDataFormat]]
-ICal DataFormat
-~~~~~~~~~~~~~~~
+# iCal DataFormat
 
 *Available as of Camel 2.11.1*
 

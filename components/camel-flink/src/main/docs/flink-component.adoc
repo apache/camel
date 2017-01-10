@@ -1,6 +1,4 @@
-[[camel-flink-CamelFlinkComponent]]
-Camel Flink Component
-~~~~~~~~~~~~~~~~~~~~~
+# Apache Flink Component
 
 *Available as of Camel 2.18*
 

@@ -1,6 +1,4 @@
-[[SpringRedis-SpringRedisComponent]]
-Spring Redis Component
-~~~~~~~~~~~~~~~~~~~~~~
+# Spring Redis Component
 
 *Available as of Camel 2.11*
 

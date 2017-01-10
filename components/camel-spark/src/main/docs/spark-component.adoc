@@ -1,6 +1,4 @@
-[[ApacheSpark-ApacheSparkcomponent]]
-Apache Spark component
-~~~~~~~~~~~~~~~~~~~~~~
+# Apache Spark Component
 
 INFO: Apache Spark component is available starting from Camel *2.17*.
 

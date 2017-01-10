@@ -1,6 +1,4 @@
-[[NettyHTTP-NettyHTTPComponent]]
-Netty HTTP Component
-~~~~~~~~~~~~~~~~~~~~
+# Netty HTTP Component
 
 *Available as of Camel 2.12*
 

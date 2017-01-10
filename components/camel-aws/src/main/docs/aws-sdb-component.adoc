@@ -1,6 +1,4 @@
-[[AWS-SDB-SDBComponent]]
-SDB Component
-~~~~~~~~~~~~~
+# AWS SimpleDB Component
 
 *Available as of Camel 2.8.4*
 

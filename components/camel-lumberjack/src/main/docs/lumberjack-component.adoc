@@ -1,6 +1,4 @@
-[[Lumberjack-LumberjackComponent]]
-Lumberjack Component
-~~~~~~~~~~~~~~~~~~~~
+# Lumberjack Component
 
 *Available as of Camel 2.18*
 

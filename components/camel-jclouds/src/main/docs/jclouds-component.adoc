@@ -1,6 +1,4 @@
-[[jclouds-JcloudsComponent]]
-Jclouds Component
-~~~~~~~~~~~~~~~~~
+# JClouds Component
 
 *Available as of Camel 2.9*
 

@@ -1,6 +1,4 @@
-[[Drill-DrillComponent]]
-Drill Component
-~~~~~~~~~~~~~~
+# Drill Component
 
 *Available as of Camel 2.18*
 

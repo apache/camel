@@ -1,6 +1,4 @@
-[[XmlBeans-XmlBeans]]
-XmlBeans
-~~~~~~~~
+# XML Beans DataFormat
 
 XmlBeans is a link:data-format.html[Data Format] which uses the
 http://xmlbeans.apache.org/[XmlBeans library] to unmarshal an XML

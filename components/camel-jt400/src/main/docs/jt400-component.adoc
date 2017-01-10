@@ -1,6 +1,4 @@
-[[JT400-JT400Component]]
-JT/400 Component
-~~~~~~~~~~~~~~~~
+# JT400 Component
 
 The *`jt400`* component allows you to exchanges messages with an AS/400
 system using data queues.

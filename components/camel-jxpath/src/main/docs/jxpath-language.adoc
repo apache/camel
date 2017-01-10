@@ -1,6 +1,4 @@
-[[JXPath-JXPath]]
-JXPath
-~~~~~~
+# JXPath Language
 
 Camel supports http://commons.apache.org/jxpath/[JXPath] to allow
 link:xpath.html[XPath] expressions to be used on beans in an

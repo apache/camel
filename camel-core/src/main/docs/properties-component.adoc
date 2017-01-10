@@ -1,6 +1,4 @@
-[[Properties-PropertiesComponent]]
-Properties Component
-~~~~~~~~~~~~~~~~~~~~
+# Properties Component
 
 *Available as of Camel 2.3*
 

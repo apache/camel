@@ -1,6 +1,4 @@
-[[FileLanguage-FileExpressionLanguage]]
-File Expression Language
-~~~~~~~~~~~~~~~~~~~~~~~~
+# File Language
 
 INFO:*File language is now merged with Simple language*
 From Camel 2.2 onwards, the file language is now merged with

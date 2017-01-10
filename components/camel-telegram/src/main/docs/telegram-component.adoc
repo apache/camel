@@ -1,6 +1,4 @@
-[[Telegram-TelegramComponent]]
-Telegram Component
-~~~~~~~~~~~~~~~~~~
+# Telegram Component
 
 *Available as of Camel 2.18*
 

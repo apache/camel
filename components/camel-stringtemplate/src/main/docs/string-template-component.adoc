@@ -1,6 +1,4 @@
-[[StringTemplate-StringTemplate]]
-String Template
-~~~~~~~~~~~~~~~
+# String Template Component
 
 The *string-template:* component allows you to process a message using a
 http://www.stringtemplate.org/[String Template]. This can be ideal when

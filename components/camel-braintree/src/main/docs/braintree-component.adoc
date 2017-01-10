@@ -1,6 +1,4 @@
-[[Braintree-BraintreeComponent]]
-Braintree Component
-~~~~~~~~~~~~~~~~~~~
+# Braintree Component
 
 *Available as of Camel 2.17*
 

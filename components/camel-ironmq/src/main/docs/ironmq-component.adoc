@@ -1,6 +1,4 @@
-[[IronMQ-IronMQComponent]]
-IronMQ Component
-~~~~~~~~~~~~~~~~
+# ironmq Component
 
 *Available as of Camel 2.17*
 

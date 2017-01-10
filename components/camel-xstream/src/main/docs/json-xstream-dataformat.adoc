@@ -1,6 +1,4 @@
-[[XStream-XStream]]
-XStream
-~~~~~~~
+# JSon XStream DataFormat
 
 XStream is a link:data-format.html[Data Format] which uses the
 http://xstream.codehaus.org/[XStream library] to marshal and unmarshal

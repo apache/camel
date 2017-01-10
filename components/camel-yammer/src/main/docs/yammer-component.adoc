@@ -1,6 +1,4 @@
-[[Yammer-Yammer]]
-Yammer
-~~~~~~
+# Yammer Component
 
 *Available as of Camel 2.12*
 

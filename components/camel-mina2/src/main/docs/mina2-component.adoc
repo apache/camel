@@ -1,6 +1,4 @@
-[[MINA2-MINA2Component]]
-MINA 2 Component
-~~~~~~~~~~~~~~~~
+# Mina2 Component
 
 *Available as of Camel 2.10*
 

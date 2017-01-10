@@ -1,6 +1,4 @@
-[[XMLSecuritycomponent-XMLSecuritycomponent]]
-XML Security component
-~~~~~~~~~~~~~~~~~~~~~~
+# XML Security Component
 
 *Available as of Camel 2.12.0*
 

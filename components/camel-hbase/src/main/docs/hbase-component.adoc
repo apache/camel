@@ -1,6 +1,4 @@
-[[hbase-HBaseComponent]]
-HBase Component
-~~~~~~~~~~~~~~~
+# HBase Component
 
 *Available as of Camel 2.10*
 

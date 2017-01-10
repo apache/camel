@@ -1,6 +1,4 @@
-[[GoogleDrive-GoogleDriveComponent]]
-GoogleDrive Component
-~~~~~~~~~~~~~~~~~~~~~
+# Google Drive Component
 
 *Available as of Camel 2.14*
 

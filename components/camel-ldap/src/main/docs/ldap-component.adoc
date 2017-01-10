@@ -1,6 +1,4 @@
-[[LDAP-LDAPComponent]]
-LDAP Component
-~~~~~~~~~~~~~~
+# LDAP Component
 
 The *ldap* component allows you to perform searches in LDAP servers
 using filters as the message payload. +

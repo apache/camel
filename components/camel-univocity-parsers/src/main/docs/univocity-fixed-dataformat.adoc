@@ -1,6 +1,4 @@
-[[uniVocity-parsersformats-uniVocity-parsers]]
-Univocity-parsers Data-format
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# uniVocity Fixed Length DataFormat
 
 *Available as of Camel 2.15.0*
 

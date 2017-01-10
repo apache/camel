@@ -1,6 +1,4 @@
-[[Class-ClassComponent]]
-Class Component
-~~~~~~~~~~~~~~~
+# Class Component
 
 *Available as of Camel 2.4*
 

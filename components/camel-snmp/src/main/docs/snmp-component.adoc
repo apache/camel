@@ -1,6 +1,4 @@
-[[SNMP-SNMPComponent]]
-SNMP Component
-~~~~~~~~~~~~~~
+# SNMP Component
 
 *Available as of Camel 2.1*
 

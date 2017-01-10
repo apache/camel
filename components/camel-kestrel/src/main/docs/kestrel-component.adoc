@@ -1,6 +1,4 @@
-[[Kestrel-KestrelComponent]]
-Kestrel Component
-~~~~~~~~~~~~~~~~~
+# Kestrel Component
 
 The Kestrel component allows messages to be sent to a
 https://github.com/robey/kestrel[Kestrel] queue, or messages to be

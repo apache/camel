@@ -1,6 +1,4 @@
-[[Disruptor-DisruptorComponent]]
-Disruptor Component
-~~~~~~~~~~~~~~~~~~~
+# Disruptor Component
 
 *Available as of Camel 2.12*
 

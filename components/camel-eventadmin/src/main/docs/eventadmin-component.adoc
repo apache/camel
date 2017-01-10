@@ -1,6 +1,4 @@
-[[EventAdmin-EventAdmincomponent]]
-EventAdmin component
-~~~~~~~~~~~~~~~~~~~~
+# OSGi EventAdmin Component
 
 *Available in Camel 2.6*
 

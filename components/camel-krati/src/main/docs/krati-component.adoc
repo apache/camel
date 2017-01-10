@@ -1,6 +1,4 @@
-[[Krati-KratiComponent]]
-Krati Component
-~~~~~~~~~~~~~~~
+# Krati Component
 
 *Available as of Camel 2.9*
 

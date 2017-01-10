@@ -1,6 +1,4 @@
-[[JPA-JPAComponent]]
-JPA Component
-~~~~~~~~~~~~~
+# JPA Component
 
 The *jpa* component enables you to store and retrieve Java objects from
 persistent storage using EJB 3's Java Persistence Architecture (JPA),

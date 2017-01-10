@@ -1,6 +1,4 @@
-[[Constant-ConstantExpressionLanguage]]
-Constant Expression Language
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Constant Language
 
 The Constant Expression Language is really just a way to specify
 constant strings as a type of expression.

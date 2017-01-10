@@ -1,14 +1,4 @@
-ifdef::env-github[]
-:caution-caption: :boom:
-:important-caption: :exclamation:
-:note-caption: :information_source:
-:tip-caption: :bulb:
-:warning-caption: :warning:
-endif::[]
-
-[[Zookeeper-ZooKeeper]]
-ZooKeeper
-~~~~~~~~~
+# ZooKeeper Component
 
 *Available as of Camel 2.9*
 

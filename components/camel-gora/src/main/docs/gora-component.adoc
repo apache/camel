@@ -1,6 +1,4 @@
-[[Gora-GoraComponent]]
-Gora Component
-~~~~~~~~~~~~~~
+# Gora Component
 
 *Camel-Gora* is an http://camel.apache.org/[Apache Camel] component that
 allows you to work with NoSQL databases using the

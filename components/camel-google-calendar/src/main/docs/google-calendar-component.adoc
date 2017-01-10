@@ -1,6 +1,4 @@
-[[GoogleCalendar-GoogleCalendarComponent]]
-GoogleCalendar Component
-~~~~~~~~~~~~~~~~~~~~~~~~
+# Google Calendar Component
 
 *Available as of Camel 2.15*
 

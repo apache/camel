@@ -1,6 +1,4 @@
-[[JSonPath-JSonPath]]
-JSonPath
-~~~~~~~~
+# JSonPath Language
 
 *Available as of Camel 2.13*
 

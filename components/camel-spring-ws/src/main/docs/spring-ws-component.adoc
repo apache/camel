@@ -1,6 +1,4 @@
-[[SpringWebServices-SpringWebServicesComponent]]
-Spring Web Services Component
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Spring WebService Component
 
 *Available as of Camel 2.6*
 

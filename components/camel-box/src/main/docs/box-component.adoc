@@ -1,6 +1,4 @@
-[[Box-BoxComponent]]
-Box Component
-~~~~~~~~~~~~~
+# Box Component
 
 *Available as of Camel 2.14*
 

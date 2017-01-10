@@ -1,6 +1,4 @@
-[[AsteriskComponent-AsteriskComponent]]
-Asterisk Component
-~~~~~~~~~~~~~~~~~~~
+# Asterisk Component
 
 *Available as of Camel 2.18*
 

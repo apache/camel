@@ -1,6 +1,4 @@
-[[JCR-JCRComponent]]
-JCR Component
-~~~~~~~~~~~~~
+# JCR Component
 
 The *`jcr`* component allows you to add/read nodes to/from a JCR
 compliant content repository (for example,

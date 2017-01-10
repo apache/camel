@@ -1,6 +1,4 @@
-[[Vertx-VertxComponent]]
-Vertx Component
-~~~~~~~~~~~~~~~
+# Vert.x Component
 
 *Available as of Camel 2.12*
 

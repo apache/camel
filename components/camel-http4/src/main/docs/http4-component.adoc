@@ -1,6 +1,4 @@
-[[HTTP4-HTTP4Component]]
-HTTP4 Component
-~~~~~~~~~~~~~~~
+# HTTP4 Component
 
 *Available as of Camel 2.3*
 

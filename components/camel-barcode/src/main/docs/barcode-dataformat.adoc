@@ -1,6 +1,4 @@
-[[BarcodeDataFormat]]
-Barcode Dataformat
-~~~~~~~~~~~~~~~~~~
+# Barcode DataFormat
 
 *Available as of Camel 2.14*
 

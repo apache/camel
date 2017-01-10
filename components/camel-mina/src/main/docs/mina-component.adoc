@@ -1,6 +1,4 @@
-[[MINA-MINAComponent]]
-MINA Component
-~~~~~~~~~~~~~~
+# Mina Component
 
 *Deprecated*
 

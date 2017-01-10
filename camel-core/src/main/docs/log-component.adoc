@@ -1,6 +1,4 @@
-[[Log-LogComponent]]
-Log Component
-~~~~~~~~~~~~~
+# Log Component
 
 The *log:* component logs message exchanges to the underlying logging
 mechanism.

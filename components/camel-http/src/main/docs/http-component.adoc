@@ -1,6 +1,4 @@
-[[HTTP-HTTPComponent]]
-HTTP Component
-~~~~~~~~~~~~~~
+# HTTP Component
 
 The *http:* component provides HTTP based link:endpoint.html[endpoints]
 for consuming external HTTP resources (as a client to call external

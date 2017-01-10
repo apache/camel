@@ -1,6 +1,4 @@
-[[Jing-JingComponent]]
-Jing Component
-~~~~~~~~~~~~~~
+# Jing Component
 
 The Jing component uses the
 http://www.thaiopensource.com/relaxng/jing.html[Jing Library] to perform

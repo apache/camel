@@ -1,6 +1,4 @@
-[[PGP-PGP]]
-PGP
-~~~
+# PGP DataFormat
 
 The PGP link:data-format.html[Data Format] integrates the Java
 Cryptographic Extension into Camel, allowing simple and flexible

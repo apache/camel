@@ -1,6 +1,4 @@
-[[MQTT-MQTTComponent]]
-MQTT Component
-~~~~~~~~~~~~~~
+# MQTT Component
 
 *Available as of Camel 2.10*
 

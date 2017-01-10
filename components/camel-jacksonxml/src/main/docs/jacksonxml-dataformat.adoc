@@ -1,6 +1,4 @@
-[[JacksonXML-JacksonXML]]
-Jackson XML
-~~~~~~~~~~~
+# JacksonXML DataFormat
 
 *Available as of Camel 2.16*
 

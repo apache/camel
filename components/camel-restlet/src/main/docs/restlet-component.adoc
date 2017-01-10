@@ -1,6 +1,4 @@
-[[Restlet-RestletComponent]]
-Restlet Component
-~~~~~~~~~~~~~~~~~
+# Restlet Component
 
 The *Restlet* component provides http://www.restlet.org[Restlet] based
 link:endpoint.html[endpoints] for consuming and producing RESTful

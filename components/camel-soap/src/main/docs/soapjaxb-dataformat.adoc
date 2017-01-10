@@ -1,6 +1,4 @@
-[[SOAP-SOAPDataFormat]]
-SOAP DataFormat
-~~~~~~~~~~~~~~~
+# SOAP DataFormat
 
 *Available as of Camel 2.3*
 

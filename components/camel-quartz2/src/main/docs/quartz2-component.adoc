@@ -1,6 +1,4 @@
-[[Quartz2-Quartz2Component]]
-Quartz2 Component
-~~~~~~~~~~~~~~~~~
+# Quartz2 Component
 
 *Available as of Camel 2.12.0*
 

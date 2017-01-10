@@ -1,6 +1,4 @@
-[[XPath-XPath]]
-XPath
-~~~~~
+# XPath Language
 
 Camel supports http://www.w3.org/TR/xpath[XPath] to allow an
 link:expression.html[Expression] or link:predicate.html[Predicate] to be

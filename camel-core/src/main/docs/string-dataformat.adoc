@@ -1,6 +1,4 @@
-[[String-Dataformat]]
-String Dataformat
-~~~~~~~~~~~~~~~~~
+# String Encoding DataFormat
 
 The String link:data-format.html[Data Format] is a textual based format
 that supports encoding.

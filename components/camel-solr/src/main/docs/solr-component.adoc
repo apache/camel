@@ -1,6 +1,4 @@
-[[Solr-SolrComponent]]
-Solr Component
-~~~~~~~~~~~~~~
+# Solr Component
 
 *Available as of Camel 2.9*
 

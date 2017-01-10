@@ -1,6 +1,4 @@
-[[CMIS-CMISComponent]]
-CMIS Component
-~~~~~~~~~~~~~~
+# CMIS Component
 
 *Available as of Camel 2.11* +
  The cmis component uses the

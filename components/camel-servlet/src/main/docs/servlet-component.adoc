@@ -1,6 +1,4 @@
-[[SERVLET-ServletComponent]]
-Servlet Component
-~~~~~~~~~~~~~~~~~
+# Servlet Component
 
 The *servlet:* component provides HTTP based
 link:endpoint.html[endpoints] for consuming HTTP requests that arrive at

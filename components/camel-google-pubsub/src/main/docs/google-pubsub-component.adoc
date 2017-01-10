@@ -1,6 +1,4 @@
-[[GooglePubsub-GooglePubsubComponent]]
-GooglePubsub Component
-~~~~~~~~~~~~~~~~~~
+# Google Pubsub Component
 
 *Available as of Camel 2.19*
 

@@ -1,6 +1,4 @@
-[[Mime-Multipart-RSSDataformat]]
-MIME-Multipart Dataformat
-~~~~~~~~~~~~~~~~~~~~~~~~~
+# MIME Multipart DataFormat
 
 *Available as of Camel 2.17*
 

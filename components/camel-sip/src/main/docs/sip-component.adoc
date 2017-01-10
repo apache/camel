@@ -1,6 +1,4 @@
-[[Sip-SIPComponent]]
-SIP Component
-~~~~~~~~~~~~~
+# SIP Component
 
 *Available as of Camel 2.5*
 

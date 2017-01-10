@@ -1,6 +1,4 @@
-[[XMLTokenizer-XMLTokenizer]]
-XMLTokenizer
-~~~~~~~~~~~~
+# XML Tokenize Language
 
 The xml tokenizer language is a built-in language in camel-core, which
 is a truly XML-aware tokenizer that can be used with the Splitter as the

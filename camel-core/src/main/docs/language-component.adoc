@@ -1,6 +1,4 @@
-[[Language-Language]]
-Language
-~~~~~~~~
+# Language Component
 
 *Available as of Camel 2.5*
 

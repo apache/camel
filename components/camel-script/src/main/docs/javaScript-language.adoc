@@ -1,6 +1,4 @@
-[[JavaScript-JavaScript]]
-JavaScript
-~~~~~~~~~~
+# JavaScript Language
 
 Camel supports
 http://en.wikipedia.org/wiki/JavaScript[JavaScript/ECMAScript] among

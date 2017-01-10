@@ -1,6 +1,4 @@
-[[AWS-EC2-EC2Component]]
-EC2 Component
-~~~~~~~~~~~~~
+# AWS EC2 Component
 
 *Available as of Camel 2.16*
 

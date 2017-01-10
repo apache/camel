@@ -1,6 +1,4 @@
-[[Openshift-OpenshiftComponent]]
-Openshift Component
-~~~~~~~~~~~~~~~~~~~
+# OpenShift Component
 
 *Available as of Camel 2.14*
 

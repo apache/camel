@@ -1,6 +1,4 @@
-[[AWS-KINESIS-KinesisComponent]]
-Kinesis Component
-~~~~~~~~~~~~~~~~~
+# AWS Kinesis Component
 
 *Available as of Camel 2.17*
 

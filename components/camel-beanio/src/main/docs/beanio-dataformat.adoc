@@ -1,6 +1,4 @@
-[[BeanIO-BeanIO]]
-BeanIO
-~~~~~~
+# BeanIO DataFormat
 
 *Available as of Camel 2.10*
 

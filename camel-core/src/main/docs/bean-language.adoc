@@ -1,6 +1,4 @@
-[[BeanLanguage-BeanLanguage]]
-Bean Language
-~~~~~~~~~~~~~
+# Bean method Language
 
 The purpose of the Bean Language is to be able to implement an
 link:expression.html[Expression] or link:predicate.html[Predicate] using

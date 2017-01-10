@@ -1,6 +1,4 @@
-[[ExchangeProperty-ExchangePropertyExpressionLanguage]]
-ExchangeProperty Expression Language
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ExchangeProperty Language
 
 The ExchangeProperty Expression Language allows you to extract values of
 named exchange properties.

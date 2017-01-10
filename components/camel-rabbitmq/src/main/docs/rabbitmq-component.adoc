@@ -1,6 +1,4 @@
-[[RabbitMQ-RabbitMQComponent]]
-RabbitMQ Component
-~~~~~~~~~~~~~~~~~~
+# RabbitMQ Component
 
 *Available as of Camel 2.12*
 

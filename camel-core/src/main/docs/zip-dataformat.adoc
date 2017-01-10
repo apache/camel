@@ -1,6 +1,4 @@
-[[Zip-Dataformat]]
-Zip Dataformat
-~~~~~~~~~~~~~~
+# Zip Deflate Compression DataFormat
 
 The Zip link:data-format.html[Data Format] is a message compression and
 de-compression format. Messages marshalled using Zip compression can be

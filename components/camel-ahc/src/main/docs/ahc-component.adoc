@@ -1,6 +1,4 @@
-[[AHC-AsyncHttpClientComponent]]
-Async Http Client Component
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# AHC Component
 
 *Available as of Camel 2.8*
 

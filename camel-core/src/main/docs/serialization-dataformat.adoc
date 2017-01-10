@@ -1,6 +1,4 @@
-[[Serialization-Serialization]]
-Serialization
-~~~~~~~~~~~~~
+# Java Object Serialization DataFormat
 
 Serialization is a link:data-format.html[Data Format] which uses the
 standard Java Serialization mechanism to unmarshal a binary payload into

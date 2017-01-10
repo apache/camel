@@ -1,6 +1,4 @@
-[[Boon-Boon]]
-Boon
-~~~~
+# Boon DataFormat
 
 *Available in Camel 2.16*
 

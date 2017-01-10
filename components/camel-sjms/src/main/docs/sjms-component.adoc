@@ -1,3 +1,4 @@
+# Simple JMS Component
 ifdef::env-github[]
 :icon-smile: :smiley:
 :caution-caption: :boom:

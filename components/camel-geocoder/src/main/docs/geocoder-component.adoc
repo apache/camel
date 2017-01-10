@@ -1,6 +1,4 @@
-[[Geocoder-GeocoderComponent]]
-Geocoder Component
-~~~~~~~~~~~~~~~~~~
+# Geocoder Component
 
 *Available as of Camel 2.12*
 

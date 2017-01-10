@@ -1,3 +1,4 @@
+# Simple JMS Batch Component
 [[ConfluenceContent]]
 [[SJMSBatch-SJMSBatchComponent]]
 SJMS Batch Component

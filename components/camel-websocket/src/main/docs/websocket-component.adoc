@@ -1,6 +1,4 @@
-[[Websocket-WebsocketComponent]]
-Websocket Component
-~~~~~~~~~~~~~~~~~~~
+# Jetty Websocket Component
 
 *Available as of Camel 2.10*
 

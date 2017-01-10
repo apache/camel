@@ -1,6 +1,4 @@
-[[HazelcastComponent-HazelcastComponent]]
-Hazelcast Component
-~~~~~~~~~~~~~~~~~~~
+# Hazelcast Component
 
 *Available as of Camel 2.7*
 

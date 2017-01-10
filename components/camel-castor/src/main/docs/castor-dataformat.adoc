@@ -1,6 +1,4 @@
-[[Castor-Castor]]
-Castor
-~~~~~~
+# Castor DataFormat
 
 *Available as of Camel 2.1*
 

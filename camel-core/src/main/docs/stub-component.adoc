@@ -1,6 +1,4 @@
-[[Stub-StubComponent]]
-Stub Component
-~~~~~~~~~~~~~~
+# Stub Component
 
 *Available as of Camel 2.10*
 

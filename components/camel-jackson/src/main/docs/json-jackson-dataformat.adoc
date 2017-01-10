@@ -1,6 +1,4 @@
-[[Jackson-Jackson]]
-Jackson
-~~~~~~~
+# JSon Jackson DataFormat
 
 *Available as of Camel 2.18*
 

@@ -1,6 +1,4 @@
-[[Cache-CacheComponent]]
-Cache Component
-~~~~~~~~~~~~~~~
+# EHCache Component
 
 *Available as of Camel 2.1*
 

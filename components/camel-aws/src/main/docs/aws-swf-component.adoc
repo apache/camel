@@ -1,6 +1,4 @@
-[[AWS-SWF-SWFComponent]]
-SWF Component
-~~~~~~~~~~~~~
+# AWS Simple Workflow Component
 
 *Available as of Camel 2.13*
 

@@ -1,6 +1,4 @@
-[[ElasticSearch-ElasticSearchComponent]]
-ElasticSearch Component
-~~~~~~~~~~~~~~~~~~~~~~~
+# Elasticsearch Component
 
 *Available as of Camel 2.11*
 

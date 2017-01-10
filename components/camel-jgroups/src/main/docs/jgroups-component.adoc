@@ -1,6 +1,4 @@
-[[JGroups-JGroupsComponent]]
-JGroups Component
-~~~~~~~~~~~~~~~~~
+# JGroups Component
 
 *Available since Camel 2.10.0*
 

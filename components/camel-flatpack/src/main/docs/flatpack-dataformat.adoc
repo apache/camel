@@ -1,6 +1,4 @@
-[[FlatpackDataFormat-FlatpackDataFormat]]
-Flatpack DataFormat
-~~~~~~~~~~~~~~~~~~~
+# Flatpack DataFormat
 
 The link:flatpack.html[Flatpack] component ships with the Flatpack data
 format that can be used to format between fixed width or delimited text
