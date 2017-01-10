@@ -1393,7 +1393,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         try {
             Class<?> clazz = null;
             try {
-                finder.findClass(componentName);
+                clazz = finder.findClass(componentName);
             } catch (NoFactoryAvailableException e) {
                 // ignore, i.e. if a component is an auto-configured spring-boot
                 // components
@@ -1489,7 +1489,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         try {
             Class<?> clazz = null;
             try {
-                finder.findClass(dataFormatName);
+                clazz = finder.findClass(dataFormatName);
             } catch (NoFactoryAvailableException e) {
                 // ignore, i.e. if a component is an auto-configured spring-boot
                 // data-formats
@@ -1527,7 +1527,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         try {
             Class<?> clazz = null;
             try {
-                finder.findClass(languageName);
+                clazz = finder.findClass(languageName);
             } catch (NoFactoryAvailableException e) {
                 // ignore, i.e. if a component is an auto-configured spring-boot
                 // languages
