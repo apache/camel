@@ -1,6 +1,4 @@
-[[Kafka-KafkaComponent]]
-Kafka Component
-~~~~~~~~~~~~~~~
+# Kafka Component
 
 *Available as of Camel 2.13*
 

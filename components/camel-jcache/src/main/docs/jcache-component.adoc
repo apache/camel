@@ -1,6 +1,4 @@
-[[JCache-JCache]]
-JCache
-~~~~~~
+# JCache Component
 
 
 

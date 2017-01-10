@@ -1,6 +1,4 @@
-[[Cometd-CometdComponent]]
-Cometd Component
-~~~~~~~~~~~~~~~~
+# CometD Component
 
 The *cometd:* component is a transport for working with the
 http://www.mortbay.org/jetty[jetty] implementation of the

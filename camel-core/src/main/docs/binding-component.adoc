@@ -1,3 +1,4 @@
+# Binding Component
 [[Binding-Binding]]
 Binding
 -------

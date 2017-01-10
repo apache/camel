@@ -1,6 +1,4 @@
-[[APNS-ApnsComponent]]
-Apns Component
-~~~~~~~~~~~~~~
+# APNS Component
 
 *Available as of Camel 2.8*
 

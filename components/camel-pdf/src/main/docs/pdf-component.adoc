@@ -1,6 +1,4 @@
-[[PDF-PDF]]
-PDF
-~~~
+# PDF Component
 
 **Available as of Camel 2.16.0**
 

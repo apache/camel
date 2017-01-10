@@ -1,6 +1,4 @@
-[[HDFS2-HDFS2Component]]
-HDFS2 Component
-~~~~~~~~~~~~~~~
+# HDFS2 Component
 
 *Available as of Camel 2.13*
 

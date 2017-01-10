@@ -1,6 +1,4 @@
-[[Atmosphere-Websocket-AtmosphereWebsocketServletComponent]]
-Atmosphere Websocket Servlet Component
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Atmosphere Websocket Component
 
 *Available as of Camel 2.14*
 

@@ -1,6 +1,4 @@
-[[Dropbox-CamelDropboxcomponent]]
-Camel Dropbox component
-~~~~~~~~~~~~~~~~~~~~~~~
+# Dropbox Component
 
 *Available as of Camel 2.14*
 

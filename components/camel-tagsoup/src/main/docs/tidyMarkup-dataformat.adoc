@@ -1,6 +1,4 @@
-[[TidyMarkup-TidyMarkup]]
-TidyMarkup
-~~~~~~~~~~
+# TidyMarkup DataFormat
 
 TidyMarkup is a link:data-format.html[Data Format] that uses the
 http://www.ccil.org/~cowan/XML/tagsoup/[TagSoup] to tidy up HTML. It can

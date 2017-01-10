@@ -1,6 +1,4 @@
-[[OpenStack-keystone-Component]]
-Openstack Keystone Component
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# OpenStack Keystone Component
 
 *Available as of Camel 2.19*
 

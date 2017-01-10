@@ -1,6 +1,4 @@
-[[JavaSpace-JavaSpaceComponent]]
-JavaSpace Component
-~~~~~~~~~~~~~~~~~~~
+# JavaSpace Component
 
 *Available as of Camel 2.1*
 

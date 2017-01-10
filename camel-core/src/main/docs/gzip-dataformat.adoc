@@ -1,6 +1,4 @@
-[[Gzip-Dataformat]]
-Gzip Dataformat
-~~~~~~~~~~~~~~~
+# GZip DataFormat
 
 The GZip link:data-format.html[Data Format] is a message compression and
 de-compression format. It uses the same deflate algorithm that is used

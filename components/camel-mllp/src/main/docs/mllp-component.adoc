@@ -1,6 +1,4 @@
-[[Mllp-MllpComponent]]
-MLLP Component
-~~~~~~~~~~~~~~
+# MLLP Component
 
 *available as of Camel 2.17*
 

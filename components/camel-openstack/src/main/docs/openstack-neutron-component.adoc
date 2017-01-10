@@ -1,6 +1,4 @@
-[[OpenStack-neutron-Component]]
-Openstack Neutron Component
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# OpenStack Neutron Component
 
 *Available as of Camel 2.19*
 

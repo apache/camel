@@ -1,6 +1,4 @@
-[[Hipchat-HipchatComponent]]
-Hipchat Component
-~~~~~~~~~~~~~~~~~
+# Hipchat Component
 
 *Available as of Camel 2.15.0*
 

@@ -1,6 +1,4 @@
-[[MongoDBGridFS-CamelMongoDBGridFScomponent]]
-Camel MongoDB GridFS component
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# MongoDBGridFS Component
 
 *Available as of Camel 2.17*
 

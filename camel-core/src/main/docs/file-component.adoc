@@ -1,6 +1,4 @@
-[[File2-FileComponent]]
-File Component
-~~~~~~~~~~~~~~
+# File Component
 
 The File component provides access to file systems, allowing files to be
 processed by any other Camel link:components.html[Components] or

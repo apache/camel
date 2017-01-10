@@ -1,6 +1,4 @@
-[[Infinispan-InfinispanComponent]]
-Infinispan Component
-~~~~~~~~~~~~~~~~~~~~
+# Infinispan Component
 
 *Available as of Camel 2.13.0*
 

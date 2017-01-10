@@ -1,6 +1,4 @@
-[[FOP-FOPComponent]]
-FOP Component
-~~~~~~~~~~~~~
+# FOP Component
 
 *Available as of Camel 2.10*
 

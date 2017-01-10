@@ -1,6 +1,4 @@
-[[Ruby-Ruby]]
-Ruby
-~~~~
+# Ruby Language
 
 Camel supports http://www.ruby-lang.org/en/[Ruby] among other
 link:scripting-languages.html[Scripting Languages] to allow an

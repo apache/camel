@@ -1,6 +1,4 @@
-[[GitHub-GitHub]]
-GitHub
-~~~~~~
+# GitHub Component
 
 *Available as of Camel 2.15*
 

@@ -1,6 +1,4 @@
-[[HL7-HL7Component]]
-HL7 Component
-~~~~~~~~~~~~~
+# HL7 DataFormat
 
 The *HL7* component is used for working with the HL7 MLLP protocol and
 http://www.hl7.org/implement/standards/product_brief.cfm?product_id=185[HL7

@@ -1,6 +1,4 @@
-[[JDBC-JDBCComponent]]
-JDBC Component
-~~~~~~~~~~~~~~
+# JDBC Component
 
 The *jdbc* component enables you to access databases through JDBC, where
 SQL queries (SELECT) and operations (INSERT, UPDATE, etc) are sent in

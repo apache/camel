@@ -1,6 +1,4 @@
-[[OpenStack-swift-Component]]
-Openstack Swift Component
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+# OpenStack Swift Component
 
 *Available as of Camel 2.19*
 

@@ -1,6 +1,4 @@
-[[SMPP-SMPPComponent]]
-SMPP Component
-~~~~~~~~~~~~~~
+# SMPP Component
 
 *CamelSmppFinalStatusAvailable as of Camel 2.2*
 

@@ -1,6 +1,4 @@
-[[ElSql-ElSqlComponent]]
-ElSql Component
-~~~~~~~~~~~~~~~
+# ElSQL Component
 
 *Available as of Camel 2.16*
 

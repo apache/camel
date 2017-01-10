@@ -1,6 +1,4 @@
-[[Bindy-Bindy]]
-Bindy
-~~~~~
+# Bindy DataFormat
 
 The goal of this component is to allow the parsing/binding of
 non-structured data (or to be more precise non-XML data) +

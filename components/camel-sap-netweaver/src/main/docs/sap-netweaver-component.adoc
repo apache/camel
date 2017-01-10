@@ -1,6 +1,4 @@
-[[SAPNetWeaver-SAPNetWeaverGatewaycomponent]]
-SAP NetWeaver Gateway component
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# SAP NetWeaver Component
 
 *Available as of Camel 2.12*
 

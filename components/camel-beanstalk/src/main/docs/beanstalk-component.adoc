@@ -1,6 +1,4 @@
-[[Beanstalk-Beanstalkcomponent]]
-Beanstalk component
-~~~~~~~~~~~~~~~~~~~
+# Beanstalk Component
 
 *Available in Camel 2.15*
 

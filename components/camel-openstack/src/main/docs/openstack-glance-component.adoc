@@ -1,6 +1,4 @@
-[[OpenStack-glance-Component]]
-Openstack Glance Component
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+# OpenStack Glance Component
 
 *Available as of Camel 2.19*
 

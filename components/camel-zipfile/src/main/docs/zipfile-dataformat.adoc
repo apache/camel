@@ -1,6 +1,4 @@
-[[ZipFileDataFormat-ZipFile]]
-Zip File
-~~~~~~~~
+# Zip File DataFormat
 
 TIP:*Available since Camel 2.11.0*
 

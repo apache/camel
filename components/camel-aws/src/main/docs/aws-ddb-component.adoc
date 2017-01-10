@@ -1,6 +1,4 @@
-[[AWS-DDB-DDBComponent]]
-DDB Component
-~~~~~~~~~~~~~
+# AWS DynamoDB Component
 
 *Available as of Camel 2.10*
 

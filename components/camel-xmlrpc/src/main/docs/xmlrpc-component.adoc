@@ -1,6 +1,4 @@
-[[XmlRpc-XmlRpcComponent]]
-XmlRpc Component
-~~~~~~~~~~~~~~~~
+# XML RPC Component
 
 *Available as of Camel 2.11*
 

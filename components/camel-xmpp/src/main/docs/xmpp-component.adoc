@@ -1,6 +1,4 @@
-[[XMPP-XMPPComponent]]
-XMPP Component
-~~~~~~~~~~~~~~
+# XMPP Component
 
 The *xmpp:* component implements an XMPP (Jabber) transport.
 

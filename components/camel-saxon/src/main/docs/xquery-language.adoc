@@ -1,6 +1,4 @@
-[[XQuery-XQuery]]
-XQuery
-~~~~~~
+# XQuery Language
 
 Camel supports http://www.w3.org/TR/xquery/[XQuery] to allow an
 link:expression.html[Expression] or link:predicate.html[Predicate] to be

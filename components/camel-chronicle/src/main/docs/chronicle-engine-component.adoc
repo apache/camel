@@ -1,3 +1,4 @@
+# Chronicle Engine Component
 
 // component options: START
 The Chronicle Engine component has no options.

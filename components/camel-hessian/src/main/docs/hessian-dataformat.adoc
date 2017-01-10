@@ -1,6 +1,4 @@
-[[hessian-HessianDataFormat]]
-Hessian DataFormat
-~~~~~~~~~~~~~~~~~~
+# Hessian DataFormat
 
 Hessian is Data Format for marshalling and unmarshalling messages using Caucho's Hessian format.
 

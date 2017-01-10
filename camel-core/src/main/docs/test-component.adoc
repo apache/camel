@@ -1,6 +1,4 @@
-[[Test-TestComponent]]
-Test Component
-~~~~~~~~~~~~~~
+# Test Component
 
 link:testing.html[Testing] of distributed and asynchronous processing is
 notoriously difficult. The link:mock.html[Mock], link:test.html[Test]

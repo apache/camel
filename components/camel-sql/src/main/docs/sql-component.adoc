@@ -1,6 +1,4 @@
-[[SQLComponent-SQLComponent]]
-SQL Component
-~~~~~~~~~~~~~
+# SQL Component
 
 The *sql:* component allows you to work with databases using JDBC
 queries. The difference between this component and link:jdbc.html[JDBC]

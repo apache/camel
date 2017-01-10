@@ -1,6 +1,4 @@
-[[GuavaEventBus-GuavaEventBusComponent]]
-Guava EventBus Component
-~~~~~~~~~~~~~~~~~~~~~~~~
+# Guava EventBus Component
 
 *Available since Camel 2.10.0*
 

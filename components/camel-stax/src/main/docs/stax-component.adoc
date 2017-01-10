@@ -1,6 +1,4 @@
-[[StAX-StAXComponent]]
-StAX Component
-~~~~~~~~~~~~~~
+# StAX Component
 
 *Available as of Camel 2.9*
 

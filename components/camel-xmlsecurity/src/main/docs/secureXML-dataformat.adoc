@@ -1,6 +1,4 @@
-[[XMLSecurityDataFormat-XMLSecurityDataFormat]]
-XMLSecurity Data Format
-~~~~~~~~~~~~~~~~~~~~~~~
+# XML Security DataFormat
 
 The XMLSecurity Data Format facilitates encryption and decryption of XML
 payloads at the Document, Element, and Element Content levels (including

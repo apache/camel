@@ -1,6 +1,4 @@
-[[SpringBatch-SpringBatchComponent]]
-Spring Batch Component
-~~~~~~~~~~~~~~~~~~~~~~
+# Spring Batch Component
 
 The *spring-batch:* component and support classes provide integration
 bridge between Camel and http://www.springsource.org/spring-batch[Spring

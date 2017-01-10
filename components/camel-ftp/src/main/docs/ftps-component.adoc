@@ -1,6 +1,4 @@
-[[FTPSComponent]]
-FTPS Component
-~~~~~~~~~~~~~~
+# FTPS Component
 
 This component provides access to remote file systems over the FTP and
 SFTP protocols.

@@ -1,6 +1,4 @@
-[[Jetty-JettyComponent]]
-Jetty Component
-~~~~~~~~~~~~~~~
+# Jetty 9 Component
 
 The *jetty* component provides HTTP-based link:endpoint.html[endpoints]
 for consuming and producing HTTP requests. That is, the Jetty component

@@ -1,6 +1,4 @@
-[[AHC-WS-AsyncHttpClientWebsocketClientComponent]]
-Async Http Client (AHC) Websocket Client Component
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# AHC Websocket Component
 
 *Available as of Camel 2.14*
 

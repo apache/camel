@@ -1,6 +1,4 @@
-[[OpenStack-cinder-Component]]
-Openstack Cinder Component
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+# OpenStack Cinder Component
 
 *Available as of Camel 2.19*
 

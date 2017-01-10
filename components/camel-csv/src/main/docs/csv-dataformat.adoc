@@ -1,6 +1,4 @@
-[[CSV-CSV]]
-CSV
-~~~
+# CSV DataFormat
 
 The CSV link:data-format.html[Data Format] uses
 http://commons.apache.org/proper/commons-csv/[Apache Commons CSV] to

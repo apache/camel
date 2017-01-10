@@ -1,6 +1,4 @@
-[[Syslog-SyslogDataFormat]]
-Syslog DataFormat
-~~~~~~~~~~~~~~~~~
+# Syslog DataFormat
 
 *Available as of Camel 2.6*
 

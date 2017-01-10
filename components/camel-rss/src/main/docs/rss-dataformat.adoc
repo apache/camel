@@ -1,6 +1,4 @@
-[[RSS-RSSDataformat]]
-RSS Dataformat
-~~~~~~~~~~~~~
+# RSS DataFormat
 
 The RSS component ships with an RSS dataformat that can be used to
 convert between String (as XML) and ROME RSS model objects.

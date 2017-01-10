@@ -1,6 +1,4 @@
-[[BeanValidator-BeanValidatorComponent]]
-Bean Validator Component
-~~~~~~~~~~~~~~~~~~~~~~~~
+# Bean Validator Component
 
 *Available as of Camel 2.3*
 

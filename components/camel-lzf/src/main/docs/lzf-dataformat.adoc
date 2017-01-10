@@ -1,6 +1,4 @@
-[[LZF-LZFDataFormat]]
-LZF Data Format
-~~~~~~~~~~~~~~~
+# LZF Deflate Compression DataFormat
 
 The
 LZF https://cwiki.apache.org/confluence/display/CAMEL/Data+Format[Data

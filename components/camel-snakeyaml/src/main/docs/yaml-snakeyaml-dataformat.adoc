@@ -1,6 +1,4 @@
-[[YAMLDataFormat-YAML]]
-YAML
-~~~~
+# YAML SnakeYAML DataFormat
 
 YAML is a link:data-format.html[Data Format] to marshal and unmarshal
 Java objects to and from http://www.yaml.org/[YAML].

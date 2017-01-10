@@ -1,6 +1,4 @@
-[[Groovy-Groovy]]
-Groovy
-~~~~~~
+# Groovy Language
 
 Camel supports http://groovy.codehaus.org/[Groovy] among other
 link:scripting-languages.html[Scripting Languages] to allow an

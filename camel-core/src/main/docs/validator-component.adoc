@@ -1,6 +1,4 @@
-[[Validation-ValidationComponent]]
-Validation Component
-~~~~~~~~~~~~~~~~~~~~
+# Validator Component
 
 The Validation component performs XML validation of the message body
 using the JAXP Validation API and based on any of the supported XML

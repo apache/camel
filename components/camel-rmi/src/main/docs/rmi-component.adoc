@@ -1,6 +1,4 @@
-[[RMI-RMIComponent]]
-RMI Component
-~~~~~~~~~~~~~
+# RMI Component
 
 The *rmi:* component binds link:exchange.html[Exchange]s to the RMI
 protocol (JRMP).

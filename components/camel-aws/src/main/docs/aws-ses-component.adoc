@@ -1,6 +1,4 @@
-[[AWS-SES-SESComponent]]
-SES Component
-~~~~~~~~~~~~~
+# AWS Simple Email Service Component
 
 *Available as of Camel 2.8.4*
 

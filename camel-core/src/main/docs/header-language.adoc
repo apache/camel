@@ -1,6 +1,4 @@
-[[Header-HeaderExpressionLanguage]]
-Header Expression Language
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Header Language
 
 The Header Expression Language allows you to extract values of named
 headers.

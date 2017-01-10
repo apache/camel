@@ -1,6 +1,4 @@
-[[SQLStoredProcedure-SQLStoredProcedureComponent]]
-SQL Stored Procedure Component
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# SQL StoredProcedure Component
 
 *Available as of Camel 2.17*
 

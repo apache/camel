@@ -1,6 +1,4 @@
-[[Paho-PahoComponent]]
-Paho Component
-~~~~~~~~~~~~~~
+# Paho Component
 
 INFO: Available as of Camel 2.16 
 

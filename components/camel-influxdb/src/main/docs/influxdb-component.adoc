@@ -1,6 +1,4 @@
-[[InfluxDb-InfluxDbComponent]]
-InfluxDb Component
-~~~~~~~~~~~~~~~~~~~~
+# InfluxDB Component
 
 *Available as of Camel 2.18.0*
 

@@ -1,6 +1,4 @@
-[[Printer-PrinterComponent]]
-Printer Component
-~~~~~~~~~~~~~~~~~
+# Printer Component
 
 *Available as of Camel 2.1*
 

@@ -1,6 +1,4 @@
-[[Spark-rest-Spark-restComponent]]
-Spark-rest Component
-~~~~~~~~~~~~~~~~~~~~
+# Spark Rest Component
 
 *Available as of Camel 2.14*
 

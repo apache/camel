@@ -1,6 +1,4 @@
-[[Direct-DirectComponent]]
-Direct Component
-~~~~~~~~~~~~~~~~
+# Direct Component
 
 The *direct:* component provides direct, synchronous invocation of any
 consumers when a producer sends a message exchange. +

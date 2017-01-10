@@ -1,6 +1,4 @@
-[[MyBatis-MyBatis]]
-MyBatis
-~~~~~~~
+# MyBatis Component
 
 *Available as of Camel 2.7*
 

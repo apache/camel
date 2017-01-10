@@ -1,6 +1,4 @@
-[[FreeMarker-FreeMarker]]
-FreeMarker
-~~~~~~~~~~
+# Freemarker Component
 
 The *freemarker:* component allows for processing a message using a
 http://freemarker.org/[FreeMarker] template. This can be ideal when

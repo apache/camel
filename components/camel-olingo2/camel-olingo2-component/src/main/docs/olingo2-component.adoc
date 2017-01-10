@@ -1,6 +1,4 @@
-[[Olingo2-Olingo2Component]]
-Olingo2 Component
-~~~~~~~~~~~~~~~~~
+# Olingo2 Component
 
 *Available as of Camel 2.14*
 

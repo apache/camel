@@ -1,6 +1,4 @@
-[[Lucene-LuceneIndexerandSearchComponent]]
-Lucene (Indexer and Search) Component
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Lucene Component
 
 *Available as of Camel 2.2*
 

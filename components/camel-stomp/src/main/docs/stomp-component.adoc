@@ -1,6 +1,4 @@
-[[Stomp-StompComponent]]
-Stomp Component
-~~~~~~~~~~~~~~~
+# Stomp Component
 
 *Available as of Camel 2.12*
 

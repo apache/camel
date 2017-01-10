@@ -1,6 +1,4 @@
-[[SEDA-SEDAComponent]]
-SEDA Component
-~~~~~~~~~~~~~~
+# SEDA Component
 
 The *seda:* component provides asynchronous
 http://www.eecs.harvard.edu/~mdw/proj/seda/[SEDA] behavior, so that

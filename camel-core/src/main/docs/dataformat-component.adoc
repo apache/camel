@@ -1,6 +1,4 @@
-[[DataFormatComponent-DataFormatComponent]]
-Data Format Component
-~~~~~~~~~~~~~~~~~~~~~
+# Data Format Component
 
 *Available as of Camel 2.12*
 

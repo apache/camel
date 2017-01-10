@@ -1,6 +1,4 @@
-[[Johnzon-Johnzon]]
-Johnzon
-~~~~~~~
+# JSon Johnzon DataFormat
 
 *Available as of Camel 2.18*
 

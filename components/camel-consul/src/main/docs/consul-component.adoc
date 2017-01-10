@@ -1,6 +1,4 @@
-[[Consul-ConsulComponent]]
-Consul Component
-~~~~~~~~~~~~~~~~
+# Consul Component
 
 *Available as of Camel 2.18*
 

@@ -1,6 +1,4 @@
-[[Rest-RestComponent]]
-Rest Component
-~~~~~~~~~~~~~~
+# REST Component
 
 *Available as of Camel 2.14*
 

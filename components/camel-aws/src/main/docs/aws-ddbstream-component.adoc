@@ -1,6 +1,4 @@
-[[AWS-DDBSTREAM-DynamoDBStreamComponent]]
-DynamoDB Stream Component
-~~~~~~~~~~~~~~~~~~~~~~~~~
+# AWS DynamoDB Streams Component
 
 *Available as of Camel 2.7*
 

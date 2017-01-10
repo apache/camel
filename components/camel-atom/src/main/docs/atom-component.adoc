@@ -1,6 +1,4 @@
-[[Atom-AtomComponent]]
-Atom Component
-~~~~~~~~~~~~~~
+# Atom Component
 
 The *atom:* component is used for polling Atom feeds.
 

@@ -1,6 +1,4 @@
-[[CouchDB-CamelCouchDBcomponent]]
-Camel CouchDB component
-~~~~~~~~~~~~~~~~~~~~~~~
+# CouchDB Component
 
 *Available as of Camel 2.11*
 

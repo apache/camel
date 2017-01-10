@@ -1,6 +1,4 @@
-[[avro-AvroDataformat]]
-Avro Dataformat
-~~~~~~~~~~~~~~~
+# Avro DataFormat
 
 *Available as of Camel 2.10*
 

@@ -1,6 +1,4 @@
-[[PHP-PHP]]
-PHP
-~~~
+# PHP Language
 
 Camel supports http://www.php.net/[PHP] among other
 link:scripting-languages.html[Scripting Languages] to allow an

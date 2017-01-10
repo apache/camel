@@ -1,6 +1,4 @@
-[[Flatpack-FlatpackComponent]]
-Flatpack Component
-~~~~~~~~~~~~~~~~~~
+# Flatpack Component
 
 The Flatpack component supports fixed width and delimited file parsing
 via the http://flatpack.sourceforge.net[FlatPack library]. +

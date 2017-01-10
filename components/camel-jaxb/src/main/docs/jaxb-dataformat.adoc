@@ -1,6 +1,4 @@
-[[JAXB-JAXB]]
-JAXB
-~~~~
+# JAXB DataFormat
 
 JAXB is a link:data-format.html[Data Format] which uses the JAXB2 XML
 marshalling standard which is included in Java 6 to unmarshal an XML

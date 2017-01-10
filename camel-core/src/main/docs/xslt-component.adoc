@@ -1,6 +1,4 @@
-[[XSLT-XSLT]]
-XSLT
-~~~~
+# XSLT Component
 
 The *xslt:* component allows you to process a message using an
 http://www.w3.org/TR/xslt[XSLT] template. This can be ideal when using

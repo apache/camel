@@ -1,6 +1,4 @@
-[[SpringEvent-SpringEventComponent]]
-Spring Event Component
-~~~~~~~~~~~~~~~~~~~~~~
+# Spring Event Component
 
 The *spring-event:* component provides access to the Spring
 `ApplicationEvent` objects. This allows you to publish

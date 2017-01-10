@@ -1,6 +1,4 @@
-[[JiBX-JiBX]]
-JiBX
-~~~~
+# JiBX DataFormat
 
 *Available as of Camel 2.6*
 

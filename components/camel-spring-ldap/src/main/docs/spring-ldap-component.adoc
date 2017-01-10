@@ -1,6 +1,4 @@
-[[SpringLDAP-SpringLDAPComponent]]
-Spring LDAP Component
-~~~~~~~~~~~~~~~~~~~~~
+# Spring LDAP Component
 
 *Available since Camel 2.11*
 

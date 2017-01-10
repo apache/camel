@@ -1,3 +1,4 @@
+# Cassandra CQL Component
 [[Cassandra-CamelCassandraComponent]]
 Camel Cassandra Component
 -------------------------

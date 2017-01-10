@@ -1,6 +1,4 @@
-[[Ehcache-EhcacheComponent]]
-Ehcache Component
-~~~~~~~~~~~~~~~~~
+# Ehcache Component
 
 *Available as of Camel 2.18.x*
 

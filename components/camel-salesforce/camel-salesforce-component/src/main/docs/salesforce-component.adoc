@@ -1,6 +1,4 @@
-[[Salesforce-Salesforcecomponent]]
-Salesforce component
-~~~~~~~~~~~~~~~~~~~~
+# Salesforce Component
 
 *Available as of Camel 2.12*
 

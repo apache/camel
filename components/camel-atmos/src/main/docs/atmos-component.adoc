@@ -1,6 +1,4 @@
-[[Atmos-Atmos]]
-Atmos Component
-~~~~~~~~~~~~~~~
+# Atmos Component
 
 *Available as of Camel 2.15*
 

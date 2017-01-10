@@ -1,6 +1,4 @@
-[[Simple-SimpleExpressionLanguage]]
-Simple Expression Language
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Simple Language
 
 The Simple Expression Language was a really simple language when it was
 created, but has since grown more powerful. It is primarily intended for

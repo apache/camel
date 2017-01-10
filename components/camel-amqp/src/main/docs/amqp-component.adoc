@@ -1,6 +1,4 @@
-[[AMQP-AMQP]]
-AMQP
-~~~~
+# AMQP Component
 
 The *amqp:* component supports the http://www.amqp.org/[AMQP 1.0
 protocol] using the JMS Client API of the http://qpid.apache.org/[Qpid]

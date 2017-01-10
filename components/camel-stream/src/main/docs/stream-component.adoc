@@ -1,6 +1,4 @@
-[[Stream-StreamComponent]]
-Stream Component
-~~~~~~~~~~~~~~~~
+# Stream Component
 
 The *stream:* component provides access to the `System.in`, `System.out`
 and `System.err` streams as well as allowing streaming of file and URL.

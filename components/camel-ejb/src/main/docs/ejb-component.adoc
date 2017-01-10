@@ -1,6 +1,4 @@
-[[EJB-EJBComponent]]
-EJB Component
-~~~~~~~~~~~~~
+# EJB Component
 
 *Available as of Camel 2.4*
 

@@ -1,6 +1,4 @@
-[[AWS-CW-CWComponent]]
-CW Component
-~~~~~~~~~~~~
+# AWS CloudWatch Component
 
 *Available as of Camel 2.11
 

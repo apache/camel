@@ -1,6 +1,4 @@
-[[RestDSL-RestDSL]]
-Rest DSL
-~~~~~~~~
+# REST API Component
 
 *Available as of Camel 2.14*
 

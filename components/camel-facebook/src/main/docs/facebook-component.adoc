@@ -1,6 +1,4 @@
-[[Facebook-FacebookComponent]]
-Facebook Component
-~~~~~~~~~~~~~~~~~~
+# Facebook Component
 
 *Available as of Camel 2.12*
 

@@ -1,6 +1,4 @@
-[[SpEL-SpringExpressionLanguageSpEL]]
-Spring Expression Language (SpEL)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# SpEL Language
 
 *Available as of Camel 2.7*
 

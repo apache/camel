@@ -1,3 +1,4 @@
+# Control Bus Component
 [[ControlBus-ControlBus]]
 ControlBus
 ^^^^^^^^^^

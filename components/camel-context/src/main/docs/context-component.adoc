@@ -1,6 +1,4 @@
-[[Context-ContextComponent]]
-Context Component
-~~~~~~~~~~~~~~~~~
+# Camel Context Component
 
 *Available as of Camel 2.7*
 

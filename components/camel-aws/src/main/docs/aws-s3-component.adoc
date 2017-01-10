@@ -1,6 +1,4 @@
-[[AWS-S3-S3Component]]
-S3 Component
-~~~~~~~~~~~~
+# AWS S3 Storage Service Component
 
 *Available as of Camel 2.8*
 

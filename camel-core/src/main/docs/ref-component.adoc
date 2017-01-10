@@ -1,6 +1,4 @@
-[[Ref-RefComponent]]
-Ref Component
-~~~~~~~~~~~~~
+# Ref Component
 
 The *ref:* component is used for lookup of existing endpoints bound in
 the link:registry.html[Registry].

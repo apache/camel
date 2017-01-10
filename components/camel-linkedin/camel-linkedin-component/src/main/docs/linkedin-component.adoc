@@ -1,6 +1,4 @@
-[[LinkedIn-LinkedInComponent]]
-LinkedIn Component
-~~~~~~~~~~~~~~~~~~
+# Linkedin Component
 
 *Available as of Camel 2.14*
 

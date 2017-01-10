@@ -1,6 +1,4 @@
-[[Browse-BrowseComponent]]
-Browse Component
-~~~~~~~~~~~~~~~~
+# Browse Component
 
 The Browse component provides a simple
 link:browsableendpoint.html[BrowsableEndpoint] which can be useful for

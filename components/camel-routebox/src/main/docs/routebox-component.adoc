@@ -1,6 +1,4 @@
-[[Routebox-RouteboxComponent]]
-Routebox Component
-~~~~~~~~~~~~~~~~~~
+# RouteBox Component
 
 *Available as of Camel 2.6*
 

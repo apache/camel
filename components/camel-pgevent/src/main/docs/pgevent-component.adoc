@@ -1,6 +1,4 @@
-[[PGEvent-PGEventComponentPostgresSQLEvent]]
-PGEvent Component (PostgresSQL Event)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# PostgresSQL Event Component
 
 This is a component for Apache Camel which allows for
 Producing/Consuming PostgreSQL events related to the LISTEN/NOTIFY

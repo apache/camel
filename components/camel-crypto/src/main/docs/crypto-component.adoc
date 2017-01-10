@@ -1,6 +1,4 @@
-[[Crypto-Crypto]]
-Crypto
-~~~~~~
+# Crypto (JCE) Component
 
 *Available as of Camel 2.3* 
 *PGP Available as of Camel 2.9*

@@ -1,6 +1,4 @@
-[[OpenStack-nova-Component]]
-Openstack Nova Component
-~~~~~~~~~~~~~~~~~~~~~~~~
+# OpenStack Nova Component
 
 *Available as of Camel 2.19*
 

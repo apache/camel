@@ -1,6 +1,4 @@
-[[Gson-Gson]]
-Gson
-~~~~
+# JSon GSon DataFormat
 
 *Available as of Camel 2.18*
 

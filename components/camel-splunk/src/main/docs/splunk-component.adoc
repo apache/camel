@@ -1,6 +1,4 @@
-[[Splunk-SplunkComponent]]
-Splunk Component
-~~~~~~~~~~~~~~~~
+# Splunk Component
 
 *Available as of Camel 2.13*
 

@@ -1,6 +1,4 @@
-[[AWS-SQS-SQSComponent]]
-SQS Component
-~~~~~~~~~~~~~
+# AWS Simple Queue Service Component
 
 *Available as of Camel 2.6*
 

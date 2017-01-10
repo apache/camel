@@ -1,6 +1,4 @@
-[[MVELComponent-MVELComponent]]
-MVEL Component
-~~~~~~~~~~~~~~
+# MVEL Component
 
 *Available as of Camel 2.12*
 

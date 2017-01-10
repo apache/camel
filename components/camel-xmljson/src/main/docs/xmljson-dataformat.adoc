@@ -1,6 +1,4 @@
-[[XmlJson-XMLJSONDataFormat]]
-XML JSON Data Format (`camel-xmljson`)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# XML JSon DataFormat
 
 *Available as of Camel 2.10*
 

@@ -1,6 +1,4 @@
-[[Weather-WeatherComponent]]
-Weather Component
-~~~~~~~~~~~~~~~~~
+# Weather Component
 
 *Available as of Camel 2.12*
 

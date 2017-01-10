@@ -1,6 +1,4 @@
-[[Crypto-Crypto]]
-Crypto
-~~~~~~
+# Crypto (Java Cryptographic Extension) DataFormat
 
 The Crypto link:data-format.html[Data Format] integrates the Java
 Cryptographic Extension into Camel, allowing simple and flexible

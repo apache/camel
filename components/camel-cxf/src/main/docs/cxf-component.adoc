@@ -1,6 +1,4 @@
-[[CXF-CXFComponent]]
-CXF Component
-~~~~~~~~~~~~~
+# CXF Component
 
 NOTE:When using CXF as a consumer, the link:cxf-bean-component.html[CXF Bean
 Component] allows you to factor out how message payloads are received

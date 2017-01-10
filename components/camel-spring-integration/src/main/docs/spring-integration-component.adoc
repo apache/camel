@@ -1,6 +1,4 @@
-[[SpringIntegration-SpringIntegrationComponent]]
-Spring Integration Component
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Spring Integration Component
 
 The *spring-integration:* component provides a bridge for Camel
 components to talk to

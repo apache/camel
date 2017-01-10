@@ -1,6 +1,4 @@
-[[iBATIS-iBATIS]]
-iBATIS
-~~~~~~
+# iBatis Component
 
 The *ibatis:* component allows you to query, poll, insert, update and
 delete data in a relational database using

@@ -1,6 +1,4 @@
-[[Mail-MailComponent]]
-Mail Component
-~~~~~~~~~~~~~~
+# Mail Component
 
 The mail component provides access to Email via Spring's Mail support
 and the underlying JavaMail system.

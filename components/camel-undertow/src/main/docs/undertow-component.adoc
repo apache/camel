@@ -1,6 +1,4 @@
-[[Undertow-UndertowComponent]]
-Undertow Component
-~~~~~~~~~~~~~~~~~~
+# Undertow Component
 
 *Available as of Camel 2.16*
 
