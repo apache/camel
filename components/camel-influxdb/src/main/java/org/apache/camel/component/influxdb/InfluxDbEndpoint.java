@@ -57,7 +57,7 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
 
         this.influxDB = dbConn;
 
-        LOG.debug("Prepairing influxdb enpoint with uri {}", uri);
+        LOG.debug("Preparing influxdb enpoint with uri {}", uri);
         LOG.debug("Creating influx db producer connectionBean:{}, databaseName:{}, retentionPolicy:{}", connectionBean, databaseName, retentionPolicy);
     }
 
