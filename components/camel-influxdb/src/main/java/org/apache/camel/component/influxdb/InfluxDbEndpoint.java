@@ -24,6 +24,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.CamelContextHelper;
 import org.influxdb.InfluxDB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,18 +48,9 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
     private String retentionPolicy = "default";
     @UriParam(defaultValue = "false")
     private boolean batch;
-
-    public InfluxDbEndpoint(String uri, InfluxDbComponent influxDbComponent, InfluxDB dbConn) {
-        super(uri, influxDbComponent);
-
-        if (dbConn == null) {
-            throw new IllegalArgumentException("dbConn is null");
-        }
-
-        this.influxDB = dbConn;
-
-        LOG.debug("Preparing influxdb enpoint with uri {}", uri);
-        LOG.debug("Creating influx db producer connectionBean:{}, databaseName:{}, retentionPolicy:{}", connectionBean, databaseName, retentionPolicy);
+    
+    public InfluxDbEndpoint(String uri, InfluxDbComponent component) {
+        super(uri, component);
     }
 
     @Override
@@ -69,6 +61,19 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("You cannot receive messages from this endpoint");
+    }
+    
+    @Override
+    protected void doStart() throws Exception {
+    	influxDB = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, InfluxDB.class);
+    	LOG.debug("Resolved the connection with the name {} as {}", connectionBean, influxDB);
+        super.doStart();
+        
+    }
+    
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
     }
 
     @Override
