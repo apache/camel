@@ -16,20 +16,23 @@
  */
 package org.apache.camel.component.azure.servicebus;
 
-import com.microsoft.windowsazure.exception.ServiceException;
-import com.microsoft.windowsazure.services.servicebus.ServiceBusContract;
-import com.microsoft.windowsazure.services.servicebus.models.BrokeredMessage;
-import com.microsoft.windowsazure.services.servicebus.models.ReceiveMessageOptions;
+import java.util.Collection;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
+import com.microsoft.windowsazure.exception.ServiceException;
+import com.microsoft.windowsazure.services.servicebus.ServiceBusContract;
+import com.microsoft.windowsazure.services.servicebus.models.BrokeredMessage;
+import com.microsoft.windowsazure.services.servicebus.models.ReceiveMessageOptions;
 
 public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractSbConsumer.class);
@@ -39,7 +42,7 @@ public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
 
     public AbstractSbConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
-
+        setExceptionHandler(new LoggingExceptionHandler(endpoint.getCamelContext(), getClass(), LoggingLevel.ERROR));
     }
 
     //    private boolean shouldDelete(Exchange exchange) {
@@ -93,10 +96,13 @@ public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
             }
         }
 
-        Exception cause = exchange.getException();
-        if (cause != null) {
-            getExceptionHandler().handleException("Error during processing exchange. Will attempt to process the message on next poll.", exchange, cause);
-        }
+        String errorMessage = String.format("Failed to deliver message with ASB MessageID %s from ExchangeID %s. Exception cause was %s", 
+    			exchange.getIn().getHeader("CamelAzureMessageId"),
+    			exchange.getIn().getMessageId(),
+    			exchange.getException().getCause());
+
+    	getExceptionHandler().handleException(errorMessage, exchange, exchange.getException());
+
     }
 
     /**
