@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -45,6 +46,8 @@ public class KafkaConsumer extends DefaultConsumer {
     private final KafkaEndpoint endpoint;
     private final Processor processor;
     private final Long pollTimeoutMs;
+    // This list helps working around the infinite loop of KAFKA-1894
+    private final List<KafkaFetchRecords> tasks = new ArrayList<>();
 
     public KafkaConsumer(KafkaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -75,7 +78,9 @@ public class KafkaConsumer extends DefaultConsumer {
 
         executor = endpoint.createExecutor();
         for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
-            executor.submit(new KafkaFetchRecords(endpoint.getConfiguration().getTopic(), i + "", getProps()));
+            KafkaFetchRecords task = new KafkaFetchRecords(endpoint.getConfiguration().getTopic(), i + "", getProps());
+            executor.submit(task);
+            tasks.add(task);
         }
     }
 
@@ -89,7 +94,12 @@ public class KafkaConsumer extends DefaultConsumer {
             } else {
                 executor.shutdownNow();
             }
+            if (!executor.isTerminated()) {
+                tasks.forEach(KafkaFetchRecords::shutdown);
+                executor.shutdownNow();
+            }
         }
+        tasks.clear();
         executor = null;
 
         super.doStop();
@@ -194,6 +204,11 @@ public class KafkaConsumer extends DefaultConsumer {
                 LOG.debug("Closing {} ", threadId);
                 IOHelper.close(consumer);
             }
+        }
+
+        private void shutdown() {
+            // As advised in the KAFKA-1894 ticket, calling this wakeup method breaks the infinite loop
+            consumer.wakeup();
         }
     }
 
