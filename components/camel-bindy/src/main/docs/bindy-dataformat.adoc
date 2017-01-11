@@ -52,15 +52,6 @@ class names instead of package names now.
 
 ### Options
 
-
-
-
-
-
-
-
-
-
 // dataformat options: START
 The Bindy dataformat supports 4 options which are listed below.
 
@@ -77,15 +68,6 @@ The Bindy dataformat supports 4 options which are listed below.
 |=======================================================================
 {% endraw %}
 // dataformat options: END
-
-
-
-
-
-
-
-
-
 
 
 
@@ -132,8 +114,8 @@ it, like '|'
 |skipFirstLine |boolean |optional - default value = false - allow to skip the first line of the
 CSV file
 
-|crlf |string |optional - possible values = WINDOWS,UNIX,MAC, or custom; default value
-= WINDOWS - allow to define the carriage return character to use. If you
+|crlf |string |optional - possible values = WINDOWS,UNIX,MAC, or custom; default value.
+WINDOWS - allow to define the carriage return character to use. If you
 specify a value other than the three listed before, the value you enter
 (custom) will be used as the CRLF character(s)
 
@@ -719,8 +701,8 @@ field, we can then add 'padd' characters.
 |=======================================================================
 |Parameter name |type |Info
 
-|crlf |string |optional - possible values = WINDOWS,UNIX,MAC, or custom; default value
-= WINDOWS - allow to define the carriage return character to use. If you
+|crlf |string |optional - possible values = WINDOWS,UNIX,MAC, or custom; default value.
+WINDOWS - allow to define the carriage return character to use. If you
 specify a value other than the three listed before, the value you enter
 (custom) will be used as the CRLF character(s)
 
@@ -1334,7 +1316,7 @@ Only one attribute/parameter exists for this annotation.
 
 *case 1 : Section*
 
-A. Definition of the header section
+Definition of the header section
 
 *FIX message - Section - Header*
 
@@ -1352,7 +1334,7 @@ public class Header {
 }
 ---------------------------------------------------------------
 
-B. Definition of the body section
+Definition of the body section
 
 *FIX message - Section - Body*
 
@@ -1373,7 +1355,7 @@ public class Order {
     private String clOrdId;
 -----------------------------------------------------------------------------------------------------------------
 
-C. Definition of the footer section
+Definition of the footer section
 
 *FIX message - Section - Footer*
 
@@ -1427,7 +1409,7 @@ of the Class>
 
 Here is the CSV output that we want :
 
-Claus,Ibsen,Camel in Action 1,2010,35 +
+ Claus,Ibsen,Camel in Action 1,2010,35 +
  Claus,Ibsen,Camel in Action 2,2012,35 +
  Claus,Ibsen,Camel in Action 3,2013,35 +
  Claus,Ibsen,Camel in Action 4,2014,35
@@ -1821,7 +1803,7 @@ is for using Camel 2.16 onwards.
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
 
- 
+
         <dataFormats>
           <bindy id="bindyDataformat" type="Csv" classType="org.apache.camel.bindy.model.Order"/>
         </dataFormats>
@@ -1842,14 +1824,8 @@ is for using Camel 2.16 onwards.
 </beans>
 -------------------------------------------------------------------------------------------------
 
-[Note]
-====
- *Be careful*
-
-Please verify that your model classes implements serializable otherwise
+*Note:* Please verify that your model classes implements serializable otherwise
 the queue manager will raise an error
-
-====
 
 ### Dependencies
 

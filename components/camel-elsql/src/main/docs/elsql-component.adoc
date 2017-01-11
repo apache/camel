@@ -9,6 +9,9 @@ https://github.com/OpenGamma/ElSql[ElSql] to define the SQL queries. 
 This component uses `spring-jdbc` behind the scenes for the actual SQL
 handling.
 
+This component can be used as a
+http://camel.apache.org/transactional-client.html[Transactional Client].
+
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
@@ -21,12 +24,6 @@ for this component:
     <!-- use the same version as your Camel core version -->
 </dependency>
 ------------------------------------------------------------
-
-[Info]
-====
-This component can be used as a
-http://camel.apache.org/transactional-client.html[Transactional Client].
-====
 
 The SQL component uses the following endpoint URI notation:
 

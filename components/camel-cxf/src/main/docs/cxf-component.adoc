@@ -78,14 +78,6 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[Tip]
-====
-CXF dependencies
-
-If you want to learn about CXF dependencies you can checkout the
-`WHICH-JARS` text file.
-
-====
 
 ### URI format
 

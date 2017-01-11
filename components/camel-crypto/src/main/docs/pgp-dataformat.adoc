@@ -121,27 +121,25 @@ libraries available from
 http://www.bouncycastle.org/java.html[http://www.bouncycastle.org/java.html]
 if you would prefer to do it that way.
 
-1.  Install the command line utilities on linux
+Install the command line utilities on linux
 
 [source,java]
 ---------------------
 apt-get install gnupg
 ---------------------
-2.  Create your keyring, entering a secure password
+Create your keyring, entering a secure password
 
 [source,java]
 -------------
 gpg --gen-key
 -------------
-3.  If you need to import someone elses public key so that you can
-encrypt a file for them.
+If you need to import someone elses public key so that you can encrypt a file for them.
 
 [source,java]
 --------------------------
 gpg --import <filename.key
 --------------------------
-4.  The following files should now exist and can be used to run the
-example
+The following files should now exist and can be used to run the example
 
 [source,java]
 -----------------------------------------------
