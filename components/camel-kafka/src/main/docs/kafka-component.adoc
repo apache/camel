@@ -95,7 +95,7 @@ The Kafka component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The Kafka component supports 77 endpoint options which are listed below:
+The Kafka component supports 78 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -121,6 +121,7 @@ The Kafka component supports 77 endpoint options which are listed below:
 | keyDeserializer | consumer | org.apache.kafka.common.serialization.StringDeserializer | String | Deserializer class for key that implements the Deserializer interface.
 | maxPartitionFetchBytes | consumer | 1048576 | Integer | The maximum amount of data per-partition the server will return. The maximum total memory used for a request will be partitions max.partition.fetch.bytes. This size must be at least as large as the maximum message size the server allows or else it is possible for the producer to send messages larger than the consumer can fetch. If that happens the consumer can get stuck trying to fetch a large message on a certain partition.
 | maxPollRecords | consumer | 500 | Integer | The maximum number of records returned in a single call to poll()
+| offsetRepository | consumer |  | String> | The offset repository to use in order to locally store the offset of each partition of the topic. Defining one will disable the autocommit.
 | partitionAssignor | consumer | org.apache.kafka.clients.consumer.RangeAssignor | String | The class name of the partition assignment strategy that the client will use to distribute partition ownership amongst consumer instances when group management is used
 | pollTimeoutMs | consumer | 5000 | Long | The timeout used when polling the KafkaConsumer.
 | seekToBeginning | consumer | false | boolean | If the option is true then KafkaConsumer will read from beginning on startup.

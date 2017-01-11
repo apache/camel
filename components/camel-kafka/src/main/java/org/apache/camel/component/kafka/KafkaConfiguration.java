@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.StateRepository;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
@@ -102,6 +103,8 @@ public class KafkaConfiguration {
     private String consumerId;
     @UriParam(label = "consumer", defaultValue = "true")
     private Boolean autoCommitEnable = true;
+    @UriParam(label = "consumer")
+    private StateRepository<String, String> offsetRepository;
 
     //Producer configuration properties
     @UriParam(label = "producer", defaultValue = "100")
@@ -461,7 +464,7 @@ public class KafkaConfiguration {
     }
 
     public Boolean isAutoCommitEnable() {
-        return autoCommitEnable;
+        return offsetRepository == null ? autoCommitEnable : false;
     }
 
     /**
@@ -470,6 +473,18 @@ public class KafkaConfiguration {
      */
     public void setAutoCommitEnable(Boolean autoCommitEnable) {
         this.autoCommitEnable = autoCommitEnable;
+    }
+
+    public StateRepository<String, String> getOffsetRepository() {
+        return offsetRepository;
+    }
+
+    /**
+     * The offset repository to use in order to locally store the offset of each partition of the topic.
+     * Defining one will disable the autocommit.
+     */
+    public void setOffsetRepository(StateRepository<String, String> offsetRepository) {
+        this.offsetRepository = offsetRepository;
     }
 
     public Integer getAutoCommitIntervalMs() {
@@ -804,7 +819,7 @@ public class KafkaConfiguration {
     }
 
     /**
-     * The Simple Authentication and Security Layer (SASL) Mechanism used. 
+     * The Simple Authentication and Security Layer (SASL) Mechanism used.
      * For the valid values see <a href="http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml">http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml</a>
      */
     public void setSaslMechanism(String saslMechanism) {

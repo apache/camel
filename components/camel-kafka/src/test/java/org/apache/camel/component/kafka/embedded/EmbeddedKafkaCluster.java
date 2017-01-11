@@ -67,6 +67,10 @@ public class EmbeddedKafkaCluster {
         return null;
     }
 
+    public void createTopic(String topic, int partitionCount) {
+        AdminUtils.createTopic(getZkUtils(), topic, partitionCount, 1, new Properties(), RackAwareMode.Enforced$.MODULE$);
+    }
+
     public void createTopics(String... topics) {
         for (String topic : topics) {
             AdminUtils.createTopic(getZkUtils(), topic, 2, 1, new Properties(), RackAwareMode.Enforced$.MODULE$);
