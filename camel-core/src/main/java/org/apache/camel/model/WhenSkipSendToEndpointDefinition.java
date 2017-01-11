@@ -27,7 +27,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * Predicate to determine if the message should be sent or not to the endpoint, when using interceptSentToEndpoint.
  */
-@Metadata(label = "configuration")
+@Metadata(label = "configuration", expressionMode = Metadata.ExpressionMode.predicate)
 @XmlRootElement(name = "whenSkipSendToEndpoint")
 public class WhenSkipSendToEndpointDefinition extends WhenDefinition {
 

@@ -45,6 +45,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
     @XmlElementRef
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     private List<WhenDefinition> whenClauses = new ArrayList<WhenDefinition>();
     @XmlElement
     private OtherwiseDefinition otherwise;
@@ -179,6 +180,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
      * @param predicate the predicate
      * @return the builder
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public ChoiceDefinition when(Predicate predicate) {
         addClause(new WhenDefinition(predicate));
         return this;
@@ -189,6 +191,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
      *
      * @return expression to be used as builder to configure the when node
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public ExpressionClause<ChoiceDefinition> when() {
         ExpressionClause<ChoiceDefinition> clause = new ExpressionClause<ChoiceDefinition>(this);
         addClause(new WhenDefinition(clause));

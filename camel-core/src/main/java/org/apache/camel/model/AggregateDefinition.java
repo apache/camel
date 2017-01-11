@@ -61,6 +61,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     @XmlElement(name = "correlationExpression", required = true)
     private ExpressionSubElementDefinition correlationExpression;
     @XmlElement(name = "completionPredicate")
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     private ExpressionSubElementDefinition completionPredicate;
     @XmlElement(name = "completionTimeout")
     private ExpressionSubElementDefinition completionTimeoutExpression;
@@ -889,6 +890,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     /**
      * Sets the predicate used to determine if the aggregation is completed
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public AggregateDefinition completionPredicate(Predicate predicate) {
         checkNoCompletedPredicate();
         setCompletionPredicate(new ExpressionSubElementDefinition(predicate));
@@ -901,6 +903,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      *
      * @return the builder
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public PredicateClause<AggregateDefinition> completionPredicate() {
         PredicateClause<AggregateDefinition> clause = new PredicateClause<>(this);
         completionPredicate(clause);
@@ -913,6 +916,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      *
      * @return the builder
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public PredicateClause<AggregateDefinition> completion() {
         return completionPredicate();
     }

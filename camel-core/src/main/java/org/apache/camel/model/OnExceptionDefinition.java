@@ -59,16 +59,20 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     @XmlElement(name = "exception", required = true)
     private List<String> exceptions = new ArrayList<String>();
     @XmlElement(name = "onWhen")
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     private WhenDefinition onWhen;
     @XmlElement(name = "retryWhile")
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     private ExpressionSubElementDefinition retryWhile;
     @XmlElement(name = "redeliveryPolicy")
     private RedeliveryPolicyDefinition redeliveryPolicyType;
     @XmlAttribute(name = "redeliveryPolicyRef")
     private String redeliveryPolicyRef;
     @XmlElement(name = "handled")
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     private ExpressionSubElementDefinition handled;
     @XmlElement(name = "continued")
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     private ExpressionSubElementDefinition continued;
     @XmlAttribute(name = "onRedeliveryRef")
     private String onRedeliveryRef;
@@ -295,6 +299,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @param handled predicate that determines true or false
      * @return the builder
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public OnExceptionDefinition handled(Predicate handled) {
         setHandledPolicy(handled);
         return this;
@@ -306,6 +311,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @param handled expression that determines true or false
      * @return the builder
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public OnExceptionDefinition handled(Expression handled) {
         setHandledPolicy(ExpressionToPredicateAdapter.toPredicate(handled));
         return this;
@@ -319,6 +325,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @param continued continued or not
      * @return the builder
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public OnExceptionDefinition continued(boolean continued) {
         Expression expression = ExpressionBuilder.constantExpression(Boolean.toString(continued));
         return continued(expression);
@@ -332,6 +339,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @param continued predicate that determines true or false
      * @return the builder
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public OnExceptionDefinition continued(Predicate continued) {
         setContinuedPolicy(continued);
         return this;
@@ -345,6 +353,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @param continued expression that determines true or false
      * @return the builder
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public OnExceptionDefinition continued(Expression continued) {
         setContinuedPolicy(ExpressionToPredicateAdapter.toPredicate(continued));
         return this;
@@ -359,6 +368,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @param predicate predicate that determines true or false
      * @return the builder
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public OnExceptionDefinition onWhen(Predicate predicate) {
         setOnWhen(new WhenDefinition(predicate));
         return this;
@@ -372,6 +382,7 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
      * @param retryWhile predicate that determines when to stop retrying
      * @return the builder
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public OnExceptionDefinition retryWhile(Predicate retryWhile) {
         setRetryWhilePolicy(retryWhile);
         return this;

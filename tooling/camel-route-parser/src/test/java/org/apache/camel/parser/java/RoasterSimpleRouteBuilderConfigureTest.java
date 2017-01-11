@@ -46,8 +46,10 @@ public class RoasterSimpleRouteBuilderConfigureTest {
             LOG.info("  Line: " + findLineNumber(simple.getPosition()));
         }
         Assert.assertEquals("${body} > 100", list.get(0).getElement());
+        Assert.assertEquals(true, list.get(0).getPredicate());
         Assert.assertEquals(27, findLineNumber(list.get(0).getPosition()));
         Assert.assertEquals("${body} > 200", list.get(1).getElement());
+        Assert.assertEquals(true, list.get(1).getPredicate());
         Assert.assertEquals(30, findLineNumber(list.get(1).getPosition()));
     }
 

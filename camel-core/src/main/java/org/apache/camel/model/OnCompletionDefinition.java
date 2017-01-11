@@ -54,6 +54,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     @XmlAttribute
     private Boolean onFailureOnly;
     @XmlElement(name = "onWhen")
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     private WhenDefinition onWhen;
     @XmlAttribute
     private Boolean parallelProcessing;
@@ -249,6 +250,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      * @param predicate predicate that determines true or false
      * @return the builder
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public OnCompletionDefinition onWhen(Predicate predicate) {
         setOnWhen(new WhenDefinition(predicate));
         return this;

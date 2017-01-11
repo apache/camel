@@ -47,8 +47,10 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
     @XmlElement(name = "onWhen")
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     private WhenDefinition onWhen;
     @XmlElement(name = "handled")
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     private ExpressionSubElementDefinition handled;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
@@ -173,6 +175,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      * @param predicate  predicate that determines true or false
      * @return the builder
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public CatchDefinition onWhen(Predicate predicate) {
         setOnWhen(new WhenDefinition(predicate));
         return this;
@@ -201,6 +204,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
      */
     @Deprecated
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public CatchDefinition handled(Predicate handled) {
         setHandledPolicy(handled);
         return this;
@@ -215,6 +219,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
      */
     @Deprecated
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public CatchDefinition handled(Expression handled) {
         setHandledPolicy(ExpressionToPredicateAdapter.toPredicate(handled));
         return this;

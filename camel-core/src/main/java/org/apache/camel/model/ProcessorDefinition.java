@@ -70,6 +70,7 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.slf4j.Logger;
@@ -1460,6 +1461,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the clause used to create the filter expression
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public ExpressionClause<? extends FilterDefinition> filter() {
         FilterDefinition filter = new FilterDefinition();
         addOutput(filter);
@@ -1474,6 +1476,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param predicate  predicate to use
      * @return the builder 
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public FilterDefinition filter(Predicate predicate) {
         FilterDefinition filter = new FilterDefinition(predicate);
         addOutput(filter);
@@ -1488,6 +1491,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param expression  the predicate expression to use
      * @return the builder
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public FilterDefinition filter(ExpressionDefinition expression) {
         FilterDefinition filter = new FilterDefinition(expression);
         addOutput(filter);
@@ -1503,6 +1507,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param expression   the expression
      * @return the builder
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public FilterDefinition filter(String language, String expression) {
         return filter(new LanguageExpression(language, expression));
     }
@@ -1515,6 +1520,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param expression  the expression
      * @return the builder
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public ValidateDefinition validate(Expression expression) {
         ValidateDefinition answer = new ValidateDefinition(expression);
         addOutput(answer);
@@ -1529,6 +1535,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param predicate  the predicate
      * @return the builder
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public ValidateDefinition validate(Predicate predicate) {
         ValidateDefinition answer = new ValidateDefinition(predicate);
         addOutput(answer);
@@ -1542,6 +1549,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the builder
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public ExpressionClause<ValidateDefinition> validate() {
         ValidateDefinition answer = new ValidateDefinition();
         addOutput(answer);
@@ -2236,6 +2244,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param predicate the while loop predicate
      * @return the builder
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public LoopDefinition loopDoWhile(Predicate predicate) {
         LoopDefinition loop = new LoopDefinition(predicate);
         addOutput(loop);

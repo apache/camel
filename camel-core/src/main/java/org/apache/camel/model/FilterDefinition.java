@@ -32,7 +32,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing", expressionMode = Metadata.ExpressionMode.predicate)
 @XmlRootElement(name = "filter")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FilterDefinition extends ExpressionNode {
