@@ -1,4 +1,4 @@
-# Twitter Component
+## Twitter Component
 ifdef::env-github[]
 :caution-caption: :boom:
 :important-caption: :exclamation:
@@ -8,9 +8,7 @@ ifdef::env-github[]
 endif::[]
 
 [[ConfluenceContent]]
-[[Twitter-Twitter]]
-Twitter
-~~~~~~~
+### Twitter
 
 *Available as of Camel 2.10*
 
@@ -38,18 +36,14 @@ for this component:
 </dependency>
 ----
 
-[[Twitter-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source]
 ----
 twitter://endpoint[?options]
 ----
 
-[[Twitter-TwitterComponent]]
-Twitter component
-^^^^^^^^^^^^^^^^^
+### Twitter component
 
 The twitter component can be configured with the Twitter account
 settings which is mandatory to configure before using.
@@ -85,9 +79,7 @@ The Twitter component supports 8 options which are listed below.
 
 You can also configure these options directly in the endpoint.
 
-[[Twitter-ConsumerEndpoints]]
-Consumer endpoints
-^^^^^^^^^^^^^^^^^^
+### Consumer endpoints
 
 Rather than the endpoints returning a List through one single route
 exchange, camel-twitter creates one route exchange per returned object.
@@ -130,9 +122,7 @@ polling* |[line-through]*twitter4j.Status* |[line-through]*@deprecated.
 Removed from Camel 2.11 onwards.*
 |=======================================================================
 
-[[Twitter-ProducerEndpoints]]
-Producer endpoints
-^^^^^^^^^^^^^^^^^^
+### Producer endpoints
 
 [width="100%",cols="20%,80%",options="header",]
 |==============================
@@ -142,9 +132,7 @@ Producer endpoints
 |timeline/user |String
 |==============================
 
-[[Twitter-URIOptions]]
-URI options
-^^^^^^^^^^^
+### URI options
 
 
 
@@ -212,9 +200,7 @@ The Twitter component supports 43 endpoint options which are listed below:
 
 
 
-[[Twitter-Messageheaders]]
-Message headers
-^^^^^^^^^^^^^^^
+### Message headers
 
 [width="100%",cols="20%,80%",options="header",]
 |=======================================================================
@@ -234,15 +220,11 @@ the option of `numberOfPages` which sets how many pages we want to
 twitter returns.
 |=======================================================================
 
-[[Twitter-Messagebody]]
-Message body
-^^^^^^^^^^^^
+### Message body
 
 All message bodies utilize objects provided by the Twitter4J API.
 
-[[Twitter-Usecases]]
-Use cases
-^^^^^^^^^
+### Use cases
 
 NOTE: *API Rate Limits:* Twitter REST APIs encapsulated by http://twitter4j.org/[Twitter4J] are
 subjected to https://dev.twitter.com/rest/public/rate-limiting[API Rate
@@ -251,9 +233,7 @@ https://dev.twitter.com/rest/public/rate-limits[API Rate Limits]
 documentation. Note that endpoints/resources not listed in that page are
 default to 15 requests per allotted user per window.
 
-[[Twitter-TocreateastatusupdatewithinyourTwitterprofile,sendthisproduceraStringbody]]
-To create a status update within your Twitter profile, send this producer a String body:
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### To create a status update within your Twitter profile, send this producer a String body:
 
 [source,java]
 ----
@@ -261,9 +241,7 @@ from("direct:foo")
   .to("twitter://timeline/user?consumerKey=[s]&consumerSecret=[s]&accessToken=[s]&accessTokenSecret=[s]);
 ----
 
-[[Twitter-Topoll,every60sec.,allstatusesonyourhometimeline]]
-To poll, every 60 sec., all statuses on your home timeline:
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### To poll, every 60 sec., all statuses on your home timeline:
 
 [source,java]
 ----
@@ -271,9 +249,7 @@ from("twitter://timeline/home?type=polling&delay=60&consumerKey=[s]&consumerSecr
   .to("bean:blah");
 ----
 
-[[Twitter-TosearchforallstatuseswiththekeywordCamel]]
-To search for all statuses with the keyword 'camel':
-++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### To search for all statuses with the keyword 'camel':
 
 [source,java]
 ----
@@ -281,9 +257,7 @@ from("twitter://search?type=direct&keywords=camel&consumerKey=[s]&consumerSecret
   .to("bean:blah");
 ----
 
-[[Twitter-Searchingusingaproducerwithstatickeywords]]
-Searching using a producer with static keywords:
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Searching using a producer with static keywords:
 
 [source,java]
 ----
@@ -291,9 +265,7 @@ from("direct:foo")
   .to("twitter://search?keywords=camel&consumerKey=[s]&consumerSecret=[s]&accessToken=[s]&accessTokenSecret=[s]");
 ----
 
-[[Twitter-Searchingusingaproducerwithdynamickeywordsfromheader]]
-Searching using a producer with dynamic keywords from header:
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Searching using a producer with dynamic keywords from header:
 
 In the `bar` header we have the keywords we want to search, so we can
 assign this value to the `CamelTwitterKeywords` header:
@@ -305,16 +277,12 @@ from("direct:foo")
   .to("twitter://search?consumerKey=[s]&consumerSecret=[s]&accessToken=[s]&accessTokenSecret=[s]");
 ----
 
-[[Twitter-Example]]
-Example
-^^^^^^^
+### Example
 
 See also the link:twitter-websocket-example.html[Twitter Websocket
 Example].
 
-[[Twitter-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]

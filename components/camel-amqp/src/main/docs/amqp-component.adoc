@@ -1,4 +1,4 @@
-# AMQP Component
+## AMQP Component
 
 The *amqp:* component supports the http://www.amqp.org/[AMQP 1.0
 protocol] using the JMS Client API of the http://qpid.apache.org/[Qpid]
@@ -20,18 +20,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------------------------------------------
 
-[[AMQP-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------------------
 amqp:[queue:|topic:]destinationName[?options]
 ---------------------------------------------
 
-[[AMQP-AMQPOptions]]
-AMQP Options
-^^^^^^^^^^^^
+### AMQP Options
 
 You can specify all of the various configuration options of the
 link:../../../../camel-jms/src/main/docs/readme.html[JMS] component after the destination name.
@@ -232,9 +228,7 @@ The AMQP component supports 86 endpoint options which are listed below:
 
 
 
-[[AMQP-Usage]]
-Usage
-^^^^^
+### Usage
 
 As AMQP component is inherited from JMS component, the usage of the
 former is almost identical to the latter:
@@ -252,9 +246,7 @@ from(...).
   to("amqp:topic:notify");
 ------------------------------------
 
-[[AMQP-ConfiguringAMQPcomponent]]
-Configuring AMQP component
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Configuring AMQP component
 
 Starting from the Camel 2.16.1 you can also use the
 `AMQPComponent#amqp10Component(String connectionURI)` factory method to
@@ -338,9 +330,7 @@ AMQPConnectionDetails amqpConnection() {
 }
 -----------------------------------------------
 
-[[AMQP-Usingtopics]]
-Using topics
-^^^^^^^^^^^^
+### Using topics
 
 To have using topics working with `camel-amqp` you need to configure the
 component to use `topic://` as topic prefix, as shown below:
@@ -361,12 +351,9 @@ Keep in mind that both  `AMQPComponent#amqpComponent()` methods and
 `AMQPConnectionDetails` pre-configure the component with the topic
 prefix, so you don't have to configure it explicitly.
 
-[[AMQP-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

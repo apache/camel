@@ -1,4 +1,4 @@
-# XML Tokenize Language
+## XML Tokenize Language
 
 The xml tokenizer language is a built-in language in camel-core, which
 is a truly XML-aware tokenizer that can be used with the Splitter as the
@@ -10,9 +10,7 @@ Tokenizer. 
 
 For more details see link:splitter.html[Splitter].
 
-[[XMLTokenizer-Options]]
-XML Tokenizer Options
-^^^^^^^^^^^^^^^^^^^^^
+### XML Tokenizer Options
 
 // language options: START
 The XML Tokenize language supports 4 options which are listed below.

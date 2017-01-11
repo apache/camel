@@ -1,4 +1,4 @@
-# Restlet Component
+## Restlet Component
 
 The *Restlet* component provides http://www.restlet.org[Restlet] based
 link:endpoint.html[endpoints] for consuming and producing RESTful
@@ -17,9 +17,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Restlet-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------------------------
@@ -57,9 +55,7 @@ synchronous=true as option on the endpoint uris, Or set it on the
 RestletComponent as a global option so all endpoints inherit this
 option.
 
-[[Restlet-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -133,9 +129,7 @@ The Restlet component supports 22 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Restlet-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -185,21 +179,15 @@ create responses using the API from Restlet. See examples below.
 the List of CacheDirective of Restlet from the camel message header.
 |=======================================================================
 
-[[Restlet-MessageBody]]
-Message Body
-^^^^^^^^^^^^
+### Message Body
 
 Camel will store the restlet response from the external server on the
 OUT body. All headers from the IN message will be copied to the OUT
 message, so that headers are preserved during routing.
 
-[[Restlet-Samples]]
-Samples
-^^^^^^^
+### Samples
 
-[[Restlet-RestletEndpointwithAuthentication]]
-Restlet Endpoint with Authentication
-++++++++++++++++++++++++++++++++++++
+#### Restlet Endpoint with Authentication
 
 The following route starts a `restlet` consumer endpoint that listens
 for `POST` requests on http://localhost:8080. The processor creates a
@@ -237,9 +225,7 @@ The sample client gets a response like the following:
 received [<order foo='1'/>] as an order id = 89531
 --------------------------------------------------
 
-[[Restlet-SinglerestletendpointtoservicemultiplemethodsandURItemplates]]
-Single restlet endpoint to service multiple methods and URI templates
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Single restlet endpoint to service multiple methods and URI templates
 
 It is possible to create a single route to service multiple HTTP methods
 using the `restletMethods` option. This snippet also shows how to
@@ -264,9 +250,7 @@ The `restletUriPatterns=#uriTemplates` option references the
 </util:list>
 --------------------------------------------------------
 
-[[Restlet-UsingRestletAPItopopulateresponse]]
-Using Restlet API to populate response
-++++++++++++++++++++++++++++++++++++++
+#### Using Restlet API to populate response
 
 *Available as of Camel 2.8*
 
@@ -277,9 +261,7 @@ the response from an inlined Camel link:processor.html[Processor]:
 
 *Generating response using Restlet Response API*
 
-[[Restlet-Configuringmaxthreadsoncomponent]]
-Configuring max threads on component
-++++++++++++++++++++++++++++++++++++
+#### Configuring max threads on component
 
 To configure the max threads options you must do this on the component,
 such as:
@@ -291,9 +273,7 @@ such as:
 </bean>
 -------------------------------------------------------------------------------
 
-[[Restlet-UsingtheRestletservletwithinawebapp]]
-Using the Restlet servlet within a webapp
-+++++++++++++++++++++++++++++++++++++++++
+#### Using the Restlet servlet within a webapp
 
 *Available as of Camel 2.8* +
  There are
@@ -386,12 +366,9 @@ well:
 </repository>
 --------------------------------------------------
 
-[[Restlet-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

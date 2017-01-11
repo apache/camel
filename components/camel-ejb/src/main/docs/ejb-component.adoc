@@ -1,4 +1,4 @@
-# EJB Component
+## EJB Component
 
 *Available as of Camel 2.4*
 
@@ -17,9 +17,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[EJB-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------
@@ -29,9 +27,7 @@ ejb:ejbName[?options]
 Where *ejbName* can be any string which is used to look up the EJB in
 the Application Server JNDI link:registry.html[Registry]
 
-[[EJB-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -71,9 +67,7 @@ The EJB component supports 6 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[EJB-BeanBinding]]
-Bean Binding
-^^^^^^^^^^^^
+### Bean Binding
 
 How bean methods to be invoked are chosen (if they are not specified
 explicitly through the *method* parameter) and how parameter values are
@@ -82,9 +76,7 @@ link:bean-binding.html[Bean Binding] mechanism which is used throughout
 all of the various link:bean-integration.html[Bean Integration]
 mechanisms in Camel.
 
-[[EJB-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
 In the following examples we use the Greater EJB which is defined as
 follows:
@@ -122,9 +114,7 @@ public class GreaterImpl implements GreaterLocal {
 }
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[EJB-UsingJavaDSL]]
-Using Java DSL
-++++++++++++++
+#### Using Java DSL
 
 In this example we want to invoke the `hello` method on the EJB. Since
 this example is based on an unit test using Apache OpenEJB we have to
@@ -172,9 +162,7 @@ usually allows it to access the JNDI registry and lookup the
 link:ejb.html[EJB]s. However if you need to access a application server on a remote JVM or
 the likes, you have to prepare the properties beforehand.
 
-[[EJB-UsingSpringXML]]
-Using Spring XML
-++++++++++++++++
+#### Using Spring XML
 
 And this is the same example using Spring XML instead:
 
@@ -207,9 +195,7 @@ Before we are ready to use link:ejb.html[EJB] in the Camel routes:
 </camelContext>
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[EJB-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -218,4 +204,3 @@ See Also
 * link:bean.html[Bean]
 * link:bean-binding.html[Bean Binding]
 * link:bean-integration.html[Bean Integration]
-

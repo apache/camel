@@ -1,4 +1,4 @@
-# Stream Component
+## Stream Component
 
 The *stream:* component provides access to the `System.in`, `System.out`
 and `System.err` streams as well as allowing streaming of file and URL.
@@ -16,9 +16,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Stream-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -----------------------
@@ -43,9 +41,7 @@ producers (that is, it cannot appear in `from()`).
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Stream-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -85,9 +81,7 @@ The Stream component supports 19 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Stream-Messagecontent]]
-Message content
-^^^^^^^^^^^^^^^
+### Message content
 
 The *stream:* component supports either `String` or `byte[]` for writing
 to streams. Just add either `String` or `byte[]` content to the
@@ -100,9 +94,7 @@ add a `java.io.OutputStream` object to `message.in.header` in the key
 `header`. +
  See samples for an example.
 
-[[Stream-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 In the following sample we route messages from the `direct:in` endpoint
 to the `System.out` stream:
@@ -138,12 +130,9 @@ file will be re-opened and scanned with each iteration of
 scanStreamDelay. Until NIO2 is available we cannot reliably detect when
 a file is deleted/recreated.
 
-[[Stream-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

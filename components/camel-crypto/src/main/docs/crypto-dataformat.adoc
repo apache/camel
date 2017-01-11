@@ -1,4 +1,4 @@
-# Crypto (Java Cryptographic Extension) DataFormat
+## Crypto (Java Cryptographic Extension) DataFormat
 
 The Crypto link:data-format.html[Data Format] integrates the Java
 Cryptographic Extension into Camel, allowing simple and flexible
@@ -8,9 +8,7 @@ encryption to cyphertext and unmarshalling to mean decryption back to
 the original plaintext. This data format implements only symmetric
 (shared-key) encryption and decyption.
 
-[[Crypto-PGPDataFormatOptions]]
-CryptoDataFormat Options
-^^^^^^^^^^^^^^^^^^^^^^^^
+### CryptoDataFormat Options
 
 // dataformat options: START
 The Crypto (Java Cryptographic Extension) dataformat supports 10 options which are listed below.
@@ -36,9 +34,7 @@ The Crypto (Java Cryptographic Extension) dataformat supports 10 options which a
 // dataformat options: END
 
 
-[[Basic Usage]]
-Basic Usage
-^^^^^^^^^^^
+### Basic Usage
 
 At its most basic all that is required to encrypt/decrypt an exchange is a shared secret key.
 If one or more instances of the Crypto data format are configured with this key the format can
@@ -79,8 +75,7 @@ In Spring the dataformat is configured first and then used in routes
 ----------------------------------------------------------
 
 
-Specifying the Encryption Algorithm
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Specifying the Encryption Algorithm
 
 Changing the algorithm is a matter of supplying the JCE algorithm name. If you change the algorithm you will need to use a compatible key.
 
@@ -102,8 +97,7 @@ from("direct:hmac-algorithm")
 A list of the available algorithms in Java 7 is available via the Java Cryptography Architecture Standard Algorithm Name Documentation.
 
 
-Specifying an Initialization Vector
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Specifying an Initialization Vector
 
 Some crypto algorithms, particularly block algorithms, require configuration with an initial block of data known as an Initialization Vector.
 In the JCE this is passed as an AlgorithmParameterSpec when the Cipher is initialized.
@@ -171,8 +165,7 @@ For more information of the use of Initialization Vectors, consult
 * http://en.wikipedia.org/wiki/Block_cipher_modes_of_operation
 
 
-Hashed Message Authentication Codes (HMAC)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Hashed Message Authentication Codes (HMAC)
 To avoid attacks against the encrypted data while it is in transit the CryptoDataFormat can also calculate a Message Authentication
 Code for the encrypted exchange contents based on a configurable MAC algorithm. The calculated HMAC is appended to the stream after encryption.
 It is separated from the stream in the decryption phase. The MAC is recalculated and verified against the transmitted version to insure nothing
@@ -225,8 +218,7 @@ or with spring.
 ----------------------------------------------------------
 
 
-Supplying Keys Dynamically
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Supplying Keys Dynamically
 
 When using a Recipient list or similar EIP the recipient of an exchange can vary dynamically.
 Using the same key across all recipients may neither be feasible or desirable. It would be useful to be able to specify
@@ -267,9 +259,7 @@ or with spring.
 ----------------------------------------------------------
 
 
-[[Crypto-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use the link:crypto.html[Crypto] dataformat in your camel routes you
 need to add the following dependency to your pom.
@@ -284,11 +274,8 @@ need to add the following dependency to your pom.
 </dependency>
 ----------------------------------------------------------
 
-[[Crypto-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:data-format.html[Data Format]
 * link:crypto-digital-signatures.html[Crypto (Digital Signatures)]
 * http://www.bouncycastle.org/java.html[http://www.bouncycastle.org/java.html]
-

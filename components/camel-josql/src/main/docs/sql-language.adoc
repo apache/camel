@@ -1,4 +1,4 @@
-# SQL Language
+## SQL Language
 
 The SQL support is added by http://josql.sourceforge.net/[JoSQL] and is
 primarily used for performing SQL queries on in-memory objects. If you
@@ -53,9 +53,7 @@ And the spring DSL:
    <to uri="queue:bar"/>
 --------------------------------------
 
-[[SQL-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // language options: START
@@ -73,9 +71,7 @@ The SQL language supports 1 options which are listed below.
 // language options: END
 
 
-[[SQL-Loadingscriptfromexternalresource]]
-Loading script from external resource
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Loading script from external resource
 
 *Available as of Camel 2.11*
 

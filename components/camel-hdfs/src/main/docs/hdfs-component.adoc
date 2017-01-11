@@ -1,4 +1,4 @@
-# HDFS Component
+## HDFS Component
 
 *Available as of Camel 2.8*
 
@@ -19,9 +19,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[HDFS-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------------
@@ -51,9 +49,7 @@ fileMode=Append to append each of the chunks together.
 
  
 
-[[HDFS-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -134,9 +130,7 @@ The HDFS component supports 41 endpoint options which are listed below:
 
 
 
-[[HDFS-KeyTypeandValueType]]
-KeyType and ValueType
-+++++++++++++++++++++
+#### KeyType and ValueType
 
 * NULL it means that the key or the value is absent
 * BYTE for writing a byte, the java Byte class is mapped into a BYTE
@@ -152,9 +146,7 @@ BYTES is also used with everything else, for example, in Camel a file is
 sent around as an InputStream, int this case is written in a sequence
 file or a map file as a sequence of bytes.
 
-[[HDFS-SplittingStrategy]]
-Splitting Strategy
-^^^^^^^^^^^^^^^^^^
+### Splitting Strategy
 
 In the current version of Hadoop opening a file in append mode is
 disabled since it's not very reliable. So, for the moment, it's only
@@ -197,15 +189,11 @@ than 1 second or if more than 5 bytes have been written. So, running
 `hadoop fs -ls /tmp/simple-file` you'll see that multiple files have
 been created.
 
-[[HDFS-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 The following headers are supported by this component:
 
-[[HDFS-Produceronly]]
-Producer only
-+++++++++++++
+#### Producer only
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -217,9 +205,7 @@ link:expression.html[Expression] object. Only relevant when not using a
 split strategy.
 |=======================================================================
 
-[[HDFS-Controllingtoclosefilestream]]
-Controlling to close file stream
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Controlling to close file stream
 
 *Available as of Camel 2.10.4*
 
@@ -234,9 +220,7 @@ the stream should be closed or not.
 Notice this does not apply if you use a split strategy, as there are
 various strategies that can control when the stream is closed.
 
-[[HDFS-UsingthiscomponentinOSGi]]
-Using this component in OSGi
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using this component in OSGi
 
 This component is fully functional in an OSGi environment, however, it
 requires some actions from the user. Hadoop uses the thread context

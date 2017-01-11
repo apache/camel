@@ -1,4 +1,4 @@
-# Dataset Component
+## Dataset Component
 
 link:testing.html[Testing] of distributed and asynchronous processing is
 notoriously difficult. The link:mock.html[Mock], link:test.html[Test]
@@ -18,9 +18,7 @@ data set is received.
 Camel will use the link:log.html[throughput logger] when sending
 dataset's.
 
-[[DataSet-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------------------
@@ -40,9 +38,7 @@ some implementations that can be used for testing:
 and `org.apache.camel.component.dataset.FileDataSet`, all of which
 extend `DataSetSupport`.
 
-[[DataSet-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -86,9 +82,7 @@ The Dataset component supports 20 endpoint options which are listed below:
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[DataSet-ConfiguringDataSet]]
-Configuring DataSet
-^^^^^^^^^^^^^^^^^^^
+### Configuring DataSet
 
 Camel will lookup in the link:registry.html[Registry] for a bean
 implementing the DataSet interface. So you can register your own DataSet
@@ -101,9 +95,7 @@ as:
    </bean>
 --------------------------------------------------------
 
-[[DataSet-Example]]
-Example
-^^^^^^^
+### Example
 
 For example, to test that a set of messages are sent to a queue and then
 consumed from the queue without losing any messages:
@@ -126,16 +118,12 @@ data set is and what the messages look like etc.  
 
  
 
-[[DataSet-DataSetSupport(abstractclass)]]
-`DataSetSupport` (abstract class)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### `DataSetSupport` (abstract class)
 
 The DataSetSupport abstract class is a nice starting point for new
 DataSets, and provides some useful features to derived classes.
 
-[[DataSet-PropertiesonDataSetSupport]]
-Properties on DataSetSupport
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Properties on DataSetSupport
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
 |Property |Type |Default |Description
@@ -153,15 +141,11 @@ progress. Useful for showing progress of a large load test. If < 0, then
 `size` / 5, if is 0 then `size`, else set to `reportCount` value.
 |=======================================================================
 
-[[DataSet-SimpleDataSet]]
-`SimpleDataSet`
-^^^^^^^^^^^^^^^
+### `SimpleDataSet`
 
 The `SimpleDataSet` extends `DataSetSupport`, and adds a default body.
 
-[[DataSet-AdditionalPropertiesonSimpleDataSet]]
-Additional Properties on SimpleDataSet
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Additional Properties on SimpleDataSet
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -174,16 +158,12 @@ configure the `SimpleDataSet` to use it by setting the
 `outputTransformer` property.
 |=======================================================================
 
-[[DataSet-ListDataSet(Camel2.17)]]
-`ListDataSet (Camel 2.17)`
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### `ListDataSet (Camel 2.17)`
 
 The List`DataSet` extends `DataSetSupport`, and adds a list of default
 bodies.
 
-[[DataSet-AdditionalPropertiesonListDataSet]]
-Additional Properties on ListDataSet
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Additional Properties on ListDataSet
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -204,16 +184,12 @@ the payload for the exchange will be selected using the modulus of the
 `CamelDataSetIndex % defaultBodies.size()` )
 |=======================================================================
 
-[[DataSet-FileDataSetCamel2.17]]
-FileDataSet (Camel 2.17)
-^^^^^^^^^^^^^^^^^^^^^^^^
+### FileDataSet (Camel 2.17)
 
 The `SimpleDataSet` extends `ListDataSet`, and adds support for loading
 the bodies from a file.
 
-[[DataSet-AdditionalPropertiesonFileDataSet]]
-Additional Properties on FileDataSet
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Additional Properties on FileDataSet
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -225,13 +201,10 @@ Additional Properties on FileDataSet
 the file into multiple payloads.
 |=======================================================================
 
-[[DataSet-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
 * link:spring-testing.html[Spring Testing]
-

@@ -1,4 +1,4 @@
-# SFTP Component
+## SFTP Component
 
 This component provides access to remote file systems over the FTP and
 SFTP protocols.
@@ -18,9 +18,7 @@ for this component:
 
 For more information you can look at link:ftp.html[FTP component]
 
-[[SFTP-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 The options below are exclusive for the FTPS component.
 

@@ -1,4 +1,4 @@
-# JOLT Component
+## JOLT Component
 
 *Available as of Camel 2.16*
 
@@ -21,9 +21,7 @@ their `pom.xml` for this component:
 
  
 
-[[JOLT-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -----------------------
@@ -37,9 +35,7 @@ invoke; or the complete URL of the remote specification
 You can append query options to the URI in the following
 format, `?option=value&option=value&...`
 
-[[JOLT-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -82,9 +78,7 @@ The JOLT component supports 6 endpoint options which are listed below:
 
 
 
-[[JOLT-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 For example you could use something like
 
@@ -115,12 +109,9 @@ from("direct:in").
 
  
 
-[[JOLT-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

@@ -1,4 +1,4 @@
-# Solr Component
+## Solr Component
 
 *Available as of Camel 2.9*
 
@@ -19,9 +19,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Solr-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 *NOTE:* solrs and solrCloud are new added since *Camel 2.14*.
 
@@ -32,9 +30,7 @@ solrs://host[:port]/solr?[options]
 solrCloud://host[:port]/solr?[options]
 --------------------------------------
 
-[[Solr-Options]]
-Solr Options
-^^^^^^^^^^^^
+### Solr Options
 
 
 // component options: START
@@ -69,9 +65,7 @@ The Solr component supports 14 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Solr-MessageOperations]]
-Message Operations
-^^^^^^^^^^^^^^^^^^
+### Message Operations
 
 The following Solr operations are currently supported. Simply set an
 exchange header with a key of "SolrOperation" and a value set to one of
@@ -116,9 +110,7 @@ bean]
 optimize command
 |=======================================================================
 
-[[Solr-Example]]
-Example
-^^^^^^^
+### Example
 
 Below is a simple INSERT, DELETE and COMMIT example
 
@@ -177,9 +169,7 @@ delete routes and then call the commit route.
     template.sendBody("direct:commit", null);
 -----------------------------------------------
 
-[[Solr-QueryingSolr]]
-Querying Solr
-^^^^^^^^^^^^^
+### Querying Solr
 
 Currently, this component doesn't support querying data natively (may be
 added later). For now, you can query Solr using link:http.html[HTTP] as
@@ -203,12 +193,9 @@ Tutorial]
 
 http://wiki.apache.org/solr/SolrQuerySyntax[Solr Query Syntax]
 
-[[Solr-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

@@ -1,4 +1,4 @@
-# CometD Component
+## CometD Component
 
 The *cometd:* component is a transport for working with the
 http://www.mortbay.org/jetty[jetty] implementation of the
@@ -21,9 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Cometd-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------------------------------------
@@ -33,9 +31,7 @@ cometd://host:port/channelName[?options]
 The *channelName* represents a topic that can be subscribed to by the
 Camel endpoints.
 
-[[Cometd-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
 ------------------------------------------
 cometd://localhost:8080/service/mychannel
@@ -44,9 +40,7 @@ cometds://localhost:8443/service/mychannel
 
 where `cometds:` represents an SSL configured endpoint.
 
-[[Cometd-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -118,9 +112,7 @@ For file (for webapp resources located in the Web Application directory
 the webapp folder -->
 cometd://localhost:8080?resourceBase=classpath:webapp
 
-[[Cometd-Authentication]]
-Authentication
-^^^^^^^^^^^^^^
+### Authentication
 
 *Available as of Camel 2.8*
 
@@ -128,13 +120,9 @@ You can configure custom `SecurityPolicy` and `Extension`'s to the
 `CometdComponent` which allows you to use authentication as
 http://cometd.org/documentation/howtos/authentication[documented here]
 
-[[Cometd-SettingupSSLforCometdComponent]]
-Setting up SSL for Cometd Component
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Setting up SSL for Cometd Component
 
-[[Cometd-UsingtheJSSEConfigurationUtility]]
-Using the JSSE Configuration Utility
-++++++++++++++++++++++++++++++++++++
+#### Using the JSSE Configuration Utility
 
 As of Camel 2.9, the Cometd component supports SSL/TLS configuration
 through the link:camel-configuration-utilities.html[Camel JSSE
@@ -196,12 +184,9 @@ Spring DSL based configuration of endpoint
   <to uri="cometds://127.0.0.1:443/service/test?baseResource=file:./target/test-classes/webapp&timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2"/>...
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[Cometd-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

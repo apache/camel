@@ -1,4 +1,4 @@
-# OpenStack Keystone Component
+## OpenStack Keystone Component
 
 *Available as of Camel 2.19*
 
@@ -6,9 +6,7 @@ The openstack-keystone component allows messages to be sent to an OpenStack iden
 
 *The openstack-keystone component supports only Identity API v3!*
 
-[[openstack-keystone-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -26,9 +24,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel.
 
 
-[[openstack-keystone-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 ----------------------------
@@ -38,9 +34,7 @@ openstack-keystone://hosturl[?options]
 You can append query options to the URI in the following format
 `?options=value&option2=value&...`
 
-[[openstack-keystone-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 // component options: START
 The OpenStack Keystone component has no options.
@@ -67,17 +61,12 @@ The OpenStack Keystone component supports 9 endpoint options which are listed be
 // endpoint options: END
 
 
-[[openstack-keystone-Usage]]
-Usage
-^^^^^
+### Usage
 You can use following settings for each subsystem:
 
-domains
-~~~~~~~
+### domains
 
-[[openstack-keystone-OperationsYouCanPerformWithDomainProducer]]
-Operations you can perform with the Domain producer
-+++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Operations you can perform with the Domain producer
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -93,9 +82,7 @@ Operations you can perform with the Domain producer
 |`delete` | Delete the domain.
 |=========================================================================
 
-[[openstack-keystone-MessageHeadersEvaluatedByTheDomainProducer]]
-Message headers evaluated by the Domain producer
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers evaluated by the Domain producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -112,12 +99,9 @@ Message headers evaluated by the Domain producer
 
 If you need more precise domain settings you can create new object of the type *org.openstack4j.model.identity.v3.Domain* and send in the message body.
 
-groups
-~~~~~~
+### groups
 
-[[openstack-keystone-OperationsYouCanPerformWithGroupProducer]]
-Operations you can perform with the Group producer
-+++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Operations you can perform with the Group producer
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -139,9 +123,7 @@ Operations you can perform with the Group producer
 |`removeUserFromGroup` | Remove the user from the group.
 |=========================================================================
 
-[[openstack-keystone-MessageHeadersEvaluatedByTheGroupProducer]]
-Message headers evaluated by the Group producer
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers evaluated by the Group producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -162,12 +144,9 @@ Message headers evaluated by the Group producer
 
 If you need more precise group settings you can create new object of the type *org.openstack4j.model.identity.v3.Group* and send in the message body.
 
-projects
-~~~~~~~~
+### projects
 
-[[openstack-keystone-OperationsYouCanPerformWithProjectProducer]]
-Operations you can perform with the Project producer
-+++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Operations you can perform with the Project producer
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -183,9 +162,7 @@ Operations you can perform with the Project producer
 |`delete` | Delete the project.
 |=========================================================================
 
-[[openstack-keystone-MessageHeadersEvaluatedByTheProjectProducer]]
-Message headers evaluated by the Project producer
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers evaluated by the Project producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -206,12 +183,9 @@ Message headers evaluated by the Project producer
 
 If you need more precise project settings you can create new object of the type *org.openstack4j.model.identity.v3.Project* and send in the message body.
 
-regions
-~~~~~~~
+### regions
 
-[[openstack-keystone-OperationsYouCanPerformWithRegionProducer]]
-Operations you can perform with the Region producer
-+++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Operations you can perform with the Region producer
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -227,9 +201,7 @@ Operations you can perform with the Region producer
 |`delete` | Delete the region.
 |=========================================================================
 
-[[openstack-keystone-MessageHeadersEvaluatedByTheRegionProducer]]
-Message headers evaluated by the Region producer
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers evaluated by the Region producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -244,12 +216,9 @@ Message headers evaluated by the Region producer
 
 If you need more precise region settings you can create new object of the type *org.openstack4j.model.identity.v3.Region* and send in the message body.
 
-users
-~~~~~
+### users
 
-[[openstack-keystone-OperationsYouCanPerformWithUserProducer]]
-Operations you can perform with the User producer
-+++++++++++++++++++++++++++++++++++++++++++++++++
+#### Operations you can perform with the User producer
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -265,9 +234,7 @@ Operations you can perform with the User producer
 |`delete` | Delete the user.
 |=========================================================================
 
-[[openstack-keystone-MessageHeadersEvaluatedByTheUserProducer]]
-Message headers evaluated by the User producer
-++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers evaluated by the User producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -290,9 +257,7 @@ Message headers evaluated by the User producer
 
 If you need more precise user settings you can create new object of the type *org.openstack4j.model.identity.v3.User* and send in the message body.
 
-[[CamelOpenstack-keystone-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -300,4 +265,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:openstack.html[openstack Component]
-

@@ -1,4 +1,4 @@
-# ironmq Component
+## ironmq Component
 
 *Available as of Camel 2.17*
 
@@ -23,9 +23,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[IronMQ-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -----------------------------
@@ -33,9 +31,7 @@ URI format
 -----------------------------
 Where **queueName** identifies the IronMQ queue you want to publish or consume messages from.
 
-[[IronMQ-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -90,9 +86,7 @@ The ironmq component supports 31 endpoint options which are listed below:
 
 
 
-[[IronMQ-IronMQComponentOptions]]
-IronMQComponent Options
-^^^^^^^^^^^^^^^^^^^^^^^
+### IronMQComponent Options
 
 
 
@@ -105,14 +99,10 @@ The ironmq component has no options.
 
 
 
-[[IronMQ-Messagebody]]
-Message Body
-^^^^^^^^^^^^
+### Message Body
 Should be either a String or a array of Strings. In the latter case the batch of strings will be send to IronMQ as one request, creating one message pr. element in the array.
 
-[[IronMQ-MessageHeaders]]
-Producer message headers
-^^^^^^^^^^^^^^^^^^^^^^^^
+### Producer message headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -121,8 +111,7 @@ Producer message headers
 |CamelIronMQMessageId |String or io.iron.ironmq.Ids|The id of the IronMQ message as a String when sending a single message, or a Ids object when sending a array of strings.
 |=======================================================================
 
-Consumer message headers
-^^^^^^^^^^^^^^^^^^^^^^^^
+### Consumer message headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -133,8 +122,7 @@ Consumer message headers
 |=======================================================================
 
 
-Consumer example
-^^^^^^^^^^^^^^^^
+### Consumer example
 
 Consume 50 messages pr. poll from the queue 'testqueue' on aws eu, and save the messages to files.
 
@@ -144,8 +132,7 @@ from("ironmq:testqueue?ironMQCloud=https://mq-aws-eu-west-1-1.iron.io&projectId=
   .to("file:somefolder");
 --------------------------------------------------
 
-Producer example
-^^^^^^^^^^^^^^^^
+### Producer example
 Dequeue from activemq jms and enqueue the messages on IronMQ.
 
 [source,java]

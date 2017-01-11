@@ -1,4 +1,4 @@
-# etcd Component
+## etcd Component
 +[[Etcd-Etcd]]
 +Etcd
 
@@ -71,5 +71,3 @@ The etcd component supports 31 endpoint options which are listed below:
 // component options: START
 The etcd component has no options.
 // component options: END
-
-

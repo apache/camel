@@ -1,4 +1,4 @@
-# AWS SimpleDB Component
+## AWS SimpleDB Component
 
 *Available as of Camel 2.8.4*
 
@@ -11,9 +11,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon SDB. More information are available at
 http://aws.amazon.com/sdb[Amazon SDB].
 
-[[AWS-SDB-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 ------------------------------
@@ -23,9 +21,7 @@ aws-sdb://domainName[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-[[AWS-SDB-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 // component options: START
@@ -65,13 +61,9 @@ You have to provide the amazonSDBClient in the
 link:registry.html[Registry] or your accessKey and secretKey to access
 the http://aws.amazon.com/sdb[Amazon's SDB].
 
-[[AWS-SDB-Usage]]
-Usage
-^^^^^
+### Usage
 
-[[AWS-SDB-MessageheadersevaluatedbytheSDBproducer]]
-Message headers evaluated by the SDB producer
-+++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers evaluated by the SDB producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -107,9 +99,7 @@ to 100.
 specified attributes will be updated/deleted or not.
 |=======================================================================
 
-[[AWS-SDB-MessageheaderssetduringDomainMetadataoperation]]
-Message headers set during DomainMetadata operation
-+++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during DomainMetadata operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -130,9 +120,7 @@ Message headers set during DomainMetadata operation
 |`CamelAwsSdbItemNameSize` |`Long` |The total size of all item names in the domain, in bytes.
 |=======================================================================
 
-[[AWS-SDB-MessageheaderssetduringGetAttributesoperation]]
-Message headers set during GetAttributes operation
-++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during GetAttributes operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -141,9 +129,7 @@ Message headers set during GetAttributes operation
 |`CamelAwsSdbAttributes` |`List<Attribute>` |The list of attributes returned by the operation.
 |=======================================================================
 
-[[AWS-SDB-MessageheaderssetduringListDomainsoperation]]
-Message headers set during ListDomains operation
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during ListDomains operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -155,9 +141,7 @@ Message headers set during ListDomains operation
 specified MaxNumberOfDomains still available.
 |=======================================================================
 
-[[AWS-SDB-MessageheaderssetduringSelectoperation]]
-Message headers set during Select operation
-+++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during Select operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -170,9 +154,7 @@ matched, the response size exceeded 1 megabyte, or the execution time
 exceeded 5 seconds.
 |=======================================================================
 
-[[AWS-SDB-AdvancedAmazonSimpleDBconfiguration]]
-Advanced AmazonSimpleDB configuration
-+++++++++++++++++++++++++++++++++++++
+#### Advanced AmazonSimpleDB configuration
 
 If you need more control over the `AmazonSimpleDB` instance
 configuration you can create your own instance and refer to it from the
@@ -201,9 +183,7 @@ AmazonSimpleDB client = new AmazonSimpleDBClient(awsCredentials, clientConfigura
 registry.bind("client", client);
 --------------------------------------------------------------------------------------
 
-[[AWS-SDB-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -221,9 +201,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.8.4 or higher).
 
-[[AWS-SDB-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -231,4 +209,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:aws.html[AWS Component]
-

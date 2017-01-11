@@ -1,13 +1,11 @@
-# OSGi EventAdmin Component
+## OSGi EventAdmin Component
 
 *Available in Camel 2.6*
 
 The `eventadmin` component can be used in an OSGi environment to receive
 OSGi EventAdmin events and process them.
 
-[[EventAdmin-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users need to add the following dependency to their `pom.xml`
 
@@ -23,9 +21,7 @@ Maven users need to add the following dependency to their `pom.xml`
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.6.0 or higher).
 
-[[EventAdmin-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,xml]
 --------------------------
@@ -34,9 +30,7 @@ eventadmin:topic[?options]
 
 where `topic` is the name of the topic to listen too.
 
-[[EventAdmin-URIoptions]]
-URI options
-^^^^^^^^^^^
+### URI options
 
 // component options: START
 The OSGi EventAdmin component supports 1 options which are listed below.
@@ -69,24 +63,18 @@ The OSGi EventAdmin component supports 6 endpoint options which are listed below
 {% endraw %}
 // endpoint options: END
 
-[[EventAdmin-Messageheaders]]
-Message headers
-^^^^^^^^^^^^^^^
+### Message headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Name |Type |Message |Description
 |=======================================================================
 
-[[EventAdmin-Messagebody]]
-Message body
-^^^^^^^^^^^^
+### Message body
 
 The `in` message body will be set to the received Event.
 
-[[EventAdmin-Exampleusage]]
-Example usage
-^^^^^^^^^^^^^
+### Example usage
 
 [source,xml]
 ------------------------------

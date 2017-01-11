@@ -1,4 +1,4 @@
-# XML Beans DataFormat
+## XML Beans DataFormat
 
 XmlBeans is a link:data-format.html[Data Format] which uses the
 http://xmlbeans.apache.org/[XmlBeans library] to unmarshal an XML
@@ -12,9 +12,7 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 -------------------------------
 
-[[XmlBeans-Options]]
-Options
-^^^^^^^
+### Options
 
 // dataformat options: START
 The XML Beans dataformat supports 2 options which are listed below.
@@ -31,9 +29,7 @@ The XML Beans dataformat supports 2 options which are listed below.
 {% endraw %}
 // dataformat options: END
 
-[[XmlBeans-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use XmlBeans in your camel routes you need to add the dependency on
 *camel-xmlbeans* which implements this data format.

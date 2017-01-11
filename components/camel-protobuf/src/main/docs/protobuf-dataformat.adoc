@@ -1,4 +1,4 @@
-# Protobuf DataFormat
+## Protobuf DataFormat
 [[Protobuf-Protobuf-ProtocolBuffers]]
 Protobuf - Protocol Buffers
 ---------------------------
@@ -21,9 +21,7 @@ http://code.google.com/apis/protocolbuffers/[API Site] +
 http://code.google.com/apis/protocolbuffers/docs/javatutorial.html[Protobuf
 Java Tutorial]
 
-[[Protobuf-Options]]
-Protobuf Options
-^^^^^^^^^^^^^^^^
+### Protobuf Options
 
 // dataformat options: START
 The Protobuf dataformat supports 2 options which are listed below.
@@ -40,17 +38,13 @@ The Protobuf dataformat supports 2 options which are listed below.
 {% endraw %}
 // dataformat options: END
 
-[[Protobuf-Protobufoverview]]
-Protobuf overview
-~~~~~~~~~~~~~~~~~
+### Protobuf overview
 
 This quick overview of how to use Protobuf. For more detail see the
 http://code.google.com/apis/protocolbuffers/docs/javatutorial.html[complete
 tutorial]
 
-[[Protobuf-Definingtheprotoformat]]
-Defining the proto format
-^^^^^^^^^^^^^^^^^^^^^^^^^
+### Defining the proto format
 
 The first step is to define the format for the body of your exchange.
 This is defined in a .proto file as so:
@@ -89,9 +83,7 @@ message AddressBook {
 }
 ------------------------------------------------------------
 
-[[Protobuf-GeneratingJavaclasses]]
-Generating Java classes
-^^^^^^^^^^^^^^^^^^^^^^^
+### Generating Java classes
 
 The Protobuf SDK provides a compiler which will generate the Java
 classes for the format we defined in our .proto file. You can run the
@@ -110,9 +102,7 @@ to use a class that does not implement com.google.protobuf.Message. Use
 the generated builders to translate the data from any of your existing
 domain classes.
 
-[[Protobuf-JavaDSL]]
-Java DSL
-~~~~~~~~
+### Java DSL
 
 You can use create the ProtobufDataFormat instance and pass it to Camel
 DataFormat marshal and unmarsha API like this.
@@ -139,9 +129,7 @@ default instance class name like this.
    from("direct:unmarshalB").unmarshal().protobuf(Person.getDefaultInstance()).to("mock:reverse");
 --------------------------------------------------------------------------------------------------
 
-[[Protobuf-SpringDSL]]
-Spring DSL
-~~~~~~~~~~
+### Spring DSL
 
 The following example shows how to use Castor to unmarshal using Spring
 configuring the protobuf data type
@@ -159,9 +147,7 @@ configuring the protobuf data type
 </camelContext>
 ----------------------------------------------------------------------------------------------------------
 
-[[Protobuf-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use Protobuf in your camel routes you need to add the a dependency on
 *camel-protobuf* which implements this data format.

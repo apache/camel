@@ -1,4 +1,4 @@
-# SCP Component
+## SCP Component
 
 The *camel-jsch* component supports the
 http://en.wikipedia.org/wiki/Secure_copy[SCP protocol] using the Client
@@ -19,9 +19,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Jsch-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------------
@@ -35,9 +33,7 @@ The file name can be specified either in the <path> part of the URI or
 as a "CamelFileName" header on the message (`Exchange.FILE_NAME` if used
 in code).
 
-[[Jsch-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -102,20 +98,15 @@ The SCP component supports 22 endpoint options which are listed below:
 
 
 
-[[Jsch-Limitations]]
-Limitations
-^^^^^^^^^^^
+### Limitations
 
 Currently camel-jsch only supports a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Producer.html[Producer]
 (i.e. copy files to another host). 
 
-[[Jsch-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

@@ -1,4 +1,4 @@
-# XML Security Component
+## XML Security Component
 
 *Available as of Camel 2.12.0*
 
@@ -37,9 +37,7 @@ for this component:
 </dependency>
 ----
 
-[[XMLSecuritycomponent-XMLSignatureWrappingModes]]
-XML Signature Wrapping Modes
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### XML Signature Wrapping Modes
 
 XML Signature differs between enveloped, enveloping, and detached XML
 signature. In the
@@ -146,9 +144,7 @@ Elements):
 
  
 
-[[XMLSecuritycomponent-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 The camel component consists of two endpoints which have the following
 URI format:
@@ -171,9 +167,7 @@ signature and set to the body of the out-message.
 * The `name` part in the URI can be chosen by the user to distinguish
 between different signer/verifier endpoints within the camel context.
 
-[[XMLSecuritycomponent-BasicExample]]
-Basic Example
-^^^^^^^^^^^^^
+### Basic Example
 
 The following example shows the basic usage of the component.
 
@@ -224,9 +218,7 @@ the parent element of the Signature element; see option
 For creating _detached_ XML signatures, see sub-chapter "Detached XML
 Signatures as Siblings of the Signed Elements".
 
-[[XMLSecuritycomponent-ComponentOptions]]
-Component Options
-^^^^^^^^^^^^^^^^
+### Component Options
 
 
 
@@ -252,9 +244,7 @@ The XML Security component supports 2 options which are listed below.
 
 
 
-[[XMLSecuritycomponent-EndpointOptions]]
-Endpoint Options
-^^^^^^^^^^^^^^^^
+### Endpoint Options
 
 
 // endpoint options: START
@@ -307,9 +297,7 @@ The XML Security component supports 37 endpoint options which are listed below:
 
 
 
-[[XMLSecuritycomponent-OutputNodeDeterminationinEnvelopingXMLSignatureCase]]
-Output Node Determination in Enveloping XML Signature Case
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Output Node Determination in Enveloping XML Signature Case
 
 After the validation the node is extracted from the XML signature
 document which is finally returned to the output-message body. In the
@@ -377,9 +365,7 @@ or the structure:
 </Signature>
 ----
 
-[[XMLSecuritycomponent-DetachedXMLSignaturesasSiblingsoftheSignedElements]]
-Detached XML Signatures as Siblings of the Signed Elements
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Detached XML Signatures as Siblings of the Signed Elements
 
 **Since 2.14.0**
 
@@ -483,9 +469,7 @@ from("direct:detached")
 ----
 
 
-[[XMLSecuritycomponent-XAdES-BESEPESfortheSignerEndpoint]]
-XAdES-BES/EPES for the Signer Endpoint
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### XAdES-BES/EPES for the Signer Endpoint
 
 *Available as of Camel 2.15.0* 
 
@@ -660,9 +644,7 @@ from("direct:xades").to("xmlsecurity:sign://xades?keyAccessor=#keyAccessorDefaul
 </bean>
 ----
 
-[[XMLSecuritycomponent-Headers]]
-Headers
-+++++++
+#### Headers
 
 [width="100%",cols="1m,1m,4",options="header",]
 |=======================================================================
@@ -686,9 +668,7 @@ namespace parameter value
 parameter value
 |=======================================================================
 
-[[XMLSecuritycomponent-LimitationswithregardtoXAdESversion1.4.2]]
-Limitations with regard to XAdES version 1.4.2
-++++++++++++++++++++++++++++++++++++++++++++++
+#### Limitations with regard to XAdES version 1.4.2
 
 * No support for signature form XAdES-T and XAdES-C
 * Only signer part implemented. Verifier part currently not available.
@@ -713,8 +693,6 @@ the XML signer endpoint).
 * The `AllDataObjectsTimeStamp` element is not supported
 * The `IndividualDataObjectsTimeStamp` element is not supported
 
-[[XMLSecuritycomponent-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * http://www.w3.org/TR/xmldsig-bestpractices/[Best Practices]

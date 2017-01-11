@@ -1,4 +1,4 @@
-# Quartz Component
+## Quartz Component
 
 The *quartz:* component provides a scheduled delivery of messages using
 the http://www.quartz-scheduler.org/[Quartz Scheduler 1.x].  +
@@ -21,9 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Quartz-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 --------------------------------------------
@@ -41,9 +39,7 @@ name.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Quartz-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -115,9 +111,7 @@ required by the `QuartzScheduler` in the OSGi container. If you do not
 set any `id` on <camelContext> then +
  a unique id is auto assigned, and there is no problem.
 
-[[Quartz-Configuringquartz.propertiesfile]]
-Configuring quartz.properties file
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Configuring quartz.properties file
 
 By default Quartz will look for a `quartz.properties` file in the
 `org/quartz` directory of the classpath. If you are using WAR
@@ -145,9 +139,7 @@ To do this you can configure this in Spring XML as follows
 </bean>
 -------------------------------------------------------------------------------
 
-[[Quartz-EnablingQuartzschedulerinJMX]]
-Enabling Quartz scheduler in JMX
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Enabling Quartz scheduler in JMX
 
 You need to configure the quartz scheduler properties to enable JMX. +
  That is typically setting the option
@@ -157,9 +149,7 @@ configuration file.
 From Camel 2.13 onwards Camel will automatic set this option to true,
 unless explicit disabled.
 
-[[Quartz-StartingtheQuartzscheduler]]
-Starting the Quartz scheduler
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Starting the Quartz scheduler
 
 This is an example:
 
@@ -170,9 +160,7 @@ This is an example:
 </bean>
 ----------------------------------------------------------------------------
 
-[[Quartz-Clustering]]
-Clustering
-^^^^^^^^^^
+### Clustering
 
 *Available as of Camel 2.4*
 
@@ -184,9 +172,7 @@ allows the trigger to keep running on the other nodes in the cluster.
 *Note*: When running in clustered node no checking is done to ensure
 unique job name/group for endpoints.
 
-[[Quartz-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 Camel adds the getters from the Quartz Execution Context as header
 values. The following headers are added: +
@@ -198,9 +184,7 @@ values. The following headers are added: +
 The `fireTime` header contains the `java.util.Date` of when the exchange
 was fired.
 
-[[Quartz-UsingCronTriggers]]
-Using Cron Triggers
-^^^^^^^^^^^^^^^^^^^
+### Using Cron Triggers
 
 Quartz supports
 http://www.quartz-scheduler.org/documentation/quartz-2.1.x/tutorials/crontrigger[Cron-like
@@ -235,9 +219,7 @@ valid URI syntax:
 |`+` | _Space_
 |=======================================================================
 
-[[Quartz-Specifyingtimezone]]
-Specifying time zone
-^^^^^^^^^^^^^^^^^^^^
+### Specifying time zone
 
 *Available as of Camel 2.8.1* +
  The Quartz Scheduler allows you to configure time zone per trigger. For
@@ -256,9 +238,7 @@ Converter] to be able configure this from the endpoint uri. +
  From Camel 2.8.1 onwards we have included such a
 link:type-converter.html[Type Converter] in the camel-core.
 
-[[Quartz-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -267,4 +247,3 @@ See Also
 
 * link:quartz2.html[Quartz2]
 * link:timer.html[Timer]
-

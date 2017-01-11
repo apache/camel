@@ -1,4 +1,4 @@
-# Yammer Component
+## Yammer Component
 
 *Available as of Camel 2.12*
 
@@ -25,18 +25,14 @@ for this component:
 </dependency>
 ----
 
-[[Yammer-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source]
 ----
 yammer:[function]?[options]
 ----
 
-[[Yammer-ComponentOptions]]
-Component options
-^^^^^^^^^^^^^^^^^
+### Component options
 
 The Yammer component can be configured with the Yammer account settings
 which are mandatory to configure before using.
@@ -66,9 +62,7 @@ The Yammer component supports 4 options which are listed below.
 
 You can also configure these options directly in the endpoint.
 
-[[Yammer-EndpointOptions]]
-Endpoint options
-^^^^^^^^^^^^^^^^^
+### Endpoint options
 
 
 
@@ -115,9 +109,7 @@ The Yammer component supports 29 endpoint options which are listed below:
 
 
 
-[[Yammer-Consumingmessages]]
-Consuming messages
-^^^^^^^^^^^^^^^^^^
+### Consuming messages
 
 The Yammer component provides several endpoints for consuming
 messages:
@@ -148,9 +140,7 @@ and topics that the user is following.
 |=======================================================================
 
 
-[[Yammer-Messageformat]]
-Message format
-++++++++++++++
+#### Message format
 
 All messages by default are converted to a POJO model provided in the
 `org.apache.camel.component.yammer.model` package. The original message
@@ -259,9 +249,7 @@ That said, marshaling this data into POJOs is not free so if you need
 you can switch back to using pure JSON by adding the `useJson=false`
 option to your URI.
 
-[[Yammer-Creatingmessages]]
-Creating messages
-^^^^^^^^^^^^^^^^^
+### Creating messages
 
 To create a new message in the account of the current user, you can use
 the following URI:
@@ -306,9 +294,7 @@ assertEquals(1, messages.getMessages().size());
 assertEquals("Hi from Camel!", messages.getMessages().get(0).getBody().getPlain());
 ----
 
-[[Yammer-Retrievinguserrelationships]]
-Retrieving user relationships
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Retrieving user relationships
 
 The Yammer component can retrieve user relationships:
 
@@ -318,9 +304,7 @@ yammer:relationships?[options]
 ----
 
 
-[[Yammer-Retrievingusers]]
-Retrieving users
-^^^^^^^^^^^^^^^^
+### Retrieving users
 
 The Yammer component provides several endpoints for retrieving
 users:
@@ -335,9 +319,7 @@ users:
 |=====================================================
 
 
-[[Yammer-Usinganenricher]]
-Using an enricher
-^^^^^^^^^^^^^^^^^
+### Using an enricher
 
 It is helpful sometimes (or maybe always in the case of users or
 relationship consumers) to use an enricher pattern rather than a route
@@ -361,9 +343,7 @@ from("direct:start")
 This will go out and fetch the current user's `User` object and set it as
 the Camel message body.
 
-[[Yammer-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]

@@ -1,4 +1,4 @@
-# GitHub Component
+## GitHub Component
 
 *Available as of Camel 2.15*
 
@@ -32,18 +32,14 @@ for this component:
 </dependency>
 -----------------------------------------
 
-[[GitHub-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,text]
 ---------------------------
 github://endpoint[?options]
 ---------------------------
 
-[[GitHub-MandatoryOptions:]]
-Mandatory Options:
-^^^^^^^^^^^^^^^^^^
+### Mandatory Options:
 
 Note that these can be configured directly through the endpoint.
 
@@ -81,9 +77,7 @@ The GitHub component supports 14 endpoint options which are listed below:
 
 
 
-[[GitHub-ConsumerEndpoints:]]
-Consumer Endpoints:
-^^^^^^^^^^^^^^^^^^^
+### Consumer Endpoints:
 
 [width="100%",cols="20%,20%,60%",options="header",]
 |=======================================================================
@@ -100,9 +94,7 @@ request discussion) or org.eclipse.egit.github.core.CommitComment
 |commit |polling |org.eclipse.egit.github.core.RepositoryCommit
 |=======================================================================
 
-[[GitHub-ProducerEndpoints:]]
-Producer Endpoints:
-^^^^^^^^^^^^^^^^^^^
+### Producer Endpoints:
 
 [width="100%",cols="20%,20%,60%",options="header",]
 |=======================================================================

@@ -1,4 +1,4 @@
-# Stomp Component
+## Stomp Component
 
 *Available as of Camel 2.12*
 
@@ -20,9 +20,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Stomp-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------
@@ -31,9 +29,7 @@ stomp:queue:destination[?options]
 
 Where *destination* is the name of the queue.
 
-[[Stomp-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -85,9 +81,7 @@ The Stomp component supports 10 endpoint options which are listed below:
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Stomp-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 Sending messages:
 
@@ -103,9 +97,7 @@ Consuming messages:
 from("stomp:queue:test").transform(body().convertToString()).to("mock:result")
 ------------------------------------------------------------------------------
 
-[[Stomp-Endpoints]]
-Endpoints
-~~~~~~~~~
+### Endpoints
 
 Camel supports the link:message-endpoint.html[Message Endpoint] pattern
 using the
@@ -134,12 +126,9 @@ implements the link:polling-consumer.html[Polling Consumer] pattern for
 consuming message exchanges from the endpoint via a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/PollingConsumer.html[PollingConsumer]
 
-[[Stomp-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:message-endpoint.html[Message Endpoint] pattern
 * link:uris.html[URIs]
 * link:writing-components.html[Writing Components]
-

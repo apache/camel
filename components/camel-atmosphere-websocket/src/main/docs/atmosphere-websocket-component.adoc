@@ -1,4 +1,4 @@
-# Atmosphere Websocket Component
+## Atmosphere Websocket Component
 
 *Available as of Camel 2.14*
 
@@ -29,9 +29,7 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Atmosphere-Websocket-Options]]
-Atmosphere-Websocket Options
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Atmosphere-Websocket Options
 
 
 
@@ -106,26 +104,20 @@ The Atmosphere Websocket component supports 36 endpoint options which are listed
 // endpoint options: END
 
 
-[[Atmosphere-Websocket-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 -----------------------------------------------
 atmosphere-websocket:///relative path[?options]
 -----------------------------------------------
 
-[[Atmosphere-Websocket-ReadingandWritingDataoverWebsocket]]
-Reading and Writing Data over Websocket
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Reading and Writing Data over Websocket
 
 An atmopshere-websocket endpoint can either write data to the socket or
 read from the socket, depending on whether the endpoint is configured as
 the producer or the consumer, respectively.
 
-[[Atmosphere-Websocket-ConfiguringURItoReadorWriteData]]
-Configuring URI to Read or Write Data
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Configuring URI to Read or Write Data
 
 In the route below, Camel will read from the specified websocket
 connection.
@@ -171,9 +163,7 @@ And the equivalent Spring sample:
 
  
 
-[[Atmosphere-Websocket-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -184,4 +174,3 @@ See Also
 * link:ahc-ws.html[AHC-WS]
 *
 https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=39621544[Websocket]
-

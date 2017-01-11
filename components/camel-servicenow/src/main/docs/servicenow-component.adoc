@@ -1,4 +1,4 @@
-# ServiceNow Component
+## ServiceNow Component
 
 *Available as of Camel 2.18*
 
@@ -19,18 +19,14 @@ for this component:
     </dependency>
 -------------------------------------------------
 
-[[ServiceNow-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------------
     servicenow://instanceName?[options]
 ---------------------------------------
 
-[[ServiceNow-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -108,9 +104,7 @@ The ServiceNow component supports 41 endpoint options which are listed below:
 
 
 
-[[ServiceNow-Headers]]
-Headers
-^^^^^^^
+### Headers
 
 [width="100%",cols="10%,10%,10%,10%,60%",options="header",]
 |===
@@ -263,9 +257,7 @@ NOTE: link:http://wiki.servicenow.com/index.php?title=REST_API#Available_APIs[Fu
 
 NOTE: https://docs.servicenow.com/bundle/helsinki-servicenow-platform/page/integrate/inbound-rest/reference/r_RESTResources.html[Helsinki REST API Documentation]
 
-[[ServiceNow-Usageexamples]]
-Usage examples:
-^^^^^^^^^^^^^^^
+### Usage examples:
  
 {% raw %}
 [source,java]

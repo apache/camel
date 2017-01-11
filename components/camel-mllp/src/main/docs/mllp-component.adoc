@@ -1,4 +1,4 @@
-# MLLP Component
+## MLLP Component
 
 *available as of Camel 2.17*
 
@@ -35,9 +35,7 @@ for this component:
 </dependency>
 ---------------------------------------------------------
 
-[[MLLP-MLLPOptions]]
-MLLP Options
-~~~~~~~~~~~~
+### MLLP Options
 
 
 
@@ -93,9 +91,7 @@ The MLLP component supports 24 endpoint options which are listed below:
 
 
 
-[[MLLP-MLLPConsumer]]
-MLLP Consumer
-~~~~~~~~~~~~~
+### MLLP Consumer
 
 The MLLP Consumer supports receiving MLLP-framed messages and sending
 HL7 Acknowledgements.  The MLLP Consumer can automatically generate the
@@ -105,9 +101,7 @@ the CamelMllpAcknowledgement exchange property.  Additionally, the type
 of acknowledgement that will be generated can be controlled by setting
 the CamelMllpAcknowledgementType exchange property.
 
-[[MLLP-MessageHeaders]]
-*Message Headers*
-^^^^^^^^^^^^^^^^^
+### *Message Headers*
 
 The MLLP Consumer adds these headers on the Camel message:
 
@@ -134,9 +128,7 @@ The MLLP Consumer adds these headers on the Camel message:
 All headers are String types. If a header value is missing, its value
 is null.
 
-[[MLLP-ExchangeProperties]]
-*Exchange Properties*
-^^^^^^^^^^^^^^^^^^^^^
+### *Exchange Properties*
 
 The type of acknowledgment the MLLP Consumer generates can be controlled
 by these properties on the Camel exchange:
@@ -151,13 +143,9 @@ by these properties on the Camel exchange:
 All headers are String types. If a header value is missing, its value
 is null.
 
-[[MLLP-ConsumerConfiguration]]
-Consumer Configuration
-^^^^^^^^^^^^^^^^^^^^^^
+### Consumer Configuration
 
-[[MLLP-MLLPProducer]]
-MLLP Producer
-~~~~~~~~~~~~~
+### MLLP Producer
 
 The MLLP Producer supports sending MLLP-framed messages and receiving
 HL7 Acknowledgements.  The MLLP Producer interrogates the HL7
@@ -165,9 +153,7 @@ Acknowledgments and raises exceptions if a negative acknowledgement is
 received.  The received acknowledgement is interrogated and an exception
 is raised in the event of a negative acknowledgement.
 
-[[MLLP-MessageHeaders.1]]
-*Message Headers*
-^^^^^^^^^^^^^^^^^
+### *Message Headers*
 
 The MLLP Producer adds these headers on the Camel message:
 
@@ -182,6 +168,3 @@ The MLLP Producer adds these headers on the Camel message:
 
 All headers are String types. If a header value is missing, its value
 is null.
-
-
-

@@ -1,4 +1,4 @@
-# Consul Component
+## Consul Component
 
 *Available as of Camel 2.18*
 
@@ -16,9 +16,7 @@ for this component:
     </dependency>
 -------------------------------------------------
 
-[[Consul-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------------
@@ -31,9 +29,7 @@ You can append query options to the URI in the following format:
     ?option=value&option=value&...
 ---------------------------------------
 
-[[Consul-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -83,9 +79,7 @@ The Consul component supports 22 endpoint options which are listed below:
 
 
 
-[[Consul-Headers]]
-Headers
-^^^^^^^
+### Headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================

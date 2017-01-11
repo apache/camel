@@ -1,4 +1,4 @@
-# Metrics Component
+## Metrics Component
 ifdef::env-github[]
 :caution-caption: :boom:
 :important-caption: :exclamation:
@@ -7,9 +7,7 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-[[MetricsComponent-MetricsComponent]]
-Metrics Component
-~~~~~~~~~~~~~~~~~
+### Metrics Component
 
 *Available as of Camel 2.14*
 
@@ -36,18 +34,14 @@ for this component:
 </dependency>
 ----
 
-[[MetricsComponent-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source]
 ----
 metrics:[ meter | counter | histogram | timer | gauge ]:metricname[?options]
 ----
 
-[[MetricsComponent-options]]
-Options
-^^^^^^^
+### Options
 
 // component options: START
 The Metrics component supports 1 options which are listed below.
@@ -86,9 +80,7 @@ The Metrics component supports 9 endpoint options which are listed below:
 
 
 
-[[MetricsComponent-registryMetricRegistry]]
-[[MetricsComponent-registry]]Metric Registry
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### [[MetricsComponent-registry]]Metric Registry
 
 Camel Metrics component uses by default a `MetricRegistry` instance with
 a `Slf4jReporter` that has a 60 second reporting interval.
@@ -150,9 +142,7 @@ public API in version DropWizard `3.0.1` for users to clean up on exit. Thus usi
 Camel Metrics Component leads to Java classloader leak and my cause
 `OutOfMemoryErrors` in some cases.
 
-[[MetricsComponent-Usage]]
-Usage
-^^^^^
+### Usage
 
 Each metric has type and name. Supported types are
 link:#MetricsComponent-counter[counter],
@@ -160,9 +150,7 @@ link:#MetricsComponent-histogram[histogram], link:#MetricsComponent-meter[meter
 link:#MetricsComponent-timer[timer] and link:#MetricsComponent-gauge[gauge].
 Metric name is simple string. If metric type is not provided then type meter is used by default.
 
-[[MetricsComponent-Headers]]
-Headers
-+++++++
+#### Headers
 
 Metric name defined in URI can be overridden by using header with name
 `CamelMetricsName`.
@@ -184,18 +172,14 @@ endpoint finishes processing of exchange. While processing exchange
 Metrics endpoint will catch all exceptions and write log entry using
 level `warn`.
 
-[[MetricsComponent-counterMetricstypecounter]]
-[[MetricsComponent-counter]]Metrics type counter
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### [[MetricsComponent-counter]]Metrics type counter
 
 [source]
 ----
 metrics:counter:metricname[?options]
 ----
 
-[[MetricsComponent-Options]]
-Options
-+++++++
+#### Options
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=====================================================
@@ -232,9 +216,7 @@ from("direct:in")
     .to("direct:out");
 ----
 
-[[MetricsComponent-Headers.1]]
-Headers
-+++++++
+#### Headers
 
 Message headers can be used to override `increment` and `decrement`
 values specified in Metrics component URI.
@@ -265,18 +247,14 @@ from("direct:in")
 
 ----
 
-[[MetricsComponent-histogramMetrictypehistogram]]
-[[MetricsComponent-histogram]]Metric type histogram
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### [[MetricsComponent-histogram]]Metric type histogram
 
 [source]
 ----
 metrics:histogram:metricname[?options]
 ----
 
-[[MetricsComponent-Options.1]]
-Options
-+++++++
+#### Options
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |===================================
@@ -304,9 +282,7 @@ from("direct:in")
 
 ----
 
-[[MetricsComponent-Headers.2]]
-Headers
-+++++++
+#### Headers
 
 Message header can be used to override value specified in Metrics
 component URI.
@@ -327,18 +303,14 @@ from("direct:in")
 
 ----
 
-[[MetricsComponent-meterMetrictypemeter]]
-[[MetricsComponent-meter]]Metric type meter
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### [[MetricsComponent-meter]]Metric type meter
 
 [source]
 ----
 metrics:meter:metricname[?options]
 ----
 
-[[MetricsComponent-Options.2]]
-Options
-+++++++
+#### Options
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |===================================
@@ -364,9 +336,7 @@ from("direct:in")
     .to("direct:out");
 ----
 
-[[MetricsComponent-Headers.3]]
-Headers
-+++++++
+#### Headers
 
 Message header can be used to override `mark` value specified in Metrics
 component URI.
@@ -386,18 +356,14 @@ from("direct:in")
     .to("direct:out");
 ----
 
-[[MetricsComponent-timerMetricstypetimer]]
-[[MetricsComponent-timer]]Metrics type timer
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### [[MetricsComponent-timer]]Metrics type timer
 
 [source]
 ----
 metrics:timer:metricname[?options]
 ----
 
-[[MetricsComponent-Options.3]]
-Options
-+++++++
+#### Options
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |==========================
@@ -422,9 +388,7 @@ from("direct:in")
 `TimerContext` objects are stored as Exchange properties between
 different Metrics component calls.
 
-[[MetricsComponent-Headers.4]]
-Headers
-+++++++
+#### Headers
 
 Message header can be used to override action value specified in Metrics
 component URI.
@@ -445,18 +409,14 @@ from("direct:in")
     .to("direct:out");
 ----
 
-[[MetricsComponent-gaugeMetrictypegauge]]
-[[MetricsComponent-gauge]]Metric type gauge
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### [[MetricsComponent-gauge]]Metric type gauge
 
 [source]
 ----
 metrics:gauge:metricname[?options]
 ----
 
-[[MetricsComponent-Options.4]]
-Options
-+++++++
+#### Options
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=====================================================
@@ -474,9 +434,7 @@ from("direct:in")
     .to("direct:out");
 ----
 
-[[MetricsComponent-Headers.5]]
-Headers
-+++++++
+#### Headers
 
 Message headers can be used to override `subject` values specified in Metrics component URI.
 Note: if `CamelMetricsName` header is specified, then new gauge is registered in addition to
@@ -497,9 +455,7 @@ from("direct:in")
     .to("direct:out");
 ----
 
-[[MetricsComponent-MetricsRoutePolicyFactory]]
-MetricsRoutePolicyFactory
-^^^^^^^^^^^^^^^^^^^^^^^^^
+### MetricsRoutePolicyFactory
 
 This factory allows to add a link:routepolicy.html[RoutePolicy] for each
 route which exposes route utilization statistics using Dropwizard metrics.
@@ -577,9 +533,7 @@ if (registryService != null) {
 }
 ----
 
-[[MetricsComponent-MetricsMessageHistoryFactory]]
-MetricsMessageHistoryFactory
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### MetricsMessageHistoryFactory
 
 *Available as of Camel 2.17*
 
@@ -655,9 +609,7 @@ String json = service.dumpStatisticsAsJson();
 And the JMX API the MBean is registered in the `type=services` tree
 with `name=MetricsMessageHistoryService`.
 
-[[MetricsComponent-InstrumentedThreadPoolFactory]]
-InstrumentedThreadPoolFactory
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### InstrumentedThreadPoolFactory
 
 *Available as of Camel 2.18*
 
@@ -666,9 +618,7 @@ which collects information from inside of Camel.
 See more details at link:advanced-configuration-of-camelcontext-using-spring.html[Advanced configuration of CamelContext using Spring]
 
 
-[[MetricsComponent-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * The `camel-example-cdi-metrics` example that illustrates the integration
   between Camel, Metrics and CDI.

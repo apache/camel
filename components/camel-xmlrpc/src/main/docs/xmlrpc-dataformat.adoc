@@ -1,4 +1,4 @@
-# XML RPC DataFormat
+## XML RPC DataFormat
 
 As the XmlRpc message could be request or response, when you use the
 XmlRpcDataFormat, you need to specify the dataformat is for request or
@@ -34,9 +34,7 @@ not.
 </camelContext>
 -------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[XmlRpc-Dataformat-Options]]
-XmlRpc Dataformat Options
-^^^^^^^^^^^^^^^^^^^^^^^^^
+### XmlRpc Dataformat Options
 
 // dataformat options: START
 The XML RPC dataformat supports 2 options which are listed below.
@@ -52,5 +50,3 @@ The XML RPC dataformat supports 2 options which are listed below.
 |=======================================================================
 {% endraw %}
 // dataformat options: END
-
-

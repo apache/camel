@@ -1,4 +1,4 @@
-# Slack Component
+## Slack Component
 
 *Available as of Camel 2.16*
 
@@ -21,9 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Slack-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 To send a message to a channel.
 
@@ -39,9 +37,7 @@ To send a direct message to a slackuser.
 slack:@username[?options]
 -------------------------
 
-[[Slack-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -80,9 +76,7 @@ The Slack component supports 6 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Slack-SlackComponent.1]]
-SlackComponent
-^^^^^^^^^^^^^^
+### SlackComponent
 
 The SlackComponent with XML must be configured as a Spring or Blueprint
 bean that contains the incoming webhook url for the integration as a
@@ -97,9 +91,7 @@ parameter.
 
 For Java you can configure this using Java code.
 
-[[Slack-Example]]
-Example
-^^^^^^^
+### Example
 
 A CamelContext with Blueprint could be as:
 
@@ -122,12 +114,9 @@ A CamelContext with Blueprint could be as:
 </blueprint>
 ---------------------------------------------------------------------------------------------------------------------------
 
-[[Slack-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

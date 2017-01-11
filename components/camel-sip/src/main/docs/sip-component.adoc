@@ -1,4 +1,4 @@
-# SIP Component
+## SIP Component
 
 *Available as of Camel 2.5*
 
@@ -45,9 +45,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Sip-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 The URI scheme for a sip endpoint is as follows:
 
@@ -63,9 +61,7 @@ UDP.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Sip-Options]]
-Options
-^^^^^^^
+### Options
 
 The SIP Component offers an extensive set of configuration options &
 capability to create custom stateful headers needed to propagate state
@@ -134,13 +130,9 @@ The SIP component supports 45 endpoint options which are listed below:
 {% endraw %}
 // endpoint options: END
 
-[[Sip-SendingMessagestofromaSIPendpoint]]
-Sending Messages to/from a SIP endpoint
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Sending Messages to/from a SIP endpoint
 
-[[Sip-CreatingaCamelSIPPublisher]]
-Creating a Camel SIP Publisher
-++++++++++++++++++++++++++++++
+#### Creating a Camel SIP Publisher
 
 In the example below, a SIP Publisher is created to send SIP Event
 publications to  +
@@ -164,9 +156,7 @@ producerTemplate.sendBodyAndHeader(
     Request.PUBLISH);  
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
-[[Sip-CreatingaCamelSIPSubscriber]]
-Creating a Camel SIP Subscriber
-+++++++++++++++++++++++++++++++
+#### Creating a Camel SIP Subscriber
 
 In the example below, a SIP Subscriber is created to receive SIP Event
 publications sent to  +

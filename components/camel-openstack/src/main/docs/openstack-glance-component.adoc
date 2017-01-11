@@ -1,12 +1,10 @@
-# OpenStack Glance Component
+## OpenStack Glance Component
 
 *Available as of Camel 2.19*
 
 The openstack-glance component allows messages to be sent to an OpenStack image services.
 
-[[openstack-glance-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -24,9 +22,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel.
 
 
-[[openstack-glance-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 ----------------------------
@@ -36,9 +32,7 @@ openstack-glance://hosturl[?options]
 You can append query options to the URI in the following format
 `?options=value&option2=value&...`
 
-[[openstack-glance-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 // component options: START
 The OpenStack Glance component has no options.
@@ -65,9 +59,7 @@ The OpenStack Glance component supports 9 endpoint options which are listed belo
 // endpoint options: END
 
 
-[[openstack-glance-Usage]]
-Usage
-^^^^^
+### Usage
 
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
@@ -88,9 +80,7 @@ Usage
 |`delete` | Delete the image.
 |=========================================================================
 
-[[openstack-glance-MessageheadersevaluatedbytheGlanceProducer]]
-Message headers evaluated by the Glance producer
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers evaluated by the Glance producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -121,9 +111,7 @@ Message headers evaluated by the Glance producer
 |`properties` | `Map` | Image properties.
 |=========================================================================
 
-[[CamelOpenstack-glance-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -131,4 +119,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:openstack.html[openstack Component]
-

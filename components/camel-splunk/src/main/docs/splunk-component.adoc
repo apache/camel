@@ -1,4 +1,4 @@
-# Splunk Component
+## Splunk Component
 
 *Available as of Camel 2.13*
 
@@ -19,18 +19,14 @@ for this component:
     </dependency>
 ---------------------------------------------
 
-[[Splunk-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -------------------------------
   splunk://[endpoint]?[options]
 -------------------------------
 
-[[Splunk-ProducerEndpoints:]]
-Producer Endpoints:
-^^^^^^^^^^^^^^^^^^^
+### Producer Endpoints:
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -62,9 +58,7 @@ SplunkEvent.  See comment under message body.
 In this example a converter is required to convert to a SplunkEvent
 class.
 
-[[Splunk-ConsumerEndpoints:]]
-Consumer Endpoints:
-^^^^^^^^^^^^^^^^^^^
+### Consumer Endpoints:
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -87,9 +81,7 @@ name of the query in the savedSearch option.
 camel-splunk creates a route exchange per search result with a
 SplunkEvent in the body.
 
-[[Splunk-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 
@@ -165,9 +157,7 @@ The Splunk component supports 43 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Splunk-Messagebody]]
-Message body
-^^^^^^^^^^^^
+### Message body
 
 Splunk operates on data in key/value pairs. The SplunkEvent class is a
 placeholder for such data, and should be in the message body for the producer. 
@@ -178,9 +168,7 @@ As of Camel 2.16.0 you can send raw data to Splunk by setting the raw
 option on the producer endpoint. This is useful for eg. json/xml and
 other payloads where Splunk has build in support. 
 
-[[Splunk-UseCases]]
-Use Cases
-^^^^^^^^^
+### Use Cases
 
 Search Twitter for tweets with music and publish events to Splunk
 
@@ -229,21 +217,16 @@ Search Splunk for tweets
           .log("${body}");
 --------------------------------------------------------------------------------------------------------------------------------
 
-[[Splunk-Othercomments]]
-Other comments
-^^^^^^^^^^^^^^
+### Other comments
 
 Splunk comes with a variety of options for leveraging machine generated
 data with prebuilt apps for analyzing and displaying this.  +
  For example the jmx app. could be used to publish jmx attributes, eg.
 route and jvm metrics to Splunk, and displaying this on a dashboard.
 
-[[Splunk-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

@@ -1,4 +1,4 @@
-# Kestrel Component
+## Kestrel Component
 
 The Kestrel component allows messages to be sent to a
 https://github.com/robey/kestrel[Kestrel] queue, or messages to be
@@ -10,9 +10,7 @@ WARNING: The kestrel project is inactive and the Camel team regard this
 components as deprecated.
 
 
-[[Kestrel-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -------------------------------------------
@@ -59,9 +57,7 @@ concurrently from a queue:
 kestrel://kserver03:22133/massive?concurrentConsumers=25&waitTimeMs=500
 -----------------------------------------------------------------------
 
-[[Kestrel-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -108,9 +104,7 @@ The Kestrel component supports 8 endpoint options which are listed below:
 
 
 
-[[Kestrel-ConfiguringtheKestrelcomponentusingSpringXML]]
-Configuring the Kestrel component using Spring XML
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Configuring the Kestrel component using Spring XML
 
 The simplest form of explicit configuration is as follows:
 
@@ -162,13 +156,9 @@ can set up a KestrelConfiguration POJO as follows:
 </beans>
 ---------------------------------------------------------------------------------------------------------------
 
-[[Kestrel-UsageExamples]]
-Usage Examples
-^^^^^^^^^^^^^^
+### Usage Examples
 
-[[Kestrel-Example1:Consuming]]
-Example 1: Consuming
-++++++++++++++++++++
+#### Example 1: Consuming
 
 [source,java]
 -------------------------------------------------------------------------------
@@ -185,9 +175,7 @@ public class MyConsumer {
 }
 -------------------------------------------
 
-[[Kestrel-Example2:Producing]]
-Example 2: Producing
-++++++++++++++++++++
+#### Example 2: Producing
 
 [source,java]
 ------------------------------------------------------------------------------
@@ -201,9 +189,7 @@ public class MyProducer {
 }
 ------------------------------------------------------------------------------
 
-[[Kestrel-Example3:SpringXMLConfiguration]]
-Example 3: Spring XML Configuration
-+++++++++++++++++++++++++++++++++++
+#### Example 3: Spring XML Configuration
 
 [source,xml]
 ----------------------------------------------------------------------------------------
@@ -228,17 +214,13 @@ public class MyBean {
 }
 -------------------------------------------
 
-[[Kestrel-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 The Kestrel component has the following dependencies:
 
 * `spymemcached` 2.5 (or greater)
 
-[[Kestrel-spymemcached]]
-spymemcached
-++++++++++++
+#### spymemcached
 
 You *must* have the `spymemcached` jar on your classpath. Here is a
 snippet you can use in your pom.xml:
@@ -273,12 +255,9 @@ you may need to set `enableAssertions` to `false`. Please refer to the
 http://maven.apache.org/plugins/maven-surefire-plugin/test-mojo.html[surefire:test
 reference] for details.
 
-[[Kestrel-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

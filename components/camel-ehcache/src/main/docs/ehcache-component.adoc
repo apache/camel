@@ -1,4 +1,4 @@
-# Ehcache Component
+## Ehcache Component
 
 *Available as of Camel 2.18.x*
 
@@ -23,9 +23,7 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Ehcache-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -----------------------------
@@ -35,9 +33,7 @@ ehcache://cacheName[?options]
 You can append query options to the URI in the following
 format, `?option=value&option=#beanRef&...`
 
-[[Ehcache-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -74,9 +70,7 @@ The Ehcache component supports 16 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Ehcache-MessageHeadersCamel]]
-Message Headers Camel 
-++++++++++++++++++++++
+#### Message Headers Camel 
 
  
 [width="100%",cols="10%,10%,80%",options="header",]
@@ -115,9 +109,7 @@ Object used for comparison for actions like REPLACE
 |CamelEhcacheEventType |EventType |The type of event received
 |=======================================================================
 
-[[Ehcache-Ehcachebasedidempotentrepositoryexample:]]
-Ehcache based idempotent repository example:
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Ehcache based idempotent repository example:
 
 [source,java]
 ------------------------------------------------------------------------------------------------
@@ -131,9 +123,7 @@ from("direct:in")
 
  
 
-[[Ehcache-Ehcachebasedaggregationrepositoryexample:]]
-Ehcache based aggregation repository example:
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Ehcache based aggregation repository example:
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------

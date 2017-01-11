@@ -1,4 +1,4 @@
-# Chronicle Engine Component
+## Chronicle Engine Component
 
 // component options: START
 The Chronicle Engine component has no options.
@@ -29,4 +29,3 @@ The Chronicle Engine component supports 13 endpoint options which are listed bel
 |=======================================================================
 {% endraw %}
 // endpoint options: END
-

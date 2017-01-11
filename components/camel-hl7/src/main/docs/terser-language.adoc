@@ -1,7 +1,5 @@
-# HL7 Terser Language
-[[HL7-Terserlanguage]]
-Terser language
-^^^^^^^^^^^^^^^
+## HL7 Terser Language
+### Terser language
 
 http://hl7api.sourceforge.net[HAPI] provides a
 http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/util/Terser.html[Terser]
@@ -28,9 +26,7 @@ import static org.apache.camel.component.hl7.HL7.terser;
       .to("mock:test2");
 --------------------------------------------------------------------------------------------------
 
-[[HL7-Terserlanguage-options]]
-Terser Language options
-^^^^^^^^^^^^^^^^^^^^^^^
+### Terser Language options
 
 // language options: START
 The HL7 Terser language supports 1 options which are listed below.
@@ -45,4 +41,3 @@ The HL7 Terser language supports 1 options which are listed below.
 |=======================================================================
 {% endraw %}
 // language options: END
-

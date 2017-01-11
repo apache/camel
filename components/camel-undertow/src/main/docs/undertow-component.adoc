@@ -1,4 +1,4 @@
-# Undertow Component
+## Undertow Component
 
 *Available as of Camel 2.16*
 
@@ -21,9 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Undertow-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -------------------------------------------------------
@@ -33,9 +31,7 @@ undertow:http://hostname[:port][/resourceUri][?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Undertow-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -93,9 +89,7 @@ The Undertow component supports 18 endpoint options which are listed below:
 
 
 
-[[Undertow-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 Camel uses the same message headers as the link:http.html[HTTP]
 component. 
@@ -108,9 +102,7 @@ example, given a client request with the URL,
 `http://myserver/myserver?orderid=123`, the exchange will contain a
 header named `orderid` with the value 123.
 
-[[Undertow-ProducerExample]]
-Producer Example
-^^^^^^^^^^^^^^^^
+### Producer Example
 
 The following is a basic example of how to send an HTTP request to an
 existing HTTP endpoint.
@@ -132,9 +124,7 @@ or in Spring XML
 <route>
 ----------------------------------------------
 
-[[Undertow-ConsumerExample]]
-Consumer Example
-^^^^^^^^^^^^^^^^
+### Consumer Example
 
 In this sample we define a route that exposes a HTTP service at
 `http://localhost:8080/myapp/myservice`:
@@ -167,9 +157,7 @@ Servlet, you should instead refer to the
 https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=46339[Servlet
 Transport].
 
-[[Undertow-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -178,4 +166,3 @@ See Also
 
 * link:jetty.html[Jetty]
 * link:http.html[HTTP]
-

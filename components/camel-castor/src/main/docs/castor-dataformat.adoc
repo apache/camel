@@ -1,4 +1,4 @@
-# Castor DataFormat
+## Castor DataFormat
 
 *Available as of Camel 2.1*
 
@@ -9,9 +9,7 @@ into Java objects or to marshal Java objects into an XML payload.
 As usually you can use either Java DSL or Spring XML to work with Castor
 Data Format.
 
-[[Castor-UsingtheJavaDSL]]
-Using the Java DSL
-^^^^^^^^^^^^^^^^^^
+### Using the Java DSL
 
 [source,java]
 -----------------------------
@@ -60,9 +58,7 @@ castor.getMarshaller();
 castor.getUnmarshaller();
 -------------------------
 
-[[Castor-UsingSpringXML]]
-Using Spring XML
-^^^^^^^^^^^^^^^^
+### Using Spring XML
 
 The following example shows how to use Castor to unmarshal using Spring
 configuring the castor data type
@@ -106,9 +102,7 @@ on multiple routes. You have to set the <castor> element directly in
 </camelContext>
 -----------------------------------------------------------------------
 
-[[Castor-Options]]
-Options
-^^^^^^^
+### Options
 
 // dataformat options: START
 The Castor dataformat supports 6 options which are listed below.
@@ -129,9 +123,7 @@ The Castor dataformat supports 6 options which are listed below.
 {% endraw %}
 // dataformat options: END
 
-[[Castor-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use Castor in your camel routes you need to add the a dependency on
 *camel-castor* which implements this data format.

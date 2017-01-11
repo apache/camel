@@ -1,4 +1,4 @@
-# MongoDB Component
+## MongoDB Component
 
 *Available as of Camel 2.10*
 
@@ -40,18 +40,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[MongoDB-URIformat]]
-URI format
-~~~~~~~~~~
+### URI format
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------
 mongodb:connectionBean?database=databaseName&collection=collectionName&operation=operationName[&moreOptions...]
 ---------------------------------------------------------------------------------------------------------------
 
-[[MongoDB-options]]
-MongoDB options
-~~~~~~~~~~~~~~~
+### MongoDB options
 
 
 // component options: START
@@ -103,9 +99,7 @@ The MongoDB component supports 24 endpoint options which are listed below:
 
 
 
-[[MongoDB-ConfigurationofdatabaseinSpringXML]]
-Configuration of database in Spring XML
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Configuration of database in Spring XML
 
 The following Spring XML creates a bean defining the connection to a
 MongoDB instance.
@@ -123,9 +117,7 @@ MongoDB instance.
 </beans>
 ----------------------------------------------------------------------------------------------------------------------------------
 
-[[MongoDB-Sampleroute]]
-Sample route
-^^^^^^^^^^^^
+### Sample route
 
 The following route defined in Spring XML executes the operation
 link:mongodb.html[*dbStats*] on a collection.
@@ -142,17 +134,11 @@ link:mongodb.html[*dbStats*] on a collection.
 </route>
 ---------------------------------------------------------------------------------------------------------------------------
 
-[[MongoDB-MongoDBoperations-producerendpoints]]
-MongoDB operations - producer endpoints
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### MongoDB operations - producer endpoints
 
-[[MongoDB-Queryoperations]]
-Query operations
-^^^^^^^^^^^^^^^^
+### Query operations
 
-[[MongoDB-findById]]
-findById
-++++++++
+#### findById
 
 This operation retrieves only one element from the collection whose _id
 field matches the content of the IN message body. The incoming object
@@ -172,9 +158,7 @@ from("direct:findById")
 TIP: *Supports optional parameters*. This operation supports specifying a fields filter. See
 link:mongodb.html[Specifying optional parameters].
 
-[[MongoDB-findOneByQuery]]
-findOneByQuery
-++++++++++++++
+#### findOneByQuery
 
 Use this operation to retrieve just one element from the collection that
 matches a MongoDB query. *The query object is extracted from the IN
@@ -204,9 +188,7 @@ from("direct:findOneByQuery")
 TIP: *Supports optional parameters*. This operation supports specifying a fields filter and/or a sort clause. See
 link:mongodb.html[Specifying optional parameters].
 
-[[MongoDB-findAll]]
-findAll
-+++++++
+#### findAll
 
 The `findAll` operation returns all documents matching a query, or none
 at all, in which case all documents contained in the collection are
@@ -276,9 +258,7 @@ consideration. |int/Integer
 TIP: *Supports optional parameters*. This operation supports specifying a fields filter and/or a sort clause. See
 link:mongodb.html[Specifying optional parameters].
 
-[[MongoDB-count]]
-count
-+++++
+#### count
 
 Returns the total number of objects in a collection, returning a Long as
 the OUT message body. +
@@ -307,9 +287,7 @@ DBObject query = ...
 Long count = template.requestBodyAndHeader("direct:count", query, MongoDbConstants.COLLECTION, "dynamicCollectionName");
 ------------------------------------------------------------------------------------------------------------------------
 
-[[MongoDB-Specifyingoptionalparameters]]
-Specifying a fields filter (projection)
-+++++++++++++++++++++++++++++++++++++++
+#### Specifying a fields filter (projection)
 
 Query operations will, by default, return the matching objects in their
 entirety (with all their fields). If your documents are large and you
@@ -330,8 +308,7 @@ DBObject fieldFilter = BasicDBObjectBuilder.start().add("_id", 0).add("boringFie
 Object result = template.requestBodyAndHeader("direct:findAll", (Object) null, MongoDbConstants.FIELDS_FILTER, fieldFilter);
 ----------------------------------------------------------------------------------------------------------------------------
 
-Specifying a sort clause
-++++++++++++++++++++++++
+#### Specifying a sort clause
 
 There is a often a requirement to fetch the min/max record from a 
 collection based on sorting by a particular field. In Mongo the 
@@ -364,13 +341,9 @@ to a single field, based on the `documentTimestamp` field:
 ----------------------------------------------------------------------------------------------------------------------------
 
 
-[[MongoDB-Create/updateoperations]]
-Create/update operations
-^^^^^^^^^^^^^^^^^^^^^^^^
+### Create/update operations
 
-[[MongoDB-insert]]
-insert
-++++++
+#### insert
 
 Inserts an new object into the MongoDB collection, taken from the IN
 message body. Type conversion is attempted to turn it into `DBObject` or
@@ -417,9 +390,7 @@ constant). The value stored is `org.bson.types.ObjectId` for single
 insert or `java.util.List<org.bson.types.ObjectId>` if multiple records
 have been inserted.
 
-[[MongoDB-save]]
-save
-++++
+#### save
 
 The save operation is equivalent to an _upsert_ (UPdate, inSERT)
 operation, where the record will be updated, and if it doesn't exist, it
@@ -449,9 +420,7 @@ from("direct:insert")
     .to("mongodb:myDb?database=flights&collection=tickets&operation=save");
 ---------------------------------------------------------------------------
 
-[[MongoDB-update]]
-update
-++++++
+#### update
 
 Update one or multiple records on the collection. Requires a
 List<DBObject> as the IN message body containing exactly 2 elements:
@@ -495,13 +464,9 @@ DBObject updateObj = new BasicDBObject("$set", new BasicDBObject("scientist", "D
 Object result = template.requestBodyAndHeader("direct:update", new Object[] {filterField, updateObj}, MongoDbConstants.MULTIUPDATE, true);
 ------------------------------------------------------------------------------------------------------------------------------------------
 
-[[MongoDB-Deleteoperations]]
-Delete operations
-^^^^^^^^^^^^^^^^^
+### Delete operations
 
-[[MongoDB-remove]]
-remove
-++++++
+#### remove
 
 Remove matching records from the collection. The IN message body will
 act as the removal filter query, and is expected to be of type
@@ -522,13 +487,9 @@ A header with key `CamelMongoDbRecordsAffected` is returned
 containing the number of records deleted (copied from
 `WriteResult.getN()`).
 
-[[MongoDB-Otheroperations]]
-Other operations
-^^^^^^^^^^^^^^^^
+### Other operations
 
-[[MongoDB-aggregate]]
-aggregate
-+++++++++
+#### aggregate
 
 *Available as of Camel 2.14*
 
@@ -546,9 +507,7 @@ from("direct:aggregate")
     .to("mock:resultAggregate");
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[MongoDB-getDbStats]]
-getDbStats
-++++++++++
+#### getDbStats
 
 Equivalent of running the `db.stats()` command in the MongoDB shell,
 which displays useful statistic figures about the database. +
@@ -585,9 +544,7 @@ assertTrue("Result is not of type DBObject", result instanceof DBObject);
 The operation will return a data structure similar to the one displayed
 in the shell, in the form of a `DBObject` in the OUT message body.
 
-[[MongoDB-getColStats]]
-getColStats
-+++++++++++
+#### getColStats
 
 Equivalent of running the `db.collection.stats()` command in the MongoDB
 shell, which displays useful statistic figures about the collection. +
@@ -627,9 +584,7 @@ assertTrue("Result is not of type DBObject", result instanceof DBObject);
 The operation will return a data structure similar to the one displayed
 in the shell, in the form of a `DBObject` in the OUT message body.
 
-[[MongoDB-command]]
-command
-+++++++
+#### command
 
 *Available as of Camel 2.15*
 
@@ -645,9 +600,7 @@ DBObject commandBody = new BasicDBObject("hostInfo", "1");
 Object result = template.requestBody("direct:command", commandBody);
 --------------------------------------------------------------------------------
 
-[[MongoDB-Dynamicoperations]]
-Dynamic operations
-^^^^^^^^^^^^^^^^^^
+### Dynamic operations
 
 An Exchange can override the endpoint's fixed operation by setting the
 `CamelMongoDbOperation` header, defined by the
@@ -665,9 +618,7 @@ Object result = template.requestBodyAndHeader("direct:insert", "irrelevantBody",
 assertTrue("Result is not of type Long", result instanceof Long);
 -----------------------------------------------------------------------------------------------------------------------------
 
-[[MongoDB-TailableCursorConsumer]]
-Tailable Cursor Consumer
-~~~~~~~~~~~~~~~~~~~~~~~~
+### Tailable Cursor Consumer
 
 MongoDB offers a mechanism to instantaneously consume ongoing data from
 a collection, by keeping the cursor open just like the `tail -f` command
@@ -689,9 +640,7 @@ new objects are inserted, MongoDB will push them as DBObjects in natural
 order to your tailable cursor consumer, who will transform them to an
 Exchange and will trigger your route logic.
 
-[[MongoDB-Howthetailablecursorconsumerworks]]
-How the tailable cursor consumer works
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### How the tailable cursor consumer works
 
 To turn a cursor into a tailable cursor, a few special flags are to be
 signalled to MongoDB when first generating the cursor. Once created, the
@@ -742,9 +691,7 @@ The above route will consume from the "flights.cancellations" capped
 collection, using "departureTime" as the increasing field, with a
 default regeneration cursor delay of 1000ms.
 
-[[MongoDB-Persistenttailtracking]]
-Persistent tail tracking
-^^^^^^^^^^^^^^^^^^^^^^^^
+### Persistent tail tracking
 
 Standard tail tracking is volatile and the last value is only kept in
 memory. However, in practice you will need to restart your Camel
@@ -764,9 +711,7 @@ persisting at regular intervals too in the future (flush every 5
 seconds) for added robustness if the demand is there. To request this
 feature, please open a ticket in the Camel JIRA.
 
-[[MongoDB-Enablingpersistenttailtracking]]
-Enabling persistent tail tracking
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Enabling persistent tail tracking
 
 To enable this function, set at least the following options on the
 endpoint URI:
@@ -812,9 +757,7 @@ from("mongodb:myDb?database=flights&collection=cancellations&tailTrackIncreasing
     .to("mock:test");
 -----------------------------------------------------------------------------------------------------------------------------------
 
-[[MongoDB-TailtrackingOnOplog]]
-Oplog Tail Tracking
-^^^^^^^^^^^^^^^^^^^
+### Oplog Tail Tracking
 
 The *oplog* collection tracking feature allows to implement trigger like functionality in MongoDB.
 In order to activate this collection you will have first to activate a replica set. For more
@@ -928,9 +871,7 @@ public class MongoDbTracker {
 -----------------------------------------------------------------------------------------------------------------------------------
 
 
-[[MongoDB-Typeconversions]]
-Type conversions
-~~~~~~~~~~~~~~~~
+### Type conversions
 
 The `MongoDbBasicConverters` type converter included with the
 camel-mongodb component provides the following conversions:
@@ -954,9 +895,7 @@ object to a `Map`, which is in turn used to initialise a new
 This type converter is auto-discovered, so you don't need to configure
 anything manually.
 
-[[MongoDB-Seealso]]
-See also
-~~~~~~~~
+### See also
 
 * http://www.mongodb.org/[MongoDB website]
 * http://en.wikipedia.org/wiki/NoSQL[NoSQL Wikipedia article]
@@ -965,4 +904,3 @@ current version]
 *
 http://svn.apache.org/viewvc/camel/trunk/components/camel-mongodb/src/test/[Unit
 tests] for more examples of usage
-

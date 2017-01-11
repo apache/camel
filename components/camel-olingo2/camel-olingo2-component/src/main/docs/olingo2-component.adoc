@@ -1,4 +1,4 @@
-# Olingo2 Component
+## Olingo2 Component
 
 *Available as of Camel 2.14*
 
@@ -30,18 +30,14 @@ for this component:
     </dependency>
 ----------------------------------------------
 
-[[Olingo2-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------------------------------------------
     olingo2://endpoint/<resource-path>?[options]
 ------------------------------------------------
 
-[[Olingo2-Olingo2Component]]
-Olingo2 Options
-^^^^^^^^^^^^^^^
+### Olingo2 Options
 
 
 
@@ -93,9 +89,7 @@ The Olingo2 component supports 16 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Olingo2-ProducerEndpoints]]
-Producer Endpoints
-^^^^^^^^^^^^^^^^^^
+### Producer Endpoints
 
 Producer endpoints can use endpoint names and options listed
 next. Producer endpoints can also use a special option *`inBody`* that
@@ -139,9 +133,7 @@ org.apache.olingo.odata2.api.commons.HttpStatusCodes for other OData resources
 |update |data, resourcePath |PUT |org.apache.olingo.odata2.api.commons.HttpStatusCodes
 |=======================================================================
 
-[[Olingo2-ODataResourceTypeMapping]]
-OData Resource Type Mapping
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### OData Resource Type Mapping
 
 The result of *read* endpoint and data type of *data* option depends on
 the OData resource being queried, created or modified. 
@@ -174,9 +166,7 @@ java.util.List<java.util.Map<String, Object>> containing list of key property na
 |Count |<resource-uri>/$count |java.lang.Long
 |=======================================================================
 
-[[Olingo2-ConsumerEndpoints]]
-Consumer Endpoints
-^^^^^^^^^^^^^^^^^^
+### Consumer Endpoints
 
 Only the *read* endpoint can be used as a consumer endpoint. Consumer
 endpoints can
@@ -187,16 +177,12 @@ collection will generate one exchange per element, and their routes will
 be executed once for each exchange. This behavior can be disabled by
 setting the endpoint property *consumer.splitResult=false*. 
 
-[[Olingo2-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 Any URI option can be provided in a message header for producer
 endpoints with a *`CamelOlingo2.`* prefix.
 
-[[Olingo2-MessageBody]]
-Message Body
-^^^^^^^^^^^^
+### Message Body
 
 All result message bodies utilize objects provided by the underlying
 http://olingo.apache.org/javadoc/odata2/index.html[Apache Olingo 2.0
@@ -206,9 +192,7 @@ parameter. For endpoints that return an array or collection, a consumer
 endpoint will map every element to distinct messages, unless
 *consumer.splitResult* is set to *false*.
 
-[[Olingo2-Usecases]]
-Use cases
-^^^^^^^^^
+### Use cases
 
 The following route reads top 5 entries from the Manufacturer feed
 ordered by ascending Name property. 
@@ -266,4 +250,3 @@ consumer endpoint will produce an *ODataFeed* value the first time, and
 from("olingo2://read/Manufacturers?queryParams=#paramsBean&consumer.timeUnit=SECONDS&consumer.delay=30")
     .to("bean:blah");
 ---------------------------------------------------------------------------------------------------------
-

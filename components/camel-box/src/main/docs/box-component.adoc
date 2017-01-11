@@ -1,4 +1,4 @@
-# Box Component
+## Box Component
 
 *Available as of Camel 2.14*
 
@@ -31,9 +31,7 @@ for this component:
     </dependency>
 -------------------------------------------
 
-[[Box-Options]]
-Box Options
-^^^^^^^^^^^
+### Box Options
 
 
 
@@ -93,9 +91,7 @@ The Box component supports 21 endpoint options which are listed below:
 
 
 
-[[Box-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 --------------------------------------------
@@ -118,9 +114,7 @@ Endpoint prefix can be one of:
 * shared-items
 * users
 
-[[Box-BoxComponent.1]]
-BoxComponent
-^^^^^^^^^^^^
+### BoxComponent
 
 The Box Component can be configured with the options below. These
 options can be provided using the component's bean
@@ -172,9 +166,7 @@ sharedLink
 returns null on first call
 |=======================================================================
 
-[[Box-ProducerEndpoints:]]
-Producer Endpoints:
-^^^^^^^^^^^^^^^^^^^
+### Producer Endpoints:
 
 Producer endpoints can use endpoint prefixes followed by endpoint names
 and associated options described next. A shorthand alias can be used for
@@ -202,9 +194,7 @@ RuntimeCamelException with a
 *com.box.restclientv2.exceptions.BoxSDKException* derived exception
 cause.
 
-[[Box-EndpointPrefixcollaborations]]
-Endpoint Prefix _collaborations_
-++++++++++++++++++++++++++++++++
+#### Endpoint Prefix _collaborations_
 
 For more information on Box collaborations see
 https://developers.box.com/docs/#collaborations[https://developers.box.com/docs/#collaborations]. The
@@ -250,9 +240,7 @@ URI Options for _collaborations_
 |getAllCollabsRequest |com.box.boxjavalibv2.requests.requestobjects.BoxGetAllCollabsRequestObject
 |=======================================================================
 
-[[Box-EndpointPrefixevents]]
-Endpoint Prefix _events_
-++++++++++++++++++++++++
+#### Endpoint Prefix _events_
 
 For more information on Box events see
 https://developers.box.com/docs/#events[https://developers.box.com/docs/#events].
@@ -287,9 +275,7 @@ URI Options for _events_
 |eventRequest |com.box.boxjavalibv2.requests.requestobjects.BoxEventRequestObject
 |=======================================================================
 
-[[Box-EndpointPrefixgroups]]
-Endpoint Prefix _groups_
-++++++++++++++++++++++++
+#### Endpoint Prefix _groups_
 
 For more information on Box groups see
 https://developers.box.com/docs/#groups[https://developers.box.com/docs/#groups].
@@ -351,9 +337,7 @@ URI Options for _groups_
 
 |=======================================================================
 
-[[Box-EndpointPrefixsearch]]
-Endpoint Prefix _search_
-++++++++++++++++++++++++
+#### Endpoint Prefix _search_
 
 For more information on Box search API see
 https://developers.box.com/docs/#search[https://developers.box.com/docs/#search]. The
@@ -384,9 +368,7 @@ URI Options for _search_
 |searchQuery |String
 |=======================================================================
 
-[[Box-EndpointPrefixcommentsandshared-comments]]
-Endpoint Prefix _comments_ and _shared-comments_
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Endpoint Prefix _comments_ and _shared-comments_
 
 For more information on Box comments see
 https://developers.box.com/docs/#comments[https://developers.box.com/docs/#comments].
@@ -433,9 +415,7 @@ URI Options for _comments_ and _shared-comments_
 |message |String
 |=======================================================================
 
-[[Box-EndpointPrefixfilesandshared-files]]
-Endpoint Prefix _files_ and _shared-files_
-++++++++++++++++++++++++++++++++++++++++++
+#### Endpoint Prefix _files_ and _shared-files_
 
 For more information on Box files see
 https://developers.box.com/docs/#files[https://developers.box.com/docs/#files].
@@ -512,9 +492,7 @@ URI Options for _files_ and _shared-files_
 |sharedLinkRequest |com.box.boxjavalibv2.requests.requestobjects.BoxSharedLinkRequestObject
 |=======================================================================
 
-[[Box-EndpointPrefixfoldersandshared-folders]]
-Endpoint Prefix _folders_ and _shared-folders_
-++++++++++++++++++++++++++++++++++++++++++++++
+#### Endpoint Prefix _folders_ and _shared-folders_
 
 For more information on Box folders see
 https://developers.box.com/docs/#folders[https://developers.box.com/docs/#folders].
@@ -571,9 +549,7 @@ URI Options for _folders_ or _shared-folders_
 |sharedLinkRequest |com.box.boxjavalibv2.requests.requestobjects.BoxSharedLinkRequestObject
 |=======================================================================
 
-[[Box-EndpointPrefixshared-items]]
-Endpoint Prefix _shared-items_
-++++++++++++++++++++++++++++++
+#### Endpoint Prefix _shared-items_
 
 For more information on Box shared items see
 https://developers.box.com/docs/#shared-items[https://developers.box.com/docs/#shared-items].
@@ -602,9 +578,7 @@ URI Options for _shared-items_
 |defaultRequest |com.box.restclientv2.requestsbase.BoxDefaultRequestObject
 |=======================================================================
 
-[[Box-EndpointPrefixusers]]
-Endpoint Prefix _users_
-+++++++++++++++++++++++
+#### Endpoint Prefix _users_
 
 For information on Box users see
 https://developers.box.com/docs/#users[https://developers.box.com/docs/#users].
@@ -669,9 +643,7 @@ URI Options for _users_
 |userUpdateLoginRequest |com.box.boxjavalibv2.requests.requestobjects.BoxUserUpdateLoginRequestObject
 |=======================================================================
 
-[[Box-ConsumerEndpoints:]]
-Consumer Endpoints:
-^^^^^^^^^^^^^^^^^^^
+### Consumer Endpoints:
 
 For more information on Box events see
 https://developers.box.com/docs/#events[https://developers.box.com/docs/#events] and
@@ -714,24 +686,18 @@ URI Options for _poll-events_
 |splitResult |boolean
 |=======================================================================
 
-[[Box-Messageheader]]
-Message header
-^^^^^^^^^^^^^^
+### Message header
 
 Any of the options can be provided in a message header for producer
 endpoints with *CamelBox.* prefix.
 
-[[Box-Messagebody]]
-Message body
-^^^^^^^^^^^^
+### Message body
 
 All result message bodies utilize objects provided by the Box Java SDK.
 Producer endpoints can specify the option name for incoming message body
 in the *inBody* endpoint parameter.
 
-[[Box-TypeConverter]]
-Type Converter
-^^^^^^^^^^^^^^
+### Type Converter
 
 The Box component also provides a Camel type converter to convert
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/file/GenericFile.html[GenericFile]
@@ -742,9 +708,7 @@ specified in the exchange property *CamelBox.folderId*. If the exchange
 property is not specified the value defaults to *"**0"* for the root
 folder ID. 
 
-[[Box-Usecases]]
-Use cases
-^^^^^^^^^
+### Use cases
 
 The following route uploads new files to the user's root folder:
 

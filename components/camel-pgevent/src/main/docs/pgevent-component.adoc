@@ -1,4 +1,4 @@
-# PostgresSQL Event Component
+## PostgresSQL Event Component
 
 This is a component for Apache Camel which allows for
 Producing/Consuming PostgreSQL events related to the LISTEN/NOTIFY
@@ -31,9 +31,7 @@ pgevent://host:port/database/channel[?parameters]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[PGEvent-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -65,12 +63,9 @@ The PostgresSQL Event component supports 11 endpoint options which are listed be
 // endpoint options: END
 
 
-[[PGEvent-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

@@ -1,4 +1,4 @@
-# MyBatis Component
+## MyBatis Component
 
 *Available as of Camel 2.7*
 
@@ -18,9 +18,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[MyBatis-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -------------------------------
@@ -40,9 +38,7 @@ the root of the classpath with the expected name of
  If the file is located in another location, you will need to configure
 the `configurationUri` option on the `MyBatisComponent` component.
 
-[[MyBatis-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -110,9 +106,7 @@ The MyBatis component supports 30 endpoint options which are listed below:
 
 
 
-[[MyBatis-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 Camel will populate the result message, either IN or OUT with a header
 with the statement used:
@@ -128,9 +122,7 @@ instance an `INSERT` could return the auto-generated key, or number of
 rows etc.
 |=======================================================================
 
-[[MyBatis-MessageBody]]
-Message Body
-^^^^^^^^^^^^
+### Message Body
 
 The response from MyBatis will only be set as the body if it's a
 `SELECT` statement. That means, for example, for `INSERT` statements
@@ -138,9 +130,7 @@ Camel will not replace the body. This allows you to continue routing and
 keep the original body. The response from MyBatis is always stored in
 the header with the key `CamelMyBatisResult`.
 
-[[MyBatis-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 For example if you wish to consume beans from a JMS queue and insert
 them into a database you could do the following:
@@ -172,9 +162,7 @@ Where *insertAccount* is the MyBatis ID in the SQL mapping file:
   </insert>
 ------------------------------------------------------------
 
-[[MyBatis-UsingStatementTypeforbettercontrolofMyBatis]]
-Using StatementType for better control of MyBatis
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using StatementType for better control of MyBatis
 
 When routing to an MyBatis endpoint you will want more fine grained
 control so you can control whether the SQL statement to be executed is a
@@ -192,9 +180,7 @@ We can do the same for some of the other operations, such as
 And the same for `UPDATE`, where we can send an `Account` object as the
 IN body to MyBatis:
 
-[[MyBatis-UsingInsertListStatementType]]
-Using InsertList StatementType
-++++++++++++++++++++++++++++++
+#### Using InsertList StatementType
 
 *Available as of Camel 2.10*
 
@@ -206,9 +192,7 @@ Then you can insert multiple rows, by sending a Camel message to the
 `mybatis` endpoint which uses the `InsertList` statement type, as shown
 below:
 
-[[MyBatis-UsingUpdateListStatementType]]
-Using UpdateList StatementType
-++++++++++++++++++++++++++++++
+#### Using UpdateList StatementType
 
 *Available as of Camel 2.11*
 
@@ -240,9 +224,7 @@ from("direct:start")
     .to("mock:result");
 --------------------------------------------------------------
 
-[[MyBatis-UsingDeleteListStatementType]]
-Using DeleteList StatementType
-++++++++++++++++++++++++++++++
+#### Using DeleteList StatementType
 
 *Available as of Camel 2.11*
 
@@ -273,18 +255,14 @@ from("direct:start")
     .to("mock:result");
 --------------------------------------------------------------
 
-[[MyBatis-NoticeonInsertList,UpdateListandDeleteListStatementTypes]]
-Notice on InsertList, UpdateList and DeleteList StatementTypes
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Notice on InsertList, UpdateList and DeleteList StatementTypes
 
 Parameter of any type (List, Map, etc.) can be passed to mybatis and an
 end user is responsible for handling it as required +
  with the help of http://www.mybatis.org/core/dynamic-sql.html[mybatis
 dynamic queries] capabilities.
 
-[[MyBatis-Scheduledpollingexample]]
-Scheduled polling example
-+++++++++++++++++++++++++
+#### Scheduled polling example
 
 This component supports scheduled polling and can therefore be used as
 a link:polling-consumer.html[Polling Consumer]. For example to poll the
@@ -319,9 +297,7 @@ And the MyBatis SQL mapping file used:
   </select>
 ----------------------------------------------------------------------------
 
-[[MyBatis-UsingonConsume]]
-Using onConsume
-+++++++++++++++
+#### Using onConsume
 
 This component supports executing statements *after* data have been
 consumed and processed by Camel. This allows you to do post updates in
@@ -335,9 +311,7 @@ database to processed, so we avoid consuming it twice or more.
 
 And the statements in the sqlmap file:
 
-[[MyBatis-Participatingintransactions]]
-Participating in transactions
-+++++++++++++++++++++++++++++
+#### Participating in transactions
 
 Setting up a transaction manager under camel-mybatis can be a little bit
 fiddly, as it involves externalising the database configuration outside
@@ -420,12 +394,9 @@ usual:
     </camelContext>
 ------------------------------------------------------------------------------------------------
 
-[[MyBatis-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

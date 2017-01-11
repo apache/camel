@@ -1,4 +1,4 @@
-# Docker Component
+## Docker Component
 
 *Available as of Camel 2.15*
 
@@ -10,9 +10,7 @@ https://docs.docker.com/reference/api/docker_remote_api[Docker Remote
 API].
 
 
-[[Docker-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------------------------
@@ -21,9 +19,7 @@ docker://[operation]?[options]
 
 Where *operation* is the specific action to perform on Docker.
 
-[[Docker-Options]]
-General Options
-^^^^^^^^^^^^^^^
+### General Options
 
 // component options: START
 The Docker component supports 1 options which are listed below.
@@ -71,9 +67,7 @@ The Docker component supports 20 endpoint options which are listed below:
 {% endraw %}
 // endpoint options: END
 
-[[Docker-HeaderStrategy]]
-Header Strategy
-^^^^^^^^^^^^^^^
+### Header Strategy
 
 All URI option can be passed as Header properties. Values found in a
 message header take precedence over URI parameters. A header property
@@ -88,9 +82,7 @@ below
 |=======================================================================
 
 
-[[Docker-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
 The following example consumes events from Docker:
 
@@ -107,9 +99,7 @@ from("docker://info?host=192.168.59.103&port=2375").to("log:info");
 -------------------------------------------------------------------
 
 
-[[Docker-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use Docker in your Camel routes you need to add a dependency on
 *camel-docker*, which implements the component.

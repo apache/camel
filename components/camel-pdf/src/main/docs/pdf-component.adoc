@@ -1,4 +1,4 @@
-# PDF Component
+## PDF Component
 
 **Available as of Camel 2.16.0**
 
@@ -22,9 +22,7 @@ following dependency to their `pom.xml`:
 </dependency>
 ------------------------------------------------------------
 
-[[PDF-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 The PDF component only supports producer endpoints.
 
@@ -33,9 +31,7 @@ The PDF component only supports producer endpoints.
 pdf:operation[?options]
 -----------------------
 
-[[PDF-Options]]
-Options
-^^^^^^^
+### Options
 
 // component options: START
 The PDF component has no options.
@@ -65,9 +61,7 @@ The PDF component supports 10 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[PDF-Headers]]
-Headers
-^^^^^^^
+### Headers
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
 |Header |Description
@@ -86,9 +80,7 @@ ishttps://pdfbox.apache.org/docs/1.8.9/javadocs/org/apache/pdfbox/pdmodel/encryp
 *Mandatory* header if PDF document is encrypted.
 |=======================================================================
 
-[[PDF-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]

@@ -1,4 +1,4 @@
-# Atom Component
+## Atom Component
 
 The *atom:* component is used for polling Atom feeds.
 
@@ -19,9 +19,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Atom-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------------------
@@ -30,9 +28,7 @@ atom://atomUri[?options]
 
 Where *atomUri* is the URI to the Atom feed to poll.
 
-[[Atom-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -84,9 +80,7 @@ The Atom component supports 28 endpoint options which are listed below:
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Atom-Exchangedataformat]]
-Exchange data format
-^^^^^^^^^^^^^^^^^^^^
+### Exchange data format
 
 Camel will set the In body on the returned `Exchange` with the entries.
 Depending on the `splitEntries` flag Camel will either return one
@@ -105,9 +99,7 @@ Depending on the `splitEntries` flag Camel will either return one
 Camel can set the `Feed` object on the In header (see `feedHeader`
 option to disable this):
 
-[[Atom-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 Camel atom uses these headers.
 
@@ -118,9 +110,7 @@ Camel atom uses these headers.
 header.
 |=======================================================================
 
-[[Atom-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 In this sample we poll James Strachan's blog.
 
@@ -133,9 +123,7 @@ In this sample we want to filter only good blogs we like to a SEDA
 queue. The sample also shows how to setup Camel standalone, not running
 in any Container or using Spring.
 
-[[Atom-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -143,4 +131,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:rss.html[RSS]
-

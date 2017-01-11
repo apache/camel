@@ -1,4 +1,4 @@
-# Gora Component
+## Gora Component
 
 *Camel-Gora* is an http://camel.apache.org/[Apache Camel] component that
 allows you to work with NoSQL databases using the
@@ -19,9 +19,7 @@ for this component:
 </dependency>
 ---------------------------------------------------------
 
-[[Gora-ApacheGoraOverview]]
-Apache Gora Overview
-~~~~~~~~~~~~~~~~~~~~
+### Apache Gora Overview
 
 The http://gora.apache.org/[Apache Gora] open source framework provides
 an in-memory data model and persistence for big data. Gora supports
@@ -39,9 +37,7 @@ http://accumulo.apache.org/[Apache Accumulo],
 http://aws.amazon.com/dynamodb/[Amazon DynamoDB] and SQL databases such
 as http://hsqldb.org/[hsqldb], http://www.mysql.com/[MySQL] and more.
 
-[[Gora-URIformat]]
-URI format
-~~~~~~~~~~
+### URI format
 
 [source,text]
 ---------------------------
@@ -64,9 +60,7 @@ _Java DSL_
 to("gora:foobar?keyClass=java.lang.Long&valueClass=org.apache.camel.component.gora.generated.Pageview&dataStoreClass=org.apache.gora.hbase.store.HBaseStore")
 -------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[Gora-Configuratiion]]
-Configuratiion
-~~~~~~~~~~~~~~
+### Configuratiion
 
 Using camel-gora needs some configuration. This mainly involve to
 configure the _AvroStore_ through the _gora.properties_ file and to
@@ -77,9 +71,7 @@ Extensive information for this configuration can be found in the apache
 http://gora.apache.org/current/index.html[gora documentation] and the
 http://gora.apache.org/current/gora-conf.html[gora-conf] page.
 
-[[Gora-Options]]
-Options
-~~~~~~~
+### Options
 
 
 // component options: START
@@ -126,9 +118,7 @@ The Gora component supports 22 endpoint options which are listed below:
 
 
 
-[[Gora-SupportedGoraOperations]]
-Supported Gora Operations
-~~~~~~~~~~~~~~~~~~~~~~~~~
+### Supported Gora Operations
 
 Supported operations include : *put*, *get*, *delete*, *getSchemaName*,
 *deleteSchema*, *createSchema*, *query*, *deleteByQuery*,
@@ -166,9 +156,7 @@ hold the objects._
 datastore._
 |=======================================================================
 
-[[Gora-GoraHeaders]]
-Gora Headers
-^^^^^^^^^^^^
+### Gora Headers
 
 [width="100%",cols="20%,80%",options="header",]
 |=======================================================================
@@ -179,9 +167,7 @@ Gora Headers
 |GoraKey | _Used in order to define the datum key for the operations need it._
 |=======================================================================
 
-[[Gora-Usageexamples]]
-Usage examples
-^^^^^^^^^^^^^^
+### Usage examples
 
 *Create Schema* _(XML DSL)_:
 
@@ -253,9 +239,7 @@ The full usage examples in the form of integration tests can be found at
 https://github.com/ipolyzos/camel-gora-examples/[camel-gora-examples]
 repository.
 
-[[Gora-Moreresources]]
-More resources
-^^^^^^^^^^^^^^
+### More resources
 
 For more please information and in depth configuration refer to the
 http://gora.apache.org/current/overview.html[Apache Gora Documentation]

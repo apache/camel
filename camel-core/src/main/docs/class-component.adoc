@@ -1,4 +1,4 @@
-# Class Component
+## Class Component
 
 *Available as of Camel 2.4*
 
@@ -7,9 +7,7 @@ in the same way as the link:bean.html[Bean] component but instead of
 looking up beans from a link:registry.html[Registry] it creates the bean
 based on the class name.
 
-[[Class-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -------------------------
@@ -19,9 +17,7 @@ class:className[?options]
 Where *className* is the fully qualified class name to create and use as
 bean.
 
-[[Class-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -48,9 +44,7 @@ The Class component supports 6 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Class-Using]]
-Using
-^^^^^
+### Using
 
 You simply use the *class* component just as the link:bean.html[Bean]
 component but by specifying the fully qualified classname instead. +
@@ -69,9 +63,7 @@ example `hello`:
     from("direct:start").to("class:org.apache.camel.component.bean.MyFooBean?method=hello").to("mock:result");
 --------------------------------------------------------------------------------------------------------------
 
-[[Class-Settingpropertiesonthecreatedinstance]]
-Setting properties on the created instance
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Setting properties on the created instance
 
 In the endpoint uri you can specify properties to set on the created
 instance, for example if it has a `setPrefix` method:
@@ -112,9 +104,7 @@ id `foo` and invoke the `setCool` method on the created instance of the
 TIP:See more details at the link:bean.html[Bean] component as the *class*
 component works in much the same way.
 
-[[Class-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -124,4 +114,3 @@ See Also
 * link:bean.html[Bean]
 * link:bean-binding.html[Bean Binding]
 * link:bean-integration.html[Bean Integration]
-

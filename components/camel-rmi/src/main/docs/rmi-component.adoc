@@ -1,4 +1,4 @@
-# RMI Component
+## RMI Component
 
 The *rmi:* component binds link:exchange.html[Exchange]s to the RMI
 protocol (JRMP).
@@ -24,9 +24,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[RMI-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------------------------------------------------------------
@@ -43,9 +41,7 @@ rmi://localhost:1099/path/to/service
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[RMI-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -75,9 +71,7 @@ The RMI component supports 9 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[RMI-Using]]
-Using
-^^^^^
+### Using
 
 To call out to an existing RMI service registered in an RMI registry,
 create a route similar to the following:
@@ -110,12 +104,9 @@ In XML DSL you can do as follows from *Camel 2.7* onwards:
     </camel:route>
 ------------------------------------------------------------------------------------------------------------------------
 
-[[RMI-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

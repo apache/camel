@@ -1,4 +1,4 @@
-# Spring Integration Component
+## Spring Integration Component
 
 The *spring-integration:* component provides a bridge for Camel
 components to talk to
@@ -18,9 +18,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[SpringIntegration-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -----------------------------------------------
@@ -35,9 +33,7 @@ used by the Spring Integration Spring context. It will equal to the
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[SpringIntegration-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -66,9 +62,7 @@ The Spring Integration component supports 8 endpoint options which are listed be
 // endpoint options: END
 
 
-[[SpringIntegration-Usage]]
-Usage
-^^^^^
+### Usage
 
 The Spring integration component is a bridge that connects Camel
 endpoints with Spring integration endpoints through the Spring
@@ -76,21 +70,15 @@ integration's input channels and output channels. Using this component,
 we can send Camel messages to Spring Integration endpoints or receive
 messages from Spring integration endpoints in a Camel routing context.
 
-[[SpringIntegration-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
-[[SpringIntegration-UsingtheSpringintegrationendpoint]]
-Using the Spring integration endpoint
-+++++++++++++++++++++++++++++++++++++
+#### Using the Spring integration endpoint
 
 You can set up a Spring integration endpoint using a URI, as follows:
 
 Or directly using a Spring integration channel name:
 
-[[SpringIntegration-TheSourceandTargetadapter]]
-The Source and Target adapter
-+++++++++++++++++++++++++++++
+#### The Source and Target adapter
 
 Spring integration also provides the Spring integration's source and
 target adapters, which can route messages from a Spring integration
@@ -101,12 +89,9 @@ This example uses the following namespaces:
 
 You can bind your source or target to a Camel endpoint as follows:
 
-[[SpringIntegration-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

@@ -1,4 +1,4 @@
-# uniVocity Fixed Length DataFormat
+## uniVocity Fixed Length DataFormat
 
 *Available as of Camel 2.15.0*
 
@@ -28,9 +28,7 @@ download page for the latest versions]).
 </dependency>
 ----------------------------------------------------
 
-[[uniVocity-parsersformats-Options]]
-Options
-^^^^^^^
+### Options
 
 Most configuration options of the uniVocity-parsers are available in the
 data formats. If you want more information about a particular option,
@@ -41,9 +39,7 @@ page].
 The 3 data formats share common options and have dedicated ones, this
 section presents them all.
 
-[[uniVocity-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // dataformat options: START
@@ -78,9 +74,7 @@ The uniVocity Fixed Length dataformat supports 17 options which are listed below
 
 
 
-[[uniVocity-parsersformats-Marshallingusages]]
-Marshalling usages
-^^^^^^^^^^^^^^^^^^
+### Marshalling usages
 
 The marshalling accepts either:
 
@@ -89,9 +83,7 @@ The marshalling accepts either:
 
 Any other body will throws an exception.
 
-[[uniVocity-parsersformats-Usageexample:marshallingaMapintoCSVformat]]
-Usage example: marshalling a Map into CSV format
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Usage example: marshalling a Map into CSV format
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -104,9 +96,7 @@ Usage example: marshalling a Map into CSV format
 </route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[uniVocity-parsersformats-Usageexample:marshallingaMapintofixed-widthformat]]
-Usage example: marshalling a Map into fixed-width format
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Usage example: marshalling a Map into fixed-width format
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -123,9 +113,7 @@ Usage example: marshalling a Map into fixed-width format
 </route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[uniVocity-parsersformats-Usageexample:marshallingaMapintoTSVformat]]
-Usage example: marshalling a Map into TSV format
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Usage example: marshalling a Map into TSV format
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -138,9 +126,7 @@ Usage example: marshalling a Map into TSV format
 </route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[uniVocity-parsersformats-Unmarshallingusages]]
-Unmarshalling usages
-^^^^^^^^^^^^^^^^^^^^
+### Unmarshalling usages
 
 The unmarshalling uses an `InputStream` in order to read the data.
 
@@ -155,9 +141,7 @@ All the rows can either:
 * be collected at once into a list (`lazyLoad` option with `false`);
 * be read on the fly using an iterator (`lazyLoad` option with `true`).
 
-[[uniVocity-parsersformats-UsageexampleunmarshallingaCSVformatintomapswithautomaticheaders]]
-Usage example: unmarshalling a CSV format into maps with automatic headers
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Usage example: unmarshalling a CSV format into maps with automatic headers
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -170,9 +154,7 @@ Usage example: unmarshalling a CSV format into maps with automatic headers
 </route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[uniVocity-parsersformats-Usageexampleunmarshallingafixed-widthformatintolists]]
-Usage example: unmarshalling a fixed-width format into lists
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Usage example: unmarshalling a fixed-width format into lists
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -188,4 +170,3 @@ Usage example: unmarshalling a fixed-width format into lists
     <to uri="mock:result"/>
 </route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-

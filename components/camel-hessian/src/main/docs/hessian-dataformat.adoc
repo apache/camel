@@ -1,4 +1,4 @@
-# Hessian DataFormat
+## Hessian DataFormat
 
 Hessian is Data Format for marshalling and unmarshalling messages using Caucho's Hessian format.
 
@@ -14,9 +14,7 @@ If you want to use Hessian Data Format from Maven, add the following dependency 
 </dependency>
 ------------------------------------------------------------
 
-[[HessianDataFormat-Options]]
-Options
-^^^^^^^
+### Options
 
 // dataformat options: START
 The Hessian dataformat supports 1 options which are listed below.
@@ -32,9 +30,7 @@ The Hessian dataformat supports 1 options which are listed below.
 {% endraw %}
 // dataformat options: END
 
-[[hessian-UsingHessianDataFormat]]
-Using the Hessian data format in Java DSL
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using the Hessian data format in Java DSL
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -42,9 +38,7 @@ Using the Hessian data format in Java DSL
         .marshal().hessian();
 --------------------------------------------------------------------------------
 
-[[hessian-UsingHessianDataFormatXml]]
-Using the Hessian data format in Spring DSL
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using the Hessian data format in Spring DSL
 
 [source,xml]
 --------------------------------------------------------------------------------

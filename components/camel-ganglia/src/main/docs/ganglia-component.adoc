@@ -1,8 +1,6 @@
-# Ganglia Component
+## Ganglia Component
 
-[[Ganglia-AvailableasofCamel2.15.0]]
-Available as of Camel 2.15.0
-++++++++++++++++++++++++++++
+#### Available as of Camel 2.15.0
 
 Provides a mechanism to send a value (the message body) as a metric to
 the http://ganglia.info[Ganglia] monitoring system.  Uses the gmetric4j
@@ -35,9 +33,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Ganglia-URIformat]]
-URI format
-~~~~~~~~~~
+### URI format
 
 [source,java]
 ------------------------------
@@ -47,9 +43,7 @@ ganglia:address:port[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Ganglia-GangliacomponentandendpointURIoptions]]
-Ganglia component and endpoint URI options
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Ganglia component and endpoint URI options
 
 
 
@@ -102,27 +96,19 @@ The Ganglia component supports 15 endpoint options which are listed below:
 
 
 
-[[Ganglia-Messagebody]]
-Message body
-~~~~~~~~~~~~
+### Message body
 
 Any value (such as a string or numeric type) in the body is sent to the
 Ganglia system.
 
-[[Ganglia-ReturnvalueAndResponse]]
-Return value / response
-~~~~~~~~~~~~~~~~~~~~~~~
+### Return value / response
 
 Ganglia sends metrics using unidirectional UDP or multicast.  There is
 no response or change to the message body.
 
-[[Ganglia-Examples]]
-Examples
-~~~~~~~~
+### Examples
 
-[[Ganglia-SendingaStringmetric]]
-Sending a String metric
-^^^^^^^^^^^^^^^^^^^^^^^
+### Sending a String metric
 
 The message body will be converted to a String and sent as a metric
 value.  Unlike numeric metrics, String values can't be charted but
@@ -140,9 +126,7 @@ from("direct:ganglia.tx")
     .to("ganglia:239.2.11.71:8649?mode=MULTICAST&prefix=test");
 ------------------------------------------------------------------------
 
-[[Ganglia-Sendinganumericmetric]]
-Sending a numeric metric
-^^^^^^^^^^^^^^^^^^^^^^^^
+### Sending a numeric metric
 
 [source,java]
 ------------------------------------------------------------------------

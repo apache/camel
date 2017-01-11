@@ -126,9 +126,6 @@ Enterprise Integration Patterns
 | link:src/main/docs/eips/serviceCall-eip.adoc[Service Call] +
 `<serviceCall>` | Remote service call definition
 
-| link:src/main/docs/eips/serviceCallConfiguration-eip.adoc[Service Call Configuration] +
-`<serviceCallConfiguration>` | Remote service call configuration
-
 | link:src/main/docs/eips/setBody-eip.adoc[Set Body] +
 `<setBody>` | Sets the contents of the message body
 

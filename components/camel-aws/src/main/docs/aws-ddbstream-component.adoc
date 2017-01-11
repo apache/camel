@@ -1,4 +1,4 @@
-# AWS DynamoDB Streams Component
+## AWS DynamoDB Streams Component
 
 *Available as of Camel 2.7*
 
@@ -11,9 +11,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon DynamoDB Streams. More information are available
 at http://aws.amazon.com/dynamodb/[AWS DynamoDB]
 
-[[AWS-DDBSTREAM-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 ------------------------------------
@@ -24,9 +22,7 @@ The stream needs to be created prior to it being used. +
  You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-[[AWS-DDBSTREAM-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 // component options: START
@@ -83,9 +79,7 @@ You have to provide the amazonDynamoDbStreamsClient in the
 link:registry.html[Registry] with proxies and relevant credentials
 configured.
 
-[[AWS-DDBSTREAM-SequenceNumbers]]
-Sequence Numbers
-^^^^^^^^^^^^^^^^
+### Sequence Numbers
 
 You can provide a literal string as the sequence number or provide a
 bean in the registry. An example of using the bean would be to save your
@@ -95,9 +89,7 @@ It is an error to provide a sequence number that is greater than the
 largest sequence number in the describe-streams result, as this will
 lead to the AWS call returning an HTTP 400.
 
-[[AWS-DDBSTREAM-BatchConsumer]]
-Batch Consumer
-^^^^^^^^^^^^^^
+### Batch Consumer
 
 This component implements the link:batch-consumer.html[Batch Consumer].
 
@@ -105,13 +97,9 @@ This allows you for instance to know how many messages exists in this
 batch and for instance let the link:aggregator.html[Aggregator]
 aggregate this number of messages.
 
-[[AWS-DDBSTREAM-Usage]]
-Usage
-^^^^^
+### Usage
 
-[[AWS-DDBSTREAM-AmazonDynamoDBStreamsClientconfiguration]]
-AmazonDynamoDBStreamsClient configuration
-+++++++++++++++++++++++++++++++++++++++++
+#### AmazonDynamoDBStreamsClient configuration
 
 You will need to create an instance of AmazonDynamoDBStreamsClient and
 bind it to the registry
@@ -129,9 +117,7 @@ region.createClient(AmazonDynamoDBStreamsClient.class, null, clientConfiguration
 registry.bind("kinesisClient", client);
 --------------------------------------------------------------------------------------------------------------------
 
-[[AWS-DDBSTREAM-ProvidingAWSCredentials]]
-Providing AWS Credentials
-+++++++++++++++++++++++++
+#### Providing AWS Credentials
 
 It is recommended that the credentials are obtained by using the
 http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/DefaultAWSCredentialsProviderChain.html[DefaultAWSCredentialsProviderChain]
@@ -140,13 +126,9 @@ however, a
 different http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/AWSCredentialsProvider.html[AWSCredentialsProvider]
 can be specified when calling createClient(...).
 
-[[AWS-DDBSTREAM-CopingwithDowntime]]
-Coping with Downtime
-^^^^^^^^^^^^^^^^^^^^
+### Coping with Downtime
 
-[[AWS-DDBSTREAM-AWSDynamoDBStreamsoutageoflessthan24hours]]
-AWS DynamoDB Streams outage of less than 24 hours
-+++++++++++++++++++++++++++++++++++++++++++++++++
+#### AWS DynamoDB Streams outage of less than 24 hours
 
 The consumer will resume from the last seen sequence number (as
 implemented
@@ -154,16 +136,12 @@ for https://issues.apache.org/jira/browse/CAMEL-9515[CAMEL-9515]), so
 you should receive a flood of events in quick succession, as long as the
 outage did not also include DynamoDB itself.
 
-[[AWS-DDBSTREAM-AWSDynamoDBStreamsoutageofmorethan24hours]]
-AWS DynamoDB Streams outage of more than 24 hours
-+++++++++++++++++++++++++++++++++++++++++++++++++
+#### AWS DynamoDB Streams outage of more than 24 hours
 
 Given that AWS only retain 24 hours worth of changes, you will have
 missed change events no matter what mitigations are in place.
 
-[[AWS-DDBSTREAM-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -181,9 +159,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.7 or higher).
 
-[[AWS-DDBSTREAM-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -192,4 +168,3 @@ See Also
 
 * link:aws.html[AWS Component] +
  +
-

@@ -1,4 +1,4 @@
-# BeanIO DataFormat
+## BeanIO DataFormat
 
 *Available as of Camel 2.10*
 
@@ -11,9 +11,7 @@ http://beanio.org/2.0/docs/reference/index.html#TheMappingFile[mappings
 XML] file where you define the mapping from the flat format to Objects
 (POJOs). This mapping file is mandatory to use.
 
-[[BeanIO-Options]]
-Options
-^^^^^^^
+### Options
 
 // dataformat options: START
 The BeanIO dataformat supports 8 options which are listed below.
@@ -36,17 +34,13 @@ The BeanIO dataformat supports 8 options which are listed below.
 {% endraw %}
 // dataformat options: END
 
-[[BeanIO-Usage]]
-Usage
-^^^^^
+### Usage
 
 An example of a
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-beanio/src/test/resources/org/apache/camel/dataformat/beanio/mappings.xml[mapping
 file is here].
 
-[[BeanIO-UsingJavaDSL]]
-Using Java DSL
-++++++++++++++
+#### Using Java DSL
 
 To use the `BeanIODataFormat` you need to configure the data format with
 the mapping file, as well the name of the stream. +
@@ -63,17 +57,13 @@ List<Employee> into a stream of CSV data.
 
 The CSV data could for example be as below:
 
-[[BeanIO-UsingXMLDSL]]
-Using XML DSL
-+++++++++++++
+#### Using XML DSL
 
 To use the BeanIO data format in XML, you need to configure it using the
 <beanio> XML tag as shown below. The routes is similar to the example
 above.
 
-[[BeanIO-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use BeanIO in your Camel routes you need to add a dependency on
 *camel-beanio* which implements this data format.

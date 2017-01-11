@@ -1,4 +1,4 @@
-# iCal DataFormat
+## iCal DataFormat
 
 *Available as of Camel 2.11.1*
 
@@ -26,9 +26,7 @@ END:VEVENT
 END:VCALENDAR
 ----------------------------------------------------------------------
 
-[[ICal-Options]]
-Options
-^^^^^^^
+### Options
 
 // dataformat options: START
 The iCal dataformat supports 2 options which are listed below.
@@ -45,9 +43,7 @@ The iCal dataformat supports 2 options which are listed below.
 {% endraw %}
 // dataformat options: END
 
-[[ICal-BasicUsage]]
-Basic Usage
-^^^^^^^^^^^
+### Basic Usage
 
 To unmarshal and marshal the message shown above, your route will look
 like the following:
@@ -74,12 +70,9 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[ICal-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-
