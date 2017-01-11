@@ -86,7 +86,7 @@ public class JettyContentExchange9 implements JettyContentExchange {
         closeRequestContentSource();
     }
 
-    protected void onResponseComplete(Result result, byte[] content, String contentType) {
+    protected void onResponseComplete(Result result, byte[] content) {
         LOG.trace("onResponseComplete");
         done.countDown();
         this.response = result.getResponse();
@@ -226,9 +226,6 @@ public class JettyContentExchange9 implements JettyContentExchange {
 
             @Override
             public void onContent(Response response, ByteBuffer content, Callback callback) {
-                if (response.getStatus() != SC_OK) {
-                    LOG.warn("Response received {}: {}", response.getStatus(), response.getReason());
-                }
                 byte[] buffer = new byte[content.limit()];
                 content.get(buffer);
                 baos.write(buffer, 0, buffer.length);
@@ -241,7 +238,7 @@ public class JettyContentExchange9 implements JettyContentExchange {
                 if (result.isFailed()) {
                     doTaskCompleted(result.getFailure());
                 } else {
-                    onResponseComplete(result, baos.toByteArray(), null);
+                    onResponseComplete(result, baos.toByteArray());
                 }
             }
         };
