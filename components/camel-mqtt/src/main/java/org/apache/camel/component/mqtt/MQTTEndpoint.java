@@ -278,25 +278,27 @@ public class MQTTEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         });
     }
 
+    @Override
     protected void doStop() throws Exception {
         super.doStop();
 
-        if (connection != null) {
-            final Promise<Void> promise = new Promise<Void>();
+        if (connection != null && connected) {
+            final Promise<Void> promise = new Promise<>();
             connection.getDispatchQueue().execute(new Task() {
                 @Override
                 public void run() {
                     connection.disconnect(new Callback<Void>() {
                         public void onSuccess(Void value) {
+                            connected = false;
                             promise.onSuccess(value);
                         }
-
                         public void onFailure(Throwable value) {
                             promise.onFailure(value);
                         }
                     });
                 }
             });
+
             promise.await(configuration.getDisconnectWaitInSeconds(), TimeUnit.SECONDS);
         }
     }
