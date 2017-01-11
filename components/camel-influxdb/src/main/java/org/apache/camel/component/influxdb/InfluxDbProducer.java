@@ -17,10 +17,14 @@
 package org.apache.camel.component.influxdb;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.influxdb.InfluxDB;
 import org.influxdb.dto.BatchPoints;
 import org.influxdb.dto.Point;
+import org.influxdb.dto.Query;
+import org.influxdb.dto.QueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +64,19 @@ public class InfluxDbProducer extends DefaultProducer {
 
         String dataBaseName = calculateDatabaseName(exchange);
         String retentionPolicy = calculateRetentionPolicy(exchange);
+        switch (endpoint.getOperation()) {
+        case InfluxDbOperations.INSERT:
+            doInsert(exchange, dataBaseName, retentionPolicy);
+            break;
+        case InfluxDbOperations.QUERY:
+            doQuery(exchange, dataBaseName, retentionPolicy);
+            break;
+        default:
+            throw new IllegalArgumentException("The operation " + endpoint.getOperation() + " is not supported");
+        }
+    }
+
+    private void doInsert(Exchange exchange, String dataBaseName, String retentionPolicy) throws InvalidPayloadException {
         if (!endpoint.isBatch()) {
             Point p = exchange.getIn().getMandatoryBody(Point.class);
 
@@ -83,6 +100,13 @@ public class InfluxDbProducer extends DefaultProducer {
         }
     }
 
+    private void doQuery(Exchange exchange, String dataBaseName, String retentionPolicy) {
+        String query = calculateQuery(exchange);
+        Query influxdbQuery = new Query(query, dataBaseName);
+        QueryResult resultSet = connection.query(influxdbQuery);
+        exchange.getOut().setBody(resultSet);
+    }
+
     private String calculateRetentionPolicy(Exchange exchange) {
         String retentionPolicy = exchange.getIn().getHeader(InfluxDbConstants.RETENTION_POLICY_HEADER, String.class);
 
@@ -101,6 +125,21 @@ public class InfluxDbProducer extends DefaultProducer {
         }
 
         return endpoint.getDatabaseName();
+    }
+    
+    private String calculateQuery(Exchange exchange) {
+        String query = exchange.getIn().getHeader(InfluxDbConstants.INFLUXDB_QUERY, String.class);
+
+        if (query != null) {
+            return query;
+        } else {
+            query = endpoint.getQuery();
+        }
+        
+        if (ObjectHelper.isEmpty(query)) {
+            throw new IllegalArgumentException("The query option must be set if you want to run a query operation");
+        }
+        return query;
     }
 
 }

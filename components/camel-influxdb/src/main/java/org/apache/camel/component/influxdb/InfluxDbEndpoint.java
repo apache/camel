@@ -48,6 +48,10 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
     private String retentionPolicy = "default";
     @UriParam(defaultValue = "false")
     private boolean batch;
+    @UriParam(defaultValue = InfluxDbOperations.INSERT)
+    private String operation = InfluxDbOperations.INSERT;
+    @UriParam
+    private String query;
     
     public InfluxDbEndpoint(String uri, InfluxDbComponent component) {
         super(uri, component);
@@ -133,5 +137,27 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
      */
     public void setBatch(boolean batch) {
         this.batch = batch;
+    }
+
+    public String getOperation() {
+        return operation;
+    }
+
+    /**
+     * Define if this operation is an insert or a query
+     */
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    /**
+     * Define the query in case of operation query
+     */
+    public void setQuery(String query) {
+        this.query = query;
     }
 }
