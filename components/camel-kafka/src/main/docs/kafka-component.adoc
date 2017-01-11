@@ -259,6 +259,19 @@ from("kafka:localhost:9092?topic=test&groupId=testing&autoOffsetReset=earliest&c
                         }).to("log:input");
 -------------------------------------------------------------------------------------------------
 
+
+When consuming messages from Kafka you can use your own offset management and not delegate this management to Kafka.
+In order to keep the offsets the component needs a `StateRepository` implementation such as `FileStateRepository`.
+This bean should be available in the registry.
+Here how to use it :
+[source,java]
+-------------------------------------------------------------------------------------------------------------------
+from("kafka:localhost:{{kafkaPort}}?topic=" + TOPIC +  //
+             "&groupId=A" +                            //
+             "&autoOffsetReset=earliest" +             // Ask to start from the beginning if we have unknown offset
+             "&offsetRepository=#repo")                // Keep the offsets in our repository named "repo"
+        .to("mock:result");
+-------------------------------------------------------------------------------------------------------------------
  
 
 Producing messages:
