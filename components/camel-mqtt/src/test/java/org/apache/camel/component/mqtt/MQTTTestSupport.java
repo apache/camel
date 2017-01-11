@@ -17,6 +17,7 @@
 
 package org.apache.camel.component.mqtt;
 
+import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.test.AvailablePortFinder;
 
 /**
@@ -57,5 +58,23 @@ public final class MQTTTestSupport {
 
     public static String getHostForMQTTEndpoint() {
         return HOST;
+    }
+
+
+
+    public static BrokerService newBrokerService() throws Exception {
+        BrokerService service = new BrokerService();
+        service.setPersistent(false);
+        service.setAdvisorySupport(false);
+        service.addConnector(getConnection());
+
+        return service;
+    }
+
+    public static MQTTComponent newComponent() throws Exception {
+        MQTTComponent component = new MQTTComponent();
+        component.setHost(getHostForMQTTEndpoint());
+
+        return component;
     }
 }
