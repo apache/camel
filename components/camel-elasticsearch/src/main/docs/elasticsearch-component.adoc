@@ -25,16 +25,6 @@ for this component:
 elasticsearch://clusterName[?options]
 -------------------------------------
 
-[Tip]
-====
-
-
-if you want to run against a local (in JVM/classloader) ElasticSearch
-server, just set the clusterName value in the URI to "local". See the
-http://www.elasticsearch.org/guide/reference/java-api/client.html[client
-guide] for more details.
-
-====
 
 ### Endpoint Options
 
@@ -81,6 +71,12 @@ The Elasticsearch component supports 12 endpoint options which are listed below:
 {% endraw %}
 // endpoint options: END
 
+### Local testing
+
+If you want to run against a local (in JVM/classloader) ElasticSearch
+server, just set the clusterName value in the URI to "local". See the
+http://www.elasticsearch.org/guide/reference/java-api/client.html[client
+guide] for more details.
 
 
 ### Message Operations

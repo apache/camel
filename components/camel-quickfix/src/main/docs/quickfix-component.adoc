@@ -7,15 +7,6 @@ http://www.quickfixj.org/[QuickFIX/J] FIX engine for using in Camel .
 This component uses the standard http://www.fixprotocol.org/[Financial
 Interchange (FIX) protocol] for message transport.
 
-[Info]
-====
-**Previous Versions**
-
-The *quickfix* component was rewritten for Camel 2.5. For information
-about using the *quickfix* component prior to 2.5 see the documentation
-section below.
-
-====
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:

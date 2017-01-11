@@ -119,8 +119,6 @@ optional if the CACHE_OPERATION is DELETEALL
 |=======================================================================
 #### Message Headers Camel 2.8+
 
-[Info]
-====
 Header changes in Camel 2.8
 
 The header names and supported values have changed to be prefixed with
@@ -130,7 +128,6 @@ remain unchanged, just their values have been changed. Also, these
 headers are now removed from the exchange after the cache operation is
 performed.
 
-====
 
 [width="100%",cols="20%,80%",options="header",]
 |=======================================================================
@@ -424,15 +421,9 @@ replication options are set per `CacheManager` and per `CacheEndpoint`.
 Also it is the only way when cache names are not know at the development
 phase.
 
-[Note]
-====
-
-
-It might be useful to read the http://ehcache.org/documentation[EHCache
+*Note*: It might be useful to read the http://ehcache.org/documentation[EHCache
 manual] to get a better understanding of the Camel Cache replication
 mechanism.
-
-====
 
 #### Example: JMS cache replication
 

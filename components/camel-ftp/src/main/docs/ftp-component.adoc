@@ -3,6 +3,13 @@
 This component provides access to remote file systems over the FTP and
 SFTP protocols.
 
+When consuming from remote FTP server make sure you read the section titled _Default when consuming files_
+further below for details related to consuming files.
+
+Absolute path is *not* supported. *Camel 2.16* will translate absolute path to relative by trimming all
+leading slashes from `directoryname`. There'll be WARN message printed
+in the logs.
+
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
@@ -16,35 +23,6 @@ for this component:
 </dependency>
 -----------------------------------------------------------------------
 
-[Info]
-====
-More options
-
-See link:file2.html[File] for more options as all the options from
-link:file2.html[File] is inherited.
-
-====
-
-[Info]
-====
-Absolute paths
-
-Absolute path is *not* supported.
-
-*Camel 2.16* will translate absolute path to relative by trimming all
-leading slashes from `directoryname`. There'll be WARN message printed
-in the logs.
-
-====
-
-[Tip]
-====
-Consuming from remote FTP server
-
-Make sure you read the section titled _Default when consuming files_
-further below for details related to consuming files.
-
-====
 
 ### URI format
 
@@ -91,24 +69,10 @@ Layer (SSL) cryptographic protocols.
 
 The options below are exclusive for the FTP component.
 
-[Info]
-====
-More options
-
-See link:file2.html[File] for more options as all the options from
-link:file2.html[File] is inherited.
-
-====
 
 // component options: START
 The FTP component has no options.
 // component options: END
-
-
-
-
-
-
 
 
 
@@ -230,16 +194,7 @@ The FTP component supports 105 endpoint options which are listed below:
 
 
 
-
-
-
-
-
-
-
-[Info]
-====
-FTPS component default trust store
+### FTPS component default trust store
 
 When using the `ftpClient.` properties related to SSL with the FTPS
 component, the trust store accept all certificates. If you only want
@@ -249,8 +204,6 @@ the `ftpClient.trustStore.xxx` options or by configuring a custom
 
 When using `sslContextParameters`, the trust store is managed by the
 configuration of the provided SSLContextParameters instance.
-
-====
 
 You can configure additional options on the `ftpClient` and
 `ftpClientConfig` from the URI directly by using the `ftpClient.` or
@@ -302,14 +255,6 @@ from("ftp://foo@myserver?password=secret&ftpClientConfig=#myConfig").to("bean:fo
 
 ### More URI options
 
-[Info]
-====
-
-
-See link:file2.html[File2] as all the options there also applies for
-this component.
-
-====
 
 ### Examples
 
@@ -318,8 +263,8 @@ this component.
 `ftp://someoneelse@someotherftpserver.co.uk:12049/reports/2008/password=secret&binary=false` +
  `ftp://publicftpserver.com/download`
 
-[Warning]
-====
+### Concurrency
+
 FTP Consumer does not support concurrency
 
 The FTP consumer (with the same endpoint) does not support concurrency
@@ -329,11 +274,7 @@ is only a single endpoint that does not support concurrent consumers.
 
 The FTP producer does *not* have this issue, it supports concurrency.
 
-====
-
-[Tip]
-====
-More information
+### More information
 
 This component is an extension of the link:file2.html[File] component.
 So there are more samples and details on the link:file2.html[File]

@@ -6,7 +6,7 @@ Apache Camel offers a REST styled DSL which can be used with Java or
 XML. The intention is to allow end users to define REST services using a
 REST style with verbs such as get, post, delete etc.
 
-#### How it works
+### How it works
 
 The Rest DSL is a facade that builds link:rest.html[Rest] endpoints as
 consumers for Camel routes. The actual REST transport is leveraged by

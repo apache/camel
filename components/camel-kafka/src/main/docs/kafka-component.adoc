@@ -8,6 +8,8 @@ http://kafka.apache.org/[Apache Kafka] message broker.
 Maven users will need to add the following dependency to their `pom.xml`
 for this component.
 
+From Camel 2.17 onwards Scala is no longer used, as we use the kafka java client.
+
 [source,xml]
 ------------------------------------------------------------
 <dependency>
@@ -18,24 +20,6 @@ for this component.
 </dependency>
 ------------------------------------------------------------
 
-#### Camel 2.17 or newer
-
-Scala is no longer used, as we use the kafka java client.
-
-#### Camel 2.16 or older
-
-And then the Scala libraries of choice. camel-kafka does not include
-that dependency, but assumes it is provided. For example to use Scala
-2.10.4 add:
-
-[source,xml]
---------------------------------------------
-    <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-library</artifactId>
-      <version>2.10.4</version>
-    </dependency>
---------------------------------------------
 
 ### URI format
 
@@ -44,12 +28,8 @@ that dependency, but assumes it is provided. For example to use Scala
 kafka:server:port[?options]
 ---------------------------
 
- 
 
-### Options (Camel 2.16 or older)
-
-
-
+### Options
 
 
 // component options: START
@@ -65,24 +45,6 @@ The Kafka component supports 1 options which are listed below.
 |=======================================================================
 {% endraw %}
 // component options: END
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -177,38 +139,12 @@ The Kafka component supports 77 endpoint options which are listed below:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 For more information about Producer/Consumer configuration:
 
 http://kafka.apache.org/documentation.html#newconsumerconfigs[http://kafka.apache.org/documentation.html#newconsumerconfigs]
 http://kafka.apache.org/documentation.html#producerconfigs[http://kafka.apache.org/documentation.html#producerconfigs]
 
 ### Samples
-
-#### Camel 2.16 or older
-
-Consuming messages:
-
-[source,java]
-------------------------------------------------------------------------------------------------------------------
-from("kafka:localhost:9092?topic=test&zookeeperHost=localhost&zookeeperPort=2181&groupId=group1").to("log:input");
-------------------------------------------------------------------------------------------------------------------
-
-Producing messages:
-
-See unit tests of camel-kafka for more examples
 
 #### Camel 2.17 or newer
 
