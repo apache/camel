@@ -41,11 +41,8 @@ public class InfluxDbProducer extends DefaultProducer {
 
     public InfluxDbProducer(InfluxDbEndpoint endpoint) {
         super(endpoint);
-        if (endpoint == null) {
-            throw new IllegalArgumentException("Can't create a producer when the endpoint is null");
-        }
 
-        if (endpoint.getInfluxDB() == null) {
+        if (ObjectHelper.isEmpty(endpoint.getInfluxDB())) {
             throw new IllegalArgumentException("Can't create a producer when the database connection is null");
         }
 
@@ -110,7 +107,7 @@ public class InfluxDbProducer extends DefaultProducer {
     private String calculateRetentionPolicy(Exchange exchange) {
         String retentionPolicy = exchange.getIn().getHeader(InfluxDbConstants.RETENTION_POLICY_HEADER, String.class);
 
-        if (retentionPolicy != null) {
+        if (ObjectHelper.isNotEmpty(retentionPolicy)) {
             return retentionPolicy;
         }
 
@@ -120,7 +117,7 @@ public class InfluxDbProducer extends DefaultProducer {
     private String calculateDatabaseName(Exchange exchange) {
         String dbName = exchange.getIn().getHeader(InfluxDbConstants.DBNAME_HEADER, String.class);
 
-        if (dbName != null) {
+        if (ObjectHelper.isNotEmpty(dbName)) {
             return dbName;
         }
 
@@ -130,7 +127,7 @@ public class InfluxDbProducer extends DefaultProducer {
     private String calculateQuery(Exchange exchange) {
         String query = exchange.getIn().getHeader(InfluxDbConstants.INFLUXDB_QUERY, String.class);
 
-        if (query != null) {
+        if (ObjectHelper.isNotEmpty(query)) {
             return query;
         } else {
             query = endpoint.getQuery();
