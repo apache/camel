@@ -32,7 +32,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,transformation", expressionMode = Metadata.ExpressionMode.predicate)
 @XmlRootElement(name = "validate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ValidateDefinition extends NoOutputExpressionNode {

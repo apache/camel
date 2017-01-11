@@ -25,6 +25,7 @@ public class ParserResult {
     private boolean parsed;
     private int position;
     private String element;
+    private Boolean predicate;
 
     public ParserResult(String node, int position, String element) {
         this(node, position, element, true);
@@ -64,6 +65,17 @@ public class ParserResult {
      */
     public String getNode() {
         return node;
+    }
+
+    public Boolean getPredicate() {
+        return predicate;
+    }
+
+    /**
+     * Tells if it was an expression which is intended to be used as a predicate (determined from camel-core mode)
+     */
+    public void setPredicate(Boolean predicate) {
+        this.predicate = predicate;
     }
 
     public String toString() {

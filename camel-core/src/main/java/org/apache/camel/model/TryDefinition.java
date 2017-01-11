@@ -148,6 +148,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
      * @param predicate  predicate that determines true or false
      * @return the builder
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public TryDefinition onWhen(Predicate predicate) {
         // we must use a delegate so we can use the fluent builder based on TryDefinition
         // to configure all with try .. catch .. finally
@@ -183,6 +184,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
      * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
      */
     @Deprecated
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public TryDefinition handled(Predicate handled) {
         // we must use a delegate so we can use the fluent builder based on TryDefinition
         // to configure all with try .. catch .. finally
@@ -204,6 +206,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
      * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
      */
     @Deprecated
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public TryDefinition handled(Expression handled) {
         return handled(ExpressionToPredicateAdapter.toPredicate(handled));
     }

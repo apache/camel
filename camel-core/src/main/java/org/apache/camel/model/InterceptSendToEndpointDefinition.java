@@ -149,6 +149,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
      * @param predicate  the predicate
      * @return the builder
      */
+    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
     public InterceptSendToEndpointDefinition when(Predicate predicate) {
         WhenDefinition when = new WhenDefinition(predicate);
         addOutput(when);

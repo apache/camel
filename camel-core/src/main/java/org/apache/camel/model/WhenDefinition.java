@@ -29,7 +29,7 @@ import org.apache.camel.spi.RouteContext;
  * 
  * @version 
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing", expressionMode = Metadata.ExpressionMode.predicate)
 @XmlRootElement(name = "when")
 public class WhenDefinition extends ExpressionNode {
 
