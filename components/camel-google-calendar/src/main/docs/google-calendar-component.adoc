@@ -1,10 +1,8 @@
-# Google Calendar Component
+## Google Calendar Component
 
 *Available as of Camel 2.15*
 
-[[GoogleCalendar-ComponentDescription]]
-Component Description
-^^^^^^^^^^^^^^^^^^^^^
+### Component Description
 
 The Google Calendar component provides access
 to http://google.com/calendar[Google Calendar] via
@@ -33,9 +31,7 @@ for this component:
         
 ----------------------------------------------------------
 
-[[GoogleCalendar-options]]
-1. Google Calendar Options
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### 1. Google Calendar Options
 
 
 
@@ -90,9 +86,7 @@ The Google Calendar component supports 16 endpoint options which are listed belo
 // endpoint options: END
 
 
-[[GoogleCalendar-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 The GoogleCalendar Component uses the following URI format:
 
@@ -112,9 +106,7 @@ Endpoint prefix can be one of:
 * list
 * settings
 
-[[GoogleCalendar-ProducerEndpoints]]
-Producer Endpoints
-^^^^^^^^^^^^^^^^^^
+### Producer Endpoints
 
 Producer endpoints can use endpoint prefixes followed by endpoint names
 and associated options described next. A shorthand alias can be used for
@@ -133,9 +125,7 @@ overrides message header, i.e. the endpoint option `inBody=option` would
 override a `CamelGoogleCalendar.option` header.
 
 
-[[GoogleCalendar-ConsumerEndpoints]]
-Consumer Endpoints
-^^^^^^^^^^^^^^^^^^
+### Consumer Endpoints
 
 Any of the producer endpoints can be used as a consumer endpoint.
 Consumer endpoints can use
@@ -145,16 +135,12 @@ invocation. Consumer endpoints that return an array or collection will
 generate one exchange per element, and their routes will be executed
 once for each exchange.
 
-[[GoogleCalendar-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 Any URI option can be provided in a message header for producer
 endpoints with a `CamelGoogleCalendar.` prefix.
 
-[[GoogleCalendar-MessageBody]]
-Message Body
-^^^^^^^^^^^^
+### Message Body
 
 All result message bodies utilize objects provided by the underlying
 APIs used by the GoogleCalendarComponent. Producer endpoints can specify

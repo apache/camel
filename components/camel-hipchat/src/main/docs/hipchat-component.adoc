@@ -1,4 +1,4 @@
-# Hipchat Component
+## Hipchat Component
 
 *Available as of Camel 2.15.0*
 
@@ -12,9 +12,7 @@ https://www.hipchat.com/account/api[personal access token] that you can
 use to produce/consume messages.
 
 
-[[Hipchat-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 -------------------------------
@@ -24,9 +22,7 @@ hipchat://[host][:port]?options
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-[[Hipchat-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 // component options: START
@@ -78,9 +74,7 @@ The Hipchat component supports 24 endpoint options which are listed below:
 
 
 
-[[Hipchat-ScheduledPollConsumer]]
-Scheduled Poll Consumer
-^^^^^^^^^^^^^^^^^^^^^^^
+### Scheduled Poll Consumer
 
 This component implements the
 link:polling-consumer.html[ScheduledPollConsumer]. Only the last message
@@ -105,9 +99,7 @@ public void configure() throws Exception {
 }
 ---------------------------------------------------------------------------------
 
-[[Hipchat-MessageheaderssetbytheHipchatconsumer]]
-Message headers set by the Hipchat consumer
-+++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set by the Hipchat consumer
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -124,9 +116,7 @@ Hipchat https://www.hipchat.com/docs/apiv2/method/view_recent_privatechat_histor
 The status of the API response received.
 |=======================================================================
 
-[[Hipchat-HipchatProducer]]
-Hipchat Producer
-^^^^^^^^^^^^^^^^
+### Hipchat Producer
 
 Producer can send messages to both Room's and User's simultaneously. The
 body of the exchange is sent as message. Sample usage is shown below.
@@ -143,9 +133,7 @@ Appropriate headers needs to be set.
  }
 ----------------------------------------------------------
 
-[[Hipchat-MessageheadersevaluatedbytheHipchatproducer]]
-Message headers evaluated by the Hipchat producer
-+++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers evaluated by the Hipchat producer
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -166,9 +154,7 @@ a user notification (change the tab color, play a sound, notify mobile
 phones, etc). *Default: 'false' (Room Only)*
 |=======================================================================
 
-[[Hipchat-MessageheaderssetbytheHipchatproducer]]
-Message headers set by the Hipchat producer
-+++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set by the Hipchat producer
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -181,9 +167,7 @@ The status of the API response received when message sent to the user.
 |HipchatFromUserResponseStatus |HipchatConstants.TO_ROOM_RESPONSE_STATUS |_http://hc.apache.org/httpcomponents-core-4.2.x/httpcore/apidocs/org/apache/http/StatusLine.html[StatusLine]_ |The status of the API response received when message sent to the room.
 |=======================================================================
 
-[[Hipchat-Dependencies]]
-Dependencies
-++++++++++++
+#### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 

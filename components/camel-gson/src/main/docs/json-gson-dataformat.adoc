@@ -1,4 +1,4 @@
-# JSon GSon DataFormat
+## JSon GSon DataFormat
 
 *Available as of Camel 2.18*
 
@@ -12,9 +12,7 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 -------------------------------
 
-[[Gson-Options]]
-Gson Options
-^^^^^^^^^^^^
+### Gson Options
 
 
 // dataformat options: START
@@ -49,9 +47,7 @@ The JSon GSon dataformat supports 17 options which are listed below.
 
 
 
-[[Gson-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use Gson in your camel routes you need to add the dependency
 on *camel-gson* which implements this data format.

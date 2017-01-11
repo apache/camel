@@ -1,4 +1,4 @@
-# Java Object Serialization DataFormat
+## Java Object Serialization DataFormat
 
 Serialization is a link:data-format.html[Data Format] which uses the
 standard Java Serialization mechanism to unmarshal a binary payload into
@@ -13,9 +13,7 @@ from("file://foo/bar").
   to("activemq:Some.Queue");
 ------------------------------
 
-[[Serialization-Options]]
-Options
-^^^^^^^
+### Options
 
 // dataformat options: START
 The Java Object Serialization dataformat supports 1 options which are listed below.
@@ -31,9 +29,7 @@ The Java Object Serialization dataformat supports 1 options which are listed bel
 {% endraw %}
 // dataformat options: END
 
-[[Serialization-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 This data format is provided in *camel-core* so no additional
 dependencies is needed.

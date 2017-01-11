@@ -1,4 +1,4 @@
-# Avro Component
+## Avro Component
 
 *Available as of Camel 2.10*
 
@@ -21,9 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[avro-ApacheAvroOverview]]
-Apache Avro Overview
-^^^^^^^^^^^^^^^^^^^^
+### Apache Avro Overview
 
 Avro allows you to define message types and a protocol using a json like
 format and then generate java code for the specified types and messages.
@@ -90,9 +88,7 @@ class Value {
 _Note: Existing classes can be used only for RPC (see below), not in
 data format._
 
-[[avro-UsingtheAvrodataformat]]
-Using the Avro data format
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using the Avro data format
 
 Using the avro data format is as easy as specifying that the class that
 you want to marshal or unmarshal in your route.
@@ -129,9 +125,7 @@ reference it from your route.
 
 In the same manner you can umarshal using the avro data format.
 
-[[avro-UsingAvroRPCinCamel]]
-Using Avro RPC in Camel
-^^^^^^^^^^^^^^^^^^^^^^^
+### Using Avro RPC in Camel
 
 As mentioned above Avro also provides RPC support over multiple
 transports such as http and netty. Camel provides consumers and
@@ -170,9 +164,7 @@ got only one parameter, *since 2.12* you can use `singleParameter` URI
 option to receive it direcly in the "in" message body without array
 wrapping.
 
-[[avro-AvroRPCURIOptions]]
-Avro RPC URI Options
-^^^^^^^^^^^^^^^^^^^^
+### Avro RPC URI Options
 
 
 
@@ -223,9 +215,7 @@ The Avro component supports 14 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[avro-AvroRPCHeaders]]
-Avro RPC Headers
-^^^^^^^^^^^^^^^^
+### Avro RPC Headers
 
 [width="100%",cols="20%,80%",options="header",]
 |=======================================================================
@@ -235,9 +225,7 @@ Avro RPC Headers
 URI (if any)
 |=======================================================================
 
-[[avro-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
 An example of using camel avro producers via http:
 

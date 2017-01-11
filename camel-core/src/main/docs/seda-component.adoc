@@ -1,4 +1,4 @@
-# SEDA Component
+## SEDA Component
 
 The *seda:* component provides asynchronous
 http://www.eecs.harvard.edu/~mdw/proj/seda/[SEDA] behavior, so that
@@ -20,9 +20,7 @@ TIP:*Synchronous*
 The link:direct.html[Direct] component provides synchronous invocation
 of any consumers when a producer sends a message exchange.
 
-[[SEDA-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -----------------------
@@ -35,9 +33,7 @@ within the current link:camelcontext.html[CamelContext].
 You can append query options to the URI in the following format:
 `?option=value&option=value&…`
 
-[[SEDA-Options]]
-Options
-^^^^^^^
+### Options
 
 // component options: START
 The SEDA component supports 3 options which are listed below.
@@ -85,9 +81,7 @@ The SEDA component supports 17 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[SEDA-ChoosingBlockingQueueimplementation]]
-Choosing BlockingQueue implementation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Choosing BlockingQueue implementation
 
 *Available as of Camel 2.12*
 
@@ -120,9 +114,7 @@ ArrayBlockingQueueFactory and PriorityBlockingQueueFactory:
 <from>seda:priority?queueFactory=#priorityQueueFactory&size=100</from>
 -----------------------------------------------------------------------------------------------------
 
-[[SEDA-UseofRequestReply]]
-Use of Request Reply
-^^^^^^^^^^^^^^^^^^^^
+### Use of Request Reply
 
 The link:seda.html[SEDA] component supports using
 link:request-reply.html[Request Reply], where the caller will wait for
@@ -151,9 +143,7 @@ between the waiting threads properly.
 This has been improved in *Camel 2.3* onwards, which allows you to chain
 as many endpoints as you like.
 
-[[SEDA-Concurrentconsumers]]
-Concurrent consumers
-^^^^^^^^^^^^^^^^^^^^
+### Concurrent consumers
 
 By default, the SEDA endpoint uses a single consumer thread, but you can
 configure it to use concurrent consumer threads. So instead of thread
@@ -168,9 +158,7 @@ As for the difference between the two, note a _thread pool_ can
 increase/shrink dynamically at runtime depending on load, whereas the
 number of concurrent consumers is always fixed.
 
-[[SEDA-Threadpools]]
-Thread pools
-^^^^^^^^^^^^
+### Thread pools
 
 Be aware that adding a thread pool to a SEDA endpoint by doing something
 like:
@@ -194,9 +182,7 @@ from("direct:stageName").thread(5).process(...)
 You can also directly configure number of threads that process messages
 on a SEDA endpoint using the `concurrentConsumers` option.
 
-[[SEDA-Sample]]
-Sample
-^^^^^^
+### Sample
 
 In the route below we use the SEDA queue to send the request to this
 async queue to be able to send a fire-and-forget message for further
@@ -210,9 +196,7 @@ another thread for further processing. Since this is from a unit test,
 it will be sent to a `mock` endpoint where we can do assertions in the
 unit test.
 
-[[SEDA-UsingmultipleConsumers]]
-Using multipleConsumers
-^^^^^^^^^^^^^^^^^^^^^^^
+### Using multipleConsumers
 
 *Available as of Camel 2.2*
 
@@ -227,9 +211,7 @@ As the beans are part of an unit test they simply send the message to a
 mock endpoint, but notice how we can use @Consume to consume from the
 seda queue.
 
-[[SEDA-Extractingqueueinformation.]]
-Extracting queue information.
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Extracting queue information.
 
 If needed, information such as queue size, etc. can be obtained without
 using JMX in this fashion:
@@ -240,9 +222,7 @@ SedaEndpoint seda = context.getEndpoint("seda:xxxx");
 int size = seda.getExchanges().size();
 -----------------------------------------------------
 
-[[SEDA-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -253,4 +233,3 @@ See Also
 * link:disruptor.html[Disruptor]
 * link:direct.html[Direct]
 * link:async.html[Async]
-

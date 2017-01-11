@@ -1,4 +1,4 @@
-# File Language
+## File Language
 
 INFO:*File language is now merged with Simple language*
 From Camel 2.2 onwards, the file language is now merged with
@@ -12,9 +12,7 @@ path and names. The goal is to allow expressions to be used with the
 link:file2.html[File] and link:ftp.html[FTP] components for setting
 dynamic file patterns for both consumer and producer.
 
-[[FileLanguage-Options]]
-File Language options
-^^^^^^^^^^^^^^^^^^^^^
+### File Language options
 
 // language options: START
 The File language supports 2 options which are listed below.
@@ -31,9 +29,7 @@ The File language supports 2 options which are listed below.
 {% endraw %}
 // language options: END
 
-[[FileLanguage-Syntax]]
-Syntax
-^^^^^^
+### Syntax
 
 This language is an *extension* to the link:simple.html[Simple] language
 so the link:simple.html[Simple] syntax applies also. So the table below
@@ -104,13 +100,9 @@ the file. Notice: all the commands from the link:simple.html[Simple]
 language can also be used.
 |=======================================================================
 
-[[FileLanguage-Filetokenexample]]
-File token example
-^^^^^^^^^^^^^^^^^^
+### File token example
 
-[[FileLanguage-Relativepaths]]
-Relative paths
-++++++++++++++
+#### Relative paths
 
 We have a `java.io.File` handle for the file `hello.txt` in the
 following *relative* directory: `.\filelanguage\test`. And we configure
@@ -142,9 +134,7 @@ tokens will return as:
 |file:absolute.path |\workspace\camel\camel-core\target\filelanguage\test\hello.txt
 |=======================================================================
 
-[[FileLanguage-Absolutepaths]]
-Absolute paths
-++++++++++++++
+#### Absolute paths
 
 We have a `java.io.File` handle for the file `hello.txt` in the
 following *absolute* directory:
@@ -178,9 +168,7 @@ return as:
 |file:absolute.path |\workspace\camel\camel-core\target\filelanguage\test\hello.txt
 |=======================================================================
 
-[[FileLanguage-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 You can enter a fixed link:constant.html[Constant] expression such as
 `myfile.txt`:
@@ -238,9 +226,7 @@ use the link:file-language.html[File Language], link:simple.html[Simple]
 and the link:bean.html[Bean] language in one combined expression. This
 is pretty powerful for those common file path patterns.
 
-[[FileLanguage-UsingSpringPropertyPlaceholderConfigurertogetherwiththeFilecomponent]]
-Using Spring PropertyPlaceholderConfigurer together with the link:file2.html[File] component
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using Spring PropertyPlaceholderConfigurer together with the link:file2.html[File] component
 
 In Camel you can use the link:file-language.html[File Language] directly
 from the link:simple.html[Simple] language which makes a
@@ -304,8 +290,6 @@ Invalid bean definition with name 'sampleRoute' defined in class path resource [
 Could not resolve placeholder 'date:now:yyyyMMdd'
 ----------------------------------------------------------------------------------------------------
 
-[[FileLanguage-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 The File language is part of *camel-core*.

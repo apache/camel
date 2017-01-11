@@ -1,4 +1,4 @@
-# Jetty Websocket Component
+## Jetty Websocket Component
 
 *Available as of Camel 2.10*
 
@@ -14,9 +14,7 @@ protocol, the SSLContextParameters must be defined.
 
 Camel 2.18 uses Jetty 9
 
-[[Websocket-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------------------------
@@ -26,9 +24,7 @@ websocket://hostname[:port][/resourceUri][?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Websocket-Options]]
-Websocket Options
-^^^^^^^^^^^^^^^^^
+### Websocket Options
 
 
 
@@ -105,9 +101,7 @@ The Jetty Websocket component supports 21 endpoint options which are listed belo
 
  
 
-[[Websocket-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 The websocket component uses 2 headers to indicate to either send
 messages back to a single/current client, or to all clients.
@@ -121,9 +115,7 @@ use the `sendToAll` option on the endpoint instead of using this header.
 |`WebsocketConstants.CONNECTION_KEY` |Sends the message to the client with the given connection key.
 |=======================================================================
 
-[[Websocket-Usage]]
-Usage
-^^^^^
+### Usage
 
 In this example we let Camel exposes a websocket server which clients
 can communicate with. The websocket server uses the default host and
@@ -150,13 +142,9 @@ from("activemq:topic:newsTopic")
    .to("websocket://localhost:8443/newsTopic?sendToAll=true&staticResources=classpath:webapp");
 -----------------------------------------------------------------------------------------------
 
-[[Websocket-SettingupSSLforWebSocketComponent]]
-Setting up SSL for WebSocket Component
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Setting up SSL for WebSocket Component
 
-[[Websocket-UsingtheJSSEConfigurationUtility]]
-Using the JSSE Configuration Utility
-++++++++++++++++++++++++++++++++++++
+#### Using the JSSE Configuration Utility
 
 As of Camel 2.10, the WebSocket component supports SSL/TLS configuration
 through the link:camel-configuration-utilities.html[Camel JSSE
@@ -234,9 +222,7 @@ Java DSL based configuration of endpoint
 ...
 ----------------------------------------------------------------------------------------------------------
 
-[[Websocket-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -248,4 +234,3 @@ See Also
 * link:twitter-websocket-example.html[Twitter Websocket Example]
 demonstrates how to poll a constant feed of twitter searches and publish
 results in real time using web socket to a web page.
-

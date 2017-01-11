@@ -1,4 +1,4 @@
-# AWS S3 Storage Service Component
+## AWS S3 Storage Service Component
 
 *Available as of Camel 2.8*
 
@@ -11,9 +11,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon S3. More information are available at
 http://aws.amazon.com/s3[Amazon S3].
 
-[[AWS-S3-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 ------------------------------
@@ -33,9 +31,7 @@ from("aws-s3:helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefix=
 --------------------------------------------------------------------------------
 
 
-[[AWS-S3-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 // component options: START
@@ -117,9 +113,7 @@ You have to provide the amazonS3Client in the
 link:registry.html[Registry] or your accessKey and secretKey to access
 the http://aws.amazon.com/s3[Amazon's S3].
 
-[[AWS-S3-BatchConsumer]]
-Batch Consumer
-^^^^^^^^^^^^^^
+### Batch Consumer
 
 This component implements the link:batch-consumer.html[Batch Consumer].
 
@@ -127,13 +121,9 @@ This allows you for instance to know how many messages exists in this
 batch and for instance let the link:aggregator.html[Aggregator]
 aggregate this number of messages.
 
-[[AWS-S3-Usage]]
-Usage
-^^^^^
+### Usage
 
-[[AWS-S3-MessageheadersevaluatedbytheS3producer]]
-Message headers evaluated by the S3 producer
-++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers evaluated by the S3 producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -180,9 +170,7 @@ the object using AWS-managed keys. For example use AES256.
 |`CamelAwsS3VersionId` |`String` |The version Id of the object to be stored or returned from the current operation
 |=======================================================================
 
-[[AWS-S3-MessageheaderssetbytheS3producer]]
-Message headers set by the S3 producer
-++++++++++++++++++++++++++++++++++++++
+#### Message headers set by the S3 producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -193,9 +181,7 @@ Message headers set by the S3 producer
 
 |=======================================================================
 
-[[AWS-S3-MessageheaderssetbytheS3consumer]]
-Message headers set by the S3 consumer
-++++++++++++++++++++++++++++++++++++++
+#### Message headers set by the S3 consumer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -244,9 +230,7 @@ specify caching behavior along the HTTP request/reply chain.
 object using AWS-managed keys.
 |=======================================================================
 
-[[AWS-S3-AdvancedAmazonS3configuration]]
-Advanced AmazonS3 configuration
-+++++++++++++++++++++++++++++++
+#### Advanced AmazonS3 configuration
 
 If your Camel Application is running behind a firewall or if you need to
 have more control over the `AmazonS3` instance configuration, you can
@@ -273,9 +257,7 @@ from("aws-s3://MyBucket?amazonS3Client=#client&delay=5000&maxMessagesPerPoll=5")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
-[[AWS-S3-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -293,9 +275,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.8 or higher).
 
-[[AWS-S3-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -303,4 +283,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:aws.html[AWS Component]
-

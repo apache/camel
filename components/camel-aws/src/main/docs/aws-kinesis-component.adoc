@@ -1,4 +1,4 @@
-# AWS Kinesis Component
+## AWS Kinesis Component
 
 *Available as of Camel 2.17*
 
@@ -11,9 +11,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon Kinesis. More information are available
 at http://aws.amazon.com/kinesis/[AWS Kinesis]
 
-[[AWS-KINESIS-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 -----------------------------------
@@ -24,9 +22,7 @@ The stream needs to be created prior to it being used. +
  You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-[[AWS-KINESIS-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 // component options: START
@@ -86,9 +82,7 @@ You have to provide the amazonKinesisClient in the
 link:registry.html[Registry] with proxies and relevant credentials
 configured.
 
-[[AWS-KINESIS-BatchConsumer]]
-Batch Consumer
-^^^^^^^^^^^^^^
+### Batch Consumer
 
 This component implements the link:batch-consumer.html[Batch Consumer].
 
@@ -96,13 +90,9 @@ This allows you for instance to know how many messages exists in this
 batch and for instance let the link:aggregator.html[Aggregator]
 aggregate this number of messages.
 
-[[AWS-KINESIS-Usage]]
-Usage
-^^^^^
+### Usage
 
-[[AWS-KINESIS-MessageheaderssetbytheKinesisconsumer]]
-Message headers set by the Kinesis consumer
-+++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set by the Kinesis consumer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -116,9 +106,7 @@ size is not defined by the API. If it is to be used as a numerical type then use
 |`CamelAwsKinesisPartitionKey` |`String` |Identifies which shard in the stream the data record is assigned to.
 |=======================================================================
 
-[[AWS-KINESIS-AmazonKinesisconfiguration]]
-AmazonKinesis configuration
-+++++++++++++++++++++++++++
+#### AmazonKinesis configuration
 
 You will need to create an instance of AmazonDynamoDBStreamsClient and
 bind it to the registry
@@ -136,9 +124,7 @@ region.createClient(AmazonDynamoDBStreamsClient.class, null, clientConfiguration
 registry.bind("kinesisClient", client);
 --------------------------------------------------------------------------------------------------------------------
 
-[[AWS-KINESIS-ProvidingAWSCredentials]]
-Providing AWS Credentials
-+++++++++++++++++++++++++
+#### Providing AWS Credentials
 
 It is recommended that the credentials are obtained by using the
 http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/DefaultAWSCredentialsProviderChain.html[DefaultAWSCredentialsProviderChain]
@@ -147,9 +133,7 @@ however, a
 different http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/AWSCredentialsProvider.html[AWSCredentialsProvider]
 can be specified when calling createClient(...).
 
-[[AWS-Kinesis-MessageheaderssetbytheKinesisproducer]]
-Message headers used by the Kinesis producer to write to Kinesis.  The producer expects that the message body is a `ByteBuffer`.
-+++++++++++++++++++++++++++++++++++++++
+#### Message headers used by the Kinesis producer to write to Kinesis.  The producer expects that the message body is a `ByteBuffer`.
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -161,8 +145,7 @@ Message headers used by the Kinesis producer to write to Kinesis.  The producer 
 
 |=======================================================================
 
-Message headers set by the Kinesis producer on successful storage of a Record
-+++++++++++++++++++++++++++++++++++++++
+#### Message headers set by the Kinesis producer on successful storage of a Record
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -176,9 +159,7 @@ http://docs.aws.amazon.com/kinesis/latest/APIReference/API_PutRecord.html#API_Pu
 
 |=======================================================================
 
-[[AWS-KINESIS-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -196,9 +177,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.17 or higher).
 
-[[AWS-KINESIS-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -206,4 +185,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:aws.html[AWS Component]
-

@@ -1,4 +1,4 @@
-# Stub Component
+## Stub Component
 
 *Available as of Camel 2.10*
 
@@ -16,9 +16,7 @@ usually fail. Stub won't though, as it basically ignores all query
 parameters to let you quickly stub out one or more endpoints in your
 route temporarily.
 
-[[Stub-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------
@@ -27,9 +25,7 @@ stub:someUri
 
 Where *`someUri`* can be any URI with any query parameters.
 
-[[Stub-Options]]
-Options
-^^^^^^^
+### Options
 
 // component options: START
 The Stub component supports 3 options which are listed below.
@@ -77,9 +73,7 @@ The Stub component supports 17 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Stub-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
 Here are a few samples:
 
@@ -87,12 +81,9 @@ Here are a few samples:
 *
 stub:http://somehost.bar.com/something[http://somehost.bar.com/something]
 
-[[Stub-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

@@ -1,4 +1,4 @@
-# RSS Component
+## RSS Component
 
 The *rss:* component is used for polling RSS feeds. Camel will default
 poll the feed every 60th seconds.
@@ -24,9 +24,7 @@ version] of http://rometools.github.io/rome/[ROME] hosted on ServiceMix
 to solve some OSGi https://issues.apache.org/jira/browse/SMX4-510[class
 loading issues].
 
-[[RSS-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------
@@ -38,9 +36,7 @@ Where `rssUri` is the URI to the RSS feed to poll.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[RSS-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -89,9 +85,7 @@ The RSS component supports 28 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[RSS-Exchangedatatypes]]
-Exchange data types
-^^^^^^^^^^^^^^^^^^^
+### Exchange data types
 
 Camel initializes the In body on the Exchange with a ROME `SyndFeed`.
 Depending on the value of the `splitEntries` flag, Camel returns either
@@ -106,9 +100,7 @@ a `SyndFeed` with one `SyndEntry` or a `java.util.List` of `SyndEntrys`.
 |`splitEntries` |`false` |The entire list of entries from the current feed is set in the exchange.
 |=======================================================================
 
-[[RSS-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -117,9 +109,7 @@ Message Headers
 |`CamelRssFeed` |The entire `SyncFeed` object.
 |=======================================================================
 
-[[RSS-RSSDataformat]]
-RSS Dataformat
-^^^^^^^^^^^^^^
+### RSS Dataformat
 
 The RSS component ships with an RSS dataformat that can be used to
 convert between String (as XML) and ROME RSS model objects.
@@ -140,9 +130,7 @@ understand them as well, for example if the feed uses `alt=rss`, then
 you can for example do 
 `from("rss:http://someserver.com/feeds/posts/default?alt=rss&splitEntries=false&consumer.delay=1000").to("bean:rss");`
 
-[[RSS-Filteringentries]]
-Filtering entries
-^^^^^^^^^^^^^^^^^
+### Filtering entries
 
 You can filter out entries quite easily using XPath, as shown in the
 data format section above. You can also exploit Camel's
@@ -152,9 +140,7 @@ would be:
 
 The custom bean for this would be:
 
-[[RSS-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -162,4 +148,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:atom.html[Atom]
-

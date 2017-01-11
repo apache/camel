@@ -1,4 +1,4 @@
-# Spring Event Component
+## Spring Event Component
 
 The *spring-event:* component provides access to the Spring
 `ApplicationEvent` objects. This allows you to publish
@@ -8,9 +8,7 @@ link:enterprise-integration-patterns.html[Enterprise Integration
 Patterns] to process them such as link:message-filter.html[Message
 Filter].
 
-[[SpringEvent-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 --------------------------------
@@ -20,9 +18,7 @@ spring-event://default[?options]
 Note, at the moment there are no options for this component. That can
 easily change in future releases, so please check back.
 
-[[Spring-Event-Options]]
-Spring Event Options
-^^^^^^^^^^^^^^^^^^^^
+### Spring Event Options
 
 
 
@@ -60,12 +56,9 @@ The Spring Event component supports 5 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[SpringEvent-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

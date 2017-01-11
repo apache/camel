@@ -1,4 +1,4 @@
-# JiBX DataFormat
+## JiBX DataFormat
 
 *Available as of Camel 2.6*
 
@@ -26,9 +26,7 @@ from("mqseries:Another.Queue").
   to("activemq:My.Queue");
 -------------------------------------------
 
-[[JiBX-Options]]
-Options
-^^^^^^^
+### Options
 
 // dataformat options: START
 The JiBX dataformat supports 3 options which are listed below.
@@ -47,9 +45,7 @@ The JiBX dataformat supports 3 options which are listed below.
 // dataformat options: END
 
 
-[[JiBX-JiBXSpringDSL]]
-JiBX Spring DSL
-^^^^^^^^^^^^^^^
+### JiBX Spring DSL
 
 JiBX data format is also supported by Camel Spring DSL.
 
@@ -79,9 +75,7 @@ JiBX data format is also supported by Camel Spring DSL.
 </camelContext>
 --------------------------------------------------------------------------------------
 
-[[JiBX-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use JiBX in your camel routes you need to add the a dependency on
 *camel-jibx* which implements this data format.

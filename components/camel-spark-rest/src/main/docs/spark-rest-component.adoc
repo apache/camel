@@ -1,4 +1,4 @@
-# Spark Rest Component
+## Spark Rest Component
 
 *Available as of Camel 2.14*
 
@@ -20,18 +20,14 @@ for this component:
     </dependency>
 -------------------------------------------------
 
-[[Spark-rest-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------------------------------
   spark-rest://verb:path?[options]
 ----------------------------------
 
-[[Spark-rest-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 
@@ -87,9 +83,7 @@ The Spark Rest component supports 13 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Spark-rest-PathusingSparksyntax]]
-Path using Spark syntax
-^^^^^^^^^^^^^^^^^^^^^^^
+### Path using Spark syntax
 
 The path option is defined using a Spark REST syntax where you define
 the REST context path using support for parameters and splat. See more
@@ -113,9 +107,7 @@ header with the key "me".
     .transform().simple("Bye ${header.me}");
 --------------------------------------------
 
-[[Spark-rest-MappingtoCamelMessage]]
-Mapping to Camel Message
-^^^^^^^^^^^^^^^^^^^^^^^^
+### Mapping to Camel Message
 
 The Spark Request object is mapped to a Camel Message as
 a `org.apache.camel.component.sparkrest.SparkMessage` which has access
@@ -135,9 +127,7 @@ Simple language to construct a response message.
     .transform().simple("Bye big ${header.splat[1]} from ${header.splat[0]}");
 ------------------------------------------------------------------------------
 
-[[Spark-rest-RestDSL]]
-Rest DSL
-^^^^^^^^
+### Rest DSL
 
 Apache Camel provides a new Rest DSL that allow to define the REST
 services in a nice REST style. For example we can define a REST hello
@@ -171,18 +161,14 @@ service as shown below:
 
 See more details at the link:rest-dsl.html[Rest DSL].
 
-[[Spark-rest-Moreexamples]]
-More examples
-^^^^^^^^^^^^^
+### More examples
 
 There is a *camel-example-spark-rest-tomcat* example in the Apache Camel
 distribution, that demonstrates how to use camel-spark-rest in a web
 application that can be deployed on Apache Tomcat, or similar web
 containers.
 
-[[Spark-rest-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -190,4 +176,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:rest.html[Rest]
-

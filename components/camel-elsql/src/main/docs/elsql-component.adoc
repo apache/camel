@@ -1,4 +1,4 @@
-# ElSQL Component
+## ElSQL Component
 
 *Available as of Camel 2.16*
 
@@ -49,9 +49,7 @@ expression.
 
 If a named parameter cannot be resolved, then an exception is thrown.
 
-[[ElSql-Options]]
-Options
-^^^^^^^
+### Options
 
 // component options: START
 The ElSQL component supports 4 options which are listed below.
@@ -129,9 +127,7 @@ The ElSQL component supports 48 endpoint options which are listed below:
 {% endraw %}
 // endpoint options: END
 
-[[ElSql-Resultofthequery]]
-Result of the query
-^^^^^^^^^^^^^^^^^^^
+### Result of the query
 
 For `select` operations, the result is an instance of
 `List<Map<String, Object>>` type, as returned by the
@@ -145,9 +141,7 @@ headers, it provides a concise syntax for querying a sequence or some
 other small value into a header.  It is convenient to use outputHeader
 and outputType together:
 
-[[ElSql-Headervalues]]
-Header values
-^^^^^^^^^^^^^
+### Header values
 
 When performing `update` operations, the SQL Component stores the update
 count in the following message headers:
@@ -163,9 +157,7 @@ count in the following message headers:
 `Integer` object.
 |=======================================================================
 
-[[ElSql-Sample]]
-Sample
-++++++
+#### Sample
 
 In the given route below, we want to get all the projects from the
 projects table. Notice the SQL query has 2 named parameters, :#lic and
@@ -217,9 +209,7 @@ assumes to have `getLicense` and `getMinimum` methods:
   ORDER BY id
 ------------------------------------------------------------
 
-[[ElSql-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -229,4 +219,3 @@ See Also
 * link:sql-component.html[SQL Component]
 * link:mybatis.html[MyBatis]
 * link:jdbc.html[JDBC]
-

@@ -1,4 +1,4 @@
-# Beanstalk Component
+## Beanstalk Component
 
 *Available in Camel 2.15*
 
@@ -9,9 +9,7 @@ You can find the detailed explanation of Beanstalk job lifecycle
 at http://github.com/kr/beanstalkd/blob/v1.3/doc/protocol.txt[Beanstalk
 protocol].
 
-[[Beanstalk-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users need to add the following dependency to their `pom.xml`
 
@@ -27,9 +25,7 @@ Maven users need to add the following dependency to their `pom.xml`
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.15.0 or higher).
 
-[[Beanstalk-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,xml]
 ------------------------------------------
@@ -56,9 +52,7 @@ details here].
 By the way, you cannot specify several tubes when you are writing jobs
 into Beanstalk.
 
-[[Beanstalk-options]]
-Beanstalk options
-^^^^^^^^^^^^^^^^^
+### Beanstalk options
 
 
 
@@ -146,9 +140,7 @@ Consumer] which means there is more options you can configure, such as
 how frequent the consumer should poll. For more details
 see link:polling-consumer.html[Polling Consumer].
 
-[[Beanstalk-ConsumerHeaders]]
-Consumer Headers
-^^^^^^^^^^^^^^^^
+### Consumer Headers
 
 The consumer stores a number of job headers in the Exchange message:
 
@@ -178,9 +170,7 @@ queue
 |_beanstalk.kicks_ |int |the number of times this job has been kicked
 |=======================================================================
 
-[[Beanstalk-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
 This Camel component lets you both request the jobs for processing and
 supply them to Beanstalkd daemon. Our simple demo routes may look like
@@ -220,12 +210,9 @@ out of buried and/or delayed state to the normal queue.
 
  
 
-[[Beanstalk-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

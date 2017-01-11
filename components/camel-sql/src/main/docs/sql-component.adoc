@@ -1,4 +1,4 @@
-# SQL Component
+## SQL Component
 
 The *sql:* component allows you to work with databases using JDBC
 queries. The difference between this component and link:jdbc.html[JDBC]
@@ -29,9 +29,7 @@ further below.
 * a JDBC based repository for the link:aggregator2.html[Aggregator] EIP
 pattern. See further below.
 
-[[SQLComponent-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 WARNING:From Camel 2.11 onwards this component can create both consumer (e.g.
 `from()`) and producer endpoints (e.g. `to()`).
@@ -102,9 +100,7 @@ also use comments such as the – dash line.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[SQLComponent-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -184,9 +180,7 @@ The SQL component supports 46 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[SQLComponent-Treatmentofthemessagebody]]
-Treatment of the message body
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Treatment of the message body
 
 The SQL component tries to convert the message body to an object of
 `java.util.Iterator` type and then uses this iterator to fill the query
@@ -211,9 +205,7 @@ parameters must be provided in a header with the
 key SqlConstants.SQL_PARAMETERS. This allows the SQL component to work
 more dynamic as the SQL query is from the message body.
 
-[[SQLComponent-Resultofthequery]]
-Result of the query
-^^^^^^^^^^^^^^^^^^^
+### Result of the query
 
 For `select` operations, the result is an instance of
 `List<Map<String, Object>>` type, as returned by the
@@ -235,9 +227,7 @@ from("jms:order.inbox")
     .to("jms:order.booking");
 -------------------------------------------------------------------------------------------
 
-[[SQLComponent-UsingStreamList]]
-Using StreamList
-^^^^^^^^^^^^^^^^
+### Using StreamList
 
 From*Camel 2.18* onwards the producer supports outputType=StreamList
 that uses an iterator to stream the output of the query. This allows to
@@ -258,9 +248,7 @@ from("direct:withSplitModel")
 
  
 
-[[SQLComponent-Headervalues]]
-Header values
-^^^^^^^^^^^^^
+### Header values
 
 When performing `update` operations, the SQL Component stores the update
 count in the following message headers:
@@ -295,9 +283,7 @@ message headers (*Available as of Camel 2.12.4, 2.13.1*):
 |CamelSqlGeneratedKeyRows |Rows that contains the generated keys (a list of maps of keys).
 |=======================================================================
 
-[[SQLComponent-Generatedkeys]]
-Generated keys
-^^^^^^^^^^^^^^
+### Generated keys
 
 *Available as of Camel 2.12.4, 2.13.1 and 2.14 *
 
@@ -312,9 +298,7 @@ You can see more details in this
 https://git-wip-us.apache.org/repos/asf?p=camel.git;a=blob_plain;f=components/camel-sql/src/test/java/org/apache/camel/component/sql/SqlGeneratedKeysTest.java;hb=3962b23f94bb4bc23011b931add08c3f6833c82e[unit
 test].
 
-[[SQLComponent-Configuration]]
-Configuration
-^^^^^^^^^^^^^
+### Configuration
 
 You can now set a reference to a `DataSource` in the URI directly:
 
@@ -323,9 +307,7 @@ You can now set a reference to a `DataSource` in the URI directly:
 sql:select * from table where id=# order by name?dataSource=myDS
 ----------------------------------------------------------------
 
-[[SQLComponent-Sample]]
-Sample
-^^^^^^
+### Sample
 
 In the sample below we execute a query and retrieve the result as a
 `List` of rows, where each row is a `Map<String, Object` and the key is
@@ -354,9 +336,7 @@ We could configure the `DataSource` in Spring XML as follows:
  <jee:jndi-lookup id="myDS" jndi-name="jdbc/myDataSource"/>
 -----------------------------------------------------------
 
-[[SQLComponent-Usingnamedparameters]]
-Using named parameters
-++++++++++++++++++++++
+#### Using named parameters
 
 *Available as of Camel 2.11*
 
@@ -385,9 +365,7 @@ parameters will be taken from the body.
      .to("sql:select * from projects where license = :#lic and id > :#min order by id")
 ---------------------------------------------------------------------------------------
 
-[[SQLComponent-Usingexpressionparameters]]
-Using expression parameters
-+++++++++++++++++++++++++++
+#### Using expression parameters
 
 *Available as of Camel 2.14*
 
@@ -403,9 +381,7 @@ from("direct:projects")
   .to("sql:select * from projects where license = :#${body} and id > :#${property.min} order by id")
 ----------------------------------------------------------------------------------------------------
 
-[[SQLComponent-UsingINquerieswithdynamicvalues]]
-Using IN queries with dynamic values
-++++++++++++++++++++++++++++++++++++
+#### Using IN queries with dynamic values
 
 *Available as of Camel 2.17*
 
@@ -474,9 +450,7 @@ from("direct:query")
 
  
 
-[[SQLComponent-UsingtheJDBCbasedidempotentrepository]]
-Using the JDBC based idempotent repository
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Using the JDBC based idempotent repository
 
 *Available as of Camel 2.7*: In this section we will use the JDBC based
 idempotent repository.
@@ -751,9 +725,7 @@ class="org.apache.camel.processor.aggregate.jdbc.DefaultJdbcOptimisticLockingExc
 -------------------------------------------------------------------------------
  
 
-[[SQLComponent-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]

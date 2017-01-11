@@ -1,4 +1,4 @@
-# Mina2 Component
+## Mina2 Component
 
 *Available as of Camel 2.10*
 
@@ -24,9 +24,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[MINA2-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -------------------------------------
@@ -58,9 +56,7 @@ exchange itself over the wire. See options below.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[MINA2-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -130,9 +126,7 @@ The Mina2 component supports 29 endpoint options which are listed below:
 
 
 
-[[MINA2-Usingacustomcodec]]
-Using a custom codec
-^^^^^^^^^^^^^^^^^^^^
+### Using a custom codec
 
 See the Mina how to write your own codec. To use your custom codec with
 `camel-mina`, you should register your codec in the
@@ -140,9 +134,7 @@ link:registry.html[Registry]; for example, by creating a bean in the
 Spring XML file. Then use the `codec` option to specify the bean ID of
 your codec. See link:hl7.html[HL7] that has a custom codec.
 
-[[MINA2-Samplewithsyncfalse]]
-Sample with sync=false
-^^^^^^^^^^^^^^^^^^^^^^
+### Sample with sync=false
 
 In this sample, Camel exposes a service that listens for TCP connections
 on port 6200. We use the *textline* codec. In our route, we create a
@@ -166,9 +158,7 @@ template.sendBody("mina2:tcp://localhost:" + port1 + "?textline=true&sync=false"
 assertMockEndpointsSatisfied();
 -------------------------------------------------------------------------------------------------
 
-[[MINA2-Samplewithsynctrue]]
-Sample with sync=true
-^^^^^^^^^^^^^^^^^^^^^
+### Sample with sync=true
 
 In the next sample, we have a more common use case where we expose a TCP
 service on port 6201 also use the textline codec. However, this time we
@@ -196,9 +186,7 @@ String response = (String)template.requestBody("mina2:tcp://localhost:" + port2 
 assertEquals("Bye World", response);
 -----------------------------------------------------------------------------------------------------------------------
 
-[[MINA2-SamplewithSpringDSL]]
-Sample with Spring DSL
-^^^^^^^^^^^^^^^^^^^^^^
+### Sample with Spring DSL
 
 Spring DSL can, of course, also be used for link:mina.html[MINA]. In the
 sample below we expose a TCP server on port 5555:
@@ -224,9 +212,7 @@ could be implemented as follows:
    }
 -----------------------------------------------
 
-[[MINA2-ClosingSessionWhenComplete]]
-Closing Session When Complete
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Closing Session When Complete
 
 When acting as a server you sometimes want to close the session when,
 for example, a client conversion is finished. To instruct Camel to close
@@ -247,18 +233,14 @@ written the `bye` message back to the client:
         });
 ---------------------------------------------------------------------------------------------------
 
-[[MINA2-GettheIoSessionformessage]]
-Get the IoSession for message
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Get the IoSession for message
 
 You can get the IoSession from the message header with this key
 `Mina2Constants.MINA_IOSESSION`, and also get the local host address
 with the key `Mina2Constants.MINA_LOCAL_ADDRESS` and remote host address
 with the key `Mina2Constants.MINA_REMOTE_ADDRESS`.
 
-[[MINA2-ConfiguringMinafilters]]
-Configuring Mina filters
-^^^^^^^^^^^^^^^^^^^^^^^^
+### Configuring Mina filters
 
 Filters permit you to use some Mina Filters, such as `SslFilter`. You
 can also implement some customized filters. Please note that `codec` and
@@ -266,9 +248,7 @@ can also implement some customized filters. Please note that `codec` and
 filters you may define are appended to the end of the filter chain; that
 is, after `codec` and `logger`.
 
-[[MINA2-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -277,4 +257,3 @@ See Also
 
 * link:mina.html[MINA]
 * link:netty.html[Netty]
-

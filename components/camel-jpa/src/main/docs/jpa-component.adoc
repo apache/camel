@@ -1,4 +1,4 @@
-# JPA Component
+## JPA Component
 
 The *jpa* component enables you to store and retrieve Java objects from
 persistent storage using EJB 3's Java Persistence Architecture (JPA),
@@ -18,9 +18,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[JPA-Sendingtotheendpoint]]
-Sending to the endpoint
-^^^^^^^^^^^^^^^^^^^^^^^
+### Sending to the endpoint
 
 You can store a Java entity bean in a database by sending it to a JPA
 producer endpoint. The body of the _In_ message is assumed to be an
@@ -36,9 +34,7 @@ If the body does not contain one of the previous listed types, put a
 link:message-translator.html[Message Translator] in front of the
 endpoint to perform the necessary conversion first.
 
-[[JPA-Consumingfromtheendpoint]]
-Consuming from the endpoint
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Consuming from the endpoint
 
 Consuming messages from a JPA consumer endpoint removes (or updates)
 entity beans in the database. This allows you to use a database table as
@@ -64,9 +60,7 @@ which will be invoked on your entity bean before it has been processed
 If you are consuming a lot (100K+) of rows and experience OutOfMemory
 problems you should set the maximumResults to sensible value.
 
-[[JPA-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -----------------------------
@@ -82,9 +76,7 @@ For consuming, the _entityClassName_ is mandatory.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[JPA-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -170,9 +162,7 @@ The JPA component supports 42 endpoint options which are listed below:
 
 
 
-[[JPA-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 Camel adds the following message headers to the exchange:
 
@@ -192,9 +182,7 @@ reason why the support for this header has been dropped.
 
 |=======================================================================
 
-[[JPA-ConfiguringEntityManagerFactory]]
-Configuring EntityManagerFactory
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Configuring EntityManagerFactory
 
 Its strongly advised to configure the JPA component to use a specific
 `EntityManagerFactory` instance. If failed to do so each `JpaEndpoint`
@@ -217,9 +205,7 @@ you do not need to configure this on the `JpaComponent` as shown above.
 You only need to do so if there is ambiguity, in which case Camel will
 log a WARN.
 
-[[JPA-ConfiguringTransactionManager]]
-Configuring TransactionManager
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Configuring TransactionManager
 
 Since *Camel 2.3* the `JpaComponent` will auto lookup the
 `TransactionManager` from the link:registry.html[Registry.] If Camel
@@ -244,9 +230,7 @@ explicitly configure a JPA component that references the
 </bean>
 -------------------------------------------------------------------
 
-[[JPA-Usingaconsumerwithanamedquery]]
-Using a consumer with a named query
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using a consumer with a named query
 
 For consuming only selected entities, you can use the
 `consumer.namedQuery` URI query option. First, you have to define the
@@ -269,9 +253,7 @@ from("jpa://org.apache.camel.examples.MultiSteps?consumer.namedQuery=step1")
 .to("bean:myBusinessLogic");
 ----------------------------------------------------------------------------
 
-[[JPA-Usingaconsumerwithaquery]]
-Using a consumer with a query
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using a consumer with a query
 
 For consuming only selected entities, you can use the `consumer.query`
 URI query option. You only have to define the query option:
@@ -282,9 +264,7 @@ from("jpa://org.apache.camel.examples.MultiSteps?consumer.query=select o from or
 .to("bean:myBusinessLogic");
 ---------------------------------------------------------------------------------------------------------------------------------------
 
-[[JPA-Usingaconsumerwithanativequery]]
-Using a consumer with a native query
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using a consumer with a native query
 
 For consuming only selected entities, you can use the
 `consumer.nativeQuery` URI query option. You only have to define the
@@ -299,16 +279,12 @@ from("jpa://org.apache.camel.examples.MultiSteps?consumer.nativeQuery=select * f
 If you use the native query option, you will receive an object array in
 the message body.
 
-[[JPA-Example]]
-Example
-^^^^^^^
+### Example
 
 See link:tracer-example.html[Tracer Example] for an example using
 link:jpa.html[JPA] to store traced messages into a database.
 
-[[JPA-UsingtheJPAbasedidempotentrepository]]
-Using the JPA based idempotent repository
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using the JPA based idempotent repository
 
 In this section we will use the JPA based idempotent repository.
 
@@ -380,9 +356,7 @@ argument to the JVM:
 Then it will all become green again
 image:https://cwiki.apache.org/confluence/s/en_GB/5982/f2b47fb3d636c8bc9fd0b11c0ec6d0ae18646be7.1/_/images/icons/emoticons/smile.png[(smile)]
 
-[[JPA-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -390,4 +364,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:tracer-example.html[Tracer Example]
-

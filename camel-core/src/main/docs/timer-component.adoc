@@ -1,11 +1,9 @@
-# Timer Component
+## Timer Component
 
 The *timer:* component is used to generate message exchanges when a
 timer fires You can only consume events from this endpoint.
 
-[[Timer-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 --------------------
@@ -32,9 +30,7 @@ link:how-do-i-specify-time-period-in-a-human-friendly-syntax.html[human
 friendly syntax].
 
 
-[[Timer-Options]]
-Options
-^^^^^^^
+### Options
 
 // component options: START
 The Timer component has no options.
@@ -66,9 +62,7 @@ The Timer component supports 13 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Timer-ExchangeProperties]]
-Exchange Properties
-^^^^^^^^^^^^^^^^^^^
+### Exchange Properties
 
 When the timer is fired, it adds the following information as properties
 to the `Exchange`:
@@ -88,9 +82,7 @@ to the `Exchange`:
 |`Exchange.TIMER_COUNTER` |`Long` |*Camel 2.8:* The current fire counter. Starts from 1.
 |=======================================================================
 
-[[Timer-Sample]]
-Sample
-^^^^^^
+### Sample
 
 To set up a route that generates an event every 60 seconds:
 
@@ -115,13 +107,9 @@ And the route in Spring DSL:
   </route>
 -------------------------------------------------------------
 
-[[Timer-Firingassoonaspossible]]
-Firing as soon as possible
-++++++++++++++++++++++++++
+#### Firing as soon as possible
 
-[[Timer-AvailableasofCamel2.17]]
-Available as of Camel 2.17
-++++++++++++++++++++++++++
+#### Available as of Camel 2.17
 
 You may want to fire messages in a Camel route as soon as possible you
 can use a negative delay:
@@ -143,9 +131,7 @@ reached.
 If you don't specify a repeatCount then the timer will continue firing
 messages until the route will be stopped. 
 
-[[Timer-Firingonlyonce]]
-Firing only once
-++++++++++++++++
+#### Firing only once
 
 *Available as of Camel 2.8*
 
@@ -160,9 +146,7 @@ starting the route. To do that you use the repeatCount option as shown:
   </route>
 -------------------------------------------------
 
-[[Timer-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -170,4 +154,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:quartz.html[Quartz]
-

@@ -1,4 +1,4 @@
-# Kafka Component
+## Kafka Component
 
 *Available as of Camel 2.13*
 
@@ -18,15 +18,11 @@ for this component.
 </dependency>
 ------------------------------------------------------------
 
-[[Kafka-Camel2.17ornewer]]
-Camel 2.17 or newer
-+++++++++++++++++++
+#### Camel 2.17 or newer
 
 Scala is no longer used, as we use the kafka java client.
 
-[[Kafka-Camel2.16orolder]]
-Camel 2.16 or older
-+++++++++++++++++++
+#### Camel 2.16 or older
 
 And then the Scala libraries of choice. camel-kafka does not include
 that dependency, but assumes it is provided. For example to use Scala
@@ -41,9 +37,7 @@ that dependency, but assumes it is provided. For example to use Scala
     </dependency>
 --------------------------------------------
 
-[[Kafka-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------
@@ -52,9 +46,7 @@ kafka:server:port[?options]
 
  
 
-[[Kafka-Options]]
-Options (Camel 2.16 or older)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Options (Camel 2.16 or older)
 
 
 
@@ -203,13 +195,9 @@ For more information about Producer/Consumer configuration:
 http://kafka.apache.org/documentation.html#newconsumerconfigs[http://kafka.apache.org/documentation.html#newconsumerconfigs]
 http://kafka.apache.org/documentation.html#producerconfigs[http://kafka.apache.org/documentation.html#producerconfigs]
 
-[[Kafka-Samples]]
-Samples
-^^^^^^^
+### Samples
 
-[[Kafka-Camel2.16orolder.1]]
-Camel 2.16 or older
-+++++++++++++++++++
+#### Camel 2.16 or older
 
 Consuming messages:
 
@@ -222,9 +210,7 @@ Producing messages:
 
 See unit tests of camel-kafka for more examples
 
-[[Kafka-Camel2.17ornewer]]
-Camel 2.17 or newer
-+++++++++++++++++++
+#### Camel 2.17 or newer
 
 Consuming messages:
 
@@ -276,9 +262,7 @@ from("direct:start").process(new Processor() {
 
  
 
-[[Kafka-Endpoints]]
-Endpoints
-~~~~~~~~~
+### Endpoints
 
 Camel supports the link:message-endpoint.html[Message Endpoint] pattern
 using the
@@ -306,12 +290,9 @@ implements the link:polling-consumer.html[Polling Consumer] pattern for
 consuming message exchanges from the endpoint via a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/PollingConsumer.html[PollingConsumer]
 
-[[Kafka-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:message-endpoint.html[Message Endpoint] pattern
 * link:uris.html[URIs]
 * link:writing-components.html[Writing Components]
-

@@ -1,4 +1,4 @@
-# Simple JMS Component
+## Simple JMS Component
 ifdef::env-github[]
 :icon-smile: :smiley:
 :caution-caption: :boom:
@@ -14,9 +14,7 @@ ifndef::env-github[]
 endif::[]
 
 [[ConfluenceContent]]
-[[SJMS-SJMSComponent]]
-SJMS Component
-~~~~~~~~~~~~~~
+### SJMS Component
 
 *Available as of Camel 2.11*
 
@@ -61,9 +59,7 @@ for this component:
 </dependency>
 ----
 
-[[SJMS-URIformat]]
-URI format
-++++++++++
+#### URI format
 
 [source]
 ----
@@ -97,9 +93,7 @@ sjms:topic:Stocks.Prices
 You append query options to the URI using the following format,
 `?option=value&option=value&...`
 
-[[SJMS-ComponentOptionsandConfigurations]]
-Component Options and Configurations
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Component Options and Configurations
 
 
 
@@ -212,13 +206,9 @@ component.setConnectionResource(connectionResource);
 component.setMaxConnections(1);
 ----
 
-[[SJMS-ProducerUsage]]
-Producer Usage
-^^^^^^^^^^^^^^
+### Producer Usage
 
-[[SJMS-InOnlyProducer]]
-InOnly Producer - (Default)
-+++++++++++++++++++++++++++
+#### InOnly Producer - (Default)
 
 The _InOnly_ producer is the default behavior of the SJMS Producer
 Endpoint.
@@ -229,9 +219,7 @@ from("direct:start")
     .to("sjms:queue:bar");
 ----
 
-[[SJMS-InOutProducer]]
-InOut Producer
-++++++++++++++
+#### InOut Producer
 
 To enable _InOut_ behavior append the `exchangePattern` attribute to the
 URI. By default it will use a dedicated TemporaryQueue for each
@@ -252,13 +240,9 @@ from("direct:start")
     .to("sjms:queue:bar?exchangePattern=InOut&namedReplyTo=my.reply.to.queue");
 ----
 
-[[SJMS-ConsumerUsage]]
-Consumer Usage
-^^^^^^^^^^^^^^
+### Consumer Usage
 
-[[SJMS-InOnlyConsumer]]
-InOnly Consumer - (Default)
-+++++++++++++++++++++++++++
+#### InOnly Consumer - (Default)
 
 The _InOnly_ xonsumer is the default Exchange behavior of the SJMS
 Consumer Endpoint.
@@ -269,9 +253,7 @@ from("sjms:queue:bar")
     .to("mock:result");
 ----
 
-[[SJMS-InOutConsumer]]
-InOut Consumer
-++++++++++++++
+#### InOut Consumer
 
 To enable _InOut_ behavior append the `exchangePattern` attribute to the
 URI.
@@ -282,13 +264,9 @@ from("sjms:queue:in.out.test?exchangePattern=InOut")
     .transform(constant("Bye Camel"));
 ----
 
-[[SJMS-AdvancedUsageNotes]]
-Advanced Usage Notes
-^^^^^^^^^^^^^^^^^^^^
+### Advanced Usage Notes
 
-[[SJMS-PlugableConnectionResourceManagementconnectionresource]]
-Plugable Connection Resource Management [[SJMS-connectionresource]]
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Plugable Connection Resource Management [[SJMS-connectionresource]]
 
 SJMS provides JMS
 http://docs.oracle.com/javaee/5/api/javax/jms/Connection.html[`Connection`]
@@ -370,15 +348,11 @@ camelContext.addComponent("sjms", component);
 To see the full example of its usage please refer to the
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/test/java/org/apache/camel/component/sjms/it/ConnectionResourceIT.java[`ConnectionResourceIT`].
 
-[[SJMS-Session,Consumer,&ProducerPooling&CachingManagement]]
-Session, Consumer, & Producer Pooling & Caching Management
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Session, Consumer, & Producer Pooling & Caching Management
 
 Coming soon ...
 
-[[SJMS-BatchMessageSupport]]
-Batch Message Support
-+++++++++++++++++++++
+#### Batch Message Support
 
 The SjmsProducer supports publishing a collection of messages by
 creating an Exchange that encapsulates a `List`. This SjmsProducer will
@@ -411,9 +385,7 @@ Then publish the list:
 template.sendBody("sjms:queue:batch.queue", messages);
 ----
 
-[[SJMS-CustomizableTransactionCommitStrategies]]
-Customizable Transaction Commit Strategies (Local JMS Transactions only)
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Customizable Transaction Commit Strategies (Local JMS Transactions only)
 
 SJMS provides a developer the means to create a custom and plugable
 transaction strategy through the use of the
@@ -426,9 +398,7 @@ is the
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-sjms/src/main/java/org/apache/camel/component/sjms/tx/BatchTransactionCommitStrategy.java[`BatchTransactionCommitStrategy`]
 which is detailed further in the next section.
 
-[[SJMS-TransactedBatchConsumersAndProducers]]
-Transacted Batch Consumers & Producers
-++++++++++++++++++++++++++++++++++++++
+#### Transacted Batch Consumers & Producers
 
 The SJMS component has been designed to support the batching of local JMS
 transactions on both the Producer and Consumer endpoints. How they are
@@ -499,13 +469,9 @@ Now publish the List with transactions enabled:
 template.sendBody("sjms:queue:batch.queue?transacted=true", messages);
 ----
 
-[[SJMS-AdditionalNotes]]
-Additional Notes
-^^^^^^^^^^^^^^^^
+### Additional Notes
 
-[[SJMS-MessageHeaderFormat]]
-Message Header Format
-+++++++++++++++++++++
+#### Message Header Format
 
 The SJMS Component uses the same header format strategy that is used in
 the Camel JMS Component. This plugable strategy ensures that messages
@@ -530,9 +496,7 @@ custom strategy for formatting keys.
 For the `exchange.in.header`, the following rules apply for the header
 values:
 
-[[SJMS-MessageContent]]
-Message Content
-+++++++++++++++
+#### Message Content
 
 To deliver content over the wire we must ensure that the body of the
 message that is being delivered adheres to the JMS Message
@@ -542,9 +506,7 @@ The types, `String`, `CharSequence`, `Date`, `BigDecimal` and `BigInteger` are a
 converted to their `toString()` representation. All other types are
 dropped.
 
-[[SJMS-Clustering]]
-Clustering
-++++++++++
+#### Clustering
 
 When using _InOut_ with SJMS in a clustered environment you must either
 use TemporaryQueue destinations or use a unique named reply to
@@ -561,17 +523,13 @@ The _InOut_ Consumer uses this strategy as well ensuring that all
 responses messages to the included `JMSReplyTo` destination also have the
 `JMSCorrelationId` copied from the request as well.
 
-[[SJMS-TransactionSupporttransactions]]
-Transaction Support [[SJMS-transactions]]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Transaction Support [[SJMS-transactions]]
 
 SJMS currently only supports the use of internal JMS Transactions. There
 is no support for the Camel Transaction Processor or the Java
 Transaction API (JTA).
 
-[[SJMS-DoesSpringlessMeanICantUseSpring]]
-Does Springless Mean I Can't Use Spring?
-++++++++++++++++++++++++++++++++++++++++
+#### Does Springless Mean I Can't Use Spring?
 
 Not at all. Below is an example of the SJMS component using the Spring
 DSL:

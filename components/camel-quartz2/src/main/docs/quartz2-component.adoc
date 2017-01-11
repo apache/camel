@@ -1,4 +1,4 @@
-# Quartz2 Component
+## Quartz2 Component
 
 *Available as of Camel 2.12.0*
 
@@ -24,9 +24,7 @@ for this component:
 remain on old Quartz 1.x, please +
  use the old link:quartz.html[Quartz] component instead.
 
-[[Quartz2-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------------------
@@ -44,9 +42,7 @@ name.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Quartz2-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -130,9 +126,7 @@ to the <camelContext> that this id is unique, as this is
 required by the `QuartzScheduler` in the OSGi container. If you do not
 set any `id` on <camelContext> then a unique id is auto assigned, and there is no problem.
 
-[[Quartz2-Configuringquartz.propertiesfile]]
-Configuring quartz.properties file
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Configuring quartz.properties file
 
 By default Quartz will look for a `quartz.properties` file in the
 `org/quartz` directory of the classpath. If you are using WAR
@@ -160,9 +154,7 @@ To do this you can configure this in Spring XML as follows
 </bean>
 -------------------------------------------------------------------------------
 
-[[Quartz2-EnablingQuartzschedulerinJMX]]
-Enabling Quartz scheduler in JMX
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Enabling Quartz scheduler in JMX
 
 You need to configure the quartz scheduler properties to enable JMX. +
  That is typically setting the option
@@ -172,9 +164,7 @@ configuration file.
 From Camel 2.13 onwards Camel will automatic set this option to true,
 unless explicit disabled.
 
-[[Quartz2-StartingtheQuartzscheduler]]
-Starting the Quartz scheduler
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Starting the Quartz scheduler
 
 The link:quartz2.html[Quartz2] component offers an option to let the
 Quartz scheduler be started delayed, or not auto started at all.
@@ -188,9 +178,7 @@ This is an example:
 </bean>
 ------------------------------------------------------------------------------
 
-[[Quartz2-Clustering]]
-Clustering
-^^^^^^^^^^
+### Clustering
 
 If you use Quartz in clustered mode, e.g. the `JobStore` is clustered.
 Then the link:quartz2.html[Quartz2] component will *not* pause/remove
@@ -200,9 +188,7 @@ to keep running on the other nodes in the cluster.
 *Note*: When running in clustered node no checking is done to ensure
 unique job name/group for endpoints.
 
-[[Quartz2-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 Camel adds the getters from the Quartz Execution Context as header
 values. The following headers are added: +
@@ -214,9 +200,7 @@ values. The following headers are added: +
 The `fireTime` header contains the `java.util.Date` of when the exchange
 was fired.
 
-[[Quartz2-UsingCronTriggers]]
-Using Cron Triggers
-^^^^^^^^^^^^^^^^^^^
+### Using Cron Triggers
 
 Quartz supports
 http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger[Cron-like
@@ -249,9 +233,7 @@ valid URI syntax:
 |`+` | _Space_
 |=======================================================================
 
-[[Quartz2-Specifyingtimezone]]
-Specifying time zone
-^^^^^^^^^^^^^^^^^^^^
+### Specifying time zone
 
 The Quartz Scheduler allows you to configure time zone per trigger. For
 example to use a timezone of your country, then you can do as follows:
@@ -263,9 +245,7 @@ quartz2://groupName/timerName?cron=0+0/5+12-18+?+*+MON-FRI&trigger.timeZone=Euro
 
 The timeZone value is the values accepted by `java.util.TimeZone`.
 
-[[Quartz2-UsingQuartzScheduledPollConsumerScheduler]]
-Using QuartzScheduledPollConsumerScheduler
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Using QuartzScheduledPollConsumerScheduler
 
 The link:quartz2.html[Quartz2] component provides a
 link:polling-consumer.html[Polling Consumer] scheduler which allows to
@@ -325,9 +305,7 @@ use the following as well:
        .to("bean:process");
 --------------------------------------------------------------------
 
-[[Quartz2-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -336,4 +314,3 @@ See Also
 
 * link:quartz.html[Quartz]
 * link:timer.html[Timer]
-

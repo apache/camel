@@ -1,4 +1,4 @@
-# Freemarker Component
+## Freemarker Component
 
 The *freemarker:* component allows for processing a message using a
 http://freemarker.org/[FreeMarker] template. This can be ideal when
@@ -17,9 +17,7 @@ for this component:
 </dependency>
 -------------------------------------------------------------------------------------
 
-[[FreeMarker-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------
@@ -33,9 +31,7 @@ file://folder/myfile.ftl[file://folder/myfile.ftl]).
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[FreeMarker-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -77,9 +73,7 @@ The Freemarker component supports 6 endpoint options which are listed below:
 
 
 
-[[FreeMarker-Headers]]
-Headers
-^^^^^^^
+### Headers
 
 Headers set during the FreeMarker evaluation are returned to the message
 and added as headers. This provides a mechanism for the FreeMarker
@@ -94,9 +88,7 @@ ${request.setHeader('fruit', 'Apple')}
 
 The header, `fruit`, is now accessible from the `message.out.headers`.
 
-[[FreeMarker-FreeMarkerContext]]
-FreeMarker Context
-^^^^^^^^^^^^^^^^^^
+### FreeMarker Context
 
 Camel will provide exchange information in the FreeMarker context (just
 a `Map`). The `Exchange` is transferred as:
@@ -132,18 +124,14 @@ variableMap.put("exchange", exchange);
 exchange.getIn().setHeader("CamelFreemarkerDataModel", variableMap);
 --------------------------------------------------------------------
 
-[[FreeMarker-Hotreloading]]
-Hot reloading
-^^^^^^^^^^^^^
+### Hot reloading
 
 The FreeMarker template resource is by default *not* hot reloadable for
 both file and classpath resources (expanded jar). If you set
 `contentCache=false`, then Camel will not cache the resource and hot
 reloading is thus enabled. This scenario can be used in development.
 
-[[FreeMarker-Dynamictemplates]]
-Dynamic templates
-^^^^^^^^^^^^^^^^^
+### Dynamic templates
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
@@ -162,9 +150,7 @@ configured. | >= 2.1
 |FreemarkerConstants.FREEMARKER_TEMPLATE |String |The template to use instead of the endpoint configured. | >= 2.1
 |=======================================================================
 
-[[FreeMarker-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 For example you could use something like:
 
@@ -216,9 +202,7 @@ from("direct:in").
   to("freemarker:dummy");
 ---------------------------------------------------------------------------------------------
 
-[[FreeMarker-TheEmailSample]]
-The Email Sample
-^^^^^^^^^^^^^^^^
+### The Email Sample
 
 In this sample we want to use FreeMarker templating for an order
 confirmation email. The email template is laid out in FreeMarker as:
@@ -235,12 +219,9 @@ ${body}
 
 And the java code:
 
-[[FreeMarker-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

@@ -1,4 +1,4 @@
-# HTTP4 Component
+## HTTP4 Component
 
 *Available as of Camel 2.3*
 
@@ -26,9 +26,7 @@ Camel-http4 uses http://hc.apache.org/httpcomponents-client-ga/[Apache
 HttpClient 4.x] while camel-http uses
 http://hc.apache.org/httpclient-3.x/[Apache HttpClient 3.x].
 
-[[HTTP4-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------------------
@@ -47,9 +45,7 @@ Therefore it should never be used as input into your Camel Routes. To
 bind/expose an HTTP endpoint via a HTTP server as input to a Camel
 route, use the link:jetty.html[Jetty Component] instead.
 
-[[HTTP4-HttpOptions]]
-Http4 Component Options
-^^^^^^^^^^^^^^^^^^^^^^^
+### Http4 Component Options
 
 
 
@@ -138,9 +134,7 @@ The HTTP4 component supports 32 endpoint options which are listed below:
 
 
 
-[[HTTP4-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 [width="100%",cols="10%,20%,70%",options="header",]
 |=======================================================================
@@ -171,9 +165,7 @@ a content type, such as `text/html`.
 provide a content encoding, such as `gzip`.
 |=======================================================================
 
-[[HTTP4-MessageBody]]
-Message Body
-^^^^^^^^^^^^
+### Message Body
 
 Camel will store the HTTP response from the external server on the OUT
 body. All headers from the IN message will be copied to the OUT message,
@@ -183,9 +175,7 @@ HTTP response headers as well to the OUT message headers.
  
 
 
-[[HTTP4-UsingSystemProperties]]
-Using System Properties
-^^^^^^^^^^^^^^^^^^^^^^^
+### Using System Properties
 
 When setting useSystemProperties to true, the HTTP Client will look for
 the following System Properties and it will use it:
@@ -207,9 +197,7 @@ the following System Properties and it will use it:
 * http.keepAlive
 * http.maxConnections
 
-[[HTTP4-Responsecode]]
-Response code
-^^^^^^^^^^^^^
+### Response code
 
 Camel will handle according to the HTTP response code:
 
@@ -227,9 +215,7 @@ the `HttpOperationFailedException` from being thrown for failed response
 codes. This allows you to get any response from the remote server. +
 There is a sample below demonstrating this.
 
-[[HTTP4-HttpOperationFailedException]]
-HttpOperationFailedException
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### HttpOperationFailedException
 
 This exception contains the following information:
 
@@ -239,9 +225,7 @@ This exception contains the following information:
 * Response body as a `java.lang.String`, if server provided a body as
 response
 
-[[HTTP4-CallingusingGETorPOST]]
-Calling using GET or POST
-^^^^^^^^^^^^^^^^^^^^^^^^^
+### Calling using GET or POST
 
 The following algorithm is used to determine whether the `GET` or `POST`
 HTTP method should be used: +
@@ -251,9 +235,7 @@ HTTP method should be used: +
  4. `POST` if there is data to send (body is not null). +
  5. `GET` otherwise.
 
-[[HTTP4-HowtogetaccesstoHttpServletRequestandHttpServletResponse]]
-How to get access to HttpServletRequest and HttpServletResponse
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### How to get access to HttpServletRequest and HttpServletResponse
 
 You can get access to these two using the Camel type converter system
 using +
@@ -266,9 +248,7 @@ HttpServletRequest request = exchange.getIn().getBody(HttpServletRequest.class);
 HttpServletRequest response = exchange.getIn().getBody(HttpServletResponse.class);
 ----------------------------------------------------------------------------------
 
-[[HTTP4-ConfiguringURItocall]]
-Configuring URI to call
-^^^^^^^^^^^^^^^^^^^^^^^
+### Configuring URI to call
 
 You can set the HTTP producer's URI directly form the endpoint URI. In
 the route below, Camel will call out to the external server, `oldhost`,
@@ -307,9 +287,7 @@ endpoint is configured with http4://oldhost. +
 If the http4 endpoint is working in bridge mode, it will ignore the
 message header of `Exchange.HTTP_URI`.
 
-[[HTTP4-ConfiguringURIParameters]]
-Configuring URI Parameters
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Configuring URI Parameters
 
 The *http* producer supports URI parameters to be sent to the HTTP
 server. The URI parameters can either be set directly on the endpoint
@@ -330,9 +308,7 @@ from("direct:start")
   .to("http4://oldhost");
 ---------------------------------------------------------------------
 
-[[HTTP4-HowtosetthehttpmethodtotheHTTPproducer]]
-How to set the http method (GET/PATCH/POST/PUT/DELETE/HEAD/OPTIONS/TRACE) to the HTTP producer
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### How to set the http method (GET/PATCH/POST/PUT/DELETE/HEAD/OPTIONS/TRACE) to the HTTP producer
 
 *Using the http PATCH method*
 
@@ -372,9 +348,7 @@ And the equivalent Spring sample:
 </camelContext>
 ---------------------------------------------------------------------
 
-[[HTTP4-Usingclienttimeout-SO_TIMEOUT]]
-Using client timeout - SO_TIMEOUT
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using client timeout - SO_TIMEOUT
 
 See the
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-http4/src/test/java/org/apache/camel/component/http4/HttpSOTimeoutTest.java[HttpSOTimeoutTest]
@@ -384,9 +358,7 @@ unit test.
 https://github.com/apache/camel/blob/master/components/camel-http4/src/test/java/org/apache/camel/component/http4/HttpSOTimeoutTest.java[HttpSOTimeoutTest]
 unit test.
 
-[[HTTP4-ConfiguringaProxy]]
-Configuring a Proxy
-^^^^^^^^^^^^^^^^^^^
+### Configuring a Proxy
 
 The HTTP4 component provides a way to configure a proxy.
 
@@ -399,9 +371,7 @@ from("direct:start")
 There is also support for proxy authentication via the
 `proxyAuthUsername` and `proxyAuthPassword` options.
 
-[[HTTP4-UsingproxysettingsoutsideofURI]]
-Using proxy settings outside of URI
-+++++++++++++++++++++++++++++++++++
+#### Using proxy settings outside of URI
 
 To avoid System properties conflicts, you can set proxy configuration
 only from the CamelContext or URI. +
@@ -432,9 +402,7 @@ Properties and then the endpoint proxy options if provided. +
 Notice in *Camel 2.8* there is also a `http.proxyScheme` property you
 can set to explicit configure the scheme to use.
 
-[[HTTP4-Configuringcharset]]
-Configuring charset
-^^^^^^^^^^^^^^^^^^^
+### Configuring charset
 
 If you are using `POST` to send data you can configure the `charset`
 using the `Exchange` property:
@@ -444,9 +412,7 @@ using the `Exchange` property:
 exchange.setProperty(Exchange.CHARSET_NAME, "ISO-8859-1");
 ----------------------------------------------------------
 
-[[HTTP4-Samplewithscheduledpoll]]
-Sample with scheduled poll
-++++++++++++++++++++++++++
+#### Sample with scheduled poll
 
 This sample polls the Google homepage every 10 seconds and write the
 page to the file `message.html`:
@@ -459,9 +425,7 @@ from("timer://foo?fixedRate=true&delay=0&period=10000")
   .to("file:target/google");
 ------------------------------------------------------------
 
-[[HTTP4-URIParametersfromtheendpointURI]]
-URI Parameters from the endpoint URI
-++++++++++++++++++++++++++++++++++++
+#### URI Parameters from the endpoint URI
 
 In this sample we have the complete URI endpoint that is just what you
 would have typed in a web browser. Multiple URI parameters can of course
@@ -474,9 +438,7 @@ web browser. Camel does no tricks here.
 template.sendBody("http4://www.google.com/search?q=Camel", null);
 -----------------------------------------------------------------
 
-[[HTTP4-URIParametersfromtheMessage]]
-URI Parameters from the Message
-+++++++++++++++++++++++++++++++
+#### URI Parameters from the Message
 
 [source,java]
 ------------------------------------------------------------------
@@ -489,9 +451,7 @@ template.sendBody("http4://www.google.com/search", null, headers);
 In the header value above notice that it should *not* be prefixed with
 `?` and you can separate parameters as usual with the `&` char.
 
-[[HTTP4-GettingtheResponseCode]]
-Getting the Response Code
-+++++++++++++++++++++++++
+#### Getting the Response Code
 
 You can get the HTTP response code from the HTTP4 component by getting
 the value from the Out message header with
@@ -508,25 +468,19 @@ Message out = exchange.getOut();
 int responseCode = out.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
 ------------------------------------------------------------------------------------
 
-[[HTTP4-DisablingCookies]]
-Disabling Cookies
-^^^^^^^^^^^^^^^^^
+### Disabling Cookies
 
 To disable cookies you can set the HTTP Client to ignore cookies by
 adding this URI option: +
  `httpClient.cookiePolicy=ignoreCookies`
 
-[[HTTP4-AdvancedUsage]]
-Advanced Usage
-^^^^^^^^^^^^^^
+### Advanced Usage
 
 If you need more control over the HTTP producer you should use the
 `HttpComponent` where you can set various classes to give you custom
 behavior.
 
-[[HTTP4-SettingupSSLforHTTPClient]]
-Setting up SSL for HTTP Client
-++++++++++++++++++++++++++++++
+#### Setting up SSL for HTTP Client
 
 [[HTTP4-UsingtheJSSEConfigurationUtility]]
 Using the JSSE Configuration Utility

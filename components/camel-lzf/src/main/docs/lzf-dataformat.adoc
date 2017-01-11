@@ -1,4 +1,4 @@
-# LZF Deflate Compression DataFormat
+## LZF Deflate Compression DataFormat
 
 The
 LZF https://cwiki.apache.org/confluence/display/CAMEL/Data+Format[Data
@@ -9,9 +9,7 @@ endpoint. The compression capability is quite useful when you deal with
 large XML and Text based payloads or when you read messages previously
 comressed using LZF algotithm.
 
-[[LZFDataFormat-Options]]
-Options
-^^^^^^^
+### Options
 
 // dataformat options: START
 The LZF Deflate Compression dataformat supports 2 options which are listed below.
@@ -28,9 +26,7 @@ The LZF Deflate Compression dataformat supports 2 options which are listed below
 {% endraw %}
 // dataformat options: END
 
-[[LZFDataFormat-Marshal]]
-Marshal
-^^^^^^^
+### Marshal
 
 In this example we marshal a regular text/XML payload to a compressed
 payload employing LZF compression format and send it an ActiveMQ queue
@@ -41,9 +37,7 @@ called MY_QUEUE.
 from("direct:start").marshal().lzf().to("activemq:queue:MY_QUEUE");
 -------------------------------------------------------------------
 
-[[LZFDataFormat-Unmarshal]]
-Unmarshal
-^^^^^^^^^
+### Unmarshal
 
 In this example we unmarshal a LZF payload from an ActiveMQ queue called
 MY_QUEUE to its original format, and forward it for processing to
@@ -54,9 +48,7 @@ the `UnGZippedMessageProcessor`.
 from("activemq:queue:MY_QUEUE").unmarshal().lzf().process(new UnCompressedMessageProcessor());
 ----------------------------------------------------------------------------------------------
 
-[[LZFDataFormat-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To useLZF compression in your camel routes you need to add a dependency
 on *camel-lzf* which implements this data format.

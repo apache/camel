@@ -1,4 +1,4 @@
-# Kubernetes Component
+## Kubernetes Component
 
 *Available as of Camel 2.17*
 
@@ -18,9 +18,7 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Kubernetes-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------------------------
@@ -30,9 +28,7 @@ kubernetes:masterUrl[?options]
 You can append query options to the URI in the following
 format, `?option=value&option=value&...`
 
-[[Kubernetes-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -91,9 +87,7 @@ The Kubernetes component supports 28 endpoint options which are listed below:
 
 
 
-[[Kubernetes-Headers]]
-Headers
-^^^^^^^
+### Headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================

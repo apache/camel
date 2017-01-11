@@ -1,4 +1,4 @@
-# AHC Websocket Component
+## AHC Websocket Component
 
 *Available as of Camel 2.14*
 
@@ -23,9 +23,7 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[AHC-WS-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 -------------------------------------------------
@@ -35,9 +33,7 @@ ahc-wss://hostname[:port][/resourceUri][?options]
 
 Will by default use port 80 for ahc-ws and 443 for ahc-wss.
 
-[[AHC-WS-AHC-WSOptions]]
-AHC-WS Options
-^^^^^^^^^^^^^^
+### AHC-WS Options
 
 As the AHC-WS component is based on the AHC component, you can use the
 various configuration options of the AHC component.
@@ -97,17 +93,13 @@ The AHC Websocket component supports 19 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[AHC-WS-WritingandReadingDataoverWebsocket]]
-Writing and Reading Data over Websocket
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Writing and Reading Data over Websocket
 
 An ahc-ws endpoint can either write data to the socket or read from the
 socket, depending on whether the endpoint is configured as the producer
 or the consumer, respectively.
 
-[[AHC-WS-ConfiguringURItoWriteorReadData]]
-Configuring URI to Write or Read Data
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Configuring URI to Write or Read Data
 
 In the route below, Camel will write to the specified websocket
 connection.
@@ -153,9 +145,7 @@ And the equivalent Spring sample:
 
  
 
-[[AHC-WS-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -164,4 +154,3 @@ See Also
 
 * link:../../../../camel-ahc/src/main/docs/readme.html[AHC]
 * link:atmosphere-websocket.html[Atmosphere-Websocket]
-

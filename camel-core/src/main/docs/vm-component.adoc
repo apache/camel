@@ -1,4 +1,4 @@
-# VM Component
+## VM Component
 
 The *vm:* component provides asynchronous
 http://www.eecs.harvard.edu/~mdw/proj/seda/[SEDA] behavior, exchanging
@@ -13,9 +13,7 @@ this mechanism to communicate across web applications (provided that
 
 VM is an extension to the link:seda.html[Seda] component.
 
-[[VM-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------------------
@@ -58,9 +56,7 @@ from("direct:foo").to("vm:bar");
 from("vm:bar?concurrentConsumers=5").to("file://output");
 ---------------------------------------------------------
 
-[[VM-Options]]
-Options
-^^^^^^^
+### Options
 
 // component options: START
 The VM component supports 3 options which are listed below.
@@ -111,9 +107,7 @@ The VM component supports 17 endpoint options which are listed below:
 See the link:seda.html[Seda] component for options and other important
 usage details as the same rules apply to the link:vm.html[Vm] component.
 
-[[VM-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 In the route below we send exchanges across CamelContext instances to a
 VM queue named `order.email`:
@@ -131,13 +125,10 @@ deployed in another `.war` application):
 from("vm:order.email").bean(MyOrderEmailSender.class);
 ------------------------------------------------------
 
-[[VM-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
 * link:seda.html[Seda]
-

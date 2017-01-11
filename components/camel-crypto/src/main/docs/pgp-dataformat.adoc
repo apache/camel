@@ -1,4 +1,4 @@
-# PGP DataFormat
+## PGP DataFormat
 
 The PGP link:data-format.html[Data Format] integrates the Java
 Cryptographic Extension into Camel, allowing simple and flexible
@@ -8,9 +8,7 @@ encryption to cyphertext and unmarshalling to mean decryption back to
 the original plaintext. This data format implements only symmetric
 (shared-key) encryption and decyption.
 
-[[Crypto-PGPDataFormatOptions]]
-PGPDataFormat Options
-^^^^^^^^^^^^^^^^^^^^^
+### PGPDataFormat Options
 
 // dataformat options: START
 The PGP dataformat supports 15 options which are listed below.
@@ -40,9 +38,7 @@ The PGP dataformat supports 15 options which are listed below.
 {% endraw %}
 // dataformat options: END
 
-[[Crypto-PGPDataFormatMessageHeaders]]
-PGPDataFormat Message Headers
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### PGPDataFormat Message Headers
 
 You can override the PGPDataFormat options by applying below headers
 into message dynamically.
@@ -97,9 +93,7 @@ symmectric key, set by PGPDataFormat during encryptiion process
 signatures, set by PGPDataFormat during signing process
 |=======================================================================
 
-[[Crypto-EncryptingwithPGPDataFormat]]
-Encrypting with PGPDataFormat
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Encrypting with PGPDataFormat
 
 The following sample uses the popular PGP format for
 encrypting/decrypting files using the
@@ -111,9 +105,7 @@ encryption, but you can obviously use different keys:
 
 Or using Spring:
 
-[[Crypto-Toworkwiththepreviousexampleyouneedthefollowing]]
-To work with the previous example you need the following
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### To work with the previous example you need the following
 
 * A public keyring file which contains the public keys used to encrypt
 the data
@@ -121,9 +113,7 @@ the data
 data
 * The keyring password
 
-[[Crypto-Managingyourkeyring]]
-Managing your keyring
-+++++++++++++++++++++
+#### Managing your keyring
 
 To manage the keyring, I use the command line tools, I find this to be
 the simplest approach in managing the keys. There are also Java
@@ -160,8 +150,7 @@ ls -l ~/.gnupg/pubring.gpg ~/.gnupg/secring.gpg
 
 [[Crypto-PGPDecrypting/VerifyingofMessagesEncrypted/SignedbyDifferentPrivate/PublicKeys]]
 PGP Decrypting/Verifying of Messages Encrypted/Signed by Different
-Private/Public Keys
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Private/Public Keys
 
 Since *Camel 2.12.2*.
 
@@ -206,9 +195,7 @@ same mechanism is also used to locate the public key for verifying a
 signature. Therefore you no longer must specify User IDs for the
 unmarshaling.
 
-[[Crypto-RestrictingtheSignerIdentitiesduringPGPSignatureVerification]]
-Restricting the Signer Identities during PGP Signature Verification
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Restricting the Signer Identities during PGP Signature Verification
 
 Since *Camel 2.12.3.*
 
@@ -245,9 +232,7 @@ successful as soon as one signature can be verified.
 then do not specify the signature key User IDs. In this case all public
 keys in the public keyring are taken into account.
 
-[[Crypto-SeveralSignaturesinOnePGPDataFormat]]
-Several Signatures in One PGP Data Format
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Several Signatures in One PGP Data Format
 
 Since *Camel 2.12.3.*
 
@@ -277,9 +262,7 @@ from("direct:start")
         ...      
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[Crypto-SupportofSub-KeysandKeyFlagsinPGPDataFormatMarshaler]]
-Support of Sub-Keys and Key Flags in PGP Data Format Marshaler
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Support of Sub-Keys and Key Flags in PGP Data Format Marshaler
 
 Since *Camel 2.12.3. +
 *An https://tools.ietf.org/html/rfc4880#section-12.1[OpenPGP V4 key] can
@@ -294,9 +277,7 @@ these Key Flags of the primary key and sub-keys in order to determine
 the right key for signing and encryption. This is necessary because the
 primary key and its sub-keys have the same User IDs.
 
-[[Crypto-SupportofCustomKeyAccessors]]
-Support of Custom Key Accessors
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Support of Custom Key Accessors
 
 Since *Camel 2.13.0. +
 *You can implement custom key accessors for encryption/signing. The
@@ -320,9 +301,7 @@ PGPKeyAccessDataFormat has the same options as PGPDataFormat except
 password, keyFileName, encryptionKeyRing, signaturePassword,
 signatureKeyFileName, and signatureKeyRing.
 
-[[Crypto-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use the PGP dataformat in your camel routes you
 need to add the following dependency to your pom.
@@ -337,11 +316,8 @@ need to add the following dependency to your pom.
 </dependency>
 ----------------------------------------------------------
 
-[[Crypto-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:data-format.html[Data Format]
 * link:crypto-digital-signatures.html[Crypto (Digital Signatures)]
 * http://www.bouncycastle.org/java.html[http://www.bouncycastle.org/java.html]
-

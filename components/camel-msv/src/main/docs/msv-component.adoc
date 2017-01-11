@@ -1,4 +1,4 @@
-# MSV Component
+## MSV Component
 
 The MSV component performs XML validation of the message body using the
 https://msv.dev.java.net/[MSV Library] and any of the supported XML
@@ -22,9 +22,7 @@ Note that the link:jing.html[Jing] component also supports
 http://relaxng.org/compact-tutorial-20030326.html[RelaxNG Compact
 Syntax]
 
-[[MSV-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------------
@@ -45,9 +43,7 @@ msv:http://acme.com/cheese.rng
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[MSV-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -97,9 +93,7 @@ The MSV component supports 12 endpoint options which are listed below:
 
 
 
-[[MSV-Example]]
-Example
-^^^^^^^
+### Example
 
 The following
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-msv/src/test/resources/org/apache/camel/component/validator/msv/camelContext.xml[example]
@@ -109,12 +103,9 @@ based on whether or not the XML matches the given
 http://relaxng.org/[RelaxNG XML Schema] (which is supplied on the
 classpath).
 
-[[MSV-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

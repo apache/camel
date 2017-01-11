@@ -1,4 +1,4 @@
-# Asterisk Component
+## Asterisk Component
 
 *Available as of Camel 2.18*
 
@@ -19,18 +19,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[AsteriskComponent-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -------------------------------------------------------------------------------------------------------------------------
 asterisk:name[?options]
 -------------------------------------------------------------------------------------------------------------------------
 
-[[AsteriskComponent-Options]]
-Options
-^^^^^^^
+### Options
 
 // component options: START
 The Asterisk component has no options.
@@ -56,9 +52,7 @@ The Asterisk component supports 9 endpoint options which are listed below:
 {% endraw %}
 // endpoint options: END
 
-[[Asterisk-Actions]]
-Action
-^^^^^^
+### Action
 Supported actions are:
 
 * QUEUE_STATUS, Queue Status

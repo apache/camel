@@ -1,4 +1,4 @@
-# Tar File DataFormat
+## Tar File DataFormat
 
 TIP:*Available since Camel 2.18.0*
 
@@ -10,9 +10,7 @@ entry can be unmarshalled (decompressed) to the original file contents.
 There is also a aggregation strategy that can
 aggregate multiple messages into a single Tar File.
 
-[[TarFile-Options]]
-TarFile Options
-^^^^^^^^^^^^^^^
+### TarFile Options
 
 
 // dataformat options: START
@@ -31,9 +29,7 @@ The Tar File dataformat supports 2 options which are listed below.
 // dataformat options: END
 
 
-[[TarFileDataFormat-Marshal]]
-Marshal
-^^^^^^^
+### Marshal
 
 In this example we marshal a regular text/XML payload to a compressed
 payload using Tar File compression, and send it to an ActiveMQ queue
@@ -74,9 +70,7 @@ from("direct:start").setHeader(Exchange.FILE_NAME, constant("report.txt")).marsh
 This route would result in a Tar File named "report.txt.tar" in the
 output directory, containing a single Tar entry named "report.txt".
 
-[[TarFileDataFormat-Unmarshal]]
-Unmarshal
-^^^^^^^^^
+### Unmarshal
 
 In this example we unmarshal a Tar File payload from an ActiveMQ queue
 called MY_QUEUE to its original format, and forward it for processing to
@@ -116,9 +110,7 @@ like this
 ----------------------------------------------------------------------------------------------------
 
 
-[[TarFileDataFormat-Aggregate]]
-Aggregate
-^^^^^^^^^
+### Aggregate
 
 INFO:Please note that this aggregation strategy requires eager completion
 check to work properly.
@@ -152,9 +144,7 @@ the `CamelFileName` header explicitly in your route:
    .to("file:output/directory");
 ------------------------------------------------------------
 
-[[TarFileDataFormat-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use Tar Files in your camel routes you need to add a dependency on
 *camel-tarfile* which implements this data format.

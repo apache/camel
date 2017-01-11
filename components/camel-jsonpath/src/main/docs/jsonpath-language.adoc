@@ -1,4 +1,4 @@
-# JSonPath Language
+## JSonPath Language
 
 *Available as of Camel 2.13*
 
@@ -18,9 +18,7 @@ from("queue:books.new")
       .to("jms:queue:book.expensive")
 -----------------------------------------------------
 
-[[JSonPath-Options]]
-JSonPath Options
-^^^^^^^^^^^^^^^^
+### JSonPath Options
 
 
 // language options: START
@@ -42,9 +40,7 @@ The JSonPath language supports 4 options which are listed below.
 
 
 
-[[JSonPath-UsingXMLconfiguration]]
-Using XML configuration
-^^^^^^^^^^^^^^^^^^^^^^^
+### Using XML configuration
 
 If you prefer to configure your routes in your link:spring.html[Spring]
 XML file then you can use link:jsonpath.html[JSonPath] expressions as
@@ -72,16 +68,12 @@ follows
   </camelContext>
 -------------------------------------------------------------------------
 
-[[JSonPath-Syntax]]
-Syntax
-^^^^^^
+### Syntax
 
 See the https://code.google.com/p/json-path/[JSonPath] project page for
 further examples.
 
-[[JSonPath-SupportedType]]
-Supported message body types
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Supported message body types
 
 Camel JSonPath supports message body using the following types:
 
@@ -104,9 +96,7 @@ If a message body is of unsupported type then an exception is thrown by default,
 can configure JSonPath to suppress exceptions (see below)
 
 
-[[JSonPath-Suppressexceptions]]
-Suppress exceptions
-~~~~~~~~~~~~~~~~~~~
+### Suppress exceptions
 
 *Available as of Camel 2.16*
 
@@ -149,9 +139,7 @@ And in XML DSL:
 
 This option is also available on the `@JsonPath` annotation.
 
-[[JSonPath-InlineSimple]]
-Inline Simple exceptions
-~~~~~~~~~~~~~~~~~~~~~~~~
+### Inline Simple exceptions
 
 *Available as of Camel 2.18*
 
@@ -207,9 +195,7 @@ And in XML DSL:
 --------------------------------------------------------------------------
 
 
-[[JSonPath-JSonPathinjection]]
-JSonPath injection
-~~~~~~~~~~~~~~~~~~
+### JSonPath injection
 
 You can use link:bean-integration.html[Bean Integration] to invoke a
 method on a bean and use various languages such as JSonPath to extract a
@@ -228,9 +214,7 @@ public class Foo {
 }
 ---------------------------------------------------------------------------------------------------
 
-[[JSonPath-EncodingDetection]]
-Encoding Detection
-~~~~~~~~~~~~~~~~~~
+### Encoding Detection
 
 *Since Camel version 2.16*, the encoding of the JSON document is
 detected automatically, if the document is encoded in unicode  (UTF-8,
@@ -240,9 +224,7 @@ you enter the document in String format to the JSONPath component or you
 can specify the encoding in the header "*CamelJsonPathJsonEncoding*"
 (JsonpathConstants.HEADER_JSON_ENCODING).
 
-[[JSonPath-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use JSonPath in your camel routes you need to add the a dependency on
 *camel-jsonpath* which implements the JSonPath language.

@@ -1,4 +1,4 @@
-# Direct VM Component
+## Direct VM Component
 
 *Available as of Camel 2.10*
 
@@ -26,9 +26,7 @@ Transactions - Tx.
 
 image:direct-vm.data/camel-direct-vm.png[image]
 
-[[Direct-VM-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------------
@@ -37,9 +35,7 @@ direct-vm:someName
 
 Where *someName* can be any string to uniquely identify the endpoint
 
-[[Direct-VM-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -85,9 +81,7 @@ The Direct VM component supports 10 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Direct-VM-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 In the route below we use the direct component to link the two routes
 together:
@@ -125,9 +119,7 @@ And the sample using spring DSL:
   </route>    
 --------------------------------------------------
 
-[[Direct-VM-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -137,4 +129,3 @@ See Also
 * link:direct.html[Direct]
 * link:seda.html[SEDA]
 * link:vm.html[VM]
-

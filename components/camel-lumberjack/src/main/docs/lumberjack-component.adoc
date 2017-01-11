@@ -1,4 +1,4 @@
-# Lumberjack Component
+## Lumberjack Component
 
 *Available as of Camel 2.18*
 
@@ -20,9 +20,7 @@ Maven users will need to add the following dependency to their `pom.xml` for thi
 </dependency>
 ------------------------------------------------------------
 
-[[Lumberjack-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------------------------------
@@ -33,9 +31,7 @@ lumberjack:host:port
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Lumberjack-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -82,19 +78,13 @@ The Lumberjack component supports 7 endpoint options which are listed below:
 
 
 
-[[Lumberjack-Result]]
-Result
-^^^^^^
+### Result
 
 The result body is a `Map<String, Object>` object.
 
-[[Lumberjack-LumberjackUsageSamples]]
-Lumberjack Usage Samples
-^^^^^^^^^^^^^^^^^^^^^^^^
+### Lumberjack Usage Samples
 
-[[Lumberjack-Example1:]]
-Example 1: Streaming the log messages
-+++++++++++++++++++++++++++++++++++++
+#### Example 1: Streaming the log messages
 
 [source,java]
 ------------------------------------------------------------------------------------
@@ -106,4 +96,3 @@ RouteBuilder builder = new RouteBuilder() {
     }
 };
 ------------------------------------------------------------------------------------
-

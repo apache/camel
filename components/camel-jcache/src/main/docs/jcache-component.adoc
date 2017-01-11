@@ -1,4 +1,4 @@
-# JCache Component
+## JCache Component
 
 
 
@@ -49,5 +49,3 @@ The JCache component supports 23 endpoint options which are listed below:
 // component options: START
 The JCache component has no options.
 // component options: END
-
-

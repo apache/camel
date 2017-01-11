@@ -1,4 +1,4 @@
-# RSS DataFormat
+## RSS DataFormat
 
 The RSS component ships with an RSS dataformat that can be used to
 convert between String (as XML) and ROME RSS model objects.
@@ -18,9 +18,7 @@ understand them as well, for example if the feed uses `alt=rss`, then
 you can for example do 
 `from("rss:http://someserver.com/feeds/posts/default?alt=rss&splitEntries=false&consumer.delay=1000").to("bean:rss");`
 
-[[RSS-RSSDataformat-Options]]
-Options
-^^^^^^^
+### Options
 
 // dataformat options: START
 The RSS dataformat supports 1 options which are listed below.
@@ -35,5 +33,3 @@ The RSS dataformat supports 1 options which are listed below.
 |=======================================================================
 {% endraw %}
 // dataformat options: END
-
-

@@ -1,4 +1,4 @@
-# JSon Jackson DataFormat
+## JSon Jackson DataFormat
 
 *Available as of Camel 2.18*
 
@@ -12,9 +12,7 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 -------------------------------
 
-[[Jackson-Options]]
-Jackson Options
-^^^^^^^^^^^^^^^
+### Jackson Options
 
 
 
@@ -50,9 +48,7 @@ The JSon Jackson dataformat supports 17 options which are listed below.
 
 
 
-[[Jackson-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use Jackson in your camel routes you need to add the dependency
 on *camel-jackson* which implements this data format.

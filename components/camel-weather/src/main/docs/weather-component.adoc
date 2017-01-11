@@ -1,4 +1,4 @@
-# Weather Component
+## Weather Component
 
 *Available as of Camel 2.12*
 
@@ -24,26 +24,20 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Weather-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------
 weather://<unused name>[?options]
 ---------------------------------
 
-[[Weather-REMARK]]
-REMARK
-^^^^^^
+### REMARK
 
 Since the 9th of October, an Api Key is required to access the
 openweather service. This key is passed as parameter to the URI
 definition of the weather endpoint using the appid param !
 
-[[Weather-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -111,16 +105,12 @@ The Weather component supports 44 endpoint options which are listed below:
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Weather-Exchangedataformat]]
-Exchange data format
-^^^^^^^^^^^^^^^^^^^^
+### Exchange data format
 
 Camel will deliver the body as a json formatted java.lang.String (see
 the `mode` option above).
 
-[[Weather-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -132,9 +122,7 @@ Message Headers
 location from this header instead.
 |=======================================================================
 
-[[Weather-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 In this sample we find the 7 day weather forecast for Madrid, Spain:
 

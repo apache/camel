@@ -1,4 +1,4 @@
-# TidyMarkup DataFormat
+## TidyMarkup DataFormat
 
 TidyMarkup is a link:data-format.html[Data Format] that uses the
 http://www.ccil.org/~cowan/XML/tagsoup/[TagSoup] to tidy up HTML. It can
@@ -15,9 +15,7 @@ link:tidymarkup.html[TidyMarkup] only supports the *unmarshal* operation
 as we really don't want to turn well formed HTML into ugly HTML
 image:https://cwiki.apache.org/confluence/s/en_GB/5982/f2b47fb3d636c8bc9fd0b11c0ec6d0ae18646be7.1/_/images/icons/emoticons/smile.png[(smile)]
 
-[[TidyMarkup-Options]]
-TidyMarkup Options
-^^^^^^^^^^^^^^^
+### TidyMarkup Options
 
 
 
@@ -40,9 +38,7 @@ The TidyMarkup dataformat supports 3 options which are listed below.
 
 
 
-[[TidyMarkup-JavaDSLExample]]
-Java DSL Example
-^^^^^^^^^^^^^^^^
+### Java DSL Example
 
 An example where the consumer provides some HTML
 
@@ -51,9 +47,7 @@ An example where the consumer provides some HTML
 from("file://site/inbox").unmarshal().tidyMarkup().to("file://site/blogs");
 ---------------------------------------------------------------------------
 
-[[TidyMarkup-SpringXMLExample]]
-Spring XML Example
-^^^^^^^^^^^^^^^^^^
+### Spring XML Example
 
 The following example shows how to use link:tidymarkup.html[TidyMarkup]
 to unmarshal using Spring
@@ -71,9 +65,7 @@ to unmarshal using Spring
 </camelContext>
 -----------------------------------------------------------------------
 
-[[TidyMarkup-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use TidyMarkup in your camel routes you need to add the a dependency
 on *camel-tagsoup* which implements this data format.

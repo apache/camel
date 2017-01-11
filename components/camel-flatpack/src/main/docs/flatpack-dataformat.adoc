@@ -1,4 +1,4 @@
-# Flatpack DataFormat
+## Flatpack DataFormat
 
 The link:flatpack.html[Flatpack] component ships with the Flatpack data
 format that can be used to format between fixed width or delimited text
@@ -16,9 +16,7 @@ link:splitter.html[Splitter].
 *Notice:* The Flatpack library does currently not support header and
 trailers for the marshal operation.
 
-[[FlatpackDataFormat-Options]]
-Options
-^^^^^^^
+### Options
 
 // dataformat options: START
 The Flatpack dataformat supports 9 options which are listed below.
@@ -42,9 +40,7 @@ The Flatpack dataformat supports 9 options which are listed below.
 {% endraw %}
 // dataformat options: END
 
-[[FlatpackDataFormat-Usage]]
-Usage
-^^^^^
+### Usage
 
 To use the data format, simply instantiate an instance and invoke the
 marshal or unmarshal operation in the route builder:
@@ -79,9 +75,7 @@ in Java code from e.g. a processor. We marshal the data according to the
 Flatpack format and convert the result as a `String` object and store it
 on a JMS queue.
 
-[[FlatpackDataFormat-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use Flatpack in your camel routes you need to add the a dependency on
 *camel-flatpack* which implements this data format.

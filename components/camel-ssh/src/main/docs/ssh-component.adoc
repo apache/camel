@@ -1,4 +1,4 @@
-# SSH Component
+## SSH Component
 
 *Available as of Camel 2.10*
 
@@ -18,18 +18,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[SSH-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -----------------------------------------------
 ssh:[username[:password]@]host[:port][?options]
 -----------------------------------------------
 
-[[SSH-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -100,9 +96,7 @@ The SSH component supports 28 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[SSH-UsageasaProducerendpoint]]
-Usage as a Producer endpoint
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Usage as a Producer endpoint
 
 When the SSH Component is used as a Producer (`.to("ssh://...")`), it
 will send the message body as the command to execute on the remote SSH
@@ -123,9 +117,7 @@ an XML encoded newline (`&#10;`).
 </route>
 ----------------------------------------------
 
-[[SSH-Authentication]]
-Authentication
-^^^^^^^^^^^^^^
+### Authentication
 
 The SSH Component can authenticate against the remote SSH server using
 one of two mechanisms: Public Key certificate or username/password.
@@ -192,19 +184,14 @@ of Camel you are using.
 </dependency>
 -----------------------------------------
 
-[[SSH-Example]]
-Example
-^^^^^^^
+### Example
 
 See the `examples/camel-example-ssh` and
 `examples/camel-example-ssh-security` in the Camel distribution.
 
-[[SSH-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

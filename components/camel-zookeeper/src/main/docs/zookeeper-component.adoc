@@ -1,4 +1,4 @@
-# ZooKeeper Component
+## ZooKeeper Component
 
 *Available as of Camel 2.9*
 
@@ -28,9 +28,7 @@ for this component:
 </dependency>
 ----
 
-[[Zookeeper-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source]
 ----
@@ -40,9 +38,7 @@ zookeeper://zookeeper-server[:port][/path][?options]
 The path from the URI specifies the node in the ZooKeeper server (a.k.a.
 _znode_) that will be the target of the endpoint:
 
-[[Zookeeper-Options]]
-Options
-^^^^^^^
+### Options
 
 // component options: START
 The ZooKeeper component supports 1 options which are listed below.
@@ -84,13 +80,9 @@ The ZooKeeper component supports 14 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Zookeeper-Usecases]]
-Use cases
-^^^^^^^^^
+### Use cases
 
-[[Zookeeper-Readingfromaznode]]
-Reading from a _znode_
-+++++++++++++++++++++
+#### Reading from a _znode_
 
 The following snippet will read the data from the _znode_
 `/somepath/somenode/` provided that it already exists. The data
@@ -110,9 +102,7 @@ endpoint await its creation:
 from("zookeeper://localhost:39913/somepath/somenode?awaitCreation=true").to("mock:result");
 ----
 
-[[Zookeeper-ReadingfromaznodeAdditionalCamel210onwards]]
-Reading from a _znode_ (additional Camel 2.10 onwards)
-++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Reading from a _znode_ (additional Camel 2.10 onwards)
 
 When data is read due to a `WatchedEvent` received from the ZooKeeper
 ensemble, the `CamelZookeeperEventType` header holds ZooKeeper's
@@ -121,9 +111,7 @@ value from that `WatchedEvent`. If the data is read initially (not
 triggered by a `WatchedEvent`) the `CamelZookeeperEventType` header will not
 be set.
 
-[[Zookeeper-Writingtoaznode]]
-Writing to a _znode_
-++++++++++++++++++++
+#### Writing to a _znode_
 
 The following snippet will write the payload of the exchange into the
 znode at `/somepath/somenode/` provided that it already exists:
@@ -216,9 +204,7 @@ Object testPayload = ...
 template.sendBodyAndHeader("direct:create-and-write-to-persistent-znode", testPayload, "CamelZooKeeperCreateMode", "PERSISTENT");
 ----
 
-[[Zookeeper-ZooKeeperenabledRoutepolicy]]
-ZooKeeper enabled Route policies
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### ZooKeeper enabled Route policies
 
 ZooKeeper allows for very simple and effective leader election out of
 the box. This component exploits this election capability in a
@@ -276,9 +262,7 @@ There are currently 3 policies defined in the component, with different SLAs:
  thus you can be sure that no even is processed before the Policy takes its decision.
 
 
-[[Zookeeper-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]

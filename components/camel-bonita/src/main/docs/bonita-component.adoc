@@ -1,12 +1,10 @@
-# Bonita Component
+## Bonita Component
 
 *Available as of Camel 2.19*
 
 This Camel component allow you to communicate with a remote Bonita engine.
 
-[[Bonita-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------------------------
@@ -15,9 +13,7 @@ bonita://[operation]?[options]
 
 Where *operation* is the specific action to perform on Bonita.
 
-[[Bonita-Options]]
-General Options
-^^^^^^^^^^^^^^^
+### General Options
 
 // component options: START
 The Bonita component has no options.
@@ -45,16 +41,12 @@ The Bonita component supports 10 endpoint options which are listed below:
 {% endraw %}
 // endpoint options: END
 
-[[Bonita-BodyMessage]]
-Body content
-^^^^^^^^^^^^
+### Body content
 
 For the startCase operation, the input variables are retrieved from the body message. This one has to contains a Map<String,Serializable>.
 
 
-[[Bonita-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
 The following example start a new case in Bonita:
 
@@ -63,9 +55,7 @@ The following example start a new case in Bonita:
 from("direct:start).to("bonita:startCase?hostname=localhost&amp;port=8080&amp;processName=TestProcess&amp;username=install&amp;password=install")
 ----------------------------------------------------------------------
 
-[[Bonita-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use Bonita in your Camel routes you need to add a dependency on
 *camel-bonita*, which implements the component.

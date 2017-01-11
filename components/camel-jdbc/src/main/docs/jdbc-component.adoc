@@ -1,4 +1,4 @@
-# JDBC Component
+## JDBC Component
 
 The *jdbc* component enables you to access databases through JDBC, where
 SQL queries (SELECT) and operations (INSERT, UPDATE, etc) are sent in
@@ -22,9 +22,7 @@ for this component:
 This component can only be used to define producer endpoints, which
 means that you cannot use the JDBC component in a `from()` statement.
 
-[[JDBC-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -----------------------------
@@ -36,9 +34,7 @@ This component only supports producer endpoints.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[JDBC-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -89,9 +85,7 @@ The JDBC component supports 14 endpoint options which are listed below:
 
 
 
-[[JDBC-Result]]
-Result
-^^^^^^
+### Result
 
 By default the result is returned in the OUT body as an
 `ArrayList<HashMap<String, Object>>`. The `List` object contains the
@@ -102,9 +96,7 @@ the result.
 *Note:* This component fetches `ResultSetMetaData` to be able to return
 the column name as the key in the `Map`.
 
-[[JDBC-MessageHeaders]]
-Message Headers
-+++++++++++++++
+#### Message Headers
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -128,9 +120,7 @@ type.
 `useHeadersAsParameters` has been enabled.
 |=======================================================================
 
-[[JDBC-Generatedkeys]]
-Generated keys
-^^^^^^^^^^^^^^
+### Generated keys
 
 *Available as of Camel 2.10*
 
@@ -147,9 +137,7 @@ test].
 
 Using generated keys does not work with together with named parameters.
 
-[[JDBC-Usingnamedparameters]]
-Using named parameters
-^^^^^^^^^^^^^^^^^^^^^^
+### Using named parameters
 
 *Available as of Camel 2.12*
 
@@ -172,9 +160,7 @@ Notice in the example above we set two headers with constant value +
 You can also store the header values in a `java.util.Map` and store the
 map on the headers with the key `CamelJdbcParameters`.
 
-[[JDBC-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 In the following example, we fetch the rows from the customer table.
 
@@ -210,9 +196,7 @@ from("direct:hello")
   .to("mock:result");
 -------------------------------------------------------------------------------------------------
 
-[[JDBC-Sample-Pollingthedatabaseeveryminute]]
-Sample - Polling the database every minute
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Sample - Polling the database every minute
 
 If we want to poll a database using the JDBC component, we need to
 combine it with a polling scheduler such as the link:timer.html[Timer]
@@ -224,9 +208,7 @@ data from the database every 60 seconds:
 from("timer://foo?period=60000").setBody(constant("select * from customer")).to("jdbc:testdb").to("activemq:queue:customers");
 ------------------------------------------------------------------------------------------------------------------------------
 
-[[JDBC-Sample-MoveDataBetweenDataSources]]
-Sample - Move Data Between Data Sources +
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Sample - Move Data Between Data Sources +
 
 A common use case is to query for data, process it and move it to
 another data source (ETL operations). In the following example, we
@@ -246,9 +228,7 @@ from("timer://MoveNewCustomersEveryHour?period=3600000")
 
  
 
-[[JDBC-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -256,4 +236,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:sql.html[SQL]
-

@@ -1,4 +1,4 @@
-# Netty Component
+## Netty Component
 
 *Available as of Camel 2.3*
 
@@ -33,9 +33,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Netty-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 The URI scheme for a netty component is as follows
 
@@ -51,9 +49,7 @@ UDP.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Netty-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -165,9 +161,7 @@ The Netty component supports 70 endpoint options which are listed below:
 
 
 
-[[Netty-RegistrybasedOptions]]
-Registry based Options
-^^^^^^^^^^^^^^^^^^^^^^
+### Registry based Options
 
 Codec Handlers and SSL Keystores can be enlisted in the
 link:registry.html[Registry], such as in the Spring XML file. 
@@ -223,9 +217,7 @@ so Camel knows it should lookup.
 
 *Important:* Read below about using non shareable encoders/decoders.
 
-[[Netty-Usingnonshareableencodersordecoders]]
-Using non shareable encoders or decoders
-++++++++++++++++++++++++++++++++++++++++
+#### Using non shareable encoders or decoders
 
 If your encoders or decoders is not shareable (eg they have the
 @Shareable class annotation), then your encoder/decoder must implement
@@ -239,13 +231,9 @@ The Netty component offers a
 `org.apache.camel.component.netty.ChannelHandlerFactories` factory
 class, that has a number of commonly used methods.
 
-[[Netty-SendingMessagestoandfromaNettyendpoint]]
-Sending Messages to/from a Netty endpoint
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Sending Messages to/from a Netty endpoint
 
-[[Netty-NettyProducer]]
-Netty Producer
-++++++++++++++
+#### Netty Producer
 
 In Producer mode, the component provides the ability to send payloads to
 a socket endpoint +
@@ -254,9 +242,7 @@ a socket endpoint +
 The producer mode supports both one-way and request-response based
 operations.
 
-[[Netty-NettyConsumer]]
-Netty Consumer
-++++++++++++++
+#### Netty Consumer
 
 In Consumer mode, the component provides the ability to:
 
@@ -269,9 +255,7 @@ object based payloads and
 The consumer mode supports both one-way and request-response based
 operations.
 
-[[Netty-Headers]]
-Headers
-^^^^^^^
+### Headers
 
 The following headers are filled for the exchanges created by the Netty
 consumer:
@@ -292,13 +276,9 @@ netty.
 |`NettyConstants.NETTY_LOCAL_ADDRESS` / `CamelNettyLocalAddress` |`java.net.SocketAddress` |Local address of the incoming socket connection.
 |=======================================================================
 
-[[Netty-UsageSamples]]
-Usage Samples
-^^^^^^^^^^^^^
+### Usage Samples
 
-[[Netty-AUDPNettyendpointusingRequest-Replyandserializedobjectpayload]]
-A UDP Netty endpoint using Request-Reply and serialized object payload
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### A UDP Netty endpoint using Request-Reply and serialized object payload
 
 [source,java]
 ------------------------------------------------------------------
@@ -316,9 +296,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ------------------------------------------------------------------
 
-[[Netty-ATCPbasedNettyconsumerendpointusingOne-waycommunication]]
-A TCP based Netty consumer endpoint using One-way communication
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### A TCP based Netty consumer endpoint using One-way communication
 
 [source,java]
 -------------------------------------------
@@ -330,9 +308,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 -------------------------------------------
 
-[[Netty-AnSSLTCPbasedNettyconsumerendpointusingRequest-Replycommunication]]
-An SSL/TCP based Netty consumer endpoint using Request-Reply communication
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### An SSL/TCP based Netty consumer endpoint using Request-Reply communication
 
 [[Netty-UsingtheJSSEConfigurationUtility]]
 Using the JSSE Configuration Utility
@@ -444,9 +420,7 @@ enriches the Camel link:message.html[Message] with headers having
 details about the client certificate. For example the subject name is
 readily available in the header `CamelNettySSLClientCertSubjectName`.
 
-[[Netty-UsingMultipleCodecs]]
-Using Multiple Codecs
-+++++++++++++++++++++
+#### Using Multiple Codecs
 
 In certain cases it may be necessary to add chains of encoders and
 decoders to the netty pipeline. To add multpile codecs to a camel netty
@@ -470,9 +444,7 @@ a comma separated list or contained in a List e.g.
 
 or via spring.
 
-[[Netty-ClosingChannelWhenComplete]]
-Closing Channel When Complete
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Closing Channel When Complete
 
 When acting as a server you sometimes want to close the channel when,
 for example, a client conversion is finished. +
@@ -500,9 +472,7 @@ written the bye message back to the client:
         });
 --------------------------------------------------------------------------------------------------------
 
-[[Netty-Addingcustomchannelpipelinefactoriestogaincompletecontroloveracreatedpipeline]]
-Adding custom channel pipeline factories to gain complete control over a created pipeline
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Adding custom channel pipeline factories to gain complete control over a created pipeline
 
 *Available as of Camel 2.5*
 
@@ -576,9 +546,7 @@ context.addRoutes(new RouteBuilder() {
 });
 -------------------------------------------------------------------
 
-[[Netty-ReusingNettybossandworkerthreadpools]]
-Reusing Netty boss and worker thread pools
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Reusing Netty boss and worker thread pools
 
 *Available as of Camel 2.12*
 
@@ -637,9 +605,7 @@ And if we have another route we can refer to the shared worker pool:
 
 ... and so forth.
 
-[[Netty-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -648,4 +614,3 @@ See Also
 
 * link:netty-http.html[Netty HTTP]
 * link:mina.html[MINA]
-

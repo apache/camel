@@ -1,4 +1,4 @@
-# RabbitMQ Component
+## RabbitMQ Component
 
 *Available as of Camel 2.12*
 
@@ -20,9 +20,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[RabbitMQ-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -------------------------------------------------
@@ -35,9 +33,7 @@ RabbitMQ client default (5672). The exchange name determines which
 exchange produced messages will sent to. In the case of consumers, the
 exchange name determines which exchange the queue will bind to.
 
-[[RabbitMQ-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -122,9 +118,7 @@ See
 http://www.rabbitmq.com/releases/rabbitmq-java-client/current-javadoc/com/rabbitmq/client/ConnectionFactory.html[http://www.rabbitmq.com/releases/rabbitmq-java-client/current-javadoc/com/rabbitmq/client/ConnectionFactory.html]
 and the AMQP specification for more information on connection options.
 
-[[RabbitMQ-Customconnectionfactory]]
-Custom connection factory
-~~~~~~~~~~~~~~~~~~~~~~~~~
+### Custom connection factory
 
 [source,xml]
 ----------------------------------------------------------------------------------------
@@ -210,18 +204,14 @@ producer will also set the headers for downstream processors once the
 exchange has taken place. Any headers set prior to production that the
 producer sets will be overriden.
 
-[[RabbitMQ-MessageBody]]
-Message Body
-^^^^^^^^^^^^
+### Message Body
 
 The component will use the camel exchange in body as the rabbit mq
 message body. The camel exchange in object must be convertible to a byte
 array. Otherwise the producer will throw an exception of unsupported
 body type.
 
-[[RabbitMQ-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 To receive messages from a queue that is bound to an exchange A with the
 routing key B,
@@ -246,12 +236,9 @@ To send messages to an exchange called C
 ...to("rabbitmq://localhost/B")
 -------------------------------
 
-[[RabbitMQ-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

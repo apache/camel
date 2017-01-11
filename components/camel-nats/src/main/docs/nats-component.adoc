@@ -1,4 +1,4 @@
-# Nats Component
+## Nats Component
 
 *Available since Camel 2.17.0*
 
@@ -17,9 +17,7 @@ their `pom.xml` for this component.
 </dependency>
 ------------------------------------------------------------
 
-[[NATS-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------------------
@@ -28,9 +26,7 @@ nats:servers[?options]
 
 Where *servers* represents the list of NATS servers.
 
-[[NATS-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -78,9 +74,7 @@ The Nats component supports 23 endpoint options which are listed below:
 
 
 
-[[NATS-Headers]]
-Headers
-^^^^^^^
+### Headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================

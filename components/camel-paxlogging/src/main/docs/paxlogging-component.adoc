@@ -1,4 +1,4 @@
-# OSGi PAX Logging Component
+## OSGi PAX Logging Component
 
 *Available in Camel 2.6*
 
@@ -6,9 +6,7 @@ The `paxlogging` component can be used in an OSGi environment to receive
 http://wiki.ops4j.org/display/paxlogging/Pax+Logging[PaxLogging] events
 and process them.
 
-[[Pax-Logging-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users need to add the following dependency to their `pom.xml`
 
@@ -24,9 +22,7 @@ Maven users need to add the following dependency to their `pom.xml`
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.6.0 or higher).
 
-[[Pax-Logging-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,xml]
 -----------------------------
@@ -36,9 +32,7 @@ paxlogging:appender[?options]
 where `appender` is the name of the pax appender that need to be
 configured in the PaxLogging service configuration.
 
-[[Pax-Logging-URIoptions]]
-URI options
-^^^^^^^^^^^
+### URI options
 
 
 
@@ -76,15 +70,11 @@ The OSGi PAX Logging component supports 5 endpoint options which are listed belo
 // endpoint options: END
 
 
-[[Pax-Logging-Messagebody]]
-Message body
-^^^^^^^^^^^^
+### Message body
 
 The `in` message body will be set to the received PaxLoggingEvent.
 
-[[Pax-Logging-Exampleusage]]
-Example usage
-^^^^^^^^^^^^^
+### Example usage
 
 [source,xml]
 ----------------------------------

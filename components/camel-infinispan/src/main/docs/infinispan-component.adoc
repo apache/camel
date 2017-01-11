@@ -1,4 +1,4 @@
-# Infinispan Component
+## Infinispan Component
 
 *Available as of Camel 2.13.0*
 
@@ -22,18 +22,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Infinispan-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -------------------------------
 infinispan://hostName?[options]
 -------------------------------
 
-[[Infinispan-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 The producer allows sending messages to a local infinispan cache
 configured in the registry, or to a remote cache using the HotRod
@@ -76,9 +72,7 @@ The Infinispan component supports 15 endpoint options which are listed below:
 
 
 
-[[Infinispan-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 [width="100%",cols="10%,10%,10%,10%,60%",options="header",]
 |=======================================================================
@@ -123,9 +117,7 @@ present the command defaults to InifinispanConfiguration's one
 operation returning something is ignored by the client application
 |=======================================================================
 
-[[Infinispan-Example]]
-Example
-^^^^^^^
+### Example
 
 Below is an example route that retrieves a value from the cache for a
 specific key:
@@ -138,9 +130,7 @@ from("direct:start")
         .to("infinispan://localhost?cacheContainer=#cacheContainer");
 ------------------------------------------------------------------------------------
 
-[[Infinispan-UsingtheInfinispanbasedidempotentrepository]]
-Using the Infinispan based idempotent repository
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using the Infinispan based idempotent repository
 
 In this section we will use the Infinispan based idempotent repository.
 
@@ -178,12 +168,9 @@ XML file as well:
 
 For more information, see these resources...
 
-[[Infinispan-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

@@ -1,4 +1,4 @@
-# Mock Component
+## Mock Component
 ifdef::env-github[]
 :caution-caption: :boom:
 :important-caption: :exclamation:
@@ -7,9 +7,7 @@ ifdef::env-github[]
 :warning-caption: :warning:
 endif::[]
 
-[[Mock-MockComponent]]
-Mock Component
-~~~~~~~~~~~~~~
+### Mock Component
 
 link:testing.html[Testing] of distributed and asynchronous processing is
 notoriously difficult. The link:mock.html[Mock], link:test.html[Test]
@@ -65,9 +63,7 @@ From Camel 2.10 onwards there are two new options `retainFirst`, and
 endpoints keep in memory.
 
 
-[[Mock-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source]
 ----
@@ -80,9 +76,7 @@ endpoint.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Mock-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -120,9 +114,7 @@ The Mock component supports 11 endpoint options which are listed below:
 
 
 
-[[Mock-SimpleExample]]
-Simple Example
-^^^^^^^^^^^^^^
+### Simple Example
 
 Here's a simple example of Mock endpoint in use. First, the endpoint is
 resolved on the context. Then we set an expectation, and then, after the
@@ -149,9 +141,7 @@ Camel will by default wait 10 seconds when the `assertIsSatisfied()` is
 invoked. This can be configured by setting the
 `setResultWaitTime(millis)` method.
 
-[[Mock-UsingassertPeriod]]
-Using `assertPeriod`
-++++++++++++++++++++
+#### Using `assertPeriod`
 
 *Available as of Camel 2.7* +
 When the assertion is satisfied then Camel will stop waiting and
@@ -174,9 +164,7 @@ resultEndpoint.expectedMessageCount(2);
 resultEndpoint.assertIsSatisfied();
 ----
 
-[[Mock-Settingexpectations]]
-Setting expectations
-^^^^^^^^^^^^^^^^^^^^
+### Setting expectations
 
 You can see from the Javadoc of
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html[MockEndpoint]
@@ -220,9 +208,7 @@ Here's another example:
 resultEndpoint.expectedBodiesReceived("firstMessageBody", "secondMessageBody", "thirdMessageBody");
 ----
 
-[[Mock-Addingexpectationstospecificmessages]]
-Adding expectations to specific messages
-++++++++++++++++++++++++++++++++++++++++
+#### Adding expectations to specific messages
 
 In addition, you can use the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#message(int)[`message(int
@@ -242,9 +228,7 @@ There are some examples of the Mock endpoint in use in the
 http://svn.apache.org/viewvc/camel/trunk/camel-core/src/test/java/org/apache/camel/processor/[`camel-core`
 processor tests].
 
-[[Mock-Mockingexistingendpoints]]
-Mocking existing endpoints
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Mocking existing endpoints
 
 *Available as of Camel 2.7*
 
@@ -313,9 +297,7 @@ That means Camel will use more memory. This may not be suitable when you
 send in a lot of messages.
 
 
-[[Mock-Mockingexistingendpointsusingthecamel-testcomponent]]
-Mocking existing endpoints using the `camel-test` component
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Mocking existing endpoints using the `camel-test` component
 
 Instead of using the `adviceWith` to instruct Camel to mock endpoints,
 you can easily enable this behavior when using the `camel-test` Test
@@ -335,9 +317,7 @@ include::../../../../components/camel-test/src/test/java/org/apache/camel/test/p
 ----
 
 
-[[Mock-MockingexistingendpointswithXMLDSL]]
-Mocking existing endpoints with XML DSL
-+++++++++++++++++++++++++++++++++++++++
+#### Mocking existing endpoints with XML DSL
 
 If you do not use the `camel-test` component for unit testing (as shown
 above) you can use a different approach when using XML files for
@@ -377,9 +357,7 @@ in the constructor for the bean:
 </bean>
 ----
 
-[[Mock-Mockingendpointsandskipsendingtooriginalendpoint]]
-Mocking endpoints and skip sending to original endpoint
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Mocking endpoints and skip sending to original endpoint
 
 *Available as of Camel 2.10*
 
@@ -405,9 +383,7 @@ The same example using the link:testing.html[Test Kit]
 include::../../../../components/camel-test/src/test/java/org/apache/camel/test/patterns/IsMockEndpointsAndSkipJUnit4Test.java[tags=e1]
 ----
 
-[[Mock-Limitingthenumberofmessagestokeep]]
-Limiting the number of messages to keep
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Limiting the number of messages to keep
 
 *Available as of Camel 2.10*
 
@@ -444,9 +420,7 @@ methods that work on message bodies, headers, etc. will only operate on
 the retained messages. In the example above they can test only the
 expectations on the 10 retained messages.
 
-[[Mock-Testingwitharrivaltimes]]
-Testing with arrival times
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Testing with arrival times
 
 *Available as of Camel 2.7*
 
@@ -502,9 +476,7 @@ In the example above we use `seconds` as the time unit, but Camel offers
 `milliseconds`, and `minutes` as well.
 
 
-[[Mock-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]

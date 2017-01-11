@@ -1,12 +1,10 @@
-# OpenStack Cinder Component
+## OpenStack Cinder Component
 
 *Available as of Camel 2.19*
 
 The openstack-cinder component allows messages to be sent to an OpenStack block storage services.
 
-[[openstack-cinder-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -24,9 +22,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel.
 
 
-[[openstack-cinder-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 ----------------------------
@@ -36,9 +32,7 @@ openstack-cinder://hosturl[?options]
 You can append query options to the URI in the following format
 `?options=value&option2=value&...`
 
-[[openstack-cinder-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 // component options: START
 The OpenStack Cinder component has no options.
@@ -66,17 +60,12 @@ The OpenStack Cinder component supports 10 endpoint options which are listed bel
 // endpoint options: END
 
 
-[[openstack-cinder-Usage]]
-Usage
-^^^^^
+### Usage
 You can use following settings for each subsystem:
 
-volumes
-~~~~~~~
+### volumes
 
-[[openstack-cinder-OperationsYouCanPerformWiththeVolumeProducer]]
-Operations you can perform with the Volume producer
-+++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Operations you can perform with the Volume producer
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -94,9 +83,7 @@ Operations you can perform with the Volume producer
 |`delete` | Delete the volume.
 |=========================================================================
 
-[[openstack-cinder-MessageheadersevaluatedbytheVolumeProducer]]
-Message headers evaluated by the Volume producer
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers evaluated by the Volume producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -123,12 +110,9 @@ Message headers evaluated by the Volume producer
 
 If you need more precise volume settings you can create new object of the type *org.openstack4j.model.storage.block.Volume* and send in the message body.
 
-snapshots
-~~~~~~~~~
+### snapshots
 
-[[openstack-cinder-OperationsYouCanPerformWiththeSnapshotProducer]]
-Operations you can perform with the Snapshot producer
-+++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Operations you can perform with the Snapshot producer
 [width="100%",cols="20%,80%",options="header",]
 |=========================================================================
 |Operation | Description
@@ -145,9 +129,7 @@ Operations you can perform with the Snapshot producer
 
 |=========================================================================
 
-[[openstack-cinder-MessageheadersevaluatedbytheSnapshotProducer]]
-Message headers evaluated by the Snapshot producer
-++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers evaluated by the Snapshot producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=========================================================================
@@ -169,9 +151,7 @@ Message headers evaluated by the Snapshot producer
 
 If you need more precise server settings you can create new object of the type *org.openstack4j.model.storage.block.VolumeSnapshot* and send in the message body.
 
-[[CamelOpenstack-cinder-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -179,4 +159,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:openstack.html[openstack Component]
-

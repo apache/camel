@@ -1,4 +1,4 @@
-# Nagios Component
+## Nagios Component
 
 *Available as of Camel 2.3*
 
@@ -18,9 +18,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Nagios-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------------------------
@@ -33,9 +31,7 @@ its endpoint. +
  Camel also provides a link:camel-jmx.html[EventNotifer] which allows
 you to send notifications to Nagios.
 
-[[Nagios-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -82,9 +78,7 @@ The Nagios component supports 8 endpoint options which are listed below:
 
 
 
-[[Nagios-Sendingmessageexamples]]
-Sending message examples
-^^^^^^^^^^^^^^^^^^^^^^^^
+### Sending message examples
 
 You can send a message to Nagios where the message payload contains the
 message. By default it will be `OK` level and use the
@@ -111,9 +105,7 @@ To send a `CRITICAL` message you can send the headers such as:
         template.sendBodyAndHeaders("direct:start", "Hello Nagios", headers);
 -----------------------------------------------------------------------------
 
-[[Nagios-UsingNagiosEventNotifer]]
-Using `NagiosEventNotifer`
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using `NagiosEventNotifer`
 
 The link:nagios.html[Nagios] component also provides an
 link:camel-jmx.html[EventNotifer] which you can use to send events to
@@ -136,12 +128,9 @@ In Spring XML its just a matter of defining a Spring bean with the type
 link:advanced-configuration-of-camelcontext-using-spring.html[Advanced
 configuration of CamelContext using Spring].
 
-[[Nagios-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

@@ -1,4 +1,4 @@
-# OpenShift Component
+## OpenShift Component
 
 *Available as of Camel 2.14*
 
@@ -18,9 +18,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Openshift-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------------------------
@@ -30,9 +28,7 @@ openshift:clientId[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Openshift-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -95,13 +91,9 @@ The OpenShift component supports 27 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Openshift-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
-[[Openshift-Listingallapplications]]
-Listing all applications
-++++++++++++++++++++++++
+#### Listing all applications
 
 [source,java]
 --------------------------------------------------------------------------
@@ -114,9 +106,7 @@ from("direct:apps")
 In this case the information about all the applications is returned as
 pojo. If you want a json response, then set mode=json.
 
-[[Openshift-Stoppinganapplication]]
-Stopping an application
-+++++++++++++++++++++++
+#### Stopping an application
 
 [source,java]
 ---------------------------------------------------------------------------------------------
@@ -160,12 +150,9 @@ following headers is included.
 |CamelOpenShiftEventNewState |No |The new state, for any of the event types
 |=======================================================================
 
-[[Openshift-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

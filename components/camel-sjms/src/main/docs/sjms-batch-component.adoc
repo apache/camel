@@ -1,8 +1,6 @@
-# Simple JMS Batch Component
+## Simple JMS Batch Component
 [[ConfluenceContent]]
-[[SJMSBatch-SJMSBatchComponent]]
-SJMS Batch Component
-~~~~~~~~~~~~~~~~~~~~
+### SJMS Batch Component
 
 *Available as of Camel 2.16*
 
@@ -78,9 +76,7 @@ for this component:
 </dependency>
 ----
 
-[[SJMSBatch-URIformat]]
-URI format
-++++++++++
+#### URI format
 
 [source]
 ----
@@ -110,9 +106,7 @@ broker. A plain link:sjms.html[SJMS] consumer endpoint can be used in
 conjunction with a regular non-persistence backed
 link:aggregator2.html[aggregator] in this scenario.
 
-[[SJMSBatch-ComponentOptionsandConfigurations]]
-Component Options and Configurations
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Component Options and Configurations
 
 
 

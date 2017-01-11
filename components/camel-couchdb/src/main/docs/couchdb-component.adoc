@@ -1,4 +1,4 @@
-# CouchDB Component
+## CouchDB Component
 
 *Available as of Camel 2.11*
 
@@ -31,9 +31,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[CouchDB-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -------------------------------------------------
@@ -43,9 +41,7 @@ couchdb:http://hostname[:port]/database?[options]
 Where *hostname* is the hostname of the running couchdb instance. Port
 is optional and if not specified then defaults to 5984.
 
-[[CouchDB-Options]]
-Options
-^^^^^^^
+### Options
 
 // component options: START
 The CouchDB component has no options.
@@ -77,9 +73,7 @@ The CouchDB component supports 15 endpoint options which are listed below:
 {% endraw %}
 // endpoint options: END
 
-[[CouchDB-Headers]]
-Headers
-^^^^^^^
+### Headers
 
 The following headers are set on exchanges during message transport.
 
@@ -105,9 +99,7 @@ ignored. That means for example, if you set CouchDbId as a header, it
 will not be used as the id for insertion, the id of the document will
 still be used.
 
-[[CouchDB-MessageBody]]
-Message Body
-^^^^^^^^^^^^
+### Message Body
 
 The component will use the message body as the document to be inserted.
 If the body is an instance of String, then it will be marshalled into a
@@ -116,9 +108,7 @@ or the insert / update will fail. If the body is an instance of a
 com.google.gson.JsonElement then it will be inserted as is. Otherwise
 the producer will throw an exception of unsupported body type.
 
-[[CouchDB-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 For example if you wish to consume all inserts, updates and deletes from
 a CouchDB instance running locally, on port 9999 then you could use the

@@ -1,4 +1,4 @@
-# Schematron Component
+## Schematron Component
 
 *Available as of Camel 2.14*
 
@@ -17,18 +17,14 @@ written in a way that Schematron rules are loaded at the start of the
 endpoint (only once) this is to minimise the overhead of instantiating a
 Java Templates object representing the rules.
 
-[[Schematron-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------
 schematron://path?[options]
 ---------------------------
 
-[[Schematron-URIoptions]]
-URI options
-^^^^^^^^^^^
+### URI options
 
 
 // component options: START
@@ -58,9 +54,7 @@ The Schematron component supports 5 endpoint options which are listed below:
 
 
 
-[[Schematron-Headers]]
-Headers
-^^^^^^^
+### Headers
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -71,9 +65,7 @@ Headers
 |CamelSchematronValidationReport |The schematrion report body in XML format. See an example below |String |IN
 |=======================================================================
 
-[[Schematron-URIandpathsyntax]]
-URI and path syntax
-^^^^^^^^^^^^^^^^^^^
+### URI and path syntax
 
 The following example shows how to invoke the schematron processor in
 Java DSL. The schematron rules file is sourced from the class path:
@@ -124,9 +116,7 @@ an update, all you need is to restart the route or the component. No
 harm in storing these rules in the class path though, but you will have
 to build and deploy the component to pick up the changes.
 
-[[Schematron-Schematronrulesandreportsamples]]
-Schematron rules and report samples
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Schematron rules and report samples
 
 Here is an example of schematron rules
 
@@ -176,4 +166,3 @@ to Schematron] by Mulleberry technologies. An excellent document in PDF
 to get you started on Schematron.
 * http://www.schematron.com[Schematron official site]. This contains
 links to other resources
-

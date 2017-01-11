@@ -1,4 +1,4 @@
-# Cassandra CQL Component
+## Cassandra CQL Component
 [[Cassandra-CamelCassandraComponent]]
 Camel Cassandra Component
 -------------------------
@@ -33,9 +33,7 @@ Maven users will need to add the following dependency to their
 </dependency>
 ------------------------------------------------------------
 
-[[Cassandra-URIformat]]
-URI format
-~~~~~~~~~~
+### URI format
 
 The endpoint can initiate the Cassandra connection or use an existing
 one.
@@ -55,9 +53,7 @@ To fine tune the Cassandra connection (SSL options, pooling options,
 load balancing policy, retry policy, reconnection policy...), create
 your own Cluster instance and give it to the Camel endpoint.
 
-[[Cassandra-Options]]
-Cassandra Options
-~~~~~~~~~~~~~~~~~
+### Cassandra Options
 
 
 // component options: START
@@ -96,13 +92,9 @@ The Cassandra CQL component supports 18 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Cassandra-Messages]]
-Messages
-~~~~~~~~
+### Messages
 
-[[Cassandra-IncomingMessage]]
-Incoming Message
-^^^^^^^^^^^^^^^^
+### Incoming Message
 
 The Camel Cassandra endpoint expects a bunch of simple objects (`Object`
 or `Object[]` or `Collection<Object>`) which will be bound to the CQL
@@ -114,9 +106,7 @@ Headers:
 * `CamelCqlQuery` (optional, `String` or `RegularStatement`): CQL query
 either as a plain String or built using the `QueryBuilder`.
 
-[[Cassandra-OutgoingMessage]]
-Outgoing Message
-^^^^^^^^^^^^^^^^
+### Outgoing Message
 
 The Camel Cassandra endpoint produces one or many a Cassandra Row
 objects depending on the `resultSetConversionStrategy`:
@@ -129,9 +119,7 @@ objects depending on the `resultSetConversionStrategy`:
 * Anything else, if `resultSetConversionStrategy` is a custom
 implementation of the `ResultSetConversionStrategy`
 
-[[Cassandra-Repositories]]
-Repositories
-~~~~~~~~~~~~
+### Repositories
 
 Cassandra can be used to store message keys or messages for the
 idempotent and aggregation EIP.
@@ -142,9 +130,7 @@ anti-patterns queues and queue like datasets]. It's advised to use
 LeveledCompaction and a small GC grace setting for these tables to allow
 tombstoned rows to be removed quickly.
 
-[[Cassandra-Idempotentrepository]]
-Idempotent repository
-^^^^^^^^^^^^^^^^^^^^^
+### Idempotent repository
 
 The `NamedCassandraIdempotentRepository` stores messages keys in a
 Cassandra table like this:
@@ -186,9 +172,7 @@ Alternatively, the `CassandraIdempotentRepository` does not have a
 `LOCAL_QUORUM`…
 |=======================================================================
 
-[[Cassandra-Aggregationrepository]]
-Aggregation repository
-^^^^^^^^^^^^^^^^^^^^^^
+### Aggregation repository
 
 The `NamedCassandraAggregationRepository` stores exchanges by
 correlation key in a Cassandra table like this:

@@ -1,4 +1,4 @@
-# GZip DataFormat
+## GZip DataFormat
 
 The GZip link:data-format.html[Data Format] is a message compression and
 de-compression format. It uses the same deflate algorithm that is used
@@ -10,9 +10,7 @@ The compression capability is quite useful when you deal with large XML
 and Text based payloads or when you read messages previously comressed
 using `gzip` tool.
 
-[[GZipdataformat-Options]]
-Options
-^^^^^^^
+### Options
 
 // dataformat options: START
 The GZip dataformat supports 1 options which are listed below.
@@ -28,9 +26,7 @@ The GZip dataformat supports 1 options which are listed below.
 {% endraw %}
 // dataformat options: END
 
-[[GZipdataformat-Marshal]]
-Marshal
-^^^^^^^
+### Marshal
 
 In this example we marshal a regular text/XML payload to a compressed
 payload employing gzip compression format and send it an ActiveMQ queue
@@ -41,9 +37,7 @@ called MY_QUEUE.
 from("direct:start").marshal().gzip().to("activemq:queue:MY_QUEUE");
 --------------------------------------------------------------------
 
-[[GZipdataformat-Unmarshal]]
-Unmarshal
-^^^^^^^^^
+### Unmarshal
 
 In this example we unmarshal a gzipped payload from an ActiveMQ queue
 called MY_QUEUE to its original format, and forward it for processing to
@@ -54,9 +48,7 @@ the `UnGZippedMessageProcessor`.
 from("activemq:queue:MY_QUEUE").unmarshal().gzip().process(new UnGZippedMessageProcessor()); 
 ---------------------------------------------------------------------------------------------
 
-[[GZipdataformat-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 This data format is provided in *camel-core* so no additional
 dependencies is needed.
