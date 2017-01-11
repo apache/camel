@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.ComponentOptionModel;
@@ -131,7 +132,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
                     boolean exists = file.exists();
                     boolean updated = false;
 
-                    updated |= updateTitle(file, model.getTitle() + " Component");
+                    updated |= updateTitles(file, model.getTitle() + " Component");
 
                     if (model.getComponentOptions() != null) {
                         String options = templateComponentOptions(model);
@@ -182,7 +183,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
                     boolean exists = file.exists();
                     boolean updated = false;
 
-                    updated |= updateTitle(file, model.getTitle() + " DataFormat");
+                    updated |= updateTitles(file, model.getTitle() + " DataFormat");
 
                     if (model.getDataFormatOptions() != null) {
                         String options = templateDataFormatOptions(model);
@@ -260,7 +261,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
                     boolean exists = file.exists();
                     boolean updated = false;
 
-                    updated |= updateTitle(file, model.getTitle() + " Language");
+                    updated |= updateTitles(file, model.getTitle() + " Language");
 
                     if (model.getLanguageOptions() != null) {
                         String options = templateLanguageOptions(model);
@@ -282,71 +283,69 @@ public class ReadmeComponentMojo extends AbstractMojo {
         }
     }
 
-    private boolean updateTitle(File file, String title) throws MojoExecutionException {
+    private boolean updateTitles(File file, String title) throws MojoExecutionException {
         if (!file.exists()) {
             return false;
         }
 
-        // they may be in old title format which we want to avoid
-        // [[Bean-BeanComponent]]
-        // Bean Component
-        // ~~~~~~~~~~~~~~
+        boolean updated = false;
 
         try {
             String text = loadText(new FileInputStream(file));
 
-            // grab the first 3 lines which can have old legacy format
-            String before = StringHelper.before(text, "\n");
-            text = StringHelper.after(text, "\n");
-            String before2 = StringHelper.before(text, "\n");
-            text = StringHelper.after(text, "\n");
-            String before3 = StringHelper.before(text, "\n");
-            text = StringHelper.after(text, "\n");
+            List<String> newLines = new ArrayList<>();
 
-            // skip old title format
-            if (before3 != null && before3.startsWith("~~~")) {
-                before = null;
-                before2 = null;
-                before3 = null;
-            }
-            if (before2 != null && before2.startsWith("~~~")) {
-                before = null;
-                before2 = null;
-            }
+            String[] lines = text.split("\n");
+            for (int i = 0; i < lines.length; i++) {
+                String line = lines[i];
 
-            String oldTitle = before;
-            if (oldTitle == null) {
-                oldTitle = before2;
-            }
-            if (oldTitle == null) {
-                oldTitle = before3;
-            }
-
-            String changed = "# " + title;
-            if (!changed.equals(oldTitle)) {
-                // insert title in top of file
-                String newText = changed + "\n";
-                // keep the before lines that was okay to keep
-                if (before != null) {
-                    newText += before + "\n";
+                if (i == 0) {
+                    // first line is the title to make the text less noisy we use level 2
+                    String newLine = "## " + title;
+                    newLines.add(newLine);
+                    updated = !line.equals(newLine);
+                    continue;
                 }
-                if (before2 != null) {
-                    newText += before2 + "\n";
-                }
-                if (before3 != null) {
-                    newText += before3 + "\n";
-                }
-                // and remember the doc body
-                newText += text;
 
+                // use single line headers with # as level instead of the cumbersome adoc weird style
+                if (line.startsWith("^^^") || line.startsWith("~~~") || line.startsWith("+++") ) {
+                    String level = line.startsWith("+++") ? "####" : "###";
+
+                    // transform legacy heading into new style
+                    int idx = newLines.size() - 1;
+                    String prev = newLines.get(idx);
+
+                    newLines.set(idx, level + " " + prev);
+
+                    // okay if 2nd-prev line is a [[title]] we need to remove that too
+                    // so we have nice clean sub titles
+                    idx = newLines.size() - 2;
+                    if (idx >= 0) {
+                        prev = newLines.get(idx);
+                        if (prev.startsWith("[[")) {
+                            // remove
+                            newLines.remove(idx);
+                        }
+                    }
+
+                    updated = true;
+                } else {
+                    // okay normal text so just add it
+                    newLines.add(line);
+                }
+            }
+
+
+            if (updated) {
+                // build the new updated text
+                String newText = newLines.stream().collect(Collectors.joining("\n"));
                 writeText(file, newText);
-                return true;
             }
         } catch (Exception e) {
             throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
         }
 
-        return false;
+        return updated;
     }
 
     private boolean updateComponentOptions(File file, String changed) throws MojoExecutionException {
