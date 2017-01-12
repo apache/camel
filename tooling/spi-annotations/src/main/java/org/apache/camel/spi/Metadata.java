@@ -33,15 +33,6 @@ import java.lang.annotation.Target;
 public @interface Metadata {
 
     /**
-     * The expression mode to use as either expression or predicate.
-     */
-    enum ExpressionMode {
-
-        expression, predicate;
-
-    }
-
-    /**
      * To define one or more labels.
      * <p/>
      * Multiple labels can be defined as a comma separated value.
@@ -84,13 +75,5 @@ public @interface Metadata {
      * Whether the option is secret/sensitive information such as a password.
      */
     boolean secret() default false;
-
-    /**
-     * Used by EIPs to mark whether an expression is used as expression or predicate.
-     * <p/>
-     * For example a message transformer uses the {@link ExpressionMode#expression} mode,
-     * while a content based router uses {@link ExpressionMode#predicate}.
-     */
-    ExpressionMode expressionMode() default ExpressionMode.expression;
 
 }

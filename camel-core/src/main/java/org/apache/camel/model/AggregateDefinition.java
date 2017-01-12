@@ -45,6 +45,7 @@ import org.apache.camel.processor.aggregate.ClosedCorrelationKeyException;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
+import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.concurrent.SynchronousExecutorService;
@@ -60,8 +61,7 @@ import org.apache.camel.util.concurrent.SynchronousExecutorService;
 public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition> implements ExecutorServiceAwareDefinition<AggregateDefinition> {
     @XmlElement(name = "correlationExpression", required = true)
     private ExpressionSubElementDefinition correlationExpression;
-    @XmlElement(name = "completionPredicate")
-    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
+    @XmlElement(name = "completionPredicate") @AsPredicate
     private ExpressionSubElementDefinition completionPredicate;
     @XmlElement(name = "completionTimeout")
     private ExpressionSubElementDefinition completionTimeoutExpression;
@@ -130,7 +130,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     public AggregateDefinition() {
     }
 
-    public AggregateDefinition(Predicate predicate) {
+    public AggregateDefinition(@AsPredicate Predicate predicate) {
         this(ExpressionNodeHelper.toExpressionDefinition(predicate));
     }
     
@@ -890,8 +890,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     /**
      * Sets the predicate used to determine if the aggregation is completed
      */
-    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
-    public AggregateDefinition completionPredicate(Predicate predicate) {
+    public AggregateDefinition completionPredicate(@AsPredicate Predicate predicate) {
         checkNoCompletedPredicate();
         setCompletionPredicate(new ExpressionSubElementDefinition(predicate));
         return this;
@@ -903,7 +902,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      *
      * @return the builder
      */
-    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
+    @AsPredicate
     public PredicateClause<AggregateDefinition> completionPredicate() {
         PredicateClause<AggregateDefinition> clause = new PredicateClause<>(this);
         completionPredicate(clause);
@@ -916,7 +915,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      *
      * @return the builder
      */
-    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
+    @AsPredicate
     public PredicateClause<AggregateDefinition> completion() {
         return completionPredicate();
     }

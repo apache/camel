@@ -35,6 +35,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.OnCompletionProcessor;
+import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
@@ -53,8 +54,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     private Boolean onCompleteOnly;
     @XmlAttribute
     private Boolean onFailureOnly;
-    @XmlElement(name = "onWhen")
-    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
+    @XmlElement(name = "onWhen") @AsPredicate
     private WhenDefinition onWhen;
     @XmlAttribute
     private Boolean parallelProcessing;
@@ -250,8 +250,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
      * @param predicate predicate that determines true or false
      * @return the builder
      */
-    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
-    public OnCompletionDefinition onWhen(Predicate predicate) {
+    public OnCompletionDefinition onWhen(@AsPredicate Predicate predicate) {
         setOnWhen(new WhenDefinition(predicate));
         return this;
     }
