@@ -4,10 +4,10 @@ import javax.inject.Named;
 import javax.transaction.Transaction;
 
 @Named("PROPAGATION_NOT_SUPPORTED")
-public class NotSupportedNewJavaEETransactionPolicy extends TransactionalJavaEETransactionPolicy {
+public class NotSupportedJavaEETransactionPolicy extends TransactionalJavaEETransactionPolicy {
 
     @Override
-    public void run(final Runnable runnable) throws Exception {
+    public void run(final Runnable runnable) throws Throwable {
 
         Transaction suspendedTransaction = null;
         try {

@@ -168,15 +168,15 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
         // spring transaction template is working best with rollback if you
         // throw it a runtime exception
         // otherwise it may not rollback messages send to JMS queues etc.
-        transactionPolicy.run(new Runnable() {
+        transactionPolicy.run(new JavaEETransactionPolicy.Runnable() {
 
             @Override
-            public void run() {
+            public void run() throws Throwable {
 
                 // wrapper exception to throw if the exchange failed
                 // IMPORTANT: Must be a runtime exception to let Spring regard
                 // it as to do "rollback"
-                RuntimeException rce;
+                Throwable rce;
 
                 // and now let process the exchange by the error handler
                 processByErrorHandler(exchange);
@@ -187,11 +187,11 @@ public class TransactionErrorHandler extends ErrorHandlerSupport
 
                     // wrap exception in transacted exception
                     if (exchange.getException() != null) {
-                        rce = ObjectHelper.wrapRuntimeCamelException(exchange.getException());
+                        rce = exchange.getException();
                     } else {
                         // create dummy exception to force spring transaction
                         // manager to rollback
-                        rce = ObjectHelper.wrapRuntimeCamelException(new TransactionRolledbackException());
+                        rce = new TransactionRolledbackException();
                     }
 
                     // throw runtime exception to force rollback (which works

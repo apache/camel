@@ -6,7 +6,7 @@ import javax.inject.Named;
 public class SupportsEETransactionPolicy extends TransactionalJavaEETransactionPolicy {
 
     @Override
-    public void run(final Runnable runnable) throws Exception {
+    public void run(final Runnable runnable) throws Throwable {
 
         runnable.run();
 

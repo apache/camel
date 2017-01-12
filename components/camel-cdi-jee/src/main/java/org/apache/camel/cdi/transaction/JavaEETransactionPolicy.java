@@ -25,6 +25,10 @@ public abstract class JavaEETransactionPolicy implements TransactedPolicy {
 
     private static final Logger LOG = LoggerFactory.getLogger(JavaEETransactionPolicy.class);
 
+    public static interface Runnable {
+        void run() throws Throwable;
+    }
+
     @Resource(lookup = "java:/TransactionManager")
     protected TransactionManager transactionManager;
 

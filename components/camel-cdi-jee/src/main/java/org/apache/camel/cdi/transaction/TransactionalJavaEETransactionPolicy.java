@@ -18,7 +18,7 @@ public abstract class TransactionalJavaEETransactionPolicy extends JavaEETransac
 
     private static final Logger LOG = LoggerFactory.getLogger(TransactionalJavaEETransactionPolicy.class);
 
-    protected void runWithTransaction(final Runnable runnable, final boolean isNew) throws Exception {
+    protected void runWithTransaction(final Runnable runnable, final boolean isNew) throws Throwable {
 
         if (isNew) {
             begin();
@@ -31,7 +31,7 @@ public abstract class TransactionalJavaEETransactionPolicy extends JavaEETransac
         } catch (Error e) {
             rollback(isNew);
             throw e;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             rollback(isNew);
             throw e;
         }
