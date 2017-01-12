@@ -141,9 +141,54 @@ public final class XmlRouteParser {
                 detail.setLineNumber(lineNumber);
                 detail.setLineNumberEnd(lineNumberEnd);
                 detail.setSimple(simple);
+
+                // is it used as predicate or not
+                boolean asPredicate = isSimplePredicate(node);
+                detail.setPredicate(asPredicate);
+                detail.setExpression(!asPredicate);
+
                 simpleExpressions.add(detail);
             }
         }
+    }
+
+    /**
+     * Using simple expressions in the XML DSL may be used in certain places as predicate only
+     */
+    private static boolean isSimplePredicate(Node node) {
+        // need to check the parent
+        Node parent = node.getParentNode();
+        if (parent == null) {
+            return false;
+        }
+        String name = parent.getNodeName();
+
+        if (name == null) {
+            return false;
+        }
+        if (name.equals("completionPredicate") || name.equals("completion")) {
+            return true;
+        }
+        if (name.equals("onWhen") || name.equals("when") || name.equals("handled") || name.equals("continued")) {
+            return true;
+        }
+        if (name.equals("retryWhile") || name.equals("filter") || name.equals("validate")) {
+            return true;
+        }
+        // special for loop
+        if (name.equals("loop")) {
+            String doWhile = null;
+            if (parent.getAttributes() != null) {
+                Node attr = parent.getAttributes().getNamedItem("doWhile");
+                if (attr != null) {
+                    doWhile = attr.getTextContent();
+                }
+            }
+            if ("true".equalsIgnoreCase(doWhile)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static String endpointComponentName(String uri) {
