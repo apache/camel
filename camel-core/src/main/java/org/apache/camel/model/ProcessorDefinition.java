@@ -65,12 +65,12 @@ import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
+import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.slf4j.Logger;
@@ -1461,7 +1461,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the clause used to create the filter expression
      */
-    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
+    @AsPredicate
     public ExpressionClause<? extends FilterDefinition> filter() {
         FilterDefinition filter = new FilterDefinition();
         addOutput(filter);
@@ -1476,8 +1476,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param predicate  predicate to use
      * @return the builder 
      */
-    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
-    public FilterDefinition filter(Predicate predicate) {
+    public FilterDefinition filter(@AsPredicate Predicate predicate) {
         FilterDefinition filter = new FilterDefinition(predicate);
         addOutput(filter);
         return filter;
@@ -1491,8 +1490,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param expression  the predicate expression to use
      * @return the builder
      */
-    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
-    public FilterDefinition filter(ExpressionDefinition expression) {
+    public FilterDefinition filter(@AsPredicate ExpressionDefinition expression) {
         FilterDefinition filter = new FilterDefinition(expression);
         addOutput(filter);
         return filter;
@@ -1507,8 +1505,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param expression   the expression
      * @return the builder
      */
-    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
-    public FilterDefinition filter(String language, String expression) {
+    public FilterDefinition filter(String language, @AsPredicate String expression) {
         return filter(new LanguageExpression(language, expression));
     }
     
@@ -1520,8 +1517,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param expression  the expression
      * @return the builder
      */
-    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
-    public ValidateDefinition validate(Expression expression) {
+    public ValidateDefinition validate(@AsPredicate Expression expression) {
         ValidateDefinition answer = new ValidateDefinition(expression);
         addOutput(answer);
         return answer;
@@ -1535,8 +1531,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param predicate  the predicate
      * @return the builder
      */
-    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
-    public ValidateDefinition validate(Predicate predicate) {
+    public ValidateDefinition validate(@AsPredicate Predicate predicate) {
         ValidateDefinition answer = new ValidateDefinition(predicate);
         addOutput(answer);
         return answer;
@@ -1549,7 +1544,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the builder
      */
-    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
+    @AsPredicate
     public ExpressionClause<ValidateDefinition> validate() {
         ValidateDefinition answer = new ValidateDefinition();
         addOutput(answer);
@@ -2244,8 +2239,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param predicate the while loop predicate
      * @return the builder
      */
-    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
-    public LoopDefinition loopDoWhile(Predicate predicate) {
+    public LoopDefinition loopDoWhile(@AsPredicate Predicate predicate) {
         LoopDefinition loop = new LoopDefinition(predicate);
         addOutput(loop);
         return loop;

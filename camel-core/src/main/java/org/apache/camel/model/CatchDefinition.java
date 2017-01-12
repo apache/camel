@@ -31,6 +31,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.processor.CatchProcessor;
+import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
@@ -46,11 +47,9 @@ import org.apache.camel.util.ExpressionToPredicateAdapter;
 public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
-    @XmlElement(name = "onWhen")
-    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
+    @XmlElement(name = "onWhen") @AsPredicate
     private WhenDefinition onWhen;
-    @XmlElement(name = "handled")
-    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
+    @XmlElement(name = "handled") @AsPredicate
     private ExpressionSubElementDefinition handled;
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
@@ -175,8 +174,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      * @param predicate  predicate that determines true or false
      * @return the builder
      */
-    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
-    public CatchDefinition onWhen(Predicate predicate) {
+    public CatchDefinition onWhen(@AsPredicate Predicate predicate) {
         setOnWhen(new WhenDefinition(predicate));
         return this;
     }
@@ -204,8 +202,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
      */
     @Deprecated
-    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
-    public CatchDefinition handled(Predicate handled) {
+    public CatchDefinition handled(@AsPredicate Predicate handled) {
         setHandledPolicy(handled);
         return this;
     }
@@ -219,8 +216,7 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
      * from a {@link Processor} or use the {@link ProcessorDefinition#throwException(Exception)}
      */
     @Deprecated
-    @Metadata(expressionMode = Metadata.ExpressionMode.predicate)
-    public CatchDefinition handled(Expression handled) {
+    public CatchDefinition handled(@AsPredicate Expression handled) {
         setHandledPolicy(ExpressionToPredicateAdapter.toPredicate(handled));
         return this;
     }
