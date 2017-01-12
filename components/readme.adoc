@@ -114,6 +114,9 @@ Components
 | link:camel-consul/src/main/docs/consul-component.adoc[Consul] (camel-consul) +
 `consul:apiEndpoint` | The camel consul component allows you to work with Consul a distributed highly available datacenter-aware service discovery and configuration system.
 
+| link:camel-couchbase/src/main/docs/couchbase-component.adoc[Couchbase] (camel-couchbase) +
+`couchbase:url` | Represents a Couchbase endpoint that can query Views with a Poll strategy and/or produce various type of operations.
+
 | link:camel-couchdb/src/main/docs/couchdb-component.adoc[CouchDB] (camel-couchdb) +
 `couchdb:protocol:hostname:port/database` | The couchdb component is used for integrate with CouchDB databases.
 
