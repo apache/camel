@@ -48,6 +48,16 @@ public class SimpleIllegalSyntaxException extends ExpressionIllegalSyntaxExcepti
         return index;
     }
 
+    /**
+     * Gets a short error message.
+     */
+    public String getShortMessage() {
+        if (message == null) {
+            return "[null]";
+        }
+        return message;
+    }
+
     @Override
     public String getMessage() {
         if (message == null) {

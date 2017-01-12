@@ -22,6 +22,7 @@ public class SimpleValidationResult implements Serializable {
 
     private final String simple;
     private String error;
+    private String shortError;
     private int index;
 
     public SimpleValidationResult(String simple) {
@@ -42,6 +43,14 @@ public class SimpleValidationResult implements Serializable {
 
     public String getError() {
         return error;
+    }
+
+    public String getShortError() {
+        return shortError;
+    }
+
+    public void setShortError(String shortError) {
+        this.shortError = shortError;
     }
 
     public int getIndex() {
