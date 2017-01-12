@@ -187,7 +187,8 @@ public class CoreEipAnnotationProcessor {
             String doc = entry.getDocumentation();
             doc = sanitizeDescription(doc, false);
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getKind(), entry.isRequired(), entry.getType(), entry.getDefaultValue(), doc,
-                    entry.isDeprecated(), false, null, null, entry.isEnumType(), entry.getEnums(), entry.isOneOf(), entry.getOneOfTypes(), null, null, false));
+                    entry.isDeprecated(), false, null, null, entry.isEnumType(), entry.getEnums(), entry.isOneOf(), entry.getOneOfTypes(),
+                    entry.isAsPredicate(), null, null, false));
         }
         buffer.append("\n  }");
 
@@ -345,19 +346,21 @@ public class CoreEipAnnotationProcessor {
         boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
         if (isEnum) {
             TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
-            // find all the enum constants which has the possible enum value that can be used
-            List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
-            for (VariableElement var : fields) {
-                if (var.getKind() == ElementKind.ENUM_CONSTANT) {
-                    String val = var.toString();
-                    enums.add(val);
+            if (enumClass != null) {
+                // find all the enum constants which has the possible enum value that can be used
+                List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
+                for (VariableElement var : fields) {
+                    if (var.getKind() == ElementKind.ENUM_CONSTANT) {
+                        String val = var.toString();
+                        enums.add(val);
+                    }
                 }
             }
         }
 
         boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
 
-        EipOption ep = new EipOption(name, "attribute", fieldTypeName, required, defaultValue, docComment, deprecated, isEnum, enums, false, null);
+        EipOption ep = new EipOption(name, "attribute", fieldTypeName, required, defaultValue, docComment, deprecated, isEnum, enums, false, null, false);
         eipOptions.add(ep);
 
         return false;
@@ -390,7 +393,7 @@ public class CoreEipAnnotationProcessor {
 
         boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
 
-        EipOption ep = new EipOption(name, "value", fieldTypeName, required, defaultValue, docComment, deprecated, false, null, false, null);
+        EipOption ep = new EipOption(name, "value", fieldTypeName, required, defaultValue, docComment, deprecated, false, null, false, null, false);
         eipOptions.add(ep);
     }
 
@@ -423,15 +426,19 @@ public class CoreEipAnnotationProcessor {
             boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
             if (isEnum) {
                 TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
-                // find all the enum constants which has the possible enum value that can be used
-                List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
-                for (VariableElement var : fields) {
-                    if (var.getKind() == ElementKind.ENUM_CONSTANT) {
-                        String val = var.toString();
-                        enums.add(val);
+                if (enumClass != null) {
+                    // find all the enum constants which has the possible enum value that can be used
+                    List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
+                    for (VariableElement var : fields) {
+                        if (var.getKind() == ElementKind.ENUM_CONSTANT) {
+                            String val = var.toString();
+                            enums.add(val);
+                        }
                     }
                 }
             }
+
+            boolean asPredicate = false;
 
             // gather oneOf expression/predicates which uses language
             Set<String> oneOfTypes = new TreeSet<String>();
@@ -442,15 +449,15 @@ public class CoreEipAnnotationProcessor {
                 for (String language : ONE_OF_LANGUAGES) {
                     fieldTypeName = language;
                     TypeElement languages = findTypeElement(processingEnv, roundEnv, language);
-                    String superClassName = canonicalClassName(languages.toString());
-                    // find all classes that has that superClassName
-                    Set<TypeElement> children = new LinkedHashSet<TypeElement>();
-                    findTypeElementChildren(processingEnv, roundEnv, children, superClassName);
-                    for (TypeElement child : children) {
-                        XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
-                        if (rootElement != null) {
-                            String childName = rootElement.name();
-                            if (childName != null) {
+                    if (languages != null) {
+                        String superClassName = canonicalClassName(languages.toString());
+                        // find all classes that has that superClassName
+                        Set<TypeElement> children = new LinkedHashSet<TypeElement>();
+                        findTypeElementChildren(processingEnv, roundEnv, children, superClassName);
+                        for (TypeElement child : children) {
+                            XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
+                            if (rootElement != null) {
+                                String childName = rootElement.name();
                                 oneOfTypes.add(childName);
                             }
                         }
@@ -465,7 +472,7 @@ public class CoreEipAnnotationProcessor {
 
             boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
 
-            EipOption ep = new EipOption(name, kind, fieldTypeName, required, defaultValue, docComment, deprecated, isEnum, enums, isOneOf, oneOfTypes);
+            EipOption ep = new EipOption(name, kind, fieldTypeName, required, defaultValue, docComment, deprecated, isEnum, enums, isOneOf, oneOfTypes, asPredicate);
             eipOptions.add(ep);
         }
     }
@@ -497,7 +504,7 @@ public class CoreEipAnnotationProcessor {
                 oneOfTypes.add(child);
             }
 
-            EipOption ep = new EipOption(name, kind, fieldTypeName, required, defaultValue, docComment, false, false, null, true, oneOfTypes);
+            EipOption ep = new EipOption(name, kind, fieldTypeName, required, defaultValue, docComment, false, false, null, true, oneOfTypes, false);
             eipOptions.add(ep);
         }
     }
@@ -509,52 +516,52 @@ public class CoreEipAnnotationProcessor {
 
         // group
         String docComment = findJavaDoc(elementUtils, null, "group", null, classElement, true);
-        EipOption ep = new EipOption("group", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null);
+        EipOption ep = new EipOption("group", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // group
         docComment = findJavaDoc(elementUtils, null, "streamCache", null, classElement, true);
-        ep = new EipOption("streamCache", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null);
+        ep = new EipOption("streamCache", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // trace
         docComment = findJavaDoc(elementUtils, null, "trace", null, classElement, true);
-        ep = new EipOption("trace", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null);
+        ep = new EipOption("trace", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // trace
         docComment = findJavaDoc(elementUtils, null, "messageHistory", null, classElement, true);
-        ep = new EipOption("messageHistory", "attribute", "java.lang.String", false, "true", docComment, false, false, null, false, null);
+        ep = new EipOption("messageHistory", "attribute", "java.lang.String", false, "true", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // trace
         docComment = findJavaDoc(elementUtils, null, "handleFault", null, classElement, true);
-        ep = new EipOption("handleFault", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null);
+        ep = new EipOption("handleFault", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // delayer
         docComment = findJavaDoc(elementUtils, null, "delayer", null, classElement, true);
-        ep = new EipOption("delayer", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null);
+        ep = new EipOption("delayer", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // autoStartup
         docComment = findJavaDoc(elementUtils, null, "autoStartup", null, classElement, true);
-        ep = new EipOption("autoStartup", "attribute", "java.lang.String", false, "true", docComment, false, false, null, false, null);
+        ep = new EipOption("autoStartup", "attribute", "java.lang.String", false, "true", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // startupOrder
         docComment = findJavaDoc(elementUtils, null, "startupOrder", null, classElement, true);
-        ep = new EipOption("startupOrder", "attribute", "java.lang.Integer", false, "", docComment, false, false, null, false, null);
+        ep = new EipOption("startupOrder", "attribute", "java.lang.Integer", false, "", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // errorHandlerRef
         docComment = findJavaDoc(elementUtils, null, "errorHandlerRef", null, classElement, true);
-        ep = new EipOption("errorHandlerRef", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null);
+        ep = new EipOption("errorHandlerRef", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // routePolicyRef
         docComment = findJavaDoc(elementUtils, null, "routePolicyRef", null, classElement, true);
-        ep = new EipOption("routePolicyRef", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null);
+        ep = new EipOption("routePolicyRef", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // shutdownRoute
@@ -562,7 +569,7 @@ public class CoreEipAnnotationProcessor {
         enums.add("Default");
         enums.add("Defer");
         docComment = findJavaDoc(elementUtils, null, "shutdownRoute", "Default", classElement, true);
-        ep = new EipOption("shutdownRoute", "attribute", "org.apache.camel.ShutdownRoute", false, "", docComment, false, true, enums, false, null);
+        ep = new EipOption("shutdownRoute", "attribute", "org.apache.camel.ShutdownRoute", false, "", docComment, false, true, enums, false, null, false);
         eipOptions.add(ep);
 
         // shutdownRunningTask
@@ -570,14 +577,14 @@ public class CoreEipAnnotationProcessor {
         enums.add("CompleteCurrentTaskOnly");
         enums.add("CompleteAllTasks");
         docComment = findJavaDoc(elementUtils, null, "shutdownRunningTask", "CompleteCurrentTaskOnly", classElement, true);
-        ep = new EipOption("shutdownRunningTask", "attribute", "org.apache.camel.ShutdownRunningTask", false, "", docComment, false, true, enums, false, null);
+        ep = new EipOption("shutdownRunningTask", "attribute", "org.apache.camel.ShutdownRunningTask", false, "", docComment, false, true, enums, false, null, false);
         eipOptions.add(ep);
 
         // inputs
         Set<String> oneOfTypes = new TreeSet<String>();
         oneOfTypes.add("from");
         docComment = findJavaDoc(elementUtils, null, "inputs", null, classElement, true);
-        ep = new EipOption("inputs", "element", "java.util.List<org.apache.camel.model.FromDefinition>", true, "", docComment, false, false, null, true, oneOfTypes);
+        ep = new EipOption("inputs", "element", "java.util.List<org.apache.camel.model.FromDefinition>", true, "", docComment, false, false, null, true, oneOfTypes, false);
         eipOptions.add(ep);
 
         // outputs
@@ -592,9 +599,7 @@ public class CoreEipAnnotationProcessor {
             XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
             if (rootElement != null) {
                 String childName = rootElement.name();
-                if (childName != null) {
-                    oneOfTypes.add(childName);
-                }
+                oneOfTypes.add(childName);
             }
         }
 
@@ -602,7 +607,7 @@ public class CoreEipAnnotationProcessor {
         oneOfTypes.remove("route");
 
         docComment = findJavaDoc(elementUtils, null, "outputs", null, classElement, true);
-        ep = new EipOption("outputs", "element", "java.util.List<org.apache.camel.model.ProcessorDefinition<?>>", true, "", docComment, false, false, null, true, oneOfTypes);
+        ep = new EipOption("outputs", "element", "java.util.List<org.apache.camel.model.ProcessorDefinition<?>>", true, "", docComment, false, false, null, true, oneOfTypes, false);
         eipOptions.add(ep);
     }
 
@@ -616,19 +621,19 @@ public class CoreEipAnnotationProcessor {
 
         // id
         String docComment = findJavaDoc(elementUtils, null, "id", null, classElement, true);
-        EipOption ep = new EipOption("id", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null);
+        EipOption ep = new EipOption("id", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // description
         docComment = findJavaDoc(elementUtils, null, "description", null, classElement, true);
-        ep = new EipOption("description", "element", "org.apache.camel.model.DescriptionDefinition", false, "", docComment, false, false, null, false, null);
+        ep = new EipOption("description", "element", "org.apache.camel.model.DescriptionDefinition", false, "", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // lets skip custom id as it has no value for end users to configure
         if (!skipUnwanted) {
             // custom id
             docComment = findJavaDoc(elementUtils, null, "customId", null, classElement, true);
-            ep = new EipOption("customId", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null);
+            ep = new EipOption("customId", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
             eipOptions.add(ep);
         }
     }
@@ -646,7 +651,7 @@ public class CoreEipAnnotationProcessor {
             Set<String> oneOfTypes = new TreeSet<String>();
             oneOfTypes.add("route");
 
-            EipOption ep = new EipOption("routes", "element", fieldTypeName, false, "", "Contains the Camel routes", false, false, null, true, oneOfTypes);
+            EipOption ep = new EipOption("routes", "element", fieldTypeName, false, "", "Contains the Camel routes", false, false, null, true, oneOfTypes, false);
             eipOptions.add(ep);
         }
     }
@@ -664,7 +669,7 @@ public class CoreEipAnnotationProcessor {
             Set<String> oneOfTypes = new TreeSet<String>();
             oneOfTypes.add("rest");
 
-            EipOption ep = new EipOption("rests", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl", false, false, null, true, oneOfTypes);
+            EipOption ep = new EipOption("rests", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl", false, false, null, true, oneOfTypes, false);
             eipOptions.add(ep);
         }
     }
@@ -695,16 +700,14 @@ public class CoreEipAnnotationProcessor {
                 XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
                 if (rootElement != null) {
                     String childName = rootElement.name();
-                    if (childName != null) {
-                        oneOfTypes.add(childName);
-                    }
+                    oneOfTypes.add(childName);
                 }
             }
 
             // remove some types which are not intended as an output in eips
             oneOfTypes.remove("route");
 
-            EipOption ep = new EipOption(name, kind, fieldTypeName, true, "", "", false, false, null, true, oneOfTypes);
+            EipOption ep = new EipOption(name, kind, fieldTypeName, true, "", "", false, false, null, true, oneOfTypes, false);
             eipOptions.add(ep);
         }
     }
@@ -746,7 +749,7 @@ public class CoreEipAnnotationProcessor {
                 }
             }
 
-            EipOption ep = new EipOption(name, kind, fieldTypeName, true, "", docComment, false, false, null, true, oneOfTypes);
+            EipOption ep = new EipOption(name, kind, fieldTypeName, true, "", docComment, false, false, null, true, oneOfTypes, false);
             eipOptions.add(ep);
         }
     }
@@ -772,6 +775,8 @@ public class CoreEipAnnotationProcessor {
             // find javadoc from original class as it will override the setExpression method where we can provide the javadoc for the given EIP
             String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, originalClassType, true);
 
+            boolean asPredicate = false;
+
             // gather oneOf expression/predicates which uses language
             Set<String> oneOfTypes = new TreeSet<String>();
             for (String language : ONE_OF_LANGUAGES) {
@@ -793,7 +798,7 @@ public class CoreEipAnnotationProcessor {
 
             boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
 
-            EipOption ep = new EipOption(name, kind, fieldTypeName, true, "", docComment, deprecated, false, null, true, oneOfTypes);
+            EipOption ep = new EipOption(name, kind, fieldTypeName, true, "", docComment, deprecated, false, null, true, oneOfTypes, asPredicate);
             eipOptions.add(ep);
         }
     }
@@ -823,7 +828,10 @@ public class CoreEipAnnotationProcessor {
             Set<String> oneOfTypes = new HashSet<String>();
             oneOfTypes.add("when");
 
-            EipOption ep = new EipOption(name, kind, fieldTypeName, false, "", docComment, deprecated, false, null, true, oneOfTypes);
+            // when is predicate
+            boolean asPredicate = true;
+
+            EipOption ep = new EipOption(name, kind, fieldTypeName, false, "", docComment, deprecated, false, null, true, oneOfTypes, asPredicate);
             eipOptions.add(ep);
         }
     }
@@ -1010,9 +1018,10 @@ public class CoreEipAnnotationProcessor {
         private Set<String> enums;
         private boolean oneOf;
         private Set<String> oneOfTypes;
+        private boolean asPredicate;
 
         private EipOption(String name, String kind, String type, boolean required, String defaultValue, String documentation, boolean deprecated,
-                          boolean enumType, Set<String> enums, boolean oneOf, Set<String> oneOfTypes) {
+                          boolean enumType, Set<String> enums, boolean oneOf, Set<String> oneOfTypes, boolean asPredicate) {
             this.name = name;
             this.kind = kind;
             this.type = type;
@@ -1024,6 +1033,7 @@ public class CoreEipAnnotationProcessor {
             this.enums = enums;
             this.oneOf = oneOf;
             this.oneOfTypes = oneOfTypes;
+            this.asPredicate = asPredicate;
         }
 
         public String getName() {
@@ -1068,6 +1078,10 @@ public class CoreEipAnnotationProcessor {
 
         public Set<String> getOneOfTypes() {
             return oneOfTypes;
+        }
+
+        public boolean isAsPredicate() {
+            return asPredicate;
         }
 
         @Override

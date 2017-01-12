@@ -310,10 +310,11 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             String optionalPrefix = "";
             String prefix = "";
             boolean multiValue = false;
+            boolean asPredicate = false;
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), "property", required, entry.getType(), defaultValue, doc,
-                    entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null,
-                    optionalPrefix, prefix, multiValue));
+                entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
+                false, null, asPredicate, optionalPrefix, prefix, multiValue));
         }
         buffer.append("\n  },");
 
@@ -361,10 +362,11 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             String optionalPrefix = "";
             String prefix = "";
             boolean multiValue = false;
+            boolean asPredicate = false;
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), "path", required, entry.getType(), defaultValue, doc,
-                    entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null,
-                    optionalPrefix, prefix, multiValue));
+                entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
+                false, null, asPredicate, optionalPrefix, prefix, multiValue));
         }
 
         // sort the endpoint options in the standard order we prefer
@@ -406,10 +408,11 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             String optionalPrefix = entry.getOptionalPrefix();
             String prefix = entry.getPrefix();
             boolean multiValue = entry.isMultiValue();
+            boolean asPredicate = false;
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), "parameter", required, entry.getType(), defaultValue,
-                    doc, entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null,
-                    optionalPrefix, prefix, multiValue));
+                doc, entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
+                false, null, asPredicate, optionalPrefix, prefix, multiValue));
         }
         buffer.append("\n  }");
 
