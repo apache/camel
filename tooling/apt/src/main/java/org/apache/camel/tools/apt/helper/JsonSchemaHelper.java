@@ -129,9 +129,15 @@ public final class JsonSchemaHelper {
             sb.append(Strings.doubleQuote(text));
         }
 
-        if (asPredicate) {
+        // for expressions we want to know if it must be used as predicate or not
+        boolean predicate = "expression".equals(kind) || asPredicate;
+        if (predicate) {
             sb.append(", \"asPredicate\": ");
-            sb.append(Strings.doubleQuote("true"));
+            if (asPredicate) {
+                sb.append(Strings.doubleQuote("true"));
+            } else {
+                sb.append(Strings.doubleQuote("false"));
+            }
         }
 
         if (!Strings.isNullOrEmpty(description)) {
