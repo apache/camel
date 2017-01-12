@@ -188,11 +188,25 @@ This bean should be available in the registry.
 Here how to use it :
 [source,java]
 -------------------------------------------------------------------------------------------------------------------
-from("kafka:localhost:{{kafkaPort}}?topic=" + TOPIC +  //
-             "&groupId=A" +                            //
-             "&autoOffsetReset=earliest" +             // Ask to start from the beginning if we have unknown offset
-             "&offsetRepository=#repo")                // Keep the offsets in our repository named "repo"
-        .to("mock:result");
+// Create the repository in which the Kafka offsets will be persisted
+FileStateRepository repository = FileStateRepository.fileStateRepository(new File("/path/to/repo.dat"));
+
+// Bind this repository into the Camel registry
+JndiRegistry registry = new JndiRegistry();
+registry.bind("offsetRepo", repository);
+
+// Configure the camel context
+DefaultCamelContext camelContext = new DefaultCamelContext(registry);
+camelContext.addRoutes(new RouteBuilder() {
+    @Override
+    public void configure() throws Exception {
+        from("kafka:localhost:{{kafkaPort}}?topic=" + TOPIC +  //
+                     "&groupId=A" +                            //
+                     "&autoOffsetReset=earliest" +             // Ask to start from the beginning if we have unknown offset
+                     "&offsetRepository=#offsetRepo")          // Keep the offsets in the previously configured repository
+                .to("mock:result");
+    }
+});
 -------------------------------------------------------------------------------------------------------------------
  
 
@@ -200,6 +214,7 @@ Producing messages:
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------
+
 from("direct:start").process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
