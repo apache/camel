@@ -1715,6 +1715,31 @@ public class DefaultCamelCatalog implements CamelCatalog {
                         // ignore
                     }
                 }
+
+                // we need to grab the short message field from this simple syntax exception
+                if (cause.getClass().getName().equals("org.apache.camel.language.simple.types.SimpleIllegalSyntaxException")) {
+                    try {
+                        Method method = cause.getClass().getMethod("getShortMessage");
+                        Object result = method.invoke(cause);
+                        if (result != null) {
+                            String msg = (String) result;
+                            answer.setShortError(msg);
+                        }
+                    } catch (Throwable i) {
+                        // ignore
+                    }
+
+                    if (answer.getShortError() == null) {
+                        // fallback and try to make existing message short instead
+                        String msg = answer.getError();
+                        // grab everything before " at location " which would be regarded as the short message
+                        int idx = msg.indexOf(" at location ");
+                        if (idx > 0) {
+                            msg = msg.substring(0, idx);
+                            answer.setShortError(msg);
+                        }
+                    }
+                }
             }
         }
 
