@@ -24,7 +24,7 @@
   </parent>
   <artifactId>camel-couchbase-starter</artifactId>
   <packaging>jar</packaging>
-  <name>Spring-Boot Starter :: Camel Extra :: Couchbase</name>
+  <name>Spring-Boot Starter :: Camel :: Couchbase</name>
   <description>Spring-Boot Starter for Camel Couchbase component</description>
   <dependencies>
     <dependency>
