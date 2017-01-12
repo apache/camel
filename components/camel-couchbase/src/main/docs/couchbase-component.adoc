@@ -1,4 +1,4 @@
-# Couchbase Component
+## Couchbase Component
 ## Couchbase Component
 
 *Available as of Camel 2.19*
