@@ -40,6 +40,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
+import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.tools.apt.helper.JsonSchemaHelper;
 import org.apache.camel.tools.apt.helper.Strings;
@@ -421,6 +422,12 @@ public class CoreEipAnnotationProcessor {
             // metadata may overrule element required
             required = findRequired(fieldElement, required);
 
+            // is it used as predicate (check field first and then fallback to its class)
+            boolean asPredicate = fieldElement.getAnnotation(AsPredicate.class) != null;
+            if (!asPredicate) {
+                asPredicate = classElement.getAnnotation(AsPredicate.class) != null;
+            }
+
             // gather enums
             Set<String> enums = new LinkedHashSet<String>();
             boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
@@ -437,8 +444,6 @@ public class CoreEipAnnotationProcessor {
                     }
                 }
             }
-
-            boolean asPredicate = false;
 
             // gather oneOf expression/predicates which uses language
             Set<String> oneOfTypes = new TreeSet<String>();
@@ -775,7 +780,14 @@ public class CoreEipAnnotationProcessor {
             // find javadoc from original class as it will override the setExpression method where we can provide the javadoc for the given EIP
             String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, originalClassType, true);
 
-            boolean asPredicate = false;
+            // is it used as predicate (check field first and then fallback to its class / original class)
+            boolean asPredicate = fieldElement.getAnnotation(AsPredicate.class) != null;
+            if (!asPredicate) {
+                asPredicate = classElement.getAnnotation(AsPredicate.class) != null;
+            }
+            if (!asPredicate) {
+                asPredicate = originalClassType.getAnnotation(AsPredicate.class) != null;
+            }
 
             // gather oneOf expression/predicates which uses language
             Set<String> oneOfTypes = new TreeSet<String>();
@@ -789,9 +801,7 @@ public class CoreEipAnnotationProcessor {
                     XmlRootElement rootElement = child.getAnnotation(XmlRootElement.class);
                     if (rootElement != null) {
                         String childName = rootElement.name();
-                        if (childName != null) {
-                            oneOfTypes.add(childName);
-                        }
+                        oneOfTypes.add(childName);
                     }
                 }
             }
