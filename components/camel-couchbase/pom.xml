@@ -45,7 +45,7 @@
     <dependency>
       <groupId>com.couchbase.client</groupId>
       <artifactId>couchbase-client</artifactId>
-      <version>1.4.12</version>
+      <version>${couchbase-client-version}</version>
     </dependency>
 
     <dependency>
