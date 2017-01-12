@@ -1265,41 +1265,58 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     TransformerRegistry getTransformerRegistry();
 
     /**
-     * Sets the properties that can be referenced in the camel context
-     * <p/>
-     * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
-     * which are used to configure global settings on CamelContext, such as a maximum debug logging length etc.
-     * For property placeholders use {@link #resolvePropertyPlaceholders(String)} method and see more details
-     * at the <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
-     *
-     * @param properties properties
+     * @deprecated use {@link #setGlobalOptions(Map) setGlobalOptions(Map<String,String>) instead}.
      */
+    @Deprecated
     void setProperties(Map<String, String> properties);
 
     /**
-     * Gets the properties that can be referenced in the camel context.
+     * Sets global options that can be referenced in the camel context
      * <p/>
      * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
-     * which are used to configure global settings on CamelContext, such as a maximum debug logging length etc.
+     * which are used to configure global options on CamelContext, such as a maximum debug logging length etc.
      * For property placeholders use {@link #resolvePropertyPlaceholders(String)} method and see more details
      * at the <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
      *
-     * @return the properties
+     * @param globalOptions global options that can be referenced in the camel context
      */
+    void setGlobalOptions(Map<String, String> globalOptions);
+
+    /**
+     * @deprecated use {@link #getGlobalOptions()} instead.
+     */
+    @Deprecated
     Map<String, String> getProperties();
 
     /**
-     * Gets the property value that can be referenced in the camel context
+     * Gets global options that can be referenced in the camel context.
      * <p/>
      * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
-     * which are used to configure global settings on CamelContext, such as a maximum debug logging length etc.
+     * which are used to configure global options on CamelContext, such as a maximum debug logging length etc.
      * For property placeholders use {@link #resolvePropertyPlaceholders(String)} method and see more details
      * at the <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
      *
-     * @return the string value of property
+     * @return global options for this context
+     */
+    Map<String, String> getGlobalOptions();
+
+    /**
+     * @deprecated use {@link #getGlobalOption(String)} instead.
      */
     String getProperty(String name);
-    
+
+    /**
+     * Gets the global option value that can be referenced in the camel context
+     * <p/>
+     * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
+     * which are used to configure global options on CamelContext, such as a maximum debug logging length etc.
+     * For property placeholders use {@link #resolvePropertyPlaceholders(String)} method and see more details
+     * at the <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
+     *
+     * @return the string value of the global option
+     */
+    String getGlobalOption(String name);
+
     /**
      * Gets the default FactoryFinder which will be used for the loading the factory class from META-INF
      *
