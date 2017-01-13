@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jsonpath;
+package org.apache.camel.jsonpath.easypredicate;
 
 import java.io.File;
 
@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class JsonPathWithEvenSimpleCBRTest extends CamelTestSupport {
+public class EasyJsonPathWithRootSimpleCBRTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -31,9 +31,9 @@ public class JsonPathWithEvenSimpleCBRTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .choice()
-                        .when().jsonpath("store.book.price < ${header.cheap}")
+                        .when().jsonpath("price < ${header.cheap}")
                             .to("mock:cheap")
-                        .when().jsonpath("store.book.price < ${header.average}")
+                        .when().jsonpath("price < ${header.average}")
                             .to("mock:average")
                         .otherwise()
                             .to("mock:expensive");
