@@ -49,7 +49,7 @@ The Kafka component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The Kafka component supports 78 endpoint options which are listed below:
+The Kafka component supports 79 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -120,6 +120,7 @@ The Kafka component supports 78 endpoint options which are listed below:
 | saslMechanism | security | GSSAPI | String | The Simple Authentication and Security Layer (SASL) Mechanism used. For the valid values see http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml
 | securityProtocol | security | PLAINTEXT | String | Protocol used to communicate with brokers. Currently only PLAINTEXT and SSL are supported.
 | sslCipherSuites | security |  | String | A list of cipher suites. This is a named combination of authentication encryption MAC and key exchange algorithm used to negotiate the security settings for a network connection using TLS or SSL network protocol.By default all the available cipher suites are supported.
+| sslContextParameters | security |  | SSLContextParameters | SSL configuration using a Camel SSLContextParameters object. If configured it's applied before the other SSL endpoint parameters.
 | sslEnabledProtocols | security | TLSv1.2,TLSv1.1,TLSv1 | String | The list of protocols enabled for SSL connections. TLSv1.2 TLSv1.1 and TLSv1 are enabled by default.
 | sslEndpointAlgorithm | security |  | String | The endpoint identification algorithm to validate server hostname using server certificate.
 | sslKeymanagerAlgorithm | security | SunX509 | String | The algorithm used by key manager factory for SSL connections. Default value is the key manager factory algorithm configured for the Java Virtual Machine.
@@ -228,6 +229,53 @@ from("direct:start")
     .setHeader(KafkaConstants.KEY, constant("Camel")) // Key of the message
     .to("kafka:localhost:9092?topic=test");
 ----------------------------------------------------------------------------
+
+
+#### SSL configuration
+
+You have 2 different ways to configure the SSL communication on the Kafka` component.
+
+The first way is through the many SSL endpoint parameters
+[source,java]
+-------------------------------------------------------------
+from("kafka:localhost:{{kafkaPort}}?topic=" + TOPIC +
+             "&groupId=A" +
+             "&sslKeystoreLocation=/path/to/keystore.jks" +
+             "&sslKeystorePassword=changeit" +
+             "&sslKeyPassword=changeit")
+        .to("mock:result");
+-------------------------------------------------------------
+
+The second way is to use the `sslContextParameters` endpoint parameter.
+[source,java]
+--------------------------------------------------------------------------------------------------
+// Configure the SSLContextParameters object
+KeyStoreParameters ksp = new KeyStoreParameters();
+ksp.setResource("/path/to/keystore.jks");
+ksp.setPassword("changeit");
+KeyManagersParameters kmp = new KeyManagersParameters();
+kmp.setKeyStore(ksp);
+kmp.setKeyPassword("changeit");
+SSLContextParameters scp = new SSLContextParameters();
+scp.setKeyManagers(kmp);
+
+// Bind this SSLContextParameters into the Camel registry
+JndiRegistry registry = new JndiRegistry();
+registry.bind("ssl", scp);
+
+// Configure the camel context
+DefaultCamelContext camelContext = new DefaultCamelContext(registry);
+camelContext.addRoutes(new RouteBuilder() {
+    @Override
+    public void configure() throws Exception {
+        from("kafka:localhost:{{kafkaPort}}?topic=" + TOPIC +  //
+                     "&groupId=A" +                            //
+                     "&sslContextParameters=#ssl")             // Reference the SSL configuration
+                .to("mock:result");
+    }
+});
+--------------------------------------------------------------------------------------------------
+
 
 ### Endpoints
 
