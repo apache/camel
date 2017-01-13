@@ -14,17 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jsonpath;
+package org.apache.camel.jsonpath.easypredicate;
 
 import java.io.File;
 
-import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class JsonPathCBRTest extends CamelTestSupport {
+public class EasyJsonPathWithSimpleCBRTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -33,60 +31,24 @@ public class JsonPathCBRTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .choice()
-                        .when().jsonpath("$.store.book[?(@.price < 10)]")
+                        .when().jsonpath("store.book.price < ${header.cheap}")
                             .to("mock:cheap")
-                        .when().jsonpath("$.store.book[?(@.price < 30)]")
+                        .when().jsonpath("store.book.price < ${header.average}")
                             .to("mock:average")
                         .otherwise()
                             .to("mock:expensive");
-                
-                from("direct:bicycle")
-                    .choice()
-                        .when().method(new BeanPredicate())
-                            .to("mock:cheap")
-                        .otherwise()
-                            .to("mock:expensive");
-                
-                from("direct:bicycle2")
-                    .choice()
-                    .when(PredicateBuilder.isLessThan(ExpressionBuilder.languageExpression("jsonpath", "$.store.bicycle.price"), ExpressionBuilder.constantExpression(100)))
-                        .to("mock:cheap")
-                    .otherwise()
-                        .to("mock:expensive");
             }
         };
     }
     
-    public static class BeanPredicate {
-        public boolean checkPrice(@JsonPath("$.store.bicycle.price") double price) {
-            return price < 100;
-        }
-    }
-    
-    @Test
-    public void testCheapBicycle() throws Exception {
-        sendMessageToBicycleRoute("direct:bicycle");
-        resetMocks();
-        sendMessageToBicycleRoute("direct:bicycle2");
-    }
-    
-    private void sendMessageToBicycleRoute(String startPoint) throws Exception {
-        getMockEndpoint("mock:cheap").expectedMessageCount(1);
-        getMockEndpoint("mock:average").expectedMessageCount(0);
-        getMockEndpoint("mock:expensive").expectedMessageCount(0);
-
-        template.sendBody(startPoint, new File("src/test/resources/cheap.json"));
-
-        assertMockEndpointsSatisfied();
-    }
-
     @Test
     public void testCheap() throws Exception {
         getMockEndpoint("mock:cheap").expectedMessageCount(1);
         getMockEndpoint("mock:average").expectedMessageCount(0);
         getMockEndpoint("mock:expensive").expectedMessageCount(0);
 
-        template.sendBody("direct:start", new File("src/test/resources/cheap.json"));
+        fluentTemplate.withHeader("cheap", 10).withHeader("average", 30).withBody(new File("src/test/resources/cheap.json"))
+                .to("direct:start").send();
 
         assertMockEndpointsSatisfied();
     }
@@ -97,7 +59,8 @@ public class JsonPathCBRTest extends CamelTestSupport {
         getMockEndpoint("mock:average").expectedMessageCount(1);
         getMockEndpoint("mock:expensive").expectedMessageCount(0);
 
-        template.sendBody("direct:start", new File("src/test/resources/average.json"));
+        fluentTemplate.withHeader("cheap", 10).withHeader("average", 30).withBody(new File("src/test/resources/average.json"))
+                .to("direct:start").send();
 
         assertMockEndpointsSatisfied();
     }
@@ -108,7 +71,8 @@ public class JsonPathCBRTest extends CamelTestSupport {
         getMockEndpoint("mock:average").expectedMessageCount(0);
         getMockEndpoint("mock:expensive").expectedMessageCount(1);
 
-        template.sendBody("direct:start", new File("src/test/resources/expensive.json"));
+        fluentTemplate.withHeader("cheap", 10).withHeader("average", 30).withBody(new File("src/test/resources/expensive.json"))
+                .to("direct:start").send();
 
         assertMockEndpointsSatisfied();
     }
