@@ -1797,7 +1797,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public SimpleValidationResult validateSimpleExpression(String simple) {
-        return doValidateSimple(DefaultCamelCatalog.class.getClassLoader(), simple, false);
+        return doValidateSimple(null, simple, false);
     }
 
     @Override
@@ -1807,7 +1807,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public SimpleValidationResult validateSimplePredicate(String simple) {
-        return doValidateSimple(DefaultCamelCatalog.class.getClassLoader(), simple, true);
+        return doValidateSimple(null, simple, true);
     }
 
     @Override
@@ -1816,6 +1816,10 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     private SimpleValidationResult doValidateSimple(ClassLoader classLoader, String simple, boolean predicate) {
+        if (classLoader == null) {
+            classLoader = DefaultCamelCatalog.class.getClassLoader();
+        }
+
         SimpleValidationResult answer = new SimpleValidationResult(simple);
 
         Object instance = null;
@@ -1884,6 +1888,73 @@ public class DefaultCamelCatalog implements CamelCatalog {
                         }
                     }
                 }
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
+    public LanguageValidationResult validateLanguagePredicate(ClassLoader classLoader, String language, String text) {
+        return doValidateLanguage(classLoader, language, text, true);
+    }
+
+    @Override
+    public LanguageValidationResult validateLanguageExpression(ClassLoader classLoader, String language, String text) {
+        return doValidateLanguage(classLoader, language, text, false);
+    }
+
+    private LanguageValidationResult doValidateLanguage(ClassLoader classLoader, String language, String text, boolean predicate) {
+        if (classLoader == null) {
+            classLoader = DefaultCamelCatalog.class.getClassLoader();
+        }
+
+        SimpleValidationResult answer = new SimpleValidationResult(text);
+
+        String json = languageJSonSchema(language);
+        if (json == null) {
+            answer.setError("Unknown language " + language);
+            return answer;
+        }
+
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
+        String className = null;
+        for (Map<String, String> row : rows) {
+            if (row.containsKey("javaType")) {
+                className = row.get("javaType");
+            }
+        }
+
+        if (className == null) {
+            answer.setError("Cannot find javaType for language " + language);
+            return answer;
+        }
+
+        Object instance = null;
+        Class clazz = null;
+        try {
+            clazz = classLoader.loadClass(className);
+            instance = clazz.newInstance();
+        } catch (Exception e) {
+            // ignore
+        }
+
+        if (clazz != null && instance != null) {
+            Throwable cause = null;
+            try {
+                if (predicate) {
+                    instance.getClass().getMethod("createPredicate", String.class).invoke(instance, text);
+                } else {
+                    instance.getClass().getMethod("createExpression", String.class).invoke(instance, text);
+                }
+            } catch (InvocationTargetException e) {
+                cause = e.getTargetException();
+            } catch (Exception e) {
+                cause = e;
+            }
+
+            if (cause != null) {
+                answer.setError(cause.getMessage());
             }
         }
 
