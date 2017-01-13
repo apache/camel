@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.ExpressionIllegalSyntaxException;
+import org.apache.camel.jsonpath.easypredicate.EasyPredicateParser;
 import org.apache.camel.support.ExpressionAdapter;
 
 public class JsonPathExpression extends ExpressionAdapter implements AfterPropertiesConfigured {
@@ -29,6 +30,7 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
     private final String expression;
     private JsonPathEngine engine;
 
+    private boolean predicate;
     private Class<?> resultType;
     private boolean suppressExceptions;
     private boolean allowSimple = true;
@@ -36,6 +38,17 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
 
     public JsonPathExpression(String expression) {
         this.expression = expression;
+    }
+
+    public boolean isPredicate() {
+        return predicate;
+    }
+
+    /**
+     * Whether to be evaluated as a predicate
+     */
+    public void setPredicate(boolean predicate) {
+        this.predicate = predicate;
     }
 
     public Class<?> getResultType() {
@@ -102,10 +115,15 @@ public class JsonPathExpression extends ExpressionAdapter implements AfterProper
     }
 
     public void init() {
+        String exp = expression;
+        if (predicate) {
+            EasyPredicateParser parser = new EasyPredicateParser();
+            exp = parser.parse(expression);
+        }
         try {
-            engine = new JsonPathEngine(expression, suppressExceptions, allowSimple, options);
+            engine = new JsonPathEngine(exp, suppressExceptions, allowSimple, options);
         } catch (Exception e) {
-            throw new ExpressionIllegalSyntaxException(expression, e);
+            throw new ExpressionIllegalSyntaxException(exp, e);
         }
     }
 
