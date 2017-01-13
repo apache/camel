@@ -32,6 +32,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
@@ -60,81 +61,85 @@ import static org.apache.camel.component.couchbase.CouchbaseConstants.DEFAULT_VI
 public class CouchbaseEndpoint extends ScheduledPollEndpoint {
 
     @UriPath
+    @Metadata(required = "true")
     private String protocol;
-    private String bucket;
+    @UriPath
+    @Metadata(required = "true")
     private String hostname;
+    @UriParam(defaultValue = "8091")
     private int port;
+    @UriParam
+    private String bucket;
 
     // Couchbase key
     @UriParam
     private String key;
 
     // Authentication
-    @UriParam
-    private String username = "";
-    @UriParam
-    private String password = "";
+    @UriParam(label = "security", secret = true)
+    private String username;
+    @UriParam(label = "security", secret = true)
+    private String password;
 
     // Additional hosts
-    @UriParam
-    private String additionalHosts = "";
+    @UriParam(label = "advanced")
+    private String additionalHosts;
 
     // Persistence and replication parameters
-    @UriParam
+    @UriParam(label = "producer", defaultValue = "0")
     private int persistTo;
 
-    @UriParam
+    @UriParam(label = "producer", defaultValue = "0")
     private int replicateTo;
 
     // Producer parameters
-    @UriParam
+    @UriParam(label = "producer", defaultValue = COUCHBASE_PUT)
     private String operation = COUCHBASE_PUT;
-    @UriParam
+    @UriParam(label = "producer", defaultValue = "false")
     private boolean autoStartIdForInserts;
-    @UriParam
+    @UriParam(label = "producer", defaultValue = "2")
     private int producerRetryAttempts = DEFAULT_PRODUCER_RETRIES;
-    @UriParam
+    @UriParam(label = "producer", defaultValue = "5000")
     private int producerRetryPause = DEFAULT_PAUSE_BETWEEN_RETRIES;
 
-    @UriParam
+    @UriParam(label = "producer")
     private long startingIdForInsertsFrom;
     // View control
-    @UriParam
+    @UriParam(label = "consumer", defaultValue = DEFAULT_DESIGN_DOCUMENT_NAME)
     private String designDocumentName = DEFAULT_DESIGN_DOCUMENT_NAME;
-    @UriParam
+    @UriParam(label = "consumer", defaultValue = DEFAULT_VIEWNAME)
     private String viewName = DEFAULT_VIEWNAME;
-    @UriParam
+    @UriParam(label = "consumer", defaultValue = "-1")
     private int limit = -1;
-    @UriParam
+    @UriParam(label = "consumer", defaultValue = "false")
     private boolean descending;
-    @UriParam
+    @UriParam(label = "consumer", defaultValue = "-1")
     private int skip = -1;
-    @UriParam
-    private String rangeStartKey = "";
-
-    @UriParam
+    @UriParam(label = "consumer")
+    private String rangeStartKey;
+    @UriParam(label = "consumer")
     private String rangeEndKey = "";
 
     // Consumer strategy
-    @UriParam
+    @UriParam(label = "consumer", defaultValue = DEFAULT_CONSUME_PROCESSED_STRATEGY)
     private String consumerProcessedStrategy = DEFAULT_CONSUME_PROCESSED_STRATEGY;
 
     // Connection fine tuning parameters
-    @UriParam
+    @UriParam(label = "advanced", defaultValue = "2500")
     private long opTimeOut = DEFAULT_OP_TIMEOUT;
-    @UriParam
+    @UriParam(label = "advanced", defaultValue = "998")
     private int timeoutExceptionThreshold = DEFAULT_TIMEOUT_EXCEPTION_THRESHOLD;
-    @UriParam
+    @UriParam(label = "advanced", defaultValue = "16384")
     private int readBufferSize = DEFAULT_READ_BUFFER_SIZE;
-    @UriParam
+    @UriParam(label = "advanced", defaultValue = "false")
     private boolean shouldOptimize;
-    @UriParam
+    @UriParam(label = "advanced", defaultValue = "30000")
     private long maxReconnectDelay = DEFAULT_MAX_RECONNECT_DELAY;
-    @UriParam
+    @UriParam(label = "advanced", defaultValue = "10000")
     private long opQueueMaxBlockTime = DEFAULT_OP_QUEUE_MAX_BLOCK_TIME;
-    @UriParam
+    @UriParam(label = "advanced", defaultValue = "400")
     private long obsPollInterval = DEFAULT_OBS_POLL_INTERVAL;
-    @UriParam
+    @UriParam(label = "advanced", defaultValue = "-1")
     private long obsTimeout = DEFAULT_OBS_TIMEOUT;
 
     public CouchbaseEndpoint() {
