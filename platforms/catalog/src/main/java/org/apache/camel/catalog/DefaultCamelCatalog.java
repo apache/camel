@@ -1653,7 +1653,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public SimpleValidationResult validateSimpleExpression(String simple) {
-        return doValidateSimple(DefaultCamelCatalog.class.getClassLoader(), simple, false);
+        return doValidateSimple(null, simple, false);
     }
 
     @Override
@@ -1663,7 +1663,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public SimpleValidationResult validateSimplePredicate(String simple) {
-        return doValidateSimple(DefaultCamelCatalog.class.getClassLoader(), simple, true);
+        return doValidateSimple(null, simple, true);
     }
 
     @Override
@@ -1672,6 +1672,16 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     private SimpleValidationResult doValidateSimple(ClassLoader classLoader, String simple, boolean predicate) {
+        if (classLoader == null) {
+            classLoader = DefaultCamelCatalog.class.getClassLoader();
+        }
+
+        // if there are {{ }}} property placeholders then we need to resolve them to something else
+        // as the simple parse cannot resolve them before parsing as we dont run the actual Camel application
+        // with property placeholders setup so we need to dummy this by replace the {{ }} to something else
+        // therefore we use an more unlikely character: {{XXX}} to ~^XXX^~
+        String resolved = simple.replaceAll("\\{\\{(.+)\\}\\}", "~^$1^~");
+
         SimpleValidationResult answer = new SimpleValidationResult(simple);
 
         Object instance = null;
@@ -1687,9 +1697,9 @@ public class DefaultCamelCatalog implements CamelCatalog {
             Throwable cause = null;
             try {
                 if (predicate) {
-                    instance.getClass().getMethod("createPredicate", String.class).invoke(instance, simple);
+                    instance.getClass().getMethod("createPredicate", String.class).invoke(instance, resolved);
                 } else {
-                    instance.getClass().getMethod("createExpression", String.class).invoke(instance, simple);
+                    instance.getClass().getMethod("createExpression", String.class).invoke(instance, resolved);
                 }
             } catch (InvocationTargetException e) {
                 cause = e.getTargetException();
@@ -1698,7 +1708,12 @@ public class DefaultCamelCatalog implements CamelCatalog {
             }
 
             if (cause != null) {
-                answer.setError(cause.getMessage());
+
+                // reverse ~^XXX^~ back to {{XXX}}
+                String errMsg = cause.getMessage();
+                errMsg = errMsg.replaceAll("\\~\\^(.+)\\^\\~", "{{$1}}");
+
+                answer.setError(errMsg);
 
                 // is it simple parser exception then we can grab the index where the problem is
                 if (cause.getClass().getName().equals("org.apache.camel.language.simple.types.SimpleIllegalSyntaxException")

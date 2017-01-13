@@ -822,6 +822,22 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testSimplePredicatePlaceholder() throws Exception {
+        SimpleValidationResult result = catalog.validateSimplePredicate(null, "${body} contains '{{danger}}'");
+        assertTrue(result.isSuccess());
+        assertEquals("${body} contains '{{danger}}'", result.getSimple());
+
+        result = catalog.validateSimplePredicate(null, "${bdy} contains '{{danger}}'");
+        assertFalse(result.isSuccess());
+        assertEquals("${bdy} contains '{{danger}}'", result.getSimple());
+        LOG.info(result.getError());
+        assertTrue(result.getError().startsWith("Unknown function: bdy at location 0"));
+        assertTrue(result.getError().contains("'{{danger}}'"));
+        assertEquals("Unknown function: bdy", result.getShortError());
+        assertEquals(0, result.getIndex());
+    }
+
+    @Test
     public void testSpringCamelContext() throws Exception {
         String json = catalog.modelJSonSchema("camelContext");
         assertNotNull(json);
