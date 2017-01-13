@@ -16,48 +16,17 @@
  */
 package org.apache.camel.catalog;
 
-import java.io.Serializable;
+/**
+ * To be backwards compatible, but favor using {@link LanguageValidationResult} instead.
+ */
+public class SimpleValidationResult extends LanguageValidationResult {
 
-public class SimpleValidationResult implements Serializable {
-
-    private final String simple;
-    private String error;
-    private String shortError;
-    private int index;
-
-    public SimpleValidationResult(String simple) {
-        this.simple = simple;
+    public SimpleValidationResult(String text) {
+        super(text);
     }
 
     public String getSimple() {
-        return simple;
+        return getText();
     }
 
-    public boolean isSuccess() {
-        return error == null;
-    }
-
-    public void setError(String error) {
-        this.error = error;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public String getShortError() {
-        return shortError;
-    }
-
-    public void setShortError(String shortError) {
-        this.shortError = shortError;
-    }
-
-    public int getIndex() {
-        return index;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
-    }
 }

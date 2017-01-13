@@ -793,11 +793,11 @@ public class CamelCatalogTest {
 
     @Test
     public void testSimpleExpression() throws Exception {
-        SimpleValidationResult result = catalog.validateSimpleExpression("${body}");
+        SimpleValidationResult result = catalog.validateSimpleExpression(null, "${body}");
         assertTrue(result.isSuccess());
         assertEquals("${body}", result.getSimple());
 
-        result = catalog.validateSimpleExpression("${body");
+        result = catalog.validateSimpleExpression(null, "${body");
         assertFalse(result.isSuccess());
         assertEquals("${body", result.getSimple());
         LOG.info(result.getError());
@@ -808,17 +808,40 @@ public class CamelCatalogTest {
 
     @Test
     public void testSimplePredicate() throws Exception {
-        SimpleValidationResult result = catalog.validateSimplePredicate("${body} == 'abc'");
+        SimpleValidationResult result = catalog.validateSimplePredicate(null, "${body} == 'abc'");
         assertTrue(result.isSuccess());
         assertEquals("${body} == 'abc'", result.getSimple());
 
-        result = catalog.validateSimplePredicate("${body} > ${header.size");
+        result = catalog.validateSimplePredicate(null, "${body} > ${header.size");
         assertFalse(result.isSuccess());
         assertEquals("${body} > ${header.size", result.getSimple());
         LOG.info(result.getError());
         assertTrue(result.getError().startsWith("expected symbol functionEnd but was eol at location 22"));
         assertEquals("expected symbol functionEnd but was eol", result.getShortError());
         assertEquals(22, result.getIndex());
+    }
+
+    @Test
+    public void testValidateLanguage() throws Exception {
+        LanguageValidationResult result = catalog.validateLanguageExpression(null, "simple", "${body}");
+        assertTrue(result.isSuccess());
+        assertEquals("${body}", result.getText());
+
+        result = catalog.validateLanguageExpression(null, "header", "foo");
+        assertTrue(result.isSuccess());
+        assertEquals("foo", result.getText());
+
+        result = catalog.validateLanguagePredicate(null, "simple", "${body} > 10");
+        assertTrue(result.isSuccess());
+        assertEquals("${body} > 10", result.getText());
+
+        result = catalog.validateLanguagePredicate(null, "header", "bar");
+        assertTrue(result.isSuccess());
+        assertEquals("bar", result.getText());
+
+        result = catalog.validateLanguagePredicate(null, "foobar", "bar");
+        assertFalse(result.isSuccess());
+        assertEquals("Unknown language foobar", result.getError());
     }
 
     @Test

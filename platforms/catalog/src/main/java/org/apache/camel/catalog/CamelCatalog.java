@@ -359,7 +359,9 @@ public interface CamelCatalog {
      *
      * @param simple  the simple expression
      * @return validation result
+     * @deprecated use {@link #validateSimpleExpression(ClassLoader, String)}
      */
+    @Deprecated
     SimpleValidationResult validateSimpleExpression(String simple);
 
     /**
@@ -367,7 +369,7 @@ public interface CamelCatalog {
      * <p/>
      * <b>Important:</b> This requires having <tt>camel-core</tt> on the classpath
      *
-     * @param classLoader a custom classloader to use for loading the simple language from the classpath
+     * @param classLoader a custom classloader to use for loading the language from the classpath, or <tt>null</tt> for using default classloader
      * @param simple  the simple expression
      * @return validation result
      */
@@ -380,7 +382,9 @@ public interface CamelCatalog {
      *
      * @param simple  the simple predicate
      * @return validation result
+     * @deprecated use {@link #validateSimplePredicate(ClassLoader, String)}
      */
+    @Deprecated
     SimpleValidationResult validateSimplePredicate(String simple);
 
     /**
@@ -388,11 +392,35 @@ public interface CamelCatalog {
      * <p/>
      * <b>Important:</b> This requires having <tt>camel-core</tt> on the classpath
      *
-     * @param classLoader a custom classloader to use for loading the simple language from the classpath
+     * @param classLoader a custom classloader to use for loading the language from the classpath, or <tt>null</tt> for using default classloader
      * @param simple  the simple predicate
      * @return validation result
      */
     SimpleValidationResult validateSimplePredicate(ClassLoader classLoader, String simple);
+
+    /**
+     * Parses and validates the language as a predicate
+     * <p/>
+     * <b>Important:</b> This requires having <tt>camel-core</tt> and the language dependencies on the classpath
+     *
+     * @param classLoader a custom classloader to use for loading the language from the classpath, or <tt>null</tt> for using default classloader
+     * @param language the name of the language
+     * @param text  the predicate text
+     * @return validation result
+     */
+    LanguageValidationResult validateLanguagePredicate(ClassLoader classLoader, String language, String text);
+
+    /**
+     * Parses and validates the language as an expression
+     * <p/>
+     * <b>Important:</b> This requires having <tt>camel-core</tt> and the language dependencies on the classpath
+     *
+     * @param classLoader a custom classloader to use for loading the language from the classpath, or <tt>null</tt> for using default classloader
+     * @param language the name of the language
+     * @param text  the expression text
+     * @return validation result
+     */
+    LanguageValidationResult validateLanguageExpression(ClassLoader classLoader, String language, String text);
 
     /**
      * Returns the component name from the given endpoint uri
