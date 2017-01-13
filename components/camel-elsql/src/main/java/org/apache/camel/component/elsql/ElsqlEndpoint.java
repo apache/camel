@@ -48,7 +48,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
  * The elsql component is an extension to the existing SQL Component that uses ElSql to define the SQL queries.
  */
 @UriEndpoint(scheme = "elsql", title = "ElSQL", syntax = "elsql:elsqlName:resourceUri", consumerClass = ElsqlConsumer.class,
-        label = "database,sql", excludeProperties = "batch") // batch is not supported
+        label = "database,sql")
 public class ElsqlEndpoint extends DefaultSqlEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElsqlEndpoint.class);
