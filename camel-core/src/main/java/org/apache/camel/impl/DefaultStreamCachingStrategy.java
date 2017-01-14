@@ -235,10 +235,10 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
             return;
         }
 
-        String bufferSize = camelContext.getProperty(BUFFER_SIZE);
-        String hold = camelContext.getProperty(THRESHOLD);
-        String chiper = camelContext.getProperty(CIPHER_TRANSFORMATION);
-        String dir = camelContext.getProperty(TEMP_DIR);
+        String bufferSize = camelContext.getGlobalOption(BUFFER_SIZE);
+        String hold = camelContext.getGlobalOption(THRESHOLD);
+        String chiper = camelContext.getGlobalOption(CIPHER_TRANSFORMATION);
+        String dir = camelContext.getGlobalOption(TEMP_DIR);
 
         boolean warn = false;
         if (bufferSize != null) {

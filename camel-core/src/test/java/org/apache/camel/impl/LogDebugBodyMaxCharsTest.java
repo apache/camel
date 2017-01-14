@@ -29,7 +29,7 @@ public class LogDebugBodyMaxCharsTest extends ContextTestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        context.getProperties().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "20");
+        context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "20");
     }
 
     @Override

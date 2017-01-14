@@ -107,7 +107,7 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         if (logger == null) {
             String name = getLogName();
             if (name == null) {
-                name = routeContext.getCamelContext().getProperty(Exchange.LOG_EIP_NAME);
+                name = routeContext.getCamelContext().getGlobalOption(Exchange.LOG_EIP_NAME);
                 if (name != null) {
                     LOG.debug("Using logName from CamelContext properties: {}", name);
                 }
