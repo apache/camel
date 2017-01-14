@@ -949,7 +949,7 @@ public final class ObjectHelper {
      */
     public static Properties getCamelPropertiesWithPrefix(String prefix, CamelContext camelContext) {
         Properties answer = new Properties();
-        Map<String, String> camelProperties = camelContext.getProperties();
+        Map<String, String> camelProperties = camelContext.getGlobalOptions();
         if (camelProperties != null) {
             for (Map.Entry<String, String> entry : camelProperties.entrySet()) {
                 String key = entry.getKey();

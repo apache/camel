@@ -30,7 +30,7 @@ public class DefaultConsumerTemplateWithCustomCacheMaxSizeTest extends ContextTe
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getProperties().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "200");
+        context.getGlobalOptions().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "200");
         return context;
     }
 
@@ -56,7 +56,7 @@ public class DefaultConsumerTemplateWithCustomCacheMaxSizeTest extends ContextTe
     }
 
     public void testInvalidSizeABC() {
-        context.getProperties().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "ABC");
+        context.getGlobalOptions().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "ABC");
         try {
             context.createConsumerTemplate();
             fail("Should have thrown an exception");
@@ -66,7 +66,7 @@ public class DefaultConsumerTemplateWithCustomCacheMaxSizeTest extends ContextTe
     }
 
     public void testInvalidSizeZero() {
-        context.getProperties().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "0");
+        context.getGlobalOptions().put(Exchange.MAXIMUM_CACHE_POOL_SIZE, "0");
         try {
             context.createConsumerTemplate();
             fail("Should have thrown an exception");
