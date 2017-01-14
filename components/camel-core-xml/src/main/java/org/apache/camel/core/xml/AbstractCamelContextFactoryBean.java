@@ -167,7 +167,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
         // then set custom properties
         if (getProperties() != null) {
-            getContext().setProperties(getProperties().asMap());
+            getContext().setGlobalOptions(getProperties().asMap());
         }
         // and enable lazy loading of type converters if applicable
         initLazyLoadTypeConverters();
