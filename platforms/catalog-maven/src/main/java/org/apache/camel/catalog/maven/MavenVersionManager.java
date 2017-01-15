@@ -38,6 +38,19 @@ public class MavenVersionManager implements VersionManager {
     private final ClassLoader classLoader = new GroovyClassLoader();
     private String version;
 
+    /**
+     * To add a 3rd party Maven repository.
+     *
+     * @param name the repository name
+     * @param url  the repository url
+     */
+    public void addMavenRepository(String name, String url) {
+        Map<String, Object> repo = new HashMap<>();
+        repo.put("name", name);
+        repo.put("root", url);
+        Grape.addResolver(repo);
+    }
+
     @Override
     public String getLoadedVersion() {
         return version;
@@ -53,6 +66,7 @@ public class MavenVersionManager implements VersionManager {
             param.put("group", "org.apache.camel");
             param.put("module", "camel-catalog");
             param.put("version", version);
+
             Grape.grab(param);
 
             this.version = version;
