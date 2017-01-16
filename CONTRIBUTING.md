@@ -1,11 +1,11 @@
 ## Contributing to Apache Camel
 
 There are many ways you can help make Camel a better piece of software - please dive in and help!
-- Try surf the documentation - if somethings confusing or not clear, let us know. 
-- Download the code & try it out and see what you think. 
+- Try surf the documentation - if somethings confusing or not clear, let us know.
+- Download the code & try it out and see what you think.
 - Browse the source code. Got an itch to scratch, want to tune some operation or add some feature?
-- Want to do some hacking on Camel? Try surfing the our [issue tracker](http://issues.apache.org/activemq/browse/CAMEL) for open issues or features that need to be implemented, take ownership of an issue and try fix it.
-- If you are a new Camel rider and would like to help us, you can also find [some easy to resolve issues.](https://issues.apache.org/jira/secure/IssueNavigator.jspa?mode=hide&requestId=12316782) 
+- Want to do some hacking on Camel? Try surfing the our [issue tracker](https://issues.apache.org/jira/browse/CAMEL) for open issues or features that need to be implemented, take ownership of an issue and try fix it.
+- If you are a new Camel rider and would like to help us, you can also find [some easy to resolve issues.](https://issues.apache.org/jira/secure/IssueNavigator.jspa?mode=hide&requestId=12316782)
 - Leave a comment on the issue to let us know you are working on it and add yourself as a watcher to get informed about all modifications.
 
 
@@ -49,7 +49,7 @@ To be able to edit the wiki you need
 
 ## If you find a bug or problem
 
-Please raise a new issue in our [issue tracker](http://issues.apache.org/activemq/browse/CAMEL)
+Please raise a new issue in our [issue tracker](https://issues.apache.org/jira/browse/CAMEL)
 If you can create a JUnit test case then your issue is more likely to be resolved quicker.
 e.g. take a look at some of the existing [unit tests cases](https://svn.apache.org/repos/asf/camel/trunk/camel-core/src/test/java/)
 Then we can add your issue to Subversion and then we'll know when its really fixed and we can ensure that the problem stays fixed in future releases.
@@ -105,8 +105,8 @@ We recommend you create patches as github PRs which is much easier for us to acc
 ## Pull request at Github
 
 There is also a Git repository at Github which you could fork. Then you submit patches as any other github project - eg work on a new feature branch and send a pull request. One of the committers then needs to accept your pull request to bring the code  to the ASF codebase. After the code has been included into the ASF codebase, you need to close the pull request because we can't do that...
-	
-When providing code patches then please include the Camel JIRA ticket number in the commit messages. 
+
+When providing code patches then please include the Camel JIRA ticket number in the commit messages.
 We favor using the syntax:
 
     CAMEL-9999: Some message goes here
@@ -137,7 +137,7 @@ We prefer patches has unit tests as well and that these unit tests have proper a
 
 ## Using the issue tracker
 
-Before you can raise an issue in the [issue tracker](http://issues.apache.org/activemq/browse/CAMEL) you need to register with it. This is quick & painless.
+Before you can raise an issue in the [issue tracker](https://issues.apache.org/jira/browse/CAMEL) you need to register with it. This is quick & painless.
 If you want to have a go at fixing an issue you need to be in the list of camel-developers on the issue tracker. To join the group, please mail the `dev@camel.apache.org` mail list with the email address you used to register with the issue tracker and we'll add you to the group.
 
 
