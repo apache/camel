@@ -41,6 +41,7 @@ public class EndpointValidationResult implements Serializable {
     // options
     private Set<String> unknown;
     private Map<String, String[]> unknownSuggestions;
+    private Set<String> lenient;
     private Set<String> notConsumerOnly;
     private Set<String> notProducerOnly;
     private Set<String> required;
@@ -108,6 +109,15 @@ public class EndpointValidationResult implements Serializable {
             unknownSuggestions = new LinkedHashMap<String, String[]>();
         }
         unknownSuggestions.put(name, suggestions);
+    }
+
+    public void addLenient(String name) {
+        if (lenient == null) {
+            lenient = new LinkedHashSet<String>();
+        }
+        if (!lenient.contains(name)) {
+            lenient.add(name);
+        }
     }
 
     public void addRequired(String name) {
@@ -221,6 +231,10 @@ public class EndpointValidationResult implements Serializable {
 
     public Set<String> getUnknown() {
         return unknown;
+    }
+
+    public Set<String> getLenient() {
+        return lenient;
     }
 
     public Map<String, String[]> getUnknownSuggestions() {

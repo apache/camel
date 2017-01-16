@@ -599,6 +599,31 @@ public class CamelCatalogTest {
         assertFalse(result.isSuccess());
         assertTrue(result.getUnknown().contains("foo"));
 
+        // lenient off consumer only
+        result = catalog.validateEndpointProperties("netty4-http:http://myserver?foo=bar", false, true, false);
+        assertFalse(result.isSuccess());
+        // consumer should still fail because we cannot use lenient option in consumer mode
+        assertEquals("foo", result.getUnknown().iterator().next());
+        assertNull(result.getLenient());
+        // lenient off producer only
+        result = catalog.validateEndpointProperties("netty4-http:http://myserver?foo=bar", false, false, true);
+        assertTrue(result.isSuccess());
+        // foo is the lenient option
+        assertEquals(1, result.getLenient().size());
+        assertEquals("foo", result.getLenient().iterator().next());
+
+        // lenient on consumer only
+        result = catalog.validateEndpointProperties("netty4-http:http://myserver?foo=bar", true, true, false);
+        assertFalse(result.isSuccess());
+        // consumer should still fail because we cannot use lenient option in consumer mode
+        assertEquals("foo", result.getUnknown().iterator().next());
+        assertNull(result.getLenient());
+        // lenient on producer only
+        result = catalog.validateEndpointProperties("netty4-http:http://myserver?foo=bar", true, false, true);
+        assertFalse(result.isSuccess());
+        assertEquals("foo", result.getUnknown().iterator().next());
+        assertNull(result.getLenient());
+
         // data format
         result = catalog.validateEndpointProperties("dataformat:string:marshal?charset=utf-8", true);
         assertTrue(result.isSuccess());
