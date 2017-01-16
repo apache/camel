@@ -308,7 +308,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
                 }
 
                 // use single line headers with # as level instead of the cumbersome adoc weird style
-                if (line.startsWith("^^^") || line.startsWith("~~~") || line.startsWith("+++") ) {
+                if (line.startsWith("^^^") || line.startsWith("~~~") || line.startsWith("+++")) {
                     String level = line.startsWith("+++") ? "####" : "###";
 
                     // transform legacy heading into new style
