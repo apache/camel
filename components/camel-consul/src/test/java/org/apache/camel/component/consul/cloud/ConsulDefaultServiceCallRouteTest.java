@@ -25,12 +25,10 @@ import com.orbitz.consul.model.agent.ImmutableRegistration;
 import com.orbitz.consul.model.agent.Registration;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cloud.ServiceDiscovery;
-import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulTestSupport;
 import org.junit.Test;
 
-public class ConsulServiceCallRouteTest extends ConsulTestSupport {
+public class ConsulDefaultServiceCallRouteTest extends ConsulTestSupport {
     private static final String SERVICE_NAME = "http-service";
     private static final int SERVICE_COUNT = 5;
     private static final int SERVICE_PORT_BASE = 8080;
@@ -96,15 +94,11 @@ public class ConsulServiceCallRouteTest extends ConsulTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                ConsulConfiguration configuration = new ConsulConfiguration(null);
-                ServiceDiscovery discovery = new ConsulServiceDiscovery(configuration);
-
                 from("direct:start")
                     .serviceCall()
                         .name(SERVICE_NAME)
-                        .component("http")
-                        .serviceDiscovery(discovery)
-                        .end()
+                        .consulServiceDiscovery()
+                        .endParent()
                     .to("log:org.apache.camel.component.consul.processor.service?level=INFO&showAll=true&multiline=true")
                     .to("mock:result");
 

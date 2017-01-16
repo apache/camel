@@ -32,10 +32,14 @@
     </serviceCallConfiguration>
 
     <serviceCallConfiguration id="conf2">
-      <staticServiceDiscovery>
-        <servers>localhost:9092</servers>
-        <servers>localhost:9093,localhost:9094</servers>
-      </staticServiceDiscovery>
+      <multiServiceDiscovery>
+        <staticServiceDiscovery>
+          <servers>localhost:9092</servers>
+        </staticServiceDiscovery>
+        <staticServiceDiscovery>
+          <servers>localhost:9093,localhost:9094</servers>
+        </staticServiceDiscovery>
+      </multiServiceDiscovery>
     </serviceCallConfiguration>
 
     <route id="test1">

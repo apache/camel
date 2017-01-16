@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring.cloud;
 
+import org.apache.camel.model.cloud.MultiServiceCallServiceDiscoveryConfiguration;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration;
 import org.apache.camel.spring.SpringCamelContext;
@@ -24,6 +25,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ServiceCallConfigurationTest {
     @Test
@@ -42,10 +44,18 @@ public class ServiceCallConfigurationTest {
         assertNotNull("No ServiceCallConfiguration (2)", conf2);
         assertNotNull("No ServiceDiscoveryConfiguration (2)", conf2.getServiceDiscoveryConfiguration());
 
-        StaticServiceCallServiceDiscoveryConfiguration discovery2 = (StaticServiceCallServiceDiscoveryConfiguration)conf2.getServiceDiscoveryConfiguration();
-        assertEquals(2, discovery2.getServers().size());
-        assertEquals("localhost:9092", discovery2.getServers().get(0));
-        assertEquals("localhost:9093,localhost:9094", discovery2.getServers().get(1));
+        MultiServiceCallServiceDiscoveryConfiguration discovery2 = (MultiServiceCallServiceDiscoveryConfiguration)conf2.getServiceDiscoveryConfiguration();
+        assertEquals(2, discovery2.getServiceDiscoveryConfigurations().size());
+        assertTrue(discovery2.getServiceDiscoveryConfigurations().get(0) instanceof StaticServiceCallServiceDiscoveryConfiguration);
+        assertTrue(discovery2.getServiceDiscoveryConfigurations().get(1) instanceof StaticServiceCallServiceDiscoveryConfiguration);
+
+        StaticServiceCallServiceDiscoveryConfiguration sconf1 = (StaticServiceCallServiceDiscoveryConfiguration)discovery2.getServiceDiscoveryConfigurations().get(0);
+        assertEquals(1, sconf1.getServers().size());
+        assertEquals("localhost:9092", sconf1.getServers().get(0));
+
+        StaticServiceCallServiceDiscoveryConfiguration sconf2 = (StaticServiceCallServiceDiscoveryConfiguration)discovery2.getServiceDiscoveryConfigurations().get(1);
+        assertEquals(1, sconf2.getServers().size());
+        assertEquals("localhost:9093,localhost:9094", sconf2.getServers().get(0));
     }
 
     protected SpringCamelContext createContext(String classpathConfigFile) {

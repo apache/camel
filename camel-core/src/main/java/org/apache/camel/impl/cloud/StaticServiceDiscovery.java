@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.util.StringHelper;
@@ -77,7 +78,7 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
         for (String part : parts) {
             String service = StringHelper.before(part, "@");
             if (service != null) {
-                part = StringHelper.after(service, "@");
+                part = StringHelper.after(part, "@");
             }
             String host = StringHelper.before(part, ":");
             String port = StringHelper.after(part, ":");
@@ -127,6 +128,10 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
 
     @Override
     public List<ServiceDefinition> getUpdatedListOfServices(String name) {
-        return Collections.unmodifiableList(servers);
+        return Collections.unmodifiableList(
+            servers.stream()
+                .filter(s -> Objects.isNull(s.getName()) || Objects.equals(name, s.getName()))
+                .collect(Collectors.toList())
+        );
     }
 }
