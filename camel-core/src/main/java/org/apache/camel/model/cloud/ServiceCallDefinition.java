@@ -91,10 +91,12 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     private Expression expression;
 
     @XmlElements({
+        @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "multiServiceDiscovery", type = MultiServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class)}
     )
     private ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration;
@@ -471,6 +473,72 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     public ServiceCallDefinition expressionConfiguration(ServiceCallExpressionConfiguration expressionConfiguration) {
         setExpressionConfiguration(expressionConfiguration);
         return this;
+    }
+
+    // *****************************
+    // Shortcuts - ServiceDiscovery
+    // *****************************
+
+    /*
+    public CachingServiceCallServiceDiscoveryConfiguration cachingServiceDiscovery() {
+        CachingServiceCallServiceDiscoveryConfiguration conf = new CachingServiceCallServiceDiscoveryConfiguration(this);
+        setServiceDiscoveryConfiguration(conf);
+
+        return conf;
+    }
+    */
+
+    public ConsulServiceCallServiceDiscoveryConfiguration consulServiceDiscovery() {
+        ConsulServiceCallServiceDiscoveryConfiguration conf = new ConsulServiceCallServiceDiscoveryConfiguration(this);
+        setServiceDiscoveryConfiguration(conf);
+
+        return conf;
+    }
+
+    public DnsServiceCallServiceDiscoveryConfiguration dnsServiceDiscovery() {
+        DnsServiceCallServiceDiscoveryConfiguration conf = new DnsServiceCallServiceDiscoveryConfiguration(this);
+        setServiceDiscoveryConfiguration(conf);
+
+        return conf;
+    }
+
+    public EtcdServiceCallServiceDiscoveryConfiguration etcdServiceDiscovery() {
+        EtcdServiceCallServiceDiscoveryConfiguration conf = new EtcdServiceCallServiceDiscoveryConfiguration(this);
+        setServiceDiscoveryConfiguration(conf);
+
+        return conf;
+    }
+
+    public KubernetesServiceCallServiceDiscoveryConfiguration kubernetesServiceDiscovery() {
+        KubernetesServiceCallServiceDiscoveryConfiguration conf = new KubernetesServiceCallServiceDiscoveryConfiguration(this);
+        setServiceDiscoveryConfiguration(conf);
+
+        return conf;
+    }
+
+    public MultiServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
+        MultiServiceCallServiceDiscoveryConfiguration conf = new MultiServiceCallServiceDiscoveryConfiguration(this);
+        setServiceDiscoveryConfiguration(conf);
+
+        return conf;
+    }
+
+    public StaticServiceCallServiceDiscoveryConfiguration staticServiceDiscovery() {
+        StaticServiceCallServiceDiscoveryConfiguration conf = new StaticServiceCallServiceDiscoveryConfiguration(this);
+        setServiceDiscoveryConfiguration(conf);
+
+        return conf;
+    }
+
+    // *****************************
+    // Shortcuts - LoadBalancer
+    // *****************************
+
+    public RibbonServiceCallLoadBalancerConfiguration ribbonLoadBalancer() {
+        RibbonServiceCallLoadBalancerConfiguration conf = new RibbonServiceCallLoadBalancerConfiguration(this);
+        setLoadBalancerConfiguration(conf);
+
+        return conf;
     }
 
     // *****************************

@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -44,13 +43,13 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
 @Metadata(label = "routing,cloud")
-@XmlRootElement(name = "expressionConfiguration")
+@XmlRootElement(name = "serviceExpression")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceCallExpressionConfiguration extends IdentifiedType implements ServiceExpressionFactory {
     private static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/cloud/";
 
     @XmlTransient
-    private final Optional<ServiceCallDefinition> parent;
+    private final ServiceCallDefinition parent;
     @XmlTransient
     private final String factoryKey;
     @XmlElement(name = "properties") @Metadata(label = "advanced")
@@ -65,13 +64,16 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
     }
 
     public ServiceCallExpressionConfiguration(ServiceCallDefinition parent, String factoryKey) {
-        this.parent = Optional.ofNullable(parent);
+        this.parent = parent;
         this.factoryKey = factoryKey;
     }
 
-    public ProcessorDefinition end() {
-        // end parent as well so we do not have to use 2x end
-        return this.parent.orElseGet(null);
+    public ServiceCallDefinition end() {
+        return this.parent;
+    }
+
+    public ProcessorDefinition<?> endParent() {
+        return this.parent.end();
     }
 
     // *************************************************************************
@@ -207,8 +209,9 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
                 IntrospectionSupport.getProperties(this, parameters, null, false);
                 parameters.put("properties", getPropertiesAsMap(camelContext));
 
-                IntrospectionSupport.setProperties(factory, parameters);
+                postProcessFactoryParameters(camelContext, parameters);
 
+                IntrospectionSupport.setProperties(factory, parameters);
 
                 answer = factory.newInstance(camelContext);
             } catch (Exception e) {
@@ -217,5 +220,12 @@ public class ServiceCallExpressionConfiguration extends IdentifiedType implement
         }
 
         return answer;
+    }
+
+    // *************************************************************************
+    // Utilities
+    // *************************************************************************
+
+    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters) throws Exception  {
     }
 }

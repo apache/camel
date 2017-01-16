@@ -33,10 +33,18 @@ public class CachingServiceDiscovery implements ServiceDiscovery {
     private long timeout;
 
     public CachingServiceDiscovery(ServiceDiscovery delegate) {
+        this(delegate, 60 * 1000);
+    }
+
+    public CachingServiceDiscovery(ServiceDiscovery delegate, long timeout) {
         this.delegate = ObjectHelper.notNull(delegate, "delegate");
         this.lastUpdate = 0;
         this.services = Collections.emptyList();
-        this.timeout = 60 * 1000; // 1 min;
+        this.timeout = timeout;
+    }
+
+    public ServiceDiscovery getDelegate() {
+        return this.delegate;
     }
 
     public void setTimeout(long timeout) {

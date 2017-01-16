@@ -15,30 +15,26 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.etcd.cloud;
+package org.apache.camel.component.consul.cloud;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import mousio.etcd4j.EtcdClient;
+import com.orbitz.consul.AgentClient;
+import com.orbitz.consul.model.agent.ImmutableRegistration;
+import com.orbitz.consul.model.agent.Registration;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.etcd.EtcdHelper;
-import org.apache.camel.component.etcd.EtcdTestSupport;
+import org.apache.camel.component.consul.ConsulTestSupport;
 import org.junit.Test;
 
-public class EtcdServiceCallRouteTest extends EtcdTestSupport {
-    private static final ObjectMapper MAPPER = EtcdHelper.createObjectMapper();
+public class ConsulRibbonServiceCallRouteTest extends ConsulTestSupport {
     private static final String SERVICE_NAME = "http-service";
     private static final int SERVICE_COUNT = 5;
     private static final int SERVICE_PORT_BASE = 8080;
 
-    private EtcdClient client;
-    private List<Map<String, Object>> servers;
+    private AgentClient client;
+    private List<Registration> registrations;
     private List<String> expectedBodies;
 
     // *************************************************************************
@@ -47,28 +43,32 @@ public class EtcdServiceCallRouteTest extends EtcdTestSupport {
 
     @Override
     protected void doPreSetup() throws Exception {
-        client = getClient();
+        client = getConsul().agentClient();
 
-        servers = new ArrayList<>(SERVICE_COUNT);
+        registrations = new ArrayList<>(SERVICE_COUNT);
         expectedBodies = new ArrayList<>(SERVICE_COUNT);
 
         for (int i = 0; i < SERVICE_COUNT; i++) {
-            Map<String, Object> server = new HashMap<>();
-            server.put("name", SERVICE_NAME);
-            server.put("address", "127.0.0.1");
-            server.put("port", SERVICE_PORT_BASE + i);
+            Registration r = ImmutableRegistration.builder()
+                .id("service-" + i)
+                .name(SERVICE_NAME)
+                .address("127.0.0.1")
+                .port(SERVICE_PORT_BASE + i)
+                .build();
 
-            client.put("/services/" + "service-" + i, MAPPER.writeValueAsString(server)).send().get();
+            client.register(r);
 
-            servers.add(Collections.unmodifiableMap(server));
-            expectedBodies.add("ping on " + (SERVICE_PORT_BASE + i));
+            registrations.add(r);
+            expectedBodies.add("ping on " + r.getPort().get());
         }
     }
 
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
-        client.deleteDir("/services/").recursive().send().get();
+
+
+        registrations.forEach(r -> client.deregister(r.getId()));
     }
 
     // *************************************************************************
@@ -80,7 +80,7 @@ public class EtcdServiceCallRouteTest extends EtcdTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(SERVICE_COUNT);
         getMockEndpoint("mock:result").expectedBodiesReceivedInAnyOrder(expectedBodies);
 
-        servers.forEach(s -> template.sendBody("direct:start", "ping"));
+        registrations.forEach(r -> template.sendBody("direct:start", "ping"));
 
         assertMockEndpointsSatisfied();
     }
@@ -97,15 +97,16 @@ public class EtcdServiceCallRouteTest extends EtcdTestSupport {
                 from("direct:start")
                     .serviceCall()
                         .name(SERVICE_NAME)
-                        .etcdServiceDiscovery()
-                            .type("on-demand")
-                        .endParent()
-                    .to("log:org.apache.camel.component.etcd.processor.service?level=INFO&showAll=true&multiline=true")
+                        .ribbonLoadBalancer()
+                            .end()
+                        .consulServiceDiscovery()
+                            .endParent()
+                    .to("log:org.apache.camel.component.consul.processor.service?level=INFO&showAll=true&multiline=true")
                     .to("mock:result");
 
-                servers.forEach(s ->
-                    fromF("jetty:http://%s:%d", s.get("address"), s.get("port"))
-                        .transform().simple("${in.body} on " + s.get("port"))
+                registrations.forEach(r ->
+                    fromF("jetty:http://%s:%d", r.getAddress().get(), r.getPort().get())
+                        .transform().simple("${in.body} on " + r.getPort().get())
                 );
             }
         };
