@@ -307,6 +307,16 @@ public interface CamelCatalog {
     Map<String, String> endpointProperties(String uri) throws URISyntaxException;
 
     /**
+     * Parses the endpoint uri and constructs a key/value properties of only the lenient properties (eg custom options)
+     * <p/>
+     * For example using the HTTP components to provide query parameters in the endpoint uri.
+     *
+     * @param uri  the endpoint uri
+     * @return properties as key value pairs of each lenient properties
+     */
+    Map<String, String> endpointLenientProperties(String uri) throws URISyntaxException;
+
+    /**
      * Validates the pattern whether its a valid time pattern.
      *
      * @param pattern  the pattern such as 5000, 5s, 5sec, 4min, 4m30s, 1h, etc.

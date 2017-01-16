@@ -39,6 +39,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import javax.print.attribute.URISyntax;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -1604,6 +1605,50 @@ public class DefaultCamelCatalog implements CamelCatalog {
             // remove the parameter as we run in a while loop until no more parameters
             parameters.remove(key);
         }
+
+        return answer;
+    }
+
+    @Override
+    public Map<String, String> endpointLenientProperties(String uri) throws URISyntaxException {
+        // need to normalize uri first
+
+        // parse the uri
+        URI u = normalizeUri(uri);
+        String scheme = u.getScheme();
+
+        String json = componentJSonSchema(scheme);
+        if (json == null) {
+            throw new IllegalArgumentException("Cannot find endpoint with scheme " + scheme);
+        }
+
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+
+        // now parse the uri parameters
+        Map<String, Object> parameters = URISupport.parseParameters(u);
+
+        // all the known options
+        Set<String> names = getNames(rows);
+
+        Map<String, String> answer = new LinkedHashMap<>();
+
+        // and covert the values to String so its JMX friendly
+        parameters.forEach((k, v) -> {
+            String key = k;
+            String value = v != null ? v.toString() : "";
+
+            // is the key a prefix property
+            int dot = key.indexOf('.');
+            if (dot != -1) {
+                String prefix = key.substring(0, dot + 1); // include dot in prefix
+                String option = getPropertyNameFromNameWithPrefix(rows, prefix);
+                if (option == null || !isPropertyMultiValue(rows, option)) {
+                    answer.put(key, value);
+                }
+            } else if (!names.contains(key)) {
+                answer.put(key, value);
+            }
+        });
 
         return answer;
     }
