@@ -998,9 +998,13 @@ public class DefaultCamelCatalog implements CamelCatalog {
             }
 
             rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
-            // only enable lenient properties if we should not ignore
-            lenientProperties = !ignoreLenientProperties && isComponentLenientProperties(rows);
-
+            if (consumerOnly) {
+                // lenient properties is not support in consumer only mode
+                lenientProperties = false;
+            } else {
+                // only enable lenient properties if we should not ignore
+                lenientProperties = !ignoreLenientProperties && isComponentLenientProperties(rows);
+            }
             rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
             properties = endpointProperties(uri);
         } catch (URISyntaxException e) {
@@ -1054,13 +1058,18 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
                 // only add as error if the component is not lenient properties, or not stub component
                 // and the name is not a property placeholder for one or more values
-                // as if we are lenient then the option is a dynamic extra option which we cannot validate
-                if (!namePlaceholder && !lenientProperties && !"stub".equals(scheme)) {
-                    result.addUnknown(name);
-                    if (suggestionStrategy != null) {
-                        String[] suggestions = suggestionStrategy.suggestEndpointOptions(getNames(rows), name);
-                        if (suggestions != null) {
-                            result.addUnknownSuggestions(name, suggestions);
+                if (!namePlaceholder && !"stub".equals(scheme)) {
+                    if (lenientProperties) {
+                        // as if we are lenient then the option is a dynamic extra option which we cannot validate
+                        result.addLenient(name);
+                    } else {
+                        // its unknown
+                        result.addUnknown(name);
+                        if (suggestionStrategy != null) {
+                            String[] suggestions = suggestionStrategy.suggestEndpointOptions(getNames(rows), name);
+                            if (suggestions != null) {
+                                result.addUnknownSuggestions(name, suggestions);
+                            }
                         }
                     }
                 }
