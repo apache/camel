@@ -286,6 +286,31 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testEndpointLenientProperties() throws Exception {
+        Map<String, String> map = catalog.endpointLenientProperties("http:myserver?throwExceptionOnFailure=false&foo=123&bar=456");
+        assertNotNull(map);
+        assertEquals(2, map.size());
+
+        assertEquals("123", map.get("foo"));
+        assertEquals("456", map.get("bar"));
+
+        map = catalog.endpointLenientProperties("http:myserver?throwExceptionOnFailure=false&foo=123&bar=456&httpClient.timeout=5000&httpClient.soTimeout=10000");
+        assertNotNull(map);
+        assertEquals(2, map.size());
+
+        assertEquals("123", map.get("foo"));
+        assertEquals("456", map.get("bar"));
+
+        map = catalog.endpointLenientProperties("http:myserver?throwExceptionOnFailure=false&foo=123&bar=456&httpClient.timeout=5000&httpClient.soTimeout=10000&myPrefix.baz=beer");
+        assertNotNull(map);
+        assertEquals(3, map.size());
+
+        assertEquals("123", map.get("foo"));
+        assertEquals("456", map.get("bar"));
+        assertEquals("beer", map.get("myPrefix.baz"));
+    }
+
+    @Test
     public void testEndpointPropertiesPlaceholders() throws Exception {
         Map<String, String> map = catalog.endpointProperties("timer:foo?period={{howoften}}&repeatCount=5");
         assertNotNull(map);
