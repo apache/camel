@@ -17,34 +17,13 @@
 package org.apache.camel.component.etcd;
 
 import mousio.etcd4j.EtcdClient;
-import org.apache.camel.Processor;
-import org.apache.camel.impl.ScheduledPollConsumer;
 
-/**
- * The etcd consumer.
- */
-public abstract class AbstractEtcdPollingConsumer extends ScheduledPollConsumer {
-    private EtcdClient client;
+interface EtcdEndpoint {
+    EtcdConfiguration getConfiguration();
 
-    protected AbstractEtcdPollingConsumer(AbstractEtcdPollingEndpoint endpoint, Processor processor) {
-        super(endpoint, processor);
-        this.client = null;
-    }
+    EtcdNamespace getNamespace();
 
-    @Override
-    protected void doStop() throws Exception {
-        if (client != null) {
-            client.close();
-        }
+    String getPath();
 
-        super.doStop();
-    }
-
-    protected EtcdClient getClient() throws Exception {
-        if (client == null) {
-            client = ((EtcdEndpoint)getEndpoint()).createClient();
-        }
-
-        return client;
-    }
+    EtcdClient createClient() throws Exception;
 }
