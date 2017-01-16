@@ -37,7 +37,7 @@
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.14.3</activemq-version>
     <aether-version>1.0.2.v20150114</aether-version>
-    <ahc-version>2.0.24</ahc-version>
+    <ahc-version>2.0.26</ahc-version>
     <ant-bundle-version>1.7.0_6</ant-bundle-version>
     <antlr-bundle-version>3.5.2_1</antlr-bundle-version>
     <antlr-runtime-bundle-version>3.5.2_1</antlr-runtime-bundle-version>
@@ -54,7 +54,7 @@
     <aries-spifly-version>1.0.8</aries-spifly-version>
     <aries-util-version>1.1.3</aries-util-version>
     <arquillian-container-se-managed-version>1.0.0.Final</arquillian-container-se-managed-version>
-    <arquillian-version>1.1.11.Final</arquillian-version>
+    <arquillian-version>1.1.12.Final</arquillian-version>
     <arquillian-weld-embedded-version>2.0.0.Beta4</arquillian-weld-embedded-version>
     <asciidoctorj-version>1.5.4.1</asciidoctorj-version>
     <asm-version>5.0.4</asm-version>
@@ -89,7 +89,7 @@
     <build-helper-maven-plugin-version>1.10</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.2</c3p0-version>
     <caffeine-version>2.3.5</caffeine-version>
-    <californium-version>1.0.4</californium-version>
+    <californium-version>1.0.5</californium-version>
     <camel-test-spring-artifactId>camel-test-spring</camel-test-spring-artifactId>
     <cassandra-driver-version>3.1.3</cassandra-driver-version>
     <cassandra-driver-guava-version>18.0</cassandra-driver-guava-version>
@@ -180,7 +180,7 @@
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
     <!-- embedmongo 1.50.2 do not work -->
     <embedmongo-version>1.50.1</embedmongo-version>
-    <etcd4j-version>2.12.0</etcd4j-version>
+    <etcd4j-version>2.13.0</etcd4j-version>
     <exec-maven-plugin-version>1.5.0</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
     <facebook4j-core-version>2.4.8</facebook4j-core-version>
@@ -232,7 +232,7 @@
     <google-api-services-pubsub-version>v1-rev12-1.22.0</google-api-services-pubsub-version>
     <google-truth-version>0.30</google-truth-version>
     <grizzly-websockets-version>2.3.25</grizzly-websockets-version>
-    <groovy-version>2.4.7</groovy-version>
+    <groovy-version>2.4.8</groovy-version>
     <gson-version>2.7</gson-version>
     <guice-version>4.0</guice-version>
     <guice3-version>3.0</guice3-version>
@@ -287,7 +287,7 @@
     <jackson-version>1.9.12</jackson-version>
     <jackson-spark-version>2.4.5</jackson-spark-version>
     <jackson2-scala-version>2.6.1</jackson2-scala-version>
-    <jackson2-version>2.8.5</jackson2-version>
+    <jackson2-version>2.8.6</jackson2-version>
     <jackrabbit-version>2.14.0</jackrabbit-version>
     <jackrabbit-guava-version>15.0</jackrabbit-guava-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
@@ -335,7 +335,7 @@
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
     <jettison-version>1.3.8</jettison-version>
     <jgit-version>4.6.0.201612231935-r</jgit-version>
-    <jgroups-version>3.6.11.Final</jgroups-version>
+    <jgroups-version>3.6.12.Final</jgroups-version>
     <libthrift-version>0.9.3</libthrift-version>
     <jibx-version>1.2.6</jibx-version>
     <jing-bundle-version>20030619_5</jing-bundle-version>

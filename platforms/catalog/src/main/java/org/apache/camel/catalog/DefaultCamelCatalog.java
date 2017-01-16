@@ -39,6 +39,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import javax.print.attribute.URISyntax;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -1142,9 +1143,13 @@ public class DefaultCamelCatalog implements CamelCatalog {
             }
 
             rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
-            // only enable lenient properties if we should not ignore
-            lenientProperties = !ignoreLenientProperties && isComponentLenientProperties(rows);
-
+            if (consumerOnly) {
+                // lenient properties is not support in consumer only mode
+                lenientProperties = false;
+            } else {
+                // only enable lenient properties if we should not ignore
+                lenientProperties = !ignoreLenientProperties && isComponentLenientProperties(rows);
+            }
             rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
             properties = endpointProperties(uri);
         } catch (URISyntaxException e) {
@@ -1198,13 +1203,18 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
                 // only add as error if the component is not lenient properties, or not stub component
                 // and the name is not a property placeholder for one or more values
-                // as if we are lenient then the option is a dynamic extra option which we cannot validate
-                if (!namePlaceholder && !lenientProperties && !"stub".equals(scheme)) {
-                    result.addUnknown(name);
-                    if (suggestionStrategy != null) {
-                        String[] suggestions = suggestionStrategy.suggestEndpointOptions(getNames(rows), name);
-                        if (suggestions != null) {
-                            result.addUnknownSuggestions(name, suggestions);
+                if (!namePlaceholder && !"stub".equals(scheme)) {
+                    if (lenientProperties) {
+                        // as if we are lenient then the option is a dynamic extra option which we cannot validate
+                        result.addLenient(name);
+                    } else {
+                        // its unknown
+                        result.addUnknown(name);
+                        if (suggestionStrategy != null) {
+                            String[] suggestions = suggestionStrategy.suggestEndpointOptions(getNames(rows), name);
+                            if (suggestions != null) {
+                                result.addUnknownSuggestions(name, suggestions);
+                            }
                         }
                     }
                 }
@@ -1600,6 +1610,50 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     @Override
+    public Map<String, String> endpointLenientProperties(String uri) throws URISyntaxException {
+        // need to normalize uri first
+
+        // parse the uri
+        URI u = normalizeUri(uri);
+        String scheme = u.getScheme();
+
+        String json = componentJSonSchema(scheme);
+        if (json == null) {
+            throw new IllegalArgumentException("Cannot find endpoint with scheme " + scheme);
+        }
+
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+
+        // now parse the uri parameters
+        Map<String, Object> parameters = URISupport.parseParameters(u);
+
+        // all the known options
+        Set<String> names = getNames(rows);
+
+        Map<String, String> answer = new LinkedHashMap<>();
+
+        // and covert the values to String so its JMX friendly
+        parameters.forEach((k, v) -> {
+            String key = k;
+            String value = v != null ? v.toString() : "";
+
+            // is the key a prefix property
+            int dot = key.indexOf('.');
+            if (dot != -1) {
+                String prefix = key.substring(0, dot + 1); // include dot in prefix
+                String option = getPropertyNameFromNameWithPrefix(rows, prefix);
+                if (option == null || !isPropertyMultiValue(rows, option)) {
+                    answer.put(key, value);
+                }
+            } else if (!names.contains(key)) {
+                answer.put(key, value);
+            }
+        });
+
+        return answer;
+    }
+
+    @Override
     public String endpointComponentName(String uri) {
         if (uri != null) {
             int idx = uri.indexOf(":");
@@ -1797,7 +1851,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public SimpleValidationResult validateSimpleExpression(String simple) {
-        return doValidateSimple(DefaultCamelCatalog.class.getClassLoader(), simple, false);
+        return doValidateSimple(null, simple, false);
     }
 
     @Override
@@ -1807,7 +1861,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
     @Override
     public SimpleValidationResult validateSimplePredicate(String simple) {
-        return doValidateSimple(DefaultCamelCatalog.class.getClassLoader(), simple, true);
+        return doValidateSimple(null, simple, true);
     }
 
     @Override
@@ -1816,6 +1870,16 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     private SimpleValidationResult doValidateSimple(ClassLoader classLoader, String simple, boolean predicate) {
+        if (classLoader == null) {
+            classLoader = DefaultCamelCatalog.class.getClassLoader();
+        }
+
+        // if there are {{ }}} property placeholders then we need to resolve them to something else
+        // as the simple parse cannot resolve them before parsing as we dont run the actual Camel application
+        // with property placeholders setup so we need to dummy this by replace the {{ }} to something else
+        // therefore we use an more unlikely character: {{XXX}} to ~^XXX^~
+        String resolved = simple.replaceAll("\\{\\{(.+)\\}\\}", "~^$1^~");
+
         SimpleValidationResult answer = new SimpleValidationResult(simple);
 
         Object instance = null;
@@ -1831,9 +1895,9 @@ public class DefaultCamelCatalog implements CamelCatalog {
             Throwable cause = null;
             try {
                 if (predicate) {
-                    instance.getClass().getMethod("createPredicate", String.class).invoke(instance, simple);
+                    instance.getClass().getMethod("createPredicate", String.class).invoke(instance, resolved);
                 } else {
-                    instance.getClass().getMethod("createExpression", String.class).invoke(instance, simple);
+                    instance.getClass().getMethod("createExpression", String.class).invoke(instance, resolved);
                 }
             } catch (InvocationTargetException e) {
                 cause = e.getTargetException();
@@ -1842,7 +1906,12 @@ public class DefaultCamelCatalog implements CamelCatalog {
             }
 
             if (cause != null) {
-                answer.setError(cause.getMessage());
+
+                // reverse ~^XXX^~ back to {{XXX}}
+                String errMsg = cause.getMessage();
+                errMsg = errMsg.replaceAll("\\~\\^(.+)\\^\\~", "{{$1}}");
+
+                answer.setError(errMsg);
 
                 // is it simple parser exception then we can grab the index where the problem is
                 if (cause.getClass().getName().equals("org.apache.camel.language.simple.types.SimpleIllegalSyntaxException")
@@ -1884,6 +1953,73 @@ public class DefaultCamelCatalog implements CamelCatalog {
                         }
                     }
                 }
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
+    public LanguageValidationResult validateLanguagePredicate(ClassLoader classLoader, String language, String text) {
+        return doValidateLanguage(classLoader, language, text, true);
+    }
+
+    @Override
+    public LanguageValidationResult validateLanguageExpression(ClassLoader classLoader, String language, String text) {
+        return doValidateLanguage(classLoader, language, text, false);
+    }
+
+    private LanguageValidationResult doValidateLanguage(ClassLoader classLoader, String language, String text, boolean predicate) {
+        if (classLoader == null) {
+            classLoader = DefaultCamelCatalog.class.getClassLoader();
+        }
+
+        SimpleValidationResult answer = new SimpleValidationResult(text);
+
+        String json = languageJSonSchema(language);
+        if (json == null) {
+            answer.setError("Unknown language " + language);
+            return answer;
+        }
+
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
+        String className = null;
+        for (Map<String, String> row : rows) {
+            if (row.containsKey("javaType")) {
+                className = row.get("javaType");
+            }
+        }
+
+        if (className == null) {
+            answer.setError("Cannot find javaType for language " + language);
+            return answer;
+        }
+
+        Object instance = null;
+        Class clazz = null;
+        try {
+            clazz = classLoader.loadClass(className);
+            instance = clazz.newInstance();
+        } catch (Exception e) {
+            // ignore
+        }
+
+        if (clazz != null && instance != null) {
+            Throwable cause = null;
+            try {
+                if (predicate) {
+                    instance.getClass().getMethod("createPredicate", String.class).invoke(instance, text);
+                } else {
+                    instance.getClass().getMethod("createExpression", String.class).invoke(instance, text);
+                }
+            } catch (InvocationTargetException e) {
+                cause = e.getTargetException();
+            } catch (Exception e) {
+                cause = e;
+            }
+
+            if (cause != null) {
+                answer.setError(cause.getMessage());
             }
         }
 

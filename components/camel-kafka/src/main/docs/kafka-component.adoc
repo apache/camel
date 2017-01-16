@@ -49,7 +49,7 @@ The Kafka component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The Kafka component supports 78 endpoint options which are listed below:
+The Kafka component supports 79 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -120,6 +120,7 @@ The Kafka component supports 78 endpoint options which are listed below:
 | saslMechanism | security | GSSAPI | String | The Simple Authentication and Security Layer (SASL) Mechanism used. For the valid values see http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml
 | securityProtocol | security | PLAINTEXT | String | Protocol used to communicate with brokers. Currently only PLAINTEXT and SSL are supported.
 | sslCipherSuites | security |  | String | A list of cipher suites. This is a named combination of authentication encryption MAC and key exchange algorithm used to negotiate the security settings for a network connection using TLS or SSL network protocol.By default all the available cipher suites are supported.
+| sslContextParameters | security |  | SSLContextParameters | SSL configuration using a Camel SSLContextParameters object. If configured it's applied before the other SSL endpoint parameters.
 | sslEnabledProtocols | security | TLSv1.2,TLSv1.1,TLSv1 | String | The list of protocols enabled for SSL connections. TLSv1.2 TLSv1.1 and TLSv1 are enabled by default.
 | sslEndpointAlgorithm | security |  | String | The endpoint identification algorithm to validate server hostname using server certificate.
 | sslKeymanagerAlgorithm | security | SunX509 | String | The algorithm used by key manager factory for SSL connections. Default value is the key manager factory algorithm configured for the Java Virtual Machine.
@@ -137,57 +138,65 @@ The Kafka component supports 78 endpoint options which are listed below:
 {% endraw %}
 // endpoint options: END
 
-
-
-
 For more information about Producer/Consumer configuration:
 
 http://kafka.apache.org/documentation.html#newconsumerconfigs[http://kafka.apache.org/documentation.html#newconsumerconfigs]
 http://kafka.apache.org/documentation.html#producerconfigs[http://kafka.apache.org/documentation.html#producerconfigs]
 
+### Message headers
+
+#### Consumer headers
+
+The following headers are available when consuming messages from Kafka.
+[width="100%",cols="2m,2m,1m,5",options="header"]
+|=======================================================================================================
+| Header constant          | Header value      | Type    | Description
+| KafkaConstants.TOPIC     | "kafka.TOPIC"     | String  | The topic from where the message originated
+| KafkaConstants.PARTITION | "kafka.PARTITION" | Integer | The partition where the message was stored
+| KafkaConstants.OFFSET    | "kafka.OFFSET"    | Long    | The offset of the message
+| KafkaConstants.KEY       | "kafka.KEY"       | Object  | The key of the message if configured
+|=======================================================================================================
+
+#### Producer headers
+
+Before sending a message to Kafka you can configure the following headers.
+[width="100%",cols="2m,2m,1m,5",options="header"]
+|============================================================================================================================================================================
+| Header constant              | Header value          | Type    | Description
+| KafkaConstants.KEY           | "kafka.KEY"           | Object  | *Required* The key of the message in order to ensure that all related message goes in the same partition
+| KafkaConstants.TOPIC         | "kafka.TOPIC"         | String  | The topic to which send the message (only read if the `bridgeEndpoint` endpoint parameter is `true`)
+| KafkaConstants.PARTITION_KEY | "kafka.PARTITION_KEY" | Integer | Explicitly specify the partition (only used if the `KafkaConstants.KEY` header is defined)
+|============================================================================================================================================================================
+
+After the message is sent to Kafka, the following headers are available
+[width="100%",cols="2m,2m,1m,5",options="header"]
+|==============================================================================================================================================================================================
+| Header constant                 | Header value                                       | Type                 | Description
+| KafkaConstants.KAFKA_RECORDMETA | "org.apache.kafka.clients.producer.RecordMetadata" | List<RecordMetadata> | The metadata (only configured if `recordMetadata` endpoint parameter is `true`
+|==============================================================================================================================================================================================
+
+
 ### Samples
 
-#### Camel 2.17 or newer
+#### Consuming messages from Kafka
 
-Consuming messages:
-
+Here is the minimal route you need in order to read messages from Kafka.
 [source,java]
--------------------------------------------------------------------------------------------------
-from("kafka:localhost:9092?topic=test&groupId=testing&autoOffsetReset=earliest&consumersCount=1")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange)
-                                    throws Exception {
-                                String messageKey = "";
-                                if (exchange.getIn() != null) {
-                                    Message message = exchange.getIn();
-                                    Integer partitionId = (Integer) message
-                                            .getHeader(KafkaConstants.PARTITION);
-                                    String topicName = (String) message
-                                            .getHeader(KafkaConstants.TOPIC);
-                                    if (message.getHeader(KafkaConstants.KEY) != null)
-                                        messageKey = (String) message
-                                                .getHeader(KafkaConstants.KEY);
-                                    Object data = message.getBody();
-
-
-                                    System.out.println("topicName :: "
-                                            + topicName + " partitionId :: "
-                                            + partitionId + " messageKey :: "
-                                            + messageKey + " message :: "
-                                            + data + "\n");
-                                }
-                            }
-                        }).to("log:input");
--------------------------------------------------------------------------------------------------
-
+-------------------------------------------------------------
+from("kafka:localhost:9092?topic=test&groupId=testing")
+    .log("Message received from Kafka : ${body}")
+    .log("    on the topic ${headers[kafka.TOPIC]}")
+    .log("    on the partition ${headers[kafka.PARTITION]}")
+    .log("    with the offset ${headers[kafka.OFFSET]}")
+    .log("    with the key ${headers[kafka.KEY]}")
+-------------------------------------------------------------
 
 When consuming messages from Kafka you can use your own offset management and not delegate this management to Kafka.
 In order to keep the offsets the component needs a `StateRepository` implementation such as `FileStateRepository`.
 This bean should be available in the registry.
 Here how to use it :
 [source,java]
--------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------
 // Create the repository in which the Kafka offsets will be persisted
 FileStateRepository repository = FileStateRepository.fileStateRepository(new File("/path/to/repo.dat"));
 
@@ -207,25 +216,66 @@ camelContext.addRoutes(new RouteBuilder() {
                 .to("mock:result");
     }
 });
--------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------
  
 
-Producing messages:
+#### Producing messages to Kafka
 
+Here is the minimal route you need in order to write messages to Kafka.
 [source,java]
----------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------
+from("direct:start")
+    .setBody(constant("Message from Camel"))          // Message to send
+    .setHeader(KafkaConstants.KEY, constant("Camel")) // Key of the message
+    .to("kafka:localhost:9092?topic=test");
+----------------------------------------------------------------------------
 
-from("direct:start").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getIn().setBody("Test Message from Camel Kafka Component Final",String.class);
-                        exchange.getIn().setHeader(KafkaConstants.PARTITION_KEY, 0);
-                        exchange.getIn().setHeader(KafkaConstants.KEY, "1");
-                    }
-                }).to("kafka:localhost:9092?topic=test");
----------------------------------------------------------------------------------------------------------------
 
- 
+#### SSL configuration
+
+You have 2 different ways to configure the SSL communication on the Kafka` component.
+
+The first way is through the many SSL endpoint parameters
+[source,java]
+-------------------------------------------------------------
+from("kafka:localhost:{{kafkaPort}}?topic=" + TOPIC +
+             "&groupId=A" +
+             "&sslKeystoreLocation=/path/to/keystore.jks" +
+             "&sslKeystorePassword=changeit" +
+             "&sslKeyPassword=changeit")
+        .to("mock:result");
+-------------------------------------------------------------
+
+The second way is to use the `sslContextParameters` endpoint parameter.
+[source,java]
+--------------------------------------------------------------------------------------------------
+// Configure the SSLContextParameters object
+KeyStoreParameters ksp = new KeyStoreParameters();
+ksp.setResource("/path/to/keystore.jks");
+ksp.setPassword("changeit");
+KeyManagersParameters kmp = new KeyManagersParameters();
+kmp.setKeyStore(ksp);
+kmp.setKeyPassword("changeit");
+SSLContextParameters scp = new SSLContextParameters();
+scp.setKeyManagers(kmp);
+
+// Bind this SSLContextParameters into the Camel registry
+JndiRegistry registry = new JndiRegistry();
+registry.bind("ssl", scp);
+
+// Configure the camel context
+DefaultCamelContext camelContext = new DefaultCamelContext(registry);
+camelContext.addRoutes(new RouteBuilder() {
+    @Override
+    public void configure() throws Exception {
+        from("kafka:localhost:{{kafkaPort}}?topic=" + TOPIC +  //
+                     "&groupId=A" +                            //
+                     "&sslContextParameters=#ssl")             // Reference the SSL configuration
+                .to("mock:result");
+    }
+});
+--------------------------------------------------------------------------------------------------
+
 
 ### Endpoints
 

@@ -119,8 +119,8 @@ public class KafkaConsumer extends DefaultConsumer {
 
             ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
             try {
-                //Fix for running camel-kafka in OSGI see KAFKA-3218
-                Thread.currentThread().setContextClassLoader(null);
+                // Kafka uses reflection for loading authentication settings, use its classloader
+                Thread.currentThread().setContextClassLoader(org.apache.kafka.clients.consumer.KafkaConsumer.class.getClassLoader());
                 this.consumer = new org.apache.kafka.clients.consumer.KafkaConsumer(kafkaProps);
             } finally {
                 Thread.currentThread().setContextClassLoader(threadClassLoader);

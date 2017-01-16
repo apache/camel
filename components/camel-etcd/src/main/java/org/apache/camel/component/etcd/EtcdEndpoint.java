@@ -14,19 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.catalog;
+package org.apache.camel.component.etcd;
 
-/**
- * To be backwards compatible, but favor using {@link LanguageValidationResult} instead.
- */
-public class SimpleValidationResult extends LanguageValidationResult {
+import mousio.etcd4j.EtcdClient;
 
-    public SimpleValidationResult(String text) {
-        super(text);
-    }
+interface EtcdEndpoint {
+    EtcdConfiguration getConfiguration();
 
-    public String getSimple() {
-        return getText();
-    }
+    EtcdNamespace getNamespace();
 
+    String getPath();
+
+    EtcdClient createClient() throws Exception;
 }

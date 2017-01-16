@@ -155,12 +155,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlElements({
             @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class),
             @XmlElement(name = "fluentTemplate", type = CamelFluentProducerTemplateFactoryBean.class),
-            @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class),
-            @XmlElement(name = "proxy", type = CamelProxyFactoryDefinition.class),
-            @XmlElement(name = "export", type = CamelServiceExporterDefinition.class),
-            @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class)})
+            @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class)})
     private List<AbstractCamelFactoryBean<?>> beansFactory;
     @XmlElements({
+        @XmlElement(name = "proxy", type = CamelProxyFactoryDefinition.class),
+        @XmlElement(name = "export", type = CamelServiceExporterDefinition.class),
+        @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class),
         @XmlElement(name = "serviceCallConfiguration", type = ServiceCallConfigurationDefinition.class),
         @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class)})
     private List<?> beans;

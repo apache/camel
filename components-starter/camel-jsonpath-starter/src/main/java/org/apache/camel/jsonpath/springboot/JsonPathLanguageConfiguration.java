@@ -35,6 +35,10 @@ public class JsonPathLanguageConfiguration {
      */
     private Boolean allowSimple = true;
     /**
+     * Whether to allow using the easy predicate parser to pre-parse predicates.
+     */
+    private Boolean allowEasyPredicate = true;
+    /**
      * Whether to trim the value to remove leading and trailing whitespaces and
      * line breaks
      */
@@ -54,6 +58,14 @@ public class JsonPathLanguageConfiguration {
 
     public void setAllowSimple(Boolean allowSimple) {
         this.allowSimple = allowSimple;
+    }
+
+    public Boolean getAllowEasyPredicate() {
+        return allowEasyPredicate;
+    }
+
+    public void setAllowEasyPredicate(Boolean allowEasyPredicate) {
+        this.allowEasyPredicate = allowEasyPredicate;
     }
 
     public Boolean getTrim() {

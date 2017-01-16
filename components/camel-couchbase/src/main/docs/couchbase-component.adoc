@@ -34,46 +34,47 @@ The Couchbase component has no options.
 // component options: END
 
 // endpoint options: START
-The Couchbase component supports 47 endpoint options which are listed below:
+The Couchbase component supports 50 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| protocol | common |  | String | The protocol to use
-| additionalHosts | common |  | String | The additional hosts
-| autoStartIdForInserts | common | false | boolean | Define if we want an autostart Id when we are doing an insert operation
-| consumerProcessedStrategy | common |  | String | Define the consumer Processed strategy to use
-| descending | common | false | boolean | Define if this operation is descending or not
-| designDocumentName | common |  | String | The design document name to use
+| protocol | common |  | String | *Required* The protocol to use
+| hostname | common |  | String | *Required* The hostname to use
+| bucket | common |  | String | The bucket to use
 | key | common |  | String | The key to use
-| limit | common |  | int | The output limit to use
-| maxReconnectDelay | common |  | long | Define the max delay during a reconnection
-| obsPollInterval | common |  | long | Define the observation polling interval
-| obsTimeout | common |  | long | Define the observation timeout
-| operation | common |  | String | The operation to do
-| opQueueMaxBlockTime | common |  | long | Define the max time an operation can be in queue blocked
-| opTimeOut | common |  | long | Define the operation timeout
-| password | common |  | String | The password to use
-| persistTo | common |  | int | Where to persist the data
-| producerRetryAttempts | common |  | int | Define the number of retry attempts
-| producerRetryPause | common |  | int | Define the retry pause between different attempts
-| rangeEndKey | common |  | String | Define a range for the end key
-| rangeStartKey | common |  | String | Define a range for the start key
-| readBufferSize | common |  | int | Define the buffer size
-| replicateTo | common |  | int | Where to replicate the data
-| shouldOptimize | common | false | boolean | Define if we want to use optimization or not where possible
-| skip | common |  | int | Define the skip to use
-| startingIdForInsertsFrom | common |  | long | Define the starting Id where we are doing an insert operation
-| timeoutExceptionThreshold | common |  | int | Define the threshold for throwing a timeout Exception
-| username | common |  | String | The username to use
-| viewName | common |  | String | The view name to use
+| port | common | 8091 | int | The port number to use
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| consumerProcessedStrategy | consumer | none | String | Define the consumer Processed strategy to use
+| descending | consumer | false | boolean | Define if this operation is descending or not
+| designDocumentName | consumer | beer | String | The design document name to use
+| limit | consumer | -1 | int | The output limit to use
+| rangeEndKey | consumer |  | String | Define a range for the end key
+| rangeStartKey | consumer |  | String | Define a range for the start key
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
+| skip | consumer | -1 | int | Define the skip to use
+| viewName | consumer | brewery_beers | String | The view name to use
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
+| autoStartIdForInserts | producer | false | boolean | Define if we want an autostart Id when we are doing an insert operation
+| operation | producer | CCB_PUT | String | The operation to do
+| persistTo | producer | 0 | int | Where to persist the data
+| producerRetryAttempts | producer | 2 | int | Define the number of retry attempts
+| producerRetryPause | producer | 5000 | int | Define the retry pause between different attempts
+| replicateTo | producer | 0 | int | Where to replicate the data
+| startingIdForInsertsFrom | producer |  | long | Define the starting Id where we are doing an insert operation
+| additionalHosts | advanced |  | String | The additional hosts
+| maxReconnectDelay | advanced | 30000 | long | Define the max delay during a reconnection
+| obsPollInterval | advanced | 400 | long | Define the observation polling interval
+| obsTimeout | advanced | -1 | long | Define the observation timeout
+| opQueueMaxBlockTime | advanced | 10000 | long | Define the max time an operation can be in queue blocked
+| opTimeOut | advanced | 2500 | long | Define the operation timeout
+| readBufferSize | advanced | 16384 | int | Define the buffer size
+| shouldOptimize | advanced | false | boolean | Define if we want to use optimization or not where possible
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| timeoutExceptionThreshold | advanced | 998 | int | Define the threshold for throwing a timeout Exception
 | backoffErrorThreshold | scheduler |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
 | backoffIdleThreshold | scheduler |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
 | backoffMultiplier | scheduler |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
@@ -87,6 +88,8 @@ The Couchbase component supports 47 endpoint options which are listed below:
 | startScheduler | scheduler | true | boolean | Whether the scheduler should be auto started.
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
+| password | security |  | String | The password to use
+| username | security |  | String | The username to use
 |=======================================================================
 {% endraw %}
 // endpoint options: END
