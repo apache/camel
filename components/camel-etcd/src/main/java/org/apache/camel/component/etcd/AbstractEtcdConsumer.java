@@ -50,7 +50,7 @@ public abstract class AbstractEtcdConsumer extends DefaultConsumer {
 
     protected EtcdClient getClient() throws Exception {
         if (client == null) {
-            client = ((AbstractEtcdEndpoint)getEndpoint()).createClient();
+            client = ((EtcdEndpoint)getEndpoint()).createClient();
         }
 
         return client;
