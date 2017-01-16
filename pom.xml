@@ -138,7 +138,6 @@
     <module>buildingtools</module>
     <module>camel-core</module>
     <module>components</module>
-    <module>components-starter</module>
     <module>tooling</module>
     <module>platforms</module>
     <module>tests</module>

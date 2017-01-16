@@ -82,7 +82,7 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
     /**
      * The directory where all spring-boot starters are
      *
-     * @parameter default-value="${project.build.directory}/../../../components-starter"
+     * @parameter default-value="${project.build.directory}/../../../platforms/spring-boot/components-starter"
      */
     protected File componentsStarterDir;
 
