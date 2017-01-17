@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mllp;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
@@ -31,8 +33,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-
-import java.util.concurrent.TimeUnit;
 
 import static org.apache.camel.component.mllp.MllpEndpoint.END_OF_BLOCK;
 import static org.apache.camel.component.mllp.MllpEndpoint.START_OF_BLOCK;
@@ -268,7 +268,7 @@ public class MllpTcpServerConsumerMessageValidationTest extends CamelTestSupport
         invalid.expectedMessageCount(1);
 
         for (int i = 0; i < messageCount; ++i) {
-            String message = (i == (messageCount/2))
+            String message = (i == (messageCount / 2))
                     ? generateMessage(i + 1).replaceFirst("EVN", "EVN" + START_OF_BLOCK)
                     : generateMessage(i + 1);
 
@@ -302,7 +302,7 @@ public class MllpTcpServerConsumerMessageValidationTest extends CamelTestSupport
         invalid.expectedMessageCount(1);
 
         for (int i = 0; i < messageCount; ++i) {
-            String message = (i == (messageCount/2))
+            String message = (i == (messageCount / 2))
                     ? generateMessage(i + 1).replaceFirst("EVN", "EVN" + END_OF_BLOCK)
                     : generateMessage(i + 1);
 
