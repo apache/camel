@@ -57,11 +57,11 @@ public class CachingServiceDiscoveryTest extends ContextTestSupport {
 
         Assert.assertEquals(1, caching.getUpdatedListOfServices("no-name").size());
         delegate.addServer("no-name@localhost:1112");
-        Assert.assertEquals(1, caching.getUpdatedListOfServices("noname").size());
+        Assert.assertEquals(1, caching.getUpdatedListOfServices("no-name").size());
 
         // Let the cache expire
         Thread.sleep(1100);
 
-        Assert.assertEquals(2, caching.getUpdatedListOfServices("noname").size());
+        Assert.assertEquals(2, caching.getUpdatedListOfServices("no-name").size());
     }
 }
