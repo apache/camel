@@ -412,12 +412,20 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         }
     }
 
+    private void reconnectIfNecessary() {
+        if (!isConnected()) {
+            connect((RemoteFileConfiguration) endpoint.getConfiguration());
+        }
+    }
+
     public synchronized boolean deleteFile(String name) throws GenericFileOperationFailedException {
         LOG.debug("Deleting file: {}", name);
         try {
+            reconnectIfNecessary();
             channel.rm(name);
             return true;
         } catch (SftpException e) {
+            LOG.warn("Cannot delete file: " + name, e);
             throw new GenericFileOperationFailedException("Cannot delete file: " + name, e);
         }
     }
@@ -425,9 +433,11 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     public synchronized boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         LOG.debug("Renaming file: {} to: {}", from, to);
         try {
+            reconnectIfNecessary();
             channel.rename(from, to);
             return true;
         } catch (SftpException e) {
+            LOG.warn("Cannot rename file from: " + from + " to: " + to, e);
             throw new GenericFileOperationFailedException("Cannot rename file from: " + from + " to: " + to, e);
         }
     }
