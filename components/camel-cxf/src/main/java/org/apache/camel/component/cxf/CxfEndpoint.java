@@ -498,8 +498,6 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         if (getServiceName() != null) {
             factoryBean.setServiceName(getServiceName());
         }
-        
-        
 
         // port name qname
         if (getPortName() != null) {
@@ -549,6 +547,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             AuthorizationPolicy authPolicy = new AuthorizationPolicy();
             authPolicy.setUserName(username);
             authPolicy.setPassword(password);
+            if (factoryBean.getProperties() == null) {
+                factoryBean.setProperties(new HashMap<String, Object>());
+            }
             factoryBean.getProperties().put(AuthorizationPolicy.class.getName(), authPolicy);
         }
         
