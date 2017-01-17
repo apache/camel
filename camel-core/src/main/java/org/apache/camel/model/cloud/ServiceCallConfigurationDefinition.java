@@ -432,6 +432,25 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         return conf;
     }
 
+    public ServiceCallConfigurationDefinition dnsServiceDiscovery(String domain) {
+        DnsServiceCallServiceDiscoveryConfiguration conf = new DnsServiceCallServiceDiscoveryConfiguration();
+        conf.setDomain(domain);
+
+        setServiceDiscoveryConfiguration(conf);
+
+        return this;
+    }
+
+    public ServiceCallConfigurationDefinition dnsServiceDiscovery(String domain, String protocol) {
+        DnsServiceCallServiceDiscoveryConfiguration conf = new DnsServiceCallServiceDiscoveryConfiguration();
+        conf.setDomain(domain);
+        conf.setProto(protocol);
+
+        setServiceDiscoveryConfiguration(conf);
+
+        return this;
+    }
+
     public EtcdServiceCallServiceDiscoveryConfiguration etcdServiceDiscovery() {
         EtcdServiceCallServiceDiscoveryConfiguration conf = new EtcdServiceCallServiceDiscoveryConfiguration();
         setServiceDiscoveryConfiguration(conf);
@@ -444,6 +463,35 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         setServiceDiscoveryConfiguration(conf);
 
         return conf;
+    }
+
+    public KubernetesServiceCallServiceDiscoveryConfiguration kubernetesClientServiceDiscovery() {
+        KubernetesServiceCallServiceDiscoveryConfiguration conf = new KubernetesServiceCallServiceDiscoveryConfiguration();
+        conf.setLookup("client");
+
+        setServiceDiscoveryConfiguration(conf);
+
+        return conf;
+    }
+
+    public ServiceCallConfigurationDefinition kubernetesEnvServiceDiscovery() {
+        KubernetesServiceCallServiceDiscoveryConfiguration conf = new KubernetesServiceCallServiceDiscoveryConfiguration();
+        conf.setLookup("environment");
+
+        setServiceDiscoveryConfiguration(conf);
+
+        return this;
+    }
+
+    public ServiceCallConfigurationDefinition kubernetesDnsServiceDiscovery(String namespace, String domain) {
+        KubernetesServiceCallServiceDiscoveryConfiguration conf = new KubernetesServiceCallServiceDiscoveryConfiguration();
+
+        conf.setNamespace(namespace);
+        conf.setDnsDomain(domain);
+
+        setServiceDiscoveryConfiguration(conf);
+
+        return this;
     }
 
     public MultiServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
@@ -464,10 +512,19 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     // Shortcuts - LoadBalancer
     // *****************************
 
-    public RibbonServiceCallLoadBalancerConfiguration ribbonLoadBalancer() {
+    public ServiceCallConfigurationDefinition ribbonLoadBalancer() {
         RibbonServiceCallLoadBalancerConfiguration conf = new RibbonServiceCallLoadBalancerConfiguration();
         setLoadBalancerConfiguration(conf);
 
-        return conf;
+        return this;
+    }
+
+    public ServiceCallConfigurationDefinition ribbonLoadBalancer(String clientName) {
+        RibbonServiceCallLoadBalancerConfiguration conf = new RibbonServiceCallLoadBalancerConfiguration();
+        conf.setClientName(clientName);
+
+        setLoadBalancerConfiguration(conf);
+
+        return this;
     }
 }
