@@ -14,25 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.impl;
 
-public class ThrottleException extends RuntimeException {
+/**
+ * Used by the {@link ThrottlingExceptionRoutePolicy} to allow custom code
+ * to handle the half open circuit state and how to determine if a route
+ * should be closed
+ *
+ */
+public interface ThrottlingExceptionHalfOpenHandler {
 
-    private static final long serialVersionUID = 1993185881371058773L;
-
-    public ThrottleException() {
-        super();
-    }
-
-    public ThrottleException(String message) {
-        super(message);
-    }
-
-    public ThrottleException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ThrottleException(Throwable cause) {
-        super(cause);
-    }
+    /**
+     * Check the state of the Camel route
+     * @return true to close the route and false to leave open
+     */
+    boolean isReadyToBeClosed();
 }

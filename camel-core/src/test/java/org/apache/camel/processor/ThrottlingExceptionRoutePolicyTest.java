@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.ThrottingExceptionHalfOpenHandler;
+import org.apache.camel.impl.ThrottlingExceptionHalfOpenHandler;
 import org.apache.camel.impl.ThrottlingExceptionRoutePolicy;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +47,6 @@ public class ThrottlingExceptionRoutePolicyTest extends ContextTestSupport {
         context.getShutdownStrategy().setTimeout(1);
     }
 
-    
     @Test
     public void testThrottlingRoutePolicyClosed() throws Exception {
         result.expectedMinimumMessageCount(size);
@@ -60,7 +59,6 @@ public class ThrottlingExceptionRoutePolicyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    
     @Test
     public void testOpenCircuitToPreventMessageThree() throws Exception {
         result.reset();
@@ -72,7 +70,7 @@ public class ThrottlingExceptionRoutePolicyTest extends ContextTestSupport {
             @Override
             public void process(Exchange exchange) throws Exception {
                 String msg = exchange.getIn().getBody(String.class);
-                exchange.setException(new ThrottleException(msg));
+                exchange.setException(new ThrottlingException(msg));
             }
         });
         
@@ -115,7 +113,7 @@ public class ThrottlingExceptionRoutePolicyTest extends ContextTestSupport {
         };
     }
     
-    public class NeverCloseHandler implements ThrottingExceptionHalfOpenHandler {
+    public class NeverCloseHandler implements ThrottlingExceptionHalfOpenHandler {
 
         @Override
         public boolean isReadyToBeClosed() {

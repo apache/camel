@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * modeled after the {@link CircuitBreakerLoadBalancer} and {@link ThrottlingInflightRoutePolicy}
+ * Modeled after the {@link CircuitBreakerLoadBalancer} and {@link ThrottlingInflightRoutePolicy}
  * this {@link RoutePolicy} will stop consuming from an endpoint based on the type of exceptions that are
  * thrown and the threshold setting. 
  * 
@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * to determine if the processes that cause the route to be open are now available  
  */
 public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implements CamelContextAware {
-    private static Logger log = LoggerFactory.getLogger(ThrottlingExceptionRoutePolicy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ThrottlingExceptionRoutePolicy.class);
     
     private static final int STATE_CLOSED = 0;
     private static final int STATE_HALF_OPEN = 1;
@@ -68,7 +68,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     // handler for half open circuit
     // can be used instead of resuming route
     // to check on resources
-    private ThrottingExceptionHalfOpenHandler halfOpenHandler;
+    private ThrottlingExceptionHalfOpenHandler halfOpenHandler;
 
     // stateful information
     private Timer halfOpenTimer;
@@ -96,7 +96,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
 
     @Override
     public void onInit(Route route) {
-        log.debug("initializing ThrottlingExceptionRoutePolicy route policy...");
+        LOG.debug("initializing ThrottlingExceptionRoutePolicy route policy...");
         logState();
     }
     
@@ -127,7 +127,7 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         boolean answer = false;
 
         if (exchange.getException() != null) {
-            log.debug("exception occured on route: checking to see if I handle that");
+            LOG.debug("exception occured on route: checking to see if I handle that");
             if (throttledExceptions == null || throttledExceptions.isEmpty()) {
                 // if no exceptions defined then always fail 
                 // (ie) assume we throttle on all exceptions
@@ -143,9 +143,9 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
             }
         }
 
-        if (log.isDebugEnabled()) {
+        if (LOG.isDebugEnabled()) {
             String exceptionName = exchange.getException() == null ? "none" : exchange.getException().getClass().getSimpleName();
-            log.debug("hasFailed ({}) with Throttled Exception: {} for exchangeId: {}", answer, exceptionName, exchange.getExchangeId());
+            LOG.debug("hasFailed ({}) with Throttled Exception: {} for exchangeId: {}", answer, exceptionName, exchange.getExchangeId());
         }
         return answer;
     }
@@ -157,31 +157,31 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         
         if (state.get() == STATE_CLOSED) {
             if (failureLimitReached) {
-                log.debug("opening circuit...");
+                LOG.debug("opening circuit...");
                 openCircuit(route);
             }
         } else if (state.get() == STATE_HALF_OPEN) {
             if (failureLimitReached) {
-                log.debug("opening circuit...");
+                LOG.debug("opening circuit...");
                 openCircuit(route);
             } else {
-                log.debug("closing circuit...");
+                LOG.debug("closing circuit...");
                 closeCircuit(route);
             }
         } else if (state.get() == STATE_OPEN) {
             long elapsedTimeSinceOpened = System.currentTimeMillis() - openedAt;
             if (halfOpenAfter <= elapsedTimeSinceOpened) {
-                log.debug("checking an open circuit...");
+                LOG.debug("checking an open circuit...");
                 if (halfOpenHandler != null) {
                     if (halfOpenHandler.isReadyToBeClosed()) {
-                        log.debug("closing circuit...");
+                        LOG.debug("closing circuit...");
                         closeCircuit(route);
                     } else {
-                        log.debug("opening circuit...");
+                        LOG.debug("opening circuit...");
                         openCircuit(route);
                     }
                 } else {
-                    log.debug("half opening circuit...");
+                    LOG.debug("half opening circuit...");
                     halfOpenCircuit(route);                    
                 }
             } 
@@ -254,8 +254,8 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     }
     
     private void logState() {
-        if (log.isDebugEnabled()) {
-            log.debug(dumpState());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(dumpState());
         }
     }
     
@@ -293,11 +293,11 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         }
     }
     
-    public ThrottingExceptionHalfOpenHandler getHalfOpenHandler() {
+    public ThrottlingExceptionHalfOpenHandler getHalfOpenHandler() {
         return halfOpenHandler;
     }
 
-    public void setHalfOpenHandler(ThrottingExceptionHalfOpenHandler halfOpenHandler) {
+    public void setHalfOpenHandler(ThrottlingExceptionHalfOpenHandler halfOpenHandler) {
         this.halfOpenHandler = halfOpenHandler;
     }
 

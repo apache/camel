@@ -24,16 +24,17 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.ThrottlingExceptionHalfOpenHandler;
 import org.apache.camel.impl.ThrottlingExceptionRoutePolicy;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ThrottingExceptionRoutePolicyHalfOpenTest extends ContextTestSupport {
-    private static Logger log = LoggerFactory.getLogger(ThrottingExceptionRoutePolicyHalfOpenTest.class);
+public class ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest extends ContextTestSupport {
+    private static Logger log = LoggerFactory.getLogger(ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest.class);
     
-    private String url = "direct:start";
+    private String url = "seda:foo?concurrentConsumers=20";
     private MockEndpoint result;
     
     @Before
@@ -47,7 +48,6 @@ public class ThrottingExceptionRoutePolicyHalfOpenTest extends ContextTestSuppor
     
     @Test
     public void testHalfOpenCircuit() throws Exception {
-        result.reset();
         result.expectedMessageCount(2);
         List<String> bodies = Arrays.asList(new String[]{"Message One", "Message Two"}); 
         result.expectedBodiesReceivedInAnyOrder(bodies);
@@ -56,7 +56,7 @@ public class ThrottingExceptionRoutePolicyHalfOpenTest extends ContextTestSuppor
             @Override
             public void process(Exchange exchange) throws Exception {
                 String msg = exchange.getIn().getBody(String.class);
-                exchange.setException(new ThrottleException(msg));
+                exchange.setException(new ThrottlingException(msg));
             }
         });
         
@@ -69,16 +69,17 @@ public class ThrottingExceptionRoutePolicyHalfOpenTest extends ContextTestSuppor
         Thread.sleep(3000);
         
         // send more messages 
-        // but never should get there
+        // but should get there (yet)
         // due to open circuit
+        // SEDA will queue it up
         log.debug("sending message three");
         sendMessage("Message Three");
-        
+
         assertMockEndpointsSatisfied();
         
         result.reset();
-        result.expectedMessageCount(1);
-        bodies = Arrays.asList(new String[]{"Message Four"}); 
+        result.expectedMessageCount(2);
+        bodies = Arrays.asList(new String[]{"Message Three", "Message Four"}); 
         result.expectedBodiesReceivedInAnyOrder(bodies);
         
         // wait long enough for
@@ -102,13 +103,24 @@ public class ThrottingExceptionRoutePolicyHalfOpenTest extends ContextTestSuppor
                 long failureWindow = 30;
                 long halfOpenAfter = 5000;
                 ThrottlingExceptionRoutePolicy policy = new ThrottlingExceptionRoutePolicy(threshold, failureWindow, halfOpenAfter, null);
+                policy.setHalfOpenHandler(new AlwaysCloseHandler());
                 
                 from(url)
                     .routePolicy(policy)
+                    .log("${body}")
                     .to("log:foo?groupSize=10")
                     .to("mock:result");
             }
         };
+    }
+    
+    public class AlwaysCloseHandler implements ThrottlingExceptionHalfOpenHandler {
+
+        @Override
+        public boolean isReadyToBeClosed() {
+            return true;
+        }
+        
     }
     
     protected void sendMessage(String bodyText) {
