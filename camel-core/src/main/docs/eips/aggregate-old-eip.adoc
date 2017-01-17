@@ -1,0 +1,6 @@
+## Aggregate
+*This applies for Camel version 2.3 or newer. If you use an older version then use this link:./aggregate-old-eip.adoc[Aggregate] link instead.*
+
+The Aggregate EIP patterns allows you to combine a number of messages together into a single message.
+
+image:http://www.enterpriseintegrationpatterns.com/img/Aggregator.gif[image]
