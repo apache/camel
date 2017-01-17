@@ -37,8 +37,8 @@ The EIP supports the following options. The default values are coming from Hystr
 If this maximum concurrent limit is hit then subsequent requests will be rejected.
 | executionIsolationStrategy | THREAD | String | This property indicates which isolation strategy HystrixCommand.run() executes with, one of the following two choices:
 
-* *THREAD* it executes on a separate thread and concurrent requests are limited by the number of threads in the thread-pool
-* *SEMAPHORE* it executes on the calling thread and concurrent requests are limited by the semaphore count
+THREAD:: it executes on a separate thread and concurrent requests are limited by the number of threads in the thread-pool
+SEMAPHORE:: it executes on the calling thread and concurrent requests are limited by the semaphore count
 
 | executionIsolationThreadInterruptOnTimeout | true | Boolean | This property indicates whether the *HystrixCommand.run()* execution should be interrupted when a timeout occurs.
 | executionTimeoutInMilliseconds | 1000 | Integer | This property sets the timeout in milliseconds for execution completion.
@@ -98,6 +98,8 @@ And in XML DSL:
 If you are using *onFallback* then that is intended to be local processing only where you can do a message transformation or call a bean or something as the fallback. If you need to call an external service over the network then you should use *onFallbackViaNetwork* that runs in another independent *HystrixCommand* that uses its own thread pool to not exhaust the first command.
 Configuring Hystrix Example
 Hystrix has many options as listed in the table above. For example to set a higher timeout to *5* seconds, and also let the circuit breaker wait *10* seconds before attempting a request again when the state was tripped to be open.
+[source,java]
+---------------------
 from("direct:start")
     .hystrix()
         .hystrixConfiguration()
@@ -108,6 +110,7 @@ from("direct:start")
         .transform().constant("Fallback message")
     .end()
     .to("mock:result");
+---------------------
 
 And in XML DSL:
 [source,xml]
