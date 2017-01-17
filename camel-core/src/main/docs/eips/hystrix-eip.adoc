@@ -19,7 +19,7 @@ Maven users will need to add the following dependency to their pom.xml to use th
 
 The EIP supports the following options. The default values are coming from Hystrix itself.
 
-[width="100%",cols="2,1m,1m,15",options="header"]
+[width="100%",cols="30,15,15,40",options="header"]
 |=======================================================================
 | Name | Default value | Type | Description
 | circuitBreakerEnabled | true | Boolean | This property determines whether a circuit breaker will be used to track health and to short-circuit requests if it trips.
