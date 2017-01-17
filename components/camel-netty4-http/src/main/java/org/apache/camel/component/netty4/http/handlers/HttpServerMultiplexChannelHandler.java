@@ -165,22 +165,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
 
         List<RestConsumerContextPathMatcher.ConsumerPath> paths = new ArrayList<RestConsumerContextPathMatcher.ConsumerPath>();
         for (final HttpServerChannelHandler handler : consumers) {
-            paths.add(new RestConsumerContextPathMatcher.ConsumerPath<HttpServerChannelHandler>() {
-                @Override
-                public String getRestrictMethod() {
-                    return handler.getConsumer().getEndpoint().getHttpMethodRestrict();
-                }
-
-                @Override
-                public String getConsumerPath() {
-                    return handler.getConsumer().getConfiguration().getPath();
-                }
-
-                @Override
-                public HttpServerChannelHandler getConsumer() {
-                    return handler;
-                }
-            });
+            paths.add(new HttpRestConsumerPath(handler));
         }
 
         RestConsumerContextPathMatcher.ConsumerPath<HttpServerChannelHandler> best = RestConsumerContextPathMatcher.matchBestPath(method, path, paths);
