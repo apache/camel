@@ -283,7 +283,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             os.write(bytes.getBytes());
             os.write(lineFeed);
             os.flush();
-            readAck(is, false);
+            readAck(is);
 
             writeFile(filename.substring(pos + 1), data, os, is, cfg);
 
@@ -292,7 +292,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             os.write(bytes.getBytes());
             os.write(lineFeed);
             os.flush();
-            readAck(is, false);
+            readAck(is);
         } else {
             int count = 0;
             int read;
@@ -313,7 +313,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 os.write(bytes.getBytes());
                 os.write(lineFeed);
                 os.flush();
-                readAck(is, false);
+                readAck(is);
 
                 // now send the stream
                 buffer.reset();
@@ -321,7 +321,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                     os.write(reply, 0, read);
                 }
                 writeAck(os);
-                readAck(is, false);
+                readAck(is);
             } finally {
                 IOHelper.close(buffer);
             }
@@ -333,26 +333,15 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         os.flush();
     }
 
-    private int readAck(InputStream is, boolean failOnEof) throws IOException {
+    private int readAck(InputStream is) throws IOException {
         String message;
         int answer = is.read();
         switch (answer) {
-        case -1:
-            if (failOnEof) {
-                message = "[scp] Unexpected end of stream";
-                throw new EOFException(message);
-            }
-            break;
-        case 1:
-            message = "[scp] WARN " + readLine(is);
-            LOG.warn(message);
-            break;
-        case 2:
-            message = "[scp] NACK " + readLine(is);
-            throw new IOException(message);
-        default:
-        // case 0:
-            break;
+			case 0:
+				break;
+        	default:
+            	message = "[scp] Return Code [" + answer + "]" + readLine(is);
+            	throw new IOException(message);
         }
         return answer;
     }
