@@ -28,9 +28,6 @@ import javax.management.openmbean.TabularData;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.StringDataFormat;
-import org.apache.camel.model.transformer.CustomTransformerDefinition;
-import org.apache.camel.model.transformer.DataFormatTransformerDefinition;
-import org.apache.camel.model.transformer.EndpointTransformerDefinition;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.slf4j.Logger;
@@ -119,25 +116,19 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("mock:result");
+                transformer()
+                    .from("xml:foo")
+                    .to("json:bar")
+                    .withUri("direct:transformer");
+                transformer()
+                    .from(ManagedTransformerRegistryTest.class)
+                    .to("xml:test")
+                    .withDataFormat(new StringDataFormat());
+                transformer()
+                    .scheme("custom")
+                    .withJava(MyTransformer.class);
                 
-                EndpointTransformerDefinition etd = new EndpointTransformerDefinition();
-                etd.setFrom("xml:foo");
-                etd.setTo("json:bar");
-                etd.setUri("direct:transformer");
-                context.getTransformers().add(etd);
-                context.resolveTransformer(new DataType("xml:foo"), new DataType("json:bar"));
-                DataFormatTransformerDefinition dftd = new DataFormatTransformerDefinition();
-                dftd.setFrom(ManagedTransformerRegistryTest.class);
-                dftd.setTo("xml:test");
-                dftd.setDataFormatType(new StringDataFormat());
-                context.getTransformers().add(dftd);
-                context.resolveTransformer(new DataType(ManagedTransformerRegistryTest.class), new DataType("xml:test"));
-                CustomTransformerDefinition ctd = new CustomTransformerDefinition();
-                ctd.setScheme("custom");
-                ctd.setType(MyTransformer.class.getName());
-                context.getTransformers().add(ctd);
-                context.resolveTransformer("custom");
+                from("direct:start").to("mock:result");
             }
         };
     }
