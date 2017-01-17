@@ -24,15 +24,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.ThrottingExceptionHalfOpenHandler;
+import org.apache.camel.impl.ThrottlingExceptionHalfOpenHandler;
 import org.apache.camel.impl.ThrottlingExceptionRoutePolicy;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ThrottingExceptionRoutePolicyHalfOpenHandlerTest extends ContextTestSupport {
-    private static Logger log = LoggerFactory.getLogger(ThrottingExceptionRoutePolicyHalfOpenHandlerTest.class);
+public class ThrottlingExceptionRoutePolicyHalfOpenHandlerTest extends ContextTestSupport {
+    private static Logger log = LoggerFactory.getLogger(ThrottlingExceptionRoutePolicyHalfOpenHandlerTest.class);
     
     private String url = "direct:start";
     private MockEndpoint result;
@@ -56,7 +56,7 @@ public class ThrottingExceptionRoutePolicyHalfOpenHandlerTest extends ContextTes
             @Override
             public void process(Exchange exchange) throws Exception {
                 String msg = exchange.getIn().getBody(String.class);
-                exchange.setException(new ThrottleException(msg));
+                exchange.setException(new ThrottlingException(msg));
             }
         });
         
@@ -113,7 +113,7 @@ public class ThrottingExceptionRoutePolicyHalfOpenHandlerTest extends ContextTes
         };
     }
     
-    public class AlwaysCloseHandler implements ThrottingExceptionHalfOpenHandler {
+    public class AlwaysCloseHandler implements ThrottlingExceptionHalfOpenHandler {
 
         @Override
         public boolean isReadyToBeClosed() {
