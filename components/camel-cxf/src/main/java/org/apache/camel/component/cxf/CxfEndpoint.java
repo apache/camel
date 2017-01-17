@@ -504,8 +504,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         if (getServiceName() != null) {
             factoryBean.setServiceName(getServiceName());
         }
-        
-        
 
         // port name qname
         if (getPortName() != null) {
@@ -555,6 +553,9 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
             AuthorizationPolicy authPolicy = new AuthorizationPolicy();
             authPolicy.setUserName(username);
             authPolicy.setPassword(password);
+            if (factoryBean.getProperties() == null) {
+                factoryBean.setProperties(new HashMap<String, Object>());
+            }
             factoryBean.getProperties().put(AuthorizationPolicy.class.getName(), authPolicy);
         }
         
