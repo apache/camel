@@ -117,11 +117,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
     @Override
     public void submitCompositeBatch(final SObjectBatch batch, final ResponseCallback<SObjectBatchResponse> callback)
             throws SalesforceException {
-        final Version batchVersion = batch.getVersion();
-        if (Version.create(version).compareTo(batchVersion) <= 0) {
-            throw new SalesforceException("Component is configured with Salesforce API version " + version
-                + ", but the Composite API batch operation requires at least " + batchVersion, 0);
-        }
+        checkCompositeBatchVersion(version, batch.getVersion());
 
         final String url = versionUrl() + "composite/batch";
 
@@ -146,6 +142,16 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
         doHttpRequest(post, (response, exception) -> callback
             .onResponse(tryToReadResponse(SObjectTreeResponse.class, response), exception));
+    }
+
+    static void checkCompositeBatchVersion(final String configuredVersion, final Version batchVersion)
+        throws SalesforceException {
+        if (Version.create(configuredVersion).compareTo(batchVersion) < 0) {
+            throw new SalesforceException("Component is configured with Salesforce API version "
+                                          + configuredVersion
+                                          + ", but the payload of the Composite API batch operation requires at least "
+                                          + batchVersion, 0);
+        }
     }
 
     Request createRequest(final HttpMethod method, final String url) {
