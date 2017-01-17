@@ -17,9 +17,11 @@
 package org.apache.camel.component.file.remote.sftp;
 
 import java.io.File;
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -27,6 +29,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.sshd.SshServer;
 import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
+import org.apache.sshd.common.session.AbstractSession;
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.PublickeyAuthenticator;
 import org.apache.sshd.server.command.ScpCommandFactory;
@@ -131,5 +134,13 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
 
     protected boolean canTest() {
         return canTest;
+    }
+
+    // disconnect all existing SSH sessions to test reconnect functionality
+    protected void disconnectAllSessions() throws IOException {
+        List<AbstractSession> sessions = sshd.getActiveSessions();
+        for (AbstractSession session : sessions) {
+            session.disconnect(4, "dummy");
+        }
     }
 }
