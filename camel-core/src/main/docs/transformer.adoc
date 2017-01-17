@@ -73,7 +73,21 @@ DataFormat Transformer Options
 
 | ref | reference to the link:data-format.html[Data Format] ID
 |=======================================================================
-Here is an example to specify bindy DataFormat type in XML DSL:
+Here is an example to specify bindy DataFormat type:
+
+Java DSL:
+[source,java]
+-------------------------------------------------------------------
+BindyDataFormat bindy = new BindyDataFormat();
+bindy.setType(BindyType.Csv);
+bindy.setClassType(com.example.Order.class);
+transformer()
+    .from(com.example.Order.class)
+    .to("csv:CSVOrder")
+    .withDataFormat(bindy);
+-------------------------------------------------------------------
+
+XML DSL:
 [source,xml]
 -------------------------------------------------------------------
 <dataFormatTransformer from="java:com.example.Order" to="csv:CSVOrder">
@@ -93,7 +107,16 @@ Endpoint Transformer Options
 
 | uri | link:endpoint.html[Endpoint] URI
 |=======================================================================
-Here is an example to specify endpoint ref in XML DSL:
+Here is an example to specify endpoint URI in Java DSL:
+[source,java]
+-------------------------------------------------------------------
+transformer()
+    .from("xml")
+    .to("json")
+    .withUri("dozer:myDozer?mappingFile=myMapping.xml...");
+-------------------------------------------------------------------
+
+And here is an example to specify endpoint ref in XML DSL:
 [source,xml]
 -------------------------------------------------------------------
 <endpointTransformer ref="myDozerEndpoint" from="xml" to="json"/>
@@ -112,7 +135,17 @@ Note that Transformer must be a subclass of `org.apache.camel.spi.Transformer`
 
 | type | Fully qualified class name of the custom Transformer class
 |=======================================================================
-Here is an example to specify custom Transformer class in XML DSL:
+Here is an example to specify custom Transformer class:
+Java DSL:
+[source,java]
+-------------------------------------------------------------------
+transformer()
+    .from("xml")
+    .to("json")
+    .withJava(com.example.MyCustomTransformer.class);
+-------------------------------------------------------------------
+
+XML DSL:
 [source,xml]
 -------------------------------------------------------------------
 <customTransformer type="com.example.MyCustomTransformer" from="xml" to="json"/>
@@ -130,7 +163,10 @@ xslt component to transform from `xml:ABCOrder` to `xml:XYZOrder`, we can do as 
 Java DSL:
 [source,java]
 -------------------------------------------------------------------
-// TODO implement fluent builder for transformers
+transformer()
+    .from("xml:ABCOrder")
+    .to("xml:XYZOrder")
+    .withUri("xslt:transform.xsl");
 -------------------------------------------------------------------
 
 XML DSL:

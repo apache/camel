@@ -53,6 +53,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     private AtomicBoolean initialized = new AtomicBoolean(false);
     private RestsDefinition restCollection = new RestsDefinition();
     private Map<String, RestConfigurationDefinition> restConfigurations;
+    private List<TransformerBuilder> transformerBuilders = new ArrayList<TransformerBuilder>();
     private RoutesDefinition routeCollection = new RoutesDefinition();
 
     public RouteBuilder() {
@@ -129,6 +130,17 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         RestDefinition answer = getRestCollection().rest(path);
         configureRest(answer);
         return answer;
+    }
+
+    /**
+     * Create a new Transformer.
+     * 
+     * @return the builder
+     */
+    public TransformerBuilder transformer() {
+        TransformerBuilder tdb = new TransformerBuilder();
+        transformerBuilders.add(tdb);
+        return tdb;
     }
 
     /**
@@ -328,6 +340,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
 
         // but populate rests before routes, as we want to turn rests into routes
         populateRests();
+        populateTransformers();
         populateRoutes();
     }
 
@@ -468,6 +481,16 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         // add the rest routes
         for (RouteDefinition route : routes) {
             getRouteCollection().route(route);
+        }
+    }
+
+    protected void populateTransformers() {
+        ModelCamelContext camelContext = getContext();
+        if (camelContext == null) {
+            throw new IllegalArgumentException("CamelContext has not been injected!");
+        }
+        for (TransformerBuilder tdb : transformerBuilders) {
+            tdb.configure(camelContext);
         }
     }
 
