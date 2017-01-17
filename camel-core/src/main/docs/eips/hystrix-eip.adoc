@@ -35,8 +35,8 @@ The EIP supports the following options. The default values are coming from Hystr
 If this maximum concurrent limit is hit then subsequent requests will be rejected.
 | executionIsolationStrategy | THREAD | String | This property indicates which isolation strategy HystrixCommand.run() executes with, one of the following two choices:
 
-- THREAD it executes on a separate thread and concurrent requests are limited by the number of threads in the thread-pool
-- SEMAPHORE it executes on the calling thread and concurrent requests are limited by the semaphore count
+* *THREAD* it executes on a separate thread and concurrent requests are limited by the number of threads in the thread-pool
+* *SEMAPHORE* it executes on the calling thread and concurrent requests are limited by the semaphore count
 
 | executionIsolationThreadInterruptOnTimeout | true | Boolean | This property indicates whether the *HystrixCommand.run()* execution should be interrupted when a timeout occurs.
 | executionTimeoutInMilliseconds | 1000 | Integer | This property sets the timeout in milliseconds for execution completion.
