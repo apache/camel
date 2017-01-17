@@ -19,7 +19,7 @@ Maven users will need to add the following dependency to their pom.xml to use th
 
 The EIP supports the following options. The default values are coming from Hystrix itself.
 
-[width="100%",cols="2,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,15",options="header"]
 |=======================================================================
 | Name | Default value | Type | Description
 | circuitBreakerEnabled | true | Boolean | This property determines whether a circuit breaker will be used to track health and to short-circuit requests if it trips.
@@ -36,6 +36,7 @@ If this maximum concurrent limit is hit then subsequent requests will be rejecte
 | executionIsolationStrategy | THREAD | String | This property indicates which isolation strategy HystrixCommand.run() executes with, one of the following two choices:
 
 * *THREAD* it executes on a separate thread and concurrent requests are limited by the number of threads in the thread-pool
+
 * *SEMAPHORE* it executes on the calling thread and concurrent requests are limited by the semaphore count
 
 | executionIsolationThreadInterruptOnTimeout | true | Boolean | This property indicates whether the *HystrixCommand.run()* execution should be interrupted when a timeout occurs.
