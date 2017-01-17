@@ -21,10 +21,12 @@ import java.util.List;
 
 final class ServiceCallConstants {
     public static final List<ServiceCallServiceDiscoveryConfiguration> SERVICE_DISCOVERY_CONFIGURATIONS = Arrays.asList(
+        new CachingServiceCallServiceDiscoveryConfiguration(),
         new ConsulServiceCallServiceDiscoveryConfiguration(),
+        new DnsServiceCallServiceDiscoveryConfiguration(),
         new EtcdServiceCallServiceDiscoveryConfiguration(),
         new KubernetesServiceCallServiceDiscoveryConfiguration(),
-        new DnsServiceCallServiceDiscoveryConfiguration()
+        new MultiServiceCallServiceDiscoveryConfiguration()
     );
 
     public static final List<ServiceCallLoadBalancerConfiguration> LOAD_BALANCER_CONFIGURATIONS = Arrays.asList(
