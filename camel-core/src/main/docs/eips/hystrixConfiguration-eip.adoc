@@ -1,0 +1,157 @@
+## Hystrix EIP
+
+Available as of Camel 2.18
+
+The hystrix EIP provides integration with Netflix Hystrix to be used as circuit breaker in the Camel routes. Hystrix is a latency and fault tolerance library designed to isolate points of access to remote systems, services and 3rd party libraries, stop cascading failure and enable resilience in complex distributed systems where failure is inevitable.
+
+Maven users will need to add the following dependency to their pom.xml to use this EIP:
+
+[source,java]
+---------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-hystrix</artifactId>
+    <version>x.x.x</version><!-- use the same version as your Camel core version -->
+</dependency>
+---------------------
+
+### Configuration options
+
+The EIP supports the following options. The default values are coming from Hystrix itself.
+
+[width="100%",cols="2,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Default value | Type | Description
+|  |  |  |
+
+| circuitBreakerEnabled | true | Boolean | This property determines whether a circuit breaker will be used to track health and to short-circuit requests if it trips.
+| circuitBreakerErrorThresholdPercentage | 50 | Integer | This property sets the error percentage at or above which the circuit should trip open and start short-circuiting requests to fallback logic.
+| circuitBreakerForceClosed | false | Boolean | This property, if true, forces the circuit breaker into a closed state in which it will allow requests regardless of the error percentage.
+| circuitBreakerForceOpen | false | Boolean | This property, if true, forces the circuit breaker into an open (tripped) state in which it will reject all requests.
+| circuitBreakerRequestVolumeThreshold | 20 | Integer | This property sets the minimum number of requests in a rolling window that will trip the circuit.
+| circuitBreakerSleepWindowInMilliseconds | 5000 | Integer | This property sets the amount of time, after tripping the circuit, to reject requests before allowing attempts again to determine if the circuit should again be closed.
+| commandKey | Node id | String | Used to identify the hystrix command. This option cannot be configured but is locked down to be the node id to make the command unique.
+| corePoolSize | 10 | Integer | This property sets the core thread-pool size. This is the maximum number of *HystrixCommands* that can execute concurrently.
+| executionIsolationSemaphoreMaxConcurrentRequests | 10 | Integer | This property sets the maximum number of requests allowed to a *HystrixCommand.run()* method when you are using *ExecutionIsolationStrategy.SEMAPHORE*.
+
+If this maximum concurrent limit is hit then subsequent requests will be rejected.
+| executionIsolationStrategy | THREAD | String | This property indicates which isolation strategy HystrixCommand.run() executes with, one of the following two choices:
+
+* *THREAD* it executes on a separate thread and concurrent requests are limited by the number of threads in the thread-pool
+* *SEMAPHORE* it executes on the calling thread and concurrent requests are limited by the semaphore count
+
+| executionIsolationThreadInterruptOnTimeout | true | Boolean | This property indicates whether the *HystrixCommand.run()* execution should be interrupted when a timeout occurs.
+| executionTimeoutInMilliseconds | 1000 | Integer | This property sets the timeout in milliseconds for execution completion.
+| executionTimeoutEnabled | true | Boolean | This property indicates whether the execution of *HystrixCommand.run()* should be timed.
+| fallbackEnabled | true | Boolean | This property determines whether a call to *HystrixCommand.getFallback()* will be attempted when failure or rejection occurs.
+| fallbackIsolationSemaphoreMaxConcurrentRequests | 10 | Integer | This property sets the maximum number of requests a *HystrixCommand.getFallback()* method is allowed to make from the calling thread.
+| groupKey | CamelHystrix | String | Used to identify the hystrix group being used by the EIP to correlate statistics, circuit-breaker, properties, etc.
+| keepAliveTime | 1 | Integer | This property sets the keep-alive time, in minutes.
+| maxQueueSize | -1 | Integer | This property sets the maximum queue size of the *BlockingQueue* implementation.
+| metricsHealthSnapshotIntervalInMilliseconds | 500 | Integer | This property sets the time to wait, in milliseconds, between allowing health snapshots to be taken that calculate success and error percentages and affect circuit breaker status.
+| metricsRollingPercentileBucketSize | 100 | Integer | This property sets the maximum number of execution times that are kept per bucket. If more executions occur during the time they will wrap around and start over-writing at the beginning of the bucket.
+| metricsRollingPercentileEnabled | true | Boolean | This property indicates whether execution latency should be tracked. The latency is calculated as a percentile. If *false* summary statistics (mean, percentiles) are returned as *-1*.
+| metricsRollingPercentileWindowBuckets | 6 | Integer | This property sets the number of buckets the rollingPercentile window will be divided into.
+| metricsRollingPercentileWindowInMilliseconds | 60000 | Integer | This property sets the duration of the rolling window in which execution times are kept to allow for percentile calculations, in milliseconds.
+| metricsRollingStatisticalWindowBuckets | 10 | Integer | This property sets the number of buckets the rolling statistical window is divided into.
+| metricsRollingStatisticalWindowInMilliseconds | 10000 | Integer | The following properties are related to capturing metrics from *HystrixCommand* and *HystrixObservableCommand* execution.
+| queueSizeRejectionThreshold | 5 | Integer | This property sets the queue size rejection threshold — an artificial maximum queue size at which rejections will occur even if maxQueueSize has not been reached.
+| requestLogEnabled | true | Boolean | This property indicates whether *HystrixCommand* execution and events should be logged to *HystrixRequestLog*.
+| threadPoolKey | null | String | Used to define which thread-pool this command should run in. By default this is using the same key as the group key.
+| threadPoolMetricsRollingStatisticalWindowBuckets | 10 | Integer | This property sets the number of buckets the rolling statistical window is divided into.
+| threadPoolMetricsRollingStatisticalWindowInMilliseconds | 10000 | Integer | This property sets the duration of the statistical rolling window, in milliseconds. This is how long metrics are kept for the thread pool.
+|=======================================================================
+
+### Example
+Below is an example route showing an Hystrix endpoint that protects against slow operation by falling back to the in-lined fallback route. By default the timeout request is just *1000ms* so the HTTP endpoint has to be fairly quick to succeed.
+[source,java]
+---------------------
+from("direct:start")
+    .hystrix()
+        .to("http://fooservice.com/slow")
+    .onFallback()
+        .transform().constant("Fallback message")
+    .end()
+    .to("mock:result");
+---------------------
+
+And in XML DSL:
+[source,xml]
+---------------------
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <hystrix>
+      <to uri="http://fooservice.com/slow"/>
+      <onFallback>
+        <transform>
+          <constant>Fallback message</constant>
+        </transform>
+      </onFallback>
+    </hystrix>
+    <to uri="mock:result"/>
+  </route>
+</camelContext>
+---------------------
+
+### onFallback vs onFallbackViaNetwork
+If you are using *onFallback* then that is intended to be local processing only where you can do a message transformation or call a bean or something as the fallback. If you need to call an external service over the network then you should use *onFallbackViaNetwork* that runs in another independent *HystrixCommand* that uses its own thread pool to not exhaust the first command.
+Configuring Hystrix Example
+Hystrix has many options as listed in the table above. For example to set a higher timeout to *5* seconds, and also let the circuit breaker wait *10* seconds before attempting a request again when the state was tripped to be open.
+from("direct:start")
+    .hystrix()
+        .hystrixConfiguration()
+             .executionTimeoutInMilliseconds(5000).circuitBreakerSleepWindowInMilliseconds(10000)
+        .end()
+        .to("http://fooservice.com/slow")
+    .onFallback()
+        .transform().constant("Fallback message")
+    .end()
+    .to("mock:result");
+
+And in XML DSL:
+[source,xml]
+---------------------
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <hystrix>
+      <hystrixConfiguration executionTimeoutInMilliseconds="5000" circuitBreakerSleepWindowInMilliseconds="10000"/>
+      <to uri="http://fooservice.com/slow"/>
+      <onFallback>
+        <transform>
+          <constant>Fallback message</constant>
+        </transform>
+      </onFallback>
+    </hystrix>
+    <to uri="mock:result"/>
+  </route>
+</camelContext>
+---------------------
+
+
+You can also configure hystrix globally and then refer to that configuration:
+[source,xml]
+---------------------
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+
+  <!-- a shared config which you can refer to from all your hystrix EIPs -->
+  <hystrixConfiguration id="sharedConfig" executionTimeoutInMilliseconds="5000" circuitBreakerSleepWindowInMilliseconds="10000"/>
+
+  <route>
+    <from uri="direct:start"/>
+    <hystrix hystrixConfigurationRef="sharedConfig">
+      <to uri="http://fooservice.com/slow"/>
+      <onFallback>
+        <transform>
+          <constant>Fallback message</constant>
+        </transform>
+      </onFallback>
+    </hystrix>
+    <to uri="mock:result"/>
+  </route>
+</camelContext>
+---------------------
+
+### Example
+You can find an example in the source code: link:https://github.com/apache/camel/tree/master/examples/camel-example-hystrix[camel-example-hystrix].
