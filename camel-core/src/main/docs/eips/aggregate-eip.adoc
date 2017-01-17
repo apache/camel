@@ -10,7 +10,7 @@ A correlation link:../../../../../docs/user-manual/en/expression.adoc[Expression
 For example, imagine a stock market data system; you are receiving 30,000 messages per second; you may want to throttle down the updates as, say, a GUI cannot cope with such massive update rates. So you may want to aggregate these messages together so that within a window (defined by a maximum number of messages or a timeout), messages for the same stock are aggregated together; by just choosing the latest message and discarding the older prices. (You could apply a delta processing algorithm if you prefer to capture some of the history).
 
 Using the aggregator correctly::
-Torsten Mielke wrote a nice link:http://tmielke.blogspot.com/2009/01/using-camel-aggregator-correctly.html[blog entry] with his thoughts and experience on using the aggreagator. Its a well worth read.
+Torsten Mielke wrote a nice link:http://tmielke.blogspot.com/2009/01/using-camel-aggregator-correctly.html[blog entry] with his thoughts and experience on using the aggregator. Its a well worth read.
 
 [NOTE]
 .AggregationStrategy changed in Camel 2.0
@@ -55,7 +55,7 @@ If you were using JMS then you may wish to use the JMSDestination header as the 
 from("activemq:someReallyFastTopic").aggregator(header("JMSDestination")).to("activemq:someSlowTopicForGuis");
 --------------------------------------------------------
 
-You can of course use many different Expression languages such as XPath, XQuery, SQL or various Scripting Languages.
+You can of course use many different link:../../../../../docs/user-manual/en/expression.adoc[Expression] languages such as XPath, XQuery, SQL or various Scripting Languages.
 Here is an example using *XPath*:
 
 [source,java]
@@ -76,7 +76,7 @@ For further examples of this pattern in use you could look at the junit test cas
 
 [NOTE]
 ====
-The correlationExpression element is in Camel 2.0. For earliler versions of Camel you will need to specify your expression without the enclosing correlationExpression element.
+The correlationExpression element is in Camel 2.0. For earlier versions of Camel you will need to specify your expression without the enclosing correlationExpression element.
 
 [source,java]
 --------------------------------------------------------
@@ -87,7 +87,7 @@ The correlationExpression element is in Camel 2.0. For earliler versions of Came
 --------------------------------------------------------
 ====
 
-The following example shows how to create a simple aggregator using the XML notation; using an Expression for the correlation value used to aggregate messages together:
+The following example shows how to create a simple aggregator using the XML notation; using an link:../../../../../docs/user-manual/en/expression.adoc[Expression] for the correlation value used to aggregate messages together:
 
 [source,xml]
 --------------------------------------------------------
@@ -206,18 +206,20 @@ The following properties is set on each Exchange that are aggregated:
 |=======================================================================
 
 ### AggregationCollection and AggregationStrategy
-This aggregator uses an AggregationCollection to store the exchanges that are currently aggregated. The AggregationCollection uses a correlation Expression and an AggregationStrategy:
-* The correlation Expression is used to correlate the incoming exchanges. The default implementation will group messages based on the correlation expression. Other implementations could for instance just add all exchanges as a batch.
+This aggregator uses an AggregationCollection to store the exchanges that are currently aggregated. The AggregationCollection uses a correlation link:../../../../../docs/user-manual/en/expression.adoc[Expression] and an AggregationStrategy:
+
+* The correlation link:../../../../../docs/user-manual/en/expression.adoc[Expression] is used to correlate the incoming exchanges. The default implementation will group messages based on the correlation expression. Other implementations could for instance just add all exchanges as a batch.
 * The strategy is used for aggregate the old (lookup by its correlation id) and the new exchanges together into a single exchange. Possible implementations include performing some kind of combining or delta processing, such as adding line items together into an invoice or just using the newest exchange and removing old exchanges such as for state tracking or market data prices; where old values are of little use.
 
 Camel provides these implementations:
+
 * DefaultAggregationCollection
 * PredicateAggregationCollection
 * UseLatestAggregationStrategy
 
 ### Examples
 #### Default example
-By default Camel uses `DefaultAggregationCollection` and `UseLatestAggregationStrategy`, so this simple example will just keep the latest received exchange for the given correlation Expression:
+By default Camel uses `DefaultAggregationCollection` and `UseLatestAggregationStrategy`, so this simple example will just keep the latest received exchange for the given correlation link:../../../../../docs/user-manual/en/expression.adoc[Expression]:
 
 [source,java]
 --------------------------------------------------------
