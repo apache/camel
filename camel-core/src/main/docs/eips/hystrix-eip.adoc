@@ -19,6 +19,7 @@ Maven users will need to add the following dependency to their pom.xml to use th
 
 The EIP supports the following options. The default values are coming from Hystrix itself.
 
+{% raw %}
 [width="100%",cols="30,15,15,40",options="header"]
 |=======================================================================
 | Name | Default value | Type | Description
@@ -60,6 +61,7 @@ If this maximum concurrent limit is hit then subsequent requests will be rejecte
 | threadPoolMetricsRollingStatisticalWindowBuckets | 10 | Integer | This property sets the number of buckets the rolling statistical window is divided into.
 | threadPoolMetricsRollingStatisticalWindowInMilliseconds | 10000 | Integer | This property sets the duration of the statistical rolling window, in milliseconds. This is how long metrics are kept for the thread pool.
 |=======================================================================
+{% endraw %}
 
 ### Example
 Below is an example route showing an Hystrix endpoint that protects against slow operation by falling back to the in-lined fallback route. By default the timeout request is just *1000ms* so the HTTP endpoint has to be fairly quick to succeed.
