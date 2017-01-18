@@ -132,7 +132,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         PRIMITIVEMAP.put("float", "java.lang.Float");
     }
 
-    private static final String[] IGNORE_MODULES = {/* Non-standard -> */ "camel-grape"};
+    private static final String[] IGNORE_MODULES = {/* Non-standard -> */ "camel-grape", "camel-connector"};
 
     /**
      * The maven project.
