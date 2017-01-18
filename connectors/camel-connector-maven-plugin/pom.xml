@@ -26,7 +26,7 @@
   </parent>
 
   <artifactId>camel-connector-maven-plugin</artifactId>
-  <name>Camel :: Connector :: Camel Connector Maven Plugin</name>
+  <name>Camel :: Connectors :: Camel Connector Maven Plugin</name>
   <packaging>maven-plugin</packaging>
 
   <dependencies>
