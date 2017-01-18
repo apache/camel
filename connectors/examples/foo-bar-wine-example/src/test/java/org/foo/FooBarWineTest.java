@@ -13,7 +13,7 @@
  * implied.  See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package io.fabric;
+package org.foo;
 
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -21,11 +21,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class FooBarTest extends CamelTestSupport {
+public class FooBarWineTest extends CamelTestSupport {
 
     @Test
     public void testFooBar() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
+        MockEndpoint mock = getMockEndpoint("mock:bar");
 
         mock.expectedMinimumMessageCount(2);
         mock.setAssertPeriod(500);
@@ -33,15 +33,28 @@ public class FooBarTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    
+    @Test
+    public void testFooWine() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:wine");
+
+        mock.expectedMinimumMessageCount(2);
+        mock.setAssertPeriod(500);
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("foo:hello?period=100")
-                    .to("bar:beer")
-                    .to("mock:result");
+                    .to("bar:Beer?amount=5")
+                    .to("mock:bar");
+
+                from("foo:hello2?period=50")
+                    .to("wine:wine?amount=2")
+                    .to("mock:wine");
             }
         };
     }
