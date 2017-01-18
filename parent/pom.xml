@@ -425,6 +425,8 @@
     <maven-jar-plugin-version>2.6</maven-jar-plugin-version>
     <maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.7.Final</maven-jboss-as-maven-plugin-version>
+    <!-- plugin-plugin 3.5 does not work -->
+    <maven-plugin-plugin-version>3.4</maven-plugin-plugin-version>
     <maven-remote-resources-plugin-version>1.5</maven-remote-resources-plugin-version>
     <!-- resources plugin needed by Camel maven archetypes -->
     <maven-resources-plugin-version>3.0.1</maven-resources-plugin-version>

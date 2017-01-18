@@ -33,6 +33,7 @@
 
   <modules>
     <module>camel-connector</module>
+    <module>camel-connector-maven-plugin</module>
   </modules>
 
 </project>
