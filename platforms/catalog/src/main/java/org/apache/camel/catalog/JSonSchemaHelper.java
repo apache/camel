@@ -123,6 +123,24 @@ public final class JSonSchemaHelper {
         return false;
     }
 
+    public static boolean isComponentConsumerOnly(List<Map<String, String>> rows) {
+        for (Map<String, String> row : rows) {
+            if (row.containsKey("consumerOnly")) {
+                return "true".equals(row.get("consumerOnly"));
+            }
+        }
+        return false;
+    }
+
+    public static boolean isComponentProducerOnly(List<Map<String, String>> rows) {
+        for (Map<String, String> row : rows) {
+            if (row.containsKey("producerOnly")) {
+                return "true".equals(row.get("producerOnly"));
+            }
+        }
+        return false;
+    }
+
     public static boolean isPropertyConsumerOnly(List<Map<String, String>> rows, String name) {
         for (Map<String, String> row : rows) {
             String labels = null;
