@@ -479,14 +479,12 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     // Shortcuts - ServiceDiscovery
     // *****************************
 
-    /*
     public CachingServiceCallServiceDiscoveryConfiguration cachingServiceDiscovery() {
         CachingServiceCallServiceDiscoveryConfiguration conf = new CachingServiceCallServiceDiscoveryConfiguration(this);
         setServiceDiscoveryConfiguration(conf);
 
         return conf;
     }
-    */
 
     public ConsulServiceCallServiceDiscoveryConfiguration consulServiceDiscovery() {
         ConsulServiceCallServiceDiscoveryConfiguration conf = new ConsulServiceCallServiceDiscoveryConfiguration(this);
@@ -502,6 +500,25 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return conf;
     }
 
+    public ServiceCallDefinition dnsServiceDiscovery(String domain) {
+        DnsServiceCallServiceDiscoveryConfiguration conf = new DnsServiceCallServiceDiscoveryConfiguration(this);
+        conf.setDomain(domain);
+
+        setServiceDiscoveryConfiguration(conf);
+
+        return this;
+    }
+
+    public ServiceCallDefinition dnsServiceDiscovery(String domain, String protocol) {
+        DnsServiceCallServiceDiscoveryConfiguration conf = new DnsServiceCallServiceDiscoveryConfiguration(this);
+        conf.setDomain(domain);
+        conf.setProto(protocol);
+
+        setServiceDiscoveryConfiguration(conf);
+
+        return this;
+    }
+
     public EtcdServiceCallServiceDiscoveryConfiguration etcdServiceDiscovery() {
         EtcdServiceCallServiceDiscoveryConfiguration conf = new EtcdServiceCallServiceDiscoveryConfiguration(this);
         setServiceDiscoveryConfiguration(conf);
@@ -514,6 +531,35 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         setServiceDiscoveryConfiguration(conf);
 
         return conf;
+    }
+
+    public KubernetesServiceCallServiceDiscoveryConfiguration kubernetesClientServiceDiscovery() {
+        KubernetesServiceCallServiceDiscoveryConfiguration conf = new KubernetesServiceCallServiceDiscoveryConfiguration(this);
+        conf.setLookup("client");
+
+        setServiceDiscoveryConfiguration(conf);
+
+        return conf;
+    }
+
+    public ServiceCallDefinition kubernetesEnvServiceDiscovery() {
+        KubernetesServiceCallServiceDiscoveryConfiguration conf = new KubernetesServiceCallServiceDiscoveryConfiguration(this);
+        conf.setLookup("environment");
+
+        setServiceDiscoveryConfiguration(conf);
+
+        return this;
+    }
+
+    public ServiceCallDefinition kubernetesDnsServiceDiscovery(String namespace, String domain) {
+        KubernetesServiceCallServiceDiscoveryConfiguration conf = new KubernetesServiceCallServiceDiscoveryConfiguration(this);
+        conf.setLookup("dns");
+        conf.setNamespace(namespace);
+        conf.setDnsDomain(domain);
+
+        setServiceDiscoveryConfiguration(conf);
+
+        return this;
     }
 
     public MultiServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
@@ -534,11 +580,20 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     // Shortcuts - LoadBalancer
     // *****************************
 
-    public RibbonServiceCallLoadBalancerConfiguration ribbonLoadBalancer() {
+    public ServiceCallDefinition ribbonLoadBalancer() {
         RibbonServiceCallLoadBalancerConfiguration conf = new RibbonServiceCallLoadBalancerConfiguration(this);
         setLoadBalancerConfiguration(conf);
 
-        return conf;
+        return this;
+    }
+
+    public ServiceCallDefinition ribbonLoadBalancer(String clientName) {
+        RibbonServiceCallLoadBalancerConfiguration conf = new RibbonServiceCallLoadBalancerConfiguration(this);
+        conf.setClientName(clientName);
+
+        setLoadBalancerConfiguration(conf);
+
+        return this;
     }
 
     // *****************************

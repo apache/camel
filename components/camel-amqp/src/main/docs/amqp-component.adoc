@@ -338,12 +338,12 @@ component to use `topic://` as topic prefix, as shown below:
 [source,java]
 -------------------------------------------------------------------------------------------------------------------------------
  <bean id="amqp" class="org.apache.camel.component.amqp.AmqpComponent">
-        <property name="connectionFactory">
-          <bean class="org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl" factory-method="createFromURL">
-            <constructor-arg index="0" type="java.lang.String" value="amqp://localhost:5672" />
-            <property name="topicPrefix" value="topic://" />  <!-- only necessary when connecting to ActiveMQ over AMQP 1.0 -->
-          </bean>
-        </property>
+   <property name="connectionFactory">
+     <bean class="org.apache.qpid.jms.JmsConnectionFactory" factory-method="createFromURL">
+       <property name="remoteURI" value="amqp://localhost:5672" />
+       <property name="topicPrefix" value="topic://" />  <!-- only necessary when connecting to ActiveMQ over AMQP 1.0 -->
+     </bean>
+   </property>
  </bean>
 -------------------------------------------------------------------------------------------------------------------------------
 
