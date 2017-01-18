@@ -27,6 +27,7 @@
     <relativePath>..</relativePath>
   </parent>
 
+  <groupId>org.foo</groupId>
   <artifactId>bar-connector</artifactId>
   <name>Camel :: Connectors :: Examples :: Bar Connector</name>
   <description>Bar Connector</description>
@@ -49,8 +50,8 @@
 
     <!-- base component to use for this connector -->
     <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
+      <groupId>org.foo</groupId>
+      <artifactId>beverage-component</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -163,8 +164,8 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Bundle-SymbolicName>com.foo.foo</Bundle-SymbolicName>
-            <Export-Service>org.apache.camel.spi.ComponentResolver;component=foo</Export-Service>
+            <Bundle-SymbolicName>com.foo.bar</Bundle-SymbolicName>
+            <Export-Service>org.apache.camel.spi.ComponentResolver;component=bar</Export-Service>
           </instructions>
         </configuration>
       </plugin>

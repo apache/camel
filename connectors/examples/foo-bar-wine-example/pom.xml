@@ -27,6 +27,7 @@
     <relativePath>..</relativePath>
   </parent>
 
+  <groupId>org.foo</groupId>
   <artifactId>foo-bar-wine-example</artifactId>
   <name>Camel :: Connectors :: Examples :: Foo Bar and Wine Example</name>
   <description>Foo Bar and Wine Example</description>
@@ -49,17 +50,17 @@
 
     <!-- connectors used in this example -->
     <dependency>
-      <groupId>org.apache.camel</groupId>
+      <groupId>org.foo</groupId>
       <artifactId>foo-connector</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.camel</groupId>
+      <groupId>org.foo</groupId>
       <artifactId>bar-connector</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.camel</groupId>
+      <groupId>org.foo</groupId>
       <artifactId>wine-connector</artifactId>
       <version>${project.version}</version>
     </dependency>

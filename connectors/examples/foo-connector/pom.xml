@@ -27,6 +27,7 @@
     <relativePath>..</relativePath>
   </parent>
 
+  <groupId>org.foo</groupId>
   <artifactId>foo-connector</artifactId>
   <name>Camel :: Connectors :: Examples :: Foo Connector</name>
   <description>Foo Connector</description>
