@@ -27,7 +27,7 @@ import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
 /**
  * @version 
  */
-public class ManagedRoutePolicyTest extends ManagementTestSupport {
+public class ManagedThrottlingInflightRoutePolicyTest extends ManagementTestSupport {
 
     public void testRoutes() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)

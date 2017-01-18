@@ -257,9 +257,9 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         int num = state.get();
         String routeState = stateAsString(num);
         if (failures.get() > 0) {
-            return String.format("*** State %s, failures %d, last failure %d ms ago", routeState, failures.get(), System.currentTimeMillis() - lastFailure);
+            return String.format("State %s, failures %d, last failure %d ms ago", routeState, failures.get(), System.currentTimeMillis() - lastFailure);
         } else {
-            return String.format("*** State %s, failures %d", routeState, failures.get());
+            return String.format("State %s, failures %d", routeState, failures.get());
         }
     }
     

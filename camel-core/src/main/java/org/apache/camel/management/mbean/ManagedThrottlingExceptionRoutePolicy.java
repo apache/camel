@@ -37,32 +37,32 @@ public class ManagedThrottlingExceptionRoutePolicy extends ManagedService implem
     }
     
     @Override
-    public long getHalfOpenAfter() {
+    public Long getHalfOpenAfter() {
         return getPolicy().getHalfOpenAfter();
     }
 
     @Override
-    public void setHalfOpenAfter(long milliseconds) {
+    public void setHalfOpenAfter(Long milliseconds) {
         getPolicy().setHalfOpenAfter(milliseconds);
     }
 
     @Override
-    public long getFailureWindow() {
+    public Long getFailureWindow() {
         return getPolicy().getFailureWindow();
     }
 
     @Override
-    public void setFailureWindow(long milliseconds) {
+    public void setFailureWindow(Long milliseconds) {
         getPolicy().setFailureWindow(milliseconds);
     }
 
     @Override
-    public int getFailureThreshold() {
+    public Integer getFailureThreshold() {
         return getPolicy().getFailureThreshold();
     }
 
     @Override
-    public void setFailureThreshold(int numberOfFailures) {
+    public void setFailureThreshold(Integer numberOfFailures) {
         getPolicy().setFailureThreshold(numberOfFailures);
     }
     
@@ -72,7 +72,7 @@ public class ManagedThrottlingExceptionRoutePolicy extends ManagedService implem
     }
 
     @Override
-    public String hasHalfOpenHandler() {
+    public String getHalfOpenHandlerName() {
         ThrottlingExceptionHalfOpenHandler obj = getPolicy().getHalfOpenHandler();
         if (obj != null) {
             return obj.getClass().getSimpleName();
@@ -82,18 +82,26 @@ public class ManagedThrottlingExceptionRoutePolicy extends ManagedService implem
     }
 
     @Override
-    public int currentFailures() {
+    public Integer getCurrentFailures() {
         return getPolicy().getFailures();
     }
 
     @Override
-    public long getLastFailure() {
-        return System.currentTimeMillis() - getPolicy().getLastFailure();
+    public Long getLastFailure() {
+        if (getPolicy().getLastFailure() == 0) {
+            return 0L;
+        } else {
+            return System.currentTimeMillis() - getPolicy().getLastFailure();
+        }
     }
 
     @Override
-    public long getOpenAt() {
-        return System.currentTimeMillis() - getPolicy().getOpenedAt();
+    public Long getOpenAt() {
+        if (getPolicy().getOpenedAt() == 0) {
+            return 0L;
+        } else {
+            return System.currentTimeMillis() - getPolicy().getOpenedAt();
+        }
     }
 
 }
