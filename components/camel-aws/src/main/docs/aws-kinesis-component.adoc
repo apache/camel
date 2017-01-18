@@ -2,7 +2,7 @@
 
 *Available as of Camel 2.17*
 
-The Kinesis component supports receiving messages from Amazon Kinesis
+The Kinesis component supports receiving messages from and sending messages to Amazon Kinesis
 service.
 
 Prerequisites
@@ -108,7 +108,7 @@ size is not defined by the API. If it is to be used as a numerical type then use
 
 #### AmazonKinesis configuration
 
-You will need to create an instance of AmazonDynamoDBStreamsClient and
+You will need to create an instance of AmazonKinesisClient and
 bind it to the registry
 
 [source,java]
@@ -118,10 +118,18 @@ clientConfiguration.setProxyHost("http://myProxyHost");
 clientConfiguration.setProxyPort(8080);
 
 Region region = Region.getRegion(Regions.fromName(region));
-region.createClient(AmazonDynamoDBStreamsClient.class, null, clientConfiguration);
+region.createClient(AmazonKinesisClient.class, null, clientConfiguration);
 // the 'null' here is the AWSCredentialsProvider which defaults to an instance of DefaultAWSCredentialsProviderChain
 
 registry.bind("kinesisClient", client);
+--------------------------------------------------------------------------------------------------------------------
+
+You then have to reference the AmazonKinesisClient in the `amazonKinesisClient` URI option.
+
+[source,java]
+--------------------------------------------------------------------------------------------------------------------
+from("aws-kinesis://mykinesisstream?amazonKinesisClient=#kinesisClient")
+  .to("log:out?showAll=true");
 --------------------------------------------------------------------------------------------------------------------
 
 #### Providing AWS Credentials
