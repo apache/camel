@@ -22,11 +22,14 @@ import org.apache.camel.model.transformer.CustomTransformerDefinition;
 import org.apache.camel.model.transformer.DataFormatTransformerDefinition;
 import org.apache.camel.model.transformer.EndpointTransformerDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
+import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 
 /**
  * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is
  * used to build a {@link org.apache.camel.spi.Transformer} and register into {@link org.apache.camel.CamelContext}.
+ * It requires 'scheme' or a pair of 'from' and 'to' to be specified by scheme(), from() and to() method.
+ * And then you can choose a type of transformer by withUri(), withDataFormat(), withJava() or withBean() method.
  */
 public class TransformerBuilder {
 
@@ -39,7 +42,10 @@ public class TransformerBuilder {
     private String beanRef;
 
     /**
-     * Set a scheme name supported by the transformer.
+     * Set the scheme name supported by the transformer.
+     * If you specify 'csv', the transformer will be picked up for all of 'csv' from/to
+     * Java transformation. Note that the scheme matching is performed only when
+     * no exactly matched transformer exists.
      *
      * @param scheme scheme name
      */
@@ -49,11 +55,14 @@ public class TransformerBuilder {
     }
 
     /**
-     * Set the 'from' data type .
+     * Set the 'from' data type name.
+     * If you specify 'xml:XYZ', the transformer will be picked up if source type is
+     * 'xml:XYZ'. If you specify just 'xml', the transformer matches with all of
+     * 'xml' source type like 'xml:ABC' or 'xml:DEF'.
      *
-     * @param from 'from' data type
+     * @param from 'from' data type name
      */
-    public TransformerBuilder from(String from) {
+    public TransformerBuilder fromType(String from) {
         this.from = from;
         return this;
     }
@@ -63,17 +72,20 @@ public class TransformerBuilder {
      *
      * @param clazz 'from' Java class
      */
-    public TransformerBuilder from(Class<?> from) {
-        this.from = "java:" + from.getName();
+    public TransformerBuilder fromType(Class<?> from) {
+        this.from = new DataType(from).toString();
         return this;
     }
 
     /**
-     * Set the 'to' data type .
+     * Set the 'to' data type name.
+     * If you specify 'json:XYZ', the transformer will be picked up if destination type is
+     * 'json:XYZ'. If you specify just 'json', the transformer matches with all of
+     * 'json' destination type like 'json:ABC' or 'json:DEF'.
      *
      * @param to 'to' data type
      */
-    public TransformerBuilder to(String to) {
+    public TransformerBuilder toType(String to) {
         this.to = to;
         return this;
     }
@@ -83,8 +95,8 @@ public class TransformerBuilder {
      *
      * @param clazz 'to' Java class
      */
-    public TransformerBuilder to(Class<?> to) {
-        this.to = "java:" + to.getName();
+    public TransformerBuilder toType(Class<?> to) {
+        this.to = new DataType(to).toString();
         return this;
     }
 
@@ -104,17 +116,16 @@ public class TransformerBuilder {
      * Set the {@code DataFormatDefinition} to be used for the {@code DataFormat} {@code Transformer}.
      * @see {@code DataFormatTransformerDefinition}, {@code DataFormatTransformer}
      * 
-     * @param dfd {@code DataFormatDefinition}
+     * @param dataFormatDefinition {@code DataFormatDefinition}
      */
-    public TransformerBuilder withDataFormat(DataFormatDefinition dfd) {
+    public TransformerBuilder withDataFormat(DataFormatDefinition dataFormatDefinition) {
         resetType();
-        this.dataFormat = dfd;
+        this.dataFormat = dataFormatDefinition;
         return this;
     }
 
     /**
-     * Set the Java {@code Class} represents a custom {@code Transformer} implementation class
-     * to be used for custom Transformer.
+     * Set the Java {@code Class} represents a custom {@code Transformer} implementation class.
      * @see {@code CustomTransformerDefinition}
      * 
      * @param clazz {@code Class} object represents custom transformer implementation

@@ -23,6 +23,8 @@ import org.apache.camel.util.StringHelper;
  */
 public class DataType {
 
+    public static final String JAVA_TYPE_PREFIX = "java";
+
     private String model;
     private String name;
     private boolean isJavaType;
@@ -32,7 +34,7 @@ public class DataType {
         if (urn != null) {
             String split[] = StringHelper.splitOnCharacter(urn, ":", 2);
             model = split[0];
-            isJavaType = model.equals("java");
+            isJavaType = model.equals(JAVA_TYPE_PREFIX);
             if (split.length > 1) {
                 name = split[1];
             }
@@ -40,7 +42,7 @@ public class DataType {
     }
     
     public DataType(Class<?> clazz) {
-        model = "java";
+        model = JAVA_TYPE_PREFIX;
         isJavaType = true;
         name = clazz.getName();
     }
