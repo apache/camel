@@ -188,12 +188,12 @@ public class TransformerRouteTest extends ContextTestSupport {
                 
                 context.addComponent("myxml", new MyXmlComponent());
                 transformer()
-                    .from("xml:XmlXOrder")
-                    .to(XOrder.class)
+                    .fromType("xml:XmlXOrder")
+                    .toType(XOrder.class)
                     .withUri("myxml:endpoint");
                 transformer()
-                    .from(XOrderResponse.class)
-                    .to("xml:XmlXOrderResponse")
+                    .fromType(XOrderResponse.class)
+                    .toType("xml:XmlXOrderResponse")
                     .withUri("myxml:endpoint");
                 from("direct:endpoint")
                     .inputType("xml:XmlXOrder")
@@ -201,12 +201,12 @@ public class TransformerRouteTest extends ContextTestSupport {
                     .inOut("direct:xyz");
                 
                 transformer()
-                    .from("other:OtherXOrder")
-                    .to(XOrder.class)
+                    .fromType("other:OtherXOrder")
+                    .toType(XOrder.class)
                     .withJava(OtherToXOrderTransformer.class);
                 transformer()
-                    .from(XOrderResponse.class)
-                    .to("other:OtherXOrderResponse")
+                    .fromType(XOrderResponse.class)
+                    .toType("other:OtherXOrderResponse")
                     .withJava(XOrderResponseToOtherTransformer.class);
                 from("direct:custom")
                     .inputType("other:OtherXOrder")

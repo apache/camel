@@ -117,12 +117,12 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 transformer()
-                    .from("xml:foo")
-                    .to("json:bar")
+                    .fromType("xml:foo")
+                    .toType("json:bar")
                     .withUri("direct:transformer");
                 transformer()
-                    .from(ManagedTransformerRegistryTest.class)
-                    .to("xml:test")
+                    .fromType(ManagedTransformerRegistryTest.class)
+                    .toType("xml:test")
                     .withDataFormat(new StringDataFormat());
                 transformer()
                     .scheme("custom")

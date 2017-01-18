@@ -53,7 +53,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     private AtomicBoolean initialized = new AtomicBoolean(false);
     private RestsDefinition restCollection = new RestsDefinition();
     private Map<String, RestConfigurationDefinition> restConfigurations;
-    private List<TransformerBuilder> transformerBuilders = new ArrayList<TransformerBuilder>();
+    private List<TransformerBuilder> transformerBuilders = new ArrayList<>();
     private RoutesDefinition routeCollection = new RoutesDefinition();
 
     public RouteBuilder() {
@@ -133,7 +133,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     /**
-     * Create a new Transformer.
+     * Create a new {@code TransformerBuilder}.
      * 
      * @return the builder
      */
