@@ -27,8 +27,8 @@
 
   <artifactId>camel-connector</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Connector</name>
-  <description>Camel Connector</description>
+  <name>Camel :: Connector Component</name>
+  <description>Camel Connector Component</description>
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.connector.*</camel.osgi.export.pkg>

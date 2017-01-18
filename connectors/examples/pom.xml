@@ -36,6 +36,7 @@
     <module>foo-connector</module>
     <module>bar-connector</module>
     <module>wine-connector</module>
+    <module>foo-bar-wine-example</module>
   </modules>
 
 </project>
