@@ -18,7 +18,13 @@ package org.foo;
 
 import org.apache.camel.main.Main;
 
-public class FooBarWineMain {
+/**
+ * Main class to run this example
+ */
+public final class FooBarWineMain {
+
+    private FooBarWineMain() {
+    }
 
     public static void main(String[] args) throws Exception {
         Main main = new Main();

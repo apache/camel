@@ -9,7 +9,7 @@
   "javaType" : "org.foo.connector.WineComponent",
   "groupId" : "org.apache.camel",
   "artifactId" : "wine-connector",
-  "version" : "1.0.0",
+  "version" : "2.19.0-SNAPSHOT",
   "description" : "To order wine from the bar",
   "labels" : [ "bar" ],
   "source" : "To",
