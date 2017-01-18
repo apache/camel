@@ -17,39 +17,40 @@
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedThrottlingExceptionRoutePolicyMBean extends ManagedServiceMBean {
 
-    @ManagedAttribute(description = "how long to wait before moving open circuit to half open")
-    long getHalfOpenAfter();
+    @ManagedAttribute(description = "How long to wait before moving open circuit to half open")
+    Long getHalfOpenAfter();
 
-    @ManagedAttribute(description = "how long to wait before moving open circuit to half open")
-    void setHalfOpenAfter(long milliseconds);
+    @ManagedAttribute(description = "How long to wait before moving open circuit to half open")
+    void setHalfOpenAfter(Long milliseconds);
     
-    @ManagedAttribute(description = "the range of time that failures should occur within")
-    long getFailureWindow();
+    @ManagedAttribute(description = "The range of time that failures should occur within")
+    Long getFailureWindow();
 
-    @ManagedAttribute(description = "the range of time that failures should occur within")
-    void setFailureWindow(long milliseconds);
+    @ManagedAttribute(description = "The range of time that failures should occur within")
+    void setFailureWindow(Long milliseconds);
     
-    @ManagedAttribute(description = "number of failures before opening circuit")
-    int getFailureThreshold();
+    @ManagedAttribute(description = "Number of failures before opening circuit")
+    Integer getFailureThreshold();
 
-    @ManagedAttribute(description = "number of failures before opening circuit")
-    void setFailureThreshold(int numberOfFailures);
+    @ManagedAttribute(description = "Number of failures before opening circuit")
+    void setFailureThreshold(Integer numberOfFailures);
 
-    @ManagedAttribute(description = "State")
+    @ManagedOperation(description = "The current state of the circuit")
     String currentState();
     
     @ManagedAttribute(description = "The half open handler registered (if any)")
-    String hasHalfOpenHandler();
+    String getHalfOpenHandlerName();
     
-    @ManagedAttribute(description = "the number of failures caught")
-    int currentFailures();
+    @ManagedAttribute(description = "The number of failures caught")
+    Integer getCurrentFailures();
     
-    @ManagedAttribute(description = "number of ms since the last failure was recorded")
-    long getLastFailure();
+    @ManagedAttribute(description = "Number of ms since the last failure was recorded")
+    Long getLastFailure();
     
-    @ManagedAttribute(description = "number ms since the circuit was opened")
-    long getOpenAt();
+    @ManagedAttribute(description = "Number ms since the circuit was opened")
+    Long getOpenAt();
 }
