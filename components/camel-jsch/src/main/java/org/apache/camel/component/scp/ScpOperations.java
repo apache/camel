@@ -342,11 +342,11 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         String message;
         int answer = is.read();
         switch (answer) {
-			case 0:
-				break;
-        	default:
-            	message = "[scp] Return Code [" + answer + "]" + readLine(is);
-            	throw new IOException(message);
+        case 0:
+            break;
+        default:                
+            message = "[scp] Return Code [" + answer + "] " + readLine(is);
+            throw new IOException(message);
         }
         return answer;
     }
