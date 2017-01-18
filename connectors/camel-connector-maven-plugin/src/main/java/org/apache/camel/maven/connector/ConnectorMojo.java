@@ -50,6 +50,12 @@ public class ConnectorMojo extends AbstractJarMojo {
     @Parameter(defaultValue = "${project.build.outputDirectory}", required = true)
     private File classesDirectory;
 
+    /**
+     * Whether to include the git url for the git repository of the source code for the Camel connector
+     */
+    @Parameter(defaultValue = "false")
+    private boolean includeGitUrl;
+
     @Override
     protected File getClassesDirectory() {
         return classesDirectory;
@@ -68,26 +74,26 @@ public class ConnectorMojo extends AbstractJarMojo {
     @Override
     public File createArchive() throws MojoExecutionException {
 
-        String gitUrl;
+        String gitUrl = null;
 
         // find the component dependency and get its .json file
-
         File file = new File(classesDirectory, "camel-connector.json");
         if (file.exists()) {
 
-            // we want to include the git url of the project
-            File gitFolder = GitHelper.findGitFolder();
-            try {
-                gitUrl = GitHelper.extractGitUrl(gitFolder);
-            } catch (IOException e) {
-                throw new MojoExecutionException("Cannot extract gitUrl due " + e.getMessage(), e);
-            }
-            if (gitUrl == null) {
-                getLog().warn("No .git directory found for connector");
+            if (includeGitUrl) {
+                // we want to include the git url of the project
+                File gitFolder = GitHelper.findGitFolder();
+                try {
+                    gitUrl = GitHelper.extractGitUrl(gitFolder);
+                } catch (IOException e) {
+                    throw new MojoExecutionException("Cannot extract gitUrl due " + e.getMessage(), e);
+                }
+                if (gitUrl == null) {
+                    getLog().warn("No .git directory found for connector");
+                }
             }
 
             try {
-
                 ObjectMapper mapper = new ObjectMapper();
                 Map dto = mapper.readValue(file, Map.class);
 
@@ -155,7 +161,7 @@ public class ConnectorMojo extends AbstractJarMojo {
 
                 // build json schema for component that only has the selectable options
             } catch (Exception e) {
-                throw new MojoExecutionException("Error in connector-maven-plugin", e);
+                throw new MojoExecutionException("Error in camel-connector-maven-plugin", e);
             }
         }
 
@@ -285,7 +291,9 @@ public class ConnectorMojo extends AbstractJarMojo {
 
         StringBuilder sb = new StringBuilder();
         sb.append("  \"component\": {\n");
-        sb.append("    \"girUrl\": \"" + nullSafe(gitUrl) + "\",\n");
+        if (gitUrl != null) {
+            sb.append("    \"girUrl\": \"" + nullSafe(gitUrl) + "\",\n");
+        }
         sb.append("    \"kind\": \"component\",\n");
         sb.append("    \"baseScheme\": \"" + nullSafe(baseScheme) + "\",\n");
         sb.append("    \"scheme\": \"" + scheme + "\",\n");
@@ -327,12 +335,13 @@ public class ConnectorMojo extends AbstractJarMojo {
      */
     private File embedCamelComponentSchema(File file) throws MojoExecutionException {
         try {
-            List<String> json = loadFile(file);
+            ObjectMapper mapper = new ObjectMapper();
+            Map dto = mapper.readValue(file, Map.class);
 
-            String scheme = extractScheme(json);
-            String groupId = extractGroupId(json);
-            String artifactId = extractArtifactId(json);
-            String version = extractVersion(json); // version not in use
+            String scheme = extractScheme(dto);
+            String groupId = extractGroupId(dto);
+            String artifactId = extractArtifactId(dto);
+            String version = extractVersion(dto);
 
             // find the artifact on the classpath that has the Camel component this connector is using
             // then we want to grab its json schema file to embed in this JAR so we have all files together
@@ -341,7 +350,7 @@ public class ConnectorMojo extends AbstractJarMojo {
                 for (Object obj : getProject().getDependencyArtifacts()) {
                     Artifact artifact = (Artifact) obj;
                     if ("jar".equals(artifact.getType())) {
-                        if (groupId.equals(artifact.getGroupId()) && artifactId.equals(artifact.getArtifactId())) {
+                        if (groupId.equals(artifact.getGroupId()) && artifactId.equals(artifact.getArtifactId()) && version.equals(artifact.getVersion())) {
                             // load the component file inside the file
                             URL url = new URL("file:" + artifact.getFile());
                             URLClassLoader child = new URLClassLoader(new URL[]{url}, this.getClass().getClassLoader());
@@ -397,48 +406,20 @@ public class ConnectorMojo extends AbstractJarMojo {
         return null;
     }
 
-    private String extractScheme(List<String> json) {
-        for (String line : json) {
-            line = line.trim();
-            if (line.startsWith("\"baseScheme\":")) {
-                String answer = line.substring(14);
-                return answer.substring(0, answer.length() - 2);
-            }
-        }
-        return null;
+    private String extractScheme(Map map) {
+        return (String) map.get("baseScheme");
     }
 
-    private String extractGroupId(List<String> json) {
-        for (String line : json) {
-            line = line.trim();
-            if (line.startsWith("\"baseGroupId\":")) {
-                String answer = line.substring(15);
-                return answer.substring(0, answer.length() - 2);
-            }
-        }
-        return null;
+    private String extractGroupId(Map map) {
+        return (String) map.get("baseGroupId");
     }
 
-    private String extractArtifactId(List<String> json) {
-        for (String line : json) {
-            line = line.trim();
-            if (line.startsWith("\"baseArtifactId\":")) {
-                String answer = line.substring(18);
-                return answer.substring(0, answer.length() - 2);
-            }
-        }
-        return null;
+    private String extractArtifactId(Map map) {
+        return (String) map.get("baseArtifactId");
     }
 
-    private String extractVersion(List<String> json) {
-        for (String line : json) {
-            line = line.trim();
-            if (line.startsWith("\"baseVersion\":")) {
-                String answer = line.substring(15);
-                return answer.substring(0, answer.length() - 2);
-            }
-        }
-        return null;
+    private String extractVersion(Map map) {
+        return (String) map.get("baseVersion");
     }
 
     private List<String> loadFile(File file) throws Exception {

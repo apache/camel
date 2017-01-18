@@ -151,7 +151,6 @@
             <goals>
               <goal>jar</goal>
             </goals>
-            <phase>generate-resources</phase>
           </execution>
         </executions>
       </plugin>
