@@ -27,7 +27,7 @@ So its only the `newExchange` that has a value. Usually you just return the newE
 You cannot use both batchTimeout and completionPredicate to trigger a completion based on either on reaching its goal first. The batch timeout will always trigger first, at that given interval.
 ====
 
-### Using the link:https://camel.apache.org/fluent-builders.html[Fluent Builders]
+### Using the Fluent Builders
 The following example shows how to aggregate messages so that only the latest message for a specific value of the cheese header is sent:
 
 [source,java]
@@ -213,9 +213,9 @@ This aggregator uses an AggregationCollection to store the exchanges that are cu
 
 Camel provides these implementations:
 
-* DefaultAggregationCollection
-* PredicateAggregationCollection
-* UseLatestAggregationStrategy
+* `DefaultAggregationCollection`
+* `PredicateAggregationCollection`
+* `UseLatestAggregationStrategy`
 
 ### Examples
 #### Default example

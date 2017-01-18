@@ -1,0 +1,42 @@
+## Circuit Breaker
+The Circuit Breaker load balancer is a stateful pattern that monitors all calls for certain exceptions. Initially the Circuit Breaker is in closed state and passes all messages. If there are failures and the threshold is reached, it moves to open state and rejects all calls until halfOpenAfter timeout is reached. After this timeout is reached, if there is a new call, it will pass and if the result is success the Circuit Breaker will move to closed state, or to open state if there was an error.
+When the circuit breaker is closed, it will throw a `java.util.concurrent.RejectedExecutionException`. This can then be caught to provide an alternate path for processing exchanges.
+
+An example using Java DSL:
+[source,java]
+--------------------------------------------------------
+from("direct:start")
+    .onException(RejectedExecutionException.class)
+        .handled(true)
+        .to("mock:serviceUnavailable")
+    .end()
+    .loadBalance()
+        .circuitBreaker(2, 1000L, MyCustomException.class)
+        .to("mock:service")
+    .end();
+--------------------------------------------------------
+
+And the same example using Spring XML:
+[source,xml]
+--------------------------------------------------------
+<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:start"/>
+        <onException>
+            <exception>java.util.concurrent.RejectedExecutionException</exception>
+            <handled><constant>true</constant></handled>
+            <to uri="mock:serviceUnavailable"/>
+        </onException>
+        <loadBalance>
+            <circuitBreaker threshold="2" halfOpenAfter="1000">
+                <exception>MyCustomException</exception>
+            </circuitBreaker>
+            <to uri="mock:service"/>
+        </loadBalance>
+    </route>
+</camelContext>
+--------------------------------------------------------
+
+### Using This Pattern
+
+If you would like to use this EIP Pattern then please read the Getting Started, you may also find the Architecture useful particularly the description of Endpoint and URIs. Then you could try out some of the Examples first before trying this pattern out.
