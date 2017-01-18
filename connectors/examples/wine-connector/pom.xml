@@ -27,6 +27,7 @@
     <relativePath>..</relativePath>
   </parent>
 
+  <groupId>org.foo</groupId>
   <artifactId>wine-connector</artifactId>
   <name>Camel :: Connectors :: Examples :: Wine Connector</name>
   <description>Wine Connector</description>
@@ -49,7 +50,7 @@
 
     <!-- base component to use for this connector -->
     <dependency>
-      <groupId>org.apache.camel</groupId>
+      <groupId>org.foo</groupId>
       <artifactId>beverage-component</artifactId>
       <version>${project.version}</version>
     </dependency>

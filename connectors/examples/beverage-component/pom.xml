@@ -26,6 +26,7 @@
     <relativePath>..</relativePath>
   </parent>
 
+  <groupId>org.foo</groupId>
   <artifactId>beverage-component</artifactId>
   <name>Camel :: Connectors :: Examples :: Beverage Component</name>
   <description>Camel Beverage Component</description>

@@ -1,19 +1,19 @@
 {
   "baseScheme" : "beverage",
-  "baseGroupId" : "org.apache.camel",
+  "baseGroupId" : "org.foo",
   "baseArtifactId" : "beverage-component",
   "baseVersion" : "2.19.0-SNAPSHOT",
   "baseJavaType" : "org.beverage.BeverageComponent",
   "name" : "Wine",
   "scheme" : "wine",
   "javaType" : "org.foo.connector.WineComponent",
-  "groupId" : "org.apache.camel",
+  "groupId" : "org.foo",
   "artifactId" : "wine-connector",
   "version" : "2.19.0-SNAPSHOT",
   "description" : "To order wine from the bar",
   "labels" : [ "bar" ],
   "source" : "To",
-  "endpointOptions" : [ "amount" ],
+  "endpointOptions" : [ "drink", "amount" ],
   "endpointValues" : {
     "drink" : "Wine"
   }

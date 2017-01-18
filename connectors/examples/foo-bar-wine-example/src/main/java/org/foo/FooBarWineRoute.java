@@ -26,7 +26,7 @@ public class FooBarWineRoute extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         from("foo:wine?period=3000")
-            .to("wine:wine?amount=2")
+            .to("wine:Wine?amount=3")
             .log("Wine ordered ${body}");
 
         from("foo:bar?period=5000")
