@@ -58,7 +58,7 @@ public class TransformerBuilderTest extends TestSupport {
         RouteBuilder builder = new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                transformer().from("xml:foo").to("json:bar").withDataFormat(new StringDataFormat());
+                transformer().fromType("xml:foo").toType("json:bar").withDataFormat(new StringDataFormat());
             }
         };
         ctx.addRoutes(builder);
@@ -77,7 +77,7 @@ public class TransformerBuilderTest extends TestSupport {
         RouteBuilder builder = new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                transformer().from("json:foo").to("xml:bar").withUri("direct:transformer");
+                transformer().fromType("json:foo").toType("xml:bar").withUri("direct:transformer");
                 from("direct:transformer");
             }
         };

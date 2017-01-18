@@ -26,8 +26,8 @@ public class MyRoutes extends RouteBuilder {
     @Override
     public void configure() {
         transformer()
-            .from("xml:MyRequest")
-            .to("xml:MyResponse")
+            .fromType("xml:MyRequest")
+            .toType("xml:MyResponse")
             .withUri("xslt:transform.xsl");
         
         from("timer:foo?period=5000").id("timer-route")
