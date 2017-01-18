@@ -179,7 +179,7 @@ For example we want to get all exchanges that contain the usernames of the chann
 
 [source,java]
 -----------------------------------------------------------------------------
-from("ircs:nick@myserver:1234/#mychannelname?listOnJoin=true&onReply=true")
+from("ircs:nick@myserver:1234/#mychannelname?namesOnJoin=true&onReply=true")
 	.choice()
 		.when(header("irc.messageType").isEqualToIgnoreCase("REPLY"))
 			.filter(header("irc.num").isEqualTo("353"))
