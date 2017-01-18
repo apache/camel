@@ -22,7 +22,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 
-public class FileHelper {
+public final class FileHelper {
+
+    private FileHelper() {
+    }
 
     /**
      * Loads the entire stream into memory as a String and returns it.
