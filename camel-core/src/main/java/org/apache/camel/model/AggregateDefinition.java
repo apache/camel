@@ -814,6 +814,16 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    public AggregateDefinition strategy(AggregationStrategy aggregationStrategy) {
+        return aggregationStrategy(aggregationStrategy);
+    }
+
+    /**
      * Sets the aggregate strategy to use
      *
      * @param aggregationStrategy  the aggregate strategy to use
@@ -927,6 +937,16 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     @AsPredicate
     public PredicateClause<AggregateDefinition> completion() {
         return completionPredicate();
+    }
+
+    /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    public AggregateDefinition completion(@AsPredicate Predicate predicate) {
+        return completionPredicate(predicate);
     }
 
     /**

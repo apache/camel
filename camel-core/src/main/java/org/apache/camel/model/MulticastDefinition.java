@@ -27,6 +27,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.AggregationStrategyClause;
+import org.apache.camel.builder.ProcessClause;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
@@ -104,6 +106,18 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
 
     // Fluent API
     // -------------------------------------------------------------------------
+
+    /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    public AggregationStrategyClause<MulticastDefinition> aggregationStrategy() {
+        AggregationStrategyClause<MulticastDefinition> clause = new AggregationStrategyClause<>(this);
+        setAggregationStrategy(clause);
+        return clause;
+    }
 
     /**
      * Sets the AggregationStrategy to be used to assemble the replies from the multicasts, into a single outgoing message from the Multicast.
@@ -245,6 +259,18 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     public MulticastDefinition executorServiceRef(String executorServiceRef) {
         setExecutorServiceRef(executorServiceRef);
         return this;
+    }
+
+    /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    public ProcessClause<MulticastDefinition> onPrepare() {
+        ProcessClause<MulticastDefinition> clause = new ProcessClause<>(this);
+        setOnPrepare(clause);
+        return clause;
     }
 
     /**

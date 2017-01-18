@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Supplier;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
@@ -73,6 +74,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.ExpressionAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1408,6 +1410,19 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    public ExpressionClause<IdempotentConsumerDefinition> idempotentConsumer() {
+        IdempotentConsumerDefinition answer = new IdempotentConsumerDefinition();
+        addOutput(answer);
+
+        return ExpressionClause.createAndSetExpression(answer);
+    }
+
+    /**
      * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent consumer EIP:</a>
      * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer IdempotentConsumer}
      * to avoid duplicate messages
@@ -2096,7 +2111,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public ExpressionClause<AggregateDefinition> aggregate(AggregationStrategy aggregationStrategy) {
         AggregateDefinition answer = new AggregateDefinition();
-        ExpressionClause<AggregateDefinition> clause = new ExpressionClause<AggregateDefinition>(answer);
+        ExpressionClause<AggregateDefinition> clause = new ExpressionClause<>(answer);
         answer.setExpression(clause);
         answer.setAggregationStrategy(aggregationStrategy);
         addOutput(answer);
@@ -2173,6 +2188,19 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    public ExpressionClause<ThrottleDefinition> throttle() {
+        ThrottleDefinition answer = new ThrottleDefinition();
+        addOutput(answer);
+
+        return ExpressionClause.createAndSetExpression(answer);
+    }
+
+    /**
      * <a href="http://camel.apache.org/throttler.html">Throttler EIP:</a>
      * Creates a throttler allowing you to ensure that a specific endpoint does not get overloaded,
      * or that we don't exceed an agreed SLA with some external service.
@@ -2243,6 +2271,21 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         LoopDefinition loop = new LoopDefinition(predicate);
         addOutput(loop);
         return loop;
+    }
+
+    /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    public ExpressionClause<LoopDefinition> loopDoWhile() {
+        LoopDefinition loop = new LoopDefinition();
+        loop.setDoWhile(true);
+
+        addOutput(loop);
+
+        return ExpressionClause.createAndSetExpression(loop);
     }
 
     /**
@@ -3089,6 +3132,26 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @SuppressWarnings("unchecked")
     public Type setHeader(String name, Expression expression) {
         SetHeaderDefinition answer = new SetHeaderDefinition(name, expression);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * Adds a processor which sets the header on the IN message
+     *
+     * @param name  the header name
+     * @param supplier the supplier used to set the header
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type setHeader(String name, final Supplier<Object> supplier) {
+        SetHeaderDefinition answer = new SetHeaderDefinition(name, new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return supplier.get();
+            }
+        });
+
         addOutput(answer);
         return (Type) this;
     }
@@ -4021,5 +4084,4 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public String getLabel() {
         return "";
     }
-    
 }

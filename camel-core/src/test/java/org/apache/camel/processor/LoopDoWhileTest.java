@@ -21,11 +21,20 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class LoopDoWhileTest extends ContextTestSupport {
 
-    public void testLoopDoWhile() throws Exception {
+    public void testLoopDoWhileSimple() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("AAAAAA");
         getMockEndpoint("mock:loop").expectedBodiesReceived("A", "AA", "AAA", "AAAA", "AAAAA");
 
-        template.sendBody("direct:start", "A");
+        template.sendBody("direct:simple", "A");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testLoopDoWhileFunctional() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("AAAAAA");
+        getMockEndpoint("mock:loop").expectedBodiesReceived("A", "AA", "AAA", "AAAA", "AAAAA");
+
+        template.sendBody("direct:functional", "A");
 
         assertMockEndpointsSatisfied();
     }
@@ -35,10 +44,18 @@ public class LoopDoWhileTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
+                from("direct:simple")
                     .loopDoWhile(simple("${body.length} <= 5"))
                         .to("mock:loop")
                         .transform(body().append("A"))
+                    .end()
+                    .to("mock:result");
+                from("direct:functional")
+                    .loopDoWhile()
+                        .body(String.class, b -> b.length() <= 5)
+                        .to("mock:loop")
+                        .transform()
+                            .body(String.class, b -> b += "A")
                     .end()
                     .to("mock:result");
             }

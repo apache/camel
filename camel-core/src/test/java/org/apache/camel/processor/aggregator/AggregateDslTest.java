@@ -21,20 +21,21 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 public class AggregateDslTest extends ContextTestSupport {
 
     public void testAggregate() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:aggregated");
-        mock.expectedBodiesReceived("0,3,6", "1,4,7", "2,5,8");
+        getMockEndpoint("mock:aggregated").expectedBodiesReceived("0,3", "1,4", "2,5");
+        getMockEndpoint("mock:aggregated-supplier").expectedBodiesReceived("0,3,6", "1,4,7", "2,5,8");
 
         for (int i = 0; i < 9; i++) {
             template.sendBodyAndHeader("direct:start", i, "type", i % 3);
+            template.sendBodyAndHeader("direct:start-supplier", i, "type", i % 3);
         }
 
-        mock.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -46,12 +47,38 @@ public class AggregateDslTest extends ContextTestSupport {
                     .aggregate()
                         .message(m -> m.getHeader("type"))
                         .strategy()
-                            .body(String.class, (o, n) ->  Stream.of(o, n).filter(Objects::nonNull).collect(Collectors.joining(",")))
+                            .body(String.class, AggregateDslTest::joinString)
                         .completion()
-                            .body(String.class, s -> s.length() == 5)
-                                    .to("mock:aggregated");
+                            .body(String.class, s -> s.split(",").length == 2)
+                    .to("mock:aggregated");
+
+                from("direct:start-supplier")
+                    .aggregate()
+                        .header("type")
+                        .strategy(AggregateDslTest::joinStringStrategy)
+                        .completion()
+                            .body(String.class, s -> s.split(",").length == 3)
+                    .to("mock:aggregated-supplier");
             }
         };
+    }
+
+    // *************************************************************************
+    // Strategies
+    // *************************************************************************
+
+    private static String joinString(String o, String n) {
+        return Stream.of(o, n).filter(Objects::nonNull).collect(Collectors.joining(","));
+    }
+
+    private static Exchange joinStringStrategy(Exchange oldExchange, Exchange newExchange) {
+        newExchange.getIn().setBody(
+            joinString(
+                oldExchange != null ? oldExchange.getIn().getBody(String.class) : null,
+                newExchange.getIn().getBody(String.class))
+        );
+
+        return newExchange;
     }
 }
 
