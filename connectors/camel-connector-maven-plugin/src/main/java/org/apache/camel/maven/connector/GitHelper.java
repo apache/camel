@@ -24,7 +24,10 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GitHelper {
+public final class GitHelper {
+
+    private GitHelper() {
+    }
 
     public static File findGitFolder() {
         File baseDir = new File("").getAbsoluteFile();
