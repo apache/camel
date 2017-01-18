@@ -18,7 +18,7 @@ package org.apache.camel;
 
 import java.util.Map;
 import java.util.Set;
-
+import java.util.function.Supplier;
 import javax.activation.DataHandler;
 
 /**
@@ -88,6 +88,13 @@ public interface Message {
     Object getHeader(String name, Object defaultValue);
 
     /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     */
+    Object getHeader(String name, Supplier<Object> defaultValueSupplier);
+
+    /**
      * Returns a header associated with this message by name and specifying the
      * type required
      *
@@ -110,6 +117,13 @@ public interface Message {
      *         the given name or <tt>null</tt> if it cannot be converted to the given type
      */
     <T> T getHeader(String name, Object defaultValue, Class<T> type);
+
+    /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     */
+    <T> T getHeader(String name, Supplier<Object> defaultValueSupplier, Class<T> type);
 
     /**
      * Sets a header on the message
