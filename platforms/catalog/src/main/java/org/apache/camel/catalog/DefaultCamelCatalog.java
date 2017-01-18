@@ -54,7 +54,9 @@ import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyKind;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyNameFromNameWithPrefix;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyPrefix;
 import static org.apache.camel.catalog.JSonSchemaHelper.getRow;
+import static org.apache.camel.catalog.JSonSchemaHelper.isComponentConsumerOnly;
 import static org.apache.camel.catalog.JSonSchemaHelper.isComponentLenientProperties;
+import static org.apache.camel.catalog.JSonSchemaHelper.isComponentProducerOnly;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyBoolean;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyConsumerOnly;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyInteger;
@@ -999,8 +1001,15 @@ public class DefaultCamelCatalog implements CamelCatalog {
             }
 
             rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
-            if (consumerOnly) {
-                // lenient properties is not support in consumer only mode
+
+            // is the component capable of both consumer and producer?
+            boolean canConsumeAndProduce = false;
+            if (!isComponentConsumerOnly(rows) && !isComponentProducerOnly(rows)) {
+                canConsumeAndProduce = true;
+            }
+
+            if (canConsumeAndProduce && consumerOnly) {
+                // lenient properties is not support in consumer only mode if the component can do both of them
                 lenientProperties = false;
             } else {
                 // only enable lenient properties if we should not ignore

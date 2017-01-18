@@ -649,6 +649,11 @@ public class CamelCatalogTest {
         assertEquals("foo", result.getUnknown().iterator().next());
         assertNull(result.getLenient());
 
+        // lenient on rss consumer only
+        result = catalog.validateEndpointProperties("rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&consumer.delay=50&foo=bar", false, true, false);
+        assertTrue(result.isSuccess());
+        assertEquals("foo", result.getLenient().iterator().next());
+
         // data format
         result = catalog.validateEndpointProperties("dataformat:string:marshal?charset=utf-8", true);
         assertTrue(result.isSuccess());
