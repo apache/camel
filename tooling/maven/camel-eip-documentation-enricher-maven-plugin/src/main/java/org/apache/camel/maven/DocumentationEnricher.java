@@ -81,12 +81,14 @@ public class DocumentationEnricher {
 
         String descriptionText = null;
         String defaultValueText = null;
+        String deprecatedText = null;
 
         List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema(Constants.PROPERTIES_ATTRIBUTE_NAME, PackageHelper.fileToString(jsonFile), true);
         for (Map<String, String> row : rows) {
             if (name.equals(row.get(Constants.NAME_ATTRIBUTE_NAME))) {
                 descriptionText = row.get(Constants.DESCRIPTION_ATTRIBUTE_NAME);
                 defaultValueText = row.get(Constants.DEFAULT_VALUE_ATTRIBUTE_NAME);
+                deprecatedText = row.get(Constants.DEPRECATED_ATTRIBUTE_NAME);
             }
         }
 
@@ -95,6 +97,10 @@ public class DocumentationEnricher {
             descriptionText = "Whether to automatic detect OSGi Blueprint property placeholder service in use, and bridge with Camel property placeholder."
                     + " When enabled this allows you to only setup OSGi Blueprint property placeholder and Camel can use the properties in the <camelContext>.";
             defaultValueText = "true";
+        }
+
+        if ("true".equals(deprecatedText)) {
+            descriptionText = "Deprecated: " + descriptionText;
         }
 
         if (!isNullOrEmpty(descriptionText)) {
