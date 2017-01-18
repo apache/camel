@@ -33,6 +33,9 @@
 
   <modules>
     <module>beverage-component</module>
+    <module>foo-connector</module>
+    <module>bar-connector</module>
+    <module>wine-connector</module>
   </modules>
 
 </project>
