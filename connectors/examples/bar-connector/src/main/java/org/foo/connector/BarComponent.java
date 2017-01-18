@@ -20,8 +20,8 @@ import org.apache.camel.component.connector.DefaultConnectorComponent;
 
 public class BarComponent extends DefaultConnectorComponent {
 
-	public BarComponent() {
-		super("bar", "org.foo.connector.BarComponent");
-	}
+    public BarComponent() {
+        super("bar", "org.foo.connector.BarComponent");
+    }
 
 }

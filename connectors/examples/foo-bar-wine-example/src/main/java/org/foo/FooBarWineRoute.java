@@ -18,6 +18,9 @@ package org.foo;
 
 import org.apache.camel.builder.RouteBuilder;
 
+/**
+ * Camel route that uses the foo, bar and wine connectors
+ */
 public class FooBarWineRoute extends RouteBuilder {
 
     @Override

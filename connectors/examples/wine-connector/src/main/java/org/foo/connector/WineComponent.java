@@ -20,8 +20,8 @@ import org.apache.camel.component.connector.DefaultConnectorComponent;
 
 public class WineComponent extends DefaultConnectorComponent {
 
-	public WineComponent() {
-		super("wine", "org.foo.connector.WineComponent");
-	}
+    public WineComponent() {
+        super("wine", "org.foo.connector.WineComponent");
+    }
 
 }
