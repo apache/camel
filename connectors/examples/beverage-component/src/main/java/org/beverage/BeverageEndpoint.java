@@ -35,13 +35,16 @@ public class BeverageEndpoint extends DefaultEndpoint {
     @UriParam(defaultValue = "1")
     private int amount = 1;
 
+    @UriParam
+    private boolean celebrity;
+
     public BeverageEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new BeverageProducer(this, drink, amount);
+        return new BeverageProducer(this, drink, amount, celebrity);
     }
 
     @Override
@@ -74,5 +77,16 @@ public class BeverageEndpoint extends DefaultEndpoint {
      */
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    public boolean isCelebrity() {
+        return celebrity;
+    }
+
+    /**
+     * Is this a famous person ordering
+     */
+    public void setCelebrity(boolean celebrity) {
+        this.celebrity = celebrity;
     }
 }

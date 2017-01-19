@@ -10,10 +10,10 @@
   "groupId" : "org.foo",
   "artifactId" : "wine-connector",
   "version" : "2.19.0-SNAPSHOT",
-  "description" : "To order two drinks from the bar",
+  "description" : "To order drinks from the bar",
   "labels" : [ "bar" ],
   "pattern" : "To",
-  "endpointOptions" : [ "drink", "amount" ],
+  "endpointOptions" : [ "drink", "amount", "celebrity" ],
   "endpointValues" : {
     "amount" : "2"
   }

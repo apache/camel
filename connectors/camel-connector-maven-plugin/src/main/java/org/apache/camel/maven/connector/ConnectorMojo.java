@@ -220,6 +220,7 @@ public class ConnectorMojo extends AbstractJarMojo {
         // find the endpoint options
         List options = (List) dto.get("endpointOptions");
         Map values = (Map) dto.get("endpointValues");
+        Map overrides = (Map) dto.get("endpointOverrides");
 
         ObjectMapper mapper = new ObjectMapper();
 
@@ -241,6 +242,14 @@ public class ConnectorMojo extends AbstractJarMojo {
                 String newDefaultValue = (String) values.get(key);
                 if (newDefaultValue != null) {
                     row.put("defaultValue", newDefaultValue);
+                }
+            }
+
+            // is there any overrides for this row?
+            if (overrides != null && overrides.containsKey(key)) {
+                Map over = (Map) overrides.get(key);
+                if (over != null) {
+                    row.putAll(over);
                 }
             }
 
