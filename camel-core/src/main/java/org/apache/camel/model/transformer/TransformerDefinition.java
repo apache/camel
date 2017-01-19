@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.InputTypeDefinition;
 import org.apache.camel.model.OutputTypeDefinition;
+import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.Transformer;
 
@@ -50,9 +51,9 @@ public abstract class TransformerDefinition {
     @XmlAttribute
     private String scheme;
     @XmlAttribute
-    private String from;
+    private String fromType;
     @XmlAttribute
-    private String to;
+    private String toType;
 
     public Transformer createTransformer(CamelContext context) throws Exception {
         return doCreateTransformer(context);
@@ -66,6 +67,9 @@ public abstract class TransformerDefinition {
 
     /**
      * Set a scheme name supported by the transformer.
+     * If you specify 'csv', the transformer will be picked up for all of 'csv' from/to
+     * Java transformation. Note that the scheme matching is performed only when
+     * no exactly matched transformer exists.
      *
      * @param scheme scheme name
      */
@@ -73,17 +77,20 @@ public abstract class TransformerDefinition {
         this.scheme = scheme;
     }
 
-    public String getFrom() {
-        return from;
+    public String getFromType() {
+        return fromType;
     }
 
     /**
-     * Set the 'from' data type .
-     *
-     * @param from 'from' data type
+     * Set the 'from' data type name.
+     * If you specify 'xml:XYZ', the transformer will be picked up if source type is
+     * 'xml:XYZ'. If you specify just 'xml', the transformer matches with all of
+     * 'xml' source type like 'xml:ABC' or 'xml:DEF'.
+     * 
+     * @param from 'from' data type name
      */
-    public void setFrom(String from) {
-        this.from = from;
+    public void setFromType(String from) {
+        this.fromType = from;
     }
 
     /**
@@ -91,21 +98,24 @@ public abstract class TransformerDefinition {
      *
      * @param clazz 'from' Java class
      */
-    public void setFrom(Class<?> clazz) {
-        this.from = "java:" + clazz.getName();
+    public void setFromType(Class<?> clazz) {
+        this.fromType = new DataType(clazz).toString();
     }
 
-    public String getTo() {
-        return to;
+    public String getToType() {
+        return toType;
     }
 
     /**
-     * Set the 'to' data type.
+     * Set the 'to' data type name.
+     * If you specify 'json:XYZ', the transformer will be picked up if destination type is
+     * 'json:XYZ'. If you specify just 'json', the transformer matches with all of
+     * 'json' destination type like 'json:ABC' or 'json:DEF'.
      *
-     * @param to 'to' data type 
+     * @param to 'to' data type name
      */
-    public void setTo(String to) {
-        this.to = to;
+    public void setToType(String to) {
+        this.toType = to;
     }
 
     /**
@@ -113,8 +123,8 @@ public abstract class TransformerDefinition {
      *
      * @param clazz 'to' Java class
      */
-    public void setTo(Class<?> clazz) {
-        this.to = "java:" + clazz.getName();
+    public void setToType(Class<?> clazz) {
+        this.toType = new DataType(clazz).toString();
     }
 
 }

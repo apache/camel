@@ -446,6 +446,11 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(label = "advanced",
             description = "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of javax.jms.Message objects when Camel is sending a JMS message.")
     private MessageCreatedStrategy messageCreatedStrategy;
+    @UriParam(label = "producer,advanced",
+            description = "When using InOut exchange pattern use this JMS property instead of JMSCorrelationID"
+                    + " JMS property to correlate messages. If set messages will be correlated solely on the"
+                    + " value of this property JMSCorrelationID property will be ignored and not set by Camel.")
+    private String correlationProperty;
 
     public JmsConfiguration() {
     }
@@ -2081,5 +2086,20 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setSelector(String selector) {
         this.selector = selector;
+    }
+
+    /**
+     * Use this JMS property to correlate messages in InOut exchange pattern (request-reply)
+     * instead of JMSCorrelationID property. This allows you to exchange messages with 
+     * systems that do not correlate messages using JMSCorrelationID JMS property. If used
+     * JMSCorrelationID will not be used or set by Camel. The value of here named property
+     * will be generated if not supplied in the header of the message under the same name.
+     */
+    public void setCorrelationProperty(final String correlationProperty) {
+        this.correlationProperty = correlationProperty;
+    }
+
+    public String getCorrelationProperty() {
+        return correlationProperty;
     }
 }

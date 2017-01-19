@@ -52,6 +52,8 @@ public class SalesforceHttpClient extends HttpClient {
 
     private final Method addSecuirtyHandlerMethod;
 
+    private final Method getProtocolHandlersMethod;
+
     public SalesforceHttpClient() {
         this(null);
     }
@@ -75,6 +77,8 @@ public class SalesforceHttpClient extends HttpClient {
             } else {
                 addSecuirtyHandlerMethod = getProtocolHandlersType.getMethod("put", ProtocolHandler.class);
             }
+
+            getProtocolHandlersMethod = HttpClient.class.getMethod("getProtocolHandlers");
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException("Found no method of adding SalesforceSecurityHandler as ProtocolHandler to Jetty HttpClient. You need Jetty 9.2 or newer on the classpath.");
         }
@@ -99,7 +103,7 @@ public class SalesforceHttpClient extends HttpClient {
         }
 
         // compensate for Jetty 9.2 vs 9.3 API change
-        final Object protocolHandlers = getProtocolHandlers();
+        final Object protocolHandlers = getProtocolHandlersMethod.invoke(this);
         addSecuirtyHandlerMethod.invoke(protocolHandlers, new SalesforceSecurityHandler(this));
 
         super.doStart();

@@ -140,6 +140,7 @@
     <module>components</module>
     <module>tooling</module>
     <module>platforms</module>
+    <module>connectors</module>
     <module>tests</module>
     <module>examples</module>
   </modules>

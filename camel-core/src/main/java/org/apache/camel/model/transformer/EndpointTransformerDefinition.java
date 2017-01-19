@@ -55,8 +55,8 @@ public class EndpointTransformerDefinition extends TransformerDefinition {
         return new ProcessorTransformer(context)
             .setProcessor(processor)
             .setModel(getScheme())
-            .setFrom(getFrom())
-            .setTo(getTo());
+            .setFrom(getFromType())
+            .setTo(getToType());
     }
 
     public String getRef() {

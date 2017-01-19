@@ -84,7 +84,7 @@
     <bouncycastle-version>1.55</bouncycastle-version>
     <boxjavalibv2.version>3.2.1</boxjavalibv2.version>
     <braintree-gateway-version>2.63.0</braintree-gateway-version>
-    <brave-zipkin-version>3.7.0</brave-zipkin-version>
+    <brave-zipkin-version>4.0.3</brave-zipkin-version>
     <brave-zipkin-bundle-version>3.7.0_1</brave-zipkin-bundle-version>
     <build-helper-maven-plugin-version>1.10</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.2</c3p0-version>
@@ -160,7 +160,7 @@
     <disruptor-version>3.3.6</disruptor-version>
     <dnsjava-version>2.1.7</dnsjava-version>
     <dnsjava-bundle-version>2.1.7_1</dnsjava-bundle-version>
-    <docker-java-version>3.0.6</docker-java-version>
+    <docker-java-version>3.0.7</docker-java-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
     <dozer-version>5.5.1</dozer-version>
     <drools-version>6.5.0.Final</drools-version>
@@ -288,7 +288,7 @@
     <jackson-spark-version>2.4.5</jackson-spark-version>
     <jackson2-scala-version>2.6.1</jackson2-scala-version>
     <jackson2-version>2.8.6</jackson2-version>
-    <jackrabbit-version>2.14.0</jackrabbit-version>
+    <jackrabbit-version>2.15.0</jackrabbit-version>
     <jackrabbit-guava-version>15.0</jackrabbit-guava-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jasper-bundle-version>6.0.44_1</jasper-bundle-version>
@@ -425,6 +425,8 @@
     <maven-jar-plugin-version>2.6</maven-jar-plugin-version>
     <maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.7.Final</maven-jboss-as-maven-plugin-version>
+    <!-- plugin-plugin 3.5 does not work -->
+    <maven-plugin-plugin-version>3.4</maven-plugin-plugin-version>
     <maven-remote-resources-plugin-version>1.5</maven-remote-resources-plugin-version>
     <!-- resources plugin needed by Camel maven archetypes -->
     <maven-resources-plugin-version>3.0.1</maven-resources-plugin-version>
@@ -662,6 +664,8 @@
     <xstream-version>1.4.9</xstream-version>
     <xom-version>1.2.5</xom-version>
     <yammer-metrics-version>2.2.0</yammer-metrics-version>
+    <zipkin-version>1.19.2</zipkin-version>
+    <zipkin-reporter-version>0.6.12</zipkin-reporter-version>
     <zjsonpatch-version>0.3.0</zjsonpatch-version>
     <zookeeper-version>3.4.9</zookeeper-version>
     <zookeeper-guava-version>16.0</zookeeper-guava-version>
@@ -896,6 +900,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cometd</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-connector</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
