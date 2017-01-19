@@ -1775,6 +1775,16 @@ public class JmsComponentConfiguration {
          * Sets the JMS selector to use
          */
         private String selector;
+        /**
+         * Use this JMS property to correlate messages in InOut exchange pattern
+         * (request-reply) instead of JMSCorrelationID property. This allows you
+         * to exchange messages with systems that do not correlate messages
+         * using JMSCorrelationID JMS property. If used JMSCorrelationID will
+         * not be used or set by Camel. The value of here named property will be
+         * generated if not supplied in the header of the message under the same
+         * name.
+         */
+        private String correlationProperty;
 
         public ConsumerType getConsumerType() {
             return consumerType;
@@ -2491,6 +2501,14 @@ public class JmsComponentConfiguration {
 
         public void setSelector(String selector) {
             this.selector = selector;
+        }
+
+        public String getCorrelationProperty() {
+            return correlationProperty;
+        }
+
+        public void setCorrelationProperty(String correlationProperty) {
+            this.correlationProperty = correlationProperty;
         }
     }
 }
