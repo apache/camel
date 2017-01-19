@@ -19,46 +19,44 @@ package org.apache.camel.model;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
 
 /**
- * A series of key value pair
- *
- * @deprecated Use {@link GlobalOptionsDefinition} instead.
+ * Models a series of string key/value pairs for configuring some global options
+ * on {@link CamelContext} such as {@link Exchange#LOG_DEBUG_BODY_MAX_CHARS}.
  */
 @Metadata(label = "configuration")
-@XmlRootElement(name = "properties")
+@XmlRootElement(name = "globalOptions")
 @XmlAccessorType(XmlAccessType.FIELD)
-@Deprecated
-public class PropertiesDefinition {
-    @XmlElement(name = "property")
-    private List<PropertyDefinition> properties;
-    
-    public PropertiesDefinition() {
+public class GlobalOptionsDefinition {
+    @XmlElement(name = "globalOption")
+    private List<GlobalOptionDefinition> globalOptions;
+
+    public GlobalOptionsDefinition() {
     }
 
-    /**
-     * A series of properties as key value pairs
-     */
-    public void setProperties(List<PropertyDefinition> properties) {
-        this.properties = properties;
+    public void setGlobalOptions(List<GlobalOptionDefinition> globalOptions) {
+        this.globalOptions = globalOptions;
     }
-    
-    public List<PropertyDefinition> getProperties() {
-        return properties;
+
+    public List<GlobalOptionDefinition> getGlobalOptions() {
+        return globalOptions;
     }
-    
+
     public Map<String, String> asMap() {
-        Map<String, String> propertiesAsMap = new HashMap<String, String>();
-        for (PropertyDefinition propertyType : getProperties()) {
-            propertiesAsMap.put(propertyType.getKey(), propertyType.getValue());
+        Map<String, String> globalOptionsAsMap = new HashMap<>();
+        for (GlobalOptionDefinition globalOption : getGlobalOptions()) {
+            globalOptionsAsMap.put(globalOption.getKey(), globalOption.getValue());
         }
-        return propertiesAsMap;
+        return globalOptionsAsMap;
     }
 
 }
