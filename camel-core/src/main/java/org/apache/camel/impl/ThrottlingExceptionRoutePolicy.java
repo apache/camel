@@ -231,20 +231,16 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         try {
             lock.lock();
             startConsumer(route.getConsumer());
-            this.reset();
+            failures.set(0);
+            lastFailure = 0;
+            openedAt = 0;
+            state.set(STATE_CLOSED);
             logState();
         } catch (Exception e) {
             handleException(e);
         } finally {
             lock.unlock();
         }
-    }
-    
-    private void reset() {
-        failures.set(0);
-        lastFailure = 0;
-        openedAt = 0;
-        state.set(STATE_CLOSED);
     }
     
     private void logState() {
