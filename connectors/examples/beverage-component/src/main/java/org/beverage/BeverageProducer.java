@@ -24,19 +24,22 @@ public class BeverageProducer extends DefaultProducer {
 
     private final Beverages drink;
     private final int amount;
+    private final boolean celebrity;
 
     private transient int total;
 
-    public BeverageProducer(Endpoint endpoint, Beverages drink, int amount) {
+    public BeverageProducer(Endpoint endpoint, Beverages drink, int amount, boolean celebrity) {
         super(endpoint);
         this.drink = drink;
         this.amount = amount;
+        this.celebrity = celebrity;
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
         total += amount;
 
-        exchange.getIn().setBody("Total " + total + " of " + drink.name().toLowerCase() + " ordered");
+        exchange.getIn().setBody("total " + total + " of " + drink.name().toLowerCase() + " ordered"
+            + (celebrity ? " from famous person" : ""));
     }
 }

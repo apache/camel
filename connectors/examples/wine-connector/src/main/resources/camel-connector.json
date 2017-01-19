@@ -16,5 +16,8 @@
   "endpointOptions" : [ "drink", "amount" ],
   "endpointValues" : {
     "drink" : "Wine"
+  },
+  "endpointOverrides": {
+    "drink": { "enum": [ "Wine" ], "description": "You can only order wine" }
   }
 }
