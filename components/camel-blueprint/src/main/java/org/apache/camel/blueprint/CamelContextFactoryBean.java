@@ -45,6 +45,7 @@ import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
 import org.apache.camel.model.ContextScanDefinition;
+import org.apache.camel.model.GlobalOptionsDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -129,8 +130,11 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private TypeConverterExists typeConverterExists;
     @XmlAttribute
     private LoggingLevel typeConverterExistsLoggingLevel;
+    @Deprecated
     @XmlElement(name = "properties")
     private PropertiesDefinition properties;
+    @XmlElement(name = "globalOptions")
+    private GlobalOptionsDefinition globalOptions;
     @XmlElement(name = "propertyPlaceholder", type = CamelPropertyPlaceholderDefinition.class)
     private CamelPropertyPlaceholderDefinition camelPropertyPlaceholder;
     @XmlElement(name = "package")
@@ -563,12 +567,23 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         this.errorHandlerRef = errorHandlerRef;
     }
 
+    @Deprecated
     public PropertiesDefinition getProperties() {
         return properties;
     }
 
+    @Override
+    public GlobalOptionsDefinition getGlobalOptions() {
+        return globalOptions;
+    }
+
+    @Deprecated
     public void setProperties(PropertiesDefinition properties) {
         this.properties = properties;
+    }
+
+    public void setGlobalOptions(GlobalOptionsDefinition globalOptions) {
+        this.globalOptions = globalOptions;
     }
 
     public String[] getPackages() {
