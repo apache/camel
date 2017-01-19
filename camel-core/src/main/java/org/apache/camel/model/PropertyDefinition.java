@@ -25,13 +25,10 @@ import org.apache.camel.spi.Metadata;
 
 /**
  * A key value pair
- *
- * @deprecated Use {@link GlobalOptionDefinition} instead.
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "property")
 @XmlAccessorType(XmlAccessType.FIELD)
-@Deprecated
 public class PropertyDefinition {
     @XmlAttribute(required = true)
     String key;
