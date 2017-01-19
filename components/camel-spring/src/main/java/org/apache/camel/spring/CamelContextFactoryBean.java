@@ -44,6 +44,7 @@ import org.apache.camel.core.xml.CamelProxyFactoryDefinition;
 import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
 import org.apache.camel.model.ContextScanDefinition;
+import org.apache.camel.model.GlobalOptionsDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -138,8 +139,11 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private TypeConverterExists typeConverterExists;
     @XmlAttribute @Metadata(defaultValue = "WARN")
     private LoggingLevel typeConverterExistsLoggingLevel;
+    @Deprecated
     @XmlElement(name = "properties")
     private PropertiesDefinition properties;
+    @XmlElement(name = "globalOptions")
+    private GlobalOptionsDefinition globalOptions;
     @XmlElement(name = "propertyPlaceholder", type = CamelPropertyPlaceholderDefinition.class)
     private CamelPropertyPlaceholderDefinition camelPropertyPlaceholder;
     @XmlElement(name = "package")
@@ -493,15 +497,29 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.interceptSendToEndpoints = interceptSendToEndpoints;
     }
 
+    @Deprecated
     public PropertiesDefinition getProperties() {
         return properties;
     }
 
+    @Override
+    public GlobalOptionsDefinition getGlobalOptions() {
+        return globalOptions;
+    }
+
     /**
-     * Configuration of CamelContext properties such as limit of debug logging and other general options.
+     * Configuration of CamelContext properties such as limit of debug logging
+     * and other general options.
+     * 
+     * @deprecated Use {@link GlobalOptionsDefinition} instead.
      */
+    @Deprecated
     public void setProperties(PropertiesDefinition properties) {
         this.properties = properties;
+    }
+
+    public void setGlobalOptions(GlobalOptionsDefinition globalOptions) {
+        this.globalOptions = globalOptions;
     }
 
     public String[] getPackages() {
