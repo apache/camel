@@ -50,15 +50,15 @@ Supported Transformers
 [[Transformer-CommonOptions]]
 Common Options
 ^^^^^^^^^^^^^
-All transformers have following common options to specify which data type is supported by the transformer. `scheme` or both of `from` and `to` must be specified.
+All transformers have following common options to specify which data type is supported by the transformer. `scheme` or both of `fromType` and `toType` must be specified.
 |=======================================================================
 | Name | Description
 
 | scheme | Type of data model like `xml` or `json`. For example if `xml` is specified, the transformer is applied for all java -&gt; xml and xml -&gt; java transformation.
  
-| from | <<Transformer-DataTypeFormat,Data type>> to transform from.
+| fromType | <<Transformer-DataTypeFormat,Data type>> to transform from.
  
-| to | <<Transformer-DataTypeFormat,Data type>> to transform to.
+| toType | <<Transformer-DataTypeFormat,Data type>> to transform to.
 |=======================================================================
 
 
@@ -90,7 +90,7 @@ transformer()
 XML DSL:
 [source,xml]
 -------------------------------------------------------------------
-<dataFormatTransformer from="java:com.example.Order" to="csv:CSVOrder">
+<dataFormatTransformer fromType="java:com.example.Order" toType="csv:CSVOrder">
     <bindy id="csvdf" type="Csv" classType="com.example.Order"/>
 </dataFormatTransformer>
 -------------------------------------------------------------------
@@ -119,7 +119,7 @@ transformer()
 And here is an example to specify endpoint ref in XML DSL:
 [source,xml]
 -------------------------------------------------------------------
-<endpointTransformer ref="myDozerEndpoint" from="xml" to="json"/>
+<endpointTransformer ref="myDozerEndpoint" fromType="xml" toType="json"/>
 -------------------------------------------------------------------
 
 
@@ -148,7 +148,7 @@ transformer()
 XML DSL:
 [source,xml]
 -------------------------------------------------------------------
-<customTransformer type="com.example.MyCustomTransformer" from="xml" to="json"/>
+<customTransformer type="com.example.MyCustomTransformer" fromType="xml" toType="json"/>
 -------------------------------------------------------------------
 
 
@@ -174,7 +174,7 @@ XML DSL:
 -------------------------------------------------------------------
 <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <transformers>
-        <endpointTransformer uri="xslt:transform.xsl" from="xml:ABCOrder" to="xml:XYZOrder"/>
+        <endpointTransformer uri="xslt:transform.xsl" fromType="xml:ABCOrder" toType="xml:XYZOrder"/>
     </transformers>
     ....
 </camelContext>
