@@ -82,8 +82,8 @@ BindyDataFormat bindy = new BindyDataFormat();
 bindy.setType(BindyType.Csv);
 bindy.setClassType(com.example.Order.class);
 transformer()
-    .from(com.example.Order.class)
-    .to("csv:CSVOrder")
+    .fromType(com.example.Order.class)
+    .toType("csv:CSVOrder")
     .withDataFormat(bindy);
 -------------------------------------------------------------------
 
@@ -111,8 +111,8 @@ Here is an example to specify endpoint URI in Java DSL:
 [source,java]
 -------------------------------------------------------------------
 transformer()
-    .from("xml")
-    .to("json")
+    .fromType("xml")
+    .toType("json")
     .withUri("dozer:myDozer?mappingFile=myMapping.xml...");
 -------------------------------------------------------------------
 
@@ -140,8 +140,8 @@ Java DSL:
 [source,java]
 -------------------------------------------------------------------
 transformer()
-    .from("xml")
-    .to("json")
+    .fromType("xml")
+    .toType("json")
     .withJava(com.example.MyCustomTransformer.class);
 -------------------------------------------------------------------
 
@@ -164,8 +164,8 @@ Java DSL:
 [source,java]
 -------------------------------------------------------------------
 transformer()
-    .from("xml:ABCOrder")
-    .to("xml:XYZOrder")
+    .fromType("xml:ABCOrder")
+    .toType("xml:XYZOrder")
     .withUri("xslt:transform.xsl");
 -------------------------------------------------------------------
 
