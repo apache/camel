@@ -13,7 +13,7 @@
   "description" : "Something cool",
   "labels" : [ "foo", "timer" ],
   "source" : "From",
-  "endpointOptions" : [ "timerName", "period" ],
+  "endpointOptions" : [ "timerName", "period", "repeatCount" ],
   "endpointValues" : {
     "fixedRate" : "true",
     "period" : "5000"
