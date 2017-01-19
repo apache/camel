@@ -664,6 +664,8 @@
     <xstream-version>1.4.9</xstream-version>
     <xom-version>1.2.5</xom-version>
     <yammer-metrics-version>2.2.0</yammer-metrics-version>
+    <zipkin-version>1.19.2</zipkin-version>
+    <zipkin-reporter-version>0.6.12</zipkin-reporter-version>
     <zjsonpatch-version>0.3.0</zjsonpatch-version>
     <zookeeper-version>3.4.9</zookeeper-version>
     <zookeeper-guava-version>16.0</zookeeper-guava-version>
