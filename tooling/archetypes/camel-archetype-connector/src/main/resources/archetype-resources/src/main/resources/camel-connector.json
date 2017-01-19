@@ -9,5 +9,11 @@
   "groupId": "${groupId}",
   "artifactId": "${artifactId}",
   "version": "${version}",
-  "description": "${description}"
+  "description": "${description}",
+  "labels" : [ "foo", "bar" ],
+  "pattern": "From",
+  "endpointOptions" : [ "foo", "bar" ],
+  "endpointValues" : {
+    "foo" : "2"
+  }
 }

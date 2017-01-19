@@ -12,7 +12,7 @@
   "version" : "2.19.0-SNAPSHOT",
   "description" : "Something cool",
   "labels" : [ "foo", "timer" ],
-  "source" : "From",
+  "pattern" : "From",
   "endpointOptions" : [ "timerName", "period", "repeatCount" ],
   "endpointValues" : {
     "fixedRate" : "true",
