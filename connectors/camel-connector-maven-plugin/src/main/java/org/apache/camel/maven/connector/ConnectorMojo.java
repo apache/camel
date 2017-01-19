@@ -266,7 +266,6 @@ public class ConnectorMojo extends AbstractJarMojo {
 
     private String buildComponentHeaderSchema(List<Map<String, String>> rows, Map dto, String gitUrl) throws Exception {
         String baseScheme = (String) dto.get("baseScheme");
-        String source = (String) dto.get("source");
         String title = (String) dto.get("name");
         String scheme = StringHelper.camelCaseToDash(title);
         String baseSyntax = getOption(rows, "syntax");
@@ -280,8 +279,9 @@ public class ConnectorMojo extends AbstractJarMojo {
             label = labels.stream().collect(Collectors.joining(","));
         }
         String async = getOption(rows, "async");
-        String producerOnly = "To".equals(source) ? "true" : null;
-        String consumerOnly = "From".equals(source) ? "true" : null;
+        String pattern = (String) dto.get("pattern");
+        String producerOnly = "To".equalsIgnoreCase(pattern) ? "true" : null;
+        String consumerOnly = "From".equalsIgnoreCase(pattern) ? "true" : null;
         String lenientProperties = getOption(rows, "lenientProperties");
         String javaType = extractJavaType(scheme);
         String groupId = getProject().getGroupId();

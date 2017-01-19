@@ -12,7 +12,7 @@
   "version" : "2.19.0-SNAPSHOT",
   "description" : "To order two drinks from the bar",
   "labels" : [ "bar" ],
-  "source" : "To",
+  "pattern" : "To",
   "endpointOptions" : [ "drink", "amount" ],
   "endpointValues" : {
     "amount" : "2"
