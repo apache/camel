@@ -186,8 +186,8 @@ public class TransformerBuilder {
         if (scheme != null) {
             transformer.setScheme(scheme);
         } else {
-            transformer.setFrom(from);
-            transformer.setTo(to);
+            transformer.setFromType(from);
+            transformer.setToType(to);
         }
         
         camelContext.getTransformers().add(transformer);

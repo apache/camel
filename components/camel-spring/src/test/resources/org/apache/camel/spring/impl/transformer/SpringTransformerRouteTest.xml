@@ -36,10 +36,10 @@
             <dataFormatTransformer scheme="json">
                 <custom ref="myJsonDataFormatDef"/>
             </dataFormatTransformer>
-            <endpointTransformer ref="myXmlEndpoint" from="xml:XmlXOrder" to="java:org.apache.camel.impl.transformer.TransformerRouteTest$XOrder"/>
-            <endpointTransformer ref="myXmlEndpoint" from="java:org.apache.camel.impl.transformer.TransformerRouteTest$XOrderResponse" to="xml:XmlXOrderResponse"/>
-            <customTransformer ref="otherToXOrder" from="other:OtherXOrder" to="java:org.apache.camel.impl.transformer.TransformerRouteTest$XOrder"/>
-            <customTransformer ref="xOrderResponseToOther" from="java:org.apache.camel.impl.transformer.TransformerRouteTest$XOrderResponse" to="other:OtherXOrderResponse"/>
+            <endpointTransformer ref="myXmlEndpoint" fromType="xml:XmlXOrder" toType="java:org.apache.camel.impl.transformer.TransformerRouteTest$XOrder"/>
+            <endpointTransformer ref="myXmlEndpoint" fromType="java:org.apache.camel.impl.transformer.TransformerRouteTest$XOrderResponse" toType="xml:XmlXOrderResponse"/>
+            <customTransformer ref="otherToXOrder" fromType="other:OtherXOrder" toType="java:org.apache.camel.impl.transformer.TransformerRouteTest$XOrder"/>
+            <customTransformer ref="xOrderResponseToOther" fromType="java:org.apache.camel.impl.transformer.TransformerRouteTest$XOrderResponse" toType="other:OtherXOrderResponse"/>
         </transformers>
         
         <route>

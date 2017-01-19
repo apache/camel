@@ -58,12 +58,12 @@ public final class TransformerKey extends ValueHolder<String> {
             return scheme.equals(def.getScheme());
         }
         if (from == null) {
-            return to.toString().equals(def.getTo());
+            return to.toString().equals(def.getToType());
         }
         if (to == null) {
-            return from.toString().equals(def.getFrom());
+            return from.toString().equals(def.getFromType());
         }
-        return from.toString().equals(def.getFrom()) && to.toString().equals(def.getTo());
+        return from.toString().equals(def.getFromType()) && to.toString().equals(def.getToType());
     }
 
     @Override

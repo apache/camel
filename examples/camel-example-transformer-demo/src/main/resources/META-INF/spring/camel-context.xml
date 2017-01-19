@@ -40,7 +40,7 @@
         <!-- START SNIPPET: e3 -->
         <camel:transformers>
             <!-- specifying from&to data type for the Java-CSV transformation -->
-            <camel:dataFormatTransformer from="java:org.apache.camel.example.transformer.demo.Order" to="csv:CSVOrder">
+            <camel:dataFormatTransformer fromType="java:org.apache.camel.example.transformer.demo.Order" toType="csv:CSVOrder">
                 <camel:bindy id="csvdf" type="Csv" classType="org.apache.camel.example.transformer.demo.Order"/>
             </camel:dataFormatTransformer>
             <!-- instead of exact from&to type, scheme name can be specified to apply for all the Java-XML transformation -->

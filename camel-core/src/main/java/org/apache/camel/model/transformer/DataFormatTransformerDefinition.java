@@ -137,8 +137,8 @@ public class DataFormatTransformerDefinition extends TransformerDefinition {
                 .setDataFormatType(dataFormatType)
                 .setDataFormatRef(ref)
                 .setModel(getScheme())
-                .setFrom(getFrom())
-                .setTo(getTo());
+                .setFrom(getFromType())
+                .setTo(getToType());
     }
 
     public String getRef() {
