@@ -301,7 +301,7 @@ The JMS component supports 74 options which are listed below.
 
 
 // endpoint options: START
-The JMS component supports 86 endpoint options which are listed below:
+The JMS component supports 87 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -350,6 +350,7 @@ The JMS component supports 86 endpoint options which are listed below:
 | timeToLive | producer | -1 | long | When sending messages specifies the time-to-live of the message (in milliseconds).
 | allowNullBody | producer (advanced) | true | boolean | Whether to allow sending messages with no body. If this option is false and the message body is null then an JMSException is thrown.
 | alwaysCopyMessage | producer (advanced) | false | boolean | If true Camel will always make a JMS message copy of the message when it is passed to the producer for sending. Copying the message is needed in some situations such as when a replyToDestinationSelectorName is set (incidentally Camel will set the alwaysCopyMessage option to true if a replyToDestinationSelectorName is set)
+| correlationProperty | producer (advanced) |  | String | Use this JMS property to correlate messages in InOut exchange pattern (request-reply) instead of JMSCorrelationID property. This allows you to exchange messages with systems that do not correlate messages using JMSCorrelationID JMS property. If used JMSCorrelationID will not be used or set by Camel. The value of here named property will be generated if not supplied in the header of the message under the same name.
 | disableTimeToLive | producer (advanced) | false | boolean | Use this option to force disabling time to live. For example when you do request/reply over JMS then Camel will by default use the requestTimeout value as time to live on the message being sent. The problem is that the sender and receiver systems have to have their clocks synchronized so they are in sync. This is not always so easy to archive. So you can use disableTimeToLive=true to not set a time to live value on the sent message. Then the message will not expire on the receiver system. See below in section About time to live for more details.
 | forceSendOriginalMessage | producer (advanced) | false | boolean | When using mapJmsMessage=false Camel will create a new JMS message to send to a new JMS destination if you touch the headers (get or set) during the route. Set this option to true to force Camel to send the original JMS message that was received.
 | includeSentJMSMessageID | producer (advanced) | false | boolean | Only applicable when sending to JMS destination using InOnly (eg fire and forget). Enabling this option will enrich the Camel Exchange with the actual JMSMessageID that was used by the JMS client when the message was sent to the JMS destination.
