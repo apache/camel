@@ -42,7 +42,7 @@ public class RequestReplyCorrelatedWithCustomHeaderTest extends CamelTestSupport
 
     @Test
     public void shouldCorrelateRepliesWithCustomCorrelationProperty() throws Exception {
-        final String reply = template.requestBody("activemq:queue:request?correlationProperty=CustomCorrelation",
+        final String reply = template.requestBody("activemq:queue:request",
                 "Bobby", String.class);
 
         assertTrue(reply.matches("Hi, Bobby, Camel-.*"));
@@ -51,7 +51,7 @@ public class RequestReplyCorrelatedWithCustomHeaderTest extends CamelTestSupport
     @Test
     public void shouldCorrelateRepliesWithCustomCorrelationPropertyAndValue() throws Exception {
         final String reply = template.requestBodyAndHeader(
-                "activemq:queue:request?correlationProperty=CustomCorrelation", "Bobby", "CustomCorrelation",
+                "activemq:queue:request", "Bobby", "CustomCorrelation",
                 "custom-id", String.class);
 
         assertEquals("Hi, Bobby, custom-id", reply);
@@ -64,6 +64,7 @@ public class RequestReplyCorrelatedWithCustomHeaderTest extends CamelTestSupport
         connectionFactory = CamelJmsTestHelper.createConnectionFactory();
 
         final JmsComponent activeMq = jmsComponentAutoAcknowledge(connectionFactory);
+        activeMq.getConfiguration().setCorrelationProperty("CustomCorrelation");
 
         camelContext.addComponent("activemq", activeMq);
 
