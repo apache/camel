@@ -36,7 +36,8 @@ public class EC2Configuration {
     private String secretKey;
     @UriParam
     private String amazonEc2Endpoint;
-    @UriParam(label = "producer")
+    @UriParam(label = "producer", enums = "createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, "
+        + "describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags, deleteTags")
     @Metadata(required = "true")
     private EC2Operations operation;
     @UriParam
