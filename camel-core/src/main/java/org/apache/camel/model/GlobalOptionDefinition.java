@@ -21,13 +21,11 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Models a string key/value pair for configuring some global options on
- * {@link CamelContext} such as {@link Exchange#LOG_DEBUG_BODY_MAX_CHARS}.
+ * Models a string key/value pair for configuring some global options on a Camel
+ * context such as max debug log length.
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "globalOption")
