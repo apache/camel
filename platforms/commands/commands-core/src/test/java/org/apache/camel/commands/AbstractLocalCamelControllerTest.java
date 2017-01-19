@@ -24,7 +24,6 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ExplicitCamelContextNameStrategy;
-import org.apache.camel.model.transformer.CustomTransformerDefinition;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
 import org.junit.After;
@@ -47,17 +46,15 @@ public class AbstractLocalCamelControllerTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                transformer()
+                    .fromType("xml:foo")
+                    .toType("json:bar")
+                    .withJava(DummyTransformer.class);
                 from("direct:start1").id("route1").delay(100).to("mock:result1");
                 from("direct:start2").id("route2").delay(100).to("mock:result2");
                 from("direct:start3").id("route3").delay(100).to("mock:result3");
             }
         });
-
-        CustomTransformerDefinition def = new CustomTransformerDefinition();
-        def.setType(DummyTransformer.class.getName());
-        def.setFrom("xml:foo");
-        def.setTo("json:bar");
-        context.getTransformers().add(def);
         localCamelController = new DummyCamelController(context);
     }
 
