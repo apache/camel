@@ -44,13 +44,13 @@
 
     <!-- brave/zkpkin -->
     <dependency>
-      <groupId>com.github.kristofa</groupId>
+      <groupId>io.zipkin.brave</groupId>
       <artifactId>brave-core</artifactId>
       <version>${brave-zipkin-version}</version>
     </dependency>
     <!-- to send to zipkin server -->
     <dependency>
-      <groupId>com.github.kristofa</groupId>
+      <groupId>io.zipkin.brave</groupId>
       <artifactId>brave-spancollector-scribe</artifactId>
       <version>${brave-zipkin-version}</version>
     </dependency>
