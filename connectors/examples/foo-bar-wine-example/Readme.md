@@ -20,3 +20,7 @@ Notice how the tool presents only the pre-selected options of these connectors. 
 which is based on the Camel `Timer` component only offers two options, where as if you are using `timer` instead
 you will have many more options.
 
+The following screenshot shows hows the `foo` connector only has two options to configure:
+
+![Foo Connector in IDEA](img/foo-connector-options-idea.png?raw=true)
+
