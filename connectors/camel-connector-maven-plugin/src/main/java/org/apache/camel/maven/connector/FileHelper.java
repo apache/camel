@@ -17,11 +17,18 @@
 package org.apache.camel.maven.connector;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Utility methods for files.
+ */
 public final class FileHelper {
 
     private FileHelper() {
@@ -56,4 +63,41 @@ public final class FileHelper {
         }
     }
 
+    /**
+     * Loads the file
+     */
+    public static List<String> loadFile(File file) throws Exception {
+        List<String> lines = new ArrayList<>();
+        LineNumberReader reader = new LineNumberReader(new FileReader(file));
+
+        String line;
+        do {
+            line = reader.readLine();
+            if (line != null) {
+                lines.add(line);
+            }
+        } while (line != null);
+        reader.close();
+
+        return lines;
+    }
+
+    /**
+     * Loads the file
+     */
+    public static List<String> loadFile(InputStream fis) throws Exception {
+        List<String> lines = new ArrayList<>();
+        LineNumberReader reader = new LineNumberReader(new InputStreamReader(fis));
+
+        String line;
+        do {
+            line = reader.readLine();
+            if (line != null) {
+                lines.add(line);
+            }
+        } while (line != null);
+        reader.close();
+
+        return lines;
+    }
 }

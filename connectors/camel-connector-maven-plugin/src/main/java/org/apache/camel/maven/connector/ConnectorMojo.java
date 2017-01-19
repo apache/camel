@@ -19,16 +19,13 @@ package org.apache.camel.maven.connector;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -63,7 +60,8 @@ public class ConnectorMojo extends AbstractJarMojo {
 
     @Override
     protected String getClassifier() {
-        return "camel-connector";
+        // no classifier
+        return null;
     }
 
     @Override
@@ -157,6 +155,12 @@ public class ConnectorMojo extends AbstractJarMojo {
                     FileOutputStream fos = new FileOutputStream(out, false);
                     fos.write(newJson.getBytes());
                     fos.close();
+
+                    // also write the file in the root folder so its easier to find that for tooling
+                    out = new File(classesDirectory,"camel-connector-schema.json");
+                    fos = new FileOutputStream(out, false);
+                    fos.write(newJson.getBytes());
+                    fos.close();
                 }
 
                 // build json schema for component that only has the selectable options
@@ -171,7 +175,7 @@ public class ConnectorMojo extends AbstractJarMojo {
     private String extractJavaType(String scheme) throws Exception {
         File file = new File(classesDirectory, "META-INF/services/org/apache/camel/component/" + scheme);
         if (file.exists()) {
-            List<String> lines = loadFile(file);
+            List<String> lines = FileHelper.loadFile(file);
             String fqn = extractClass(lines);
             return fqn;
         }
@@ -228,7 +232,6 @@ public class ConnectorMojo extends AbstractJarMojo {
             String key = row.get("name");
             row.remove("name");
 
-            // TODO: if no options should we include all by default instead?
             if (options == null || !options.contains(key)) {
                 continue;
             }
@@ -265,7 +268,7 @@ public class ConnectorMojo extends AbstractJarMojo {
         String baseScheme = (String) dto.get("baseScheme");
         String source = (String) dto.get("source");
         String title = (String) dto.get("name");
-        String scheme = camelCaseToDash(title);
+        String scheme = StringHelper.camelCaseToDash(title);
         String baseSyntax = getOption(rows, "syntax");
         String syntax = baseSyntax.replaceFirst(baseScheme, scheme);
 
@@ -274,11 +277,7 @@ public class ConnectorMojo extends AbstractJarMojo {
         String label = null;
         List<String> labels = (List<String>) dto.get("labels");
         if (labels != null) {
-            CollectionStringBuffer csb = new CollectionStringBuffer(",");
-            for (String s : labels) {
-                csb.append(s);
-            }
-            label = csb.toString();
+            label = labels.stream().collect(Collectors.joining(","));
         }
         String async = getOption(rows, "async");
         String producerOnly = "To".equals(source) ? "true" : null;
@@ -292,10 +291,10 @@ public class ConnectorMojo extends AbstractJarMojo {
         StringBuilder sb = new StringBuilder();
         sb.append("  \"component\": {\n");
         if (gitUrl != null) {
-            sb.append("    \"girUrl\": \"" + nullSafe(gitUrl) + "\",\n");
+            sb.append("    \"girUrl\": \"" + StringHelper.nullSafe(gitUrl) + "\",\n");
         }
         sb.append("    \"kind\": \"component\",\n");
-        sb.append("    \"baseScheme\": \"" + nullSafe(baseScheme) + "\",\n");
+        sb.append("    \"baseScheme\": \"" + StringHelper.nullSafe(baseScheme) + "\",\n");
         sb.append("    \"scheme\": \"" + scheme + "\",\n");
         sb.append("    \"syntax\": \"" + syntax + "\",\n");
         sb.append("    \"title\": \"" + title + "\",\n");
@@ -326,10 +325,6 @@ public class ConnectorMojo extends AbstractJarMojo {
         return sb.toString();
     }
 
-    private static String nullSafe(String text) {
-        return text != null ? text : "";
-    }
-
     /**
      * Finds and embeds the Camel component JSon schema file
      */
@@ -357,7 +352,7 @@ public class ConnectorMojo extends AbstractJarMojo {
 
                             InputStream is = child.getResourceAsStream("META-INF/services/org/apache/camel/component/" + scheme);
                             if (is != null) {
-                                List<String> lines = loadFile(is);
+                                List<String> lines = FileHelper.loadFile(is);
                                 String fqn = extractClass(lines);
                                 is.close();
 
@@ -367,7 +362,7 @@ public class ConnectorMojo extends AbstractJarMojo {
 
                                 is = child.getResourceAsStream(name);
                                 if (is != null) {
-                                    List<String> schema = loadFile(is);
+                                    List<String> schema = FileHelper.loadFile(is);
                                     is.close();
 
                                     // write schema to file
@@ -420,63 +415,6 @@ public class ConnectorMojo extends AbstractJarMojo {
 
     private String extractVersion(Map map) {
         return (String) map.get("baseVersion");
-    }
-
-    private List<String> loadFile(File file) throws Exception {
-        List<String> lines = new ArrayList<>();
-        LineNumberReader reader = new LineNumberReader(new FileReader(file));
-
-        String line;
-        do {
-            line = reader.readLine();
-            if (line != null) {
-                lines.add(line);
-            }
-        } while (line != null);
-        reader.close();
-
-        return lines;
-    }
-
-    private List<String> loadFile(InputStream fis) throws Exception {
-        List<String> lines = new ArrayList<>();
-        LineNumberReader reader = new LineNumberReader(new InputStreamReader(fis));
-
-        String line;
-        do {
-            line = reader.readLine();
-            if (line != null) {
-                lines.add(line);
-            }
-        } while (line != null);
-        reader.close();
-
-        return lines;
-    }
-
-    public static String camelCaseToDash(String value) {
-        StringBuilder sb = new StringBuilder(value.length());
-        boolean dash = false;
-
-        for (char c : value.toCharArray()) {
-            // skip dash in start
-            if (sb.length() > 0 & Character.isUpperCase(c)) {
-                dash = true;
-            }
-            if (dash) {
-                sb.append('-');
-                sb.append(Character.toLowerCase(c));
-            } else {
-                // lower case first
-                if (sb.length() == 0) {
-                    sb.append(Character.toLowerCase(c));
-                } else {
-                    sb.append(c);
-                }
-            }
-            dash = false;
-        }
-        return sb.toString();
     }
 
 }

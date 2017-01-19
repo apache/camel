@@ -25,6 +25,9 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Basic JSon parser to read the Camel component JSon schema files.
+ */
 public final class JSonSchemaHelper {
 
     private static final Pattern PATTERN = Pattern.compile("\"(.+?)\"|\\[(.+)\\]");

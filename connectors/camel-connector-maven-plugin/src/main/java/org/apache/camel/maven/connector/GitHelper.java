@@ -24,11 +24,17 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Utility methods for git.
+ */
 public final class GitHelper {
 
     private GitHelper() {
     }
 
+    /**
+     * Finds the folder where <tt>.git</tt> is located in the project
+     */
     public static File findGitFolder() {
         File baseDir = new File("").getAbsoluteFile();
         return findGitFolder(baseDir);
