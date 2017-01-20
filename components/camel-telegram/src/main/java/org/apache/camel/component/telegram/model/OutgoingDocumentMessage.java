@@ -56,7 +56,7 @@ public class OutgoingDocumentMessage extends OutgoingMessage {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("OutgoingVideoMessage{");
+        final StringBuilder sb = new StringBuilder("OutgoingDocumentMessage{");
         sb.append("document(length)=").append(document != null ? document.length : null);
         sb.append(", filenameWithExtension='").append(filenameWithExtension).append('\'');
         sb.append(", caption='").append(caption).append('\'');
