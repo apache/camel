@@ -554,6 +554,15 @@ public class AMQPComponentConfiguration {
      */
     private Long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime = 100L;
     /**
+     * Use this JMS property to correlate messages in InOut exchange pattern
+     * (request-reply) instead of JMSCorrelationID property. This allows you to
+     * exchange messages with systems that do not correlate messages using
+     * JMSCorrelationID JMS property. If used JMSCorrelationID will not be used
+     * or set by Camel. The value of here named property will be generated if
+     * not supplied in the header of the message under the same name.
+     */
+    private String correlationProperty;
+    /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
      * header to and from Camel message.
      */
@@ -1158,6 +1167,14 @@ public class AMQPComponentConfiguration {
     public void setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
             Long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
         this.waitForProvisionCorrelationToBeUpdatedThreadSleepingTime = waitForProvisionCorrelationToBeUpdatedThreadSleepingTime;
+    }
+
+    public String getCorrelationProperty() {
+        return correlationProperty;
+    }
+
+    public void setCorrelationProperty(String correlationProperty) {
+        this.correlationProperty = correlationProperty;
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
