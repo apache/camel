@@ -19,9 +19,6 @@ package org.apache.camel.component.websocket;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,7 +81,7 @@ public class WebsocketComponentServletTest {
         DefaultWebsocket webSocket = websocketComponentServlet.doWebSocketConnect(request, PROTOCOL);
         assertNotNull(webSocket);
         assertEquals(DefaultWebsocket.class, webSocket.getClass());
-        DefaultWebsocket defaultWebsocket = (DefaultWebsocket) webSocket;
+        DefaultWebsocket defaultWebsocket = webSocket;
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
         defaultWebsocket.onMessage(MESSAGE);
         InOrder inOrder = inOrder(consumer, sync, request);
@@ -97,7 +94,7 @@ public class WebsocketComponentServletTest {
         DefaultWebsocket webSocket = websocketComponentServlet.doWebSocketConnect(request, PROTOCOL);
         assertNotNull(webSocket);
         assertEquals(DefaultWebsocket.class, webSocket.getClass());
-        DefaultWebsocket defaultWebsocket = (DefaultWebsocket) webSocket;
+        DefaultWebsocket defaultWebsocket = webSocket;
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
         defaultWebsocket.onMessage(MESSAGE);
         InOrder inOrder = inOrder(consumer, sync, request);

@@ -63,7 +63,6 @@ public final class InfinispanUtil {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static RemoteCacheManager asRemote(BasicCacheContainer container) {
         return RemoteCacheManager.class.cast(container);
     }

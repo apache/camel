@@ -36,6 +36,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.Pipeline;
+import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
@@ -68,6 +69,7 @@ public class DefaultRouteContext implements RouteContext {
     private List<RoutePolicy> routePolicyList = new ArrayList<RoutePolicy>();
     private ShutdownRoute shutdownRoute;
     private ShutdownRunningTask shutdownRunningTask;
+    private Contract contract;
 
     public DefaultRouteContext(CamelContext camelContext, RouteDefinition route, FromDefinition from, Collection<Route> routes) {
         this.camelContext = camelContext;
@@ -190,6 +192,11 @@ public class DefaultRouteContext implements RouteContext {
 
             // wrap in route lifecycle
             internal.addAdvice(new CamelInternalProcessor.RouteLifecycleAdvice());
+
+            // wrap in contract
+            if (contract != null) {
+                internal.addAdvice(new CamelInternalProcessor.ContractAdvice(contract));
+            }
 
             // and create the route that wraps the UoW
             Route edcr = new EventDrivenConsumerRoute(this, getEndpoint(), internal);
@@ -399,5 +406,9 @@ public class DefaultRouteContext implements RouteContext {
 
     public List<RoutePolicy> getRoutePolicyList() {
         return routePolicyList;
+    }
+
+    public void setContract(Contract contract) {
+        this.contract = contract;
     }
 }

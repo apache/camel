@@ -46,6 +46,7 @@ import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
+import org.apache.camel.spi.Transformer;
 import org.apache.camel.util.JsonSchemaHelper;
 
 /**
@@ -359,7 +360,6 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         }
     }
 
-    @SuppressWarnings("deprecation")
     public String getRouteModelAsXml(String routeId, String camelContextName) throws Exception {
         CamelContext context = this.getLocalCamelContext(camelContextName);
         if (context == null) {
@@ -399,7 +399,6 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         return null;
     }
 
-    @SuppressWarnings("deprecation")
     public String getRestModelAsXml(String camelContextName) throws Exception {
         CamelContext context = this.getLocalCamelContext(camelContextName);
         if (context == null) {
@@ -621,6 +620,29 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
             answer.add(row);
         }
 
+        return answer;
+    }
+
+    @Override
+    public List<Map<String, String>> getTransformers(String camelContextName) throws Exception {
+        List<Map<String, String>> answer = new ArrayList<Map<String, String>>();
+
+        if (camelContextName != null) {
+            CamelContext context = this.getLocalCamelContext(camelContextName);
+            if (context != null) {
+                List<Transformer> transformers = new ArrayList<Transformer>(context.getTransformerRegistry().values());
+                for (Transformer transformer : transformers) {
+                    Map<String, String> row = new LinkedHashMap<String, String>();
+                    row.put("camelContextName", context.getName());
+                    row.put("scheme", transformer.getModel());
+                    row.put("from", transformer.getFrom().toString());
+                    row.put("to", transformer.getTo().toString());
+                    row.put("state", transformer.getStatus().toString());
+                    row.put("description", transformer.toString());
+                    answer.add(row);
+                }
+            }
+        }
         return answer;
     }
 

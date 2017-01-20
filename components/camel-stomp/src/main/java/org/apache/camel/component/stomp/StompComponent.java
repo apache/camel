@@ -24,31 +24,13 @@ import org.apache.camel.spi.Metadata;
 
 public class StompComponent extends UriEndpointComponent {
 
-    /**
-     * To use the shared stomp configuration
-     */
+    @Metadata(label = "advanced")
     private StompConfiguration configuration = new StompConfiguration();
-
-    /**
-     * The URI of the Stomp broker to connect to
-     */
     private String brokerUrl;
-
-    /**
-     * The username
-     */
     @Metadata(label = "security", secret = true)
     private String login;
-
-    /**
-     * The password
-     */
     @Metadata(label = "security", secret = true)
     private String passcode;
-
-    /**
-     * The virtual host
-     */
     private String host;
 
     public StompComponent() {

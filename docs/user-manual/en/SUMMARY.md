@@ -34,7 +34,6 @@
     * [Exchange](exchange.adoc)
     * [Exchange Pattern](exchange-pattern.adoc)
     * [Expression](expression.adoc)
-    * [HTTP Session Handling](http-session.adoc)
     * [Injector](injector.adoc)
     * [Intercept](intercept.adoc)
     * [Inversion Of Control With Smart Defaults](inversion-of-control-with-smart-defaults.adoc)
@@ -74,28 +73,9 @@
 -->
 
 * [Enterprise Integration Patterns](enterprise-integration-patterns.adoc)
-    * Messaging Systems
-        * [Message Channel](message-channel.adoc)
-        * [Message](message.adoc)
-        * [Message Router](message-router.adoc)
-        * [Message Translator](message-translator.adoc)
-        * [Message Endpoint](message-endpoint.adoc)
-        * [Pipes and Filter](pipes-and-filters.adoc)
-    * Messaging Channels
-        * [Point to Point Channel](point-to-point-channel.adoc)
-        * [Publish Subscribe Channel](publish-subscribe-channel.adoc)
-        * [Dead Letter Channel](dead-letter-channel.adoc)
-        * [Guaranteed Delivery](guaranteed-delivery.adoc)
-        * [Message Bus](message-bus.adoc)
-    * Message Construction
-        * [Correlation Identifier](correlation-identifier.adoc)
-        * [Event Message](event-message.adoc)
-        * [Return Address](return-address.adoc)
-        * [Request Reply](request-reply.adoc)
-    * Message Routing
-        * [Content Based Router](content-based-router.adoc)
-        * [Message Filter](message-filter.adoc)
-        * [Dynamic Router](dynamic-router.adoc)
+    * [Event Message](event-message.adoc)
+    * [Message](message.adoc)
+    * [Request Reply](request-reply.adoc)
 
 * Community
     * FAQ
@@ -180,6 +160,7 @@
 	* [CoAP](coap-component.adoc)
 	* [CometD](cometd-component.adoc)
 	* [Consul](consul-component.adoc)
+	* [Couchbase](couchbase-component.adoc)
 	* [CouchDB](couchdb-component.adoc)
 	* [Crypto (JCE)](crypto-component.adoc)
 	* [CXF](cxf-component.adoc)
@@ -256,6 +237,7 @@
 	* [Mina2](mina2-component.adoc)
 	* [MLLP](mllp-component.adoc)
 	* [MongoDB](mongodb-component.adoc)
+	* [MongoDB](mongodb3-component.adoc)
 	* [MongoDBGridFS](gridfs-component.adoc)
 	* [MQTT](mqtt-component.adoc)
 	* [MSV](msv-component.adoc)
@@ -269,6 +251,12 @@
 	* [Netty4](netty4-component.adoc)
 	* [Netty4 HTTP](netty4-http-component.adoc)
 	* [OpenShift](openshift-component.adoc)
+	* [OpenStack Cinder](openstack-cinder-component.adoc)
+	* [OpenStack Glance](openstack-glance-component.adoc)
+	* [OpenStack Keystone](openstack-keystone-component.adoc)
+	* [OpenStack Neutron](openstack-neutron-component.adoc)
+	* [OpenStack Nova](openstack-nova-component.adoc)
+	* [OpenStack Swift](openstack-swift-component.adoc)
 	* [OptaPlanner](optaplanner-component.adoc)
 	* [OSGi EventAdmin](eventadmin-component.adoc)
 	* [OSGi PAX Logging](paxlogging-component.adoc)
@@ -450,6 +438,3 @@
         * [CDI Testing](cdi-testing.adoc)
         * [Spring Testing](spring-testing.adoc)
     * [JSSE Utility](camel-configuration-utilities.adoc)
-
-* Developer Guide
-    * [Building](building.adoc)

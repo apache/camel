@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.ldap.enabled",
+      "description": "Enable ldap component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

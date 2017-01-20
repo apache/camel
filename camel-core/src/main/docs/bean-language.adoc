@@ -1,6 +1,4 @@
-[[BeanLanguage-BeanLanguage]]
-Bean Language
-~~~~~~~~~~~~~
+## Bean method Language
 
 The purpose of the Bean Language is to be able to implement an
 link:expression.html[Expression] or link:predicate.html[Predicate] using
@@ -20,9 +18,7 @@ link:message.html[Message] Exchange to the method parameters; so you can
 annotate the bean to extract headers or other expressions such as
 link:xpath.html[XPath] or link:xquery.html[XQuery] from the message.
 
-[[Bean-Options]]
-Bean Options
-^^^^^^^^^^^^
+### Bean Options
 
 // language options: START
 The Bean method language supports 5 options which are listed below.
@@ -43,9 +39,7 @@ The Bean method language supports 5 options which are listed below.
 // language options: END
 
 
-[[BeanLanguage-UsingBeanExpressionsfromtheJavaDSL]]
-Using Bean Expressions from the Java DSL
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using Bean Expressions from the Java DSL
 
 [source,java]
 ----------------------------------------------
@@ -54,9 +48,7 @@ from("activemq:topic:OrdersTopic").
     to("activemq:BigSpendersQueue");
 ----------------------------------------------
 
-[[BeanLanguage-UsingBeanExpressionsfromXML]]
-Using Bean Expressions from XML
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using Bean Expressions from XML
 
 [source,xml]
 --------------------------------------------------
@@ -74,9 +66,7 @@ Using Bean Expressions from XML
 Note, the `bean` attribute of the method expression element is now
 deprecated. You should now make use of `ref` attribute instead.
 
-[[BeanLanguage-Writingtheexpressionbean]]
-Writing the expression bean
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Writing the expression bean
 
 The bean in the above examples is just any old Java Bean with a method
 called isGoldCustomer() that returns some object that is easily
@@ -112,9 +102,7 @@ So you can bind parameters of the method to the Exchange, the
 link:message.html[Message] or individual headers, properties, the body
 or other expressions.
 
-[[BeanLanguage-Nonregistrybeans]]
-Non registry beans
-^^^^^^^^^^^^^^^^^^
+### Non registry beans
 
 The link:bean-language.html[Bean Language] also supports invoking beans
 that isn't registered in the link:registry.html[Registry]. This is
@@ -172,8 +160,6 @@ Which also can be done in a bit shorter and nice way:
                 to("activemq:BigSpendersQueue");
 ------------------------------------------------------
 
-[[BeanLanguage-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 The Bean language is part of *camel-core*.

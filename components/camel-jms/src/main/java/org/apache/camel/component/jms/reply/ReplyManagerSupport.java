@@ -58,6 +58,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     protected final CountDownLatch replyToLatch = new CountDownLatch(1);
     protected final long replyToTimeout = 10000;
     protected CorrelationTimeoutMap correlation;
+    protected String correlationProperty;
 
     public ReplyManagerSupport(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -80,6 +81,11 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         this.replyTo = replyTo;
         // trigger latch as the reply to has been resolved and set
         replyToLatch.countDown();
+    }
+
+    @Override
+    public void setCorrelationProperty(final String correlationProperty) {
+        this.correlationProperty = correlationProperty;
     }
 
     public Destination getReplyTo() {
@@ -123,11 +129,17 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
     public void onMessage(Message message, Session session) throws JMSException {
         String correlationID = null;
+
         try {
-            correlationID = message.getJMSCorrelationID();
+            if (correlationProperty == null) {
+                correlationID = message.getJMSCorrelationID();
+            } else {
+                correlationID = message.getStringProperty(correlationProperty);
+            }
         } catch (JMSException e) {
             // ignore
         }
+
         if (correlationID == null) {
             log.warn("Ignoring message with no correlationID: {}", message);
             return;

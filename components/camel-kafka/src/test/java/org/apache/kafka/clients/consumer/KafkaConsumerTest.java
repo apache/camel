@@ -37,6 +37,7 @@ public class KafkaConsumerTest {
     public void init() {
         when(kafkaConsumer.poll(1000)).thenReturn(ConsumerRecords.empty());
     }
+
     @Test
     public void testPollGivenReturnsEmptyConsumerRecordShouldNotBeNull() {
         ConsumerRecords<Object, Object> consumerRecords = kafkaConsumer.poll(1000);

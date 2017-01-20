@@ -1,6 +1,4 @@
-[[Git-GitComponent]]
-Git Component
-~~~~~~~~~~~~~
+## Git Component
 
 *Available as of Camel 2.16*
 
@@ -23,9 +21,7 @@ The *git:* component allows you to work with a generic Git repository. 
 git://localRepositoryPath[?options]
 -----------------------------------
 
-[[Git-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 The producer allows to do operations on a specific repository. +
 The consumer allows consuming commits, tags and branches on a specific
@@ -40,7 +36,7 @@ The Git component has no options.
 
 
 // endpoint options: START
-The Git component supports 13 endpoint options which are listed below:
+The Git component supports 14 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -53,10 +49,11 @@ The Git component supports 13 endpoint options which are listed below:
 | remotePath | common |  | String | The remote repository path
 | tagName | common |  | String | The tag name to work on
 | username | common |  | String | Remote repository username
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | type | consumer |  | GitType | The consumer type
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| allowEmpty | producer | true | boolean | The flag to manage empty git commits
 | operation | producer |  | String | The operation to do on the repository
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
@@ -66,9 +63,7 @@ The Git component supports 13 endpoint options which are listed below:
 
 
 
-[[Git-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 [width="100%",cols="10%,10%,10%,20%,50%",options="header",]
 |=======================================================================
@@ -85,11 +80,12 @@ Message Headers
 |CamelGitCommitEmail |`null` |String |Producer |The commit email in a commit operation
 
 |CamelGitCommitId |`null` |String |Producer |The commit id
+
+|CamelGitAllowEmpty |`null` |Boolean |Producer |The flag to manage empty git commits
+
 |=======================================================================
 
-[[Git-ProducerExample]]
-Producer Example
-^^^^^^^^^^^^^^^^
+### Producer Example
 
 Below is an example route of a producer that add a file test.java to a
 local repository, commit it with a specific message on master branch and
@@ -105,9 +101,7 @@ from("direct:start")
         .to("git:///tmp/testRepo?operation=push&remotePath=https://foo.com/test/test.git&username=xxx&password=xxx")
 --------------------------------------------------------------------------------------------------------------------
 
-[[Git-ConsumerExample]]
-Consumer Example
-^^^^^^^^^^^^^^^^
+### Consumer Example
 
 Below is an example route of a consumer that consumes commit:
 

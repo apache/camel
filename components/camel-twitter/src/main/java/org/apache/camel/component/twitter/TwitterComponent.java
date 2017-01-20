@@ -20,19 +20,28 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 
 /**
  * Twitter component
  */
 public class TwitterComponent extends UriEndpointComponent {
 
+    @Metadata(label = "security", secret = true)
     private String consumerKey;
+    @Metadata(label = "security", secret = true)
     private String consumerSecret;
+    @Metadata(label = "security", secret = true)
     private String accessToken;
+    @Metadata(label = "security", secret = true)
     private String accessTokenSecret;
+    @Metadata(label = "proxy")
     private String httpProxyHost;
+    @Metadata(label = "proxy")
     private String httpProxyUser;
+    @Metadata(label = "proxy")
     private String httpProxyPassword;
+    @Metadata(label = "proxy")
     private Integer httpProxyPort;
 
     public TwitterComponent() {

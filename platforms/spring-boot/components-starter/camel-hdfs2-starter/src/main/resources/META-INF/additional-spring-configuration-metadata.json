@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.hdfs2.enabled",
+      "description": "Enable hdfs2 component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

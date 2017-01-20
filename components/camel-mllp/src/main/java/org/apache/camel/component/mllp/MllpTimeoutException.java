@@ -17,43 +17,45 @@
 package org.apache.camel.component.mllp;
 
 /**
- * Raised when a MLLP Producer or Consumer encounter a timeout reading a message
+ * Raised when a MLLP Producer or Consumer encounter a timeout reading a message or an acknowledgment
  */
 public class MllpTimeoutException extends MllpException {
-    private final byte[] hl7Message;
+    static final String EXCEPTION_MESSAGE = "Timeout receiving HL7 Message";
 
-    public MllpTimeoutException(String message, byte[] hl7Message) {
-        super(message);
-        this.hl7Message = hl7Message;
+    public MllpTimeoutException(byte[] partialHl7Message) {
+        super(EXCEPTION_MESSAGE, partialHl7Message);
     }
 
-    public MllpTimeoutException(String message, byte[] hl7Message, Throwable cause) {
-        super(message, cause);
-        this.hl7Message = hl7Message;
+    public MllpTimeoutException(String message, byte[] partialHl7Message) {
+        super(message, partialHl7Message);
     }
 
+    public MllpTimeoutException(byte[] partialHl7Message, Throwable cause) {
+        super(EXCEPTION_MESSAGE, partialHl7Message, cause);
+    }
+
+    public MllpTimeoutException(String message, byte[] partialHl7Message, Throwable cause) {
+        super(message, partialHl7Message, cause);
+    }
+
+    protected MllpTimeoutException(String message, byte[] hl7Message, byte[] partialHl7Acknowledgement) {
+        super(message, hl7Message, partialHl7Acknowledgement);
+    }
+
+    protected MllpTimeoutException(String message, byte[] hl7Message, byte[] partialHl7Acknowledgement, Throwable cause) {
+        super(message, hl7Message, partialHl7Acknowledgement, cause);
+    }
+
+    /**
+     * Get the HL7 message payload associated with this exception, if any.
+     *
+     * @return If the timeout occurred while attempting to receive an HL7 Message, this will be null.  If the timeout
+     * occurred while attempting to receive an HL7 Acknowledgement, this will be the HL7 Message.  If the timeout occurred
+     * while attempting to complete the read of an HL7 message (i.e. part of the message has already been read), this
+     * will be the partial acknowledgement payload that was read before the timeout.
+     */
     public byte[] getHl7Message() {
-        return hl7Message;
-    }
-
-    @Override
-    public String getMessage() {
-        if (isLogPhi()) {
-            return String.format("%s:\n\tHL7 Message: %s", super.getMessage(), covertBytesToPrintFriendlyString(hl7Message));
-        } else {
-            return super.getMessage();
-        }
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder(this.getClass().getName());
-
-        stringBuilder.append(": {hl7Message=")
-                .append(covertBytesToPrintFriendlyString(hl7Message))
-                .append("}");
-
-        return stringBuilder.toString();
+        return super.getHl7Message();
     }
 
 }

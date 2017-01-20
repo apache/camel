@@ -32,7 +32,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.quartz.JobDetail;
@@ -73,9 +72,9 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
     private int startDelayedSeconds;
     @UriParam
     private boolean usingFixedCamelContextName;
-    @UriParam(prefix = "trigger.", multiValue = true)
+    @UriParam(label = "advanced", prefix = "trigger.", multiValue = true)
     private Map<String, Object> triggerParameters;
-    @UriParam(prefix = "job.", multiValue = true)
+    @UriParam(label = "advanced", prefix = "job.", multiValue = true)
     private Map<String, Object> jobParameters;
 
     public QuartzEndpoint(final String endpointUri, final QuartzComponent component) {

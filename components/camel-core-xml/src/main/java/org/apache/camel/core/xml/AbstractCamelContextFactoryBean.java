@@ -66,10 +66,12 @@ import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
+import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestContainer;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.transformer.TransformersDefinition;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.TraceFormatter;
@@ -165,7 +167,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
         // then set custom properties
         if (getProperties() != null) {
-            getContext().setProperties(getProperties().asMap());
+            getContext().setGlobalOptions(getProperties().asMap());
         }
         // and enable lazy loading of type converters if applicable
         initLazyLoadTypeConverters();
@@ -760,6 +762,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract DataFormatsDefinition getDataFormats();
 
+    public abstract TransformersDefinition getTransformers();
+
     public abstract List<OnExceptionDefinition> getOnExceptions();
 
     public abstract List<OnCompletionDefinition> getOnCompletions();
@@ -771,6 +775,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     public abstract List<ThreadPoolProfileDefinition> getThreadPoolProfiles();
 
     public abstract String getDependsOn();
+
+    public abstract List<AbstractCamelFactoryBean<?>> getBeansFactory();
+
+    public abstract List<?> getBeans();
 
     // Implementation methods
     // -------------------------------------------------------------------------
@@ -833,6 +841,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getDataFormats() != null) {
             ctx.setDataFormats(getDataFormats().asMap());
         }
+        if (getTransformers() != null) {
+            ctx.setTransformers(getTransformers().getTransforms());
+        }
         if (getTypeConverterStatisticsEnabled() != null) {
             ctx.setTypeConverterStatisticsEnabled(getTypeConverterStatisticsEnabled());
         }
@@ -844,6 +855,15 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getRestConfiguration() != null) {
             ctx.setRestConfiguration(getRestConfiguration().asRestConfiguration(ctx));
+        }
+        if (getBeans() != null) {
+            for (Object bean : getBeans()) {
+                if (bean instanceof ServiceCallConfigurationDefinition) {
+                    @SuppressWarnings("unchecked")
+                    ServiceCallConfigurationDefinition configuration = (ServiceCallConfigurationDefinition)bean;
+                    ctx.addServiceCallConfiguration(configuration.getId(), configuration);
+                }
+            }
         }
     }
 

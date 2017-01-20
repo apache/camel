@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.pgevent.enabled",
+      "description": "Enable pgevent component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

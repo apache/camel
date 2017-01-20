@@ -1,6 +1,4 @@
-[[Log-LogComponent]]
-Log Component
-~~~~~~~~~~~~~
+## Log Component
 
 The *log:* component logs message exchanges to the underlying logging
 mechanism.
@@ -14,9 +12,7 @@ logging via, among others:
 http://java.sun.com/j2se/1.4.2/docs/api/java/util/logging/package-summary.html[JDK
 Util Logging logging]
 
-[[Log-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -----------------------------
@@ -53,9 +49,7 @@ There is also a `log` directly in the DSL, but it has a different
 purpose. Its meant for lightweight and human logs. See more details at
 link:logeip.html[LogEIP].
 
-[[Log-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -65,10 +59,10 @@ The Log component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| exchangeFormatter | ExchangeFormatter | Sets a custom ExchangeFormatter to convert the Exchange to a String suitable for logging. If not specified we default to DefaultExchangeFormatter.
+| Name | Group | Default | Java Type | Description
+| exchangeFormatter | advanced |  | ExchangeFormatter | Sets a custom ExchangeFormatter to convert the Exchange to a String suitable for logging. If not specified we default to DefaultExchangeFormatter.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -114,9 +108,7 @@ The Log component supports 26 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Log-Regularloggersample]]
-Regular logger sample
-^^^^^^^^^^^^^^^^^^^^^
+### Regular logger sample
 
 In the route below we log the incoming orders at `DEBUG` level before
 the order is processed:
@@ -137,9 +129,7 @@ Or using Spring XML to define the route:
   </route> 
 ---------------------------------------------------
 
-[[Log-Regularloggerwithformattersample]]
-Regular logger with formatter sample
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Regular logger with formatter sample
 
 In the route below we log the incoming orders at `INFO` level before the
 order is processed.
@@ -150,9 +140,7 @@ from("activemq:orders").
     to("log:com.mycompany.order?showAll=true&multiline=true").to("bean:processOrder");
 --------------------------------------------------------------------------------------
 
-[[Log-ThroughputloggerwithgroupSizesample]]
-Throughput logger with groupSize sample
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Throughput logger with groupSize sample
 
 In the route below we log the throughput of the incoming orders at
 `DEBUG` level grouped by 10 messages.
@@ -163,9 +151,7 @@ from("activemq:orders").
     to("log:com.mycompany.order?level=DEBUG&groupSize=10").to("bean:processOrder");
 -----------------------------------------------------------------------------------
 
-[[Log-ThroughputloggerwithgroupIntervalsample]]
-Throughput logger with groupInterval sample
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Throughput logger with groupInterval sample
 
 This route will result in message stats logged every 10s, with an
 initial 60s delay and stats should be displayed even if there isn't any
@@ -184,9 +170,7 @@ The following will be logged:
 "Received: 1000 new messages, with total 2000 so far. Last group took: 10000 millis which is: 100 messages per second. average: 100"
 ------------------------------------------------------------------------------------------------------------------------------------
 
-[[Log-Fullcustomizationoftheloggingoutput]]
-Full customization of the logging output
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Full customization of the logging output
 
 *Available as of Camel 2.11*
 
@@ -268,9 +252,7 @@ options:
 <to uri="log:bar?param1=bar&amp;param2=200"/>
 ---------------------------------------------
 
-[[Log-UsingLogcomponentinOSGi]]
-Using Log component in OSGi
-+++++++++++++++++++++++++++
+#### Using Log component in OSGi
 
 *Improvement as of Camel 2.12.4/2.13.1*
 
@@ -286,9 +268,7 @@ should be the bundle which contains route definition. To do this, either
 register single instance of `org.slf4j.Logger` in the Registry or
 reference it using `logger` URI parameter.
 
-[[Log-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -300,4 +280,3 @@ See Also
 * link:how-do-i-use-java-14-logging.html[How do I use Java 1.4 logging]
 * link:logeip.html[LogEIP] for using `log` directly in the DSL for human
 logs.
-

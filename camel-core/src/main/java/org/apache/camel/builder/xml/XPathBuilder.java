@@ -524,6 +524,10 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
         this.namespaces.putAll(namespaces);
     }
 
+    public Map<String, String> getNamespaces() {
+        return namespaces;
+    }
+
     /**
      * Gets the {@link XPathFunction} for getting the input message body.
      * <p/>

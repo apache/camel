@@ -425,9 +425,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                         LOG.trace("Loading {} class", pkg);
                         try {
                             Class<?> clazz = bundle.loadClass(pkg);
-                            if (test.matches(clazz)) {
-                                classes.add(clazz);
-                            }
+                            classes.add(clazz);
                             // the class could be found and loaded so continue to next
                             continue;
                         } catch (Throwable t) {

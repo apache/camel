@@ -19,12 +19,7 @@ package org.apache.camel.component.sjms.producer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import javax.jms.Connection;
-import javax.jms.Destination;
 import javax.jms.Message;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -32,9 +27,7 @@ import org.apache.camel.component.sjms.BatchMessage;
 import org.apache.camel.component.sjms.MessageProducerResources;
 import org.apache.camel.component.sjms.SjmsProducer;
 import org.apache.camel.component.sjms.TransactionCommitStrategy;
-import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.component.sjms.tx.DefaultTransactionCommitStrategy;
-import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
 
 /**
  * A Camel Producer that provides the InOnly Exchange pattern..

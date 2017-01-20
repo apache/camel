@@ -26,6 +26,7 @@ import java.util.Collections;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.apache.ApacheHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Base64;
@@ -33,13 +34,15 @@ import com.google.api.client.util.Strings;
 import com.google.api.services.pubsub.Pubsub;
 import com.google.api.services.pubsub.PubsubScopes;
 
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class GooglePubsubConnectionFactory {
 
-    private static JsonFactory jsonFactory;
-    private static HttpTransport transport;
+    private static JsonFactory jsonFactory = new JacksonFactory();
 
     private final Logger logger = LoggerFactory.getLogger(GooglePubsubConnectionFactory.class);
 
@@ -51,23 +54,30 @@ public class GooglePubsubConnectionFactory {
     private Pubsub client;
 
     public GooglePubsubConnectionFactory() {
-        jsonFactory = new JacksonFactory();
-
-        try {
-            transport = GoogleNetHttpTransport.newTrustedTransport();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
-    public synchronized Pubsub getClient() throws Exception {
+    public synchronized Pubsub getDefaultClient() throws Exception {
         if (this.client == null) {
             this.client = buildClient();
         }
         return this.client;
     }
 
+    public Pubsub getMultiThreadClient(int parallelThreads) throws Exception {
+
+        PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager();
+        cm.setDefaultMaxPerRoute(parallelThreads);
+        cm.setMaxTotal(parallelThreads);
+        CloseableHttpClient httpClient = HttpClients.createMinimal(cm);
+
+        return buildClient(new ApacheHttpTransport(httpClient));
+    }
+
     private Pubsub buildClient() throws Exception {
+        return buildClient(GoogleNetHttpTransport.newTrustedTransport());
+    };
+
+    private Pubsub buildClient(HttpTransport httpTransport) throws Exception {
 
         GoogleCredential credential = null;
 
@@ -75,7 +85,7 @@ public class GooglePubsubConnectionFactory {
             if (logger.isDebugEnabled()) {
                 logger.debug("Service Account and Key have been set explicitly. Initialising PubSub using Service Account " + serviceAccount);
             }
-            credential = createFromAccountKeyPair();
+            credential = createFromAccountKeyPair(httpTransport);
         }
 
         if (credential == null && !Strings.isNullOrEmpty(credentialsFileLocation)) {
@@ -92,7 +102,7 @@ public class GooglePubsubConnectionFactory {
             credential = createDefault();
         }
 
-        Pubsub.Builder builder = new Pubsub.Builder(transport, jsonFactory, credential)
+        Pubsub.Builder builder = new Pubsub.Builder(httpTransport, jsonFactory, credential)
                 .setApplicationName("camel-google-pubsub");
 
         // Local emulator, SOCKS proxy, etc.
@@ -126,10 +136,10 @@ public class GooglePubsubConnectionFactory {
         return credential;
     }
 
-    private GoogleCredential createFromAccountKeyPair() {
+    private GoogleCredential createFromAccountKeyPair(HttpTransport httpTransport) {
         try {
             GoogleCredential credential = new GoogleCredential.Builder()
-                    .setTransport(transport)
+                    .setTransport(httpTransport)
                     .setJsonFactory(jsonFactory)
                     .setServiceAccountId(serviceAccount)
                     .setServiceAccountScopes(PubsubScopes.all())

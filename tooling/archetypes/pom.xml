@@ -36,6 +36,7 @@
     <module>camel-archetype-blueprint</module>
     <module>camel-archetype-cdi</module>
     <module>camel-archetype-component</module>
+    <module>camel-archetype-connector</module>
     <module>camel-archetype-dataformat</module>
     <module>camel-archetype-groovy</module>
     <module>camel-archetype-java</module>

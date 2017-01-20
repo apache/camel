@@ -20,6 +20,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.http.common.DefaultHttpBinding;
@@ -41,9 +42,10 @@ public class ServletEndpoint extends HttpCommonEndpoint {
 
     @UriPath(label = "consumer") @Metadata(required = "true")
     private String contextPath;
-
     @UriParam(label = "consumer", defaultValue = "CamelServlet")
     private String servletName;
+    @UriParam(label = "consumer,advanced")
+    private boolean attachmentMultipartBinding;
 
     public ServletEndpoint() {
     }
@@ -63,7 +65,7 @@ public class ServletEndpoint extends HttpCommonEndpoint {
         // make sure we include servlet variant of the http binding
         if (this.binding == null) {
             // is attachment binding enabled?
-            if (getComponent().isAttachmentMultipartBinding()) {
+            if (isAttachmentMultipartBinding()) {
                 this.binding = new AttachmentHttpBinding();
             } else {
                 this.binding = new DefaultHttpBinding();
@@ -107,6 +109,22 @@ public class ServletEndpoint extends HttpCommonEndpoint {
 
     public String getServletName() {
         return servletName;
+    }
+
+    public boolean isAttachmentMultipartBinding() {
+        return attachmentMultipartBinding;
+    }
+
+    /**
+     * Whether to automatic bind multipart/form-data as attachments on the Camel {@link Exchange}.
+     * <p/>
+     * The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together.
+     * Remove disableStreamCache to use AttachmentMultipartBinding.
+     * <p/>
+     * This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.
+     */
+    public void setAttachmentMultipartBinding(boolean attachmentMultipartBinding) {
+        this.attachmentMultipartBinding = attachmentMultipartBinding;
     }
 
     @Override

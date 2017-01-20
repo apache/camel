@@ -26,7 +26,6 @@ import javax.enterprise.inject.Produces;
 import javax.inject.Named;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.CdiCamelExtension;
 import org.apache.camel.cdi.bean.OtherCamelRoute;
 import org.apache.camel.cdi.bean.SimpleCamelRoute;

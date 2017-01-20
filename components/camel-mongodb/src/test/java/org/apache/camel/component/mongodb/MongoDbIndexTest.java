@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.stream.StreamSupport;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
 import com.mongodb.client.ListIndexesIterable;

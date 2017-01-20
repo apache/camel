@@ -31,6 +31,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -106,6 +107,7 @@ public class KubernetesBuildConfigsProducer extends DefaultProducer {
             }
             buildConfigsList = buildConfigs.list();
         }
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(buildConfigsList.getItems());
     }
 
@@ -124,6 +126,8 @@ public class KubernetesBuildConfigsProducer extends DefaultProducer {
         }
         buildConfig = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs()
                 .inNamespace(namespaceName).withName(buildConfigName).get();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(buildConfig);
     }
 }

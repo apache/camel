@@ -50,7 +50,7 @@ public class PubsubConnectionFactoryTest extends PubsubTestSupport {
                 .setCredentialsFileLocation(file.getAbsolutePath())
                 .setServiceURL(SERVICE_URL);
 
-        Pubsub pubsub = cf.getClient();
+        Pubsub pubsub = cf.getDefaultClient();
 
         String query = String.format("projects/%s", PROJECT_ID);
         // [ DEPENDS on actual project being available]

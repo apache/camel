@@ -35,11 +35,11 @@ public class NatsConfiguration {
     private String topic;
     @UriParam(defaultValue = "true")
     private boolean reconnect = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean pedantic;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean verbose;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean ssl;
     @UriParam(defaultValue = "2000")
     private int reconnectTimeWait = 2000;
@@ -49,7 +49,7 @@ public class NatsConfiguration {
     private int pingInterval = 4000;
     @UriParam(label = "producer")
     private String replySubject;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean noRandomizeServers;
     @UriParam(label = "consumer")
     private String queueName;
@@ -57,11 +57,15 @@ public class NatsConfiguration {
     private String maxMessages;
     @UriParam(label = "consumer", defaultValue = "10")
     private int poolSize = 10;
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean flushConnection;
+    @UriParam(label = "common", defaultValue = "1000")
+    private int flushTimeout = 1000;
     @UriParam(label = "security")
     private boolean secure;
     @UriParam(label = "security")
     private boolean tlsDebug;
-    @UriParam(label = "security", description = "SSL configuration")
+    @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
 
     /**
@@ -217,6 +221,28 @@ public class NatsConfiguration {
 
     public void setPoolSize(int poolSize) {
         this.poolSize = poolSize;
+    }
+
+    public boolean isFlushConnection() {
+        return flushConnection;
+    }
+
+    /**
+     * Define if we want to flush connection or not
+     */
+    public void setFlushConnection(boolean flushConnection) {
+        this.flushConnection = flushConnection;
+    }
+
+    public int getFlushTimeout() {
+        return flushTimeout;
+    }
+
+    /**
+     * Set the flush timeout
+     */
+    public void setFlushTimeout(int flushTimeout) {
+        this.flushTimeout = flushTimeout;
     }
 
     /**

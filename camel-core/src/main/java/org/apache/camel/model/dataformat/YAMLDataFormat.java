@@ -16,9 +16,12 @@
  */
 package org.apache.camel.model.dataformat;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -58,6 +61,10 @@ public class YAMLDataFormat extends DataFormatDefinition {
     private Boolean useApplicationContextClassLoader = true;
     @XmlAttribute @Metadata(defaultValue = "false")
     private Boolean prettyFlow = false;
+    @XmlAttribute @Metadata(defaultValue = "false")
+    private Boolean allowAnyType = false;
+    @XmlElement(name = "typeFilter")
+    private List<YAMLTypeFilterDefinition> typeFilters;
 
     public YAMLDataFormat() {
         this(YAMLLibrary.SnakeYAML);
@@ -188,6 +195,28 @@ public class YAMLDataFormat extends DataFormatDefinition {
         this.prettyFlow = prettyFlow;
     }
 
+    public boolean isAllowAnyType() {
+        return allowAnyType;
+    }
+
+    /**
+     * Allow any class to be un-marshaled
+     */
+    public void setAllowAnyType(boolean allowAnyType) {
+        this.allowAnyType = allowAnyType;
+    }
+
+    public List<YAMLTypeFilterDefinition> getTypeFilters() {
+        return typeFilters;
+    }
+
+    /**
+     * Set the types SnakeYAML is allowed to un-marshall
+     */
+    public void setTypeFilters(List<YAMLTypeFilterDefinition> typeFilters) {
+        this.typeFilters = typeFilters;
+    }
+
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (library == YAMLLibrary.SnakeYAML) {
@@ -218,6 +247,27 @@ public class YAMLDataFormat extends DataFormatDefinition {
         setProperty(dataFormat, camelContext, "classLoader", classLoader);
         setProperty(dataFormat, camelContext, "useApplicationContextClassLoader", useApplicationContextClassLoader);
         setProperty(dataFormat, camelContext, "prettyFlow", prettyFlow);
+        setProperty(dataFormat, camelContext, "allowAnyType", allowAnyType);
+
+        if (typeFilters != null && !typeFilters.isEmpty()) {
+            List<String> typeFilterDefinitions = new ArrayList<>(typeFilters.size());
+            for (YAMLTypeFilterDefinition definition : typeFilters) {
+                String value = definition.getValue();
+
+                if (!value.startsWith("type") && !value.startsWith("regexp")) {
+                    YAMLTypeFilterType type = definition.getType();
+                    if (type == null) {
+                        type = YAMLTypeFilterType.type;
+                    }
+
+                    value = type.name() + ":" + value;
+                }
+
+                typeFilterDefinitions.add(value);
+            }
+
+            setProperty(dataFormat, camelContext, "typeFilterDefinitions", typeFilterDefinitions);
+        }
 
         setPropertyRef(dataFormat, camelContext, "constructor", constructor);
         setPropertyRef(dataFormat, camelContext, "representer", representer);
@@ -238,4 +288,5 @@ public class YAMLDataFormat extends DataFormatDefinition {
             setProperty(camelContext, dataFormat, propertyName, ref);
         }
     }
+
 }

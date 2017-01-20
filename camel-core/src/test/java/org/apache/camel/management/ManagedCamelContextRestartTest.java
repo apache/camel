@@ -107,7 +107,7 @@ public class ManagedCamelContextRestartTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:foo").transform(constant("Bye World"));
+                from("direct:foo").delay(10).transform(constant("Bye World"));
             }
         };
     }

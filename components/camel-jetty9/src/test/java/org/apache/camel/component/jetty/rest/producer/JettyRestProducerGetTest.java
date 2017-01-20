@@ -18,7 +18,6 @@ package org.apache.camel.component.jetty.rest.producer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.junit.Test;

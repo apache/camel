@@ -16,12 +16,12 @@
 ## ------------------------------------------------------------------------
 package ${package};
 
-import org.apache.camel.spring.boot.FatJarRouter;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.apache.camel.builder.RouteBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 
-@SpringBootApplication
-public class MySpringBootRouter extends FatJarRouter {
+@Component
+public class MySpringBootRouter extends RouteBuilder {
 
     @Override
     public void configure() {

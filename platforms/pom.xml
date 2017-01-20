@@ -39,6 +39,8 @@
     <module>catalog</module>
     <module>catalog-lucene</module>
     <module>catalog-maven</module>
+    <module>catalog-rest</module>
+    <module>catalog-rest-app</module>
     <module>catalog-provider-karaf</module>
     <module>catalog-provider-springboot</module>
   </modules>

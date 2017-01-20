@@ -1,6 +1,4 @@
-[[PGP-PGP]]
-PGP
-~~~
+## PGP DataFormat
 
 The PGP link:data-format.html[Data Format] integrates the Java
 Cryptographic Extension into Camel, allowing simple and flexible
@@ -10,12 +8,10 @@ encryption to cyphertext and unmarshalling to mean decryption back to
 the original plaintext. This data format implements only symmetric
 (shared-key) encryption and decyption.
 
-[[Crypto-PGPDataFormatOptions]]
-PGPDataFormat Options
-^^^^^^^^^^^^^^^^^^^^^
+### PGPDataFormat Options
 
 // dataformat options: START
-The PGP dataformat supports 14 options which are listed below.
+The PGP dataformat supports 15 options which are listed below.
 
 
 
@@ -37,13 +33,12 @@ The PGP dataformat supports 14 options which are listed below.
 | compressionAlgorithm |  | Integer | Compression algorithm; possible values are defined in org.bouncycastle.bcpg.CompressionAlgorithmTags; for example 0 (= UNCOMPRESSED) 1 (= ZIP) 2 (= ZLIB) 3 (= BZIP2). Only relevant for encrypting.
 | hashAlgorithm |  | Integer | Signature hash algorithm; possible values are defined in org.bouncycastle.bcpg.HashAlgorithmTags; for example 2 (= SHA1) 8 (= SHA256) 9 (= SHA384) 10 (= SHA512) 11 (=SHA224). Only relevant for signing.
 | signatureVerificationOption |  | String | Controls the behavior for verifying the signature during unmarshaling. There are 4 values possible: optional: The PGP message may or may not contain signatures; if it does contain signatures then a signature verification is executed. required: The PGP message must contain at least one signature; if this is not the case an exception (PGPException) is thrown. A signature verification is executed. ignore: Contained signatures in the PGP message are ignored; no signature verification is executed. no_signature_allowed: The PGP message must not contain a signature; otherwise an exception (PGPException) is thrown.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
 {% endraw %}
 // dataformat options: END
 
-[[Crypto-PGPDataFormatMessageHeaders]]
-PGPDataFormat Message Headers
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### PGPDataFormat Message Headers
 
 You can override the PGPDataFormat options by applying below headers
 into message dynamically.
@@ -98,9 +93,7 @@ symmectric key, set by PGPDataFormat during encryptiion process
 signatures, set by PGPDataFormat during signing process
 |=======================================================================
 
-[[Crypto-EncryptingwithPGPDataFormat]]
-Encrypting with PGPDataFormat
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Encrypting with PGPDataFormat
 
 The following sample uses the popular PGP format for
 encrypting/decrypting files using the
@@ -112,9 +105,7 @@ encryption, but you can obviously use different keys:
 
 Or using Spring:
 
-[[Crypto-Toworkwiththepreviousexampleyouneedthefollowing]]
-To work with the previous example you need the following
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### To work with the previous example you need the following
 
 * A public keyring file which contains the public keys used to encrypt
 the data
@@ -122,9 +113,7 @@ the data
 data
 * The keyring password
 
-[[Crypto-Managingyourkeyring]]
-Managing your keyring
-+++++++++++++++++++++
+#### Managing your keyring
 
 To manage the keyring, I use the command line tools, I find this to be
 the simplest approach in managing the keys. There are also Java
@@ -132,27 +121,25 @@ libraries available from
 http://www.bouncycastle.org/java.html[http://www.bouncycastle.org/java.html]
 if you would prefer to do it that way.
 
-1.  Install the command line utilities on linux
+Install the command line utilities on linux
 
 [source,java]
 ---------------------
 apt-get install gnupg
 ---------------------
-2.  Create your keyring, entering a secure password
+Create your keyring, entering a secure password
 
 [source,java]
 -------------
 gpg --gen-key
 -------------
-3.  If you need to import someone elses public key so that you can
-encrypt a file for them.
+If you need to import someone elses public key so that you can encrypt a file for them.
 
 [source,java]
 --------------------------
 gpg --import <filename.key
 --------------------------
-4.  The following files should now exist and can be used to run the
-example
+The following files should now exist and can be used to run the example
 
 [source,java]
 -----------------------------------------------
@@ -161,8 +148,7 @@ ls -l ~/.gnupg/pubring.gpg ~/.gnupg/secring.gpg
 
 [[Crypto-PGPDecrypting/VerifyingofMessagesEncrypted/SignedbyDifferentPrivate/PublicKeys]]
 PGP Decrypting/Verifying of Messages Encrypted/Signed by Different
-Private/Public Keys
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Private/Public Keys
 
 Since *Camel 2.12.2*.
 
@@ -207,9 +193,7 @@ same mechanism is also used to locate the public key for verifying a
 signature. Therefore you no longer must specify User IDs for the
 unmarshaling.
 
-[[Crypto-RestrictingtheSignerIdentitiesduringPGPSignatureVerification]]
-Restricting the Signer Identities during PGP Signature Verification
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Restricting the Signer Identities during PGP Signature Verification
 
 Since *Camel 2.12.3.*
 
@@ -246,9 +230,7 @@ successful as soon as one signature can be verified.
 then do not specify the signature key User IDs. In this case all public
 keys in the public keyring are taken into account.
 
-[[Crypto-SeveralSignaturesinOnePGPDataFormat]]
-Several Signatures in One PGP Data Format
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Several Signatures in One PGP Data Format
 
 Since *Camel 2.12.3.*
 
@@ -278,9 +260,7 @@ from("direct:start")
         ...      
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[Crypto-SupportofSub-KeysandKeyFlagsinPGPDataFormatMarshaler]]
-Support of Sub-Keys and Key Flags in PGP Data Format Marshaler
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Support of Sub-Keys and Key Flags in PGP Data Format Marshaler
 
 Since *Camel 2.12.3. +
 *An https://tools.ietf.org/html/rfc4880#section-12.1[OpenPGP V4 key] can
@@ -295,9 +275,7 @@ these Key Flags of the primary key and sub-keys in order to determine
 the right key for signing and encryption. This is necessary because the
 primary key and its sub-keys have the same User IDs.
 
-[[Crypto-SupportofCustomKeyAccessors]]
-Support of Custom Key Accessors
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Support of Custom Key Accessors
 
 Since *Camel 2.13.0. +
 *You can implement custom key accessors for encryption/signing. The
@@ -321,9 +299,7 @@ PGPKeyAccessDataFormat has the same options as PGPDataFormat except
 password, keyFileName, encryptionKeyRing, signaturePassword,
 signatureKeyFileName, and signatureKeyRing.
 
-[[Crypto-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use the PGP dataformat in your camel routes you
 need to add the following dependency to your pom.
@@ -338,11 +314,8 @@ need to add the following dependency to your pom.
 </dependency>
 ----------------------------------------------------------
 
-[[Crypto-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:data-format.html[Data Format]
 * link:crypto-digital-signatures.html[Crypto (Digital Signatures)]
 * http://www.bouncycastle.org/java.html[http://www.bouncycastle.org/java.html]
-

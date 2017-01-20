@@ -39,6 +39,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of @{link Producer} which use the SMPP protocol
+ *
+ * @version
  */
 public class SmppProducer extends DefaultProducer {
 
@@ -84,7 +86,7 @@ public class SmppProducer extends DefaultProducer {
     }
 
     private SMPPSession createSession() throws IOException {
-        LOG.debug("Connecting to: " + getEndpoint().getConnectionString() + "...");
+        LOG.debug("Connecting to: {}...", getEndpoint().getConnectionString());
         
         SMPPSession session = createSMPPSession();
         session.setEnquireLinkTimer(this.configuration.getEnquireLinkTimer());
@@ -102,7 +104,7 @@ public class SmppProducer extends DefaultProducer {
                         NumberingPlanIndicator.valueOf(configuration.getNumberingPlanIndicator()),
                         ""));
         
-        LOG.info("Connected to: " + getEndpoint().getConnectionString());
+        LOG.info("Connected to: {}", getEndpoint().getConnectionString());
         
         return session;
     }
@@ -153,24 +155,19 @@ public class SmppProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        LOG.debug("Disconnecting from: " + getEndpoint().getConnectionString() + "...");
+        LOG.debug("Disconnecting from: {}...", getEndpoint().getConnectionString());
 
         super.doStop();
         closeSession();
 
-        LOG.info("Disconnected from: " + getEndpoint().getConnectionString());
+        LOG.info("Disconnected from: {}", getEndpoint().getConnectionString());
     }
     
     private void closeSession() {
         if (session != null) {
             session.removeSessionStateListener(this.internalSessionStateListener);
-            // remove this hack after http://code.google.com/p/jsmpp/issues/detail?id=93 is fixed
-            try {
-                Thread.sleep(1000);
-                session.unbindAndClose();
-            } catch (Exception e) {
-                LOG.warn("Could not close session " + session);
-            }
+            session.unbindAndClose();
+            // clear session as we closed it successfully
             session = null;
         }
     }
@@ -182,7 +179,7 @@ public class SmppProducer extends DefaultProducer {
                     public void run() {
                         boolean reconnected = false;
                         
-                        LOG.info("Schedule reconnect after " + initialReconnectDelay + " millis");
+                        LOG.info("Schedule reconnect after {} millis", initialReconnectDelay);
                         try {
                             Thread.sleep(initialReconnectDelay);
                         } catch (InterruptedException e) {
@@ -193,7 +190,7 @@ public class SmppProducer extends DefaultProducer {
                                 && attempt < configuration.getMaxReconnect()) {
                             try {
                                 attempt++;
-                                LOG.info("Trying to reconnect to {} - attempt #", getEndpoint().getConnectionString(), attempt);
+                                LOG.info("Trying to reconnect to {} - attempt #{}", getEndpoint().getConnectionString(), attempt);
                                 session = createSession();
                                 reconnected = true;
                             } catch (IOException e) {

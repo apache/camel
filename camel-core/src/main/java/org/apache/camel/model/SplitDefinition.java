@@ -27,7 +27,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
@@ -73,6 +72,8 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     private Boolean shareUnitOfWork;
     @XmlAttribute
     private Boolean parallelAggregate;
+    @XmlAttribute
+    private Boolean stopOnAggregateException;
 
     public SplitDefinition() {
     }
@@ -104,6 +105,7 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         boolean isStreaming = getStreaming() != null && getStreaming();
         boolean isShareUnitOfWork = getShareUnitOfWork() != null && getShareUnitOfWork();
         boolean isParallelAggregate = getParallelAggregate() != null && getParallelAggregate();
+        boolean isStopOnAggregateException = getStopOnAggregateException() != null && getStopOnAggregateException();
         boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing);
         ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Split", this, isParallelProcessing);
 
@@ -119,7 +121,7 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
 
         Splitter answer = new Splitter(routeContext.getCamelContext(), exp, childProcessor, aggregationStrategy,
                             isParallelProcessing, threadPool, shutdownThreadPool, isStreaming, isStopOnException(),
-                            timeout, onPrepare, isShareUnitOfWork, isParallelAggregate);
+                            timeout, onPrepare, isShareUnitOfWork, isParallelAggregate, isStopOnAggregateException);
         return answer;
     }
 
@@ -230,6 +232,20 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
      */
     public SplitDefinition parallelAggregate() {
         setParallelAggregate(true);
+        return this;
+    }
+    
+    /**
+     * If enabled, unwind exceptions occurring at aggregation time to the error handler when parallelProcessing is used.
+     * Currently, aggregation time exceptions do not stop the route processing when parallelProcessing is used.
+     * Enabling this option allows to work around this behavior.
+     *
+     * The default value is <code>false</code> for the sake of backward compatibility.
+     *
+     * @return the builder
+     */
+    public SplitDefinition stopOnAggregateException() {
+        setStopOnAggregateException(true);
         return this;
     }
 
@@ -390,6 +406,14 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
 
     public void setParallelAggregate(Boolean parallelAggregate) {
         this.parallelAggregate = parallelAggregate;
+    }
+    
+    public Boolean getStopOnAggregateException() {
+        return this.stopOnAggregateException;
+    }
+
+    public void setStopOnAggregateException(Boolean stopOnAggregateException) {
+        this.stopOnAggregateException = stopOnAggregateException;
     }
 
     public Boolean getStopOnException() {

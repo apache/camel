@@ -18,33 +18,18 @@ package org.apache.camel.component.undertow;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.net.ssl.SSLContext;
-
-import io.undertow.Handlers;
-import io.undertow.Undertow;
-import io.undertow.attribute.ExchangeAttributes;
-import io.undertow.predicate.PathTemplatePredicate;
-import io.undertow.predicate.Predicate;
-import io.undertow.predicate.Predicates;
-import io.undertow.server.HttpHandler;
-import io.undertow.server.handlers.PathHandler;
-import io.undertow.server.handlers.PathTemplateHandler;
-import io.undertow.server.handlers.PredicateHandler;
-import io.undertow.util.PathTemplate;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.undertow.handlers.NotFoundHandler;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
@@ -66,8 +51,11 @@ import org.slf4j.LoggerFactory;
 public class UndertowComponent extends UriEndpointComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory {
     private static final Logger LOG = LoggerFactory.getLogger(UndertowEndpoint.class);
 
-    private UndertowHttpBinding undertowHttpBinding;
     private Map<UndertowHostKey, UndertowHost> undertowRegistry = new ConcurrentHashMap<UndertowHostKey, UndertowHost>();
+
+    @Metadata(label = "advanced")
+    private UndertowHttpBinding undertowHttpBinding;
+    @Metadata(label = "security")
     private SSLContextParameters sslContextParameters;
 
     public UndertowComponent() {

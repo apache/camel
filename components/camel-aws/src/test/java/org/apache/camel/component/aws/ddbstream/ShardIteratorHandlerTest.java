@@ -28,7 +28,6 @@ import com.amazonaws.services.dynamodbv2.model.Stream;
 import com.amazonaws.services.dynamodbv2.model.StreamDescription;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.hamcrest.CoreMatchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

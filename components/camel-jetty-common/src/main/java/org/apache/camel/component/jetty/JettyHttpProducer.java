@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.net.CookieStore;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -115,6 +116,20 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
 
         JettyContentExchange httpExchange = getEndpoint().createContentExchange();
         httpExchange.init(exchange, getBinding(), client, callback);
+
+        // url must have scheme
+        try {
+            uri = new URI(url);
+            String scheme = uri.getScheme();
+            if (scheme == null) {
+                throw new IllegalArgumentException("Url must include scheme: " + url + ". If you are bridging endpoints set bridgeEndpoint=true."
+                        + " If you want to call a specific url, then you may need to remove all CamelHttp* headers in the route before this."
+                        + " See more details at: http://camel.apache.org/how-to-remove-the-http-protocol-headers-in-the-camel-message.html");
+            }
+        } catch (URISyntaxException e) {
+            // ignore
+        }
+
         httpExchange.setURL(url); // Url has to be set first
         httpExchange.setMethod(methodName);
         

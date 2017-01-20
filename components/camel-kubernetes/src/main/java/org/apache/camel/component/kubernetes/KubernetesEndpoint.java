@@ -26,6 +26,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.consumer.KubernetesNamespacesConsumer;
+import org.apache.camel.component.kubernetes.consumer.KubernetesNodesConsumer;
 import org.apache.camel.component.kubernetes.consumer.KubernetesPodsConsumer;
 import org.apache.camel.component.kubernetes.consumer.KubernetesReplicationControllersConsumer;
 import org.apache.camel.component.kubernetes.consumer.KubernetesServicesConsumer;
@@ -141,6 +142,9 @@ public class KubernetesEndpoint extends DefaultEndpoint {
                 
             case KubernetesCategory.NAMESPACES:
                 return new KubernetesNamespacesConsumer(this, processor);
+                
+            case KubernetesCategory.NODES:
+                return new KubernetesNodesConsumer(this, processor);
 
             default:
                 throw new IllegalArgumentException("The " + category + " consumer category doesn't exist");

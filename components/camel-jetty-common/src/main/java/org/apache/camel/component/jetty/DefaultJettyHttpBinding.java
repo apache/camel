@@ -37,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version 
+ * @version
  */
 public class DefaultJettyHttpBinding implements JettyHttpBinding {
 
@@ -51,7 +51,7 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
 
     public DefaultJettyHttpBinding() {
     }
-    
+
     public void populateResponse(Exchange exchange, JettyContentExchange httpExchange) throws Exception {
         int responseCode = httpExchange.getResponseStatus();
 

@@ -1,6 +1,4 @@
-[[BeanValidator-BeanValidatorComponent]]
-Bean Validator Component
-~~~~~~~~~~~~~~~~~~~~~~~~
+## Bean Validator Component
 
 *Available as of Camel 2.3*
 
@@ -24,9 +22,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[BeanValidator-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------------------------
@@ -44,9 +40,7 @@ Where *label* is an arbitrary text value describing the endpoint. +
  You can append query options to the URI in the following format,
 ?option=value&option=value&...
 
-[[BeanValidator-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 // component options: START
@@ -74,9 +68,7 @@ The Bean Validator component supports 7 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[BeanValidator-OSGideployment]]
-OSGi deployment
-^^^^^^^^^^^^^^^
+### OSGi deployment
 
 To use Hibernate Validator in the OSGi environment use dedicated
 `ValidationProviderResolver` implementation, just as
@@ -101,9 +93,7 @@ If no custom `ValidationProviderResolver` is defined and the validator
 component has been deployed into the OSGi environment,
 the `HibernateValidationProviderResolver` will be automatically used.
 
-[[BeanValidator-Example]]
-Example
-^^^^^^^
+### Example
 
 Assumed we have a java bean with the following annotations
 
@@ -246,12 +236,9 @@ and the `constraints-car.xml` file
 </constraint-mappings>
 ----------------------------------------------------------------------------------------------------
 
-[[BeanValidator-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

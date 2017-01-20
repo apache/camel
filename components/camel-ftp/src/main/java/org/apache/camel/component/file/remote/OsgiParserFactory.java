@@ -40,7 +40,7 @@ import org.apache.commons.net.ftp.parser.VMSVersioningFTPEntryParser;
  * OsgiParserFactory
  * 
  * commons-net DefaultFTPFileEntryParserFactory uses Class.forName, and fails
- * to load custom ParserFactories in OSGI.   This class is an alternative ParserFactory
+ * to load custom ParserFactories in OSGI. This class is an alternative ParserFactory
  * that can be used when Camel is used in an OSGI environment.
  */
 public class OsgiParserFactory extends DefaultFTPFileEntryParserFactory {

@@ -18,18 +18,12 @@ package org.apache.camel.builder.script.example;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
-import org.junit.Before;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version 
  */
 public class RubyFilterTest extends XPathFilterTest {
-
-    @Before
-    public void setUpEnv() {
-        System.setProperty("org.jruby.embed.localcontext.scope", "threadsafe");
-    }
 
     @Override
     public void testSendMatchingMessage() throws Exception {

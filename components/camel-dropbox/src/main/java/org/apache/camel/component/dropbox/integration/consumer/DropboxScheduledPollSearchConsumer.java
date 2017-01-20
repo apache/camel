@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.dropbox.integration.consumer;
 
+import com.dropbox.core.DbxEntry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
-import org.apache.camel.component.dropbox.dto.DropboxResult;
+import org.apache.camel.component.dropbox.dto.DropboxSearchResult;
+import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 
 public class DropboxScheduledPollSearchConsumer extends DropboxScheduledPollConsumer {
 
@@ -37,10 +39,20 @@ public class DropboxScheduledPollSearchConsumer extends DropboxScheduledPollCons
     @Override
     protected int poll() throws Exception {
         Exchange exchange = endpoint.createExchange();
-        DropboxResult result = DropboxAPIFacade.getInstance(configuration.getClient())
+        DropboxSearchResult result = new DropboxAPIFacade(configuration.getClient(), exchange)
                 .search(configuration.getRemotePath(), configuration.getQuery());
-        result.populateExchange(exchange);
-        LOG.info("consumer --> downloaded: " + result.toString());
+
+        StringBuilder fileExtracted = new StringBuilder();
+        for (DbxEntry entry : result.getFound()) {
+            fileExtracted.append(entry.name).append("-").append(entry.path).append("\n");
+        }
+
+        exchange.getIn().setHeader(DropboxResultHeader.FOUND_FILES.name(), fileExtracted.toString());
+        exchange.getIn().setBody(result.getFound());
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Downloaded: {}", result.toString());
+        }
 
         try {
             // send message to next processor in the route

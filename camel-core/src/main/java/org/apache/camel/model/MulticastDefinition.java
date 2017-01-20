@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
@@ -74,6 +73,8 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     private Boolean shareUnitOfWork;
     @XmlAttribute
     private Boolean parallelAggregate;
+    @XmlAttribute
+    private Boolean stopOnAggregateException;
 
     public MulticastDefinition() {
     }
@@ -182,6 +183,20 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      */
     public MulticastDefinition parallelAggregate() {
         setParallelAggregate(true);
+        return this;
+    }
+    
+    /**
+     * If enabled, unwind exceptions occurring at aggregation time to the error handler when parallelProcessing is used.
+     * Currently, aggregation time exceptions do not stop the route processing when parallelProcessing is used.
+     * Enabling this option allows to work around this behavior.
+     *
+     * The default value is <code>false</code> for the sake of backward compatibility.
+     *
+     * @return the builder
+     */
+    public MulticastDefinition stopOnAggregateException() {
+        setStopOnAggregateException(true);
         return this;
     }
 
@@ -295,6 +310,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         boolean isStreaming = getStreaming() != null && getStreaming();
         boolean isStopOnException = getStopOnException() != null && getStopOnException();
         boolean isParallelAggregate = getParallelAggregate() != null && getParallelAggregate();
+        boolean isStopOnAggregateException = getStopOnAggregateException() != null && getStopOnAggregateException();
 
         boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isParallelProcessing);
         ExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredExecutorService(routeContext, "Multicast", this, isParallelProcessing);
@@ -308,7 +324,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         }
 
         MulticastProcessor answer = new MulticastProcessor(routeContext.getCamelContext(), list, strategy, isParallelProcessing,
-                                      threadPool, shutdownThreadPool, isStreaming, isStopOnException, timeout, onPrepare, isShareUnitOfWork, isParallelAggregate);
+                                      threadPool, shutdownThreadPool, isStreaming, isStopOnException, timeout, onPrepare, isShareUnitOfWork, isParallelAggregate, isStopOnAggregateException);
         return answer;
     }
 
@@ -473,6 +489,14 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
 
     public void setParallelAggregate(Boolean parallelAggregate) {
         this.parallelAggregate = parallelAggregate;
+    }
+
+    public Boolean getStopOnAggregateException() {
+        return stopOnAggregateException;
+    }
+
+    public void setStopOnAggregateException(Boolean stopOnAggregateException) {
+        this.stopOnAggregateException = stopOnAggregateException;
     }
 
 }

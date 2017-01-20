@@ -28,7 +28,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * @version 
  */
 public class HttpExplicitConnectionCloseTest extends CamelTestSupport {
     protected String expectedText = "activemq";

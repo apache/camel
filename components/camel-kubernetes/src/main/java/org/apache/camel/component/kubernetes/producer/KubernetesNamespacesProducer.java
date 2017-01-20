@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,6 +108,8 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
             namespaces.withLabel(entry.getKey(), entry.getValue());
         }
         NamespaceList namespace = namespaces.list();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(namespace.getItems());
     }
 
@@ -120,6 +123,8 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
         }
         Namespace namespace = getEndpoint().getKubernetesClient().namespaces()
                 .withName(namespaceName).get();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(namespace);
     }
 
@@ -138,6 +143,8 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
                 .build();
         Namespace namespace = getEndpoint().getKubernetesClient().namespaces()
                 .create(ns);
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(namespace);
     }
 
@@ -151,6 +158,8 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
         }
         Boolean namespace = getEndpoint().getKubernetesClient().namespaces()
                 .withName(namespaceName).delete();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(namespace);
     }
 }

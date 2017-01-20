@@ -17,10 +17,8 @@
 package org.apache.camel.component.websocket;
 
 import java.io.Serializable;
-import java.lang.annotation.Annotation;
 import java.util.UUID;
 
-import org.eclipse.jetty.websocket.api.BatchMode;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;

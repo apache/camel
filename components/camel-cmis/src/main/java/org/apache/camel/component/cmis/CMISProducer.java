@@ -53,6 +53,11 @@ public class CMISProducer extends DefaultProducer {
         this.sessionFacade = null;
     }
 
+    @Override
+    public CMISEndpoint getEndpoint() {
+        return (CMISEndpoint) super.getEndpoint();
+    }
+
     public void process(Exchange exchange) throws Exception {
         CmisObject cmisObject = createNode(exchange);
         LOG.debug("Created node with id: {}", cmisObject.getId());
@@ -190,7 +195,7 @@ public class CMISProducer extends DefaultProducer {
 
     private CMISSessionFacade getSessionFacade() throws Exception {
         if (sessionFacade == null) {
-            sessionFacade = sessionFacadeFactory.create();
+            sessionFacade = sessionFacadeFactory.create(getEndpoint());
             sessionFacade.initSession();
         }
 

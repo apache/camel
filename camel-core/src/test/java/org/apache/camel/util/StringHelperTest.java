@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import java.util.List;
+
 import junit.framework.TestCase;
 
 /**
@@ -204,6 +206,37 @@ public class StringHelperTest extends TestCase {
         assertEquals("Should get the right class name", "Integer[]", StringHelper.normalizeClassName("Integer[] \r"));
         assertEquals("Should get the right class name", "Hello_World", StringHelper.normalizeClassName("Hello_World"));
         assertEquals("Should get the right class name", "", StringHelper.normalizeClassName("////"));
+    }
+
+    public void testChangedLines() {
+        String oldText = "Hello\nWorld\nHow are you";
+        String newText = "Hello\nWorld\nHow are you";
+
+        List<Integer> changed = StringHelper.changedLines(oldText, newText);
+        assertEquals(0, changed.size());
+
+        oldText = "Hello\nWorld\nHow are you";
+        newText = "Hello\nWorld\nHow are you today";
+
+        changed = StringHelper.changedLines(oldText, newText);
+        assertEquals(1, changed.size());
+        assertEquals(2, changed.get(0).intValue());
+
+        oldText = "Hello\nWorld\nHow are you";
+        newText = "Hello\nCamel\nHow are you today";
+
+        changed = StringHelper.changedLines(oldText, newText);
+        assertEquals(2, changed.size());
+        assertEquals(1, changed.get(0).intValue());
+        assertEquals(2, changed.get(1).intValue());
+
+        oldText = "Hello\nWorld\nHow are you";
+        newText = "Hello\nWorld\nHow are you today\nand tomorrow";
+
+        changed = StringHelper.changedLines(oldText, newText);
+        assertEquals(2, changed.size());
+        assertEquals(2, changed.get(0).intValue());
+        assertEquals(3, changed.get(1).intValue());
     }
 
 }

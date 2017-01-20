@@ -37,8 +37,12 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServletComponent extends HttpCommonComponent implements RestConsumerFactory, RestApiConsumerFactory {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ServletComponent.class);
 
     private String servletName = "CamelServlet";
     private HttpRegistry httpRegistry;
@@ -64,6 +68,8 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
         Boolean async = getAndRemoveParameter(parameters, "async", Boolean.class);
+        Boolean attachmentMultipartBinding = getAndRemoveParameter(parameters, "attachmentMultipartBinding", Boolean.class);
+        Boolean disableStreamCache = getAndRemoveParameter(parameters, "disableStreamCache", Boolean.class);
 
         if (lenientContextPath()) {
             // the uri must have a leading slash for the context-path matching to work with servlet, and it can be something people
@@ -116,6 +122,26 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         }
         if (httpMethodRestrict != null) {
             endpoint.setHttpMethodRestrict(httpMethodRestrict);
+        }
+        if (attachmentMultipartBinding != null) {
+            endpoint.setAttachmentMultipartBinding(attachmentMultipartBinding);
+        } else {
+            endpoint.setAttachmentMultipartBinding(isAttachmentMultipartBinding());
+        }
+        if (disableStreamCache != null) {
+            endpoint.setDisableStreamCache(disableStreamCache);
+        }
+
+        // turn off stream caching if in attachment mode
+        if (endpoint.isAttachmentMultipartBinding()) {
+            if (disableStreamCache == null) {
+                // disableStreamCache not explicit configured so we can automatic change it
+                LOG.info("Disabling stream caching as attachmentMultipartBinding is enabled");
+                endpoint.setDisableStreamCache(true);
+            } else if (!disableStreamCache) {
+                throw new IllegalArgumentException("The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together."
+                        + " Remove disableStreamCache to use AttachmentMultipartBinding");
+            }
         }
 
         setProperties(endpoint, parameters);
@@ -187,7 +213,10 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
     /**
      * Whether to automatic bind multipart/form-data as attachments on the Camel {@link Exchange}.
      * <p/>
-     * This is turn off by default as this may require servet specific configuration to enable this when using Servlet's.
+     * The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together.
+     * Remove disableStreamCache to use AttachmentMultipartBinding.
+     * <p/>
+     * This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.
      */
     public void setAttachmentMultipartBinding(boolean attachmentMultipartBinding) {
         this.attachmentMultipartBinding = attachmentMultipartBinding;

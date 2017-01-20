@@ -17,11 +17,15 @@
 package org.apache.camel.http.common;
 
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
+import org.apache.camel.spi.Metadata;
 
 public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent {
 
+    @Metadata(label = "advanced")
     protected HttpBinding httpBinding;
+    @Metadata(label = "advanced")
     protected HttpConfiguration httpConfiguration;
+    @Metadata(label = "advanced")
     protected boolean allowJavaSerializedObject;
 
     public HttpCommonComponent(Class<? extends HttpCommonEndpoint> endpointClass) {

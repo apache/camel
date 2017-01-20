@@ -27,12 +27,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Consumer test for events on Docker Platform
@@ -53,7 +52,7 @@ public class DockerEventsConsumerTest extends CamelTestSupport {
 
     public void setupMocks() {
         Mockito.when(dockerClient.eventsCmd()).thenReturn(eventsCmd);
-        Mockito.when(eventsCmd.withSince(Mockito.anyString())).thenReturn(eventsCmd);
+        Mockito.when(eventsCmd.withSince(Matchers.anyString())).thenReturn(eventsCmd);
     }
 
     @Test

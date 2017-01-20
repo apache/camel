@@ -22,9 +22,8 @@
 
   <!-- START SNIPPET: e1 -->
   <!-- bean which creates/destroys the database table for this example -->
-  <bean id="initDatabase" class="org.apache.camel.example.mybatis.DatabaseBean"
-        init-method="create" destroy-method="destroy">
-    <property name="camelContext" ref="myBatisAndCamel"/>
+  <bean id="database-initializer" class="org.apache.camel.example.mybatis.DatabaseInitializationBean" init-method="create" destroy-method="drop">
+    <property name="url" value="jdbc:derby:memory:mybatis" />
   </bean>
   <!-- END SNIPPET: e1 -->
 
@@ -33,7 +32,7 @@
   <bean id="orderService" class="org.apache.camel.example.mybatis.OrderService"/>
 
   <!-- here is Camel configured with a number of routes -->
-  <camelContext id="myBatisAndCamel" xmlns="http://camel.apache.org/schema/blueprint">
+  <camelContext id="myBatisAndCamel" xmlns="http://camel.apache.org/schema/blueprint" depends-on="database-initializer">
 
     <!-- route that generate new orders and insert them in the database -->
     <route id="generateOrder-route">

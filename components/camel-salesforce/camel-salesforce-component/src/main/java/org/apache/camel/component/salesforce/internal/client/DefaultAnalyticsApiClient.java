@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.TypeReferences;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.AsyncReportResults;
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.RecentReport;
@@ -67,15 +68,11 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
 
         doHttpRequest(request, new ClientResponseCallback() {
             @Override
-            @SuppressWarnings("unchecked")
             public void onResponse(InputStream response, SalesforceException ex) {
                 List<RecentReport> recentReports = null;
                 if (response != null) {
                     try {
-                        recentReports = unmarshalResponse(response, request,
-                                new TypeReference<List<RecentReport>>() {
-                                }
-                        );
+                        recentReports = unmarshalResponse(response, request, TypeReferences.RECENT_REPORT_LIST_TYPE);
                     } catch (SalesforceException e) {
                         ex = e;
                     }
@@ -180,15 +177,11 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
 
         doHttpRequest(request, new ClientResponseCallback() {
             @Override
-            @SuppressWarnings("unchecked")
             public void onResponse(InputStream response, SalesforceException ex) {
                 List<ReportInstance> reportInstances = null;
                 if (response != null) {
                     try {
-                        reportInstances = unmarshalResponse(response, request,
-                                new TypeReference<List<ReportInstance>>() {
-                                }
-                        );
+                        reportInstances = unmarshalResponse(response, request, TypeReferences.REPORT_INSTANCE_LIST_TYPE);
                     } catch (SalesforceException e) {
                         ex = e;
                     }
@@ -261,9 +254,7 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
         try {
             if (responseContent != null) {
                 // unmarshal RestError
-                final List<RestError> errors = objectMapper.readValue(responseContent,
-                        new TypeReference<List<RestError>>() {
-                        });
+                final List<RestError> errors = objectMapper.readValue(responseContent, TypeReferences.REST_ERROR_LIST_TYPE);
                 return new SalesforceException(errors, statusCode);
             }
         } catch (UnsupportedEncodingException e) {

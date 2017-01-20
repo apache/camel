@@ -18,8 +18,6 @@ package org.apache.camel.component.jetty;
 
 import java.util.concurrent.Executor;
 
-import javax.net.ssl.SSLContext;
-
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.HttpClientTransport;

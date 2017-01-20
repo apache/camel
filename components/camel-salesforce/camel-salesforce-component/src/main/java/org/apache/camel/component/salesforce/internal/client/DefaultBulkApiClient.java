@@ -259,7 +259,7 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
 
     @Override
     public void getRequest(String jobId, String batchId, final StreamResponseCallback callback) {
-        final Request get = getRequest(HttpMethod.GET, batchUrl(jobId, batchId));
+        final Request get = getRequest(HttpMethod.GET, batchRequestUrl(jobId, batchId, null));
 
         // make the call and parse the result
         doHttpRequest(get, new ClientResponseCallback() {
@@ -470,6 +470,14 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
             return batchUrl(jobId, batchId) + "/result/" + resultId;
         } else {
             return batchUrl(jobId, batchId) + "/result";
+        }
+    }
+
+    private String batchRequestUrl(String jobId, String batchId, String requestId) {
+        if (requestId != null) {
+            return batchUrl(jobId, batchId) + "/request/" + requestId;
+        } else {
+            return batchUrl(jobId, batchId) + "/request";
         }
     }
 }

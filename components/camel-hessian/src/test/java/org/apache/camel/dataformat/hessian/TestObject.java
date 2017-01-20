@@ -96,7 +96,7 @@ class TestObject implements Serializable {
         result = 31 * result + intNumber;
         temp = Double.doubleToLongBits(floatNumber);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + (int) character;
+        result = 31 * result + character;
         result = 31 * result + (text != null ? text.hashCode() : 0);
         return result;
     }

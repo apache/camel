@@ -42,7 +42,6 @@ import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.SubUnitOfWorkCallback;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.EventHelper;
@@ -296,7 +295,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             formatter.setShowHeaders(true);
             formatter.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
             try {
-                Integer maxChars = CamelContextHelper.parseInteger(camelContext, camelContext.getProperty(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
+                Integer maxChars = CamelContextHelper.parseInteger(camelContext, camelContext.getGlobalOption(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
                 if (maxChars != null) {
                     formatter.setMaxChars(maxChars);
                 }

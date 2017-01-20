@@ -68,9 +68,30 @@
     <profiles>
 
       <profile>
-        <id>salesforce-test</id>
+        <id>integration</id>
         <build>
           <plugins>
+            <plugin>
+              <artifactId>maven-enforcer-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>test-salesforce-login-properties-exists</id>
+                  <goals>
+                    <goal>enforce</goal>
+                  </goals>
+                  <configuration>
+                    <rules>
+                      <requireFilesExist>
+                        <files>
+                         <file>../test-salesforce-login.properties</file>
+                        </files>
+                      </requireFilesExist>
+                    </rules>
+                    <fail>true</fail>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
             <plugin>
               <artifactId>maven-surefire-plugin</artifactId>
               <configuration>

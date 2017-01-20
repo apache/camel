@@ -1,6 +1,4 @@
-[[Jackson-Jackson]]
-Jackson
-~~~~~~~
+## JSon Jackson DataFormat
 
 *Available as of Camel 2.18*
 
@@ -14,14 +12,12 @@ from("activemq:My.Queue").
   to("mqseries:Another.Queue");
 -------------------------------
 
-[[Jackson-Options]]
-Jackson Options
-^^^^^^^^^^^^^^^
+### Jackson Options
 
 
 
 // dataformat options: START
-The JSon Jackson dataformat supports 15 options which are listed below.
+The JSon Jackson dataformat supports 17 options which are listed below.
 
 
 
@@ -44,15 +40,15 @@ The JSon Jackson dataformat supports 15 options which are listed below.
 | enableFeatures |  | String | Set of features to enable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature com.fasterxml.jackson.databind.DeserializationFeature or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma
 | disableFeatures |  | String | Set of features to disable on the Jackson com.fasterxml.jackson.databind.ObjectMapper. The features should be a name that matches a enum from com.fasterxml.jackson.databind.SerializationFeature com.fasterxml.jackson.databind.DeserializationFeature or com.fasterxml.jackson.databind.MapperFeature Multiple features can be separated by comma
 | permissions |  | String | Adds permissions that controls which Java packages and classes XStream is allowed to use during unmarshal from xml/json to Java beans. A permission must be configured either here or globally using a JVM system property. The permission can be specified in a syntax where a plus sign is allow and minus sign is deny. Wildcards is supported by using . as prefix. For example to allow com.foo and all subpackages then specfy com.foo.. Multiple permissions can be configured separated by comma such as com.foo.-com.foo.bar.MySecretBean. The following default permission is always included: -java.lang.java.util. unless its overridden by specifying a JVM system property with they key org.apache.camel.xstream.permissions.
+| allowUnmarshallType | false | Boolean | If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling. This should only be enabled when desired to be used.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
 {% endraw %}
 // dataformat options: END
 
 
 
-[[Jackson-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use Jackson in your camel routes you need to add the dependency
 on *camel-jackson* which implements this data format.

@@ -143,11 +143,14 @@ public class SpringAnnotationProcessor {
                 buffer.append(",");
             }
             buffer.append("\n    ");
+
             // as its json we need to sanitize the docs
             String doc = entry.getDocumentation();
             doc = sanitizeDescription(doc, false);
+
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getKind(), entry.isRequired(), entry.getType(), entry.getDefaultValue(), doc,
-                    entry.isDeprecated(), false, null, null, entry.isEnumType(), entry.getEnums(), entry.isOneOf(), entry.getOneOfTypes(), null, null, false));
+                    entry.isDeprecated(), false, null, null, entry.isEnumType(), entry.getEnums(), entry.isOneOf(), entry.getOneOfTypes(), entry.isAsPredicate(),
+                null, null, false));
         }
         buffer.append("\n  }");
 
@@ -294,7 +297,7 @@ public class SpringAnnotationProcessor {
             }
         }
 
-        EipOption ep = new EipOption(name, "attribute", fieldTypeName, required, defaultValue, docComment, deprecated, isEnum, enums, false, null);
+        EipOption ep = new EipOption(name, "attribute", fieldTypeName, required, defaultValue, docComment, deprecated, isEnum, enums, false, null, false);
         eipOptions.add(ep);
 
         return false;
@@ -312,7 +315,7 @@ public class SpringAnnotationProcessor {
         Set<String> oneOfTypes = new TreeSet<String>();
         oneOfTypes.add("route");
 
-        EipOption ep = new EipOption("route", "element", fieldTypeName, false, "", "Contains the Camel routes", false, false, null, true, oneOfTypes);
+        EipOption ep = new EipOption("route", "element", fieldTypeName, false, "", "Contains the Camel routes", false, false, null, true, oneOfTypes, false);
         eipOptions.add(ep);
     }
 
@@ -328,7 +331,7 @@ public class SpringAnnotationProcessor {
         Set<String> oneOfTypes = new TreeSet<String>();
         oneOfTypes.add("rest");
 
-        EipOption ep = new EipOption("rest", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl", false, false, null, true, oneOfTypes);
+        EipOption ep = new EipOption("rest", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl", false, false, null, true, oneOfTypes, false);
         eipOptions.add(ep);
     }
 
@@ -406,8 +409,9 @@ public class SpringAnnotationProcessor {
             boolean oneOf = !oneOfTypes.isEmpty();
 
             boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
+            boolean asPredicate = false;
 
-            EipOption ep = new EipOption(name, kind, fieldTypeName, required, defaultValue, docComment, deprecated, isEnum, enums, oneOf, oneOfTypes);
+            EipOption ep = new EipOption(name, kind, fieldTypeName, required, defaultValue, docComment, deprecated, isEnum, enums, oneOf, oneOfTypes, asPredicate);
             eipOptions.add(ep);
         }
     }
@@ -442,8 +446,7 @@ public class SpringAnnotationProcessor {
                 String child = element.name();
                 oneOfTypes.add(child);
             }
-
-            EipOption ep = new EipOption(name, kind, fieldTypeName, required, defaultValue, docComment, false, false, null, true, oneOfTypes);
+            EipOption ep = new EipOption(name, kind, fieldTypeName, required, defaultValue, docComment, false, false, null, true, oneOfTypes, false);
             eipOptions.add(ep);
         }
     }
@@ -562,9 +565,10 @@ public class SpringAnnotationProcessor {
         private Set<String> enums;
         private boolean oneOf;
         private Set<String> oneOfTypes;
+        private boolean asPredicate;
 
         private EipOption(String name, String kind, String type, boolean required, String defaultValue, String documentation, boolean deprecated,
-                          boolean enumType, Set<String> enums, boolean oneOf, Set<String> oneOfTypes) {
+                          boolean enumType, Set<String> enums, boolean oneOf, Set<String> oneOfTypes, boolean asPredicate) {
             this.name = name;
             this.kind = kind;
             this.type = type;
@@ -576,6 +580,7 @@ public class SpringAnnotationProcessor {
             this.enums = enums;
             this.oneOf = oneOf;
             this.oneOfTypes = oneOfTypes;
+            this.asPredicate = asPredicate;
         }
 
         public String getName() {
@@ -620,6 +625,10 @@ public class SpringAnnotationProcessor {
 
         public Set<String> getOneOfTypes() {
             return oneOfTypes;
+        }
+
+        public boolean isAsPredicate() {
+            return asPredicate;
         }
 
         @Override

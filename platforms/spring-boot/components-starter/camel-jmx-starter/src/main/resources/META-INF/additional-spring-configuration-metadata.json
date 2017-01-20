@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.jmx.enabled",
+      "description": "Enable jmx component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

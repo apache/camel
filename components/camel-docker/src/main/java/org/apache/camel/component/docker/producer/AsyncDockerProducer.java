@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.command.AttachContainerCmd;
 import com.github.dockerjava.api.command.BuildImageCmd;
 import com.github.dockerjava.api.command.ExecStartCmd;

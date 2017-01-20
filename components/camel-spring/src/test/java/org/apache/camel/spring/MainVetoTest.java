@@ -17,10 +17,6 @@
 package org.apache.camel.spring;
 
 import junit.framework.TestCase;
-import org.apache.camel.CamelContext;
-import org.apache.camel.VetoCamelContextStartException;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.support.LifecycleStrategySupport;
 import org.junit.Test;
 
 /**

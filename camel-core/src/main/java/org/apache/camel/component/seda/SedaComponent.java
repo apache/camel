@@ -36,10 +36,12 @@ import org.slf4j.LoggerFactory;
 public class SedaComponent extends UriEndpointComponent {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final int maxConcurrentConsumers = 500;
+    @Metadata(label = "advanced")
     protected int queueSize;
-    @Metadata(defaultValue = "1")
+    @Metadata(label = "consumer", defaultValue = "1")
     protected int concurrentConsumers = 1;
     private final Map<String, QueueReference> queues = new HashMap<String, QueueReference>();
+    @Metadata(label = "advanced")
     private BlockingQueueFactory<Exchange> defaultQueueFactory = new LinkedBlockingQueueFactory<Exchange>();
 
     public SedaComponent() {

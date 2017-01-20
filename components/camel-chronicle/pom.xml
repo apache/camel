@@ -44,22 +44,10 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
-    <!-- need to override maven version as some releases are dody and refer to SNAPSHOT -->
-    <dependency>
-      <groupId>net.openhft</groupId>
-      <artifactId>chronicle-wire</artifactId>
-      <version>${chronicle-wire-version}</version>
-    </dependency>
     <dependency>
       <groupId>net.openhft</groupId>
       <artifactId>chronicle-engine</artifactId>
       <version>${chronicle-engine-version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>net.openhft</groupId>
-          <artifactId>chronicle-wire</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>

@@ -31,7 +31,6 @@ import static org.apache.camel.component.lumberjack.io.LumberjackConstants.TYPE_
 import static org.apache.camel.component.lumberjack.io.LumberjackConstants.VERSION_V2;
 import static org.junit.Assert.assertEquals;
 
-@SuppressWarnings("unchecked")
 public class LumberjackChannelInitializerTest {
     @Test
     public void shouldDecodeTwoWindowsWithCompressedMessages() throws Exception {

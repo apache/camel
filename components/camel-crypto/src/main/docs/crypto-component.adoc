@@ -1,6 +1,4 @@
-[[Crypto-Crypto]]
-Crypto
-~~~~~~
+## Crypto (JCE) Component
 
 *Available as of Camel 2.3* 
 *PGP Available as of Camel 2.9*
@@ -13,9 +11,7 @@ encryption to cyphertext and unmarshalling to mean decryption back to
 the original plaintext. This data format implements only symmetric
 (shared-key) encryption and decyption.
 
-[[Crypto-Options]]
-Options
-^^^^^^^
+### Options
 
 // component options: START
 The Crypto (JCE) component supports 1 options which are listed below.
@@ -23,10 +19,10 @@ The Crypto (JCE) component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| configuration | DigitalSignatureConfiguration | To use the shared DigitalSignatureConfiguration as configuration
+| Name | Group | Default | Java Type | Description
+| configuration | advanced |  | DigitalSignatureConfiguration | To use the shared DigitalSignatureConfiguration as configuration
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -63,9 +59,7 @@ The Crypto (JCE) component supports 21 endpoint options which are listed below:
 {% endraw %}
 // endpoint options: END
 
-[[Crypto-BasicUsage]]
-Basic Usage
-^^^^^^^^^^^
+### Basic Usage
 
 At its most basic all that is required to encrypt/decrypt an exchange is
 a shared secret key. If one or more instances of the Crypto data format
@@ -92,9 +86,7 @@ In Spring the dataformat is configured first and then used in routes
 </camelContext>
 -----------------------------------------------------------------------
 
-[[Crypto-SpecifyingtheEncryptionAlgorithm]]
-Specifying the Encryption Algorithm
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Specifying the Encryption Algorithm
 
 Changing the algorithm is a matter of supplying the JCE algorithm name.
 If you change the algorithm you will need to use a compatible key.
@@ -103,9 +95,7 @@ A list of the available algorithms in Java 7 is available via the
 http://docs.oracle.com/javase/7/docs/technotes/guides/security/StandardNames.html[Java
 Cryptography Architecture Standard Algorithm Name Documentation].
 
-[[Crypto-SpecifyinganInitializationVector]]
-Specifying an Initialization Vector
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Specifying an Initialization Vector
 
 Some crypto algorithms, particularly block algorithms, require
 configuration with an initial block of data known as an Initialization
@@ -132,9 +122,7 @@ http://www.herongyang.com/Cryptography/[http://www.herongyang.com/Cryptography/]
 *
 http://en.wikipedia.org/wiki/Block_cipher_modes_of_operation[http://en.wikipedia.org/wiki/Block_cipher_modes_of_operation]
 
-[[Crypto-HashedMessageAuthenticationCodes(HMAC)]]
-Hashed Message Authentication Codes (HMAC)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Hashed Message Authentication Codes (HMAC)
 
 To avoid attacks against the encrypted data while it is in transit the
 CryptoDataFormat can also calculate a Message Authentication Code for
@@ -157,9 +145,7 @@ security providers
 
 or with spring.
 
-[[Crypto-SupplyingKeysDynamically]]
-Supplying Keys Dynamically
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Supplying Keys Dynamically
 
 When using a Recipient list or similar EIP the recipient of an exchange
 can vary dynamically. Using the same key across all recipients may
@@ -173,9 +159,7 @@ allow for keys to be supplied dynamically via the message headers below
 
 or with spring.
 
-[[Crypto-PGPMessage]]
-PGP Message
-^^^^^^^^^^^
+### PGP Message
 
 The PGP Data Formater can create and decrypt/verify PGP Messages of the
 following PGP packet structure (entries in brackets are optional and
@@ -191,9 +175,7 @@ was mandatory.
 
  
 
-[[Crypto-PGPDataFormatOptions]]
-PGPDataFormat Options
-^^^^^^^^^^^^^^^^^^^^^
+### PGPDataFormat Options
 [width="70%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
 |Name |Type |Default |Description
@@ -322,9 +304,7 @@ then no Compressed Data packet is added and the compressionAlgorithm
 value is ignored. Only used for marshaling.
 |=======================================================================
 
-[[Crypto-PGPDataFormatMessageHeaders]]
-PGPDataFormat Message Headers
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### PGPDataFormat Message Headers
 
 You can override the PGPDataFormat options by applying below headers
 into message dynamically.
@@ -379,9 +359,7 @@ symmectric key, set by PGPDataFormat during encryptiion process
 signatures, set by PGPDataFormat during signing process
 |=======================================================================
 
-[[Crypto-EncryptingwithPGPDataFormat]]
-Encrypting with PGPDataFormat
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Encrypting with PGPDataFormat
 
 The following sample uses the popular PGP format for
 encrypting/decrypting files using the
@@ -393,9 +371,7 @@ encryption, but you can obviously use different keys:
 
 Or using Spring:
 
-[[Crypto-Toworkwiththepreviousexampleyouneedthefollowing]]
-To work with the previous example you need the following
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### To work with the previous example you need the following
 
 * A public keyring file which contains the public keys used to encrypt
 the data
@@ -403,9 +379,7 @@ the data
 data
 * The keyring password
 
-[[Crypto-Managingyourkeyring]]
-Managing your keyring
-+++++++++++++++++++++
+#### Managing your keyring
 
 To manage the keyring, I use the command line tools, I find this to be
 the simplest approach in managing the keys. There are also Java
@@ -413,27 +387,25 @@ libraries available from
 http://www.bouncycastle.org/java.html[http://www.bouncycastle.org/java.html]
 if you would prefer to do it that way.
 
-1.  Install the command line utilities on linux
+Install the command line utilities on linux
 
 [source,java]
 ---------------------
 apt-get install gnupg
 ---------------------
-2.  Create your keyring, entering a secure password
+Create your keyring, entering a secure password
 
 [source,java]
 -------------
 gpg --gen-key
 -------------
-3.  If you need to import someone elses public key so that you can
-encrypt a file for them.
+If you need to import someone elses public key so that you can encrypt a file for them.
 
 [source,java]
 --------------------------
 gpg --import <filename.key
 --------------------------
-4.  The following files should now exist and can be used to run the
-example
+The following files should now exist and can be used to run the example
 
 [source,java]
 -----------------------------------------------
@@ -442,8 +414,7 @@ ls -l ~/.gnupg/pubring.gpg ~/.gnupg/secring.gpg
 
 [[Crypto-PGPDecrypting/VerifyingofMessagesEncrypted/SignedbyDifferentPrivate/PublicKeys]]
 PGP Decrypting/Verifying of Messages Encrypted/Signed by Different
-Private/Public Keys
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Private/Public Keys
 
 Since *Camel 2.12.2*.
 
@@ -475,22 +446,21 @@ from("direct:start")
         ...            
 ------------------------------------------------------------------------------------------------------------------------------------------
 
-* The functionality is especially useful to support the key exchange. If
+The functionality is especially useful to support the key exchange. If
 you want to exchange the private key for decrypting you can accept for a
 period of time messages which are either encrypted with the old or new
 corresponding public key. Or if the sender wants to exchange his signer
 private key, you can accept for a period of time, the old or new signer
 key.
-* Technical background: The PGP encrypted data contains a Key ID of the
+
+Technical background: The PGP encrypted data contains a Key ID of the
 public key which was used to encrypt the data. This Key ID can be used
 to locate the private key in the secret keyring to decrypt the data. The
 same mechanism is also used to locate the public key for verifying a
 signature. Therefore you no longer must specify User IDs for the
 unmarshaling.
 
-[[Crypto-RestrictingtheSignerIdentitiesduringPGPSignatureVerification]]
-Restricting the Signer Identities during PGP Signature Verification
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Restricting the Signer Identities during PGP Signature Verification
 
 Since *Camel 2.12.3.*
 
@@ -527,9 +497,7 @@ successful as soon as one signature can be verified.
 then do not specify the signature key User IDs. In this case all public
 keys in the public keyring are taken into account.
 
-[[Crypto-SeveralSignaturesinOnePGPDataFormat]]
-Several Signatures in One PGP Data Format
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Several Signatures in One PGP Data Format
 
 Since *Camel 2.12.3.*
 
@@ -559,9 +527,7 @@ from("direct:start")
         ...      
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[Crypto-SupportofSub-KeysandKeyFlagsinPGPDataFormatMarshaler]]
-Support of Sub-Keys and Key Flags in PGP Data Format Marshaler
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Support of Sub-Keys and Key Flags in PGP Data Format Marshaler
 
 Since *Camel 2.12.3. +
 *An https://tools.ietf.org/html/rfc4880#section-12.1[OpenPGP V4 key] can
@@ -576,9 +542,7 @@ these Key Flags of the primary key and sub-keys in order to determine
 the right key for signing and encryption. This is necessary because the
 primary key and its sub-keys have the same User IDs.
 
-[[Crypto-SupportofCustomKeyAccessors]]
-Support of Custom Key Accessors
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Support of Custom Key Accessors
 
 Since *Camel 2.13.0. +
 *You can implement custom key accessors for encryption/signing. The
@@ -602,9 +566,7 @@ PGPKeyAccessDataFormat has the same options as PGPDataFormat except
 password, keyFileName, encryptionKeyRing, signaturePassword,
 signatureKeyFileName, and signatureKeyRing.
 
-[[Crypto-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use the link:crypto.html[Crypto] dataformat in your camel routes you
 need to add the following dependency to your pom.
@@ -619,11 +581,8 @@ need to add the following dependency to your pom.
 </dependency>
 ----------------------------------------------------------
 
-[[Crypto-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:data-format.html[Data Format]
 * link:crypto-digital-signatures.html[Crypto (Digital Signatures)]
 * http://www.bouncycastle.org/java.html[http://www.bouncycastle.org/java.html]
-

@@ -1,6 +1,4 @@
-[[Mustache-Mustache]]
-Mustache
-~~~~~~~~
+## Mustache Component
 
 *Available as of Camel 2.12*
 
@@ -21,9 +19,7 @@ for this component:
 </dependency>
 ---------------------------------------------------------------------------------
 
-[[Mustache-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -------------------------------
@@ -37,9 +33,7 @@ file://folder/myfile.mustache[file://folder/myfile.mustache]).
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Mustache-Options]]
-Options
-^^^^^^^
+### Options
 
 
 {% raw %}
@@ -51,10 +45,10 @@ The Mustache component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| mustacheFactory | MustacheFactory | To use a custom MustacheFactory
+| Name | Group | Default | Java Type | Description
+| mustacheFactory | advanced |  | MustacheFactory | To use a custom MustacheFactory
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -86,9 +80,7 @@ The Mustache component supports 6 endpoint options which are listed below:
 {% endraw %}
 
 
-[[Mustache-MustacheContext]]
-Mustache Context
-^^^^^^^^^^^^^^^^
+### Mustache Context
 
 Camel will provide exchange information in the Mustache context (just a
 `Map`). The `Exchange` is transferred as:
@@ -112,9 +104,7 @@ Camel will provide exchange information in the Mustache context (just a
 |`response` |The Out message (only for InOut message exchange pattern).
 |=======================================================================
 
-[[Mustache-Dynamictemplates]]
-Dynamic templates
-^^^^^^^^^^^^^^^^^
+### Dynamic templates
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
@@ -131,9 +121,7 @@ configured. |
 |MustacheConstants.MUSTACHE_TEMPLATE |String |The template to use instead of the endpoint configured. |
 |=======================================================================
 
-[[Mustache-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 For example you could use something like:
 
@@ -166,9 +154,7 @@ setHeader(MustacheConstants.MUSTACHE_RESOURCE_URI).constant("path/to/my/template
 to("mustache:dummy");
 --------------------------------------------------------------------------------------------
 
-[[Mustache-TheEmailSample]]
-The Email Sample
-^^^^^^^^^^^^^^^^
+### The Email Sample
 
 In this sample we want to use Mustache templating for an order
 confirmation email. The email template is laid out in Mustache as:
@@ -183,12 +169,9 @@ Regards Camel Riders Bookstore
 {{body}}
 -------------------------------------------------
 
-[[Mustache-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

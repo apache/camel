@@ -37,6 +37,7 @@ public enum OperationName {
     QUERY_ALL("queryAll"),
     SEARCH("search"),
     APEX_CALL("apexCall"),
+    RECENT("recent"),
 
     // bulk API
     CREATE_JOB("createJob"),
@@ -58,7 +59,18 @@ public enum OperationName {
     EXECUTE_SYNCREPORT("executeSyncReport"),
     EXECUTE_ASYNCREPORT("executeAsyncReport"),
     GET_REPORT_INSTANCES("getReportInstances"),
-    GET_REPORT_RESULTS("getReportResults");
+    GET_REPORT_RESULTS("getReportResults"),
+
+    // limits API
+    LIMITS("limits"),
+
+    // Approval Processes and Process Rules API
+    APPROVAL("approval"),
+    APPROVALS("approvals"),
+
+    // Composite API
+    COMPOSITE_TREE("composite-tree"),
+    COMPOSITE_BATCH("composite-batch");
 
     private final String value;
 

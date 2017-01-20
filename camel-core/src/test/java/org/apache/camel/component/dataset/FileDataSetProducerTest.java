@@ -16,19 +16,29 @@
  */
 package org.apache.camel.component.dataset;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
 
 /**
  * @version 
  */
 public class FileDataSetProducerTest extends ContextTestSupport {
+
+    @Rule
+    public TemporaryFolder tempFolder = new TemporaryFolder();
     protected FileDataSet dataSet;
 
-    final String testDataFileName = "src/test/data/file-dataset-test.txt";
     final String testPayload = String.format("Line 1%nLine 2%nLine 3%nLine 4%nLine 5%nLine 6%nLine 7%nLine 8%nLine 9%nLine 10%n");
 
     final String sourceUri = "direct://source";
@@ -56,9 +66,17 @@ public class FileDataSetProducerTest extends ContextTestSupport {
 
     @Override
     public void setUp() throws Exception {
-        dataSet = new FileDataSet(testDataFileName);
+        File fileDataset = createFileDatasetWithSystemEndOfLine();
+        dataSet = new FileDataSet(fileDataset);
         assertEquals("Unexpected DataSet size", 1, dataSet.getSize());
         super.setUp();
+    }
+
+    private File createFileDatasetWithSystemEndOfLine() throws IOException {
+        tempFolder.create();
+        File fileDataset = tempFolder.newFile("file-dataset-test.txt");
+        Files.copy(new ByteArrayInputStream(testPayload.getBytes()), fileDataset.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        return fileDataset;
     }
 
     @Override

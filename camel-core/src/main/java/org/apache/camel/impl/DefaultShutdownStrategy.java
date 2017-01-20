@@ -41,7 +41,6 @@ import org.apache.camel.Service;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.Suspendable;
-import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.ShutdownAware;
@@ -181,7 +180,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
         // at first sort according to route startup order
         List<RouteStartupOrder> routesOrdered = new ArrayList<RouteStartupOrder>(routes);
-        Collections.sort(routesOrdered, new Comparator<RouteStartupOrder>() {
+        routesOrdered.sort(new Comparator<RouteStartupOrder>() {
             public int compare(RouteStartupOrder o1, RouteStartupOrder o2) {
                 return o1.getStartupOrder() - o2.getStartupOrder();
             }

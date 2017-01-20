@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.weather.geolocation;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.component.weather.WeatherComponent;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;

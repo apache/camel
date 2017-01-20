@@ -51,7 +51,7 @@ public abstract class AbstractServiceNowProcessor implements Processor {
         this.endpoint = endpoint;
         this.config = endpoint.getConfiguration();
         this.mapper = ObjectHelper.notNull(config.getMapper(), "mapper");
-        this.client = new ServiceNowClient(config);
+        this.client = new ServiceNowClient(endpoint.getCamelContext(), config);
         this.dispatchers = new ArrayList<>();
     }
 
@@ -148,7 +148,7 @@ public abstract class AbstractServiceNowProcessor implements Processor {
 
                 if (root != null) {
                     Iterator<Map.Entry<String, JsonNode>> fields = root.fields();
-                    while(fields.hasNext()) {
+                    while (fields.hasNext()) {
                         final Map.Entry<String, JsonNode> entry = fields.next();
                         final String key = entry.getKey();
                         final JsonNode node = entry.getValue();

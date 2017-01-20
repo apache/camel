@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.jbpm.enabled",
+      "description": "Enable jbpm component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

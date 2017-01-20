@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.context.enabled",
+      "description": "Enable context component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -367,6 +367,10 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         initialized.set(false);
     }
 
+    public Map<String, String> getNamespaces() {
+        return namespacePrefixes;
+    }
+
     public XQueryExpression getExpression() throws IOException, XPathException {
         return expression;
     }
@@ -635,10 +639,13 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     protected void addParameters(DynamicQueryContext dynamicQueryContext, Map<String, Object> map, String parameterPrefix) {
         Set<Map.Entry<String, Object>> propertyEntries = map.entrySet();
         for (Map.Entry<String, Object> entry : propertyEntries) {
-            dynamicQueryContext.setParameter(
-                StructuredQName.fromClarkName(parameterPrefix + entry.getKey()),
-                new ObjectValue(entry.getValue())
-            );
+            // skip headers with null values
+            if (entry.getValue() != null) {
+                dynamicQueryContext.setParameter(
+                        StructuredQName.fromClarkName(parameterPrefix + entry.getKey()),
+                        new ObjectValue(entry.getValue())
+                );
+            }
         }
     }
 
@@ -655,7 +662,6 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             LOG.debug("Initializing XQueryBuilder {}", this);
             if (configuration == null) {
                 configuration = new Configuration();
-                //configuration.setHostLanguage(Configuration.XQUERY);
                 configuration.setStripsWhiteSpace(isStripsAllWhiteSpace() ? Whitespace.ALL : Whitespace.IGNORABLE);
                 LOG.debug("Created new Configuration {}", configuration);
             } else {

@@ -28,6 +28,9 @@ import org.apache.camel.Exchange;
  * or remove some headers. And a more common use case is for instance to count some values from the body payload. That
  * could be to sum up a total amount etc.
  * <p/>
+ * Note that <tt>oldExchange</tt> may be <tt>null</tt> more than once when this strategy is throwing a {@link java.lang.RuntimeException}
+ * and <tt>parallelProcessing</tt> is used. You can work around this behavior using the <tt>stopOnAggregateException</tt> option.
+ * <p/>
  * It is possible that <tt>newExchange</tt> is <tt>null</tt> which could happen if there was no data possible
  * to acquire. Such as when using a {@link org.apache.camel.processor.PollEnricher} to poll from a JMS queue which
  * is empty and a timeout was set.

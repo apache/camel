@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.websocket.enabled",
+      "description": "Enable websocket component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

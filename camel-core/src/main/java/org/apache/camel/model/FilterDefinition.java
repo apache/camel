@@ -24,6 +24,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
@@ -32,7 +33,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
-@Metadata(label = "eip,routing")
+@Metadata(label = "eip,routing") @AsPredicate
 @XmlRootElement(name = "filter")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FilterDefinition extends ExpressionNode {

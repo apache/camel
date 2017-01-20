@@ -46,6 +46,8 @@ public class JsonPathExpression extends ExpressionDefinition {
     private Boolean suppressExceptions;
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean allowSimple;
+    @XmlAttribute @Metadata(defaultValue = "true")
+    private Boolean allowEasyPredicate;
 
     public JsonPathExpression() {
     }
@@ -91,6 +93,17 @@ public class JsonPathExpression extends ExpressionDefinition {
         this.allowSimple = allowSimple;
     }
 
+    public Boolean getAllowEasyPredicate() {
+        return allowEasyPredicate;
+    }
+
+    /**
+     * Whether to allow using the easy predicate parser to pre-parse predicates.
+     */
+    public void setAllowEasyPredicate(Boolean allowEasyPredicate) {
+        this.allowEasyPredicate = allowEasyPredicate;
+    }
+
     /**
      * Whether to suppress exceptions such as PathNotFoundException.
      */
@@ -125,6 +138,9 @@ public class JsonPathExpression extends ExpressionDefinition {
         if (allowSimple != null) {
             setProperty(expression, "allowSimple", allowSimple);
         }
+        if (allowEasyPredicate != null) {
+            setProperty(expression, "allowEasyPredicate", allowEasyPredicate);
+        }
         super.configureExpression(camelContext, expression);
     }
 
@@ -138,6 +154,9 @@ public class JsonPathExpression extends ExpressionDefinition {
         }
         if (allowSimple != null) {
             setProperty(predicate, "allowSimple", allowSimple);
+        }
+        if (allowEasyPredicate != null) {
+            setProperty(predicate, "allowEasyPredicate", allowEasyPredicate);
         }
         super.configurePredicate(camelContext, predicate);
     }

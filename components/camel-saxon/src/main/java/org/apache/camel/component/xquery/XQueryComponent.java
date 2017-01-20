@@ -22,6 +22,7 @@ import java.util.Map;
 import net.sf.saxon.lib.ModuleURIResolver;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ResourceHelper;
 
 /**
@@ -30,6 +31,7 @@ import org.apache.camel.util.ResourceHelper;
  */
 public class XQueryComponent extends UriEndpointComponent {
 
+    @Metadata(label = "advanced")
     private ModuleURIResolver moduleURIResolver = new XQueryModuleURIResolver(this);
 
     public XQueryComponent() {

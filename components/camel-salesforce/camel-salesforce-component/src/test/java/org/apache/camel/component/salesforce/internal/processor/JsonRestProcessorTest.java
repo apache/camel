@@ -19,17 +19,12 @@ package org.apache.camel.component.salesforce.internal.processor;
 import java.io.ByteArrayInputStream;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Calendar;
-import java.util.Date;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.salesforce.SalesforceComponent;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.api.dto.AbstractDTOBase;
-import org.apache.camel.component.salesforce.dto.generated.Document;
-import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;

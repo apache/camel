@@ -173,7 +173,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     @Test
     public void testSuppressGetCustomerExceptionWithCxfRsEndpoint() {
         Exchange exchange 
-            = template.send("cxfrs://http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/?httpClientAPI=true&throwExceptionOnFailure=false", new Processor() {
+            = template.send("cxfrs://http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/?httpClientAPI=true&throwExceptionOnFailure=false&synchronous=true", new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     exchange.setPattern(ExchangePattern.InOut);
                     Message message = exchange.getIn();
@@ -200,7 +200,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     @Test
     public void testGetCustomerExceptionWithCxfRsEndpoint() {
         Exchange exchange 
-            = template.send("cxfrs://http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/?httpClientAPI=true", new Processor() {
+            = template.send("cxfrs://http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/?httpClientAPI=true&synchronous=true", new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     exchange.setPattern(ExchangePattern.InOut);
                     Message message = exchange.getIn();
@@ -280,7 +280,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     @Test
     public void testAddCustomerUniqueResponseCodeWithHttpClientAPI() {
         Exchange exchange 
-            = template.send("cxfrs://http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "?httpClientAPI=true", new Processor() {
+            = template.send("cxfrs://http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "?httpClientAPI=true&synchronous=true", new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     exchange.setPattern(ExchangePattern.InOut);
                     Message inMessage = exchange.getIn();
@@ -340,7 +340,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     @Test
     public void testAddCustomerUniqueResponseCode() {
         Exchange exchange 
-            = template.send("cxfrs://http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "?httpClientAPI=true", new Processor() {
+            = template.send("cxfrs://http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "?httpClientAPI=true&synchronous=true", new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     exchange.setPattern(ExchangePattern.InOut);
                     Message inMessage = exchange.getIn();
@@ -368,7 +368,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     
     @Test
     public void testProducerWithQueryParameters() {
-        Exchange exchange = template.send("cxfrs://http://localhost:" + getPort2() + "/" + getClass().getSimpleName() + "/testQuery?httpClientAPI=true&q1=12&q2=13", new Processor() {
+        Exchange exchange = template.send("cxfrs://http://localhost:" + getPort2() + "/" + getClass().getSimpleName() + "/testQuery?httpClientAPI=true&q1=12&q2=13&synchronous=true", new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     exchange.setPattern(ExchangePattern.InOut);
                     Message inMessage = exchange.getIn();
@@ -388,7 +388,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     
     @Test
     public void testProducerWithQueryParametersHeader() {
-        Exchange exchange = template.send("cxfrs://http://localhost:" + getPort2() + "/" + getClass().getSimpleName() + "/testQuery?httpClientAPI=true&q1=12&q2=13", new Processor() {
+        Exchange exchange = template.send("cxfrs://http://localhost:" + getPort2() + "/" + getClass().getSimpleName() + "/testQuery?httpClientAPI=true&q1=12&q2=13&synchronous=true", new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     exchange.setPattern(ExchangePattern.InOut);
                     Message inMessage = exchange.getIn();
@@ -418,7 +418,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     @Test    
     public void testRestServerDirectlyGetCustomer() {
         // we cannot convert directly to Customer as we need camel-jaxb
-        String response = template.requestBodyAndHeader("cxfrs:http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/customerservice/customers/123",
+        String response = template.requestBodyAndHeader("cxfrs:http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/customerservice/customers/123?synchronous=true",
                 null, Exchange.HTTP_METHOD, "GET", String.class);
         
         assertNotNull("The response should not be null ", response);
@@ -430,7 +430,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         input.setName("Donald Duck");
 
         // we cannot convert directly to Customer as we need camel-jaxb
-        String response = template.requestBodyAndHeader("cxfrs:http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/customerservice/customers",
+        String response = template.requestBodyAndHeader("cxfrs:http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/customerservice/customers?synchronous=true",
                 input, Exchange.HTTP_METHOD, "POST", String.class);
 
         assertNotNull(response);
@@ -461,7 +461,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     public void testProducerWithFeature() {
         TestFeature feature = context().getRegistry().lookupByNameAndType("testFeature", TestFeature.class);
         
-        template.requestBodyAndHeader("cxfrs:http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/customerservice/customers/123?features=#myFeatures",
+        template.requestBodyAndHeader("cxfrs:http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/customerservice/customers/123?features=#myFeatures&synchronous=true",
                 null, Exchange.HTTP_METHOD, "GET", String.class);
 
         assertTrue("The feature should be initialized", feature.initialized);
@@ -469,7 +469,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
 
     @Test
     public void testProducer422Response() {
-        Exchange exchange = template.send("cxfrs://http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/?httpClientAPI=true", new Processor() {
+        Exchange exchange = template.send("cxfrs://http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/?httpClientAPI=true&synchronous=true", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 Message message = exchange.getIn();

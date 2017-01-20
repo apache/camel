@@ -26,7 +26,6 @@ import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-
 public class DropboxProducerGetSingleTest extends DropboxTestSupport {
 
     public DropboxProducerGetSingleTest() throws Exception { }

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.mllp;
 
-import java.net.BindException;
-import java.net.ServerSocket;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
@@ -30,10 +28,13 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit.rule.mllp.MllpClientResource;
 import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceException;
+import org.apache.camel.test.junit.rule.mllp.MllpJUnitResourceTimeoutException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static org.apache.camel.component.mllp.MllpEndpoint.END_OF_BLOCK;
+import static org.apache.camel.component.mllp.MllpEndpoint.START_OF_BLOCK;
 import static org.apache.camel.test.mllp.Hl7MessageGenerator.generateMessage;
 
 public class MllpTcpServerConsumerTest extends CamelTestSupport {
@@ -42,6 +43,9 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock://result")
     MockEndpoint result;
+
+    @EndpointInject(uri = "mock://timeout-ex")
+    MockEndpoint timeout;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -67,9 +71,8 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
             public void configure() throws Exception {
                 String routeId = "mllp-test-receiver-route";
 
-                onCompletion()
-                        .toF("log:%s?level=INFO&showAll=true", routeId)
-                        .log(LoggingLevel.INFO, routeId, "Test route complete");
+                onException(MllpTimeoutException.class)
+                        .to(timeout);
 
                 fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d",
                         mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout)
@@ -84,6 +87,7 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
     @Test
     public void testReceiveSingleMessage() throws Exception {
         result.expectedMessageCount(1);
+        timeout.expectedMessageCount(0);
 
         mllpClient.connect();
 
@@ -95,6 +99,7 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
     @Test
     public void testReceiveSingleMessageWithDelayAfterConnection() throws Exception {
         result.expectedMinimumMessageCount(1);
+        timeout.expectedMessageCount(0);
 
         mllpClient.connect();
 
@@ -108,6 +113,7 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
     public void testReceiveMultipleMessages() throws Exception {
         int sendMessageCount = 5;
         result.expectedMinimumMessageCount(5);
+        timeout.expectedMessageCount(0);
 
         mllpClient.connect();
 
@@ -121,6 +127,7 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
     @Test
     public void testOpenMllpEnvelopeWithReset() throws Exception {
         result.expectedMessageCount(4);
+        timeout.expectedMessageCount(1);
         NotifyBuilder notify1 = new NotifyBuilder(context).whenDone(2).create();
         NotifyBuilder notify2 = new NotifyBuilder(context).whenDone(5).create();
 
@@ -167,5 +174,114 @@ public class MllpTcpServerConsumerTest extends CamelTestSupport {
         assertTrue("Should be acknowledgment for message 5", acknowledgement5.contains("MSA|AA|00005"));
     }
 
+    @Test
+    public void testMessageReadTimeout() throws Exception {
+        result.expectedMessageCount(0);
+        timeout.expectedMessageCount(1);
+
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+
+        mllpClient.setSendEndOfBlock(false);
+        mllpClient.setSendEndOfData(false);
+
+        mllpClient.sendFramedData(generateMessage());
+
+        assertTrue("One exchange should have completed", notify.matches(15, TimeUnit.SECONDS));
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testInvalidMessage() throws Exception {
+        result.expectedMessageCount(1);
+        timeout.expectedMessageCount(0);
+
+        mllpClient.sendFramedData("INVALID PAYLOAD");
+
+        assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void testNthInvalidMessage() throws Exception {
+        int messageCount = 10;
+
+        result.expectedMessageCount(messageCount);
+        timeout.expectedMessageCount(0);
+
+        for (int i = 0; i < messageCount; ++i) {
+            if (i == messageCount / 2) {
+                try {
+                    mllpClient.sendMessageAndWaitForAcknowledgement("INVALID PAYLOAD");
+                    fail("An acknowledgement should not be received for an invalid HL7 message");
+                } catch (MllpJUnitResourceTimeoutException timeoutEx) {
+                    // expected - eat this
+                }
+            } else {
+                mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage(i + 1));
+            }
+        }
+
+        assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void testMessageContainingEmbeddedStartOfBlock() throws Exception {
+        result.expectedMessageCount(1);
+        timeout.expectedMessageCount(0);
+
+        mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage().replaceFirst("EVN", "EVN" + START_OF_BLOCK));
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testNthMessageContainingEmbeddedStartOfBlock() throws Exception {
+        int messageCount = 10;
+
+        result.expectedMessageCount(messageCount);
+        timeout.expectedMessageCount(0);
+
+        for (int i = 0; i < messageCount; ++i) {
+            String message = (i == (messageCount / 2))
+                    ? generateMessage(i + 1).replaceFirst("EVN", "EVN" + START_OF_BLOCK)
+                    : generateMessage(i + 1);
+
+            log.debug("Sending message {}", MllpComponent.covertToPrintFriendlyString(message));
+
+            mllpClient.sendMessageAndWaitForAcknowledgement(message);
+        }
+
+        assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void testMessageContainingEmbeddedEndOfBlock() throws Exception {
+        result.expectedMessageCount(1);
+        timeout.expectedMessageCount(0);
+
+        mllpClient.sendMessageAndWaitForAcknowledgement(generateMessage().replaceFirst("EVN", "EVN" + END_OF_BLOCK));
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testInvalidMessageContainingEmbeddedEndOfBlock() throws Exception {
+        int messageCount = 10;
+
+        result.expectedMessageCount(messageCount);
+        timeout.expectedMessageCount(0);
+
+        for (int i = 0; i < messageCount; ++i) {
+            String message = (i == (messageCount / 2))
+                    ? generateMessage(i + 1).replaceFirst("EVN", "EVN" + END_OF_BLOCK)
+                    : generateMessage(i + 1);
+
+            log.debug("Sending message {}", MllpComponent.covertToPrintFriendlyString(message));
+
+            mllpClient.sendMessageAndWaitForAcknowledgement(message);
+        }
+
+        assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
+    }
 }
 

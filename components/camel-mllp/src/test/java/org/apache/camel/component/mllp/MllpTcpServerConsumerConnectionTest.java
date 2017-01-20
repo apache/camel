@@ -30,6 +30,9 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static org.apache.camel.component.mllp.MllpTcpServerConsumer.SOCKET_STARTUP_TEST_READ_TIMEOUT;
+import static org.apache.camel.component.mllp.MllpTcpServerConsumer.SOCKET_STARTUP_TEST_WAIT;
+
 public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
     static final int RECEIVE_TIMEOUT = 500;
 
@@ -83,11 +86,12 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
      * @throws Exception
      */
     @Test
-    public void testConnectWithoutData() throws Exception {
+    public void testConnectThenCloseWithoutData() throws Exception {
         int connectionCount = 10;
         long connectionMillis = 200;
 
         result.setExpectedCount(0);
+        result.setAssertPeriod(SOCKET_STARTUP_TEST_WAIT + SOCKET_STARTUP_TEST_READ_TIMEOUT);
 
         addTestRoute(-1);
 
@@ -96,6 +100,35 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
             Thread.sleep(connectionMillis);
             mllpClient.close();
         }
+
+        // Connect one more time and allow a client thread to start
+        mllpClient.connect();
+        Thread.sleep(SOCKET_STARTUP_TEST_WAIT + SOCKET_STARTUP_TEST_READ_TIMEOUT + 1000);
+        mllpClient.close();
+
+        assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
+    }
+
+    @Test
+    public void testConnectThenResetWithoutData() throws Exception {
+        int connectionCount = 10;
+        long connectionMillis = 200;
+
+        result.setExpectedCount(0);
+        result.setAssertPeriod(SOCKET_STARTUP_TEST_WAIT + SOCKET_STARTUP_TEST_READ_TIMEOUT);
+
+        addTestRoute(-1);
+
+        for (int i = 1; i <= connectionCount; ++i) {
+            mllpClient.connect();
+            Thread.sleep(connectionMillis);
+            mllpClient.reset();
+        }
+
+        // Connect one more time and allow a client thread to start
+        mllpClient.connect();
+        Thread.sleep(SOCKET_STARTUP_TEST_WAIT + SOCKET_STARTUP_TEST_READ_TIMEOUT + 1000);
+        mllpClient.reset();
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
     }

@@ -32,6 +32,7 @@ import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.EndpointCompleter;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,11 +42,15 @@ import org.slf4j.LoggerFactory;
  */
 public class VertxComponent extends UriEndpointComponent implements EndpointCompleter {
     private static final Logger LOG = LoggerFactory.getLogger(VertxComponent.class);
-    private VertxFactory vertxFactory;
+
     private volatile boolean createdVertx;
+
+    @Metadata(label = "advanced")
+    private VertxFactory vertxFactory;
     private Vertx vertx;
     private String host;
     private int port;
+    @Metadata(defaultValue = "60")
     private int timeout = 60;
     private VertxOptions vertxOptions;
 

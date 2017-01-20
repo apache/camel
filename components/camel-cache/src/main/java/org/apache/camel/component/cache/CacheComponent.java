@@ -19,18 +19,19 @@ package org.apache.camel.component.cache;
 import java.io.InputStream;
 import java.util.Map;
 
-import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.apache.camel.util.ServiceHelper;
 
 public class CacheComponent extends UriEndpointComponent {
     private CacheConfiguration configuration;
+    @Metadata(label = "advanced")
     private CacheManagerFactory cacheManagerFactory;
+    @Metadata(defaultValue = "classpath:ehcache.xml")
     private String configurationFile;
 
     public CacheComponent() {

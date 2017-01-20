@@ -17,7 +17,6 @@
 package org.apache.camel.component.bean;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -50,7 +49,7 @@ public class BeanConcurrentTest extends ContextTestSupport {
             String body = mock.getReceivedExchanges().get(i).getIn().getBody(String.class);
             list.add(body);
         }
-        Collections.sort(list);
+        list.sort(null);
 
         // and they should be unique and no lost messages
         assertEquals(1000, list.size());

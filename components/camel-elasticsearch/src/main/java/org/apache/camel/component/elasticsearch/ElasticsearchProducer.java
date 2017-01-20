@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
@@ -82,6 +83,8 @@ public class ElasticsearchProducer extends DefaultProducer {
             return ElasticsearchConstants.OPERATION_SEARCH;
         } else if (request instanceof MultiSearchRequest) {
             return ElasticsearchConstants.OPERATION_MULTISEARCH;
+        } else if (request instanceof DeleteIndexRequest) {
+            return ElasticsearchConstants.OPERATION_DELETE_INDEX;
         }
 
         String operationConfig = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_OPERATION, String.class);
@@ -166,6 +169,9 @@ public class ElasticsearchProducer extends DefaultProducer {
         } else if (ElasticsearchConstants.OPERATION_MULTISEARCH.equals(operation)) {
             MultiSearchRequest multiSearchRequest = message.getBody(MultiSearchRequest.class);
             message.setBody(client.multiSearch(multiSearchRequest));
+        } else if (ElasticsearchConstants.OPERATION_DELETE_INDEX.equals(operation)) {
+            DeleteIndexRequest deleteIndexRequest = message.getBody(DeleteIndexRequest.class);
+            message.setBody(client.admin().indices().delete(deleteIndexRequest).actionGet());
         } else {
             throw new IllegalArgumentException(ElasticsearchConstants.PARAM_OPERATION + " value '" + operation + "' is not supported");
         }

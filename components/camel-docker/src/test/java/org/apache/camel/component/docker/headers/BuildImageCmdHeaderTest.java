@@ -84,8 +84,8 @@ public class BuildImageCmdHeaderTest extends BaseDockerHeaderTest<BuildImageCmd>
         Mockito.when(dockerClient.buildImageCmd(Matchers.any(InputStream.class))).thenReturn(mockObject);
         Mockito.when(dockerClient.buildImageCmd(Matchers.any(File.class))).thenReturn(mockObject);
 
-        Mockito.when(mockObject.exec(Mockito.anyObject())).thenReturn(callback);
-        Mockito.when(callback.awaitImageId()).thenReturn(Mockito.anyString());
+        Mockito.when(mockObject.exec(Matchers.anyObject())).thenReturn(callback);
+        Mockito.when(callback.awaitImageId()).thenReturn(Matchers.anyString());
     }
 
     @Override

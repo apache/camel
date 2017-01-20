@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.http4.enabled",
+      "description": "Enable http4 component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

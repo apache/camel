@@ -1,10 +1,8 @@
-[[BlueprintTesting-BlueprintTesting]]
-Blueprint Testing
-~~~~~~~~~~~~~~~~~
+## Blueprint Testing
 
 *Available as of Camel 2.10*
 
-INFO:*camel-test-blueprint* does only support testing _one_ CamelContext. So
+camel-test-blueprint does only support testing _one_ CamelContext. So
 if you have two or more CamelContexts in your blueprint XML files, then
 only the CamelContext first found is used during testing.
 
@@ -43,9 +41,7 @@ pom:
 </dependency>
 -----------------------------------------------
 
-[[BlueprintTesting-Classpathscanning]]
-Classpath scanning
-^^^^^^^^^^^^^^^^^^
+### Classpath scanning
 
 By default PojoSR test container scans the test classpath for all the
 OSGi bundles available there. All the bundles with Blueprint descriptor
@@ -68,9 +64,7 @@ getBlueprintDescriptor method will not prevent the test container from
 loading a given descriptor. The `getBundleFilter` method is the proper
 way of filtering out bundles you don't want to start during the test.
 
-[[BlueprintTesting-SettingtimeoutwhengettingCamelContext]]
-Setting timeout when getting CamelContext
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Setting timeout when getting CamelContext
 
 *Available as of Camel 2.13.0/2.12.1/2.11.2*
 
@@ -83,9 +77,7 @@ property.
 * Locally for each test, by overriding _getCamelContextCreationTimeout_
 method.
 
-[[BlueprintTesting-Addingservicesonstartup]]
-Adding services on startup
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Adding services on startup
 
 *Available as of Camel 2.11.2/2.12.0*
 

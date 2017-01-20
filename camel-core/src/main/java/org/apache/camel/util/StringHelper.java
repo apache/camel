@@ -16,6 +16,9 @@
  */
 package org.apache.camel.util;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
@@ -78,14 +81,33 @@ public final class StringHelper {
      * @param s the string
      * @param maxLength the maximum length of the returned string
      * @return s if the length of s is less than maxLength or the first maxLength characters of s
+     * @deprecated use {@link #limitLength(String, int)}
      */
+    @Deprecated
     public static String limitLenght(String s, int maxLength) {
+        return limitLength(s, maxLength);
+    }
+
+    /**
+     * Limits the length of a string
+     *
+     * @param s the string
+     * @param maxLength the maximum length of the returned string
+     * @return s if the length of s is less than maxLength or the first maxLength characters of s
+     */
+    public static String limitLength(String s, int maxLength) {
         if (ObjectHelper.isEmpty(s)) {
             return s;
         }
         return s.length() <= maxLength ? s : s.substring(0, maxLength);
     }
 
+    /**
+     * Removes all quotes (single and double) from the string
+     *
+     * @param s  the string
+     * @return the string without quotes (single and double)
+     */
     public static String removeQuotes(String s) {
         if (ObjectHelper.isEmpty(s)) {
             return s;
@@ -96,6 +118,12 @@ public final class StringHelper {
         return s;
     }
 
+    /**
+     * Removes all leading and ending quotes (single and double) from the string
+     *
+     * @param s  the string
+     * @return the string without leading and ending quotes (single and double)
+     */
     public static String removeLeadingAndEndingQuotes(String s) {
         if (ObjectHelper.isEmpty(s)) {
             return s;
@@ -113,6 +141,12 @@ public final class StringHelper {
         return s;
     }
 
+    /**
+     * Whether the string starts and ends with either single or double quotes.
+     *
+     * @param s the string
+     * @return <tt>true</tt> if the string starts and ends with either single or double quotes.
+     */
     public static boolean isQuoted(String s) {
         if (ObjectHelper.isEmpty(s)) {
             return false;
@@ -308,6 +342,7 @@ public final class StringHelper {
         return value;
     }
 
+    // TODO: add javadoc
     public static String[] splitOnCharacter(String value, String needle, int count) {
         String rc[] = new String[count];
         rc[0] = value;
@@ -342,6 +377,12 @@ public final class StringHelper {
         return text;
     }
 
+    /**
+     * Capitalize the string (upper case first character)
+     *
+     * @param text  the string
+     * @return the string capitalized (upper case first character)
+     */
     public static String capitalize(String text) {
         if (text == null) {
             return null;
@@ -575,4 +616,36 @@ public final class StringHelper {
         }
         return sb.toString();
     }
+
+    /**
+     * Compares old and new text content and report back which lines are changed
+     *
+     * @param oldText  the old text
+     * @param newText  the new text
+     * @return a list of line numbers that are changed in the new text
+     */
+    public static List<Integer> changedLines(String oldText, String newText) {
+        if (oldText == null || oldText.equals(newText)) {
+            return Collections.emptyList();
+        }
+
+        List<Integer> changed = new ArrayList<>();
+
+        String[] oldLines = oldText.split("\n");
+        String[] newLines = newText.split("\n");
+
+        for (int i = 0; i < newLines.length; i++) {
+            String newLine = newLines[i];
+            String oldLine = i < oldLines.length ? oldLines[i] : null;
+            if (oldLine == null) {
+                changed.add(i);
+            } else if (!newLine.equals(oldLine)) {
+                changed.add(i);
+            }
+        }
+
+        return changed;
+    }
+
+
 }

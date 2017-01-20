@@ -23,8 +23,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.apache.camel.component.atmos.util.AtmosOperation.get;
-
 public class AtmosConsumerTest extends CamelTestSupport {
 
     @Override

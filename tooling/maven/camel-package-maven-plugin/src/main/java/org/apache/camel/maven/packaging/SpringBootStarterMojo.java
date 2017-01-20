@@ -268,7 +268,6 @@ public class SpringBootStarterMojo extends AbstractMojo {
 
     }
 
-    @SuppressWarnings("unchecked")
     private void fixAdditionalRepositories(Document pom) throws Exception {
 
         if (project.getFile() != null) {

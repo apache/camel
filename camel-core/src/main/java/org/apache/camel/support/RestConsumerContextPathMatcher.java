@@ -17,9 +17,11 @@
 package org.apache.camel.support;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 /**
  * A context path matcher when using rest-dsl that allows components to reuse the same matching logic.
@@ -30,11 +32,10 @@ import java.util.Locale;
  * The {@link ConsumerPath} is used for the components to provide the details to the matcher.
  */
 public final class RestConsumerContextPathMatcher {
+
     private RestConsumerContextPathMatcher() {
-        
     }
     
-
     /**
      * Consumer path details which must be implemented and provided by the components.
      */
@@ -55,6 +56,11 @@ public final class RestConsumerContextPathMatcher {
          */
         T getConsumer();
 
+        /**
+         * Whether the consumer match on uri prefix
+         */
+        boolean isMatchOnUriPrefix();
+
     }
 
     /**
@@ -72,6 +78,21 @@ public final class RestConsumerContextPathMatcher {
         }
         if (requestPath == null || consumerPath == null) {
             return false;
+        }
+
+        // remove starting/ending slashes
+        if (requestPath.startsWith("/")) {
+            requestPath = requestPath.substring(1);
+        }
+        if (requestPath.endsWith("/")) {
+            requestPath = requestPath.substring(0, requestPath.length() - 1);
+        }
+        // remove starting/ending slashes
+        if (consumerPath.startsWith("/")) {
+            consumerPath = consumerPath.substring(1);
+        }
+        if (consumerPath.endsWith("/")) {
+            consumerPath = consumerPath.substring(0, consumerPath.length() - 1);
         }
 
         String p1 = requestPath.toLowerCase(Locale.ENGLISH);
@@ -116,6 +137,16 @@ public final class RestConsumerContextPathMatcher {
                 answer = consumer;
                 break;
             }
+        }
+
+        // if there are no wildcards, then select the matching with the longest path
+        boolean noWildcards = candidates.stream().allMatch(p -> countWildcards(p.getConsumerPath()) == 0);
+        if (noWildcards) {
+            // grab first which is the longest that matched the request path
+            answer = candidates.stream()
+                .filter(c -> matchPath(requestPath, c.getConsumerPath(), c.isMatchOnUriPrefix()))
+                // sort by longest by inverting the sort by multiply with -1
+                .sorted(Comparator.comparingInt(o -> -1 * o.getConsumerPath().length())).findFirst().orElse(null);
         }
 
         // then match by wildcard path
@@ -183,6 +214,14 @@ public final class RestConsumerContextPathMatcher {
      * @return <tt>true</tt> if matched, <tt>false</tt> otherwise
      */
     private static boolean matchRestPath(String requestPath, String consumerPath, boolean wildcard) {
+        // deal with null parameters
+        if (requestPath == null && consumerPath == null) {
+            return true;
+        }
+        if (requestPath == null || consumerPath == null) {
+            return false;
+        }
+
         // remove starting/ending slashes
         if (requestPath.startsWith("/")) {
             requestPath = requestPath.substring(1);

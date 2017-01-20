@@ -16,12 +16,10 @@
  */
 package org.apache.camel.component.nagios;
 
-import com.googlecode.jsendnsca.core.NagiosPassiveCheckSender;
 import com.googlecode.jsendnsca.core.NonBlockingNagiosPassiveCheckSender;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.BeforeClass;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 /**

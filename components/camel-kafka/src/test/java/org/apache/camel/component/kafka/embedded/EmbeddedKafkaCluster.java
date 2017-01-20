@@ -30,7 +30,6 @@ import kafka.server.KafkaConfig;
 import kafka.server.KafkaServer;
 import kafka.utils.ZkUtils;
 import scala.Option;
-import scala.collection.Seq;
 import scala.collection.mutable.Buffer;
 
 public class EmbeddedKafkaCluster {
@@ -66,6 +65,10 @@ public class EmbeddedKafkaCluster {
             return server.zkUtils();
         }
         return null;
+    }
+
+    public void createTopic(String topic, int partitionCount) {
+        AdminUtils.createTopic(getZkUtils(), topic, partitionCount, 1, new Properties(), RackAwareMode.Enforced$.MODULE$);
     }
 
     public void createTopics(String... topics) {

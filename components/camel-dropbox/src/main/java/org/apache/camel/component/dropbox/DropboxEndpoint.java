@@ -92,7 +92,7 @@ public class DropboxEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         LOG.trace("Resolve consumer dropbox endpoint {" + configuration.getOperation().toString() + "}");
         LOG.trace("Resolve consumer dropbox attached client:" + configuration.getClient());
-        DropboxScheduledPollConsumer consumer = null;
+        DropboxScheduledPollConsumer consumer;
         if (this.configuration.getOperation() == DropboxOperation.search) {
             consumer = new DropboxScheduledPollSearchConsumer(this, processor, configuration);
             consumer.setDelay(POLL_CONSUMER_DELAY);

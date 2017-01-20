@@ -61,6 +61,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
     private final String delimiter;
     private boolean parallelProcessing;
     private boolean parallelAggregate;
+    private boolean stopOnAggregateException;
     private boolean stopOnException;
     private boolean ignoreInvalidEndpoints;
     private boolean streaming;
@@ -145,7 +146,8 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
 
         RecipientListProcessor rlp = new RecipientListProcessor(exchange.getContext(), producerCache, iter, getAggregationStrategy(),
                 isParallelProcessing(), getExecutorService(), isShutdownExecutorService(),
-                isStreaming(), isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork(), isParallelAggregate()) {
+                isStreaming(), isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork(), isParallelAggregate(),
+                isStopOnAggregateException()) {
             @Override
             protected synchronized ExecutorService createAggregateExecutorService(String name) {
                 // use a shared executor service to avoid creating new thread pools
@@ -248,6 +250,14 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor, IdA
 
     public void setParallelAggregate(boolean parallelAggregate) {
         this.parallelAggregate = parallelAggregate;
+    }
+
+    public boolean isStopOnAggregateException() {
+        return stopOnAggregateException;
+    }
+
+    public void setStopOnAggregateException(boolean stopOnAggregateException) {
+        this.stopOnAggregateException = stopOnAggregateException;
     }
 
     public boolean isStopOnException() {

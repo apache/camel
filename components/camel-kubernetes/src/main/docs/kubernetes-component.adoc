@@ -1,6 +1,4 @@
-[[Kubernetes-KubernetesComponent]]
-Kubernetes Component
-~~~~~~~~~~~~~~~~~~~~
+## Kubernetes Component
 
 *Available as of Camel 2.17*
 
@@ -20,9 +18,7 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Kubernetes-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------------------------
@@ -32,9 +28,7 @@ kubernetes:masterUrl[?options]
 You can append query options to the URI in the following
 format, `?option=value&option=value&...`
 
-[[Kubernetes-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -61,13 +55,13 @@ The Kubernetes component supports 28 endpoint options which are listed below:
 | dnsDomain | common |  | String | The dns domain used for ServiceCall EIP
 | kubernetesClient | common |  | DefaultKubernetesClient | Default KubernetesClient to use if provided
 | portName | common |  | String | The port name used for ServiceCall EIP
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | labelKey | consumer |  | String | The Consumer Label key when watching at some resources
 | labelValue | consumer |  | String | The Consumer Label value when watching at some resources
 | namespace | consumer |  | String | The namespace
 | poolSize | consumer | 1 | int | The Consumer pool size
 | resourceName | consumer |  | String | The Consumer Resource Name we would like to watch
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | operation | producer |  | String | Producer operation to do on Kubernetes
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
@@ -93,9 +87,7 @@ The Kubernetes component supports 28 endpoint options which are listed below:
 
 
 
-[[Kubernetes-Headers]]
-Headers
-^^^^^^^
+### Headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================

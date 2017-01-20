@@ -30,7 +30,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jetty.client.HttpClientTransport;
 import org.eclipse.jetty.server.AbstractConnector;
 import org.eclipse.jetty.server.ConnectionFactory;
-import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.ForwardedRequestCustomizer;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
@@ -48,32 +47,11 @@ public class JettyHttpComponent9 extends JettyHttpComponent {
         return new JettyHttpEndpoint9(this, endpointUri.toString(), httpUri);
     }
     
-    protected Connector getSslSocketConnector(Server server, JettyHttpEndpoint endpoint) {
-        Connector answer = null;
-        /*
-        if (sslSocketConnectors != null) {
-            SslContextFactory con = sslSocketConnectors.get(endpoint.getPort());
-            if (con != null) {
-                SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(con, null);
-                @SuppressWarnings("resource")
-                ServerConnector sc = new ServerConnector(server, sslConnectionFactory);
-                sc.setPort(endpoint.getPort());
-                sc.setHost(endpoint.getHttpUri().getHost());
-                answer = sc;
-            }
-        }
-        */
-        if (answer == null) {
-            answer = createConnector(server, endpoint);
-        }
-        return answer;
-    }
-    
     protected AbstractConnector createConnectorJettyInternal(Server server,
                                                       JettyHttpEndpoint endpoint,
                                                       SslContextFactory sslcf) {
         try {
-            String hosto = endpoint.getHttpUri().getHost();
+            String host = endpoint.getHttpUri().getHost();
             int porto = endpoint.getPort();
             org.eclipse.jetty.server.HttpConfiguration httpConfig = new org.eclipse.jetty.server.HttpConfiguration();
             httpConfig.setSendServerVersion(endpoint.isSendServerVersion());
@@ -110,21 +88,9 @@ public class JettyHttpComponent9 extends JettyHttpComponent {
             connectionFactories.add(httpFactory);
             result.setConnectionFactories(connectionFactories);
             result.setPort(porto);
-            if (hosto != null) {
-                result.setHost(hosto);
+            if (host != null) {
+                result.setHost(host);
             }
-            /*
-            if (getSocketConnectorProperties() != null && !"https".equals(endpoint.getProtocol())) {
-                // must copy the map otherwise it will be deleted
-                Map<String, Object> properties = new HashMap<String, Object>(getSocketConnectorProperties());
-                IntrospectionSupport.setProperties(httpConfig, properties);
-                if (properties.size() > 0) {
-                    throw new IllegalArgumentException("There are " + properties.size()
-                        + " parameters that couldn't be set on the SocketConnector."
-                        + " Check the uri if the parameters are spelt correctly and that they are properties of the SelectChannelConnector."
-                        + " Unknown parameters=[" + properties + "]");
-                }
-            } else*/
             if (getSslSocketConnectorProperties() != null && "https".equals(endpoint.getProtocol())) {
                 // must copy the map otherwise it will be deleted
                 Map<String, Object> properties = new HashMap<String, Object>(getSslSocketConnectorProperties());

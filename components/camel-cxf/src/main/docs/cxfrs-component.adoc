@@ -1,10 +1,8 @@
-[[CXFRS-CXFRSComponent]]
-CXFRS Component
-~~~~~~~~~~~~~~~
+## CXF-RS Component
 
-[Note]
-====
-
+The *cxfrs:* component provides integration with
+http://cxf.apache.org[Apache CXF] for connecting to JAX-RS 1.1 and 2.0
+services hosted in CXF.
 
 When using CXF as a consumer, the link:cxf-bean-component.html[CXF Bean
 Component] allows you to factor out how message payloads are received
@@ -12,12 +10,6 @@ from their processing as a RESTful or SOAP web service. This has the
 potential of using a multitude of transports to consume web services.
 The bean component's configuration is also simpler and provides the
 fastest method to implement web services using Camel and CXF.
-
-====
-
-The *cxfrs:* component provides integration with
-http://cxf.apache.org[Apache CXF] for connecting to JAX-RS 1.1 and 2.0
-services hosted in CXF.
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -31,9 +23,7 @@ for this component:
 </dependency>
 -------------------------------------------------------------------------------------
 
-[[CXFRS-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -----------------------
@@ -57,9 +47,7 @@ For either style above, you can append options to the URI as follows:
 cxfrs:bean:cxfEndpoint?resourceClasses=org.apache.camel.rs.Example
 ------------------------------------------------------------------
 
-[[CXFRS-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -69,10 +57,10 @@ The CXF-RS component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| headerFilterStrategy | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+| Name | Group | Default | Java Type | Description
+| headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -98,9 +86,9 @@ The CXF-RS component supports 31 endpoint options which are listed below:
 | schemaLocations | common |  | List | Sets the locations of the schema(s) which can be used to validate the incoming XML or JAXB-driven JSON.
 | skipFaultLogging | common | false | boolean | This option controls whether the PhaseInterceptorChain skips logging the Fault that it catches.
 | bindingStyle | consumer | Default | BindingStyle | Sets how requests and responses will be mapped to/from Camel. Two values are possible: SimpleConsumer: This binding style processes request parameters multiparts etc. and maps them to IN headers IN attachments and to the message body. It aims to eliminate low-level processing of org.apache.cxf.message.MessageContentsList. It also also adds more flexibility and simplicity to the response mapping. Only available for consumers. Default: The default style. For consumers this passes on a MessageContentsList to the route requiring low-level processing in the route. This is the traditional binding style which simply dumps the org.apache.cxf.message.MessageContentsList coming in from the CXF stack onto the IN message body. The user is then responsible for processing it according to the contract defined by the JAX-RS method signature. Custom: allows you to specify a custom binding through the binding option.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | publishedEndpointUrl | consumer |  | String | This option can override the endpointUrl that published from the WADL which can be accessed with resource address url plus _wadl
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | cookieHandler | producer |  | CookieHandler | Configure a cookie handler to maintain a HTTP session
 | hostnameVerifier | producer |  | HostnameVerifier | The hostname verifier to be used. Use the notation to reference a HostnameVerifier from the registry.
@@ -131,9 +119,7 @@ http://svn.apache.org/repos/asf/camel/trunk/components/camel-cxf/src/main/resour
 file] and https://cwiki.apache.org/CXF20DOC/JAX-RS[CXF JAX-RS
 documentation] for more information.
 
-[[CXFRS-HowtoconfiguretheRESTendpointinCamel]]
-How to configure the REST endpoint in Camel
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### How to configure the REST endpoint in Camel
 
 In
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-cxf/src/main/resources/schema/cxfEndpoint.xsd[camel-cxf
@@ -141,9 +127,7 @@ schema file], there are two elements for the REST endpoint definition.
 *cxf:rsServer* for REST consumer, *cxf:rsClient* for REST producer. +
  You can find a Camel REST service route configuration example here.
 
-[[CXFRS-HowtooverridetheCXFproduceraddressfrommessageheader]]
-How to override the CXF producer address from message header
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### How to override the CXF producer address from message header
 
 The `camel-cxfrs` producer supports to override the services address by
 setting the message with the key of "CamelDestinationOverrideUrl".
@@ -154,9 +138,7 @@ setting the message with the key of "CamelDestinationOverrideUrl".
  exchange.getIn().setHeader(Exchange.DESTINATION_OVERRIDE_URL, constant(getServiceAddress()));
 ----------------------------------------------------------------------------------------------
 
-[[CXFRS-ConsumingaRESTRequest-SimpleBindingStyle]]
-Consuming a REST Request - Simple Binding Style
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Consuming a REST Request - Simple Binding Style
 
 *Available as of Camel 2.11*
 
@@ -194,9 +176,7 @@ respected and it becomes the final response.
 * In all cases, Camel headers permitted by custom or default
 `HeaderFilterStrategy` are added to the HTTP response.
 
-[[CXFRS-EnablingtheSimpleBindingStyle]]
-Enabling the Simple Binding Style
-+++++++++++++++++++++++++++++++++
+#### Enabling the Simple Binding Style
 
 This binding style can be activated by setting the `bindingStyle`
 parameter in the consumer endpoint to value `SimpleConsumer`:
@@ -207,9 +187,7 @@ parameter in the consumer endpoint to value `SimpleConsumer`:
     .to("log:TEST?showAll=true");
 ---------------------------------------------------------
 
-[[CXFRS-Examplesofrequestbindingwithdifferentmethodsignatures]]
-Examples of request binding with different method signatures
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Examples of request binding with different method signatures
 
 Below is a list of method signatures along with the expected result from
 the Simple binding.
@@ -241,9 +219,7 @@ as the IN message body.
  The DataHandler is unwrapped from the MessageContentsList and preserved
 as the IN message body.
 
-[[CXFRS-MoreexamplesoftheSimpleBindingStyle]]
-More examples of the Simple Binding Style
-+++++++++++++++++++++++++++++++++++++++++
+#### More examples of the Simple Binding Style
 
 Given a JAX-RS resource class with this method:
 
@@ -292,9 +268,7 @@ For more examples on how to process requests and write responses can be
 found
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/jaxrs/simplebinding/[here].
 
-[[CXFRS-ConsumingaRESTRequest-DefaultBindingStyle]]
-Consuming a REST Request - Default Binding Style
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Consuming a REST Request - Default Binding Style
 
 The https://cwiki.apache.org/CXF20DOC/JAX-RS[CXF JAXRS front end]
 implements the https://jsr311.java.net/[JAX-RS (JSR-311) API], so we can
@@ -329,9 +303,7 @@ set on the Camel exchange and the route execution will continue as
 usual. This can be useful for integrating the existing JAX-RS implementations into Camel routes and
 for post-processing JAX-RS Responses in custom processors.
 
-[[CXFRS-HowtoinvoketheRESTservicethroughcamel-cxfrsproducer]]
-How to invoke the REST service through camel-cxfrs producer
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### How to invoke the REST service through camel-cxfrs producer
 
 The https://cwiki.apache.org/CXF20DOC/JAX-RS[CXF JAXRS front end]
 implements

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.telegram.model;
 
-import java.util.Arrays;
-
 /**
  * An outgoing photo message.
  */

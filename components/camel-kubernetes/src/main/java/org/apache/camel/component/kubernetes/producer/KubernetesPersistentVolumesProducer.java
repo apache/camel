@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,6 +83,8 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
     protected void doList(Exchange exchange, String operation) throws Exception {
         PersistentVolumeList persistentVolumeList = getEndpoint()
                 .getKubernetesClient().persistentVolumes().list();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(persistentVolumeList.getItems());
     }
 
@@ -97,6 +100,8 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
             pvs.withLabel(entry.getKey(), entry.getValue());
         }
         pvList = pvs.list();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(pvList.getItems());
     }
 
@@ -112,6 +117,8 @@ public class KubernetesPersistentVolumesProducer extends DefaultProducer {
                     "Get a specific Persistent Volume require specify a Persistent Volume name");
         }
         pv = getEndpoint().getKubernetesClient().persistentVolumes().withName(pvName).get();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(pv);
     }
 }

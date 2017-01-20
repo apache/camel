@@ -36,10 +36,7 @@ public abstract class MQTTBaseTest extends CamelTestSupport {
 
 
     public void setUp() throws Exception {
-        brokerService = new BrokerService();
-        brokerService.setPersistent(false);
-        brokerService.setAdvisorySupport(false);
-        brokerService.addConnector(MQTTTestSupport.getConnection());
+        brokerService = MQTTTestSupport.newBrokerService();
         brokerService.start();
         super.setUp();
     }

@@ -27,12 +27,17 @@ import io.netty.util.concurrent.EventExecutorGroup;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 
 public class NettyComponent extends UriEndpointComponent {
+
+    @Metadata(label = "advanced")
     private NettyConfiguration configuration;
+    @Metadata(label = "advanced", defaultValue = "16")
     private int maximumPoolSize = 16;
+    @Metadata(label = "advanced")
     private volatile EventExecutorGroup executorService;
 
     public NettyComponent() {

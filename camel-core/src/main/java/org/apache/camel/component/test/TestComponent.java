@@ -16,16 +16,12 @@
  */
 package org.apache.camel.component.test;
 
-import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
-import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**
  * The <a href="http://camel.apache.org/test.html">Test Component</a> is for simplifying unit and integration tests.

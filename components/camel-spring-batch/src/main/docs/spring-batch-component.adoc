@@ -1,6 +1,4 @@
-[[SpringBatch-SpringBatchComponent]]
-Spring Batch Component
-~~~~~~~~~~~~~~~~~~~~~~
+## Spring Batch Component
 
 The *spring-batch:* component and support classes provide integration
 bridge between Camel and http://www.springsource.org/spring-batch[Spring
@@ -19,9 +17,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[SpringBatch-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------------------------
@@ -36,9 +32,7 @@ WARNING:This component can only be used to define producer endpoints, which
 means that you cannot use the Spring Batch component in a `from()`
 statement.
 
-[[SpringBatch-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -49,11 +43,11 @@ The Spring Batch component supports 2 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| jobLauncher | JobLauncher | Explicitly specifies a JobLauncher to be used.
-| jobRegistry | JobRegistry | Explicitly specifies a JobRegistry to be used.
+| Name | Group | Default | Java Type | Description
+| jobLauncher | producer |  | JobLauncher | Explicitly specifies a JobLauncher to be used.
+| jobRegistry | producer |  | JobRegistry | Explicitly specifies a JobRegistry to be used.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -85,9 +79,7 @@ The Spring Batch component supports 5 endpoint options which are listed below:
 
 
 
-[[SpringBatch-Usage]]
-Usage
-^^^^^
+### Usage
 
 When Spring Batch component receives the message, it triggers the job
 execution. The job will be executed using the
@@ -109,9 +101,7 @@ parameters. `String`, `Long`, `Double` and `java.util.Date` values are
 copied to the `org.springframework.batch.core.JobParametersBuilder` -
 other data types are converted to Strings.
 
-[[SpringBatch-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
 Triggering the Spring Batch job execution:
 
@@ -142,16 +132,12 @@ JobExecution jobExecution = mockEndpoint.getExchanges().get(0).getIn().getBody(J
 BatchStatus currentJobStatus = jobExecution.getStatus();
 ---------------------------------------------------------------------------------------------------
 
-[[SpringBatch-Supportclasses]]
-Support classes
-^^^^^^^^^^^^^^^
+### Support classes
 
 Apart from the Component, Camel Spring Batch provides also support
 classes, which can be used to hook into Spring Batch infrastructure.
 
-[[SpringBatch-CamelItemReader]]
-CamelItemReader
-+++++++++++++++
+#### CamelItemReader
 
 `CamelItemReader` can be used to read batch data directly from the Camel
 infrastructure.
@@ -175,9 +161,7 @@ JMS queue.
 </batch:job>
 -----------------------------------------------------------------------------------------------
 
-[[SpringBatch-CamelItemWriter]]
-CamelItemWriter
-+++++++++++++++
+#### CamelItemWriter
 
 `CamelItemWriter` has similar purpose as `CamelItemReader`, but it is
 dedicated to write chunk of the processed data.
@@ -201,9 +185,7 @@ JMS queue.
 </batch:job>
 -----------------------------------------------------------------------------------------------
 
-[[SpringBatch-CamelItemProcessor]]
-CamelItemProcessor
-++++++++++++++++++
+#### CamelItemProcessor
 
 `CamelItemProcessor` is the implementation of Spring Batch
 `org.springframework.batch.item.ItemProcessor` interface. The latter
@@ -243,9 +225,7 @@ the http://camel.apache.org/simple.html[Simple expression language].
 </batch:job>
 -------------------------------------------------------------------------------------------------------------
 
-[[SpringBatch-CamelJobExecutionListener]]
-CamelJobExecutionListener
-+++++++++++++++++++++++++
+#### CamelJobExecutionListener
 
 `CamelJobExecutionListener` is the implementation of the
 `org.springframework.batch.core.JobExecutionListener` interface sending

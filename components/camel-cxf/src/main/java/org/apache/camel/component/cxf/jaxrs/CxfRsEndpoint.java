@@ -34,6 +34,7 @@ import org.apache.camel.Service;
 import org.apache.camel.component.cxf.NullFaultListener;
 import org.apache.camel.http.common.cookie.CookieHandler;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.UriEndpoint;
@@ -195,7 +196,12 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         if (bindingStyle == BindingStyle.SimpleConsumer) {
             throw new IllegalArgumentException("The SimpleConsumer Binding Style cannot be used in a camel-cxfrs producer");
         }
-        return new CxfRsProducer(this);
+        final CxfRsProducer cxfRsProducer = new CxfRsProducer(this);
+        if (isSynchronous()) {
+            return new SynchronousDelegateProducer(cxfRsProducer);
+        } else {
+            return cxfRsProducer;
+        }
     }
 
     public boolean isSingleton() {

@@ -17,8 +17,6 @@
 package org.apache.camel.component.gora;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.ExecutorService;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;

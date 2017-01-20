@@ -41,10 +41,9 @@ public class Hl7AcknowledgementGenerator implements Processor {
             + "MSA|AR|" + SEGMENT_DELIMITER
             + MESSAGE_TERMINATOR;
 
-
     @Override
     public void process(Exchange exchange) throws Exception {
-        Message message = null;
+        Message message;
         if (exchange.hasOut()) {
             message = exchange.getOut();
         } else {
@@ -56,13 +55,13 @@ public class Hl7AcknowledgementGenerator implements Processor {
         byte[] acknowledgementBytes = null;
         if (null == exchange.getException()) {
             acknowledgementBytes = generateApplicationAcceptAcknowledgementMessage(hl7Bytes);
-            message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "AA");
+            exchange.setProperty(MLLP_ACKNOWLEDGEMENT_TYPE, "AA");
         } else {
             acknowledgementBytes = generateApplicationErrorAcknowledgementMessage(hl7Bytes);
-            message.setHeader(MLLP_ACKNOWLEDGEMENT_TYPE, "AE");
+            exchange.setProperty(MLLP_ACKNOWLEDGEMENT_TYPE, "AE");
         }
 
-        message.setHeader(MLLP_ACKNOWLEDGEMENT, acknowledgementBytes);
+        exchange.setProperty(MLLP_ACKNOWLEDGEMENT, acknowledgementBytes);
     }
 
     public byte[] generateApplicationAcceptAcknowledgementMessage(byte[] hl7MessageBytes) throws Hl7AcknowledgementGenerationException {
@@ -109,7 +108,7 @@ public class Hl7AcknowledgementGenerator implements Processor {
 
         // Build the MSH Segment
         ByteArrayOutputStream acknowledgement = new ByteArrayOutputStream(1024);
-        acknowledgement.write(hl7MessageBytes, 0, 8); // through MSH-2 (without trailing field separator)
+        acknowledgement.write(hl7MessageBytes, 0, fieldSeparatorIndexes.get(1)); // through MSH-2 (without trailing field separator)
         acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(3), fieldSeparatorIndexes.get(4) - fieldSeparatorIndexes.get(3)); // MSH-5
         acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(4), fieldSeparatorIndexes.get(5) - fieldSeparatorIndexes.get(4)); // MSH-6
         acknowledgement.write(hl7MessageBytes, fieldSeparatorIndexes.get(1), fieldSeparatorIndexes.get(2) - fieldSeparatorIndexes.get(1)); // MSH-3
@@ -143,6 +142,7 @@ public class Hl7AcknowledgementGenerator implements Processor {
         acknowledgement.write(SEGMENT_DELIMITER);
 
         // Terminate the message
+        acknowledgement.write(SEGMENT_DELIMITER);
         acknowledgement.write(MESSAGE_TERMINATOR);
 
         return acknowledgement.toByteArray();

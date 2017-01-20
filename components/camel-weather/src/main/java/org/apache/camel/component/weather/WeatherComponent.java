@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.weather;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;

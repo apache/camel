@@ -17,7 +17,6 @@
 package org.apache.camel.component.validator;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 

@@ -186,6 +186,7 @@
             <configuration>
               <excludes>
                 <exclude>**/*Cdi12Test.java</exclude>
+                <exclude>**/*Cdi20Test.java</exclude>
               </excludes>
             </configuration>
           </plugin>
@@ -232,6 +233,20 @@
     <profile>
       <id>weld-1.2</id>
 
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <excludes>
+                <exclude>**/*Cdi20Test.java</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+
       <dependencies>
 
         <!-- provided dependencies -->
@@ -263,6 +278,40 @@
     </profile>
 
     <profile>
+      <id>weld-2.0</id>
+
+      <dependencies>
+
+        <!-- provided dependencies -->
+
+        <dependency>
+          <groupId>javax.enterprise</groupId>
+          <artifactId>cdi-api</artifactId>
+          <version>${cdi-api-2.0-version}</version>
+          <scope>provided</scope>
+        </dependency>
+
+        <!-- test dependencies -->
+
+        <dependency>
+          <groupId>org.jboss.weld</groupId>
+          <artifactId>weld-core-impl</artifactId>
+          <version>${weld3-version}</version>
+          <scope>test</scope>
+        </dependency>
+
+        <dependency>
+          <groupId>org.jboss.arquillian.container</groupId>
+          <artifactId>arquillian-weld-embedded</artifactId>
+          <version>${arquillian-weld-embedded-version}</version>
+          <scope>test</scope>
+        </dependency>
+
+      </dependencies>
+    </profile>
+
+
+    <profile>
       <id>owb-1.0</id>
 
       <build>
@@ -273,6 +322,7 @@
             <configuration>
               <excludes>
                 <exclude>**/*Cdi12Test.java</exclude>
+                <exclude>**/*Cdi20Test.java</exclude>
                 <!-- OWB does not call the InjectionTarget#preDestroy method -->
                 <exclude>**/UnstoppedCamelContext*Test.java</exclude>
                 <!-- Reactivate when OWB-1155 is fixed -->
@@ -339,6 +389,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <excludes>
+                <exclude>**/*Cdi20Test.java</exclude>
                 <!-- Reactivate when OWB-1155 is fixed -->
                 <exclude>**/ProgrammaticLookupTest.java</exclude>
                 <!-- Reactivate when OWB-1126 is fixed -->

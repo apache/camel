@@ -23,22 +23,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.Customer;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.junit.Test;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
 
 public class JpaPollingConsumerTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + Customer.class.getName() + " x";
-
-    protected void save(final Customer customer) {
-        transactionTemplate.execute(new TransactionCallback<Object>() {
-            public Object doInTransaction(TransactionStatus status) {
-                entityManager.joinTransaction();
-                entityManager.persist(customer);
-                entityManager.flush();
-                return null;
-            }
-        });
-    }
 
     protected void assertEntitiesInDatabase(int count, String entity) {
         List<?> results = entityManager.createQuery("select o from " + entity + " o").getResultList();
@@ -49,10 +36,10 @@ public class JpaPollingConsumerTest extends AbstractJpaTest {
     public void testPollingConsumer() throws Exception {
         Customer customer = new Customer();
         customer.setName("Donald Duck");
-        save(customer);
+        saveEntityInDB(customer);
         Customer customer2 = new Customer();
         customer2.setName("Goofy");
-        save(customer2);
+        saveEntityInDB(customer2);
 
         assertEntitiesInDatabase(2, Customer.class.getName());
 

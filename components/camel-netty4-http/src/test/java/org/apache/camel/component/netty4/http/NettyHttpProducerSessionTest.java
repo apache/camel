@@ -61,36 +61,27 @@ public class NettyHttpProducerSessionTest extends BaseNettyTest {
         return jndiRegistry;
     }
 
-    private String getTestServerEndpointSessionUrl() {
-        // session handling will not work for localhost
-        return "http://127.0.0.1:" + getPort() + "/session";
-    }
-
-    private String getTestServerEndpointSessionUri() {
-        return "jetty:" + getTestServerEndpointSessionUrl() + "?sessionSupport=true";
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("netty4-http:" + getTestServerEndpointSessionUrl())
-                    .to("netty4-http:" + getTestServerEndpointSessionUrl())
+                    .toF("netty4-http:http://127.0.0.1:%d/session", getPort())
+                    .toF("netty4-http:http://127.0.0.1:%d/session", getPort())
                     .to("mock:result");
 
                 from("direct:instance")
-                    .to("netty4-http:" + getTestServerEndpointSessionUrl() + "?cookieHandler=#instanceCookieHandler")
-                    .to("netty4-http:" + getTestServerEndpointSessionUrl() + "?cookieHandler=#instanceCookieHandler")
+                    .toF("netty4-http:http://127.0.0.1:%d/session?cookieHandler=#instanceCookieHandler", getPort())
+                    .toF("netty4-http:http://127.0.0.1:%d/session?cookieHandler=#instanceCookieHandler", getPort())
                     .to("mock:result");
 
                 from("direct:exchange")
-                    .to("netty4-http:" + getTestServerEndpointSessionUrl() + "?cookieHandler=#exchangeCookieHandler")
-                    .to("netty4-http:" + getTestServerEndpointSessionUrl() + "?cookieHandler=#exchangeCookieHandler")
+                    .toF("netty4-http:http://127.0.0.1:%d/session?cookieHandler=#exchangeCookieHandler", getPort())
+                    .toF("netty4-http:http://127.0.0.1:%d/session?cookieHandler=#exchangeCookieHandler", getPort())
                     .to("mock:result");
 
-                from(getTestServerEndpointSessionUri())
+                fromF("jetty:http://127.0.0.1:%d/session?sessionSupport=true", getPort())
                     .process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {

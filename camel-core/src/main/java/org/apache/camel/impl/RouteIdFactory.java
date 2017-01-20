@@ -22,20 +22,22 @@ import java.util.Optional;
 import org.apache.camel.NamedNode;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.rest.RestBindingDefinition;
+import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.NodeIdFactory;
 
 /**
  * Factory for generating route ids based on uris.
  * <p>
  * For direct/seda routes it returns route name (direct:start -> start).
- * For rest routes it returns its context path.
+ * For rest routes it returns its method and context path formatted as one string.
  * <p>
  * When id cannot be generated, falls back to other {@link NodeIdFactory} implementation.
  * If none is passed in the constructor, then {@link DefaultNodeIdFactory} is used.
  */
 public class RouteIdFactory implements NodeIdFactory {
 
+    private static final char SEPARATOR = '-';
     private NodeIdFactory defaultNodeIdFactory;
 
     public RouteIdFactory() {
@@ -62,6 +64,14 @@ public class RouteIdFactory implements NodeIdFactory {
             }
         }
 
+        if (definition instanceof VerbDefinition) {
+            Optional<String> id = extractIdFromVerb((VerbDefinition) definition);
+
+            if (id.isPresent()) {
+                return id.get();
+            }
+        }
+
         return defaultNodeIdFactory.createId(definition);
     }
 
@@ -69,6 +79,10 @@ public class RouteIdFactory implements NodeIdFactory {
      * Extract id from routes
      */
     private Optional<String> extractId(RouteDefinition routeDefinition) {
+        if (routeDefinition.getRestDefinition() != null) {
+            return Optional.empty();
+        }
+
         List<FromDefinition> inputs = routeDefinition.getInputs();
 
         if (inputs == null || inputs.isEmpty()) {
@@ -97,27 +111,111 @@ public class RouteIdFactory implements NodeIdFactory {
     }
 
     /**
-     * Extract id from rest route.
+     * Extract id from a rest route.
      */
     private Optional<String> extractIdFromRestDefinition(RouteDefinition route) {
-        if (route.getOutputs().get(0) instanceof RestBindingDefinition) {
-            if (route.getRestDefinition() == null) {
-                return Optional.empty();
-            }
-
-            String path = route.getRestDefinition().getPath();
-
-            if (path == null) {
-                return Optional.empty();
-            }
-
-            if (path.indexOf('/') > 0) {
-                return Optional.of(path.substring(0, path.indexOf('/')));
-            }
-
-            return Optional.of(path);
+        if (route.getRestDefinition() != null) {
+            return extractIdFromInput(route);
         }
 
         return Optional.empty();
+    }
+
+    /**
+     * Extract id from a rest verb definition.
+     */
+    private Optional<String> extractIdFromVerb(VerbDefinition verb) {
+        RestDefinition restDefinition = verb.getRest();
+
+        if (restDefinition != null) {
+            StringBuilder routeId = new StringBuilder();
+            routeId.append(verb.asVerb());
+            appendWithSeparator(routeId, prepareUri(restDefinition.getPath()));
+
+            if (verb.getUri() != null && verb.getUri().length() > 0) {
+                appendWithSeparator(routeId, prepareUri(verb.getUri()));
+            }
+
+            verb.setUsedForGeneratingNodeId(true);
+
+            return Optional.of(routeId.toString());
+        }
+
+        return Optional.empty();
+
+    }
+
+    /**
+     * Extract id from rest input uri.
+     */
+    private Optional<String> extractIdFromInput(RouteDefinition route) {
+        List<FromDefinition> inputs = route.getInputs();
+
+        if (inputs == null || inputs.isEmpty()) {
+            return Optional.empty();
+        }
+
+        FromDefinition from = inputs.get(0);
+        String uri = from.getUri();
+
+        String[] uriSplitted = uri.split(":");
+
+        // needs to have at least 3 fields
+        if (uriSplitted.length < 3) {
+            return Optional.empty();
+        }
+
+        String verb = uriSplitted[1];
+        String contextPath = uriSplitted[2];
+        String additionalUri = "";
+
+        if (uriSplitted.length > 3 && uriSplitted[3].startsWith("/")) {
+            additionalUri = uriSplitted[3];
+        }
+
+        StringBuilder routeId = new StringBuilder(verb.length() + contextPath.length() + additionalUri.length());
+
+        routeId.append(verb);
+        appendWithSeparator(routeId, prepareUri(contextPath));
+
+        if (additionalUri.length() > 0) {
+            appendWithSeparator(routeId, prepareUri(additionalUri));
+        }
+
+        return Optional.of(routeId.toString());
+    }
+
+    /**
+     * Prepares uri to be part of the id.
+     */
+    private String prepareUri(String uri) {
+        if (uri == null) {
+            return "";
+        }
+
+        if (uri.contains("?")) {
+            uri = uri.substring(0, uri.indexOf('?'));
+        }
+
+        return uri.replaceAll("/", String.valueOf(SEPARATOR));
+    }
+
+    /**
+     * Appends new element to the builder.
+     */
+    private void appendWithSeparator(StringBuilder builder, String str) {
+        if (builder.charAt(builder.length() - 1) == SEPARATOR) {
+            if (str.startsWith(String.valueOf(SEPARATOR))) {
+                builder.append(str.replaceFirst(String.valueOf(SEPARATOR), ""));
+            } else {
+                builder.append(str);
+            }
+        } else {
+            if (!str.startsWith(String.valueOf(SEPARATOR))) {
+                builder.append(SEPARATOR);
+            }
+
+            builder.append(str);
+        }
     }
 }

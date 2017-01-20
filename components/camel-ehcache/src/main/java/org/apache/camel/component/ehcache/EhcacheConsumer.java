@@ -29,7 +29,6 @@ public class EhcacheConsumer extends DefaultConsumer implements CacheEventListen
     private final EhcacheManager manager;
     private final Cache cache;
 
-    @SuppressWarnings("unchecked")
     public EhcacheConsumer(EhcacheEndpoint endpoint, EhcacheConfiguration configuration, Processor processor) throws Exception {
         super(endpoint, processor);
 
@@ -58,7 +57,7 @@ public class EhcacheConsumer extends DefaultConsumer implements CacheEventListen
     }
 
     @Override
-    public void onEvent(CacheEvent<Object, Object> event) {
+    public void onEvent(CacheEvent<? extends Object, ? extends Object> event) {
         final Exchange exchange = getEndpoint().createExchange();
         final Message message = exchange.getIn();
 

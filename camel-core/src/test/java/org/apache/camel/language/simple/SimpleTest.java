@@ -1650,6 +1650,19 @@ public class SimpleTest extends LanguageTestSupport {
         assertEquals(4, animal.getFriend().getAge());
     }
 
+    public void testNestedTypeFunction() throws Exception {
+        // when using type: function we need special logic to not lazy evaluate it so its evaluated only once
+        // and won't fool Camel to think its a nested OGNL method call expression instead (CAMEL-10664)
+        exchange.setProperty(Exchange.AUTHENTICATION, 123);
+        String exp = "${exchangeProperty.${type:org.apache.camel.Exchange.AUTHENTICATION}.toString()}";
+        assertExpression(exp, "123");
+
+        exchange.getIn().setHeader("whichOne", "AUTHENTICATION");
+        exchange.setProperty(Exchange.AUTHENTICATION, 456);
+        exp = "${exchangeProperty.${type:org.apache.camel.Exchange.${header.whichOne}}.toString()}";
+        assertExpression(exp, "456");
+    }
+
     protected String getLanguageName() {
         return "simple";
     }

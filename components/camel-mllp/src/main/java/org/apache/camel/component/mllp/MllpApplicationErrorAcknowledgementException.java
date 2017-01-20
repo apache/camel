@@ -19,7 +19,8 @@ package org.apache.camel.component.mllp;
 /**
  * Raised when a MLLP Producer receives a HL7 Application Error Acknowledgement
  */
-public class MllpApplicationErrorAcknowledgementException extends MllpAcknowledgementException {
+public class MllpApplicationErrorAcknowledgementException extends MllpNegativeAcknowledgementException {
+
     static final String EXCEPTION_MESSAGE = "HL7 Application Error Acknowledgment Received";
 
     public MllpApplicationErrorAcknowledgementException(byte[] hl7Message, byte[] hl7Acknowledgement) {
@@ -28,5 +29,10 @@ public class MllpApplicationErrorAcknowledgementException extends MllpAcknowledg
 
     public MllpApplicationErrorAcknowledgementException(byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
         super(EXCEPTION_MESSAGE, hl7Message, hl7Acknowledgement, cause);
+    }
+
+    @Override
+    public String getAcknowledgmentType() {
+        return "AE";
     }
 }

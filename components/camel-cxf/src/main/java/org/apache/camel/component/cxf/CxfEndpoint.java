@@ -44,7 +44,6 @@ import javax.xml.ws.WebServiceProvider;
 import javax.xml.ws.handler.Handler;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import org.apache.camel.AsyncEndpoint;
@@ -510,8 +509,6 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         if (getServiceName() != null) {
             factoryBean.setServiceName(getServiceName());
         }
-        
-        
 
         // port name qname
         if (getPortName() != null) {
@@ -561,6 +558,9 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
             AuthorizationPolicy authPolicy = new AuthorizationPolicy();
             authPolicy.setUserName(username);
             authPolicy.setPassword(password);
+            if (factoryBean.getProperties() == null) {
+                factoryBean.setProperties(new HashMap<String, Object>());
+            }
             factoryBean.getProperties().put(AuthorizationPolicy.class.getName(), authPolicy);
         }
         
@@ -1237,7 +1237,7 @@ public class CxfEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
                 super.setParameters(params, message);
             }
 
-            message.remove(DataFormat.class);
+            message.remove(DataFormat.class.getName());
         }
 
         private String findName(List<Source> sources, int i) {

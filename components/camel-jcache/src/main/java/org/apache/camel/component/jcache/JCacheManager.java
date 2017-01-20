@@ -76,7 +76,6 @@ public class JCacheManager<K, V> implements Closeable {
         return cache;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public synchronized void close() throws IOException {
         if (configuration != null) {

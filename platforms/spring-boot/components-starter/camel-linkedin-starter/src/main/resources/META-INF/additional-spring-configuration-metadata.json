@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.linkedin.enabled",
+      "description": "Enable linkedin component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -366,7 +366,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                         mps.add(processor);
                     }
                 }
-                Collections.sort(mps, new OrderProcessorMBeans());
+                mps.sort(new OrderProcessorMBeans());
 
                 // walk the processors in reverse order, and calculate the accumulated total time
                 Map<String, Long> accumulatedTimes = new HashMap<String, Long>();

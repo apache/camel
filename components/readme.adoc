@@ -103,7 +103,7 @@ Components
 `cm-sms:host` | The influxdb component allows to integrate with CM SMS Gateway.
 
 | link:camel-cmis/src/main/docs/cmis-component.adoc[CMIS] (camel-cmis) +
-`cmis:url` | The cmis component uses the Apache Chemistry client API and allows you to add/read nodes to/from a CMIS compliant content repositories.
+`cmis:cmsUrl` | The cmis component uses the Apache Chemistry client API and allows you to add/read nodes to/from a CMIS compliant content repositories.
 
 | link:camel-coap/src/main/docs/coap-component.adoc[CoAP] (camel-coap) +
 `coap:uri` | The coap component is used for sending and receiving messages from COAP capable devices.
@@ -113,6 +113,9 @@ Components
 
 | link:camel-consul/src/main/docs/consul-component.adoc[Consul] (camel-consul) +
 `consul:apiEndpoint` | The camel consul component allows you to work with Consul a distributed highly available datacenter-aware service discovery and configuration system.
+
+| link:camel-couchbase/src/main/docs/couchbase-component.adoc[Couchbase] (camel-couchbase) +
+`couchbase:url` | Represents a Couchbase endpoint that can query Views with a Poll strategy and/or produce various type of operations.
 
 | link:camel-couchdb/src/main/docs/couchdb-component.adoc[CouchDB] (camel-couchdb) +
 `couchdb:protocol:hostname:port/database` | The couchdb component is used for integrate with CouchDB databases.
@@ -342,6 +345,9 @@ Components
 | link:camel-mongodb/src/main/docs/mongodb-component.adoc[MongoDB] (camel-mongodb) +
 `mongodb:connectionBean` | Component for working with documents stored in MongoDB database.
 
+| link:camel-mongodb3/src/main/docs/mongodb3-component.adoc[MongoDB] (camel-mongodb3) +
+`mongodb3:connectionBean` | Component for working with documents stored in MongoDB database.
+
 | link:camel-mongodb-gridfs/src/main/docs/gridfs-component.adoc[MongoDBGridFS] (camel-mongodb-gridfs) +
 `gridfs:connectionBean` | Component for working with MongoDB GridFS.
 
@@ -380,6 +386,24 @@ Components
 
 | link:camel-openshift/src/main/docs/openshift-component.adoc[OpenShift] (camel-openshift) +
 `openshift:clientId` | *deprecated* To manage your Openshift 2.x applications.
+
+| link:camel-openstack/src/main/docs/openstack-cinder-component.adoc[OpenStack Cinder] (camel-openstack) +
+`openstack-cinder:host` | The openstack-cinder component allows messages to be sent to an OpenStack block storage services.
+
+| link:camel-openstack/src/main/docs/openstack-glance-component.adoc[OpenStack Glance] (camel-openstack) +
+`openstack-glance:host` | The openstack-glance component allows messages to be sent to an OpenStack image services.
+
+| link:camel-openstack/src/main/docs/openstack-keystone-component.adoc[OpenStack Keystone] (camel-openstack) +
+`openstack-keystone:host` | The openstack-keystone component allows messages to be sent to an OpenStack identity services.
+
+| link:camel-openstack/src/main/docs/openstack-neutron-component.adoc[OpenStack Neutron] (camel-openstack) +
+`openstack-neutron:host` | The openstack-neutron component allows messages to be sent to an OpenStack network services.
+
+| link:camel-openstack/src/main/docs/openstack-nova-component.adoc[OpenStack Nova] (camel-openstack) +
+`openstack-nova:host` | The openstack-nova component allows messages to be sent to an OpenStack compute services.
+
+| link:camel-openstack/src/main/docs/openstack-swift-component.adoc[OpenStack Swift] (camel-openstack) +
+`openstack-swift:host` | The openstack-swift component allows messages to be sent to an OpenStack object storage services.
 
 | link:camel-optaplanner/src/main/docs/optaplanner-component.adoc[OptaPlanner] (camel-optaplanner) +
 `optaplanner:configFile` | Solves the planning problem contained in a message with OptaPlanner.
@@ -578,6 +602,7 @@ Other Components
 | Shiro (camel-shiro) | Security using Shiro
 | Spring (camel-spring) | Camel Spring XML DSL
 | Spring Boot (camel-spring-boot) | Using Camel with Spring Boot
+| Spring Cloud (camel-spring-cloud) | Using Camel with Spring Cloud
 | Spring DM (camel-spring-dm) | *deprecated* Camel SpringDM (OSGi) XML DSL
 | Spring Java Config (camel-spring-javaconfig) | Using Camel with Spring Java Configuration
 | Spring Security (camel-spring-security) | Security using Spring

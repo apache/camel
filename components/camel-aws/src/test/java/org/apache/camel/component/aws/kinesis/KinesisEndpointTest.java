@@ -19,7 +19,6 @@ package org.apache.camel.component.aws.kinesis;
 import com.amazonaws.services.kinesis.AmazonKinesis;
 import com.amazonaws.services.kinesis.model.ShardIteratorType;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.junit.Before;

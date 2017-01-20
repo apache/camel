@@ -1,6 +1,4 @@
-[[ServiceNow-ServiceNowComponent]]
-ServiceNow Component
-~~~~~~~~~~~~~~~~~~~~
+## ServiceNow Component
 
 *Available as of Camel 2.18*
 
@@ -21,18 +19,14 @@ for this component:
     </dependency>
 -------------------------------------------------
 
-[[ServiceNow-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------------
     servicenow://instanceName?[options]
 ---------------------------------------
 
-[[ServiceNow-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -41,23 +35,23 @@ The ServiceNow component supports 7 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| configuration | ServiceNowConfiguration | The ServiceNow default configuration
-| apiUrl | String | The ServiceNow REST API url
-| userName | String | ServiceNow user account name
-| password | String | ServiceNow account password
-| oauthClientId | String | OAuth2 ClientID
-| oauthClientSecret | String | OAuth2 ClientSecret
-| oauthTokenUrl | String | OAuth token Url
+| Name | Group | Default | Java Type | Description
+| configuration | advanced |  | ServiceNowConfiguration | The ServiceNow default configuration
+| apiUrl | producer |  | String | The ServiceNow REST API url
+| userName | security |  | String | ServiceNow user account name
+| password | security |  | String | ServiceNow account password
+| oauthClientId | security |  | String | OAuth2 ClientID
+| oauthClientSecret | security |  | String | OAuth2 ClientSecret
+| oauthTokenUrl | security |  | String | OAuth token Url
 |=======================================================================
 {% endraw %}
 // component options: END
 
 
 // endpoint options: START
-The ServiceNow component supports 33 endpoint options which are listed below:
+The ServiceNow component supports 41 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -75,6 +69,7 @@ The ServiceNow component supports 33 endpoint options which are listed below:
 | includeScores | producer |  | Boolean | Set this parameter to true to return all scores for a scorecard. If a value is not specified this parameter defaults to false and returns only the most recent score value.
 | inputDisplayValue | producer |  | Boolean | True to set raw value of input fields (default: false)
 | key | producer |  | Boolean | Set this parameter to true to return only scorecards for key indicators.
+| models | producer |  | String | Defines both request and response models
 | perPage | producer | 10 | Integer | Enter the maximum number of scorecards each query can return. By default this value is 10 and the maximum is 100.
 | release | producer | HELSINKI | ServiceNowRelease | The ServiceNow release to target default to Helsinki See https://docs.servicenow.com
 | requestModels | producer |  | String | Defines the request model
@@ -88,23 +83,28 @@ The ServiceNow component supports 33 endpoint options which are listed below:
 | target | producer |  | Boolean | Set this parameter to true to return only scorecards that have a target.
 | topLevelOnly | producer |  | Boolean | Gets only those categories whose parent is a catalog.
 | apiVersion | advanced |  | String | The ServiceNow REST API version default latest
+| httpClientPolicy | advanced |  | HTTPClientPolicy | To configure http-client
 | mapper | advanced |  | ObjectMapper | Sets Jackson's ObjectMapper to use for request/reply
+| proxyAuthorizationPolicy | advanced |  | ProxyAuthorizationPolicy | To configure proxy authentication
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| proxyHost | proxy |  | String | The proxy host name
+| proxyPort | proxy |  | Integer | The proxy port number
 | apiUrl | security |  | String | The ServiceNow REST API url
 | oauthClientId | security |  | String | OAuth2 ClientID
 | oauthClientSecret | security |  | String | OAuth2 ClientSecret
 | oauthTokenUrl | security |  | String | OAuth token Url
-| password | security |  | String | *Required* ServiceNow account password MUST be provided
-| userName | security |  | String | *Required* ServiceNow user account name MUST be provided
+| password | security |  | String | ServiceNow account password MUST be provided
+| proxyPassword | security |  | String | Password for proxy authentication
+| proxyUserName | security |  | String | Username for proxy authentication
+| sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters. See http://camel.apache.org/camel-configuration-utilities.html
+| userName | security |  | String | ServiceNow user account name MUST be provided
 |=======================================================================
 {% endraw %}
 // endpoint options: END
 
 
 
-[[ServiceNow-Headers]]
-Headers
-^^^^^^^
+### Headers
 
 [width="100%",cols="10%,10%,10%,10%,60%",options="header",]
 |===
@@ -257,9 +257,7 @@ NOTE: link:http://wiki.servicenow.com/index.php?title=REST_API#Available_APIs[Fu
 
 NOTE: https://docs.servicenow.com/bundle/helsinki-servicenow-platform/page/integrate/inbound-rest/reference/r_RESTResources.html[Helsinki REST API Documentation]
 
-[[ServiceNow-Usageexamples]]
-Usage examples:
-^^^^^^^^^^^^^^^
+### Usage examples:
  
 {% raw %}
 [source,java]

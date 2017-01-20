@@ -84,11 +84,8 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStart() throws Exception {
-        if (getConnectionResource() == null) {
-            throw new IllegalArgumentException(String.format("ConnectionResource or ConnectionFactory must be configured for %s", this));
-        }
-
         super.doStart();
+
         this.executor = getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsProducer");
         if (getProducers() == null) {
             setProducers(new GenericObjectPool<MessageProducerResources>(new MessageProducerResourcesFactory()));
@@ -180,14 +177,15 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
     }
 
     protected Session createSession() throws Exception {
-        Connection conn = getConnectionResource().borrowConnection();
+        ConnectionResource connectionResource = getOrCreateConnectionResource();
+        Connection conn = connectionResource.borrowConnection();
         try {
             return conn.createSession(isEndpointTransacted(), getAcknowledgeMode());
         } catch (Exception e) {
             log.error("Unable to create the Session", e);
             throw e;
         } finally {
-            getConnectionResource().returnConnection(conn);
+            connectionResource.returnConnection(conn);
         }
     }
 
@@ -278,8 +276,20 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
         return isSynchronous();
     }
 
+    /**
+     * @deprecated use {@link #getOrCreateConnectionResource()}
+     */
+    @Deprecated
     protected ConnectionResource getConnectionResource() {
         return getEndpoint().getConnectionResource();
+    }
+
+    protected ConnectionResource getOrCreateConnectionResource() {
+        ConnectionResource answer = getEndpoint().getConnectionResource();
+        if (answer == null) {
+            answer = getEndpoint().createConnectionResource(this);
+        }
+        return answer;
     }
 
     /**

@@ -29,15 +29,18 @@
   <artifactId>camel-itest-osgi</artifactId>
   <name>Camel :: Integration Tests :: OSGi</name>
   <description>Performs OSGi compliance integration tests</description>
-
+  
   <dependencies>
-
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-karaf</artifactId>
       <scope>test</scope>
     </dependency>
-
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jackson</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -53,6 +56,7 @@
           <!--<rerunFailingTestsCount>0</rerunFailingTestsCount>-->
           <systemPropertyVariables>
             <karafVersion>${karaf4-version}</karafVersion>
+            <camelKarafFeatureVersion>${project.version}</camelKarafFeatureVersion>
           </systemPropertyVariables>
         </configuration>
       </plugin>

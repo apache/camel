@@ -1,6 +1,4 @@
-[[SpringIntegration-SpringIntegrationComponent]]
-Spring Integration Component
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## Spring Integration Component
 
 The *spring-integration:* component provides a bridge for Camel
 components to talk to
@@ -20,9 +18,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[SpringIntegration-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -----------------------------------------------
@@ -37,9 +33,7 @@ used by the Spring Integration Spring context. It will equal to the
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[SpringIntegration-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -57,9 +51,9 @@ The Spring Integration component supports 8 endpoint options which are listed be
 | Name | Group | Default | Java Type | Description
 | defaultChannel | common |  | String | *Required* The default channel name which is used by the Spring Integration Spring context. It will equal to the inputChannel name for the Spring Integration consumer and the outputChannel name for the Spring Integration provider.
 | inOut | common | false | boolean | The exchange pattern that the Spring integration endpoint should use. If inOut=true then a reply channel is expected either from the Spring Integration Message header or configured on the endpoint.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | inputChannel | consumer |  | String | The Spring integration input channel name that this endpoint wants to consume from Spring integration.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | outputChannel | producer |  | String | The Spring integration output channel name that is used to send messages to Spring integration.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
@@ -68,9 +62,7 @@ The Spring Integration component supports 8 endpoint options which are listed be
 // endpoint options: END
 
 
-[[SpringIntegration-Usage]]
-Usage
-^^^^^
+### Usage
 
 The Spring integration component is a bridge that connects Camel
 endpoints with Spring integration endpoints through the Spring
@@ -78,21 +70,15 @@ integration's input channels and output channels. Using this component,
 we can send Camel messages to Spring Integration endpoints or receive
 messages from Spring integration endpoints in a Camel routing context.
 
-[[SpringIntegration-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
-[[SpringIntegration-UsingtheSpringintegrationendpoint]]
-Using the Spring integration endpoint
-+++++++++++++++++++++++++++++++++++++
+#### Using the Spring integration endpoint
 
 You can set up a Spring integration endpoint using a URI, as follows:
 
 Or directly using a Spring integration channel name:
 
-[[SpringIntegration-TheSourceandTargetadapter]]
-The Source and Target adapter
-+++++++++++++++++++++++++++++
+#### The Source and Target adapter
 
 Spring integration also provides the Spring integration's source and
 target adapters, which can route messages from a Spring integration
@@ -103,12 +89,9 @@ This example uses the following namespaces:
 
 You can bind your source or target to a Camel endpoint as follows:
 
-[[SpringIntegration-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

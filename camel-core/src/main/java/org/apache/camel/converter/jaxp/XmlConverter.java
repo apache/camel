@@ -46,6 +46,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
@@ -86,6 +87,7 @@ public class XmlConverter {
     public static final String DOCUMENT_BUILDER_FACTORY_FEATURE = "org.apache.camel.xmlconverter.documentBuilderFactory.feature";
     public static String defaultCharset = ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
 
+    private static final String JDK_FALLBACK_TRANSFORMER_FACTORY = "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
     private static final Logger LOG = LoggerFactory.getLogger(XmlConverter.class);
 
     private volatile DocumentBuilderFactory documentBuilderFactory;
@@ -280,6 +282,24 @@ public class XmlConverter {
     @Converter
     public String toString(Node node, Exchange exchange) throws TransformerException {
         return toString(new DOMSource(node), exchange);
+    }
+
+    /**
+     * Converts the given Document to into text
+     * @param document The document to convert
+     * @param outputOptions The {@link OutputKeys} properties to control various aspects of the XML output
+     * @return The string representation of the document
+     * @throws TransformerException
+     */
+    public String toStringFromDocument(Document document, Properties outputOptions) throws TransformerException {
+        if (document == null) {
+            return null;
+        }
+
+        DOMSource source = new DOMSource(document);
+        StringWriter buffer = new StringWriter();
+        toResult(source, new StreamResult(buffer), outputOptions);
+        return buffer.toString();
     }
 
     /**
@@ -1152,7 +1172,23 @@ public class XmlConverter {
     }
 
     public TransformerFactory createTransformerFactory() {
-        TransformerFactory factory = TransformerFactory.newInstance();
+        TransformerFactory factory;
+        TransformerFactoryConfigurationError cause;
+        try {
+            factory = TransformerFactory.newInstance();
+        } catch (TransformerFactoryConfigurationError e) {
+            cause = e;
+            // try fallback from the JDK
+            try {
+                LOG.debug("Cannot create/load TransformerFactory due: {}. Will attempt to use JDK fallback TransformerFactory: {}", e.getMessage(), JDK_FALLBACK_TRANSFORMER_FACTORY);
+                factory = TransformerFactory.newInstance(JDK_FALLBACK_TRANSFORMER_FACTORY, null);
+            } catch (Throwable t) {
+                // okay we cannot load fallback then throw original exception
+                throw cause;
+            }
+        }
+        LOG.debug("Created TransformerFactory: {}", factory);
+
         // Enable the Security feature by default
         try {
             factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);

@@ -18,12 +18,15 @@ package org.apache.camel.component.salesforce;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata;
+import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
+import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest.Action;
 import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum;
@@ -38,7 +41,7 @@ import org.apache.camel.spi.UriParams;
 public class SalesforceEndpointConfig implements Cloneable {
 
     // default API version
-    public static final String DEFAULT_VERSION = "33.0";
+    public static final String DEFAULT_VERSION = "34.0";
 
     // general parameter
     public static final String API_VERSION = "apiVersion";
@@ -56,6 +59,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String SOBJECT_SEARCH = "sObjectSearch";
     public static final String APEX_METHOD = "apexMethod";
     public static final String APEX_URL = "apexUrl";
+    public static final String LIMIT = "limit";
 
     // prefix for parameters in headers
     public static final String APEX_QUERY_PARAM_PREFIX = "apexQueryParam.";
@@ -65,7 +69,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String JOB_ID = "jobId";
     public static final String BATCH_ID = "batchId";
     public static final String RESULT_ID = "resultId";
-    
+
     // parameters for Analytics API
     public static final String REPORT_ID = "reportId";
     public static final String INCLUDE_DETAILS = "includeDetails";
@@ -75,6 +79,9 @@ public class SalesforceEndpointConfig implements Cloneable {
     // parameters for Streaming API
     public static final String DEFAULT_REPLAY_ID = "defaultReplayId";
     public static final String INITIAL_REPLAY_ID_MAP = "initialReplayIdMap";
+
+    // parameters for Approval API
+    public static final String APPROVAL = "approval";
 
     // default maximum authentication retries on failed authentication or expired session
     public static final int DEFAULT_MAX_AUTHENTICATION_RETRIES = 4;
@@ -140,7 +147,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     private Boolean notifyForOperationDelete;
     @UriParam
     private Boolean notifyForOperationUndelete;
-    
+
     // Analytics API properties
     @UriParam
     private String reportId;
@@ -157,6 +164,9 @@ public class SalesforceEndpointConfig implements Cloneable {
     @UriParam
     private Map<String, Integer> initialReplayIdMap;
 
+    // Approval API properties
+    private ApprovalRequest approval;
+
     // Salesforce Jetty9 HttpClient, set using reference
     @UriParam
     private SalesforceHttpClient httpClient;
@@ -172,6 +182,9 @@ public class SalesforceEndpointConfig implements Cloneable {
     // Streaming connection restart attempt maximum backoff interval
     @UriParam
     private long maxBackoff = DEFAULT_MAX_BACKOFF;
+
+    @UriParam
+    private Integer limit;
 
     public SalesforceEndpointConfig copy() {
         try {
@@ -335,6 +348,19 @@ public class SalesforceEndpointConfig implements Cloneable {
      */
     public void setApexQueryParams(Map<String, Object> apexQueryParams) {
         this.apexQueryParams = apexQueryParams;
+    }
+
+    public ApprovalRequest getApproval() {
+        return approval;
+    }
+
+    /**
+     * The approval request for Approval API.
+     *
+     * @param approval
+     */
+    public void setApproval(final ApprovalRequest approval) {
+        this.approval = approval;
     }
 
     public ContentType getContentType() {
@@ -563,6 +589,8 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(SOBJECT_SEARCH, sObjectSearch);
         valueMap.put(APEX_METHOD, apexMethod);
         valueMap.put(APEX_URL, apexUrl);
+        valueMap.put(LIMIT, limit);
+        valueMap.put(APPROVAL, approval);
         // apexQueryParams are handled explicitly in AbstractRestProcessor
 
         // add bulk API properties
@@ -592,6 +620,7 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     /**
      * Default replayId setting if no value is found in {@link #initialReplayIdMap}
+     * 
      * @param defaultReplayId
      */
     public void setDefaultReplayId(Integer defaultReplayId) {
@@ -607,5 +636,181 @@ public class SalesforceEndpointConfig implements Cloneable {
      */
     public void setInitialReplayIdMap(Map<String, Integer> initialReplayIdMap) {
         this.initialReplayIdMap = initialReplayIdMap;
+    }
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    /**
+     * Limit on number of returned records. Applicable to some of the API, check the Salesforce documentation.
+     * 
+     * @param limit
+     */
+    public void setLimit(final Integer limit) {
+        this.limit = limit;
+    }
+
+    public Action getApprovalActionType() {
+        if (approval == null) {
+            return null;
+        }
+
+        return approval.getActionType();
+    }
+
+    public String getApprovalComments() {
+        if (approval == null) {
+            return null;
+        }
+
+        return approval.getComments();
+    }
+
+    public String getApprovalContextActorId() {
+        if (approval == null) {
+            return null;
+        }
+
+        return approval.getContextActorId();
+    }
+
+    public String getApprovalContextId() {
+        if (approval == null) {
+            return null;
+        }
+
+        return approval.getContextId();
+    }
+
+    public List<String> getApprovalNextApproverIds() {
+        if (approval == null) {
+            return null;
+        }
+
+        return approval.getNextApproverIds();
+    }
+
+    public String getApprovalProcessDefinitionNameOrId() {
+        if (approval == null) {
+            return null;
+        }
+
+        return approval.getProcessDefinitionNameOrId();
+    }
+
+    public boolean isApprovalSkipEntryCriteria() {
+        if (approval == null) {
+            return false;
+        }
+
+        return approval.isSkipEntryCriteria();
+    }
+
+    /**
+     * Represents the kind of action to take: Submit, Approve, or Reject.
+     *
+     * @param actionType
+     */
+    public void setApprovalActionType(final Action actionType) {
+        if (approval == null) {
+            approval = new ApprovalRequest();
+        }
+
+        approval.setActionType(actionType);
+    }
+
+    /**
+     * The comment to add to the history step associated with this request.
+     *
+     * @param comments
+     */
+    public void setApprovalComments(final String comments) {
+        if (approval == null) {
+            approval = new ApprovalRequest();
+        }
+
+        approval.setComments(comments);
+    }
+
+    /**
+     * The ID of the submitter who’s requesting the approval record. 
+     *
+     * @param contextActorId
+     */
+    public void setApprovalContextActorId(final String contextActorId) {
+        if (approval == null) {
+            approval = new ApprovalRequest();
+        }
+
+        approval.setContextActorId(contextActorId);
+    }
+
+    /**
+     * The ID of the item that is being acted upon.
+     *
+     * @param contextId
+     */
+    public void setApprovalContextId(final String contextId) {
+        if (approval == null) {
+            approval = new ApprovalRequest();
+        }
+
+        approval.setContextId(contextId);
+    }
+
+    /**
+     * If the process requires specification of the next approval, the ID of the user to be assigned the next request.
+     *
+     * @param nextApproverIds
+     */
+    public void setApprovalNextApproverIds(final List<String> nextApproverIds) {
+        if (approval == null) {
+            approval = new ApprovalRequest();
+        }
+
+        approval.setNextApproverIds(nextApproverIds);
+    }
+
+    /**
+     * If the process requires specification of the next approval, the ID of the user to be assigned the next request.
+     *
+     * @param nextApproverIds
+     */
+    public void setApprovalNextApproverIds(String nextApproverId) {
+        if (approval == null) {
+            approval = new ApprovalRequest();
+        }
+
+        approval.setNextApproverIds(nextApproverId);
+    }
+
+    /**
+     * The developer name or ID of the process definition.
+     *
+     * @param processDefinitionNameOrId
+     */
+    public void setApprovalProcessDefinitionNameOrId(final String processDefinitionNameOrId) {
+        if (approval == null) {
+            approval = new ApprovalRequest();
+        }
+
+        approval.setProcessDefinitionNameOrId(processDefinitionNameOrId);
+    }
+
+    /**
+     * Determines whether to evaluate the entry criteria for the process (true) or not (false) if the process definition
+     * name or ID isn’t null. If the process definition name or ID isn’t specified, this argument is ignored, and 
+     * standard evaluation is followed based on process order. By default, the entry criteria isn’t skipped if it’s not
+     * set by this request.
+     *
+     * @param skipEntryCriteria
+     */
+    public void setApprovalSkipEntryCriteria(final boolean skipEntryCriteria) {
+        if (approval == null) {
+            approval = new ApprovalRequest();
+        }
+
+        approval.setSkipEntryCriteria(skipEntryCriteria);
     }
 }

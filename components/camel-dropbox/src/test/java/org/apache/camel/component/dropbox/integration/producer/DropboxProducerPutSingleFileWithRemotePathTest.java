@@ -26,7 +26,6 @@ import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-
 public class DropboxProducerPutSingleFileWithRemotePathTest extends DropboxTestSupport {
 
     public DropboxProducerPutSingleFileWithRemotePathTest() throws Exception { }

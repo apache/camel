@@ -42,7 +42,7 @@ public final class JCacheHelper {
         return new JCacheManager<>(configuration);
     }
 
-    @SuppressWarnings("uncheked")
+    @SuppressWarnings("unchecked")
     public static <T> T tcclProxy(final T instance, Class<T> type, final ClassLoader classLoader) {
         return (T) Proxy.newProxyInstance(
             JCacheHelper.class.getClassLoader(),

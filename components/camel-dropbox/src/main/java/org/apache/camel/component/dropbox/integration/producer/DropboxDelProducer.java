@@ -20,7 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
-import org.apache.camel.component.dropbox.dto.DropboxResult;
+import org.apache.camel.component.dropbox.dto.DropboxDelResult;
+import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 
 public class DropboxDelProducer extends DropboxProducer {
     
@@ -30,11 +31,11 @@ public class DropboxDelProducer extends DropboxProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        DropboxResult result = DropboxAPIFacade.getInstance(configuration.getClient())
-                .del(configuration.getRemotePath());
-        result.populateExchange(exchange);
-        log.info("Deleted: " + configuration.getRemotePath());
-
+        DropboxDelResult result = new DropboxAPIFacade(configuration.getClient(), exchange)
+            .del(configuration.getRemotePath());
+        exchange.getIn().setHeader(DropboxResultHeader.DELETED_PATH.name(), result.getEntry());
+        exchange.getIn().setBody(result.getEntry());
+        log.debug("Deleted: {}", configuration.getRemotePath());
     }
 
 }

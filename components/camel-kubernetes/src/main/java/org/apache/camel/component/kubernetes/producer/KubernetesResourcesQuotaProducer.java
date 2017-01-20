@@ -31,6 +31,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,6 +121,8 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
             }
             resList = resQuota.list();
         }
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(resList.getItems());
     }
 
@@ -143,6 +146,8 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         }
         rq = getEndpoint().getKubernetesClient().resourceQuotas()
                 .inNamespace(namespaceName).withName(rqName).get();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(rq);
     }
 
@@ -180,6 +185,8 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
                 .endMetadata().withSpec(rqSpec).build();
         rq = getEndpoint().getKubernetesClient().resourceQuotas()
                 .inNamespace(namespaceName).create(rqCreating);
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(rq);
     }
 
@@ -203,6 +210,8 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         boolean rqDeleted = getEndpoint().getKubernetesClient()
                 .resourceQuotas().inNamespace(namespaceName).withName(rqName)
                 .delete();
+        
+        MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(rqDeleted);
     }
 }

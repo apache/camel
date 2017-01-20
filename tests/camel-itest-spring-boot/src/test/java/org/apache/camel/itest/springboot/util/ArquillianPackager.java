@@ -91,6 +91,8 @@ public final class ArquillianPackager {
     private static final String LIB_FOLDER = "/BOOT-INF/lib";
     private static final String CLASSES_FOLDER = "BOOT-INF/classes";
 
+    private static final Pattern PROP_PATTERN = Pattern.compile("(\\$\\{[^}]*\\})");
+
     private ArquillianPackager() {
     }
 
@@ -469,8 +471,7 @@ public final class ArquillianPackager {
         pom = pom.replace("<!-- DEPENDENCIES -->", dependencies.toString());
 
         Map<String, String> resolvedProperties = new TreeMap<>();
-        Pattern propPattern = Pattern.compile("(\\$\\{[^}]*\\})");
-        Matcher m = propPattern.matcher(pom);
+        Matcher m = PROP_PATTERN.matcher(pom);
         while (m.find()) {
             String property = m.group();
             String resolved = DependencyResolver.resolveModuleOrParentProperty(new File(new File(config.getModuleBasePath()), "pom.xml"), property);

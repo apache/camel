@@ -24,7 +24,6 @@ import org.apache.camel.dataformat.bindy.model.car.Car.Colour;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.model.dataformat.BindyType;
-import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;

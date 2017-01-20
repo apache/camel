@@ -87,7 +87,6 @@ public class SalesforceSession implements Service {
         this.listeners = new CopyOnWriteArraySet<SalesforceSessionListener>();
     }
 
-    @SuppressWarnings("unchecked")
     public synchronized String login(String oldToken) throws SalesforceException {
 
         // check if we need a new session

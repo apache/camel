@@ -16,15 +16,15 @@
   limitations under the License.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>camel-spring-boot-dm</artifactId>
     <groupId>org.apache.camel</groupId>
     <version>2.19.0-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
   <artifactId>camel-spring-boot-dependencies</artifactId>
   <packaging>pom</packaging>
-  <name>Camel :: Spring-Boot :: Dependency Management :: BOM</name>
+  <name>Camel :: Platform :: Spring-Boot :: Dependency Management :: BOM</name>
   <description>Camel Spring-Boot BOM</description>
   <dependencyManagement>
     <dependencies>
@@ -66,7 +66,7 @@
       <dependency>
         <groupId>com.google.truth</groupId>
         <artifactId>truth</artifactId>
-        <version>0.27</version>
+        <version>0.30</version>
       </dependency>
       <dependency>
         <groupId>com.hazelcast</groupId>
@@ -467,6 +467,31 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-catalog-maven</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-catalog-provider-karaf</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-catalog-provider-springboot</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-catalog-rest</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-catalog-rest-app</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-cdi</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -547,6 +572,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-connector</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-consul</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -594,6 +624,16 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-core-xml-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-couchbase</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-couchbase-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1629,6 +1669,16 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-mongodb3</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-mongodb3-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-mqtt</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1774,6 +1824,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-openstack</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-optaplanner</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1900,6 +1955,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-rmi-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-route-parser</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2180,6 +2240,16 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-boot-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spring-cloud</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spring-cloud-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2595,97 +2665,97 @@
       <dependency>
         <groupId>org.apache.cxf.services.sts</groupId>
         <artifactId>cxf-services-sts-core</artifactId>
-        <version>3.1.8</version>
+        <version>3.1.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf.services.ws-discovery</groupId>
         <artifactId>cxf-services-ws-discovery-api</artifactId>
-        <version>3.1.8</version>
+        <version>3.1.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-core</artifactId>
-        <version>3.1.8</version>
+        <version>3.1.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-bindings-soap</artifactId>
-        <version>3.1.8</version>
+        <version>3.1.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-bindings-xml</artifactId>
-        <version>3.1.8</version>
+        <version>3.1.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-databinding-jaxb</artifactId>
-        <version>3.1.8</version>
+        <version>3.1.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-jaxrs</artifactId>
-        <version>3.1.8</version>
+        <version>3.1.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-jaxws</artifactId>
-        <version>3.1.8</version>
+        <version>3.1.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-frontend-simple</artifactId>
-        <version>3.1.8</version>
+        <version>3.1.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-management</artifactId>
-        <version>3.1.8</version>
+        <version>3.1.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-transports-http</artifactId>
-        <version>3.1.8</version>
+        <version>3.1.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-transports-jms</artifactId>
-        <version>3.1.8</version>
+        <version>3.1.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-transports-local</artifactId>
-        <version>3.1.8</version>
+        <version>3.1.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-addr</artifactId>
-        <version>3.1.8</version>
+        <version>3.1.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-mex</artifactId>
-        <version>3.1.8</version>
+        <version>3.1.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-policy</artifactId>
-        <version>3.1.8</version>
+        <version>3.1.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-rm</artifactId>
-        <version>3.1.8</version>
+        <version>3.1.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-ws-security</artifactId>
-        <version>3.1.8</version>
+        <version>3.1.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-wsdl</artifactId>
-        <version>3.1.8</version>
+        <version>3.1.9</version>
       </dependency>
       <dependency>
         <groupId>org.apache.ftpserver</groupId>
@@ -2735,12 +2805,12 @@
       <dependency>
         <groupId>org.apache.kafka</groupId>
         <artifactId>kafka-clients</artifactId>
-        <version>0.10.1.0</version>
+        <version>0.10.1.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.kafka</groupId>
         <artifactId>kafka_2.11</artifactId>
-        <version>0.10.1.0</version>
+        <version>0.10.1.1</version>
       </dependency>
       <dependency>
         <groupId>org.apache.mina</groupId>
@@ -2750,7 +2820,7 @@
       <dependency>
         <groupId>org.apache.openjpa</groupId>
         <artifactId>openjpa-persistence-jdbc</artifactId>
-        <version>2.4.1</version>
+        <version>2.4.2</version>
       </dependency>
       <dependency>
         <groupId>org.apache.ws.commons.axiom</groupId>
@@ -2775,7 +2845,7 @@
       <dependency>
         <groupId>org.cassandraunit</groupId>
         <artifactId>cassandra-unit</artifactId>
-        <version>3.0.0.1</version>
+        <version>3.1.1.0</version>
         <exclusions>
           <exclusion>
             <groupId>org.apache.cassandra</groupId>
@@ -2872,233 +2942,233 @@
       <dependency>
         <groupId>org.jruby</groupId>
         <artifactId>jruby</artifactId>
-        <version>1.7.26</version>
+        <version>1.7.18</version>
       </dependency>
       <dependency>
         <groupId>org.jruby</groupId>
         <artifactId>jruby-complete</artifactId>
-        <version>1.7.26</version>
+        <version>1.7.18</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-benchmark</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-benchmark</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-benchmark</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-benchmark</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-core</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-core</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-core</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-core</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-distribution</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <type>zip</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-docs</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <type>jdocbook</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-examples</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-examples</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-examples</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-common</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-common</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-common</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-common</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jpa</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jpa</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jpa</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-jpa</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-xstream</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-xstream</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-xstream</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <type>test-jar</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-persistence-xstream</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <classifier>javadoc</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-api</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-api</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-backend</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-backend</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-client</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-domain-editor-client</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-api</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-api</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-backend</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-backend</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-client</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-wb-solver-editor-client</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-webexamples</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <type>war</type>
       </dependency>
       <dependency>
         <groupId>org.optaplanner</groupId>
         <artifactId>optaplanner-webexamples</artifactId>
-        <version>6.4.0.Final</version>
+        <version>6.5.0.Final</version>
         <classifier>sources</classifier>
       </dependency>
       <dependency>

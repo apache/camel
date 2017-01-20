@@ -1,6 +1,4 @@
-[[Netty4-NettyComponent]]
-Netty Component
-~~~~~~~~~~~~~~~
+## Netty4 Component
 
 *Available as of Camel 2.14*
 
@@ -32,9 +30,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Netty4-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 The URI scheme for a netty component is as follows
 
@@ -50,9 +46,7 @@ UDP.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Netty4-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -64,12 +58,12 @@ The Netty4 component supports 3 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| maximumPoolSize | int | The thread pool size for the EventExecutorGroup if its in use. The default value is 16.
-| configuration | NettyConfiguration | To use the NettyConfiguration as configuration when creating endpoints.
-| executorService | EventExecutorGroup | To use the given EventExecutorGroup
+| Name | Group | Default | Java Type | Description
+| maximumPoolSize | advanced | 16 | int | The thread pool size for the EventExecutorGroup if its in use. The default value is 16.
+| configuration | advanced |  | NettyConfiguration | To use the NettyConfiguration as configuration when creating endpoints.
+| executorService | advanced |  | EventExecutorGroup | To use the given EventExecutorGroup
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -99,7 +93,7 @@ The Netty4 component supports 74 endpoint options which are listed below:
 | reuseAddress | common | true | boolean | Setting to facilitate socket multiplexing
 | sync | common | true | boolean | Setting to set endpoint as one-way or request-response
 | tcpNoDelay | common | true | boolean | Setting to improve TCP protocol performance
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | broadcast | consumer | false | boolean | Setting to choose Multicast over UDP
 | clientMode | consumer | false | boolean | If the clientMode is true netty consumer will connect the address as a TCP client.
 | reconnect | consumer | true | boolean | Used only in clientMode in consumer the consumer will attempt to reconnect on disconnection if this is enabled
@@ -108,7 +102,7 @@ The Netty4 component supports 74 endpoint options which are listed below:
 | bossCount | consumer (advanced) | 1 | int | When netty works on nio mode it uses default bossCount parameter from Netty which is 1. User can use this operation to override the default bossCount from Netty
 | bossGroup | consumer (advanced) |  | EventLoopGroup | Set the BossGroup which could be used for handling the new connection of the server side across the NettyEndpoint
 | disconnectOnNoReply | consumer (advanced) | true | boolean | If sync is enabled then this option dictates NettyConsumer if it should disconnect where there is no reply to send back.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | nettyServerBootstrapFactory | consumer (advanced) |  | NettyServerBootstrapFactory | To use a custom NettyServerBootstrapFactory
 | networkInterface | consumer (advanced) |  | String | When using UDP then this option can be used to specify a network interface by its name such as eth0 to join a multicast group.
@@ -175,9 +169,7 @@ The Netty4 component supports 74 endpoint options which are listed below:
 
 
 
-[[Netty4-RegistrybasedOptions]]
-Registry based Options
-^^^^^^^^^^^^^^^^^^^^^^
+### Registry based Options
 
 Codec Handlers and SSL Keystores can be enlisted in the
 link:registry.html[Registry], such as in the Spring XML file. 
@@ -233,9 +225,7 @@ so Camel knows it should lookup.
 
 *Important:* Read below about using non shareable encoders/decoders.
 
-[[Netty4-Usingnonshareableencodersordecoders]]
-Using non shareable encoders or decoders
-++++++++++++++++++++++++++++++++++++++++
+#### Using non shareable encoders or decoders
 
 If your encoders or decoders is not shareable (eg they have the
 @Shareable class annotation), then your encoder/decoder must implement
@@ -249,13 +239,9 @@ The Netty component offers a
 `org.apache.camel.component.netty.ChannelHandlerFactories` factory
 class, that has a number of commonly used methods.
 
-[[Netty4-SendingMessagestofromaNettyendpoint]]
-Sending Messages to/from a Netty endpoint
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Sending Messages to/from a Netty endpoint
 
-[[Netty4-NettyProducer]]
-Netty Producer
-++++++++++++++
+#### Netty Producer
 
 In Producer mode, the component provides the ability to send payloads to
 a socket endpoint +
@@ -264,9 +250,7 @@ a socket endpoint +
 The producer mode supports both one-way and request-response based
 operations.
 
-[[Netty4-NettyConsumer]]
-Netty Consumer
-++++++++++++++
+#### Netty Consumer
 
 In Consumer mode, the component provides the ability to:
 
@@ -279,13 +263,9 @@ object based payloads and
 The consumer mode supports both one-way and request-response based
 operations.
 
-[[Netty4-UsageSamples]]
-Usage Samples
-^^^^^^^^^^^^^
+### Usage Samples
 
-[[Netty4-AUDPNettyendpointusingRequest-Replyandserializedobjectpayload]]
-A UDP Netty endpoint using Request-Reply and serialized object payload
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### A UDP Netty endpoint using Request-Reply and serialized object payload
 
 [source,java]
 ------------------------------------------------------------------
@@ -303,9 +283,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ------------------------------------------------------------------
 
-[[Netty4-ATCPbasedNettyconsumerendpointusingOne-waycommunication]]
-A TCP based Netty consumer endpoint using One-way communication
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### A TCP based Netty consumer endpoint using One-way communication
 
 [source,java]
 -------------------------------------------
@@ -317,9 +295,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 -------------------------------------------
 
-[[Netty4-AnSSLTCPbasedNettyconsumerendpointusingRequest-Replycommunication]]
-An SSL/TCP based Netty consumer endpoint using Request-Reply communication
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### An SSL/TCP based Netty consumer endpoint using Request-Reply communication
 
 [[Netty4-UsingtheJSSEConfigurationUtility]]
 Using the JSSE Configuration Utility
@@ -431,9 +407,7 @@ enriches the Camel link:message.html[Message] with headers having
 details about the client certificate. For example the subject name is
 readily available in the header `CamelNettySSLClientCertSubjectName`.
 
-[[Netty4-UsingMultipleCodecs]]
-Using Multiple Codecs
-+++++++++++++++++++++
+#### Using Multiple Codecs
 
 In certain cases it may be necessary to add chains of encoders and
 decoders to the netty pipeline. To add multpile codecs to a camel netty
@@ -540,9 +514,7 @@ or via spring.
     </camelContext>
 -------------------------------------------------------------------------------------------------------------
 
-[[Netty4-ClosingChannelWhenComplete]]
-Closing Channel When Complete
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Closing Channel When Complete
 
 When acting as a server you sometimes want to close the channel when,
 for example, a client conversion is finished. +
@@ -572,8 +544,7 @@ written the bye message back to the client:
 
 [[Netty4-Addingcustomchannelpipelinefactoriestogaincompletecontroloveracreatedpipeline]]
 Adding custom channel pipeline factories to gain complete control over a
-created pipeline
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### created pipeline
 
 Custom channel pipelines provide complete control to the user over the
 handler/interceptor chain by inserting custom handler(s), encoder(s) &
@@ -643,9 +614,7 @@ context.addRoutes(new RouteBuilder() {
 });
 ----------------------------------------------------------------------
 
-[[Netty4-ReusingNettybossandworkerthreadpools]]
-Reusing Netty boss and worker thread pools
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Reusing Netty boss and worker thread pools
 
 *Available as of Camel 2.12*
 
@@ -704,9 +673,7 @@ And if we have another route we can refer to the shared worker pool:
 
 ... and so forth.
 
-[[Netty4-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]

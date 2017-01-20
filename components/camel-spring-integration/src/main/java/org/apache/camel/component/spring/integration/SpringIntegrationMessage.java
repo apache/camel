@@ -53,7 +53,7 @@ public class SpringIntegrationMessage extends DefaultMessage {
 
         setMessageId(that.getMessageId());
         setBody(that.getBody());
-        getHeaders().putAll(that.getHeaders());
+        super.getHeaders().putAll(that.getHeaders());
         if (that instanceof SpringIntegrationMessage) {
             SpringIntegrationMessage orig = (SpringIntegrationMessage) that;
             setMessage(orig.getMessage());

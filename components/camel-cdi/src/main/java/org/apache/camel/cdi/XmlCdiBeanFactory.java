@@ -193,8 +193,8 @@ final class XmlCdiBeanFactory {
         Set<SyntheticBean<?>> beans = new HashSet<>();
 
         // TODO: WARN log if the definition doesn't have an id
-        if (factory.getBeans() != null) {
-            factory.getBeans().stream()
+        if (factory.getBeansFactory() != null) {
+            factory.getBeansFactory().stream()
                 .filter(XmlCdiBeanFactory::hasId)
                 .map(bean -> camelContextBean(context, bean, url))
                 .forEach(beans::add);

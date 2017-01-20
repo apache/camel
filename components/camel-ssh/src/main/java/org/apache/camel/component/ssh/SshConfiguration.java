@@ -34,16 +34,17 @@ public class SshConfiguration implements Cloneable {
     private String host;
     @UriPath(defaultValue = "" + DEFAULT_SSH_PORT)
     private int port = DEFAULT_SSH_PORT;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String username;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String password;
     @UriParam(label = "consumer")
     private String pollCommand;
+    @UriParam(label = "security")
     private KeyPairProvider keyPairProvider;
-    @UriParam(defaultValue = KeyPairProvider.SSH_RSA)
+    @UriParam(label = "security", defaultValue = KeyPairProvider.SSH_RSA)
     private String keyType = KeyPairProvider.SSH_RSA;
-    @UriParam
+    @UriParam(label = "security")
     private String certResource;
     @UriParam(defaultValue = "30000")
     private long timeout = 30000;

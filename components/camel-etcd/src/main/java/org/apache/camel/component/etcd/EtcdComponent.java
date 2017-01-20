@@ -27,6 +27,7 @@ import org.apache.camel.util.ObjectHelper;
  * Represents the component that manages {@link AbstractEtcdEndpoint}.
  */
 public class EtcdComponent extends UriEndpointComponent {
+
     public EtcdComponent() {
         super(AbstractEtcdEndpoint.class);
     }

@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.ssh.enabled",
+      "description": "Enable ssh component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

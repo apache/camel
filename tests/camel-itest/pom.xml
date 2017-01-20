@@ -47,6 +47,11 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jms</artifactId>
       <scope>test</scope>
     </dependency>
@@ -413,6 +418,20 @@
 
   <build>
     <plugins>
+
+      <!-- to validate Camel endpoints: mvn camel:validate -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <failOnError>false</failOnError>
+          <includeTest>true</includeTest>
+          <includeXml>true</includeXml>
+          <ignoreLenientProperties>false</ignoreLenientProperties>
+        </configuration>
+      </plugin>
+            
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>

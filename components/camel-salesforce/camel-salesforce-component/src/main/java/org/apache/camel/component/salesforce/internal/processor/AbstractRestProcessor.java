@@ -22,15 +22,24 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
+import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
+import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
+import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequests;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
@@ -67,6 +76,14 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                 payloadFormat, session);
 
         this.classMap = endpoint.getComponent().getClassMap();
+    }
+
+    // used in unit tests
+    AbstractRestProcessor(final SalesforceEndpoint endpoint, final RestClient restClient,
+            final Map<String, Class<?>> classMap) {
+        super(endpoint);
+        this.restClient = restClient;
+        this.classMap = classMap;
     }
 
     @Override
@@ -152,6 +169,18 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
             case APEX_CALL:
                 processApexCall(exchange, callback);
                 break;
+            case RECENT:
+                processRecent(exchange, callback);
+                break;
+            case LIMITS:
+                processLimits(exchange, callback);
+                break;
+            case APPROVAL:
+                processApproval(exchange, callback);
+                break;
+            case APPROVALS:
+                processApprovals(exchange, callback);
+                break;
             default:
                 throw new SalesforceException("Unknown operation name: " + operationName.value(), null);
             }
@@ -173,6 +202,98 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
         // continue routing asynchronously
         return false;
+    }
+
+    final void processApproval(final Exchange exchange, final AsyncCallback callback) throws SalesforceException {
+        final TypeConverter converter = exchange.getContext().getTypeConverter();
+
+        final ApprovalRequest approvalRequestFromHeader = getParameter(SalesforceEndpointConfig.APPROVAL, exchange,
+                IGNORE_BODY, IS_OPTIONAL, ApprovalRequest.class);
+        final boolean requestGivenInHeader = approvalRequestFromHeader != null;
+
+        // find if there is a ApprovalRequest as `approval` in the message header
+        final ApprovalRequest approvalHeader = Optional.ofNullable(approvalRequestFromHeader)
+                .orElse(new ApprovalRequest());
+
+        final Message incomingMessage = exchange.getIn();
+
+        final Map<String, Object> incomingHeaders = incomingMessage.getHeaders();
+
+        final boolean requestGivenInParametersInHeader = processApprovalHeaderValues(approvalHeader, incomingHeaders);
+
+        final boolean nothingInheader = !requestGivenInHeader && !requestGivenInParametersInHeader;
+
+        final Object approvalBody = incomingMessage.getBody();
+
+        final boolean bodyIsIterable = approvalBody instanceof Iterable;
+        final boolean bodyIsIterableButEmpty = bodyIsIterable && !((Iterable) approvalBody).iterator().hasNext();
+
+        // body contains nothing of interest if it's null, holds an empty iterable or cannot be converted to
+        // ApprovalRequest
+        final boolean nothingInBody = !(approvalBody != null && !bodyIsIterableButEmpty);
+
+        // we found nothing in the headers or the body
+        if (nothingInheader && nothingInBody) {
+            throw new SalesforceException("Missing " + SalesforceEndpointConfig.APPROVAL
+                + " parameter in header or ApprovalRequest or List of ApprovalRequests body", 0);
+        }
+
+        // let's try to resolve the request body to send
+        final ApprovalRequests requestsBody;
+        if (nothingInBody) {
+            // nothing in body use the header values only
+            requestsBody = new ApprovalRequests(approvalHeader);
+        } else if (bodyIsIterable) {
+            // multiple ApprovalRequests are found
+            final Iterable<?> approvalRequests = (Iterable<?>) approvalBody;
+
+            // use header values as template and apply them to the body
+            final List<ApprovalRequest> requests = StreamSupport.stream(approvalRequests.spliterator(), false)
+                    .map(value -> converter.convertTo(ApprovalRequest.class, value))
+                    .map(request -> request.applyTemplate(approvalHeader)).collect(Collectors.toList());
+
+            requestsBody = new ApprovalRequests(requests);
+        } else {
+            // we've looked at the body, and are expecting to see something resembling ApprovalRequest in there
+            // but lets see if that is so
+            final ApprovalRequest given = converter.tryConvertTo(ApprovalRequest.class, approvalBody);
+
+            final ApprovalRequest request = Optional.ofNullable(given).orElse(new ApprovalRequest())
+                    .applyTemplate(approvalHeader);
+
+            requestsBody = new ApprovalRequests(request);
+        }
+
+        final InputStream request = getRequestStream(requestsBody);
+
+        restClient.approval(request, (response, exception) -> processResponse(exchange, response, exception, callback));
+    }
+
+    final boolean processApprovalHeaderValues(final ApprovalRequest approvalRequest,
+            final Map<String, Object> incomingHeaderValues) {
+        // loop trough all header values, find those that start with `approval.`
+        // set the property value to the given approvalRequest and return if
+        // any value was set
+        return incomingHeaderValues.entrySet().stream().filter(kv -> kv.getKey().startsWith("approval.")).map(kv -> {
+            final String property = kv.getKey().substring(9);
+            Object value = kv.getValue();
+
+            if (value != null) {
+                try {
+                    setPropertyValue(approvalRequest, property, value);
+
+                    return true;
+                } catch (SalesforceException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+
+            return false;
+        }).reduce(false, (a, b) -> a || b);
+    }
+
+    private void processApprovals(final Exchange exchange, final AsyncCallback callback) {
+        restClient.approvals((response, exception) -> processResponse(exchange, response, exception, callback));
     }
 
     private void processGetVersions(final Exchange exchange, final AsyncCallback callback) {
@@ -561,6 +682,16 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         return apexUrl;
     }
 
+    private void processRecent(Exchange exchange, AsyncCallback callback) throws SalesforceException {
+        final Integer limit = getParameter(SalesforceEndpointConfig.LIMIT, exchange, true, true, Integer.class);
+
+        restClient.recent(limit, (response, exception) -> processResponse(exchange, response, exception, callback));
+    }
+
+    private void processLimits(Exchange exchange, AsyncCallback callback) {
+        restClient.limits((response, exception) -> processResponse(exchange, response, exception, callback));
+    }
+
     @SuppressWarnings("unchecked")
     private Map<String, Object> getQueryParams(Exchange exchange) {
 
@@ -603,7 +734,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         }
     }
 
-    private void setPropertyValue(AbstractSObjectBase sObjectBase, String name, Object value) throws SalesforceException {
+    private void setPropertyValue(Object sObjectBase, String name, Object value) throws SalesforceException {
         try {
             // set the value with the set method
             Method setMethod = sObjectBase.getClass().getMethod("set" + name, value.getClass());
@@ -660,6 +791,15 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
     // get request stream from In message
     protected abstract InputStream getRequestStream(Exchange exchange) throws SalesforceException;
+
+    /**
+     * Returns {@link InputStream} to serialized form of the given object.
+     * 
+     * @param object
+     *            object to serialize
+     * @return stream to read serialized object from
+     */
+    protected abstract InputStream getRequestStream(Object object) throws SalesforceException;
 
     private void setResponseClass(Exchange exchange, String sObjectName) throws SalesforceException {
         Class<?> sObjectClass;

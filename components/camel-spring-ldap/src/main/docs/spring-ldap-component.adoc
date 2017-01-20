@@ -1,6 +1,4 @@
-[[SpringLDAP-SpringLDAPComponent]]
-Spring LDAP Component
-~~~~~~~~~~~~~~~~~~~~~
+## Spring LDAP Component
 
 *Available since Camel 2.11*
 
@@ -20,9 +18,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[SpringLDAP-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------------------------------------
@@ -34,9 +30,7 @@ http://static.springsource.org/spring-ldap/site/apidocs/org/springframework/ldap
 LDAP Template bean]. In this bean, you configure the URL and the
 credentials for your LDAP access.
 
-[[SpringLDAP-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -61,45 +55,53 @@ The Spring LDAP component supports 4 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[SpringLDAP-Usage]]
-Usage
-^^^^^
+### Usage
 
 The component supports producer endpoint only. An attempt to create a
 consumer endpoint will result in an `UnsupportedOperationException`. +
  The body of the message must be a map (an instance of `java.util.Map`).
-This map must contain at least an entry with the key *`dn`* that
+This map must contain at least an entry with the key *`dn`* (not needed for function_driven operation) that
 specifies the root node for the LDAP operation to be performed. Other
 entries of the map are operation-specific (see below).
 
 The body of the message remains unchanged for the `bind` and `unbind`
-operations. For the `search` operation, the body is set to the result of
+operations. For the `search` and `function_driven` operations, the body is set to the result of
 the search, see
 http://static.springsource.org/spring-ldap/site/apidocs/org/springframework/ldap/core/LdapTemplate.html#search%28java.lang.String,%20java.lang.String,%20int,%20org.springframework.ldap.core.AttributesMapper%29[http://static.springsource.org/spring-ldap/site/apidocs/org/springframework/ldap/core/LdapTemplate.html#search%28java.lang.String,%20java.lang.String,%20int,%20org.springframework.ldap.core.AttributesMapper%29].
 
-[[SpringLDAP-Search]]
-Search
-++++++
+#### Search
 
 The message body must have an entry with the key *`filter`*. The value
-must be a String representing a valid LDAP filter, see
+must be a `String` representing a valid LDAP filter, see
 http://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol#Search_and_Compare[http://en.wikipedia.org/wiki/Lightweight_Directory_Access_Protocol#Search_and_Compare].
 
-[[SpringLDAP-Bind]]
-Bind
-++++
+#### Bind
 
 The message body must have an entry with the key *`attributes`*. The
 value must be an instance of
 http://docs.oracle.com/javase/6/docs/api/javax/naming/directory/Attributes.html[javax.naming.directory.Attributes]
 This entry specifies the LDAP node to be created.
 
-[[SpringLDAP-Unbind]]
-Unbind
-++++++
+#### Unbind
 
 No further entries necessary, the node with the specified *`dn`* is
 deleted.
+
+#### Authenticate
+
+The message body must have entries with the keys *`filter`* and  *`password`*. The
+values must be an instance of `String` representing a valid LDAP filter and a user password, respectively.
+
+#### Modify Attributes
+
+The message body must have an entry with the key *`modificationItems`*. The
+value must be an instance of any array of type 
+http://docs.oracle.com/javase/6/docs/api/javax/naming/directory/ModificationItem.html[javax.naming.directory.ModificationItem]
+
+#### Function-Driven
+
+The message body must have entries with the keys *`function`* and *`request`*. The *`function`* value must be of type `java.util.function.BiFunction<L, Q, S>`. The `L` type parameter must be of type `org.springframework.ldap.core.LdapOperations`. The *`request`* value must be the same type as the `Q` type parameter in the *`function`* and it must encapsulate the parameters expected by the LdapTemplate method being invoked within the *`function`*. The `S` type parameter represents the response type as returned by the LdapTemplate method being invoked.
+This operation allows dynamic invocation of LdapTemplate methods that are not covered by the operations mentioned above.
 
 *Key definitions*
 
@@ -109,4 +111,7 @@ in `org.apache.camel.springldap.SpringLdapProducer`:
 * public static final String DN = "dn"
 * public static final String FILTER = "filter"
 * public static final String ATTRIBUTES = "attributes"
-
+* public static final String PASSWORD = "password";
+* public static final String MODIFICATION_ITEMS = "modificationItems";
+* public static final String FUNCTION = "function";
+* public static final String REQUEST = "request";

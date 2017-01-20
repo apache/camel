@@ -1,6 +1,4 @@
-[[StAX-StAXComponent]]
-StAX Component
-~~~~~~~~~~~~~~
+## StAX Component
 
 *Available as of Camel 2.9*
 
@@ -23,9 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[StAX-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 --------------------------
@@ -48,9 +44,7 @@ using the # syntax as shown:
 stax:#myHandler
 ---------------
 
-[[Stax-Options]]
-Options
-~~~~~~~
+### Options
 
 
 // component options: START
@@ -73,9 +67,7 @@ The StAX component supports 2 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[StAX-UsageofacontenthandlerasStAXparser]]
-Usage of a content handler as StAX parser
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Usage of a content handler as StAX parser
 
 The message body after the handling is the handler itself.
 
@@ -95,9 +87,7 @@ from("file:target/in")
   });
 --------------------------------------------------------------------------------------------------------
 
-[[StAX-IterateoveracollectionusingJAXBandStAX]]
-Iterate over a collection using JAXB and StAX
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Iterate over a collection using JAXB and StAX
 
 First we suppose you have JAXB objects.
 
@@ -201,18 +191,13 @@ from("file:target/in")
         .to("mock:records");
 -------------------------------------------------
 
-[[StAX-ThepreviousexamplewithXMLDSL]]
-The previous example with XML DSL
-+++++++++++++++++++++++++++++++++
+#### The previous example with XML DSL
 
 The example above could be implemented as follows in XML DSL
 
-[[StAX-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

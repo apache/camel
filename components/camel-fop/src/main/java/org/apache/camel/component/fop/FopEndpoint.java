@@ -19,8 +19,6 @@ package org.apache.camel.component.fop;
 import java.io.InputStream;
 import java.net.URI;
 
-import org.apache.avalon.framework.configuration.Configuration;
-import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;

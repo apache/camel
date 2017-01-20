@@ -1,6 +1,4 @@
-[[Ehcache-EhcacheComponent]]
-Ehcache Component
-~~~~~~~~~~~~~~~~~
+## Ehcache Component
 
 *Available as of Camel 2.18.x*
 
@@ -25,9 +23,7 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Ehcache-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -----------------------------
@@ -37,9 +33,7 @@ ehcache://cacheName[?options]
 You can append query options to the URI in the following
 format, `?option=value&option=#beanRef&...`
 
-[[Ehcache-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -49,25 +43,34 @@ The Ehcache component has no options.
 
 
 // endpoint options: START
-The Ehcache component supports 5 endpoint options which are listed below:
+The Ehcache component supports 16 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | cacheName | common |  | String | *Required* the cache name
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| cacheManager | common |  | CacheManager | The cache manager
+| configUri | common |  | String | URI pointing to the Ehcache XML configuration file's location
+| createCacheIfNotExist | common | true | boolean | Configure if a cache need to be created if it does exist or can't be pre-configured.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| eventFiring | consumer | ASYNCHRONOUS | EventFiring | Set the the delivery mode (synchronous asynchronous)
+| eventOrdering | consumer | ORDERED | EventOrdering | Set the the delivery mode (ordered unordered)
+| eventTypes | consumer | EVICTED,EXPIRED,REMOVED,CREATED,UPDATED | Set | Set the type of events to listen for
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| action | producer |  | String | To configure the default cache action. If an action is set in the message header then the operation from the header takes precedence.
+| key | producer |  | Object | To configure the default action key. If a key is set in the message header then the key from the header takes precedence.
+| configuration | advanced |  | CacheConfiguration<?,?> | The default cache configuration to be used to create caches.
+| keyType | advanced | java.lang.Object | String | The cache key type default Object.class
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| valueType | advanced | java.lang.Object | String | The cache value type default Object.class
 |=======================================================================
 {% endraw %}
 // endpoint options: END
 
 
-[[Ehcache-MessageHeadersCamel]]
-Message Headers Camel 
-++++++++++++++++++++++
+#### Message Headers Camel 
 
  
 [width="100%",cols="10%,10%,80%",options="header",]
@@ -106,9 +109,7 @@ Object used for comparison for actions like REPLACE
 |CamelEhcacheEventType |EventType |The type of event received
 |=======================================================================
 
-[[Ehcache-Ehcachebasedidempotentrepositoryexample:]]
-Ehcache based idempotent repository example:
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Ehcache based idempotent repository example:
 
 [source,java]
 ------------------------------------------------------------------------------------------------
@@ -122,9 +123,7 @@ from("direct:in")
 
  
 
-[[Ehcache-Ehcachebasedaggregationrepositoryexample:]]
-Ehcache based aggregation repository example:
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Ehcache based aggregation repository example:
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------

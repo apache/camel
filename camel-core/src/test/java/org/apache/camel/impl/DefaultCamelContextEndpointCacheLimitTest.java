@@ -16,10 +16,7 @@
  */
 package org.apache.camel.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
@@ -64,7 +61,7 @@ public class DefaultCamelContextEndpointCacheLimitTest extends ContextTestSuppor
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getProperties().put(Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE, "75");
+        context.getGlobalOptions().put(Exchange.MAXIMUM_ENDPOINT_CACHE_SIZE, "75");
         return context;
     }
 }

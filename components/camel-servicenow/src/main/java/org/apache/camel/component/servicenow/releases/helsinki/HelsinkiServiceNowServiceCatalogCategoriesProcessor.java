@@ -51,7 +51,7 @@ class HelsinkiServiceNowServiceCatalogCategoriesProcessor extends AbstractServic
         final Message in = exchange.getIn();
         final Class<?> responseModel = getResponseModel(in);
         final String sysId = getSysID(in);
-        final String apiVersion  =getApiVersion(in);
+        final String apiVersion = getApiVersion(in);
 
         Response response = client.reset()
             .types(MediaType.APPLICATION_JSON_TYPE)

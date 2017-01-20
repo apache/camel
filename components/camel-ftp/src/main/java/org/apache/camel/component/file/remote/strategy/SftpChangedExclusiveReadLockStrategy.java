@@ -90,7 +90,7 @@ public class SftpChangedExclusiveReadLockStrategy implements GenericFileExclusiv
                     match = f.getFilename().equals(file.getFileNameOnly());
                 }
                 if (match) {
-                    newLastModified = f.getAttrs().getMTime() * 1000;
+                    newLastModified = f.getAttrs().getMTime() * 1000L;
                     newLength = f.getAttrs().getSize();
                 }
             }

@@ -31,7 +31,6 @@ public class EhcacheProducer extends DefaultProducer {
     private final EhcacheManager manager;
     private final Cache cache;
 
-    @SuppressWarnings("unchecked")
     public EhcacheProducer(EhcacheEndpoint endpoint, EhcacheConfiguration configuration) throws Exception {
         super(endpoint);
 

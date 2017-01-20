@@ -37,7 +37,7 @@ import org.codehaus.mojo.exec.AbstractExecMojo;
  *
  * @goal embedded
  * @requiresDependencyResolution compile+runtime
- * @execute phase="test-compile"
+ * @execute phase="prepare-package"
  */
 public class EmbeddedMojo extends AbstractExecMojo {
 

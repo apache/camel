@@ -1,6 +1,4 @@
-[[JCR-JCRComponent]]
-JCR Component
-~~~~~~~~~~~~~
+## JCR Component
 
 The *`jcr`* component allows you to add/read nodes to/from a JCR
 compliant content repository (for example,
@@ -20,9 +18,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[JCR-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -------------------------------------------
@@ -34,16 +30,12 @@ jcr://user:password@repository/path/to/node
 From *Camel 2.10* onwards you can use consumer as an EventListener in
 JCR or a producer to read a node by identifier.
 
-[[JCR-Usage]]
-Usage
-^^^^^
+### Usage
 
 The `repository` element of the URI is used to look up the JCR
 `Repository` object in the Camel context registry.
 
-[[JCR-Options]]
-JCR Options
-+++++++++++
+#### JCR Options
 
 
 // component options: START
@@ -72,8 +64,8 @@ The JCR component supports 16 endpoint options which are listed below:
 | username | common |  | String | Username for login
 | uuids | common |  | String | When a comma separated uuid list string is set only events whose associated parent node has one of the identifiers in the comma separated uuid list will be received.
 | workspaceName | common |  | String | The workspace to access. If it's not specified then the default one will be used
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
@@ -88,9 +80,7 @@ message headers in Camel versions earlier than 2.12.3. See
 https://issues.apache.org/jira/browse/CAMEL-7067[https://issues.apache.org/jira/browse/CAMEL-7067]
 for more details.
 
-[[JCR-Example]]
-Example
-^^^^^^^
+### Example
 
 The snippet below creates a node named `node` under the `/home/test`
 node in the content repository. One additional property is added to the
@@ -119,12 +109,9 @@ all the children.
 </route>
 ---------------------------------------------------------------------------------------------
 
-[[JCR-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

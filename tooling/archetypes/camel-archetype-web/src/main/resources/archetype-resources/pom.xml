@@ -22,12 +22,10 @@
   <groupId>${groupId}</groupId>
   <artifactId>${artifactId}</artifactId>
   <version>${version}</version>
+  <packaging>war</packaging>
 
   <name>Camel Web Application</name>
   <description>Camel project that deploys the Camel routes as a WAR</description>
-  <url>http://www.myorganization.org</url>
-
-  <packaging>war</packaging>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -36,6 +34,7 @@
 
   <dependencyManagement>
     <dependencies>
+      <!-- Camel BOM -->
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>

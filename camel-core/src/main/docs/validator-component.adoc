@@ -1,6 +1,4 @@
-[[Validation-ValidationComponent]]
-Validation Component
-~~~~~~~~~~~~~~~~~~~~
+## Validator Component
 
 The Validation component performs XML validation of the message body
 using the JAXP Validation API and based on any of the supported XML
@@ -17,9 +15,7 @@ Syntax]
 The link:msv.html[MSV] component also supports
 http://relaxng.org/[RelaxNG XML Syntax].
 
-[[Validation-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -----------------------------------
@@ -51,9 +47,7 @@ for this component when using *Camel 2.8* or older:
 From Camel 2.9 onwards the link:validation.html[Validation] component is
 provided directly in the camel-core.
 
-[[Validation-Options]]
-Options
-^^^^^^^
+### Options
 
 // component options: START
 The Validator component supports 1 options which are listed below.
@@ -61,10 +55,10 @@ The Validator component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| resourceResolverFactory | ValidatorResourceResolverFactory | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI
+| Name | Group | Default | Java Type | Description
+| resourceResolverFactory | advanced |  | ValidatorResourceResolverFactory | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -94,9 +88,7 @@ The Validator component supports 12 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Validation-Example]]
-Example
-^^^^^^^
+### Example
 
 The following
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-spring/src/test/resources/org/apache/camel/component/validator/camelContext.xml[example]
@@ -105,9 +97,7 @@ goes to one of two endpoints, either *mock:valid* or *mock:invalid*
 based on whether or not the XML matches the given schema (which is
 supplied on the classpath).
 
-[[Validation-Advanced:JMXmethodclearCachedSchema]]
-Advanced: JMX method clearCachedSchema
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Advanced: JMX method clearCachedSchema
 
 Since *Camel 2.17*, you can force that the cached schema in the
 validator endpoint is cleared and reread with the next process call with
@@ -115,12 +105,9 @@ the JMX operation `clearCachedSchema. `You can also use this method to
 programmatically clear the cache. This method is available on the
 `ValidatorEndpoint `class`.`
 
-[[Validation-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

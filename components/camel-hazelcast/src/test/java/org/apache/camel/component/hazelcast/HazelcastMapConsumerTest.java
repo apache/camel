@@ -43,7 +43,6 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
     private ArgumentCaptor<MapEntryListener> argument;
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
         when(hazelcastInstance.getMap("foo")).thenReturn(map);
         argument = ArgumentCaptor.forClass(MapEntryListener.class);
@@ -51,7 +50,6 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {
         verify(hazelcastInstance).getMap("foo");
         verify(map).addEntryListener(any(MapEntryListener.class), eq(true));

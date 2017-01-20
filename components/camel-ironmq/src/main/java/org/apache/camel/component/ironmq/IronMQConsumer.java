@@ -75,8 +75,8 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
         LOG.trace("Received {} messages in this poll", messages.length);
 
         Queue<Exchange> answer = new LinkedList<Exchange>();
-        for (int i = 0; i < messages.length; i++) {
-            Exchange exchange = getEndpoint().createExchange(messages[i]);
+        for (Message message : messages) {
+            Exchange exchange = getEndpoint().createExchange(message);
             answer.add(exchange);
         }
         return answer;

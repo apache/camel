@@ -260,4 +260,21 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         pre = parser.parsePredicate();
         assertFalse("Should not match", pre.matches(exchange));
     }
+
+    public void testSimpleInEmpty() throws Exception {
+        SimplePredicateParser parser = new SimplePredicateParser("${body} in ',,gold,silver'", true);
+        Predicate pre = parser.parsePredicate();
+
+        exchange.getIn().setBody("gold");
+        assertTrue("Should match gold", pre.matches(exchange));
+
+        exchange.getIn().setBody("silver");
+        assertTrue("Should match silver", pre.matches(exchange));
+
+        exchange.getIn().setBody("");
+        assertTrue("Should match empty", pre.matches(exchange));
+
+        exchange.getIn().setBody("bronze");
+        assertFalse("Should not match bronze", pre.matches(exchange));
+    }
 }

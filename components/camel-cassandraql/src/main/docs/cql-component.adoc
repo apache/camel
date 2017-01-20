@@ -1,3 +1,4 @@
+## Cassandra CQL Component
 [[Cassandra-CamelCassandraComponent]]
 Camel Cassandra Component
 -------------------------
@@ -32,9 +33,7 @@ Maven users will need to add the following dependency to their
 </dependency>
 ------------------------------------------------------------
 
-[[Cassandra-URIformat]]
-URI format
-~~~~~~~~~~
+### URI format
 
 The endpoint can initiate the Cassandra connection or use an existing
 one.
@@ -54,9 +53,7 @@ To fine tune the Cassandra connection (SSL options, pooling options,
 load balancing policy, retry policy, reconnection policy...), create
 your own Cluster instance and give it to the Camel endpoint.
 
-[[Cassandra-Options]]
-Cassandra Options
-~~~~~~~~~~~~~~~~~
+### Cassandra Options
 
 
 // component options: START
@@ -86,8 +83,8 @@ The Cassandra CQL component supports 18 endpoint options which are listed below:
 | resultSetConversionStrategy | common |  | String | To use a custom class that implements logic for converting ResultSet into message body ALL ONE LIMIT_10 LIMIT_100...
 | session | common |  | Session | To use the Session instance (you would normally not use this option)
 | username | common |  | String | Username for session authentication
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
@@ -95,13 +92,9 @@ The Cassandra CQL component supports 18 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Cassandra-Messages]]
-Messages
-~~~~~~~~
+### Messages
 
-[[Cassandra-IncomingMessage]]
-Incoming Message
-^^^^^^^^^^^^^^^^
+### Incoming Message
 
 The Camel Cassandra endpoint expects a bunch of simple objects (`Object`
 or `Object[]` or `Collection<Object>`) which will be bound to the CQL
@@ -113,9 +106,7 @@ Headers:
 * `CamelCqlQuery` (optional, `String` or `RegularStatement`): CQL query
 either as a plain String or built using the `QueryBuilder`.
 
-[[Cassandra-OutgoingMessage]]
-Outgoing Message
-^^^^^^^^^^^^^^^^
+### Outgoing Message
 
 The Camel Cassandra endpoint produces one or many a Cassandra Row
 objects depending on the `resultSetConversionStrategy`:
@@ -128,9 +119,7 @@ objects depending on the `resultSetConversionStrategy`:
 * Anything else, if `resultSetConversionStrategy` is a custom
 implementation of the `ResultSetConversionStrategy`
 
-[[Cassandra-Repositories]]
-Repositories
-~~~~~~~~~~~~
+### Repositories
 
 Cassandra can be used to store message keys or messages for the
 idempotent and aggregation EIP.
@@ -141,9 +130,7 @@ anti-patterns queues and queue like datasets]. It's advised to use
 LeveledCompaction and a small GC grace setting for these tables to allow
 tombstoned rows to be removed quickly.
 
-[[Cassandra-Idempotentrepository]]
-Idempotent repository
-^^^^^^^^^^^^^^^^^^^^^
+### Idempotent repository
 
 The `NamedCassandraIdempotentRepository` stores messages keys in a
 Cassandra table like this:
@@ -185,9 +172,7 @@ Alternatively, the `CassandraIdempotentRepository` does not have a
 `LOCAL_QUORUM`…
 |=======================================================================
 
-[[Cassandra-Aggregationrepository]]
-Aggregation repository
-^^^^^^^^^^^^^^^^^^^^^^
+### Aggregation repository
 
 The `NamedCassandraAggregationRepository` stores exchanges by
 correlation key in a Cassandra table like this:

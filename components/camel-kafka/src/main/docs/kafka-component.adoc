@@ -1,6 +1,4 @@
-[[Kafka-KafkaComponent]]
-Kafka Component
-~~~~~~~~~~~~~~~
+## Kafka Component
 
 *Available as of Camel 2.13*
 
@@ -9,6 +7,8 @@ http://kafka.apache.org/[Apache Kafka] message broker.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component.
+
+From Camel 2.17 onwards Scala is no longer used, as we use the kafka java client.
 
 [source,xml]
 ------------------------------------------------------------
@@ -20,46 +20,16 @@ for this component.
 </dependency>
 ------------------------------------------------------------
 
-[[Kafka-Camel2.17ornewer]]
-Camel 2.17 or newer
-+++++++++++++++++++
 
-Scala is no longer used, as we use the kafka java client.
-
-[[Kafka-Camel2.16orolder]]
-Camel 2.16 or older
-+++++++++++++++++++
-
-And then the Scala libraries of choice. camel-kafka does not include
-that dependency, but assumes it is provided. For example to use Scala
-2.10.4 add:
-
-[source,xml]
---------------------------------------------
-    <dependency>
-      <groupId>org.scala-lang</groupId>
-      <artifactId>scala-library</artifactId>
-      <version>2.10.4</version>
-    </dependency>
---------------------------------------------
-
-[[Kafka-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------
 kafka:server:port[?options]
 ---------------------------
 
- 
 
-[[Kafka-Options]]
-Options (Camel 2.16 or older)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-
-
+### Options
 
 
 // component options: START
@@ -68,36 +38,18 @@ The Kafka component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| workerPool | ExecutorService | To use a shared custom worker pool for continue routing Exchange after kafka server has acknowledge the message that was sent to it from KafkaProducer using asynchronous non-blocking processing. If using this option then you must handle the lifecycle of the thread pool to shut the pool down when no longer needed.
+| Name | Group | Default | Java Type | Description
+| workerPool | advanced |  | ExecutorService | To use a shared custom worker pool for continue routing Exchange after kafka server has acknowledge the message that was sent to it from KafkaProducer using asynchronous non-blocking processing. If using this option then you must handle the lifecycle of the thread pool to shut the pool down when no longer needed.
 |=======================================================================
 {% endraw %}
 // component options: END
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // endpoint options: START
-The Kafka component supports 77 endpoint options which are listed below:
+The Kafka component supports 79 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -111,7 +63,7 @@ The Kafka component supports 77 endpoint options which are listed below:
 | autoCommitEnable | consumer | true | Boolean | If true periodically commit to ZooKeeper the offset of messages already fetched by the consumer. This committed offset will be used when the process fails as the position from which the new consumer will begin.
 | autoCommitIntervalMs | consumer | 5000 | Integer | The frequency in ms that the consumer offsets are committed to zookeeper.
 | autoOffsetReset | consumer | latest | String | What to do when there is no initial offset in ZooKeeper or if an offset is out of range: smallest : automatically reset the offset to the smallest offset largest : automatically reset the offset to the largest offset fail: throw exception to the consumer
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | checkCrcs | consumer | true | Boolean | Automatically check the CRC32 of the records consumed. This ensures no on-the-wire or on-disk corruption to the messages occurred. This check adds some overhead so it may be disabled in cases seeking extreme performance.
 | consumerId | consumer |  | String | Generated automatically if not set.
 | consumerRequestTimeoutMs | consumer | 40000 | Integer | The configuration controls the maximum amount of time the client will wait for the response of a request. If the response is not received before the timeout elapses the client will resend the request if necessary or fail the request if retries are exhausted.
@@ -122,13 +74,14 @@ The Kafka component supports 77 endpoint options which are listed below:
 | heartbeatIntervalMs | consumer | 3000 | Integer | The expected time between heartbeats to the consumer coordinator when using Kafka's group management facilities. Heartbeats are used to ensure that the consumer's session stays active and to facilitate rebalancing when new consumers join or leave the group. The value must be set lower than session.timeout.ms but typically should be set no higher than 1/3 of that value. It can be adjusted even lower to control the expected time for normal rebalances.
 | keyDeserializer | consumer | org.apache.kafka.common.serialization.StringDeserializer | String | Deserializer class for key that implements the Deserializer interface.
 | maxPartitionFetchBytes | consumer | 1048576 | Integer | The maximum amount of data per-partition the server will return. The maximum total memory used for a request will be partitions max.partition.fetch.bytes. This size must be at least as large as the maximum message size the server allows or else it is possible for the producer to send messages larger than the consumer can fetch. If that happens the consumer can get stuck trying to fetch a large message on a certain partition.
-| maxPollRecords | consumer | 2147483647 | Integer | A unique string that identifies the consumer group this consumer belongs to. This property is required if the consumer uses either the group management functionality by using subscribe(topic) or the Kafka-based offset management strategy.
+| maxPollRecords | consumer | 500 | Integer | The maximum number of records returned in a single call to poll()
+| offsetRepository | consumer |  | String> | The offset repository to use in order to locally store the offset of each partition of the topic. Defining one will disable the autocommit.
 | partitionAssignor | consumer | org.apache.kafka.clients.consumer.RangeAssignor | String | The class name of the partition assignment strategy that the client will use to distribute partition ownership amongst consumer instances when group management is used
 | pollTimeoutMs | consumer | 5000 | Long | The timeout used when polling the KafkaConsumer.
 | seekToBeginning | consumer | false | boolean | If the option is true then KafkaConsumer will read from beginning on startup.
 | sessionTimeoutMs | consumer | 30000 | Integer | The timeout used to detect failures when using Kafka's group management facilities.
 | valueDeserializer | consumer | org.apache.kafka.common.serialization.StringDeserializer | String | Deserializer class for value that implements the Deserializer interface.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | bridgeEndpoint | producer | false | boolean | If the option is true then KafkaProducer will ignore the KafkaConstants.TOPIC header setting of the inbound message.
 | bufferMemorySize | producer | 33554432 | Integer | The total bytes of memory the producer can use to buffer records waiting to be sent to the server. If records are sent faster than they can be delivered to the server the producer will either block or throw an exception based on the preference specified by block.on.buffer.full.This setting should correspond roughly to the total memory the producer will use but is not a hard bound since not all memory the producer uses is used for buffering. Some additional memory will be used for compression (if compression is enabled) as well as for maintaining in-flight requests.
@@ -167,6 +120,7 @@ The Kafka component supports 77 endpoint options which are listed below:
 | saslMechanism | security | GSSAPI | String | The Simple Authentication and Security Layer (SASL) Mechanism used. For the valid values see http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml
 | securityProtocol | security | PLAINTEXT | String | Protocol used to communicate with brokers. Currently only PLAINTEXT and SSL are supported.
 | sslCipherSuites | security |  | String | A list of cipher suites. This is a named combination of authentication encryption MAC and key exchange algorithm used to negotiate the security settings for a network connection using TLS or SSL network protocol.By default all the available cipher suites are supported.
+| sslContextParameters | security |  | SSLContextParameters | SSL configuration using a Camel SSLContextParameters object. If configured it's applied before the other SSL endpoint parameters.
 | sslEnabledProtocols | security | TLSv1.2,TLSv1.1,TLSv1 | String | The list of protocols enabled for SSL connections. TLSv1.2 TLSv1.1 and TLSv1 are enabled by default.
 | sslEndpointAlgorithm | security |  | String | The endpoint identification algorithm to validate server hostname using server certificate.
 | sslKeymanagerAlgorithm | security | SunX509 | String | The algorithm used by key manager factory for SSL connections. Default value is the key manager factory algorithm configured for the Java Virtual Machine.
@@ -184,103 +138,146 @@ The Kafka component supports 77 endpoint options which are listed below:
 {% endraw %}
 // endpoint options: END
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 For more information about Producer/Consumer configuration:
 
 http://kafka.apache.org/documentation.html#newconsumerconfigs[http://kafka.apache.org/documentation.html#newconsumerconfigs]
 http://kafka.apache.org/documentation.html#producerconfigs[http://kafka.apache.org/documentation.html#producerconfigs]
 
-[[Kafka-Samples]]
-Samples
-^^^^^^^
+### Message headers
 
-[[Kafka-Camel2.16orolder.1]]
-Camel 2.16 or older
-+++++++++++++++++++
+#### Consumer headers
 
-Consuming messages:
+The following headers are available when consuming messages from Kafka.
+[width="100%",cols="2m,2m,1m,5",options="header"]
+|=======================================================================================================
+| Header constant          | Header value      | Type    | Description
+| KafkaConstants.TOPIC     | "kafka.TOPIC"     | String  | The topic from where the message originated
+| KafkaConstants.PARTITION | "kafka.PARTITION" | Integer | The partition where the message was stored
+| KafkaConstants.OFFSET    | "kafka.OFFSET"    | Long    | The offset of the message
+| KafkaConstants.KEY       | "kafka.KEY"       | Object  | The key of the message if configured
+|=======================================================================================================
 
+#### Producer headers
+
+Before sending a message to Kafka you can configure the following headers.
+[width="100%",cols="2m,2m,1m,5",options="header"]
+|============================================================================================================================================================================
+| Header constant              | Header value          | Type    | Description
+| KafkaConstants.KEY           | "kafka.KEY"           | Object  | *Required* The key of the message in order to ensure that all related message goes in the same partition
+| KafkaConstants.TOPIC         | "kafka.TOPIC"         | String  | The topic to which send the message (only read if the `bridgeEndpoint` endpoint parameter is `true`)
+| KafkaConstants.PARTITION_KEY | "kafka.PARTITION_KEY" | Integer | Explicitly specify the partition (only used if the `KafkaConstants.KEY` header is defined)
+|============================================================================================================================================================================
+
+After the message is sent to Kafka, the following headers are available
+[width="100%",cols="2m,2m,1m,5",options="header"]
+|==============================================================================================================================================================================================
+| Header constant                 | Header value                                       | Type                 | Description
+| KafkaConstants.KAFKA_RECORDMETA | "org.apache.kafka.clients.producer.RecordMetadata" | List<RecordMetadata> | The metadata (only configured if `recordMetadata` endpoint parameter is `true`
+|==============================================================================================================================================================================================
+
+
+### Samples
+
+#### Consuming messages from Kafka
+
+Here is the minimal route you need in order to read messages from Kafka.
 [source,java]
-------------------------------------------------------------------------------------------------------------------
-from("kafka:localhost:9092?topic=test&zookeeperHost=localhost&zookeeperPort=2181&groupId=group1").to("log:input");
-------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------
+from("kafka:localhost:9092?topic=test&groupId=testing")
+    .log("Message received from Kafka : ${body}")
+    .log("    on the topic ${headers[kafka.TOPIC]}")
+    .log("    on the partition ${headers[kafka.PARTITION]}")
+    .log("    with the offset ${headers[kafka.OFFSET]}")
+    .log("    with the key ${headers[kafka.KEY]}")
+-------------------------------------------------------------
 
-Producing messages:
-
-See unit tests of camel-kafka for more examples
-
-[[Kafka-Camel2.17ornewer]]
-Camel 2.17 or newer
-+++++++++++++++++++
-
-Consuming messages:
-
+When consuming messages from Kafka you can use your own offset management and not delegate this management to Kafka.
+In order to keep the offsets the component needs a `StateRepository` implementation such as `FileStateRepository`.
+This bean should be available in the registry.
+Here how to use it :
 [source,java]
--------------------------------------------------------------------------------------------------
-from("kafka:localhost:9092?topic=test&groupId=testing&autoOffsetReset=earliest&consumersCount=1")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange)
-                                    throws Exception {
-                                String messageKey = "";
-                                if (exchange.getIn() != null) {
-                                    Message message = exchange.getIn();
-                                    Integer partitionId = (Integer) message
-                                            .getHeader(KafkaConstants.PARTITION);
-                                    String topicName = (String) message
-                                            .getHeader(KafkaConstants.TOPIC);
-                                    if (message.getHeader(KafkaConstants.KEY) != null)
-                                        messageKey = (String) message
-                                                .getHeader(KafkaConstants.KEY);
-                                    Object data = message.getBody();
+----------------------------------------------------------------------------------------------------------------------------
+// Create the repository in which the Kafka offsets will be persisted
+FileStateRepository repository = FileStateRepository.fileStateRepository(new File("/path/to/repo.dat"));
 
+// Bind this repository into the Camel registry
+JndiRegistry registry = new JndiRegistry();
+registry.bind("offsetRepo", repository);
 
-                                    System.out.println("topicName :: "
-                                            + topicName + " partitionId :: "
-                                            + partitionId + " messageKey :: "
-                                            + messageKey + " message :: "
-                                            + data + "\n");
-                                }
-                            }
-                        }).to("log:input");
--------------------------------------------------------------------------------------------------
-
+// Configure the camel context
+DefaultCamelContext camelContext = new DefaultCamelContext(registry);
+camelContext.addRoutes(new RouteBuilder() {
+    @Override
+    public void configure() throws Exception {
+        from("kafka:localhost:{{kafkaPort}}?topic=" + TOPIC +  //
+                     "&groupId=A" +                            //
+                     "&autoOffsetReset=earliest" +             // Ask to start from the beginning if we have unknown offset
+                     "&offsetRepository=#offsetRepo")          // Keep the offsets in the previously configured repository
+                .to("mock:result");
+    }
+});
+----------------------------------------------------------------------------------------------------------------------------
  
 
-Producing messages:
+#### Producing messages to Kafka
 
+Here is the minimal route you need in order to write messages to Kafka.
 [source,java]
----------------------------------------------------------------------------------------------------------------
-from("direct:start").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getIn().setBody("Test Message from Camel Kafka Component Final",String.class);
-                        exchange.getIn().setHeader(KafkaConstants.PARTITION_KEY, 0);
-                        exchange.getIn().setHeader(KafkaConstants.KEY, "1");
-                    }
-                }).to("kafka:localhost:9092?topic=test");
----------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------
+from("direct:start")
+    .setBody(constant("Message from Camel"))          // Message to send
+    .setHeader(KafkaConstants.KEY, constant("Camel")) // Key of the message
+    .to("kafka:localhost:9092?topic=test");
+----------------------------------------------------------------------------
 
- 
 
-[[Kafka-Endpoints]]
-Endpoints
-~~~~~~~~~
+#### SSL configuration
+
+You have 2 different ways to configure the SSL communication on the Kafka` component.
+
+The first way is through the many SSL endpoint parameters
+[source,java]
+-------------------------------------------------------------
+from("kafka:localhost:{{kafkaPort}}?topic=" + TOPIC +
+             "&groupId=A" +
+             "&sslKeystoreLocation=/path/to/keystore.jks" +
+             "&sslKeystorePassword=changeit" +
+             "&sslKeyPassword=changeit")
+        .to("mock:result");
+-------------------------------------------------------------
+
+The second way is to use the `sslContextParameters` endpoint parameter.
+[source,java]
+--------------------------------------------------------------------------------------------------
+// Configure the SSLContextParameters object
+KeyStoreParameters ksp = new KeyStoreParameters();
+ksp.setResource("/path/to/keystore.jks");
+ksp.setPassword("changeit");
+KeyManagersParameters kmp = new KeyManagersParameters();
+kmp.setKeyStore(ksp);
+kmp.setKeyPassword("changeit");
+SSLContextParameters scp = new SSLContextParameters();
+scp.setKeyManagers(kmp);
+
+// Bind this SSLContextParameters into the Camel registry
+JndiRegistry registry = new JndiRegistry();
+registry.bind("ssl", scp);
+
+// Configure the camel context
+DefaultCamelContext camelContext = new DefaultCamelContext(registry);
+camelContext.addRoutes(new RouteBuilder() {
+    @Override
+    public void configure() throws Exception {
+        from("kafka:localhost:{{kafkaPort}}?topic=" + TOPIC +  //
+                     "&groupId=A" +                            //
+                     "&sslContextParameters=#ssl")             // Reference the SSL configuration
+                .to("mock:result");
+    }
+});
+--------------------------------------------------------------------------------------------------
+
+
+### Endpoints
 
 Camel supports the link:message-endpoint.html[Message Endpoint] pattern
 using the
@@ -308,12 +305,9 @@ implements the link:polling-consumer.html[Polling Consumer] pattern for
 consuming message exchanges from the endpoint via a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/PollingConsumer.html[PollingConsumer]
 
-[[Kafka-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:message-endpoint.html[Message Endpoint] pattern
 * link:uris.html[URIs]
 * link:writing-components.html[Writing Components]
-

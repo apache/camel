@@ -93,7 +93,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected String securityProvider = "SunX509";
     @UriParam(defaultValue = DEFAULT_ENABLED_PROTOCOLS, label = "security")
     protected String enabledProtocols = DEFAULT_ENABLED_PROTOCOLS;
-    @UriParam(label = "security")
+    @UriParam(label = "security", secret = true)
     protected String passphrase;
     @UriParam(label = "consumer,advanced")
     protected BossPool bossPool;

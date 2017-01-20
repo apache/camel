@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.lucene.enabled",
+      "description": "Enable lucene component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

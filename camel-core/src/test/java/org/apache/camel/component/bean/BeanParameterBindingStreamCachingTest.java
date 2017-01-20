@@ -47,7 +47,6 @@ public class BeanParameterBindingStreamCachingTest extends ContextTestSupport {
         };
     }
 
-    @SuppressWarnings("unused")
     public static class Foo {
 
         public static String hello(@Simple("${body}") String body,

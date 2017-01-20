@@ -1,6 +1,4 @@
-[[JGroups-JGroupsComponent]]
-JGroups Component
-~~~~~~~~~~~~~~~~~
+## JGroups Component
 
 *Available since Camel 2.10.0*
 
@@ -35,9 +33,7 @@ Camel *2.13.0* or higher, please use the following POM entry instead.
 </dependency>
 ------------------------------------------------------------
 
-[[JGroups-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -----------------------------
@@ -47,9 +43,7 @@ jgroups:clusterName[?options]
 Where *clusterName* represents the name of the JGroups cluster the
 component should connect to.
 
-[[JGroups-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -60,12 +54,12 @@ The JGroups component supports 3 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| channel | Channel | Channel to use
-| channelProperties | String | Specifies configuration properties of the JChannel used by the endpoint.
-| enableViewMessages | boolean | If set to true the consumer endpoint will receive org.jgroups.View messages as well (not only org.jgroups.Message instances). By default only regular messages are consumed by the endpoint.
+| Name | Group | Default | Java Type | Description
+| channel | common |  | Channel | Channel to use
+| channelProperties | common |  | String | Specifies configuration properties of the JChannel used by the endpoint.
+| enableViewMessages | consumer | false | boolean | If set to true the consumer endpoint will receive org.jgroups.View messages as well (not only org.jgroups.Message instances). By default only regular messages are consumed by the endpoint.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -84,9 +78,9 @@ The JGroups component supports 7 endpoint options which are listed below:
 | Name | Group | Default | Java Type | Description
 | clusterName | common |  | String | *Required* The name of the JGroups cluster the component should connect to.
 | channelProperties | common |  | String | Specifies configuration properties of the JChannel used by the endpoint.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | enableViewMessages | consumer | false | boolean | If set to true the consumer endpoint will receive org.jgroups.View messages as well (not only org.jgroups.Message instances). By default only regular messages are consumed by the endpoint.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
@@ -95,9 +89,7 @@ The JGroups component supports 7 endpoint options which are listed below:
 
 
 
-[[JGroups-Headers]]
-Headers
-^^^^^^^
+### Headers
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -118,9 +110,7 @@ consumed message has been extracted.
 endpoint.
 |=======================================================================
  
-[[JGroups-Usage]]
-Usage
-^^^^^
+### Usage
 
 Using `jgroups` component on the consumer side of the route will capture
 messages received by the `JChannel` associated with the endpoint and
@@ -145,9 +135,7 @@ endpoint.
 from("direct:start").to("jgroups:clusterName");
 --------------------------------------------------
 
-[[JGroups-Predefinedfilters]]
-Predefined filters
-^^^^^^^^^^^^^^^^^^
+### Predefined filters
 
 Starting from version *2.13.0* of Camel, JGroups component comes with
 predefined filters factory class named `JGroupsFilters.`
@@ -170,9 +158,7 @@ from("jgroups:clusterName?enableViewMessages=true").
   to("seda:masterNodeEventsQueue");
 ----------------------------------------------------------------------------------------
 
-[[JGroups-Predefinedexpressions]]
-Predefined expressions
-^^^^^^^^^^^^^^^^^^^^^^
+### Predefined expressions
 
 Starting from version *2.13.0* of Camel, JGroups component comes with
 predefined expressions factory class named `JGroupsExpressions.`
@@ -210,13 +196,9 @@ from("jgroups:clusterName?enableViewMessages=true").
 from("timer://master?repeatCount=1").routeId("masterRoute").autoStartup(false).to(masterMockUri); 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[JGroups-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
-[[JGroups-SendingreceivingmessagestofromtheJGroupscluster]]
-Sending (receiving) messages to (from) the JGroups cluster
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Sending (receiving) messages to (from) the JGroups cluster
 
 In order to send message to the JGroups cluster use producer endpoint,
 just as demonstrated on the snippet below.
@@ -242,9 +224,7 @@ from("jgroups:myCluster").to("mock:messagesFromTheCluster");
 mockEndpoint.assertIsSatisfied();
 ------------------------------------------------------------
 
-[[JGroups-Receiveclusterviewchangenotifications]]
-Receive cluster view change notifications
-+++++++++++++++++++++++++++++++++++++++++
+#### Receive cluster view change notifications
 
 The snippet below demonstrates how to create the consumer endpoint
 listening to the notifications regarding cluster membership changes. By
@@ -260,9 +240,7 @@ from("jgroups:clusterName?enableViewMessages=true").to(mockEndpoint);
 mockEndpoint.assertIsSatisfied();
 ---------------------------------------------------------------------
 
-[[JGroups-Keepingsingletonroutewithinthecluster]]
-Keeping singleton route within the cluster
-++++++++++++++++++++++++++++++++++++++++++
+#### Keeping singleton route within the cluster
 
 The snippet below demonstrates how to keep the singleton consumer route
 in the cluster of Camel Contexts. As soon as the master node dies, one

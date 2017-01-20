@@ -94,7 +94,7 @@ public class PubsubTestSupport extends CamelTestSupport {
             .setServiceAccount(SERVICE_ACCOUNT)
             .setServiceAccountKey(SERVICE_KEY)
             .setServiceURL(SERVICE_URL)
-            .getClient();
+            .getDefaultClient();
 
         String topicFullName = String.format("projects/%s/topics/%s",
                                          PubsubTestSupport.PROJECT_ID,

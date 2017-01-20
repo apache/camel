@@ -1,6 +1,4 @@
-[[Direct-DirectComponent]]
-Direct Component
-~~~~~~~~~~~~~~~~
+## Direct Component
 
 The *direct:* component provides direct, synchronous invocation of any
 consumers when a producer sends a message exchange. +
@@ -15,9 +13,7 @@ TIP:*Connection to other camel contexts*
 The link:vm.html[VM] component provides connections between Camel
 contexts as long they run in the same *JVM*.
 
-[[Direct-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,text]
 -------------------------
@@ -26,9 +22,7 @@ direct:someName[?options]
 
 Where *someName* can be any string to uniquely identify the endpoint
 
-[[Direct-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -38,11 +32,11 @@ The Direct component supports 2 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| block | boolean | If sending a message to a direct endpoint which has no active consumer then we can tell the producer to block and wait for the consumer to become active.
-| timeout | long | The timeout value to use if block is enabled.
+| Name | Group | Default | Java Type | Description
+| block | producer | false | boolean | If sending a message to a direct endpoint which has no active consumer then we can tell the producer to block and wait for the consumer to become active.
+| timeout | producer | 30000 | long | The timeout value to use if block is enabled.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -70,9 +64,7 @@ The Direct component supports 8 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Direct-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 In the route below we use the direct component to link the two routes
 together:
@@ -108,9 +100,7 @@ And the sample using spring DSL:
 See also samples from the link:seda.html[SEDA] component, how they can
 be used together.
 
-[[Direct-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -118,4 +108,3 @@ See Also
 * link:getting-started.html[Getting Started]
 * link:seda.html[SEDA]
 * link:vm.html[VM]
-

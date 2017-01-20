@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.netty4.http;
 
-import java.nio.charset.Charset;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;

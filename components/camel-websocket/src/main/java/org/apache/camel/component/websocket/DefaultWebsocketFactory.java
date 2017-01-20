@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.websocket;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 
 /**

@@ -357,7 +357,6 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         return sigGens;
     }
 
-    @SuppressWarnings("resource")
     public Object unmarshal(Exchange exchange, InputStream encryptedStream) throws Exception { //NOPMD
         if (encryptedStream == null) {
             return null;

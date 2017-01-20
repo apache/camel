@@ -18,7 +18,6 @@ package org.apache.camel.component.mail;
 
 import java.io.IOException;
 import java.util.Map;
-import javax.activation.DataHandler;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 

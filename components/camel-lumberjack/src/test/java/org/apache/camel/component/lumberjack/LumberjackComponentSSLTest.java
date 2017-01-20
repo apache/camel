@@ -32,7 +32,6 @@ import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-@SuppressWarnings("unchecked")
 public class LumberjackComponentSSLTest extends CamelTestSupport {
     private static int port;
 

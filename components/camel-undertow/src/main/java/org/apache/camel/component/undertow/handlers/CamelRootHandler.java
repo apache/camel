@@ -16,15 +16,8 @@
  */
 package org.apache.camel.component.undertow.handlers;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import io.undertow.Handlers;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.PathHandler;
-import io.undertow.server.handlers.PathTemplateHandler;
-import io.undertow.util.Headers;
 import io.undertow.util.PathTemplate;
 
 /**

@@ -1,6 +1,4 @@
-[[SERVLET-ServletComponent]]
-Servlet Component
-~~~~~~~~~~~~~~~~~
+## Servlet Component
 
 The *servlet:* component provides HTTP based
 link:endpoint.html[endpoints] for consuming HTTP requests that arrive at
@@ -29,9 +27,7 @@ body appears to be empty or you need to access the data multiple times
 link:stream-caching.html[Stream caching] or convert the message body to
 a `String` which is safe to be read multiple times.
 
-[[SERVLET-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------
@@ -41,9 +37,7 @@ servlet://relative_path[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[SERVLET-Options]]
-Options
-^^^^^^^
+### Options
 
 // component options: START
 The Servlet component supports 7 options which are listed below.
@@ -51,22 +45,22 @@ The Servlet component supports 7 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| servletName | String | Default name of servlet to use. The default name is CamelServlet.
-| httpRegistry | HttpRegistry | To use a custom org.apache.camel.component.servlet.HttpRegistry.
-| attachmentMultipartBinding | boolean | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. This is turn off by default as this may require servet specific configuration to enable this when using Servlet's.
-| httpBinding | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
-| httpConfiguration | HttpConfiguration | To use the shared HttpConfiguration as base configuration.
-| allowJavaSerializedObject | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
-| headerFilterStrategy | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+| Name | Group | Default | Java Type | Description
+| servletName | consumer |  | String | Default name of servlet to use. The default name is CamelServlet.
+| httpRegistry | consumer |  | HttpRegistry | To use a custom org.apache.camel.component.servlet.HttpRegistry.
+| attachmentMultipartBinding | consumer | false | boolean | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.
+| httpBinding | advanced |  | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
+| httpConfiguration | advanced |  | HttpConfiguration | To use the shared HttpConfiguration as base configuration.
+| allowJavaSerializedObject | advanced | false | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
+| headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
 |=======================================================================
 {% endraw %}
 // component options: END
 
 // endpoint options: START
-The Servlet component supports 21 endpoint options which are listed below:
+The Servlet component supports 22 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -75,7 +69,7 @@ The Servlet component supports 21 endpoint options which are listed below:
 | contextPath | consumer |  | String | *Required* The context-path to use
 | disableStreamCache | common | false | boolean | Determines whether or not the raw input stream from Servlet is cached or not (Camel will read the stream into a in memory/overflow to file Stream caching) cache. By default Camel will cache the Servlet input stream to support reading it multiple times to ensure it Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream such as streaming it directly to a file or other persistent store. DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body if this option is false to support reading the stream multiple times. If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance in case you do not need to read the message payload multiple times. The http/http4 producer will by default cache the response body stream. If setting this option to true then the producers will not cache the response body stream but use the response stream as-is as the message body.
 | async | consumer | false | boolean | Configure the consumer to work in async mode
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | chunked | consumer | true | boolean | If this option is false the Servlet will disable the HTTP streaming and set the content-length header on the response
 | eagerCheckContentAvailable | consumer | false | boolean | Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present. This can be turned on in case HTTP clients do not send streamed data.
 | headerFilterStrategy | consumer |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
@@ -87,7 +81,8 @@ The Servlet component supports 21 endpoint options which are listed below:
 | servletName | consumer | CamelServlet | String | Name of the servlet to use
 | traceEnabled | consumer | false | boolean | Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off.
 | transferException | consumer | false | boolean | If enabled and an Exchange failed processing on the consumer side and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| attachmentMultipartBinding | consumer (advanced) | false | boolean | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | mapHttpMessageBody | advanced | true | boolean | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping.
 | mapHttpMessageFormUrlEncodedBody | advanced | true | boolean | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping.
@@ -97,9 +92,7 @@ The Servlet component supports 21 endpoint options which are listed below:
 {% endraw %}
 // endpoint options: END
 
-[[SERVLET-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 Camel will apply the same Message Headers as the link:http.html[HTTP]
 component.
@@ -109,18 +102,14 @@ Camel will also populate *all* `request.parameter` and
 `http://myserver/myserver?orderid=123`, the exchange will contain a
 header named `orderid` with the value 123.
 
-[[SERVLET-Usage]]
-Usage
-^^^^^
+### Usage
 
 You can consume only from endpoints generated by the Servlet component.
 Therefore, it should be used only as input into your Camel routes. To
 issue HTTP requests against other HTTP endpoints, use the
 link:http.html[HTTP Component]
 
-[[SERVLET-PuttingCamelJARsintheappserverbootclasspath]]
-Putting Camel JARs in the app server boot classpath
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Putting Camel JARs in the app server boot classpath
 
 If you put the Camel JARs such as `camel-core`, `camel-servlet`, etc. in
 the boot classpath of your application server (eg usually in its lib
@@ -179,9 +168,7 @@ But its *strongly advised* to use unique servlet-name for each Camel
 application to avoid this duplication clash, as well any unforeseen
 side-effects.
 
-[[SERVLET-Sample]]
-Sample
-^^^^^^
+### Sample
 
 INFO: From Camel 2.7 onwards it's easier to use link:servlet.html[Servlet] in
 Spring web applications. See link:servlet-tomcat-example.html[Servlet
@@ -205,15 +192,11 @@ endpoint uses the relative path to specify the endpoint's URL. A client
 can access the `camel-servlet` endpoint through the servlet publish
 address: `("http://localhost:8080/camel/services") + RELATIVE_PATH("/hello")`.
 
-[[SERVLET-SamplewhenusingSpring3.x]]
-Sample when using Spring 3.x
-++++++++++++++++++++++++++++
+#### Sample when using Spring 3.x
 
 See link:servlet-tomcat-example.html[Servlet Tomcat Example]
 
-[[SERVLET-SamplewhenusingSpring2.x]]
-Sample when using Spring 2.x
-++++++++++++++++++++++++++++
+#### Sample when using Spring 2.x
 
 When using the Servlet component in a Camel/Spring application it's
 often required to load the Spring ApplicationContext _after_ the Servlet
@@ -244,9 +227,7 @@ like this:
 <web-app>
 -------------------------------------------------------------------------
 
-[[SERVLET-SamplewhenusingOSGi]]
-Sample when using OSGi
-++++++++++++++++++++++
+#### Sample when using OSGi
 
 From *Camel 2.6.0*, you can publish the
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
@@ -259,9 +240,7 @@ the
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-servlet/src/main/java/org/apache/camel/component/servlet/CamelHttpTransportServlet.java[CamelHttpTransportServlet]
 on the OSGi platform
 
-[[SERVLET-Spring-Boot]]
-Usage with Spring-Boot
-++++++++++++++++++++++
+#### Usage with Spring-Boot
 
 From *Camel 2.19.0* onwards, the _camel-servlet-starter_ library binds automatically all the rest endpoints under the "/camel/*" context path.
 The following table summarizes the additional configuration properties available in the camel-servlet-starter library.
@@ -277,9 +256,7 @@ The automatic mapping of the Camel servlet can also be disabled.
 |=======================================================================
 {% endraw %}
 
-[[SERVLET-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -291,4 +268,3 @@ See Also
 Example]
 * link:http.html[HTTP]
 * link:jetty.html[Jetty]
-

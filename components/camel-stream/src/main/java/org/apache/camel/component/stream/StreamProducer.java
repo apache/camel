@@ -90,6 +90,7 @@ public class StreamProducer extends DefaultProducer {
 
         URL url = new URL(u);
         URLConnection c = url.openConnection();
+        c.setDoOutput(true);
         return c.getOutputStream();
     }
 

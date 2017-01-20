@@ -1,6 +1,4 @@
-[[SpringRedis-SpringRedisComponent]]
-Spring Redis Component
-~~~~~~~~~~~~~~~~~~~~~~
+## Spring Redis Component
 
 *Available as of Camel 2.11*
 
@@ -17,9 +15,7 @@ INFO:*Prerequisites*
 In order to use this component, you must have a Redis server running.
 
 
-[[SpringRedis-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 ----------------------------------
@@ -29,9 +25,7 @@ spring-redis://host:port[?options]
 You can append query options to the URI in the following format,
 `?options=value&option2=value&...`
 
-[[SpringRedis-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 // component options: START
@@ -52,28 +46,24 @@ The Spring Redis component supports 12 endpoint options which are listed below:
 | channels | common |  | String | List of topic names or name patterns to subscribe to. Multiple names can be separated by comma.
 | command | common | SET | Command | Default command which can be overridden by message header. Notice the consumer only supports the following commands: PSUBSCRIBE and SUBSCRIBE
 | connectionFactory | common |  | RedisConnectionFactory | Reference to a pre-configured RedisConnectionFactory instance to use.
-| listenerContainer | common |  | RedisMessageListenerContainer | Reference to a pre-configured RedisMessageListenerContainer instance to use.
 | redisTemplate | common |  | RedisTemplate | Reference to a pre-configured RedisTemplate instance to use.
 | serializer | common |  | RedisSerializer | Reference to a pre-configured RedisSerializer instance to use.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| listenerContainer | consumer (advanced) |  | RedisMessageListenerContainer | Reference to a pre-configured RedisMessageListenerContainer instance to use.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}
 // endpoint options: END
 
 
-[[SpringRedis-Usage]]
-Usage
-^^^^^
+### Usage
 
 See also the unit tests available
 at https://github.com/apache/camel/tree/master/components/camel-spring-redis/src/test/java/org/apache/camel/component/redis[https://github.com/apache/camel/tree/master/components/camel-spring-redis/src/test/java/org/apache/camel/component/redis].
 
-[[SpringRedis-MessageheadersevaluatedbytheRedisproducer]]
-Message headers evaluated by the Redis producer
-+++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers evaluated by the Redis producer
 
 The producer issues commands to the server and each command has
 different set of parameters with specific types. The result from the
@@ -345,9 +335,7 @@ milliseconds |CamelRedis.Key (String), CamelRedis.Timestamp (Long) |Boolean
 |`PUBLISH` |Post a message to a channel |CamelRedis.Channel (String), CamelRedis.Message (Object) |void
 |=======================================================================
 
-[[SpringRedis-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -365,12 +353,9 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.11 or higher).
 
-[[SpringRedis-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

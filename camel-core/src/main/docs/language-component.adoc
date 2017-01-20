@@ -1,6 +1,4 @@
-[[Language-Language]]
-Language
-~~~~~~~~
+## Language Component
 
 *Available as of Camel 2.5*
 
@@ -18,9 +16,7 @@ additional JARs is needed. You only have to include additional Camel
 components if the language of choice mandates it, such as using
 link:groovy.html[Groovy] or link:javascript.html[JavaScript] languages.
 
-[[Language-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------------------------------------
@@ -36,9 +32,7 @@ link:language.html[Language]s in Camel
 language://languageName:resource:scheme:location][?options]
 -----------------------------------------------------------
 
-[[Language-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 // component options: START
@@ -67,9 +61,7 @@ The Language component supports 8 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Language-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 The following message headers can be used to affect the behavior of the
 component
@@ -82,9 +74,7 @@ component
 script configured on the endpoint.
 |=======================================================================
 
-[[Language-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
 For example you can use the link:simple.html[Simple] language to
 link:message-translator.html[Message Translator] a message:
@@ -105,9 +95,7 @@ Object out = producer.requestBodyAndHeader("language:xpath", "<foo>Hello World</
 assertEquals("Hello World", out);
 --------------------------------------------------------------------------------------------------------------------------------
 
-[[Language-Loadingscriptsfromresources]]
-Loading scripts from resources
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Loading scripts from resources
 
 *Available as of Camel 2.9*
 
@@ -128,9 +116,7 @@ From *Camel 2.11* onwards you can refer to the resource similar to the
 other link:language.html[Language]s in Camel by prefixing with
 `"resource:"` as shown below:
 
-[[Language-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -140,4 +126,3 @@ See Also
 * link:routing-slip.html[Routing Slip]
 * link:dynamic-router.html[Dynamic Router]
 * link:script.html[Script]
-

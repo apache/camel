@@ -39,11 +39,6 @@ import org.apache.camel.impl.DefaultCamelContextNameStrategy;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.SendDefinition;
-import org.apache.camel.model.remote.ConsulConfigurationDefinition;
-import org.apache.camel.model.remote.DnsConfigurationDefinition;
-import org.apache.camel.model.remote.EtcdConfigurationDefinition;
-import org.apache.camel.model.remote.KubernetesConfigurationDefinition;
-import org.apache.camel.model.remote.RibbonConfigurationDefinition;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spring.CamelBeanPostProcessor;
@@ -154,11 +149,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("streamCaching", CamelStreamCachingStrategyDefinition.class, false, false);
         addBeanDefinitionParser("propertyPlaceholder", CamelPropertyPlaceholderDefinition.class, false, false);
         addBeanDefinitionParser("hystrixConfiguration", HystrixConfigurationDefinition.class, false, false);
-        addBeanDefinitionParser("consulConfiguration", ConsulConfigurationDefinition.class, false, false);
-        addBeanDefinitionParser("dnsConfiguration", DnsConfigurationDefinition.class, false, false);
-        addBeanDefinitionParser("etcdConfiguration", EtcdConfigurationDefinition.class, false, false);
-        addBeanDefinitionParser("kubernetesConfiguration", KubernetesConfigurationDefinition.class, false, false);
-        addBeanDefinitionParser("ribbonConfiguration", RibbonConfigurationDefinition.class, false, false);
 
         // errorhandler could be the sub element of camelContext or defined outside camelContext
         BeanDefinitionParser errorHandlerParser = new ErrorHandlerDefinitionParser();
@@ -393,6 +383,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("interceptFroms", factoryBean.getInterceptFroms());
                 builder.addPropertyValue("interceptSendToEndpoints", factoryBean.getInterceptSendToEndpoints());
                 builder.addPropertyValue("dataFormats", factoryBean.getDataFormats());
+                builder.addPropertyValue("transformers", factoryBean.getTransformers());
                 builder.addPropertyValue("onCompletions", factoryBean.getOnCompletions());
                 builder.addPropertyValue("onExceptions", factoryBean.getOnExceptions());
                 builder.addPropertyValue("builderRefs", factoryBean.getBuilderRefs());
@@ -408,6 +399,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("camelJMXAgent", factoryBean.getCamelJMXAgent());
                 builder.addPropertyValue("camelStreamCachingStrategy", factoryBean.getCamelStreamCachingStrategy());
                 builder.addPropertyValue("threadPoolProfiles", factoryBean.getThreadPoolProfiles());
+                builder.addPropertyValue("beansFactory", factoryBean.getBeansFactory());
+                builder.addPropertyValue("beans", factoryBean.getBeans());
                 // add any depends-on
                 addDependsOn(factoryBean, builder);
             }

@@ -1,0 +1,22 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.bindy-csv.enabled",
+      "description": "Enable bindy-csv dataformat",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.bindy-fixed.enabled",
+      "description": "Enable bindy-fixed dataformat",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.bindy-kvp.enabled",
+      "description": "Enable bindy-kvp dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

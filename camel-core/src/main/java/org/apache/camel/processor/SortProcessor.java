@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -54,7 +53,7 @@ public class SortProcessor<T> extends ServiceSupport implements AsyncProcessor, 
 
             @SuppressWarnings("unchecked")
             List<T> list = expression.evaluate(exchange, List.class);
-            Collections.sort(list, comparator);
+            list.sort(comparator);
 
             if (exchange.getPattern().isOutCapable()) {
                 Message out = exchange.getOut();

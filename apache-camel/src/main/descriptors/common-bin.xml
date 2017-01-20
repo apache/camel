@@ -16,7 +16,6 @@
     limitations under the License.
 -->
 <component>
-  <!--<id>common-bin</id>-->
 
   <dependencySets>
     <dependencySet>
@@ -57,9 +56,11 @@
         <include>org.apache.camel:camel-core</include>
         <include>org.apache.camel:camel-core-osgi</include>
         <include>org.apache.camel:camel-cometd</include>
+        <include>org.apache.camel:camel-connector</include>
         <include>org.apache.camel:camel-consul</include>
         <include>org.apache.camel:camel-context</include>
         <include>org.apache.camel:camel-couchdb</include>
+        <include>org.apache.camel:camel-couchbase</include>
         <include>org.apache.camel:camel-crypto</include>
         <include>org.apache.camel:camel-csv</include>
         <include>org.apache.camel:camel-cxf</include>
@@ -161,6 +162,7 @@
         <include>org.apache.camel:camel-mina2</include>
         <include>org.apache.camel:camel-mllp</include>
         <include>org.apache.camel:camel-mongodb</include>
+        <include>org.apache.camel:camel-mongodb3</include>
         <include>org.apache.camel:camel-mongodb-gridfs</include>
         <include>org.apache.camel:camel-mqtt</include>
         <include>org.apache.camel:camel-msv</include>
@@ -176,6 +178,7 @@
         <include>org.apache.camel:camel-olingo2-api</include>
         <include>org.apache.camel:camel-olingo2</include>
         <include>org.apache.camel:camel-openshift</include>
+        <include>org.apache.camel:camel-openstack</include>
         <include>org.apache.camel:camel-optaplanner</include>
         <include>org.apache.camel:camel-paho</include>
         <include>org.apache.camel:camel-paxlogging</include>
@@ -220,6 +223,8 @@
         <include>org.apache.camel:camel-spring-batch</include>
         <include>org.apache.camel:camel-spring-boot</include>
         <include>org.apache.camel:camel-spring-boot-starter</include>
+        <include>org.apache.camel:camel-spring-cloud</include>
+        <include>org.apache.camel:camel-spring-cloud-starter</include>
         <include>org.apache.camel:camel-spring-dm</include>
         <include>org.apache.camel:camel-spring-integration</include>
         <include>org.apache.camel:camel-spring-javaconfig</include>
@@ -264,12 +269,26 @@
         <include>org.apache.camel:camel-zipkin</include>
         <include>org.apache.camel:camel-zipkin-starter</include>
         <include>org.apache.camel:camel-zookeeper</include>
+      </includes>
+    </dependencySet>
+
+    <dependencySet>
+      <outputDirectory>/lib/tooling</outputDirectory>
+      <unpack>false</unpack>
+      <scope>runtime</scope>
+      <includes>
         <include>org.apache.camel:camel-catalog</include>
         <include>org.apache.camel:camel-catalog-lucene</include>
+        <include>org.apache.camel:camel-catalog-maven</include>
+        <include>org.apache.camel:camel-catalog-provider-karaf</include>
+        <include>org.apache.camel:camel-catalog-provider-springboot</include>
+        <include>org.apache.camel:camel-catalog-rest</include>
+        <include>org.apache.camel:camel-catalog-rest-app</include>
         <include>org.apache.camel:camel-commands-core</include>
         <include>org.apache.camel:camel-commands-jolokia</include>
         <include>org.apache.camel:camel-commands-spring-boot</include>
         <include>org.apache.camel.karaf:camel-karaf-commands</include>
+        <include>org.apache.camel:camel-route-parser</include>
       </includes>
     </dependencySet>
 
@@ -312,6 +331,7 @@
         <include>org.apache.camel:camel-core-starter</include>
         <include>org.apache.camel:camel-core-xml-starter</include>
         <include>org.apache.camel:camel-couchdb-starter</include>
+        <include>org.apache.camel:camel-couchbase-starter</include>
         <include>org.apache.camel:camel-crypto-starter</include>
         <include>org.apache.camel:camel-csv-starter</include>
         <include>org.apache.camel:camel-cxf-starter</include>
@@ -410,6 +430,7 @@
         <include>org.apache.camel:camel-mllp-starter</include>
         <include>org.apache.camel:camel-mongodb-gridfs-starter</include>
         <include>org.apache.camel:camel-mongodb-starter</include>
+        <include>org.apache.camel:camel-mongodb3-starter</include>
         <include>org.apache.camel:camel-mqtt-starter</include>
         <include>org.apache.camel:camel-msv-starter</include>
         <include>org.apache.camel:camel-mustache-starter</include>
@@ -424,6 +445,7 @@
         <include>org.apache.camel:camel-ognl-starter</include>
         <include>org.apache.camel:camel-olingo2-starter</include>
         <include>org.apache.camel:camel-openshift-starter</include>
+        <include>org.apache.camel:camel-openstack-starter</include>
         <include>org.apache.camel:camel-optaplanner-starter</include>
         <include>org.apache.camel:camel-paho-starter</include>
         <include>org.apache.camel:camel-pdf-starter</include>
@@ -463,6 +485,7 @@
         <include>org.apache.camel:camel-splunk-starter</include>
         <include>org.apache.camel:camel-spring-batch-starter</include>
         <include>org.apache.camel:camel-spring-boot-starter</include>
+        <include>org.apache.camel:camel-spring-cloud-starter</include>
         <include>org.apache.camel:camel-spring-dm-starter</include>
         <include>org.apache.camel:camel-spring-integration-starter</include>
         <include>org.apache.camel:camel-spring-javaconfig-starter</include>

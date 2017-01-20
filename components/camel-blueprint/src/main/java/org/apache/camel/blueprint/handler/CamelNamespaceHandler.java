@@ -176,7 +176,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         return getClass().getClassLoader().getResource("camel-blueprint.xsd");
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"rawtypes"})
     public Set<Class> getManagedClasses() {
         return new HashSet<Class>(Arrays.asList(BlueprintCamelContext.class));
     }
@@ -282,7 +282,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         registerBeans(context, contextId, ccfb.getThreadPools());
         registerBeans(context, contextId, ccfb.getEndpoints());
         registerBeans(context, contextId, ccfb.getRedeliveryPolicies());
-        registerBeans(context, contextId, ccfb.getBeans());
+        registerBeans(context, contextId, ccfb.getBeansFactory());
 
         // Register processors
         MutablePassThroughMetadata beanProcessorFactory = context.createMetadata(MutablePassThroughMetadata.class);
@@ -980,7 +980,6 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             this.blueprintContainer = blueprintContainer;
         }
 
-        @SuppressWarnings("deprecation")
         public void process(ComponentDefinitionRegistry componentDefinitionRegistry) {
             CamelContextFactoryBean ccfb = (CamelContextFactoryBean) blueprintContainer.getComponentInstance(".camelBlueprint.factory." + camelContextName);
             CamelContext camelContext = ccfb.getContext();

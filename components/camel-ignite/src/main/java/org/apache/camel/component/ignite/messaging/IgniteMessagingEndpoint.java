@@ -76,7 +76,7 @@ public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         // Validate options.
         if (topic == null) {
-            new IllegalStateException("Cannot initialize an Ignite Messaging Producer with a null topic.");
+            throw new IllegalStateException("Cannot initialize an Ignite Messaging Consumer with a null topic.");
         }
 
         // Initialize the Consumer.

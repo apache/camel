@@ -1,6 +1,4 @@
-[[AWS-SQS-SQSComponent]]
-SQS Component
-~~~~~~~~~~~~~
+## AWS Simple Queue Service Component
 
 *Available as of Camel 2.6*
 
@@ -13,9 +11,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon SQS. More information are available at
 http://aws.amazon.com/sqs[Amazon SQS].
 
-[[AWS-SQS-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 ------------------------------
@@ -26,9 +22,7 @@ The queue will be created if they don't already exists. +
  You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-[[AWS-SQS-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 // component options: START
@@ -58,7 +52,7 @@ The AWS Simple Queue Service component supports 45 endpoint options which are li
 | region | common |  | String | Specify the queue region which could be used with queueOwnerAWSAccountId to build the service URL.
 | secretKey | common |  | String | Amazon AWS Secret Key
 | attributeNames | consumer |  | String | A list of attribute names to receive when consuming. Multiple names can be separated by comma.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | concurrentConsumers | consumer | 1 | int | Allows you to use multiple threads to poll the sqs queue to increase throughput
 | defaultVisibilityTimeout | consumer |  | Integer | The default visibility timeout (in seconds)
 | deleteAfterRead | consumer | true | boolean | Delete message from SQS after it has been read
@@ -69,7 +63,7 @@ The AWS Simple Queue Service component supports 45 endpoint options which are li
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
 | visibilityTimeout | consumer |  | Integer | The duration (in seconds) that the received messages are hidden from subsequent retrieve requests after being retrieved by a ReceiveMessage request to set in the com.amazonaws.services.sqs.model.SetQueueAttributesRequest. This only make sense if its different from defaultVisibilityTimeout. It changes the queue visibility timeout attribute permanently.
 | waitTimeSeconds | consumer |  | Integer | Duration in seconds (0 to 20) that the ReceiveMessage action call will wait until a message is in the queue to include in the response.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | delaySeconds | producer |  | Integer | Delay sending messages for a number of seconds.
@@ -110,9 +104,7 @@ You have to provide the amazonSQSClient in the
 link:registry.html[Registry] or your accessKey and secretKey to access
 the http://aws.amazon.com/sqs[Amazon's SQS].
 
-[[AWS-SQS-BatchConsumer]]
-Batch Consumer
-^^^^^^^^^^^^^^
+### Batch Consumer
 
 This component implements the link:batch-consumer.html[Batch Consumer].
 
@@ -120,13 +112,9 @@ This allows you for instance to know how many messages exists in this
 batch and for instance let the link:aggregator.html[Aggregator]
 aggregate this number of messages.
 
-[[AWS-SQS-Usage]]
-Usage
-^^^^^
+### Usage
 
-[[AWS-SQS-MessageheaderssetbytheSQSproducer]]
-Message headers set by the SQS producer
-+++++++++++++++++++++++++++++++++++++++
+#### Message headers set by the SQS producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -140,9 +128,7 @@ Message headers set by the SQS producer
 see by others.
 |=======================================================================
 
-[[AWS-SQS-MessageheaderssetbytheSQSconsumer]]
-Message headers set by the SQS consumer
-+++++++++++++++++++++++++++++++++++++++
+#### Message headers set by the SQS consumer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -157,9 +143,7 @@ Message headers set by the SQS consumer
 |`CamelAwsSqsAttributes` |`Map<String, String>` |The Amazon SQS message attributes.
 |=======================================================================
 
-[[AWS-SQS-AdvancedAmazonSQSconfiguration]]
-Advanced AmazonSQS configuration
-++++++++++++++++++++++++++++++++
+#### Advanced AmazonSQS configuration
 
 If your Camel Application is running behind a firewall or if you need to
 have more control over the AmazonSQS instance configuration, you can
@@ -186,9 +170,7 @@ from("aws-sqs://MyQueue?amazonSQSClient=#client&delay=5000&maxMessagesPerPoll=5"
 .to("mock:result");
 ---------------------------------------------------------------------------------
 
-[[AWS-SQS-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -206,9 +188,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.6 or higher).
 
-[[AWS-SQS-JMS-styleSelectors]]
-JMS-style Selectors
-^^^^^^^^^^^^^^^^^^^
+### JMS-style Selectors
 
 SQS does not allow selectors, but you can effectively achieve this by
 using the link:message-filter.html[Camel Filter EIP] and setting an
@@ -232,9 +212,7 @@ will not make it through the filter AND also not be deleted from the SQS
 queue. After 5000 miliseconds, the message will become visible to other
 consumers.
 
-[[AWS-SQS-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -242,4 +220,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:aws.html[AWS Component]
-

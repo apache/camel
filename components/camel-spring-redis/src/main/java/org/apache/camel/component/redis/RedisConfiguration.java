@@ -42,7 +42,7 @@ public class RedisConfiguration {
     private String channels;
     @UriParam
     private RedisTemplate redisTemplate;
-    @UriParam
+    @UriParam(label = "consumer,advanced")
     private RedisMessageListenerContainer listenerContainer;
     @UriParam
     private RedisConnectionFactory connectionFactory;

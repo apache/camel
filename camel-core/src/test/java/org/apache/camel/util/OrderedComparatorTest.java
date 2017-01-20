@@ -17,7 +17,6 @@
 package org.apache.camel.util;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -37,7 +36,7 @@ public class OrderedComparatorTest extends TestCase {
         answer.add(new MyOrder(5));
         answer.add(new MyOrder(4));
 
-        Collections.sort(answer, new OrderedComparator());
+        answer.sort(new OrderedComparator());
 
         assertEquals(0, answer.get(0).getOrder());
         assertEquals(1, answer.get(1).getOrder());
@@ -54,7 +53,7 @@ public class OrderedComparatorTest extends TestCase {
         answer.add(new MyOrder(5));
         answer.add(new MyOrder(4));
 
-        Collections.sort(answer, new OrderedComparator(true));
+        answer.sort(new OrderedComparator(true));
 
         assertEquals(5, answer.get(0).getOrder());
         assertEquals(4, answer.get(1).getOrder());
@@ -72,7 +71,7 @@ public class OrderedComparatorTest extends TestCase {
         answer.add(new MyOrder(Ordered.HIGHEST));
         answer.add(new MyOrder(4));
 
-        Collections.sort(answer, new OrderedComparator());
+        answer.sort(new OrderedComparator());
 
         assertEquals(Ordered.HIGHEST, answer.get(0).getOrder());
         assertEquals(0, answer.get(1).getOrder());
@@ -91,7 +90,7 @@ public class OrderedComparatorTest extends TestCase {
         answer.add(new MyOrder(Ordered.HIGHEST));
         answer.add(new MyOrder(4));
 
-        Collections.sort(answer, new OrderedComparator(true));
+        answer.sort(new OrderedComparator(true));
 
         assertEquals(200, answer.get(0).getOrder());
         assertEquals(50, answer.get(1).getOrder());
@@ -110,7 +109,7 @@ public class OrderedComparatorTest extends TestCase {
         answer.add(new MyOrder(Ordered.LOWEST));
         answer.add(new MyOrder(-4));
 
-        Collections.sort(answer, new OrderedComparator());
+        answer.sort(new OrderedComparator());
 
         assertEquals(-4, answer.get(0).getOrder());
         assertEquals(-2, answer.get(1).getOrder());
@@ -129,7 +128,7 @@ public class OrderedComparatorTest extends TestCase {
         answer.add(new MyOrder(Ordered.LOWEST));
         answer.add(new MyOrder(-4));
 
-        Collections.sort(answer, new OrderedComparator(true));
+        answer.sort(new OrderedComparator(true));
 
         assertEquals(Ordered.LOWEST, answer.get(0).getOrder());
         assertEquals(200, answer.get(1).getOrder());

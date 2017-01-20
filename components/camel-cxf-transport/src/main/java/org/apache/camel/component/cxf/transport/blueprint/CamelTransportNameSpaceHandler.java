@@ -40,7 +40,7 @@ public class CamelTransportNameSpaceHandler implements NamespaceHandler {
         return null;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("rawtypes")
     public Set<Class> getManagedClasses() {
         return new HashSet<Class>(Arrays.asList(CamelTransportNameSpaceHandler.class));
     }

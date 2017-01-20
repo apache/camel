@@ -37,7 +37,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 @UriEndpoint(scheme = "mybatis", title = "MyBatis", syntax = "mybatis:statement", consumerClass =  MyBatisConsumer.class, label = "database,sql")
 public class MyBatisEndpoint extends DefaultPollingEndpoint {
 
-    private MyBatisProcessingStrategy processingStrategy = new DefaultMyBatisProcessingStrategy();
     @UriPath @Metadata(required = "true")
     private String statement;
     @UriParam(label = "producer")
@@ -57,6 +56,8 @@ public class MyBatisEndpoint extends DefaultPollingEndpoint {
     private boolean useIterator = true;
     @UriParam(label = "consumer", optionalPrefix = "consumer.")
     private boolean routeEmptyResultSet;
+    @UriParam(label = "consumer,advanced")
+    private MyBatisProcessingStrategy processingStrategy = new DefaultMyBatisProcessingStrategy();
     @UriParam(label = "producer", defaultValue = "SIMPLE")
     private ExecutorType executorType;
 
@@ -156,6 +157,9 @@ public class MyBatisEndpoint extends DefaultPollingEndpoint {
         return processingStrategy;
     }
 
+    /**
+     * To use a custom MyBatisProcessingStrategy
+     */
     public void setProcessingStrategy(MyBatisProcessingStrategy processingStrategy) {
         this.processingStrategy = processingStrategy;
     }

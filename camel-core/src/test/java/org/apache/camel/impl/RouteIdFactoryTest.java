@@ -39,6 +39,9 @@ public class RouteIdFactoryTest extends ContextTestSupport {
                 context.setNodeIdFactory(new RouteIdFactory());
                 from("direct:start1?timeout=30000").to("mock:result");
                 from("direct:start2").to("mock:result");
+                rest("/say/hello").get("/bar").to("mock:result");
+                rest("/say/hello").get().to("mock:result");
+                rest().get("/hello").to("mock:result");
             }
         };
     }
@@ -49,6 +52,18 @@ public class RouteIdFactoryTest extends ContextTestSupport {
 
     public void testDirectRouteId() {
         assertEquals("start2", context.getRouteDefinitions().get(1).getId());
+    }
+
+    public void testRestRouteIdWithVerbUri() {
+        assertEquals("get-say-hello-bar", context.getRouteDefinitions().get(2).getId());
+    }
+
+    public void testRestRouteIdWithoutVerbUri() {
+        assertEquals("get-say-hello", context.getRouteDefinitions().get(3).getId());
+    }
+
+    public void testRestRouteIdWithoutPathUri() {
+        assertEquals("get-hello", context.getRouteDefinitions().get(4).getId());
     }
 
 }

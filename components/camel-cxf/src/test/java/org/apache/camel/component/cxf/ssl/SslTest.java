@@ -18,15 +18,11 @@ package org.apache.camel.component.cxf.ssl;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.ws.Endpoint;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CXFTestSupport;
-import org.apache.camel.component.cxf.GreeterImpl;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
-import org.apache.hello_world_soap_http.Greeter;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -49,7 +45,7 @@ public class SslTest extends CamelSpringTestSupport {
 
     @AfterClass
     public static void cleanUp() {
-        //System.getProperties().remove("cxf.config.file");
+        //System.clearProperty("cxf.config.file");
     }
 
     @BeforeClass

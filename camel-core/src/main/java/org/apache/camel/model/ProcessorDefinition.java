@@ -51,11 +51,11 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessClause;
 import org.apache.camel.builder.ProcessorBuilder;
+import org.apache.camel.model.cloud.ServiceCallDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.SimpleExpression;
-import org.apache.camel.model.remote.ServiceCallDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
@@ -65,6 +65,7 @@ import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
+import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.IdempotentRepository;
@@ -666,7 +667,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the builder
      */
-    @SuppressWarnings("unchecked")
     public ServiceCallDefinition serviceCall() {
         ServiceCallDefinition answer = new ServiceCallDefinition();
         addOutput(answer);
@@ -1390,6 +1390,24 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Ends the current block and returns back to the {@link HystrixDefinition hystrix()} DSL.
+     *
+     * @return the builder
+     */
+    public HystrixDefinition endHystrix() {
+        ProcessorDefinition<?> def = this;
+
+        // are we already a try?
+        if (def instanceof HystrixDefinition) {
+            return (HystrixDefinition) def;
+        }
+
+        // okay end this and get back to the try
+        def = end();
+        return (HystrixDefinition) def;
+    }
+
+    /**
      * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent consumer EIP:</a>
      * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer IdempotentConsumer}
      * to avoid duplicate messages
@@ -1443,6 +1461,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the clause used to create the filter expression
      */
+    @AsPredicate
     public ExpressionClause<? extends FilterDefinition> filter() {
         FilterDefinition filter = new FilterDefinition();
         addOutput(filter);
@@ -1457,7 +1476,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param predicate  predicate to use
      * @return the builder 
      */
-    public FilterDefinition filter(Predicate predicate) {
+    public FilterDefinition filter(@AsPredicate Predicate predicate) {
         FilterDefinition filter = new FilterDefinition(predicate);
         addOutput(filter);
         return filter;
@@ -1471,7 +1490,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param expression  the predicate expression to use
      * @return the builder
      */
-    public FilterDefinition filter(ExpressionDefinition expression) {
+    public FilterDefinition filter(@AsPredicate ExpressionDefinition expression) {
         FilterDefinition filter = new FilterDefinition(expression);
         addOutput(filter);
         return filter;
@@ -1486,7 +1505,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param expression   the expression
      * @return the builder
      */
-    public FilterDefinition filter(String language, String expression) {
+    public FilterDefinition filter(String language, @AsPredicate String expression) {
         return filter(new LanguageExpression(language, expression));
     }
     
@@ -1498,7 +1517,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param expression  the expression
      * @return the builder
      */
-    public ValidateDefinition validate(Expression expression) {
+    public ValidateDefinition validate(@AsPredicate Expression expression) {
         ValidateDefinition answer = new ValidateDefinition(expression);
         addOutput(answer);
         return answer;
@@ -1512,7 +1531,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param predicate  the predicate
      * @return the builder
      */
-    public ValidateDefinition validate(Predicate predicate) {
+    public ValidateDefinition validate(@AsPredicate Predicate predicate) {
         ValidateDefinition answer = new ValidateDefinition(predicate);
         addOutput(answer);
         return answer;
@@ -1525,6 +1544,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the builder
      */
+    @AsPredicate
     public ExpressionClause<ValidateDefinition> validate() {
         ValidateDefinition answer = new ValidateDefinition();
         addOutput(answer);
@@ -2219,7 +2239,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param predicate the while loop predicate
      * @return the builder
      */
-    public LoopDefinition loopDoWhile(Predicate predicate) {
+    public LoopDefinition loopDoWhile(@AsPredicate Predicate predicate) {
         LoopDefinition loop = new LoopDefinition(predicate);
         addOutput(loop);
         return loop;
@@ -2685,7 +2705,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the builder
      */
-    @SuppressWarnings("unchecked")
     public ProcessClause<ProcessorDefinition<Type>> process() {
         ProcessClause<ProcessorDefinition<Type>> clause = new ProcessClause<>(this);
         ProcessDefinition answer = new ProcessDefinition(clause);
@@ -3495,7 +3514,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
      */
-    @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri) {
         return pollEnrich(resourceUri, null);
     }
@@ -3516,7 +3534,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
      */
-    @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri, AggregationStrategy aggregationStrategy) {
         return pollEnrich(resourceUri, -1, aggregationStrategy);
     }
@@ -3539,7 +3556,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
      */
-    @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri, long timeout, AggregationStrategy aggregationStrategy) {
         return pollEnrich(resourceUri, timeout, aggregationStrategy, false);
     }
@@ -3562,7 +3578,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
      */
-    @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri, long timeout, String aggregationStrategyRef) {
         return pollEnrich(resourceUri, timeout, aggregationStrategyRef, false);
     }
@@ -3683,7 +3698,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
      */
-    @SuppressWarnings("unchecked")
     public Type pollEnrich(String resourceUri, long timeout) {
         return pollEnrich(resourceUri, timeout, (String) null);
     }

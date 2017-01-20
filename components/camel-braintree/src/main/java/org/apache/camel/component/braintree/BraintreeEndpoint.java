@@ -30,7 +30,6 @@ import org.apache.camel.component.braintree.internal.BraintreeConstants;
 import org.apache.camel.component.braintree.internal.BraintreePropertiesHelper;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.component.AbstractApiEndpoint;
 import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;

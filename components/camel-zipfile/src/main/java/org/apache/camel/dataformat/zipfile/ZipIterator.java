@@ -17,7 +17,6 @@
 package org.apache.camel.dataformat.zipfile;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;

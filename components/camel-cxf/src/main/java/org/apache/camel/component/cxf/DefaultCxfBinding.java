@@ -56,6 +56,7 @@ import org.apache.cxf.binding.soap.Soap11;
 import org.apache.cxf.binding.soap.Soap12;
 import org.apache.cxf.binding.soap.SoapBindingConstants;
 import org.apache.cxf.binding.soap.SoapHeader;
+import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.headers.Header;
@@ -185,9 +186,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         
         // propagate protocol headers
         propagateHeadersFromCxfToCamel(cxfMessage, camelExchange.getOut(), camelExchange);
-        DataFormat dataFormat = camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY,  
-                                                          DataFormat.class);
-        boolean isXop = Boolean.valueOf(camelExchange.getProperty(Message.MTOM_ENABLED, String.class));
+
         // propagate attachments
         if (cxfMessage.getAttachments() != null) {
             // propagate attachments
@@ -782,15 +781,19 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
     }
 
     protected static void addNamespace(Element element, Map<String, String> nsMap) {
-        for (String ns : nsMap.keySet()) {
+        for (Map.Entry<String, String> ns : nsMap.entrySet()) {
             // We should not override the namespace setting of the element
-            if (XMLConstants.XMLNS_ATTRIBUTE.equals(ns)) {
+            if (XMLConstants.XMLNS_ATTRIBUTE.equals(ns.getKey())) {
                 if (ObjectHelper.isEmpty(element.getAttribute(XMLConstants.XMLNS_ATTRIBUTE))) {
-                    element.setAttribute(ns, nsMap.get(ns));
+                    element.setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, ns.getKey(), ns.getValue());
+                }
+            } else if (StringUtils.isEmpty(ns.getKey())) {
+                if (ObjectHelper.isEmpty(element.getAttribute(XMLConstants.XMLNS_ATTRIBUTE))) {
+                    element.setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns", ns.getValue());
                 }
             } else {
-                if (ObjectHelper.isEmpty(element.getAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns))) {
-                    element.setAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns, nsMap.get(ns));
+                if (ObjectHelper.isEmpty(element.getAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns.getKey()))) {
+                    element.setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, XMLConstants.XMLNS_ATTRIBUTE + ":" + ns.getKey(), ns.getValue());
                 }
             }
         }

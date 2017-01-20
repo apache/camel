@@ -27,6 +27,8 @@ import java.util.concurrent.TimeoutException;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.LockModeType;
+import javax.persistence.PersistenceException;
 import javax.persistence.Query;
 
 import org.apache.camel.Exchange;
@@ -49,6 +51,7 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
     private String query;
     private String namedQuery;
     private String nativeQuery;
+    private LockModeType lockModeType = LockModeType.PESSIMISTIC_WRITE;
     private Class<?> resultClass;
     private QueryFactory queryFactory;
     private Map<String, Object> parameters;
@@ -86,6 +89,14 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
 
     public void setNativeQuery(String nativeQuery) {
         this.nativeQuery = nativeQuery;
+    }
+
+    public LockModeType getLockModeType() {
+        return lockModeType;
+    }
+
+    public void setLockModeType(LockModeType lockModeType) {
+        this.lockModeType = lockModeType;
     }
 
     public Class<?> getResultClass() {
@@ -126,24 +137,40 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
 
                 Query query = getQueryFactory().createQuery(entityManager);
                 configureParameters(query);
+
+                if (getEndpoint().isConsumeLockEntity()) {
+                    query.setLockMode(getLockModeType());
+                }
+
                 LOG.trace("Created query {}", query);
 
                 Object answer;
-                List<?> results = query.getResultList();
 
-                if (results != null && results.size() == 1) {
-                    // we only have 1 entity so return that
-                    answer = results.get(0);
-                } else {
-                    // we have more data so return a list
-                    answer = results;
+                try {
+                    List<?> results = query.getResultList();
+
+                    if (results != null && results.size() == 1) {
+                        // we only have 1 entity so return that
+                        answer = results.get(0);
+                    } else {
+                        // we have more data so return a list
+                        answer = results;
+                    }
+
+                    // commit
+                    LOG.debug("Flushing EntityManager");
+                    entityManager.flush();
+
+                    // must clear after flush
+                    entityManager.clear();
+
+                } catch (PersistenceException e) {
+                    LOG.info("Disposing EntityManager {} on {} due to coming transaction rollback", entityManager, this);
+
+                    entityManager.close();
+
+                    throw e;
                 }
-
-                // commit
-                LOG.debug("Flushing EntityManager");
-                entityManager.flush();
-                // must clear after flush
-                entityManager.clear();
 
                 return answer;
             }

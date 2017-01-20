@@ -46,7 +46,7 @@ And then start the client that calls service1 every second.
 
 ```sh
 $ cd client
-$ mvn compile camel:run
+$ mvn compile spring-boot:run
 ```
 
 You can then stop service1 and see that the client should fallback to call service2 in the Hystrix EIP circuit breaker.

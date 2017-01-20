@@ -34,6 +34,7 @@ import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.http.common.HttpRestHeaderFilterStrategy;
 import org.apache.camel.http.common.UrlRewrite;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IntrospectionSupport;
@@ -69,17 +70,26 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpComponent.class);
 
+    @Metadata(label = "advanced")
     protected HttpClientConfigurer httpClientConfigurer;
+    @Metadata(label = "advanced")
     protected HttpClientConnectionManager clientConnectionManager;
+    @Metadata(label = "advanced")
     protected HttpContext httpContext;
+    @Metadata(label = "security")
     protected SSLContextParameters sslContextParameters;
+    @Metadata(label = "security")
     protected X509HostnameVerifier x509HostnameVerifier = new BrowserCompatHostnameVerifier();
+    @Metadata(label = "producer")
     protected CookieStore cookieStore;
 
     // options to the default created http connection manager
+    @Metadata(label = "advanced", defaultValue = "200")
     protected int maxTotalConnections = 200;
+    @Metadata(label = "advanced", defaultValue = "20")
     protected int connectionsPerRoute = 20;
     // It's MILLISECONDS, the default value is always keep alive
+    @Metadata(label = "advanced")
     protected long connectionTimeToLive = -1;
 
     public HttpComponent() {

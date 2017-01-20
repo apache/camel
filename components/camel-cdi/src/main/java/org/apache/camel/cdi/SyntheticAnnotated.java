@@ -24,6 +24,7 @@ import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
+import static java.util.stream.Collectors.toSet;
 
 import javax.enterprise.inject.spi.Annotated;
 
@@ -52,35 +53,34 @@ final class SyntheticAnnotated implements Annotated {
         annotations.add(annotation);
     }
 
-    @Override
     public Type getBaseType() {
         return type;
     }
 
-    @Override
     public Set<Type> getTypeClosure() {
         return unmodifiableSet(types);
     }
 
-    @Override
     public Set<Annotation> getAnnotations() {
         return unmodifiableSet(annotations);
     }
 
-    @Override
     public <T extends Annotation> T getAnnotation(Class<T> type) {
         return annotations.stream()
             .filter(isAnnotationType(type))
-            .findAny()
+            .findFirst()
             .map(type::cast)
             .orElse(null);
     }
 
-    @Override
-    public boolean isAnnotationPresent(Class<? extends Annotation> type) {
+    public <T extends Annotation> Set<T> getAnnotations(Class<T> type) {
         return annotations.stream()
             .filter(isAnnotationType(type))
-            .findAny()
-            .isPresent();
+            .map(type::cast)
+            .collect(toSet());
+    }
+
+    public boolean isAnnotationPresent(Class<? extends Annotation> type) {
+        return annotations.stream().anyMatch(isAnnotationType(type));
     }
 }

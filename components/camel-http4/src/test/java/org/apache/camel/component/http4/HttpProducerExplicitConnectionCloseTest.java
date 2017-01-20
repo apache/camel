@@ -20,8 +20,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.http.common.HttpHeaderFilterStrategy;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.apache.http.protocol.HTTP;

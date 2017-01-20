@@ -1,6 +1,4 @@
-[[JDBC-JDBCComponent]]
-JDBC Component
-~~~~~~~~~~~~~~
+## JDBC Component
 
 The *jdbc* component enables you to access databases through JDBC, where
 SQL queries (SELECT) and operations (INSERT, UPDATE, etc) are sent in
@@ -24,9 +22,7 @@ for this component:
 This component can only be used to define producer endpoints, which
 means that you cannot use the JDBC component in a `from()` statement.
 
-[[JDBC-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -----------------------------
@@ -38,9 +34,7 @@ This component only supports producer endpoints.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[JDBC-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -51,10 +45,10 @@ The JDBC component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| dataSource | DataSource | To use the DataSource instance instead of looking up the data source by name from the registry.
+| Name | Group | Default | Java Type | Description
+| dataSource | producer |  | DataSource | To use the DataSource instance instead of looking up the data source by name from the registry.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -73,17 +67,17 @@ The JDBC component supports 14 endpoint options which are listed below:
 | Name | Group | Default | Java Type | Description
 | dataSourceName | producer |  | String | *Required* Name of DataSource to lookup in the Registry.
 | allowNamedParameters | producer | true | boolean | Whether to allow using named parameters in the queries.
-| beanRowMapper | producer |  | BeanRowMapper | To use a custom org.apache.camel.component.jdbc.BeanRowMapper when using outputClass. The default implementation will lower case the row names and skip underscores and dashes. For example CUST_ID is mapped as custId.
 | outputClass | producer |  | String | Specify the full package and class name to use as conversion when outputType=SelectOne or SelectList.
 | outputType | producer | SelectList | JdbcOutputType | Determines the output the producer should use.
 | parameters | producer |  | Map | Optional parameters to the java.sql.Statement. For example to set maxRows fetchSize etc.
-| prepareStatementStrategy | producer |  | JdbcPrepareStatementStrategy | Allows to plugin to use a custom org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy to control preparation of the query and prepared statement.
 | readSize | producer |  | int | The default maximum number of rows that can be read by a polling query. The default value is 0.
 | resetAutoCommit | producer | true | boolean | Camel will set the autoCommit on the JDBC connection to be false commit the change after executed the statement and reset the autoCommit flag of the connection at the end if the resetAutoCommit is true. If the JDBC connection doesn't support to reset the autoCommit flag you can set the resetAutoCommit flag to be false and Camel will not try to reset the autoCommit flag. When used with XA transactions you most likely need to set it to false so that the transaction manager is in charge of committing this tx.
 | transacted | producer | false | boolean | Whether transactions are in use.
 | useGetBytesForBlob | producer | false | boolean | To read BLOB columns as bytes instead of string data. This may be needed for certain databases such as Oracle where you must read BLOB columns as bytes.
 | useHeadersAsParameters | producer | false | boolean | Set this option to true to use the prepareStatementStrategy with named parameters. This allows to define queries with named placeholders and use headers with the dynamic values for the query placeholders.
 | useJDBC4ColumnNameAndLabelSemantics | producer | true | boolean | Sets whether to use JDBC 4 or JDBC 3.0 or older semantic when retrieving column name. JDBC 4.0 uses columnLabel to get the column name where as JDBC 3.0 uses both columnName or columnLabel. Unfortunately JDBC drivers behave differently so you can use this option to work out issues around your JDBC driver if you get problem using this component This option is default true.
+| beanRowMapper | advanced |  | BeanRowMapper | To use a custom org.apache.camel.component.jdbc.BeanRowMapper when using outputClass. The default implementation will lower case the row names and skip underscores and dashes. For example CUST_ID is mapped as custId.
+| prepareStatementStrategy | advanced |  | JdbcPrepareStatementStrategy | Allows to plugin to use a custom org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy to control preparation of the query and prepared statement.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}
@@ -91,9 +85,7 @@ The JDBC component supports 14 endpoint options which are listed below:
 
 
 
-[[JDBC-Result]]
-Result
-^^^^^^
+### Result
 
 By default the result is returned in the OUT body as an
 `ArrayList<HashMap<String, Object>>`. The `List` object contains the
@@ -104,9 +96,7 @@ the result.
 *Note:* This component fetches `ResultSetMetaData` to be able to return
 the column name as the key in the `Map`.
 
-[[JDBC-MessageHeaders]]
-Message Headers
-+++++++++++++++
+#### Message Headers
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -130,9 +120,7 @@ type.
 `useHeadersAsParameters` has been enabled.
 |=======================================================================
 
-[[JDBC-Generatedkeys]]
-Generated keys
-^^^^^^^^^^^^^^
+### Generated keys
 
 *Available as of Camel 2.10*
 
@@ -149,9 +137,7 @@ test].
 
 Using generated keys does not work with together with named parameters.
 
-[[JDBC-Usingnamedparameters]]
-Using named parameters
-^^^^^^^^^^^^^^^^^^^^^^
+### Using named parameters
 
 *Available as of Camel 2.12*
 
@@ -174,9 +160,7 @@ Notice in the example above we set two headers with constant value +
 You can also store the header values in a `java.util.Map` and store the
 map on the headers with the key `CamelJdbcParameters`.
 
-[[JDBC-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 In the following example, we fetch the rows from the customer table.
 
@@ -212,9 +196,7 @@ from("direct:hello")
   .to("mock:result");
 -------------------------------------------------------------------------------------------------
 
-[[JDBC-Sample-Pollingthedatabaseeveryminute]]
-Sample - Polling the database every minute
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Sample - Polling the database every minute
 
 If we want to poll a database using the JDBC component, we need to
 combine it with a polling scheduler such as the link:timer.html[Timer]
@@ -226,9 +208,7 @@ data from the database every 60 seconds:
 from("timer://foo?period=60000").setBody(constant("select * from customer")).to("jdbc:testdb").to("activemq:queue:customers");
 ------------------------------------------------------------------------------------------------------------------------------
 
-[[JDBC-Sample-MoveDataBetweenDataSources]]
-Sample - Move Data Between Data Sources +
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Sample - Move Data Between Data Sources +
 
 A common use case is to query for data, process it and move it to
 another data source (ETL operations). In the following example, we
@@ -248,9 +228,7 @@ from("timer://MoveNewCustomersEveryHour?period=3600000")
 
  
 
-[[JDBC-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -258,4 +236,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:sql.html[SQL]
-

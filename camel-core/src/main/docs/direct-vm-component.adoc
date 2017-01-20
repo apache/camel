@@ -1,6 +1,4 @@
-[[Direct-VM-DirectVMComponent]]
-Direct VM Component
-~~~~~~~~~~~~~~~~~~~
+## Direct VM Component
 
 *Available as of Camel 2.10*
 
@@ -28,9 +26,7 @@ Transactions - Tx.
 
 image:direct-vm.data/camel-direct-vm.png[image]
 
-[[Direct-VM-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------------
@@ -39,9 +35,7 @@ direct-vm:someName
 
 Where *someName* can be any string to uniquely identify the endpoint
 
-[[Direct-VM-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -51,13 +45,13 @@ The Direct VM component supports 4 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| block | boolean | If sending a message to a direct endpoint which has no active consumer then we can tell the producer to block and wait for the consumer to become active.
-| timeout | long | The timeout value to use if block is enabled.
-| headerFilterStrategy | HeaderFilterStrategy | Sets a HeaderFilterStrategy that will only be applied on producer endpoints (on both directions: request and response). Default value: none.
-| propagateProperties | boolean | Whether to propagate or not properties from the producer side to the consumer side and viceversa. Default value: true.
+| Name | Group | Default | Java Type | Description
+| block | producer | false | boolean | If sending a message to a direct endpoint which has no active consumer then we can tell the producer to block and wait for the consumer to become active.
+| timeout | producer | 30000 | long | The timeout value to use if block is enabled.
+| headerFilterStrategy | common |  | HeaderFilterStrategy | Sets a HeaderFilterStrategy that will only be applied on producer endpoints (on both directions: request and response). Default value: none.
+| propagateProperties | advanced | true | boolean | Whether to propagate or not properties from the producer side to the consumer side and vice versa. Default value: true.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -80,16 +74,14 @@ The Direct VM component supports 10 endpoint options which are listed below:
 | failIfNoConsumers | producer | false | boolean | Whether the producer should fail by throwing an exception when sending to a Direct-VM endpoint with no active consumers.
 | timeout | producer | 30000 | long | The timeout value to use if block is enabled.
 | headerFilterStrategy | producer (advanced) |  | HeaderFilterStrategy | Sets a HeaderFilterStrategy that will only be applied on producer endpoints (on both directions: request and response). Default value: none.
-| propagateProperties | advanced | false | Boolean | Whether to propagate or not properties from the producer side to the consumer side and viceversa. Default value: true.
+| propagateProperties | advanced | true | boolean | Whether to propagate or not properties from the producer side to the consumer side and vice versa. Default value: true.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}
 // endpoint options: END
 
 
-[[Direct-VM-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 In the route below we use the direct component to link the two routes
 together:
@@ -127,9 +119,7 @@ And the sample using spring DSL:
   </route>    
 --------------------------------------------------
 
-[[Direct-VM-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -139,4 +129,3 @@ See Also
 * link:direct.html[Direct]
 * link:seda.html[SEDA]
 * link:vm.html[VM]
-

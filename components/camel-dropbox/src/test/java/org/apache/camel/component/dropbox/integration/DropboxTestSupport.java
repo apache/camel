@@ -28,7 +28,7 @@ public class DropboxTestSupport extends CamelTestSupport {
 
     protected final Properties properties;
 
-    protected DropboxTestSupport() throws Exception {
+    protected DropboxTestSupport() {
         URL url = getClass().getResource("/test-options.properties");
 
         InputStream inStream;

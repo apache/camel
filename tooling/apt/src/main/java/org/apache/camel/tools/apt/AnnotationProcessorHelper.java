@@ -395,7 +395,7 @@ public final class AnnotationProcessorHelper {
             InputStream is = resource.openInputStream();
             return loadText(is, true);
         } catch (Exception e) {
-            warning(processingEnv, "Cannot load file");
+            warning(processingEnv, "APT cannot load file: " + packageName + "/" + fileName);
         }
 
         return null;

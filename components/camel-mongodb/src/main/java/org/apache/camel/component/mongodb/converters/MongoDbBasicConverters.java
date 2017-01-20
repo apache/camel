@@ -131,8 +131,8 @@ public final class MongoDbBasicConverters {
             Map<?, ?> m = OBJECT_MAPPER.convertValue(value, Map.class);
             answer = new BasicDBObject(m);
         } catch (Exception e) {
-            LOG.warn("Conversion has fallen back to generic Object -> DBObject, but unable to convert type {}. Returning null.", 
-                    value.getClass().getCanonicalName());
+            LOG.warn("Conversion has fallen back to generic Object -> DBObject, but unable to convert type {}. Returning null. {}",
+                    value.getClass().getCanonicalName(), e.getClass().getCanonicalName() + ": " + e.getMessage());
             return null;
         }
         return answer;
