@@ -58,6 +58,9 @@
     <module>camel-cxf-transport</module>
     <module>camel-jms</module>
 
+    <!-- build it first so it can be used by other component to test i.e. ServiceCall EIP -->
+    <module>camel-ribbon</module>
+
     <!-- regular modules in alphabetic order -->
     <module>camel-ahc</module>
     <module>camel-ahc-ws</module>
@@ -91,6 +94,7 @@
     <module>camel-cometd</module>
     <module>camel-consul</module>
     <module>camel-context</module>
+    <module>camel-couchbase</module>
     <module>camel-couchdb</module>
     <module>camel-crypto</module>
     <module>camel-csv</module>
@@ -184,6 +188,7 @@
     <module>camel-mina2</module>
     <module>camel-mllp</module>
     <module>camel-mongodb</module>
+    <module>camel-mongodb3</module>
     <module>camel-mongodb-gridfs</module>
     <module>camel-mqtt</module>
     <module>camel-msv</module>
@@ -199,6 +204,7 @@
     <module>camel-ognl</module>
     <module>camel-olingo2</module>
     <module>camel-openshift</module>
+    <module>camel-openstack</module>
     <module>camel-optaplanner</module>
     <module>camel-paho</module>
     <module>camel-paxlogging</module>
@@ -211,7 +217,6 @@
     <module>camel-quickfix</module>
     <module>camel-rabbitmq</module>
     <module>camel-restlet</module>
-    <module>camel-ribbon</module>
     <module>camel-rmi</module>
     <module>camel-routebox</module>
     <module>camel-rss</module>
@@ -240,6 +245,7 @@
     <module>camel-splunk</module>
     <module>camel-spring-batch</module>
     <module>camel-spring-boot</module>
+    <module>camel-spring-cloud</module>
     <module>camel-spring-javaconfig</module>
     <module>camel-spring-integration</module>
     <module>camel-spring-ldap</module>
@@ -337,6 +343,26 @@
           <scope>provided</scope>
         </dependency>
       </dependencies>
+    </profile>
+    <profile>
+      <id>validate</id>
+      <build>
+        <plugins>           
+          <!-- to validate Camel endpoints: mvn camel:validate -Pvalidate -->
+          <plugin>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-maven-plugin</artifactId>
+            <version>${project.version}</version>
+            <configuration>
+              <failOnError>false</failOnError>
+              <includeTest>true</includeTest>
+              <includeXml>true</includeXml>
+              <ignoreLenientProperties>false</ignoreLenientProperties>
+              <excludes>.*custom-exchange-formatter-context\.xml</excludes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
     </profile>
   </profiles>
 

@@ -1,6 +1,4 @@
-[[ZipFileDataFormat-ZipFile]]
-Zip File
-~~~~~~~~
+## Zip File DataFormat
 
 TIP:*Available since Camel 2.11.0*
 
@@ -15,13 +13,11 @@ https://blogs.oracle.com/xuemingshen/entry/zip64_support_for_4g_zipfile[Java
 Since Camel 2.12.3 there is also a aggregation strategy that can
 aggregate multiple messages into a single Zip file.
 
-[[ZipFile-Options]]
-ZipFile Options
-^^^^^^^^^^^^^^^
+### ZipFile Options
 
 
 // dataformat options: START
-The Zip File dataformat supports 1 options which are listed below.
+The Zip File dataformat supports 2 options which are listed below.
 
 
 
@@ -30,15 +26,14 @@ The Zip File dataformat supports 1 options which are listed below.
 |=======================================================================
 | Name | Default | Java Type | Description
 | usingIterator | false | Boolean | If the zip file has more then one entry the setting this option to true allows to work with the splitter EIP to split the data using an iterator in a streaming mode.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
 {% endraw %}
 // dataformat options: END
 
 
 
-[[ZipFileDataFormat-Marshal]]
-Marshal
-^^^^^^^
+### Marshal
 
 In this example we marshal a regular text/XML payload to a compressed
 payload using Zip file compression, and send it to an ActiveMQ queue
@@ -79,9 +74,7 @@ from("direct:start").setHeader(Exchange.FILE_NAME, constant("report.txt")).marsh
 This route would result in a Zip file named "report.txt.zip" in the
 output directory, containing a single Zip entry named "report.txt".
 
-[[ZipFileDataFormat-Unmarshal]]
-Unmarshal
-^^^^^^^^^
+### Unmarshal
 
 In this example we unmarshal a Zip file payload from an ActiveMQ queue
 called MY_QUEUE to its original format, and forward it for processing to
@@ -120,9 +113,7 @@ like this
      .end();
 ----------------------------------------------------------------------------------------------------
 
-[[ZipFileDataFormat-Aggregate]]
-Aggregate
-^^^^^^^^^
+### Aggregate
 
 TIP:*Available since Camel 2.12.3*
 
@@ -158,9 +149,7 @@ the `CamelFileName` header explicitly in your route:
    .to("file:output/directory");
 ------------------------------------------------------------
 
-[[ZipFileDataFormat-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use Zip files in your camel routes you need to add a dependency on
 *camel-zipfile* which implements this data format.

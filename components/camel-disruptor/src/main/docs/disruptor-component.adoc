@@ -1,6 +1,4 @@
-[[Disruptor-DisruptorComponent]]
-Disruptor Component
-~~~~~~~~~~~~~~~~~~~
+## Disruptor Component
 
 *Available as of Camel 2.12*
 
@@ -63,9 +61,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Disruptor-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -----------------------------
@@ -90,9 +86,7 @@ across contexts in case of +
   ?option=value&option=value&…
 ------------------------------
 
-[[Disruptor-Options]]
-Options
-^^^^^^^
+### Options
 
 All the following options are valid for both the **disruptor:** and
 **disruptor-vm:** components.
@@ -105,16 +99,16 @@ The Disruptor component supports 7 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| defaultConcurrentConsumers | int | To configure the default number of concurrent consumers
-| defaultMultipleConsumers | boolean | To configure the default value for multiple consumers
-| defaultProducerType | DisruptorProducerType | To configure the default value for DisruptorProducerType The default value is Multi.
-| defaultWaitStrategy | DisruptorWaitStrategy | To configure the default value for DisruptorWaitStrategy The default value is Blocking.
-| defaultBlockWhenFull | boolean | To configure the default value for block when full The default value is true.
-| queueSize | int | To configure the ring buffer size
-| bufferSize | int | To configure the ring buffer size
+| Name | Group | Default | Java Type | Description
+| defaultConcurrentConsumers | consumer | 1 | int | To configure the default number of concurrent consumers
+| defaultMultipleConsumers | consumer | false | boolean | To configure the default value for multiple consumers
+| defaultProducerType | producer | Multi | DisruptorProducerType | To configure the default value for DisruptorProducerType The default value is Multi.
+| defaultWaitStrategy | consumer | Blocking | DisruptorWaitStrategy | To configure the default value for DisruptorWaitStrategy The default value is Blocking.
+| defaultBlockWhenFull | producer | true | boolean | To configure the default value for block when full The default value is true.
+| queueSize | common |  | int | To configure the ring buffer size
+| bufferSize | common | 1024 | int | To configure the ring buffer size
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -131,11 +125,11 @@ The Disruptor component supports 13 endpoint options which are listed below:
 | Name | Group | Default | Java Type | Description
 | name | common |  | String | *Required* Name of queue
 | size | common | 1024 | int | The maximum capacity of the Disruptors ringbuffer Will be effectively increased to the nearest power of two. Notice: Mind if you use this option then its the first endpoint being created with the queue name that determines the size. To make sure all endpoints use same size then configure the size option on all of them or the first endpoint being created.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | concurrentConsumers | consumer | 1 | int | Number of concurrent threads processing exchanges.
 | multipleConsumers | consumer | false | boolean | Specifies whether multiple consumers are allowed. If enabled you can use Disruptor for Publish-Subscribe messaging. That is you can send a message to the queue and have each consumer receive a copy of the message. When enabled this option should be specified on every consumer endpoint.
 | waitStrategy | consumer | Blocking | DisruptorWaitStrategy | Defines the strategy used by consumer threads to wait on new exchanges to be published. The options allowed are:Blocking Sleeping BusySpin and Yielding.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | blockWhenFull | producer | false | boolean | Whether a thread that sends messages to a full Disruptor will block until the ringbuffer's capacity is no longer exhausted. By default the calling thread will block and wait until the message can be accepted. By disabling this option an exception will be thrown stating that the queue is full.
 | producerType | producer | Multi | DisruptorProducerType | Defines the producers allowed on the Disruptor. The options allowed are: Multi to allow multiple producers and Single to enable certain optimizations only allowed when one concurrent producer (on one thread or otherwise synchronized) is active.
@@ -147,9 +141,7 @@ The Disruptor component supports 13 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Disruptor-Waitstrategies]]
-Wait strategies
-^^^^^^^^^^^^^^^
+### Wait strategies
 
 The wait strategy effects the type of waiting performed by the consumer
 threads that are currently waiting for the next exchange to be
@@ -178,9 +170,7 @@ barrier after an initially spinning. |This strategy is a good compromise between
 without incurring significant latency spikes.
 |=======================================================================
 
-[[Disruptor-UseofRequestReply]]
-Use of Request Reply
-^^^^^^^^^^^^^^^^^^^^
+### Use of Request Reply
 
 The Disruptor component supports using link:request-reply.html[Request
 Reply], where the caller will wait for the Async route to complete. For
@@ -198,9 +188,7 @@ buffer. As it is a link:request-reply.html[Request Reply] message, we
 wait for the response. When the consumer on the _disruptor:input_ buffer
 is complete, it copies the response to the original message response.
 
-[[Disruptor-Concurrentconsumers]]
-Concurrent consumers
-^^^^^^^^^^^^^^^^^^^^
+### Concurrent consumers
 
 By default, the Disruptor endpoint uses a single consumer thread, but
 you can configure it to use concurrent consumer threads. So instead of
@@ -216,9 +204,7 @@ increase/shrink dynamically at runtime depending on load, whereas the
 number of concurrent consumers is always fixed and supported by the
 Disruptor internally so performance will be higher.
 
-[[Disruptor-Threadpools]]
-Thread pools
-^^^^^^^^^^^^
+### Thread pools
 
 Be aware that adding a thread pool to a Disruptor endpoint by doing
 something like:
@@ -235,9 +221,7 @@ of the performance gains achieved by using the Disruptor. Instead, it is
 advices to directly configure number of threads that process messages on
 a Disruptor endpoint using the concurrentConsumers option.
 
-[[Disruptor-Sample]]
-Sample
-^^^^^^
+### Sample
 
 In the route below we use the Disruptor to send the request to this
 async queue to be able to send a fire-and-forget message for further
@@ -270,9 +254,7 @@ another thread for further processing. Since this is from a unit test,
 it will be sent to a mock endpoint where we can do assertions in the
 unit test.
 
-[[Disruptor-UsingmultipleConsumers]]
-Using multipleConsumers
-^^^^^^^^^^^^^^^^^^^^^^^
+### Using multipleConsumers
 
 In this example we have defined two consumers and registered them as
 spring beans.
@@ -311,9 +293,7 @@ public class FooEventConsumer {
 }
 -------------------------------------------
 
-[[Disruptor-Extractingdisruptorinformation]]
-Extracting disruptor information
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Extracting disruptor information
 
 If needed, information such as buffer size, etc. can be obtained without
 using JMX in this fashion:

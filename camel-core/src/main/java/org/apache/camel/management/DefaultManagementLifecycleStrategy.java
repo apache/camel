@@ -49,6 +49,7 @@ import org.apache.camel.api.management.PerformanceCounter;
 import org.apache.camel.impl.ConsumerCache;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultEndpointRegistry;
+import org.apache.camel.impl.DefaultTransformerRegistry;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
@@ -68,6 +69,7 @@ import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedStreamCachingStrategy;
 import org.apache.camel.management.mbean.ManagedThrottlingInflightRoutePolicy;
 import org.apache.camel.management.mbean.ManagedTracer;
+import org.apache.camel.management.mbean.ManagedTransformerRegistry;
 import org.apache.camel.management.mbean.ManagedTypeConverterRegistry;
 import org.apache.camel.model.AOPDefinition;
 import org.apache.camel.model.InterceptDefinition;
@@ -487,6 +489,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             answer = new ManagedStreamCachingStrategy(context, (StreamCachingStrategy) service);
         } else if (service instanceof EventNotifier) {
             answer = getManagementObjectStrategy().getManagedObjectForEventNotifier(context, (EventNotifier) service);
+        } else if (service instanceof DefaultTransformerRegistry) {
+            answer = new ManagedTransformerRegistry(context, (DefaultTransformerRegistry)service);
         } else if (service != null) {
             // fallback as generic service
             answer = getManagementObjectStrategy().getManagedObjectForService(context, service);

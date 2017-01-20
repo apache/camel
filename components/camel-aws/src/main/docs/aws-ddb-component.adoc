@@ -1,6 +1,4 @@
-[[AWS-DDB-DDBComponent]]
-DDB Component
-~~~~~~~~~~~~~
+## AWS DynamoDB Component
 
 *Available as of Camel 2.10*
 
@@ -13,9 +11,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon DynamoDB. More information are available at
 http://aws.amazon.com/dynamodb[Amazon DynamoDB].
 
-[[AWS-DDB-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 ------------------------------
@@ -25,9 +21,7 @@ aws-ddb://domainName[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-[[AWS-DDB-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 // component options: START
@@ -70,13 +64,9 @@ You have to provide the amazonDDBClient in the
 link:registry.html[Registry] or your accessKey and secretKey to access
 the http://aws.amazon.com/dynamodb[Amazon's DynamoDB].
 
-[[AWS-DDB-Usage]]
-Usage
-^^^^^
+### Usage
 
-[[AWS-DDB-MessageheadersevaluatedbytheDDBproducer]]
-Message headers evaluated by the DDB producer
-+++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers evaluated by the DDB producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -129,9 +119,7 @@ the query.*From Camel 2.16.0 this header doesn't exist anymore.*
 |`CamelAwsDdbUpdateValues` |`Map<String, AttributeValueUpdate>` |Map of attribute name to the new value and action for the update.
 |=======================================================================
 
-[[AWS-DDB-MessageheaderssetduringBatchGetItemsoperation]]
-Message headers set during BatchGetItems operation
-++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during BatchGetItems operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -143,9 +131,7 @@ Message headers set during BatchGetItems operation
 processed with the current response.
 |=======================================================================
 
-[[AWS-DDB-MessageheaderssetduringDeleteItemoperation]]
-Message headers set during DeleteItem operation
-+++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during DeleteItem operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -154,9 +140,7 @@ Message headers set during DeleteItem operation
 |`CamelAwsDdbAttributes` |`Map<String, AttributeValue>` |The list of attributes returned by the operation.
 |=======================================================================
 
-[[AWS-DDB-MessageheaderssetduringDeleteTableoperation]]
-Message headers set during DeleteTable operation
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during DeleteTable operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -180,9 +164,7 @@ Message headers set during DeleteTable operation
 |`CamelAwsDdbTableStatus` |`String` |The status of the table: CREATING, UPDATING, DELETING, ACTIVE
 |=======================================================================
 
-[[AWS-DDB-MessageheaderssetduringDescribeTableoperation]]
-Message headers set during DescribeTable operation
-++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during DescribeTable operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -209,9 +191,7 @@ not KeySchema*
 |`CamelAwsDdbWriteCapacity` |`Long` |WriteCapacityUnits property of this table.
 |=======================================================================
 
-[[AWS-DDB-MessageheaderssetduringGetItemoperation]]
-Message headers set during GetItem operation
-++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during GetItem operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -221,9 +201,7 @@ Message headers set during GetItem operation
 
 |=======================================================================
 
-[[AWS-DDB-MessageheaderssetduringPutItemoperation]]
-Message headers set during PutItem operation
-++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during PutItem operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -233,9 +211,7 @@ Message headers set during PutItem operation
 
 |=======================================================================
 
-[[AWS-DDB-MessageheaderssetduringQueryoperation]]
-Message headers set during Query operation
-++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during Query operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -252,9 +228,7 @@ consumed during the operation.
 |`CamelAwsDdbCount` |`Integer` |Number of items in the response.
 |=======================================================================
 
-[[AWS-DDB-MessageheaderssetduringScanoperation]]
-Message headers set during Scan operation
-+++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during Scan operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -273,9 +247,7 @@ consumed during the operation.
 |`CamelAwsDdbScannedCount` |`Integer` |Number of items in the complete scan before any filters are applied.
 |=======================================================================
 
-[[AWS-DDB-MessageheaderssetduringUpdateItemoperation]]
-Message headers set during UpdateItem operation
-+++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set during UpdateItem operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -285,9 +257,7 @@ Message headers set during UpdateItem operation
 
 |=======================================================================
 
-[[AWS-DDB-AdvancedAmazonDynamoDBconfiguration]]
-Advanced AmazonDynamoDB configuration
-+++++++++++++++++++++++++++++++++++++
+#### Advanced AmazonDynamoDB configuration
 
 If you need more control over the `AmazonDynamoDB` instance
 configuration you can create your own instance and refer to it from the
@@ -316,9 +286,7 @@ AmazonDynamoDB client = new AmazonDynamoDBClient(awsCredentials, clientConfigura
 registry.bind("client", client);
 --------------------------------------------------------------------------------------
 
-[[AWS-DDB-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -336,9 +304,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.10 or higher).
 
-[[AWS-DDB-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -346,4 +312,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:aws.html[AWS Component]
-

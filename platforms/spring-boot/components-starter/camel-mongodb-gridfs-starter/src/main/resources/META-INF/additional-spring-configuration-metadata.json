@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.gridfs.enabled",
+      "description": "Enable gridfs component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

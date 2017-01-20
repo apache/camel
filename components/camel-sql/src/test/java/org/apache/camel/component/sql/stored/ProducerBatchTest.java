@@ -55,7 +55,7 @@ public class ProducerBatchTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
 
 
-        List<Map> batchParams = new ArrayList<>();
+        List<Map<String, Object>> batchParams = new ArrayList<>();
 
         Map<String, Object> batch1 = new HashMap<>();
         batchParams.add(batch1);

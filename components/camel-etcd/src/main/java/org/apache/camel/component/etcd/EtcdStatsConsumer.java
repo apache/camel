@@ -20,9 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 public class EtcdStatsConsumer extends AbstractEtcdPollingConsumer {
-
-    public EtcdStatsConsumer(EtcdStatsEndpoint endpoint, Processor processor, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
-        super(endpoint, processor, configuration, namespace, path);
+    public EtcdStatsConsumer(EtcdStatsEndpoint endpoint, Processor processor) {
+        super(endpoint, processor);
     }
 
     @Override
@@ -37,8 +36,8 @@ public class EtcdStatsConsumer extends AbstractEtcdPollingConsumer {
 
         if (answer != null) {
             Exchange exchange = endpoint.createExchange();
-            exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, getNamespace());
-            exchange.getIn().setHeader(EtcdConstants.ETCD_PATH, getPath());
+            exchange.getIn().setHeader(EtcdConstants.ETCD_NAMESPACE, endpoint.getNamespace());
+            exchange.getIn().setHeader(EtcdConstants.ETCD_PATH, endpoint.getPath());
             exchange.getIn().setBody(answer);
 
             getProcessor().process(exchange);

@@ -100,17 +100,6 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <plugins>
-      <!-- Allows the routes to be run via 'mvn camel:run' -->
-      <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
-        <version>${project.version}</version>
-      </plugin>
-    </plugins>
-  </build>
-
   <profiles>
     <profile>
       <id>no-integration-test</id>

@@ -1,6 +1,4 @@
-[[SQLStoredProcedure-SQLStoredProcedureComponent]]
-SQL Stored Procedure Component
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## SQL StoredProcedure Component
 
 *Available as of Camel 2.17*
 
@@ -25,9 +23,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[SQLStoredProcedure-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 The SQL component uses the following endpoint URI notation:
 
@@ -62,9 +58,7 @@ SUBNUMBERS(
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[SQLStoredProcedure-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -74,10 +68,10 @@ The SQL StoredProcedure component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| dataSource | DataSource | Sets the DataSource to use to communicate with the database.
+| Name | Group | Default | Java Type | Description
+| dataSource | producer |  | DataSource | Sets the DataSource to use to communicate with the database.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -104,9 +98,7 @@ The SQL StoredProcedure component supports 7 endpoint options which are listed b
 // endpoint options: END
 
 
-[[SQLStoredProcedure-Declaringthestoredproceduretemplate]]
-Declaring the stored procedure template
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Declaring the stored procedure template
 
 The template is declared using a syntax that would be similar to a Java
 method signature. The name of the stored procedure, and then the
@@ -129,9 +121,7 @@ In SQL term the stored procedure could be declared as:
 CREATE PROCEDURE SUBNUMBERS(VALUE1 INTEGER, VALUE2 INTEGER,OUT RESULT INTEGER)
 ------------------------------------------------------------------------------
 
-[[SQLStoredProcedure-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -139,4 +129,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:sql-component.html[SQL Component]
-

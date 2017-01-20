@@ -35,6 +35,12 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
         this.block = new CompositeNodes(token);
     }
 
+    public boolean lazyEval(SimpleNode child) {
+        String text = child.toString();
+        // don't lazy evaluate nested type references as they are static
+        return !text.startsWith("${type:");
+    }
+
     @Override
     public String toString() {
         // output a nice toString so it makes debugging easier as we can see the entire block
@@ -68,12 +74,17 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
 
                 // we need to concat the block so we have the expression
                 for (SimpleNode child : block.getChildren()) {
+                    // whether a nested function should be lazy evaluated or not
+                    boolean lazy = true;
+                    if (child instanceof SimpleFunctionStart) {
+                        lazy = ((SimpleFunctionStart) child).lazyEval(child);
+                    }
                     if (child instanceof LiteralNode) {
                         String text = ((LiteralNode) child).getText();
                         sb.append(text);
                         quoteEmbeddedFunctions |= ((LiteralNode) child).quoteEmbeddedNodes();
                     // if its quoted literal then embed that as text
-                    } else if (child instanceof SingleQuoteStart || child instanceof DoubleQuoteStart) {
+                    } else if (!lazy || child instanceof SingleQuoteStart || child instanceof DoubleQuoteStart) {
                         try {
                             // pass in null when we evaluate the nested expressions
                             Expression nested = child.createExpression(null);

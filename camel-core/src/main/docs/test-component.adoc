@@ -1,6 +1,4 @@
-[[Test-TestComponent]]
-Test Component
-~~~~~~~~~~~~~~
+## Test Component
 
 link:testing.html[Testing] of distributed and asynchronous processing is
 notoriously difficult. The link:mock.html[Mock], link:test.html[Test]
@@ -39,9 +37,7 @@ for this component when using *Camel 2.8* or older:
 From Camel 2.9 onwards the link:test.html[Test] component is provided
 directly in the camel-core.
 
-[[Test-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 --------------------------------
@@ -52,9 +48,7 @@ Where *expectedMessagesEndpointUri* refers to some other
 link:component.html[Component] URI that the expected message bodies are
 pulled from before starting the test.
 
-[[Test-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 // component options: START
 The Test component has no options.
@@ -88,9 +82,7 @@ The Test component supports 15 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Test-Example]]
-Example
-^^^^^^^
+### Example
 
 For example, you could write a test case as follows:
 
@@ -107,9 +99,7 @@ method], your test case will perform the necessary assertions.
 To see how you can set other expectations on the test endpoint, see the
 link:mock.html[Mock] component.
 
-[[Test-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -117,4 +107,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:spring-testing.html[Spring Testing]
-

@@ -35,11 +35,11 @@ public class NatsConfiguration {
     private String topic;
     @UriParam(defaultValue = "true")
     private boolean reconnect = true;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean pedantic;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean verbose;
-    @UriParam(defaultValue = "false")
+    @UriParam(label = "security")
     private boolean ssl;
     @UriParam(defaultValue = "2000")
     private int reconnectTimeWait = 2000;
@@ -49,7 +49,7 @@ public class NatsConfiguration {
     private int pingInterval = 4000;
     @UriParam(label = "producer")
     private String replySubject;
-    @UriParam(defaultValue = "false")
+    @UriParam
     private boolean noRandomizeServers;
     @UriParam(label = "consumer")
     private String queueName;
@@ -65,7 +65,7 @@ public class NatsConfiguration {
     private boolean secure;
     @UriParam(label = "security")
     private boolean tlsDebug;
-    @UriParam(label = "security", description = "SSL configuration")
+    @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
 
     /**

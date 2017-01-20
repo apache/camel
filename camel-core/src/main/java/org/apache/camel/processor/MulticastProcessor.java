@@ -152,6 +152,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     private final boolean parallelProcessing;
     private final boolean streaming;
     private final boolean parallelAggregate;
+    private final boolean stopOnAggregateException;
     private final boolean stopOnException;
     private final ExecutorService executorService;
     private final boolean shutdownExecutorService;
@@ -176,10 +177,17 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                 streaming, stopOnException, timeout, onPrepare, shareUnitOfWork, false);
     }
 
+    public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy, boolean parallelProcessing,
+                              ExecutorService executorService, boolean shutdownExecutorService, boolean streaming, boolean stopOnException, long timeout, Processor onPrepare,
+                              boolean shareUnitOfWork, boolean parallelAggregate) {
+        this(camelContext, processors, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException, timeout, onPrepare,
+             shareUnitOfWork, false, false);
+    }
+    
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy,
                               boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService, boolean streaming,
                               boolean stopOnException, long timeout, Processor onPrepare, boolean shareUnitOfWork,
-                              boolean parallelAggregate) {
+                              boolean parallelAggregate, boolean stopOnAggregateException) {
         notNull(camelContext, "camelContext");
         this.camelContext = camelContext;
         this.processors = processors;
@@ -194,6 +202,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         this.onPrepare = onPrepare;
         this.shareUnitOfWork = shareUnitOfWork;
         this.parallelAggregate = parallelAggregate;
+        this.stopOnAggregateException = stopOnAggregateException;
     }
 
     @Override
@@ -530,10 +539,14 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     doAggregate(getAggregationStrategy(subExchange), result, subExchange);
                 }
             } catch (Throwable e) {
-                // wrap in exception to explain where it failed
-                CamelExchangeException cex = new CamelExchangeException("Parallel processing failed for number " + aggregated.get(), subExchange, e);
-                subExchange.setException(cex);
-                LOG.debug(cex.getMessage(), cex);
+                if (isStopOnAggregateException()) {
+                    throw e;
+                } else {
+                    // wrap in exception to explain where it failed
+                    CamelExchangeException cex = new CamelExchangeException("Parallel processing failed for number " + aggregated.get(), subExchange, e);
+                    subExchange.setException(cex);
+                    LOG.debug(cex.getMessage(), cex);
+                }
             } finally {
                 aggregated.incrementAndGet();
             }
@@ -1292,6 +1305,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
     public boolean isParallelAggregate() {
         return parallelAggregate;
+    }
+
+    public boolean isStopOnAggregateException() {
+        return stopOnAggregateException;
     }
 
     public boolean isShareUnitOfWork() {

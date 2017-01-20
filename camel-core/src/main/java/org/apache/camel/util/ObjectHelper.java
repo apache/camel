@@ -46,6 +46,7 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.w3c.dom.Node;
@@ -387,6 +388,18 @@ public final class ObjectHelper {
             return text.trim().length() > 0;
         } else {
             return true;
+        }
+    }
+
+    /**
+     * Tests whether the value is <b>not</b> <tt>null</tt> or an empty string.
+     *
+     * @param value  the value, if its a String it will be tested for text length as well
+     * @param consumer  the consumer, the operation to be executed against value if not empty
+     */
+    public static <T> void ifNotEmpty(T value, Consumer<T> consumer) {
+        if (isNotEmpty(value)) {
+            consumer.accept(value);
         }
     }
 
@@ -936,7 +949,7 @@ public final class ObjectHelper {
      */
     public static Properties getCamelPropertiesWithPrefix(String prefix, CamelContext camelContext) {
         Properties answer = new Properties();
-        Map<String, String> camelProperties = camelContext.getProperties();
+        Map<String, String> camelProperties = camelContext.getGlobalOptions();
         if (camelProperties != null) {
             for (Map.Entry<String, String> entry : camelProperties.entrySet()) {
                 String key = entry.getKey();

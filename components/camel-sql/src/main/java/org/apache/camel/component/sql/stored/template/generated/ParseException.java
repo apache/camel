@@ -90,14 +90,14 @@ public class ParseException extends Exception {
         String eol = System.getProperty("line.separator", "\n");
         StringBuffer expected = new StringBuffer();
         int maxSize = 0;
-        for (int i = 0; i < expectedTokenSequences.length; i++) {
-            if (maxSize < expectedTokenSequences[i].length) {
-                maxSize = expectedTokenSequences[i].length;
+        for (int[] expectedTokenSequence : expectedTokenSequences) {
+            if (maxSize < expectedTokenSequence.length) {
+                maxSize = expectedTokenSequence.length;
             }
-            for (int j = 0; j < expectedTokenSequences[i].length; j++) {
-                expected.append(tokenImage[expectedTokenSequences[i][j]]).append(' ');
+            for (int j = 0; j < expectedTokenSequence.length; j++) {
+                expected.append(tokenImage[expectedTokenSequence[j]]).append(' ');
             }
-            if (expectedTokenSequences[i][expectedTokenSequences[i].length - 1] != 0) {
+            if (expectedTokenSequence[expectedTokenSequence.length - 1] != 0) {
                 expected.append("...");
             }
             expected.append(eol).append("    ");

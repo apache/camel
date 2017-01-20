@@ -1,6 +1,4 @@
-[[Openshift-OpenshiftComponent]]
-Openshift Component
-~~~~~~~~~~~~~~~~~~~
+## OpenShift Component
 
 *Available as of Camel 2.14*
 
@@ -20,9 +18,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Openshift-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------------------------
@@ -32,9 +28,7 @@ openshift:clientId[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Openshift-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -44,13 +38,13 @@ The OpenShift component supports 4 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| username | String | The username to login to openshift server.
-| password | String | The password for login to openshift server.
-| domain | String | Domain name. If not specified then the default domain is used.
-| server | String | Url to the openshift server. If not specified then the default value from the local openshift configuration file /.openshift/express.conf is used. And if that fails as well then openshift.redhat.com is used.
+| Name | Group | Default | Java Type | Description
+| username | security |  | String | The username to login to openshift server.
+| password | security |  | String | The password for login to openshift server.
+| domain | common |  | String | Domain name. If not specified then the default domain is used.
+| server | common |  | String | Url to the openshift server. If not specified then the default value from the local openshift configuration file /.openshift/express.conf is used. And if that fails as well then openshift.redhat.com is used.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -70,9 +64,9 @@ The OpenShift component supports 27 endpoint options which are listed below:
 | password | common |  | String | *Required* The password for login to openshift server.
 | server | common |  | String | Url to the openshift server. If not specified then the default value from the local openshift configuration file /.openshift/express.conf is used. And if that fails as well then openshift.redhat.com is used.
 | username | common |  | String | *Required* The username to login to openshift server.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | application | producer |  | String | The application name to start stop restart or get the state.
@@ -97,13 +91,9 @@ The OpenShift component supports 27 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Openshift-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
-[[Openshift-Listingallapplications]]
-Listing all applications
-++++++++++++++++++++++++
+#### Listing all applications
 
 [source,java]
 --------------------------------------------------------------------------
@@ -116,9 +106,7 @@ from("direct:apps")
 In this case the information about all the applications is returned as
 pojo. If you want a json response, then set mode=json.
 
-[[Openshift-Stoppinganapplication]]
-Stopping an application
-+++++++++++++++++++++++
+#### Stopping an application
 
 [source,java]
 ---------------------------------------------------------------------------------------------
@@ -162,12 +150,9 @@ following headers is included.
 |CamelOpenShiftEventNewState |No |The new state, for any of the event types
 |=======================================================================
 
-[[Openshift-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

@@ -35,7 +35,7 @@ import org.apache.camel.impl.DefaultAttachment;
  * <p/>
  * This implementation is needed to deal with attachments when using Servlet.
  */
-final class AttachmentHttpBinding extends DefaultHttpBinding {
+public final class AttachmentHttpBinding extends DefaultHttpBinding {
 
     AttachmentHttpBinding() {
     }
@@ -59,11 +59,15 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
         }
     }
 
-    final class PartDataSource implements DataSource {
+    public final class PartDataSource implements DataSource {
         private final Part part;
 
         PartDataSource(Part part) {
             this.part = part;
+        }
+
+        public String getSubmittedFileName() {
+            return part.getSubmittedFileName();
         }
 
         @Override

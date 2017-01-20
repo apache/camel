@@ -21,6 +21,7 @@ import java.util.concurrent.Executors;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -32,8 +33,11 @@ import org.apache.hadoop.hbase.client.ConnectionFactory;
  */
 public class HBaseComponent extends UriEndpointComponent {
 
-    private Configuration configuration;
     private Connection connection;
+
+    @Metadata(label = "advanced")
+    private Configuration configuration;
+    @Metadata(defaultValue = "10")
     private int poolMaxSize = 10;
 
     public HBaseComponent() {

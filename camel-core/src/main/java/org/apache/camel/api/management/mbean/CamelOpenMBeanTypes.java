@@ -216,4 +216,16 @@ public final class CamelOpenMBeanTypes {
                 new OpenType[]{SimpleType.STRING, SimpleType.LONG});
     }
 
+    public static TabularType listTransformersTabularType() throws OpenDataException {
+        CompositeType ct = listTransformersCompositeType();
+        return new TabularType("listTransformers", "Lists all the transformers in the registry", ct, new String[]{"scheme", "from", "to"});
+    }
+
+    public static CompositeType listTransformersCompositeType() throws OpenDataException {
+        return new CompositeType("transformers", "Transformers",
+                                 new String[]{"scheme", "from", "to", "static", "dynamic", "description"},
+                                 new String[]{"Scheme", "From", "To", "Static", "Dynamic", "Description"},
+                                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING,
+                                                SimpleType.BOOLEAN, SimpleType.BOOLEAN, SimpleType.STRING});
+    }
 }

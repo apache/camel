@@ -85,7 +85,7 @@ public class ManagedRouteStopTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("log:foo").to("mock:result");
+                from("direct:start").delayer(10).to("log:foo").to("mock:result");
             }
         };
     }

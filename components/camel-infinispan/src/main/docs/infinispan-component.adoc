@@ -1,6 +1,4 @@
-[[Infinispan-InfinispanComponent]]
-Infinispan Component
-~~~~~~~~~~~~~~~~~~~~
+## Infinispan Component
 
 *Available as of Camel 2.13.0*
 
@@ -24,18 +22,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Infinispan-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -------------------------------
 infinispan://hostName?[options]
 -------------------------------
 
-[[Infinispan-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 The producer allows sending messages to a local infinispan cache
 configured in the registry, or to a remote cache using the HotRod
@@ -61,12 +55,12 @@ The Infinispan component supports 15 endpoint options which are listed below:
 | cacheContainer | common |  | BasicCacheContainer | Specifies the cache Container to connect
 | cacheName | common |  | String | Specifies the cache name
 | queryBuilder | common |  | InfinispanQueryBuilder | Specifies the query builder.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | clusteredListener | consumer | false | boolean | If true the listener will be installed for the entire cluster
 | customListener | consumer |  | InfinispanCustomListener | Returns the custom listener in use if provided
 | eventTypes | consumer |  | String | Specifies the set of event types to register by the consumer. Multiple event can be separated by comma. The possible event types are: CACHE_ENTRY_ACTIVATED CACHE_ENTRY_PASSIVATED CACHE_ENTRY_VISITED CACHE_ENTRY_LOADED CACHE_ENTRY_EVICTED CACHE_ENTRY_CREATED CACHE_ENTRY_REMOVED CACHE_ENTRY_MODIFIED TRANSACTION_COMPLETED TRANSACTION_REGISTERED CACHE_ENTRY_INVALIDATED DATA_REHASHED TOPOLOGY_CHANGED PARTITION_STATUS_CHANGED
 | sync | consumer | true | boolean | If true the consumer will receive notifications synchronously
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | command | producer | put | String | The operation to perform.
 | configurationUri | advanced |  | String | An implementation specific URI for the CacheManager
@@ -78,9 +72,7 @@ The Infinispan component supports 15 endpoint options which are listed below:
 
 
 
-[[Infinispan-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 [width="100%",cols="10%,10%,10%,10%,60%",options="header",]
 |=======================================================================
@@ -125,9 +117,7 @@ present the command defaults to InifinispanConfiguration's one
 operation returning something is ignored by the client application
 |=======================================================================
 
-[[Infinispan-Example]]
-Example
-^^^^^^^
+### Example
 
 Below is an example route that retrieves a value from the cache for a
 specific key:
@@ -140,9 +130,7 @@ from("direct:start")
         .to("infinispan://localhost?cacheContainer=#cacheContainer");
 ------------------------------------------------------------------------------------
 
-[[Infinispan-UsingtheInfinispanbasedidempotentrepository]]
-Using the Infinispan based idempotent repository
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using the Infinispan based idempotent repository
 
 In this section we will use the Infinispan based idempotent repository.
 
@@ -180,12 +168,9 @@ XML file as well:
 
 For more information, see these resources...
 
-[[Infinispan-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

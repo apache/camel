@@ -1,6 +1,4 @@
-[[SQLComponent-SQLComponent]]
-SQL Component
-~~~~~~~~~~~~~
+## SQL Component
 
 The *sql:* component allows you to work with databases using JDBC
 queries. The difference between this component and link:jdbc.html[JDBC]
@@ -31,9 +29,7 @@ further below.
 * a JDBC based repository for the link:aggregator2.html[Aggregator] EIP
 pattern. See further below.
 
-[[SQLComponent-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 WARNING:From Camel 2.11 onwards this component can create both consumer (e.g.
 `from()`) and producer endpoints (e.g. `to()`).
@@ -104,9 +100,7 @@ also use comments such as the – dash line.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[SQLComponent-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -116,11 +110,11 @@ The SQL component supports 2 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| dataSource | DataSource | Sets the DataSource to use to communicate with the database.
-| usePlaceholder | boolean | Sets whether to use placeholder and replace all placeholder characters with sign in the SQL queries. This option is default true
+| Name | Group | Default | Java Type | Description
+| dataSource | common |  | DataSource | Sets the DataSource to use to communicate with the database.
+| usePlaceholder | advanced | true | boolean | Sets whether to use placeholder and replace all placeholder characters with sign in the SQL queries. This option is default true
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -144,7 +138,7 @@ The SQL component supports 46 endpoint options which are listed below:
 | outputType | common | SelectList | SqlOutputType | Make the output of consumer or producer to SelectList as List of Map or SelectOne as single Java object in the following way: a) If the query has only single column then that JDBC Column object is returned. (such as SELECT COUNT( ) FROM PROJECT will return a Long object. b) If the query has more than one column then it will return a Map of that result. c) If the outputClass is set then it will convert the query result into an Java bean object by calling all the setters that match the column names. It will assume your class has a default constructor to create instance with. d) If the query resulted in more than one rows it throws an non-unique result exception.
 | separator | common | , | char | The separator to use when parameter values is taken from message body (if the body is a String type) to be inserted at placeholders. Notice if you use named parameters then a Map type is used instead. The default value is comma.
 | breakBatchOnConsumeFail | consumer | false | boolean | Sets whether to break batch if onConsume failed.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | expectedUpdateCount | consumer | -1 | int | Sets an expected update count to validate when using onConsume.
 | maxMessagesPerPoll | consumer |  | int | Sets the maximum number of messages to poll
 | onConsume | consumer |  | String | After processing each row then this query can be executed if the Exchange was processed successfully for example to mark the row as processed. The query can have parameter.
@@ -154,7 +148,7 @@ The SQL component supports 46 endpoint options which are listed below:
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
 | transacted | consumer | false | boolean | Enables or disables transaction. If enabled then if processing an exchange failed then the consumer break out processing any further exchanges to cause a rollback eager
 | useIterator | consumer | true | boolean | Sets how resultset should be delivered to route. Indicates delivery as either a list or individual object. defaults to true.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | processingStrategy | consumer (advanced) |  | SqlProcessingStrategy | Allows to plugin to use a custom org.apache.camel.component.sql.SqlProcessingStrategy to execute queries when the consumer has processed the rows/batch.
@@ -186,9 +180,7 @@ The SQL component supports 46 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[SQLComponent-Treatmentofthemessagebody]]
-Treatment of the message body
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Treatment of the message body
 
 The SQL component tries to convert the message body to an object of
 `java.util.Iterator` type and then uses this iterator to fill the query
@@ -213,9 +205,7 @@ parameters must be provided in a header with the
 key SqlConstants.SQL_PARAMETERS. This allows the SQL component to work
 more dynamic as the SQL query is from the message body.
 
-[[SQLComponent-Resultofthequery]]
-Result of the query
-^^^^^^^^^^^^^^^^^^^
+### Result of the query
 
 For `select` operations, the result is an instance of
 `List<Map<String, Object>>` type, as returned by the
@@ -237,9 +227,7 @@ from("jms:order.inbox")
     .to("jms:order.booking");
 -------------------------------------------------------------------------------------------
 
-[[SQLComponent-UsingStreamList]]
-Using StreamList
-^^^^^^^^^^^^^^^^
+### Using StreamList
 
 From*Camel 2.18* onwards the producer supports outputType=StreamList
 that uses an iterator to stream the output of the query. This allows to
@@ -260,9 +248,7 @@ from("direct:withSplitModel")
 
  
 
-[[SQLComponent-Headervalues]]
-Header values
-^^^^^^^^^^^^^
+### Header values
 
 When performing `update` operations, the SQL Component stores the update
 count in the following message headers:
@@ -297,9 +283,7 @@ message headers (*Available as of Camel 2.12.4, 2.13.1*):
 |CamelSqlGeneratedKeyRows |Rows that contains the generated keys (a list of maps of keys).
 |=======================================================================
 
-[[SQLComponent-Generatedkeys]]
-Generated keys
-^^^^^^^^^^^^^^
+### Generated keys
 
 *Available as of Camel 2.12.4, 2.13.1 and 2.14 *
 
@@ -314,9 +298,7 @@ You can see more details in this
 https://git-wip-us.apache.org/repos/asf?p=camel.git;a=blob_plain;f=components/camel-sql/src/test/java/org/apache/camel/component/sql/SqlGeneratedKeysTest.java;hb=3962b23f94bb4bc23011b931add08c3f6833c82e[unit
 test].
 
-[[SQLComponent-Configuration]]
-Configuration
-^^^^^^^^^^^^^
+### Configuration
 
 You can now set a reference to a `DataSource` in the URI directly:
 
@@ -325,9 +307,7 @@ You can now set a reference to a `DataSource` in the URI directly:
 sql:select * from table where id=# order by name?dataSource=myDS
 ----------------------------------------------------------------
 
-[[SQLComponent-Sample]]
-Sample
-^^^^^^
+### Sample
 
 In the sample below we execute a query and retrieve the result as a
 `List` of rows, where each row is a `Map<String, Object` and the key is
@@ -356,9 +336,7 @@ We could configure the `DataSource` in Spring XML as follows:
  <jee:jndi-lookup id="myDS" jndi-name="jdbc/myDataSource"/>
 -----------------------------------------------------------
 
-[[SQLComponent-Usingnamedparameters]]
-Using named parameters
-++++++++++++++++++++++
+#### Using named parameters
 
 *Available as of Camel 2.11*
 
@@ -387,9 +365,7 @@ parameters will be taken from the body.
      .to("sql:select * from projects where license = :#lic and id > :#min order by id")
 ---------------------------------------------------------------------------------------
 
-[[SQLComponent-Usingexpressionparameters]]
-Using expression parameters
-+++++++++++++++++++++++++++
+#### Using expression parameters
 
 *Available as of Camel 2.14*
 
@@ -405,9 +381,7 @@ from("direct:projects")
   .to("sql:select * from projects where license = :#${body} and id > :#${property.min} order by id")
 ----------------------------------------------------------------------------------------------------
 
-[[SQLComponent-UsingINquerieswithdynamicvalues]]
-Using IN queries with dynamic values
-++++++++++++++++++++++++++++++++++++
+#### Using IN queries with dynamic values
 
 *Available as of Camel 2.17*
 
@@ -476,9 +450,7 @@ from("direct:query")
 
  
 
-[[SQLComponent-UsingtheJDBCbasedidempotentrepository]]
-Using the JDBC based idempotent repository
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Using the JDBC based idempotent repository
 
 *Available as of Camel 2.7*: In this section we will use the JDBC based
 idempotent repository.
@@ -753,9 +725,7 @@ class="org.apache.camel.processor.aggregate.jdbc.DefaultJdbcOptimisticLockingExc
 -------------------------------------------------------------------------------
  
 
-[[SQLComponent-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]

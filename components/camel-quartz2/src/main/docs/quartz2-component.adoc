@@ -1,6 +1,4 @@
-[[Quartz2-Quartz2Component]]
-Quartz2 Component
-~~~~~~~~~~~~~~~~~
+## Quartz2 Component
 
 *Available as of Camel 2.12.0*
 
@@ -26,9 +24,7 @@ for this component:
 remain on old Quartz 1.x, please +
  use the old link:quartz.html[Quartz] component instead.
 
-[[Quartz2-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------------------
@@ -46,9 +42,7 @@ name.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Quartz2-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -58,18 +52,18 @@ The Quartz2 component supports 9 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| autoStartScheduler | boolean | Whether or not the scheduler should be auto started. This options is default true
-| startDelayedSeconds | int | Seconds to wait before starting the quartz scheduler.
-| prefixJobNameWithEndpointId | boolean | Whether to prefix the quartz job with the endpoint id. This option is default false.
-| enableJmx | boolean | Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX. This options is default true
-| properties | Properties | Properties to configure the Quartz scheduler.
-| propertiesFile | String | File name of the properties to load from the classpath
-| prefixInstanceName | boolean | Whether to prefix the Quartz Scheduler instance name with the CamelContext name. This is enabled by default to let each CamelContext use its own Quartz scheduler instance by default. You can set this option to false to reuse Quartz scheduler instances between multiple CamelContext's.
-| schedulerFactory | SchedulerFactory | To use the custom SchedulerFactory which is used to create the Scheduler.
-| scheduler | Scheduler | To use the custom configured Quartz scheduler instead of creating a new Scheduler.
+| Name | Group | Default | Java Type | Description
+| autoStartScheduler | scheduler | true | boolean | Whether or not the scheduler should be auto started. This options is default true
+| startDelayedSeconds | scheduler |  | int | Seconds to wait before starting the quartz scheduler.
+| prefixJobNameWithEndpointId | consumer | false | boolean | Whether to prefix the quartz job with the endpoint id. This option is default false.
+| enableJmx | consumer | true | boolean | Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX. This options is default true
+| properties | consumer |  | Properties | Properties to configure the Quartz scheduler.
+| propertiesFile | consumer |  | String | File name of the properties to load from the classpath
+| prefixInstanceName | consumer | true | boolean | Whether to prefix the Quartz Scheduler instance name with the CamelContext name. This is enabled by default to let each CamelContext use its own Quartz scheduler instance by default. You can set this option to false to reuse Quartz scheduler instances between multiple CamelContext's.
+| schedulerFactory | advanced |  | SchedulerFactory | To use the custom SchedulerFactory which is used to create the Scheduler.
+| scheduler | advanced |  | Scheduler | To use the custom configured Quartz scheduler instead of creating a new Scheduler.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -86,14 +80,14 @@ The Quartz2 component supports 21 endpoint options which are listed below:
 | Name | Group | Default | Java Type | Description
 | groupName | consumer | Camel | String | The quartz group name to use. The combination of group name and timer name should be unique.
 | triggerName | consumer |  | String | *Required* The quartz timer name to use. The combination of group name and timer name should be unique.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | cron | consumer |  | String | Specifies a cron expression to define when to trigger.
 | deleteJob | consumer | true | boolean | If set to true then the trigger automatically delete when route stop. Else if set to false it will remain in scheduler. When set to false it will also mean user may reuse pre-configured trigger with camel Uri. Just ensure the names match. Notice you cannot have both deleteJob and pauseJob set to true.
 | durableJob | consumer | false | boolean | Whether or not the job should remain stored after it is orphaned (no triggers point to it).
 | pauseJob | consumer | false | boolean | If set to true then the trigger automatically pauses when route stop. Else if set to false it will remain in scheduler. When set to false it will also mean user may reuse pre-configured trigger with camel Uri. Just ensure the names match. Notice you cannot have both deleteJob and pauseJob set to true.
 | recoverableJob | consumer | false | boolean | Instructs the scheduler whether or not the job should be re-executed if a 'recovery' or 'fail-over' situation is encountered.
 | stateful | consumer | false | boolean | Uses a Quartz PersistJobDataAfterExecution and DisallowConcurrentExecution instead of the default job.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | customCalendar | advanced |  | Calendar | Specifies a custom calendar to avoid specific range of date
 | jobParameters | advanced |  | Map | To configure additional options on the job.
@@ -132,9 +126,7 @@ to the <camelContext> that this id is unique, as this is
 required by the `QuartzScheduler` in the OSGi container. If you do not
 set any `id` on <camelContext> then a unique id is auto assigned, and there is no problem.
 
-[[Quartz2-Configuringquartz.propertiesfile]]
-Configuring quartz.properties file
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Configuring quartz.properties file
 
 By default Quartz will look for a `quartz.properties` file in the
 `org/quartz` directory of the classpath. If you are using WAR
@@ -162,9 +154,7 @@ To do this you can configure this in Spring XML as follows
 </bean>
 -------------------------------------------------------------------------------
 
-[[Quartz2-EnablingQuartzschedulerinJMX]]
-Enabling Quartz scheduler in JMX
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Enabling Quartz scheduler in JMX
 
 You need to configure the quartz scheduler properties to enable JMX. +
  That is typically setting the option
@@ -174,9 +164,7 @@ configuration file.
 From Camel 2.13 onwards Camel will automatic set this option to true,
 unless explicit disabled.
 
-[[Quartz2-StartingtheQuartzscheduler]]
-Starting the Quartz scheduler
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Starting the Quartz scheduler
 
 The link:quartz2.html[Quartz2] component offers an option to let the
 Quartz scheduler be started delayed, or not auto started at all.
@@ -190,9 +178,7 @@ This is an example:
 </bean>
 ------------------------------------------------------------------------------
 
-[[Quartz2-Clustering]]
-Clustering
-^^^^^^^^^^
+### Clustering
 
 If you use Quartz in clustered mode, e.g. the `JobStore` is clustered.
 Then the link:quartz2.html[Quartz2] component will *not* pause/remove
@@ -202,9 +188,7 @@ to keep running on the other nodes in the cluster.
 *Note*: When running in clustered node no checking is done to ensure
 unique job name/group for endpoints.
 
-[[Quartz2-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 Camel adds the getters from the Quartz Execution Context as header
 values. The following headers are added: +
@@ -216,9 +200,7 @@ values. The following headers are added: +
 The `fireTime` header contains the `java.util.Date` of when the exchange
 was fired.
 
-[[Quartz2-UsingCronTriggers]]
-Using Cron Triggers
-^^^^^^^^^^^^^^^^^^^
+### Using Cron Triggers
 
 Quartz supports
 http://www.quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger[Cron-like
@@ -251,9 +233,7 @@ valid URI syntax:
 |`+` | _Space_
 |=======================================================================
 
-[[Quartz2-Specifyingtimezone]]
-Specifying time zone
-^^^^^^^^^^^^^^^^^^^^
+### Specifying time zone
 
 The Quartz Scheduler allows you to configure time zone per trigger. For
 example to use a timezone of your country, then you can do as follows:
@@ -265,9 +245,7 @@ quartz2://groupName/timerName?cron=0+0/5+12-18+?+*+MON-FRI&trigger.timeZone=Euro
 
 The timeZone value is the values accepted by `java.util.TimeZone`.
 
-[[Quartz2-UsingQuartzScheduledPollConsumerScheduler]]
-Using QuartzScheduledPollConsumerScheduler
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Using QuartzScheduledPollConsumerScheduler
 
 The link:quartz2.html[Quartz2] component provides a
 link:polling-consumer.html[Polling Consumer] scheduler which allows to
@@ -327,9 +305,7 @@ use the following as well:
        .to("bean:process");
 --------------------------------------------------------------------
 
-[[Quartz2-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -338,4 +314,3 @@ See Also
 
 * link:quartz.html[Quartz]
 * link:timer.html[Timer]
-

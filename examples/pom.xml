@@ -14,9 +14,7 @@
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
--->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+--><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -56,6 +54,7 @@
     <module>camel-example-etl</module>
     <module>camel-example-ftp</module>
     <module>camel-example-guice-jms</module>
+    <module>camel-example-groovy</module>
     <module>camel-example-hystrix</module>
     <module>camel-example-java8</module>
     <module>camel-example-java8-rx</module>
@@ -69,10 +68,12 @@
     <module>camel-example-netty-http</module>
     <module>camel-example-osgi-rmi</module>
     <module>camel-example-pojo-messaging</module>
+    <module>camel-example-reload</module>
     <module>camel-example-reportincident</module>
     <module>camel-example-reportincident-wssecurity</module>
     <module>camel-example-restlet-jdbc</module>
     <module>camel-example-route-throttling</module>
+    <module>camel-example-scala</module>
     <module>camel-example-servlet-rest-blueprint</module>
     <module>camel-example-servlet-tomcat</module>
     <module>camel-example-servlet-tomcat-no-spring</module>
@@ -137,6 +138,19 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <!-- to validate Camel endpoints: mvn camel:validate -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <failOnError>false</failOnError>
+          <includeTest>true</includeTest>
+          <includeXml>true</includeXml>
+          <ignoreLenientProperties>false</ignoreLenientProperties>
+        </configuration>
       </plugin>
 
       <plugin>

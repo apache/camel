@@ -1,6 +1,4 @@
-[[Atmos-Atmos]]
-Atmos Component
-~~~~~~~~~~~~~~~
+## Atmos Component
 
 *Available as of Camel 2.15*
 
@@ -13,9 +11,7 @@ https://github.com/emcvipr/dataservices-sdk-java[Atmos Client].
 from("atmos:foo/get?remotePath=/path").to("mock:test");
 -------------------------------
 
-[[Atmos-Options]]
-Options
-~~~~~~~
+### Options
 
 
 // component options: START
@@ -41,8 +37,8 @@ The Atmos component supports 14 endpoint options which are listed below:
 | remotePath | common |  | String | Where to put files on Atmos
 | secretKey | common |  | String | Atmos shared secret
 | uri | common |  | String | Atomos server uri
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
@@ -50,9 +46,7 @@ The Atmos component supports 14 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Atmos-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use Atmos in your camel routes you need to add the dependency
 on *camel-atmos* which implements this data format.
@@ -73,8 +67,7 @@ link:download.html[the download page for the latest versions]).
 
 [[Atmos-Integrations]]
 
-Integrations
-^^^^^^^^^^^^
+### Integrations
 
 When you look at atmos integrations, there is one type of consumer, 
 GetConsumer, which is a type of ScheduledPollConsumer. 
@@ -88,9 +81,7 @@ Whereas there are 4 types of producers which are
 * `Move`
 * `Put`
 
-[[Atmos-Examples]]
-Examples
-^^^^^^^^ 
+### Examples
 
 These example are taken from tests:
 
@@ -126,9 +117,7 @@ exhange
 DOWNLOADED_FILE, DOWNLOADED_FILES, UPLOADED_FILE, UPLOADED_FILES, FOUND_FILES, DELETED_PATH, MOVED_PATH;
 -------------------------------
 
-[[Atmos-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]

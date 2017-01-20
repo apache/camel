@@ -1,15 +1,11 @@
-[[DataFormatComponent-DataFormatComponent]]
-Data Format Component
-~~~~~~~~~~~~~~~~~~~~~
+## Data Format Component
 
 *Available as of Camel 2.12*
 
 The *dataformat:* component allows to use link:data-format.html[Data
 Format] as a Camel link:component.html[Component].
 
-[[DataFormatComponent-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------------------
@@ -22,9 +18,7 @@ then followed by the operation which must either be `marshal` or
 Format] in use. See the link:data-format.html[Data Format] documentation
 for which options it support.
 
-[[DataFormatComponent-Options]]
-DataFormat Options
-^^^^^^^^^^^^^^^^^^
+### DataFormat Options
 
 
 // component options: START
@@ -48,9 +42,7 @@ The Data Format component supports 3 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[DataFormatComponent-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 For example to use the link:jaxb.html[JAXB] link:data-format.html[Data
 Format] we can do as follows:
@@ -75,13 +67,10 @@ And in XML DSL you do:
 </camelContext>
 -----------------------------------------------------------------------
 
-[[DataFormatComponent-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
 * link:data-format.html[Data Format]
-

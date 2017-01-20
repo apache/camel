@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.transformer.DataFormatTransformer;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.dataformat.AvroDataFormat;
+import org.apache.camel.model.dataformat.BarcodeDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
 import org.apache.camel.model.dataformat.BeanioDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
@@ -37,11 +38,14 @@ import org.apache.camel.model.dataformat.CustomDataFormat;
 import org.apache.camel.model.dataformat.FlatpackDataFormat;
 import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
+import org.apache.camel.model.dataformat.HessianDataFormat;
 import org.apache.camel.model.dataformat.IcalDataFormat;
 import org.apache.camel.model.dataformat.JacksonXMLDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JibxDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
+import org.apache.camel.model.dataformat.LZFDataFormat;
+import org.apache.camel.model.dataformat.MimeMultipartDataFormat;
 import org.apache.camel.model.dataformat.PGPDataFormat;
 import org.apache.camel.model.dataformat.ProtobufDataFormat;
 import org.apache.camel.model.dataformat.RssDataFormat;
@@ -59,6 +63,7 @@ import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.XmlJsonDataFormat;
 import org.apache.camel.model.dataformat.XmlRpcDataFormat;
+import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
 import org.apache.camel.spi.DataFormat;
@@ -79,6 +84,7 @@ public class DataFormatTransformerDefinition extends TransformerDefinition {
 
     @XmlElements({
         @XmlElement(required = false, name = "avro", type = AvroDataFormat.class),
+        @XmlElement(required = false, name = "barcode", type = BarcodeDataFormat.class),
         @XmlElement(required = false, name = "base64", type = Base64DataFormat.class),
         @XmlElement(required = false, name = "beanio", type = BeanioDataFormat.class),
         @XmlElement(required = false, name = "bindy", type = BindyDataFormat.class),
@@ -86,15 +92,19 @@ public class DataFormatTransformerDefinition extends TransformerDefinition {
         @XmlElement(required = false, name = "castor", type = CastorDataFormat.class),
         @XmlElement(required = false, name = "crypto", type = CryptoDataFormat.class),
         @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),
+        // TODO: Camel 3.0 - Should be named customDataFormat to avoid naming clash with custom loadbalancer
         @XmlElement(required = false, name = "custom", type = CustomDataFormat.class),
         @XmlElement(required = false, name = "flatpack", type = FlatpackDataFormat.class),
         @XmlElement(required = false, name = "gzip", type = GzipDataFormat.class),
+        @XmlElement(required = false, name = "hessian", type = HessianDataFormat.class),
         @XmlElement(required = false, name = "hl7", type = HL7DataFormat.class),
         @XmlElement(required = false, name = "ical", type = IcalDataFormat.class),
         @XmlElement(required = false, name = "jacksonxml", type = JacksonXMLDataFormat.class),
         @XmlElement(required = false, name = "jaxb", type = JaxbDataFormat.class),
         @XmlElement(required = false, name = "jibx", type = JibxDataFormat.class),
         @XmlElement(required = false, name = "json", type = JsonDataFormat.class),
+        @XmlElement(required = false, name = "lzf", type = LZFDataFormat.class),
+        @XmlElement(required = false, name = "mimeMultipart", type = MimeMultipartDataFormat.class),
         @XmlElement(required = false, name = "protobuf", type = ProtobufDataFormat.class),
         @XmlElement(required = false, name = "rss", type = RssDataFormat.class),
         @XmlElement(required = false, name = "secureXML", type = XMLSecurityDataFormat.class),
@@ -112,6 +122,7 @@ public class DataFormatTransformerDefinition extends TransformerDefinition {
         @XmlElement(required = false, name = "xmlrpc", type = XmlRpcDataFormat.class),
         @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class),
         @XmlElement(required = false, name = "pgp", type = PGPDataFormat.class),
+        @XmlElement(required = false, name = "yaml", type = YAMLDataFormat.class),
         @XmlElement(required = false, name = "zip", type = ZipDataFormat.class),
         @XmlElement(required = false, name = "zipFile", type = ZipFileDataFormat.class)}
         )
@@ -126,8 +137,8 @@ public class DataFormatTransformerDefinition extends TransformerDefinition {
                 .setDataFormatType(dataFormatType)
                 .setDataFormatRef(ref)
                 .setModel(getScheme())
-                .setFrom(getFrom())
-                .setTo(getTo());
+                .setFrom(getFromType())
+                .setTo(getToType());
     }
 
     public String getRef() {
@@ -136,6 +147,7 @@ public class DataFormatTransformerDefinition extends TransformerDefinition {
 
     /**
      * Set the reference of the DataFormat.
+     *
      * @param ref reference of the DataFormat
      */
     public void setRef(String ref) {

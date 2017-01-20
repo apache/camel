@@ -39,6 +39,7 @@ import org.apache.camel.core.osgi.OsgiCamelContextPublisher;
 import org.apache.camel.core.osgi.OsgiEventAdminNotifier;
 import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
+import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelServiceExporterDefinition;
@@ -57,12 +58,8 @@ import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
+import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
-import org.apache.camel.model.remote.ConsulConfigurationDefinition;
-import org.apache.camel.model.remote.DnsConfigurationDefinition;
-import org.apache.camel.model.remote.EtcdConfigurationDefinition;
-import org.apache.camel.model.remote.KubernetesConfigurationDefinition;
-import org.apache.camel.model.remote.RibbonConfigurationDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformersDefinition;
@@ -147,18 +144,16 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlElement(name = "streamCaching", type = CamelStreamCachingStrategyDefinition.class)
     private CamelStreamCachingStrategyDefinition camelStreamCachingStrategy;
     @XmlElements({
-        @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class),
-        @XmlElement(name = "kubernetesConfiguration", type = KubernetesConfigurationDefinition.class),
-        @XmlElement(name = "ribbonConfiguration", type = RibbonConfigurationDefinition.class),
-        @XmlElement(name = "consulConfiguration", type = ConsulConfigurationDefinition.class),
-        @XmlElement(name = "dnsConfiguration", type = DnsConfigurationDefinition.class),
-        @XmlElement(name = "etcdConfiguration", type = EtcdConfigurationDefinition.class),
         @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class),
         @XmlElement(name = "fluentTemplate", type = CamelFluentProducerTemplateFactoryBean.class),
         @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class),
         @XmlElement(name = "proxy", type = CamelProxyFactoryBean.class),
-        @XmlElement(name = "export", type = CamelServiceExporterDefinition.class),
         @XmlElement(name = "errorHandler", type = CamelErrorHandlerFactoryBean.class)})
+    private List<AbstractCamelFactoryBean<?>> beansFactory;
+    @XmlElements({
+        @XmlElement(name = "export", type = CamelServiceExporterDefinition.class),
+        @XmlElement(name = "serviceCallConfiguration", type = ServiceCallConfigurationDefinition.class),
+        @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class)})
     private List<?> beans;
     @XmlElement(name = "routeBuilder")
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<RouteBuilderDefinition>();
@@ -616,6 +611,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         this.camelStreamCachingStrategy = camelStreamCachingStrategy;
     }
 
+    public List<AbstractCamelFactoryBean<?>> getBeansFactory() {
+        return beansFactory;
+    }
+
+    public void setBeansFactory(List<AbstractCamelFactoryBean<?>> beansFactory) {
+        this.beansFactory = beansFactory;
+    }
+
+    @Override
     public List<?> getBeans() {
         return beans;
     }

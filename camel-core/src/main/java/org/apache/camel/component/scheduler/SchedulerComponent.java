@@ -24,12 +24,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 
 public class SchedulerComponent extends UriEndpointComponent {
 
     private final Map<String, ScheduledExecutorService> executors = new HashMap<String, ScheduledExecutorService>();
     private final Map<String, AtomicInteger> refCounts = new HashMap<String, AtomicInteger>();
 
+    @Metadata(defaultValue = "1", label = "scheduler")
     private int concurrentTasks = 1;
 
     public SchedulerComponent() {

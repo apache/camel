@@ -1,6 +1,4 @@
-[[Restlet-RestletComponent]]
-Restlet Component
-~~~~~~~~~~~~~~~~~
+## Restlet Component
 
 The *Restlet* component provides http://www.restlet.org[Restlet] based
 link:endpoint.html[endpoints] for consuming and producing RESTful
@@ -19,9 +17,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Restlet-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------------------------
@@ -59,9 +55,7 @@ synchronous=true as option on the endpoint uris, Or set it on the
 RestletComponent as a global option so all endpoints inherit this
 option.
 
-[[Restlet-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -71,29 +65,29 @@ The Restlet component supports 20 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| controllerDaemon | Boolean | Indicates if the controller thread should be a daemon (not blocking JVM exit).
-| controllerSleepTimeMs | Integer | Time for the controller thread to sleep between each control.
-| inboundBufferSize | Integer | The size of the buffer when reading messages.
-| maxConnectionsPerHost | Integer | Maximum number of concurrent connections per host (IP address).
-| maxThreads | Integer | Maximum threads that will service requests.
-| lowThreads | Integer | Number of worker threads determining when the connector is considered overloaded.
-| maxTotalConnections | Integer | Maximum number of concurrent connections in total.
-| minThreads | Integer | Minimum threads waiting to service requests.
-| outboundBufferSize | Integer | The size of the buffer when writing messages.
-| persistingConnections | Boolean | Indicates if connections should be kept alive after a call.
-| pipeliningConnections | Boolean | Indicates if pipelining connections are supported.
-| threadMaxIdleTimeMs | Integer | Time for an idle thread to wait for an operation before being collected.
-| useForwardedForHeader | Boolean | Lookup the X-Forwarded-For header supported by popular proxies and caches and uses it to populate the Request.getClientAddresses() method result. This information is only safe for intermediary components within your local network. Other addresses could easily be changed by setting a fake header and should not be trusted for serious security checks.
-| reuseAddress | Boolean | Enable/disable the SO_REUSEADDR socket option. See java.io.ServerSocketreuseAddress property for additional details.
-| maxQueued | Integer | Maximum number of calls that can be queued if there aren't any worker thread available to service them. If the value is '0' then no queue is used and calls are rejected if no worker thread is immediately available. If the value is '-1' then an unbounded queue is used and calls are never rejected.
-| disableStreamCache | boolean | Determines whether or not the raw input stream from Restlet is cached or not (Camel will read the stream into a in memory/overflow to file Stream caching) cache. By default Camel will cache the Restlet input stream to support reading it multiple times to ensure Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream such as streaming it directly to a file or other persistent store. DefaultRestletBinding will copy the request input stream into a stream cache and put it into message body if this option is false to support reading the stream multiple times.
-| port | int | To configure the port number for the restlet consumer routes. This allows to configure this once to reuse the same port for these consumers.
-| synchronous | Boolean | Whether to use synchronous Restlet Client for the producer. Setting this option to true can yield faster performance as it seems the Restlet synchronous Client works better.
-| enabledConverters | List | A list of converters to enable as full class name or simple class name. All the converters automatically registered are enabled if empty or null
-| headerFilterStrategy | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+| Name | Group | Default | Java Type | Description
+| controllerDaemon | consumer (advanced) |  | Boolean | Indicates if the controller thread should be a daemon (not blocking JVM exit).
+| controllerSleepTimeMs | consumer (advanced) |  | Integer | Time for the controller thread to sleep between each control.
+| inboundBufferSize | consumer |  | Integer | The size of the buffer when reading messages.
+| maxConnectionsPerHost | common |  | Integer | Maximum number of concurrent connections per host (IP address).
+| maxThreads | consumer (advanced) |  | Integer | Maximum threads that will service requests.
+| lowThreads | consumer (advanced) |  | Integer | Number of worker threads determining when the connector is considered overloaded.
+| maxTotalConnections | common |  | Integer | Maximum number of concurrent connections in total.
+| minThreads | consumer (advanced) |  | Integer | Minimum threads waiting to service requests.
+| outboundBufferSize | consumer |  | Integer | The size of the buffer when writing messages.
+| persistingConnections | consumer (advanced) |  | Boolean | Indicates if connections should be kept alive after a call.
+| pipeliningConnections | consumer (advanced) |  | Boolean | Indicates if pipelining connections are supported.
+| threadMaxIdleTimeMs | consumer (advanced) |  | Integer | Time for an idle thread to wait for an operation before being collected.
+| useForwardedForHeader | consumer |  | Boolean | Lookup the X-Forwarded-For header supported by popular proxies and caches and uses it to populate the Request.getClientAddresses() method result. This information is only safe for intermediary components within your local network. Other addresses could easily be changed by setting a fake header and should not be trusted for serious security checks.
+| reuseAddress | consumer |  | Boolean | Enable/disable the SO_REUSEADDR socket option. See java.io.ServerSocketreuseAddress property for additional details.
+| maxQueued | consumer (advanced) |  | Integer | Maximum number of calls that can be queued if there aren't any worker thread available to service them. If the value is '0' then no queue is used and calls are rejected if no worker thread is immediately available. If the value is '-1' then an unbounded queue is used and calls are never rejected.
+| disableStreamCache | consumer (advanced) | false | boolean | Determines whether or not the raw input stream from Restlet is cached or not (Camel will read the stream into a in memory/overflow to file Stream caching) cache. By default Camel will cache the Restlet input stream to support reading it multiple times to ensure Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream such as streaming it directly to a file or other persistent store. DefaultRestletBinding will copy the request input stream into a stream cache and put it into message body if this option is false to support reading the stream multiple times.
+| port | consumer |  | int | To configure the port number for the restlet consumer routes. This allows to configure this once to reuse the same port for these consumers.
+| synchronous | producer |  | Boolean | Whether to use synchronous Restlet Client for the producer. Setting this option to true can yield faster performance as it seems the Restlet synchronous Client works better.
+| enabledConverters | advanced |  | List | A list of converters to enable as full class name or simple class name. All the converters automatically registered are enabled if empty or null
+| headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -113,10 +107,11 @@ The Restlet component supports 22 endpoint options which are listed below:
 | port | common | 80 | int | *Required* The port number of the restlet service
 | uriPattern | common |  | String | The resource pattern such as /customer/id
 | restletMethod | common | GET | Method | On a producer endpoint specifies the request method to use. On a consumer endpoint specifies that the endpoint consumes only restletMethod requests.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | restletMethods | consumer |  | String | Specify one or more methods separated by commas (e.g. restletMethods=postput) to be serviced by a restlet consumer endpoint. If both restletMethod and restletMethods options are specified the restletMethod setting is ignored. The possible methods are: ALLCONNECTDELETEGETHEADOPTIONSPATCHPOSTPUTTRACE
 | restletUriPatterns | consumer |  | List | Specify one ore more URI templates to be serviced by a restlet consumer endpoint using the notation to reference a List in the Camel Registry. If a URI pattern has been defined in the endpoint URI both the URI pattern defined in the endpoint and the restletUriPatterns option will be honored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| disableStreamCache | consumer (advanced) | false | boolean | Determines whether or not the raw input stream from Restlet is cached or not (Camel will read the stream into a in memory/overflow to file Stream caching) cache. By default Camel will cache the Restlet input stream to support reading it multiple times to ensure Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream such as streaming it directly to a file or other persistent store. DefaultRestletBinding will copy the request input stream into a stream cache and put it into message body if this option is false to support reading the stream multiple times.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | connectTimeout | producer | 30000 | int | The Client will give up connection if the connection is timeout 0 for unlimited wait.
 | cookieHandler | producer |  | CookieHandler | Configure a cookie handler to maintain a HTTP session
@@ -124,7 +119,6 @@ The Restlet component supports 22 endpoint options which are listed below:
 | throwExceptionOnFailure | producer | true | boolean | Whether to throw exception on a producer failure. If this option is false then the http status code is set as a message header which can be checked if it has an error value.
 | autoCloseStream | producer (advanced) | false | boolean | Whether to auto close the stream representation as response from calling a REST service using the restlet producer. If the response is streaming and the option streamRepresentation is enabled then you may want to auto close the InputStream from the streaming response to ensure the input stream is closed when the Camel Exchange is done being routed. However if you need to read the stream outside a Camel route you may need to not auto close the stream.
 | streamRepresentation | producer (advanced) | false | boolean | Whether to support stream representation as response from calling a REST service using the restlet producer. If the response is streaming then this option can be enabled to use an java.io.InputStream as the message body on the Camel Message body. If using this option you may want to enable the autoCloseStream option as well to ensure the input stream is closed when the Camel Exchange is done being routed. However if you need to read the stream outside a Camel route you may need to not auto close the stream.
-| disableStreamCache | advanced | false | boolean | Determines whether or not the raw input stream from Restlet is cached or not (Camel will read the stream into a in memory/overflow to file Stream caching) cache. By default Camel will cache the Restlet input stream to support reading it multiple times to ensure Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream such as streaming it directly to a file or other persistent store. DefaultRestletBinding will copy the request input stream into a stream cache and put it into message body if this option is false to support reading the stream multiple times.
 | headerFilterStrategy | advanced |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
 | restletBinding | advanced |  | RestletBinding | To use a custom RestletBinding to bind between Restlet and Camel message.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
@@ -135,9 +129,7 @@ The Restlet component supports 22 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Restlet-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -187,21 +179,15 @@ create responses using the API from Restlet. See examples below.
 the List of CacheDirective of Restlet from the camel message header.
 |=======================================================================
 
-[[Restlet-MessageBody]]
-Message Body
-^^^^^^^^^^^^
+### Message Body
 
 Camel will store the restlet response from the external server on the
 OUT body. All headers from the IN message will be copied to the OUT
 message, so that headers are preserved during routing.
 
-[[Restlet-Samples]]
-Samples
-^^^^^^^
+### Samples
 
-[[Restlet-RestletEndpointwithAuthentication]]
-Restlet Endpoint with Authentication
-++++++++++++++++++++++++++++++++++++
+#### Restlet Endpoint with Authentication
 
 The following route starts a `restlet` consumer endpoint that listens
 for `POST` requests on http://localhost:8080. The processor creates a
@@ -239,9 +225,7 @@ The sample client gets a response like the following:
 received [<order foo='1'/>] as an order id = 89531
 --------------------------------------------------
 
-[[Restlet-SinglerestletendpointtoservicemultiplemethodsandURItemplates]]
-Single restlet endpoint to service multiple methods and URI templates
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Single restlet endpoint to service multiple methods and URI templates
 
 It is possible to create a single route to service multiple HTTP methods
 using the `restletMethods` option. This snippet also shows how to
@@ -266,9 +250,7 @@ The `restletUriPatterns=#uriTemplates` option references the
 </util:list>
 --------------------------------------------------------
 
-[[Restlet-UsingRestletAPItopopulateresponse]]
-Using Restlet API to populate response
-++++++++++++++++++++++++++++++++++++++
+#### Using Restlet API to populate response
 
 *Available as of Camel 2.8*
 
@@ -279,9 +261,7 @@ the response from an inlined Camel link:processor.html[Processor]:
 
 *Generating response using Restlet Response API*
 
-[[Restlet-Configuringmaxthreadsoncomponent]]
-Configuring max threads on component
-++++++++++++++++++++++++++++++++++++
+#### Configuring max threads on component
 
 To configure the max threads options you must do this on the component,
 such as:
@@ -293,9 +273,7 @@ such as:
 </bean>
 -------------------------------------------------------------------------------
 
-[[Restlet-UsingtheRestletservletwithinawebapp]]
-Using the Restlet servlet within a webapp
-+++++++++++++++++++++++++++++++++++++++++
+#### Using the Restlet servlet within a webapp
 
 *Available as of Camel 2.8* +
  There are
@@ -388,12 +366,9 @@ well:
 </repository>
 --------------------------------------------------
 
-[[Restlet-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

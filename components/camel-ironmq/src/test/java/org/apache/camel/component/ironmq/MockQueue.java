@@ -90,8 +90,8 @@ public class MockQueue extends Queue {
     @Override
     public void deleteMessages(Messages messages) throws IOException {
         MessageOptions[] messageOptions = messages.toMessageOptions();
-        for (int i = 0; i < messageOptions.length; i++) {
-            deleteMessage(messageOptions[i].getId(), messageOptions[i].getReservationId());
+        for (MessageOptions messageOption : messageOptions) {
+            deleteMessage(messageOption.getId(), messageOption.getReservationId());
         }
     }
 

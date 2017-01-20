@@ -65,7 +65,7 @@ public class IrcsListUsersIntegrationTest extends CamelTestSupport {
             public void configure() throws Exception {
                 LOGGER.debug("Creating new test route");
                 
-                from(PRODUCER_URI + "?listOnJoin=true&onReply=true")
+                from(PRODUCER_URI + "?namesOnJoin=true&onReply=true")
                     .choice()
                         .when(header("irc.messageType").isEqualToIgnoreCase("REPLY"))
                             .filter(header("irc.num").isEqualTo(IRC_RPL_NAMREPLY))

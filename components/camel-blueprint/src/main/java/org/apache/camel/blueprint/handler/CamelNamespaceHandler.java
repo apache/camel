@@ -282,7 +282,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         registerBeans(context, contextId, ccfb.getThreadPools());
         registerBeans(context, contextId, ccfb.getEndpoints());
         registerBeans(context, contextId, ccfb.getRedeliveryPolicies());
-        registerBeans(context, contextId, ccfb.getBeans());
+        registerBeans(context, contextId, ccfb.getBeansFactory());
 
         // Register processors
         MutablePassThroughMetadata beanProcessorFactory = context.createMetadata(MutablePassThroughMetadata.class);

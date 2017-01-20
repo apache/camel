@@ -83,6 +83,11 @@
       <artifactId>jetty-jmx</artifactId>
       <version>${jetty9-version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-util</artifactId>
+      <version>${jetty9-version}</version>
+    </dependency>
 
     <dependency>
         <groupId>org.apache.camel</groupId>

@@ -44,16 +44,8 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
     @EndpointInject(uri = "mock://acknowledged")
     MockEndpoint acknowledged;
 
-    @EndpointInject(uri = "mock://timeout-ex")
-    MockEndpoint timeout;
-
-    @EndpointInject(uri = "mock://frame-ex")
-    MockEndpoint frame;
-
-    @Override
-    public String isMockEndpoints() {
-        return "log://netty-mllp-sender-throughput*";
-    }
+    @EndpointInject(uri = "mock://timeout-error")
+    MockEndpoint timeoutError;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -75,34 +67,26 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
             public void configure() throws Exception {
                 errorHandler(
                         defaultErrorHandler().allowRedeliveryWhileStopping(false));
-                onException(MllpFrameException.class)
+
+                onException(MllpAcknowledgementTimeoutException.class)
                         .handled(true)
                         .logHandled(false)
-                        .to(frame);
-                onException(MllpTimeoutException.class)
-                        .handled(true)
-                        .logHandled(false)
-                        .to(timeout);
-                onCompletion()
-                        .onFailureOnly().log(LoggingLevel.ERROR, "Processing Failed");
+                        .to(timeoutError);
+
                 from(source.getDefaultEndpoint())
                         .routeId("mllp-sender-test-route")
                         .log(LoggingLevel.INFO, "Sending Message: $simple{header[CamelHL7MessageControl]}")
                         .toF("mllp://%s:%d?connectTimeout=%d&receiveTimeout=%d",
                                 mllpServer.getListenHost(), mllpServer.getListenPort(), connectTimeout, responseTimeout)
                         .to(acknowledged);
-                from("direct://handle-timeout")
-                        .log(LoggingLevel.ERROR, "Response Timeout")
-                        .rollback();
             }
         };
     }
 
     @Test
     public void testSendSingleMessage() throws Exception {
-        acknowledged.setExpectedMessageCount(1);
-        timeout.setExpectedMessageCount(0);
-        frame.setExpectedMessageCount(0);
+        acknowledged.expectedMessageCount(1);
+        timeoutError.expectedMessageCount(0);
 
         source.sendBody(generateMessage());
 
@@ -113,9 +97,8 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
     @Test
     public void testSendMultipleMessages() throws Exception {
         int messageCount = 5;
-        acknowledged.setExpectedMessageCount(messageCount);
-        timeout.setExpectedMessageCount(0);
-        frame.setExpectedMessageCount(0);
+        acknowledged.expectedMessageCount(messageCount);
+        timeoutError.expectedMessageCount(0);
 
         NotifyBuilder[] complete = new NotifyBuilder[messageCount];
         for (int i = 0; i < messageCount; ++i) {
@@ -134,9 +117,8 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
     @Test
     public void testNoResponseOnFirstMessage() throws Exception {
         int sendMessageCount = 5;
-        acknowledged.setExpectedMessageCount(sendMessageCount - 1);
-        timeout.expectedMessageCount(1);
-        frame.setExpectedMessageCount(0);
+        acknowledged.expectedMessageCount(sendMessageCount - 1);
+        timeoutError.expectedMessageCount(1);
 
         NotifyBuilder[] complete = new NotifyBuilder[sendMessageCount];
         for (int i = 0; i < sendMessageCount; ++i) {
@@ -161,9 +143,8 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
     @Test
     public void testNoResponseOnNthMessage() throws Exception {
         int sendMessageCount = 3;
-        acknowledged.setExpectedMessageCount(sendMessageCount - 1);
-        timeout.expectedMessageCount(1);
-        frame.setExpectedMessageCount(0);
+        acknowledged.expectedMessageCount(sendMessageCount - 1);
+        timeoutError.expectedMessageCount(1);
 
         NotifyBuilder[] complete = new NotifyBuilder[sendMessageCount];
         for (int i = 0; i < sendMessageCount; ++i) {
@@ -183,7 +164,8 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
     @Test
     public void testMissingEndOfDataByte() throws Exception {
         int sendMessageCount = 3;
-        acknowledged.setExpectedMessageCount(sendMessageCount - 1);
+        acknowledged.expectedMessageCount(sendMessageCount - 1);
+        timeoutError.expectedMessageCount(1);
 
         NotifyBuilder[] complete = new NotifyBuilder[sendMessageCount];
         for (int i = 0; i < sendMessageCount; ++i) {
@@ -203,7 +185,8 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
     @Test
     public void testMissingEndOfBlockByte() throws Exception {
         int sendMessageCount = 3;
-        acknowledged.setExpectedMessageCount(sendMessageCount - 1);
+        acknowledged.expectedMessageCount(sendMessageCount - 1);
+        timeoutError.expectedMessageCount(1);
 
         NotifyBuilder[] complete = new NotifyBuilder[sendMessageCount];
         for (int i = 0; i < sendMessageCount; ++i) {
@@ -221,19 +204,25 @@ public class MllpTcpClientProducerTest extends CamelTestSupport {
     }
 
     @Test
-    public void testApplicationAcceptAcknowledgement() throws Exception {
-        int sendMessageCount = 5;
-        acknowledged.setExpectedMessageCount(sendMessageCount);
+    public void testAcknowledgementReceiveTimeout() throws Exception {
+        acknowledged.expectedMessageCount(0);
+        timeoutError.expectedMessageCount(1);
 
-        NotifyBuilder[] complete = new NotifyBuilder[sendMessageCount];
-        for (int i = 0; i < sendMessageCount; ++i) {
-            complete[i] = new NotifyBuilder(context).whenDone(i + 1).create();
-        }
+        mllpServer.disableResponse(1);
 
-        for (int i = 0; i < sendMessageCount; ++i) {
-            source.sendBody(generateMessage(i + 1));
-            assertTrue("Messege " + i + " not completed", complete[i].matches(1, TimeUnit.SECONDS));
-        }
+        source.sendBody(generateMessage());
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testAcknowledgementReadTimeout() throws Exception {
+        acknowledged.expectedMessageCount(0);
+        timeoutError.expectedMessageCount(1);
+
+        mllpServer.setDelayDuringAcknowledgement(15000);
+
+        source.sendBody(generateMessage());
 
         assertMockEndpointsSatisfied(15, TimeUnit.SECONDS);
     }

@@ -81,7 +81,7 @@ public class WebsocketComponentServletTest {
         DefaultWebsocket webSocket = websocketComponentServlet.doWebSocketConnect(request, PROTOCOL);
         assertNotNull(webSocket);
         assertEquals(DefaultWebsocket.class, webSocket.getClass());
-        DefaultWebsocket defaultWebsocket = (DefaultWebsocket) webSocket;
+        DefaultWebsocket defaultWebsocket = webSocket;
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
         defaultWebsocket.onMessage(MESSAGE);
         InOrder inOrder = inOrder(consumer, sync, request);
@@ -94,7 +94,7 @@ public class WebsocketComponentServletTest {
         DefaultWebsocket webSocket = websocketComponentServlet.doWebSocketConnect(request, PROTOCOL);
         assertNotNull(webSocket);
         assertEquals(DefaultWebsocket.class, webSocket.getClass());
-        DefaultWebsocket defaultWebsocket = (DefaultWebsocket) webSocket;
+        DefaultWebsocket defaultWebsocket = webSocket;
         defaultWebsocket.setConnectionKey(CONNECTION_KEY);
         defaultWebsocket.onMessage(MESSAGE);
         InOrder inOrder = inOrder(consumer, sync, request);

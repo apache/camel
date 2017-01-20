@@ -24,6 +24,7 @@ import java.lang.reflect.Field;
 import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -33,9 +34,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Stack;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -58,6 +62,7 @@ import org.apache.camel.component.salesforce.internal.client.SyncResponseCallbac
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -734,7 +739,10 @@ public class CamelSalesforceMojo extends AbstractMojo {
         private static final String BASE64BINARY = "base64Binary";
         private static final String MULTIPICKLIST = "multipicklist";
         private static final String PICKLIST = "picklist";
+        private static final List<String> BLACKLISTED_PROPERTIES = Arrays.asList("PicklistValues", "ChildRelationships");
         private boolean useStringsForPicklists;
+        private final Map<String, AtomicInteger> varNames = new HashMap<>();
+        private Stack<String> stack;
 
         public GeneratorUtility(Boolean useStringsForPicklists) {
             this.useStringsForPicklists = Boolean.TRUE.equals(useStringsForPicklists);
@@ -851,6 +859,67 @@ public class CamelSalesforceMojo extends AbstractMojo {
             }
 
             return changed ? result.toString().toUpperCase() : value.toUpperCase();
+        }
+
+        public boolean includeList(final List<?> list, final String propertyName) {
+            return !list.isEmpty() && !BLACKLISTED_PROPERTIES.contains(propertyName);
+        }
+        public boolean notNull(final Object val) {
+            return val != null;
+        }
+
+        public Set<Map.Entry<String, Object>> propertiesOf(final Object object) {
+            final Map<String, Object> properties = new HashMap<>();
+            IntrospectionSupport.getProperties(object, properties, null, false);
+
+            return properties.entrySet().stream()
+                .collect(Collectors.toMap(e -> StringUtils.capitalize(e.getKey()), Map.Entry::getValue)).entrySet();
+        }
+
+        public String variableName(final String given) {
+            final String base = StringUtils.uncapitalize(given);
+
+            AtomicInteger counter = varNames.get(base);
+            if (counter == null) {
+                counter = new AtomicInteger(0);
+                varNames.put(base, counter);
+            }
+
+            return base + counter.incrementAndGet();
+        }
+
+        public boolean isPrimitiveOrBoxed(final Object object) {
+            final Class<?> clazz = object.getClass();
+
+            final boolean isWholeNumberWrapper = Byte.class.equals(clazz) || Short.class.equals(clazz)
+                || Integer.class.equals(clazz) || Long.class.equals(clazz);
+
+            final boolean isFloatingPointWrapper = Double.class.equals(clazz) || Float.class.equals(clazz);
+
+            final boolean isWrapper = isWholeNumberWrapper || isFloatingPointWrapper || Boolean.class.equals(clazz)
+                || Character.class.equals(clazz);
+
+            final boolean isPrimitive = clazz.isPrimitive();
+
+            return isPrimitive || isWrapper;
+        }
+
+        public void start(final String initial) {
+            stack = new Stack<>();
+            stack.push(initial);
+            varNames.clear();
+        }
+
+        public String current() {
+            return stack.peek();
+        }
+
+        public void push(final String additional) {
+            stack.push(additional);
+        }
+
+        public void pop() {
+            stack.pop();
         }
     }
 

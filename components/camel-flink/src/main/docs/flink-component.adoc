@@ -1,6 +1,4 @@
-[[camel-flink-CamelFlinkComponent]]
-Camel Flink Component
-~~~~~~~~~~~~~~~~~~~~~
+## Apache Flink Component
 
 *Available as of Camel 2.18*
 
@@ -25,9 +23,7 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[camel-flink-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 Currently, the Flink Component supports only Producers. One can create DataSet, DataStream jobs.
 
@@ -62,9 +58,7 @@ The Apache Flink component supports 7 endpoint options which are listed below:
 
 
 
-[[Flink-FlinkComponentOptions]]
-FlinkComponent Options
-^^^^^^^^^^^^^^^^^^^^
+### FlinkComponent Options
 
 
 
@@ -75,13 +69,13 @@ The Apache Flink component supports 4 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| dataSet | DataSet | DataSet to compute against.
-| dataStream | DataStream | DataStream to compute against.
-| dataSetCallback | DataSetCallback | Function performing action against a DataSet.
-| dataStreamCallback | DataStreamCallback | Function performing action against a DataStream.
+| Name | Group | Default | Java Type | Description
+| dataSet | producer |  | DataSet | DataSet to compute against.
+| dataStream | producer |  | DataStream | DataStream to compute against.
+| dataSetCallback | producer |  | DataSetCallback | Function performing action against a DataSet.
+| dataStreamCallback | producer |  | DataStreamCallback | Function performing action against a DataStream.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -90,8 +84,7 @@ The Apache Flink component supports 4 options which are listed below.
 
 
 
-Flink DataSet Callback
-^^^^^^^^^^^^^^^^^^^^^^
+### Flink DataSet Callback
 
 [source,java]
 -----------------------------------
@@ -110,8 +103,7 @@ public DataSetCallback<Long> dataSetCallback() {
 }
 -----------------------------------
 
-Flink DataStream Callback
-^^^^^^^^^^^^^^^^^^^^^^^^^
+### Flink DataStream Callback
 
 [source,java]
 ---------------------------
@@ -128,8 +120,7 @@ public VoidDataStreamCallback dataStreamCallback() {
 }
 ---------------------------
 
-Camel-Flink Producer call
-^^^^^^^^^^^^^^^^^^^^^^^^^
+### Camel-Flink Producer call
 
 [source,java]
 -----------------------------------
@@ -146,11 +137,9 @@ try {
     }
 -----------------------------------
 
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

@@ -41,10 +41,10 @@ public class MllpTcpClientProducerBlueprintTest extends CamelBlueprintTestSuppor
 
     final String sourceUri = "direct://source";
     final String mockAcknowledgedUri = "mock://acknowledged";
-    final String mockTimeoutUri = "mock://timeout-ex";
+    final String mockTimeoutUri = "mock://timeoutError-ex";
     final String mockAeExUri = "mock://ae-ack";
     final String mockArExUri = "mock://ar-ack";
-    final String mockFrameExUri = "mock://frame-ex";
+    final String mockFrameExUri = "mock://frameError-ex";
 
     @EndpointInject(uri = sourceUri)
     ProducerTemplate source;
@@ -101,11 +101,11 @@ public class MllpTcpClientProducerBlueprintTest extends CamelBlueprintTestSuppor
     @Test()
     public void testSendMultipleMessages() throws Exception {
         int messageCount = 500;
-        acknowledged.setExpectedMessageCount(messageCount);
-        timeout.setExpectedMessageCount(0);
-        frame.setExpectedMessageCount(0);
-        ae.setExpectedMessageCount(0);
-        ar.setExpectedMessageCount(0);
+        acknowledged.expectedMessageCount(messageCount);
+        timeout.expectedMessageCount(0);
+        frame.expectedMessageCount(0);
+        ae.expectedMessageCount(0);
+        ar.expectedMessageCount(0);
 
         // Uncomment one of these lines to see the NACKs handled
         // mllpServer.setSendApplicationRejectAcknowledgementModulus(10);

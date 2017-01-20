@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -145,18 +144,18 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     public Map<String, String> getProperties() {
-        if (context.getProperties().isEmpty()) {
+        if (context.getGlobalOptions().isEmpty()) {
             return null;
         }
-        return context.getProperties();
+        return context.getGlobalOptions();
     }
 
     public String getProperty(String name) throws Exception {
-        return context.getProperty(name);
+        return context.getGlobalOption(name);
     }
 
     public void setProperty(String name, String value) throws Exception {
-        context.getProperties().put(name, value);
+        context.getGlobalOptions().put(name, value);
     }
 
     public Boolean getTracing() {
@@ -499,7 +498,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                     processors.add(processor);
                 }
             }
-            Collections.sort(processors, new OrderProcessorMBeans());
+            processors.sort(new OrderProcessorMBeans());
 
             // loop the routes, and append the processor stats if needed
             sb.append("  <routeStats>\n");

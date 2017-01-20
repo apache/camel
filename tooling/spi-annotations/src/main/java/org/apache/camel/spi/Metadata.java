@@ -62,6 +62,16 @@ public @interface Metadata {
     String description() default "";
 
     /**
+     * Allows to define enums this options accepts.
+     * <p/>
+     * If the type is already an enum, then this option should not be used; instead you can use
+     * this option when the type is a String that only accept certain values.
+     * <p/>
+     * Multiple values is separated by comma.
+     */
+    String enums() default "";
+
+    /**
      * Whether the option is secret/sensitive information such as a password.
      */
     boolean secret() default false;

@@ -1,6 +1,4 @@
-[[Drill-DrillComponent]]
-Drill Component
-~~~~~~~~~~~~~~
+## Drill Component
 
 *Available as of Camel 2.18*
 
@@ -21,9 +19,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Drill-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 --------------------------------
@@ -33,15 +29,11 @@ drill://host[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Drill-Producer]]
-Drill Producer 
-^^^^^^^^^^^^^
+### Drill Producer 
 
 The producer execute query using *CamelDrillQuery* header and put results into body.
 
-[[Drill-Options]]
-Options
-^^^^^^^
+### Options
 
 // component options: START
 The Drill component has no options.
@@ -66,12 +58,9 @@ The Drill component supports 6 endpoint options which are listed below:
 {% endraw %}
 // endpoint options: END
 
-[[Drill-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

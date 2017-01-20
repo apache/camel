@@ -34,11 +34,6 @@ public class ManagedConsumer extends ManagedService implements ManagedConsumerMB
         this.consumer = consumer;
     }
 
-    @Override
-    public void init(ManagementStrategy strategy) {
-        // noop
-    }
-
     public Consumer getConsumer() {
         return consumer;
     }

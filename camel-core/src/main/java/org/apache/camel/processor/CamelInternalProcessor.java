@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -104,7 +103,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     public void addAdvice(CamelInternalProcessorAdvice advice) {
         advices.add(advice);
         // ensure advices are sorted so they are in the order we want
-        Collections.sort(advices, new OrderedComparator());
+        advices.sort(new OrderedComparator());
     }
 
     /**

@@ -24,6 +24,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.validation.PredicateValidatingProcessor;
+import org.apache.camel.spi.AsPredicate;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 
@@ -32,7 +33,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version 
  */
-@Metadata(label = "eip,transformation")
+@Metadata(label = "eip,transformation") @AsPredicate
 @XmlRootElement(name = "validate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ValidateDefinition extends NoOutputExpressionNode {

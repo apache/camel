@@ -1,6 +1,4 @@
-[[AWS-S3-S3Component]]
-S3 Component
-~~~~~~~~~~~~
+## AWS S3 Storage Service Component
 
 *Available as of Camel 2.8*
 
@@ -13,9 +11,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon S3. More information are available at
 http://aws.amazon.com/s3[Amazon S3].
 
-[[AWS-S3-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 ------------------------------
@@ -35,9 +31,7 @@ from("aws-s3:helloBucket?accessKey=yourAccessKey&secretKey=yourSecretKey&prefix=
 --------------------------------------------------------------------------------
 
 
-[[AWS-S3-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 // component options: START
@@ -70,14 +64,14 @@ The AWS S3 Storage Service component supports 40 endpoint options which are list
 | proxyHost | common |  | String | Camel 2.16: To define a proxy host when instantiating the SQS client
 | proxyPort | common |  | Integer | Camel 2.16: Specify a proxy port to be used inside the client definition.
 | secretKey | common |  | String | Amazon AWS Secret Key
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | deleteAfterRead | consumer | true | boolean | Delete objects from S3 after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs the object is not deleted. If this option is false then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the link S3ConstantsBUCKET_NAME and link S3ConstantsKEY headers or only the link S3ConstantsKEY header.
 | fileName | consumer |  | String | To get the object from the bucket with the given file name
 | includeBody | consumer | true | boolean | Camel 2.17: If it is true the exchange body will be set to a stream to the contents of the file. If false the headers will be set with the S3 object metadata but the body will be null.
 | maxMessagesPerPoll | consumer | 10 | int | Gets the maximum number of messages as a limit to poll at each polling. Is default unlimited but use 0 or negative number to disable it as unlimited.
 | prefix | consumer |  | String | Camel 2.10.1: The prefix which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only consume objects we are interested in.
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | deleteAfterWrite | producer | false | boolean | Camel 2.11.0: Delete file object after the S3 file has been uploaded
@@ -119,9 +113,7 @@ You have to provide the amazonS3Client in the
 link:registry.html[Registry] or your accessKey and secretKey to access
 the http://aws.amazon.com/s3[Amazon's S3].
 
-[[AWS-S3-BatchConsumer]]
-Batch Consumer
-^^^^^^^^^^^^^^
+### Batch Consumer
 
 This component implements the link:batch-consumer.html[Batch Consumer].
 
@@ -129,13 +121,9 @@ This allows you for instance to know how many messages exists in this
 batch and for instance let the link:aggregator.html[Aggregator]
 aggregate this number of messages.
 
-[[AWS-S3-Usage]]
-Usage
-^^^^^
+### Usage
 
-[[AWS-S3-MessageheadersevaluatedbytheS3producer]]
-Message headers evaluated by the S3 producer
-++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers evaluated by the S3 producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -182,9 +170,7 @@ the object using AWS-managed keys. For example use AES256.
 |`CamelAwsS3VersionId` |`String` |The version Id of the object to be stored or returned from the current operation
 |=======================================================================
 
-[[AWS-S3-MessageheaderssetbytheS3producer]]
-Message headers set by the S3 producer
-++++++++++++++++++++++++++++++++++++++
+#### Message headers set by the S3 producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -195,9 +181,7 @@ Message headers set by the S3 producer
 
 |=======================================================================
 
-[[AWS-S3-MessageheaderssetbytheS3consumer]]
-Message headers set by the S3 consumer
-++++++++++++++++++++++++++++++++++++++
+#### Message headers set by the S3 consumer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -246,9 +230,7 @@ specify caching behavior along the HTTP request/reply chain.
 object using AWS-managed keys.
 |=======================================================================
 
-[[AWS-S3-AdvancedAmazonS3configuration]]
-Advanced AmazonS3 configuration
-+++++++++++++++++++++++++++++++
+#### Advanced AmazonS3 configuration
 
 If your Camel Application is running behind a firewall or if you need to
 have more control over the `AmazonS3` instance configuration, you can
@@ -275,9 +257,7 @@ from("aws-s3://MyBucket?amazonS3Client=#client&delay=5000&maxMessagesPerPoll=5")
 .to("mock:result");
 --------------------------------------------------------------------------------
 
-[[AWS-S3-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -295,9 +275,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.8 or higher).
 
-[[AWS-S3-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -305,4 +283,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:aws.html[AWS Component]
-

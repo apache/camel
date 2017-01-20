@@ -1,3 +1,4 @@
+## Twitter Component
 ifdef::env-github[]
 :caution-caption: :boom:
 :important-caption: :exclamation:
@@ -7,9 +8,7 @@ ifdef::env-github[]
 endif::[]
 
 [[ConfluenceContent]]
-[[Twitter-Twitter]]
-Twitter
-~~~~~~~
+### Twitter
 
 *Available as of Camel 2.10*
 
@@ -37,18 +36,14 @@ for this component:
 </dependency>
 ----
 
-[[Twitter-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source]
 ----
 twitter://endpoint[?options]
 ----
 
-[[Twitter-TwitterComponent]]
-Twitter component
-^^^^^^^^^^^^^^^^^
+### Twitter component
 
 The twitter component can be configured with the Twitter account
 settings which is mandatory to configure before using.
@@ -63,17 +58,17 @@ The Twitter component supports 8 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| accessToken | String | The access token
-| accessTokenSecret | String | The access token secret
-| consumerKey | String | The consumer key
-| consumerSecret | String | The consumer secret
-| httpProxyHost | String | The http proxy host which can be used for the camel-twitter.
-| httpProxyUser | String | The http proxy user which can be used for the camel-twitter.
-| httpProxyPassword | String | The http proxy password which can be used for the camel-twitter.
-| httpProxyPort | int | The http proxy port which can be used for the camel-twitter.
+| Name | Group | Default | Java Type | Description
+| accessToken | security |  | String | The access token
+| accessTokenSecret | security |  | String | The access token secret
+| consumerKey | security |  | String | The consumer key
+| consumerSecret | security |  | String | The consumer secret
+| httpProxyHost | proxy |  | String | The http proxy host which can be used for the camel-twitter.
+| httpProxyUser | proxy |  | String | The http proxy user which can be used for the camel-twitter.
+| httpProxyPassword | proxy |  | String | The http proxy password which can be used for the camel-twitter.
+| httpProxyPort | proxy |  | int | The http proxy port which can be used for the camel-twitter.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -84,9 +79,7 @@ The Twitter component supports 8 options which are listed below.
 
 You can also configure these options directly in the endpoint.
 
-[[Twitter-ConsumerEndpoints]]
-Consumer endpoints
-^^^^^^^^^^^^^^^^^^
+### Consumer endpoints
 
 Rather than the endpoints returning a List through one single route
 exchange, camel-twitter creates one route exchange per returned object.
@@ -129,9 +122,7 @@ polling* |[line-through]*twitter4j.Status* |[line-through]*@deprecated.
 Removed from Camel 2.11 onwards.*
 |=======================================================================
 
-[[Twitter-ProducerEndpoints]]
-Producer endpoints
-^^^^^^^^^^^^^^^^^^
+### Producer endpoints
 
 [width="100%",cols="20%,80%",options="header",]
 |==============================
@@ -141,9 +132,7 @@ Producer endpoints
 |timeline/user |String
 |==============================
 
-[[Twitter-URIOptions]]
-URI options
-^^^^^^^^^^^
+### URI options
 
 
 
@@ -159,16 +148,12 @@ The Twitter component supports 43 endpoint options which are listed below:
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | kind | common |  | String | *Required* What polling mode to use direct polling or event based. The event mode is only supported when the endpoint kind is event based.
-| accessToken | common |  | String | The access token. Can also be configured on the TwitterComponent level instead.
-| accessTokenSecret | common |  | String | The access secret. Can also be configured on the TwitterComponent level instead.
-| consumerKey | common |  | String | The consumer key. Can also be configured on the TwitterComponent level instead.
-| consumerSecret | common |  | String | The consumer secret. Can also be configured on the TwitterComponent level instead.
 | user | common |  | String | Username used for user timeline consumption direct message production etc.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
 | type | consumer | direct | EndpointType | Endpoint type to use. Only streaming supports event type.
 | distanceMetric | consumer (advanced) | km | String | Used by the non-stream geography search to search by radius using the configured metrics. The unit can either be mi for miles or km for kilometers. You need to configure all the following options: longitude latitude radius and distanceMetric.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | latitude | consumer (advanced) |  | Double | Used by the non-stream geography search to search by latitude. You need to configure all the following options: longitude latitude radius and distanceMetric.
 | locations | consumer (advanced) |  | String | Bounding boxes created by pairs of lat/lons. Can be used for streaming/filter. A pair is defined as latlon. And multiple paris can be separated by semi colon.
@@ -201,6 +186,10 @@ The Twitter component supports 43 endpoint options which are listed below:
 | httpProxyPassword | proxy |  | String | The http proxy password which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
 | httpProxyPort | proxy |  | Integer | The http proxy port which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
 | httpProxyUser | proxy |  | String | The http proxy user which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
+| accessToken | security |  | String | The access token. Can also be configured on the TwitterComponent level instead.
+| accessTokenSecret | security |  | String | The access secret. Can also be configured on the TwitterComponent level instead.
+| consumerKey | security |  | String | The consumer key. Can also be configured on the TwitterComponent level instead.
+| consumerSecret | security |  | String | The consumer secret. Can also be configured on the TwitterComponent level instead.
 |=======================================================================
 {% endraw %}
 // endpoint options: END
@@ -211,9 +200,7 @@ The Twitter component supports 43 endpoint options which are listed below:
 
 
 
-[[Twitter-Messageheaders]]
-Message headers
-^^^^^^^^^^^^^^^
+### Message headers
 
 [width="100%",cols="20%,80%",options="header",]
 |=======================================================================
@@ -233,15 +220,11 @@ the option of `numberOfPages` which sets how many pages we want to
 twitter returns.
 |=======================================================================
 
-[[Twitter-Messagebody]]
-Message body
-^^^^^^^^^^^^
+### Message body
 
 All message bodies utilize objects provided by the Twitter4J API.
 
-[[Twitter-Usecases]]
-Use cases
-^^^^^^^^^
+### Use cases
 
 NOTE: *API Rate Limits:* Twitter REST APIs encapsulated by http://twitter4j.org/[Twitter4J] are
 subjected to https://dev.twitter.com/rest/public/rate-limiting[API Rate
@@ -250,9 +233,7 @@ https://dev.twitter.com/rest/public/rate-limits[API Rate Limits]
 documentation. Note that endpoints/resources not listed in that page are
 default to 15 requests per allotted user per window.
 
-[[Twitter-TocreateastatusupdatewithinyourTwitterprofile,sendthisproduceraStringbody]]
-To create a status update within your Twitter profile, send this producer a String body:
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### To create a status update within your Twitter profile, send this producer a String body:
 
 [source,java]
 ----
@@ -260,9 +241,7 @@ from("direct:foo")
   .to("twitter://timeline/user?consumerKey=[s]&consumerSecret=[s]&accessToken=[s]&accessTokenSecret=[s]);
 ----
 
-[[Twitter-Topoll,every60sec.,allstatusesonyourhometimeline]]
-To poll, every 60 sec., all statuses on your home timeline:
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### To poll, every 60 sec., all statuses on your home timeline:
 
 [source,java]
 ----
@@ -270,9 +249,7 @@ from("twitter://timeline/home?type=polling&delay=60&consumerKey=[s]&consumerSecr
   .to("bean:blah");
 ----
 
-[[Twitter-TosearchforallstatuseswiththekeywordCamel]]
-To search for all statuses with the keyword 'camel':
-++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### To search for all statuses with the keyword 'camel':
 
 [source,java]
 ----
@@ -280,9 +257,7 @@ from("twitter://search?type=direct&keywords=camel&consumerKey=[s]&consumerSecret
   .to("bean:blah");
 ----
 
-[[Twitter-Searchingusingaproducerwithstatickeywords]]
-Searching using a producer with static keywords:
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Searching using a producer with static keywords:
 
 [source,java]
 ----
@@ -290,9 +265,7 @@ from("direct:foo")
   .to("twitter://search?keywords=camel&consumerKey=[s]&consumerSecret=[s]&accessToken=[s]&accessTokenSecret=[s]");
 ----
 
-[[Twitter-Searchingusingaproducerwithdynamickeywordsfromheader]]
-Searching using a producer with dynamic keywords from header:
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Searching using a producer with dynamic keywords from header:
 
 In the `bar` header we have the keywords we want to search, so we can
 assign this value to the `CamelTwitterKeywords` header:
@@ -304,16 +277,12 @@ from("direct:foo")
   .to("twitter://search?consumerKey=[s]&consumerSecret=[s]&accessToken=[s]&accessTokenSecret=[s]");
 ----
 
-[[Twitter-Example]]
-Example
-^^^^^^^
+### Example
 
 See also the link:twitter-websocket-example.html[Twitter Websocket
 Example].
 
-[[Twitter-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]

@@ -1,12 +1,8 @@
-[[Bean-BeanComponent]]
-Bean Component
-~~~~~~~~~~~~~~
+## Bean Component
 
 The *bean:* component binds beans to Camel message exchanges.
 
-[[Bean-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------
@@ -16,9 +12,7 @@ bean:beanID[?options]
 Where *beanID* can be any string which is used to look up the bean in
 the link:registry.html[Registry]
 
-[[Bean-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -48,9 +42,7 @@ The Bean component supports 6 endpoint options which are listed below:
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Bean-Using]]
-Using
-^^^^^
+### Using
 
 The object instance that is used to consume messages must be explicitly
 registered with the link:registry.html[Registry]. For example, if you
@@ -84,9 +76,7 @@ And the same route using Spring DSL:
 </route>
 ----------------------------
 
-[[Bean-Beanasendpoint]]
-Bean as endpoint
-^^^^^^^^^^^^^^^^
+### Bean as endpoint
 
 Camel also supports invoking link:bean.html[Bean] as an Endpoint. In the
 route below:
@@ -99,9 +89,7 @@ Camel will use link:bean-binding.html[Bean Binding] to invoke the
 `sayHello` method, by converting the Exchange's In body to the `String`
 type and storing the output of the method on the Exchange Out body.
 
-[[Bean-JavaDSLbeansyntax]]
-Java DSL bean syntax
-^^^^^^^^^^^^^^^^^^^^
+### Java DSL bean syntax
 
 Java DSL comes with syntactic sugar for the link:bean.html[Bean]
 component. Instead of specifying the bean explicitly as the endpoint
@@ -133,9 +121,7 @@ from("direct:start").bean(new ExampleBean(), "methodName");
 from("direct:start").bean(ExampleBean.class);
 ---------------------------------------------------------------
 
-[[Bean-BeanBinding]]
-Bean Binding
-^^^^^^^^^^^^
+### Bean Binding
 
 How bean methods to be invoked are chosen (if they are not specified
 explicitly through the *method* parameter) and how parameter values are
@@ -144,9 +130,7 @@ link:bean-binding.html[Bean Binding] mechanism which is used throughout
 all of the various link:bean-integration.html[Bean Integration]
 mechanisms in Camel.
 
-[[Bean-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -156,4 +140,3 @@ See Also
 * link:class.html[Class] component
 * link:bean-binding.html[Bean Binding]
 * link:bean-integration.html[Bean Integration]
-

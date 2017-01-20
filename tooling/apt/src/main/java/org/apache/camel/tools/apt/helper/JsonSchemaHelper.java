@@ -42,7 +42,7 @@ public final class JsonSchemaHelper {
 
     public static String toJson(String name, String kind, Boolean required, String type, String defaultValue, String description,
                                 Boolean deprecated, Boolean secret, String group, String label, boolean enumType, Set<String> enums,
-                                boolean oneOfType, Set<String> oneOffTypes, String optionalPrefix, String prefix, boolean multiValue) {
+                                boolean oneOfType, Set<String> oneOffTypes, boolean asPredicate, String optionalPrefix, String prefix, boolean multiValue) {
         String typeName = JsonSchemaHelper.getType(type, enumType);
 
         StringBuilder sb = new StringBuilder();
@@ -69,7 +69,8 @@ public final class JsonSchemaHelper {
 
         sb.append(", \"type\": ");
         if ("enum".equals(typeName)) {
-            sb.append(Strings.doubleQuote("string"));
+            String actualType = JsonSchemaHelper.getType(type, false);
+            sb.append(Strings.doubleQuote(actualType));
             sb.append(", \"javaType\": \"" + type + "\"");
             CollectionStringBuffer enumValues = new CollectionStringBuffer();
             for (Object value : enums) {
@@ -126,6 +127,17 @@ public final class JsonSchemaHelper {
             sb.append(", \"defaultValue\": ");
             String text = safeDefaultValue(defaultValue);
             sb.append(Strings.doubleQuote(text));
+        }
+
+        // for expressions we want to know if it must be used as predicate or not
+        boolean predicate = "expression".equals(kind) || asPredicate;
+        if (predicate) {
+            sb.append(", \"asPredicate\": ");
+            if (asPredicate) {
+                sb.append(Strings.doubleQuote("true"));
+            } else {
+                sb.append(Strings.doubleQuote("false"));
+            }
         }
 
         if (!Strings.isNullOrEmpty(description)) {

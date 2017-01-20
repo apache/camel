@@ -19,6 +19,7 @@ package org.apache.camel.jaxb;
 import javax.xml.bind.JAXBElement;
 
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
@@ -86,6 +87,7 @@ public class CamelJaxbTest extends CamelTestSupport {
 
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.expectedHeaderReceived(Exchange.CONTENT_TYPE, "application/xml");
         template.sendBody("direct:marshal", person);
         resultEndpoint.assertIsSatisfied();
 
@@ -102,6 +104,7 @@ public class CamelJaxbTest extends CamelTestSupport {
 
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.expectedHeaderReceived(Exchange.CONTENT_TYPE, "application/xml");
         template.sendBody("direct:marshal", person);
         resultEndpoint.assertIsSatisfied();
 

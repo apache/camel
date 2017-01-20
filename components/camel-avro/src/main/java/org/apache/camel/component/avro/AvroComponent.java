@@ -28,12 +28,15 @@ import org.apache.avro.reflect.ReflectData;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.URISupport;
 
 public class AvroComponent extends UriEndpointComponent {
 
-    private AvroConfiguration configuration;
     private ConcurrentMap<String, AvroListener> listenerRegistry = new ConcurrentHashMap<String, AvroListener>();
+
+    @Metadata(label = "advanced")
+    private AvroConfiguration configuration;
 
     public AvroComponent() {
         super(AvroEndpoint.class);

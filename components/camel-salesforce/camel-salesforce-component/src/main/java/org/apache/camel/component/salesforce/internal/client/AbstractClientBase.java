@@ -173,7 +173,9 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
                         final String msg = String.format("Error {%s:%s} executing {%s:%s}",
                             status, response.getReason(), request.getMethod(), request.getURI());
                         final SalesforceException cause = createRestException(response, getContentAsInputStream());
-                        callback.onResponse(null, new SalesforceException(msg, response.getStatus(), cause));
+
+                        // for APIs that return body on status 400, such as Composite API we need content as well
+                        callback.onResponse(getContentAsInputStream(), new SalesforceException(msg, response.getStatus(), cause));
 
                     } else {
 

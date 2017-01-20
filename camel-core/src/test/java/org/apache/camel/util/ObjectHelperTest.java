@@ -618,7 +618,7 @@ public class ObjectHelperTest extends TestCase {
 
     public void testGetCamelContextPropertiesWithPrefix() {
         CamelContext context = new DefaultCamelContext();
-        Map<String, String> properties = context.getProperties();
+        Map<String, String> properties = context.getGlobalOptions();
         properties.put("camel.object.helper.test1", "test1");
         properties.put("camel.object.helper.test2", "test2");
         properties.put("camel.object.test", "test");

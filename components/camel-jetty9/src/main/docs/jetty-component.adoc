@@ -1,6 +1,4 @@
-[[Jetty-JettyComponent]]
-Jetty Component
-~~~~~~~~~~~~~~~
+## Jetty 9 Component
 
 The *jetty* component provides HTTP-based link:endpoint.html[endpoints]
 for consuming and producing HTTP requests. That is, the Jetty component
@@ -33,9 +31,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Jetty-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------------------------------------------------
@@ -45,9 +41,7 @@ jetty:http://hostname[:port][/resourceUri][?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Jetty-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -59,40 +53,40 @@ The Jetty 9 component supports 31 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| sslKeyPassword | String | The key password which is used to access the certificate's key entry in the keystore (this is the same password that is supplied to the keystore command's -keypass option).
-| sslPassword | String | The ssl password which is required to access the keystore file (this is the same password that is supplied to the keystore command's -storepass option).
-| keystore | String | Specifies the location of the Java keystore file which contains the Jetty server's own X.509 certificate in a key entry.
-| errorHandler | ErrorHandler | This option is used to set the ErrorHandler that Jetty server uses.
-| sslSocketConnectors | Map | A map which contains per port number specific SSL connectors.
-| socketConnectors | Map | A map which contains per port number specific HTTP connectors. Uses the same principle as sslSocketConnectors.
-| httpClientMinThreads | Integer | To set a value for minimum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured.
-| httpClientMaxThreads | Integer | To set a value for maximum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured.
-| minThreads | Integer | To set a value for minimum number of threads in server thread pool. Notice that both a min and max size must be configured.
-| maxThreads | Integer | To set a value for maximum number of threads in server thread pool. Notice that both a min and max size must be configured.
-| threadPool | ThreadPool | To use a custom thread pool for the server. This option should only be used in special circumstances.
-| enableJmx | boolean | If this option is true Jetty JMX support will be enabled for this endpoint.
-| jettyHttpBinding | JettyHttpBinding | To use a custom org.apache.camel.component.jetty.JettyHttpBinding which are used to customize how a response should be written for the producer.
-| httpBinding | HttpBinding | Not to be used - use JettyHttpBinding instead.
-| httpConfiguration | HttpConfiguration | Jetty component does not use HttpConfiguration.
-| mbContainer | MBeanContainer | To use a existing configured org.eclipse.jetty.jmx.MBeanContainer if JMX is enabled that Jetty uses for registering mbeans.
-| sslSocketConnectorProperties | Map | A map which contains general SSL connector properties.
-| socketConnectorProperties | Map | A map which contains general HTTP connector properties. Uses the same principle as sslSocketConnectorProperties.
-| continuationTimeout | Long | Allows to set a timeout in millis when using Jetty as consumer (server). By default Jetty uses 30000. You can use a value of = 0 to never expire. If a timeout occurs then the request will be expired and Jetty will return back a http error 503 to the client. This option is only in use when using Jetty with the Asynchronous Routing Engine.
-| useContinuation | boolean | Whether or not to use Jetty continuations for the Jetty Server.
-| sslContextParameters | SSLContextParameters | To configure security using SSLContextParameters
-| responseBufferSize | Integer | Allows to configure a custom value of the response buffer size on the Jetty connectors.
-| requestBufferSize | Integer | Allows to configure a custom value of the request buffer size on the Jetty connectors.
-| requestHeaderSize | Integer | Allows to configure a custom value of the request header size on the Jetty connectors.
-| responseHeaderSize | Integer | Allows to configure a custom value of the response header size on the Jetty connectors.
-| proxyHost | String | To use a http proxy to configure the hostname.
-| proxyPort | Integer | To use a http proxy to configure the port number.
-| useXForwardedForHeader | boolean | To use the X-Forwarded-For header in HttpServletRequest.getRemoteAddr.
-| sendServerVersion | boolean | If the option is true jetty server will send the date header to the client which sends the request. NOTE please make sure there is no any other camel-jetty endpoint is share the same port otherwise this option may not work as expected.
-| allowJavaSerializedObject | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
-| headerFilterStrategy | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+| Name | Group | Default | Java Type | Description
+| sslKeyPassword | security |  | String | The key password which is used to access the certificate's key entry in the keystore (this is the same password that is supplied to the keystore command's -keypass option).
+| sslPassword | security |  | String | The ssl password which is required to access the keystore file (this is the same password that is supplied to the keystore command's -storepass option).
+| keystore | security |  | String | Specifies the location of the Java keystore file which contains the Jetty server's own X.509 certificate in a key entry.
+| errorHandler | advanced |  | ErrorHandler | This option is used to set the ErrorHandler that Jetty server uses.
+| sslSocketConnectors | security |  | Map | A map which contains per port number specific SSL connectors.
+| socketConnectors | security |  | Map | A map which contains per port number specific HTTP connectors. Uses the same principle as sslSocketConnectors.
+| httpClientMinThreads | producer |  | Integer | To set a value for minimum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured.
+| httpClientMaxThreads | producer |  | Integer | To set a value for maximum number of threads in HttpClient thread pool. Notice that both a min and max size must be configured.
+| minThreads | consumer |  | Integer | To set a value for minimum number of threads in server thread pool. Notice that both a min and max size must be configured.
+| maxThreads | consumer |  | Integer | To set a value for maximum number of threads in server thread pool. Notice that both a min and max size must be configured.
+| threadPool | consumer (advanced) |  | ThreadPool | To use a custom thread pool for the server. This option should only be used in special circumstances.
+| enableJmx | common | false | boolean | If this option is true Jetty JMX support will be enabled for this endpoint.
+| jettyHttpBinding | advanced |  | JettyHttpBinding | To use a custom org.apache.camel.component.jetty.JettyHttpBinding which are used to customize how a response should be written for the producer.
+| httpBinding | advanced |  | HttpBinding | Not to be used - use JettyHttpBinding instead.
+| httpConfiguration | advanced |  | HttpConfiguration | Jetty component does not use HttpConfiguration.
+| mbContainer | advanced |  | MBeanContainer | To use a existing configured org.eclipse.jetty.jmx.MBeanContainer if JMX is enabled that Jetty uses for registering mbeans.
+| sslSocketConnectorProperties | security |  | Map | A map which contains general SSL connector properties.
+| socketConnectorProperties | security |  | Map | A map which contains general HTTP connector properties. Uses the same principle as sslSocketConnectorProperties.
+| continuationTimeout | consumer | 30000 | Long | Allows to set a timeout in millis when using Jetty as consumer (server). By default Jetty uses 30000. You can use a value of = 0 to never expire. If a timeout occurs then the request will be expired and Jetty will return back a http error 503 to the client. This option is only in use when using Jetty with the Asynchronous Routing Engine.
+| useContinuation | consumer | true | boolean | Whether or not to use Jetty continuations for the Jetty Server.
+| sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
+| responseBufferSize | common |  | Integer | Allows to configure a custom value of the response buffer size on the Jetty connectors.
+| requestBufferSize | common |  | Integer | Allows to configure a custom value of the request buffer size on the Jetty connectors.
+| requestHeaderSize | common |  | Integer | Allows to configure a custom value of the request header size on the Jetty connectors.
+| responseHeaderSize | common |  | Integer | Allows to configure a custom value of the response header size on the Jetty connectors.
+| proxyHost | proxy |  | String | To use a http proxy to configure the hostname.
+| proxyPort | proxy |  | Integer | To use a http proxy to configure the port number.
+| useXForwardedForHeader | common | false | boolean | To use the X-Forwarded-For header in HttpServletRequest.getRemoteAddr.
+| sendServerVersion | consumer | true | boolean | If the option is true jetty server will send the date header to the client which sends the request. NOTE please make sure there is no any other camel-jetty endpoint is share the same port otherwise this option may not work as expected.
+| allowJavaSerializedObject | advanced | false | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
+| headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -120,7 +114,7 @@ The Jetty 9 component supports 54 endpoint options which are listed below:
 | httpBinding | common |  | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
 | transferException | common | false | boolean | If enabled and an Exchange failed processing on the consumer side and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
 | async | consumer | false | boolean | Configure the consumer to work in async mode
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | continuationTimeout | consumer | 30000 | Long | Allows to set a timeout in millis when using Jetty as consumer (server). By default Jetty uses 30000. You can use a value of = 0 to never expire. If a timeout occurs then the request will be expired and Jetty will return back a http error 503 to the client. This option is only in use when using Jetty with the Asynchronous Routing Engine.
 | eagerCheckContentAvailable | consumer | false | boolean | Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present. This can be turned on in case HTTP clients do not send streamed data.
 | enableCORS | consumer | false | boolean | If the option is true Jetty server will setup the CrossOriginFilter which supports the CORS out of box.
@@ -134,7 +128,7 @@ The Jetty 9 component supports 54 endpoint options which are listed below:
 | sessionSupport | consumer | false | boolean | Specifies whether to enable the session manager on the server side of Jetty.
 | traceEnabled | consumer | false | boolean | Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off.
 | useContinuation | consumer |  | Boolean | Whether or not to use Jetty continuations for the Jetty Server.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | filterInitParameters | consumer (advanced) |  | Map | Configuration of the filter init parameters. These parameters will be applied to the filter list before starting the jetty server.
 | filtersRef | consumer (advanced) |  | String | Allows using a custom filters which is putted into a list and can be find in the Registry. Multiple values can be separated by comma.
@@ -174,9 +168,7 @@ The Jetty 9 component supports 54 endpoint options which are listed below:
 
 
 
-[[Jetty-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 Camel uses the same message headers as the link:http.html[HTTP]
 component. 
@@ -192,17 +184,13 @@ header named `orderid` with the value 123.
 Starting with Camel 2.2.0, you can get the request.parameter from the
 message header not only from Get Method, but also other HTTP method.
 
-[[Jetty-Usage]]
-Usage
-^^^^^
+### Usage
 
 The Jetty component supports both consumer and producer endpoints.
 Another option for producing to other HTTP endpoints, is to use the
 link:http.html[HTTP Component]
 
-[[Jetty-ProducerExample]]
-Producer Example
-^^^^^^^^^^^^^^^^
+### Producer Example
 
 The following is a basic example of how to send an HTTP request to an
 existing HTTP endpoint.
@@ -224,9 +212,7 @@ or in Spring XML
 <route>
 ---------------------------------------------
 
-[[Jetty-ConsumerExample]]
-Consumer Example
-^^^^^^^^^^^^^^^^
+### Consumer Example
 
 In this sample we define a route that exposes a HTTP service at
 `http://localhost:8080/myapp/myservice`:
@@ -269,9 +255,7 @@ link:simple.html[Simple] (such as link:el.html[EL] or
 link:ognl.html[OGNL]) we could also test for the parameter value and do
 routing based on the header value as well.
 
-[[Jetty-SessionSupport]]
-Session Support
-^^^^^^^^^^^^^^^
+### Session Support
 
 The session support option, `sessionSupport`, can be used to enable a
 `HttpSession` object and access the session object while processing the
@@ -304,9 +288,7 @@ public void process(Exchange exchange) throws Exception {
 }
 --------------------------------------------------------------------------------------
 
-[[Jetty-SSLSupport(HTTPS)]]
-SSL Support (HTTPS)
-^^^^^^^^^^^^^^^^^^^
+### SSL Support (HTTPS)
 
 [[Jetty-UsingtheJSSEConfigurationUtility]]
 Using the JSSE Configuration Utility
@@ -477,9 +459,7 @@ difference between the various Camel versions:
 The value you use as keys in the above map is the port you configure
 Jetty to listen on.
 
-[[Jetty-ConfiguringgeneralSSLproperties]]
-Configuring general SSL properties
-++++++++++++++++++++++++++++++++++
+#### Configuring general SSL properties
 
 *Available as of Camel 2.5*
 
@@ -503,9 +483,7 @@ the port number as entry).
 </bean>
 -----------------------------------------------------------------------------
 
-[[Jetty-HowtoobtainreferencetotheX509Certificate]]
-How to obtain reference to the X509Certificate
-++++++++++++++++++++++++++++++++++++++++++++++
+#### How to obtain reference to the X509Certificate
 
 Jetty stores a reference to the certificate in the HttpServletRequest
 which you can access from code as follows:
@@ -516,9 +494,7 @@ HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
 X509Certificate cert = (X509Certificate) req.getAttribute("javax.servlet.request.X509Certificate")
 --------------------------------------------------------------------------------------------------
 
-[[Jetty-ConfiguringgeneralHTTPproperties]]
-Configuring general HTTP properties
-+++++++++++++++++++++++++++++++++++
+#### Configuring general HTTP properties
 
 *Available as of Camel 2.5*
 
@@ -539,9 +515,7 @@ the port number as entry).
 </bean>
 -----------------------------------------------------------------------------
 
-[[Jetty-ObtainingX-Forwarded-ForheaderwithHttpServletRequest.getRemoteAddr]]
-Obtaining X-Forwarded-For header with HttpServletRequest.getRemoteAddr()
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Obtaining X-Forwarded-For header with HttpServletRequest.getRemoteAddr()
 
 If the HTTP requests are handled by an Apache server and forwarded to
 jetty with mod_proxy, the original client IP address is in the
@@ -573,9 +547,7 @@ This is particularly useful when an existing Apache server handles TLS
 connections for a domain and proxies them to application servers
 internally.
 
-[[Jetty-DefaultbehaviorforreturningHTTPstatuscodes]]
-Default behavior for returning HTTP status codes
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Default behavior for returning HTTP status codes
 
 The default behavior of HTTP status codes is defined by the
 `org.apache.camel.component.http.DefaultHttpBinding` class, which
@@ -588,9 +560,7 @@ returned, and the stacktrace is returned in the body. If you want to
 specify which HTTP status code to return, set the code in the
 `Exchange.HTTP_RESPONSE_CODE` header of the OUT message.
 
-[[Jetty-CustomizingHttpBinding]]
-Customizing HttpBinding
-^^^^^^^^^^^^^^^^^^^^^^^
+### Customizing HttpBinding
 
 By default, Camel uses the
 `org.apache.camel.component.http.DefaultHttpBinding` to handle how a
@@ -616,9 +586,7 @@ And then we can reference this binding when we define the route:
 <route><from uri="jetty:http://0.0.0.0:8080/myapp/myservice?httpBindingRef=mybinding"/><to uri="bean:doSomething"/></route>
 ---------------------------------------------------------------------------------------------------------------------------
 
-[[Jetty-Jettyhandlersandsecurityconfiguration]]
-Jetty handlers and security configuration
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Jetty handlers and security configuration
 
 You can configure a list of Jetty handlers on the endpoint, which can be
 useful for enabling advanced Jetty security features. These handlers are
@@ -688,9 +656,7 @@ from("jetty:http://0.0.0.0:9080/myservice?handlers=securityHandler")
 If you need more handlers, set the `handlers` option equal to a
 comma-separated list of bean IDs.
 
-[[Jetty-HowtoreturnacustomHTTP500replymessage]]
-How to return a custom HTTP 500 reply message
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### How to return a custom HTTP 500 reply message
 
 You may want to return a custom reply message when something goes wrong,
 instead of the default reply message Camel link:jetty.html[Jetty]
@@ -701,9 +667,7 @@ link:exception-clause.html[Exception Clause] to construct the custom
 reply message. For example as show here, where we return
 `Dude something went wrong` with HTTP error code 500:
 
-[[Jetty-Multi-partFormsupport]]
-Multi-part Form support
-^^^^^^^^^^^^^^^^^^^^^^^
+### Multi-part Form support
 
 From Camel 2.3.0, camel-jetty support to multipart form post out of box.
 The submitted form-data are mapped into the message header. Camel-jetty
@@ -715,9 +679,7 @@ of the attachment file name. You can find the example here.
 earlier versions you receive the temporary file name for the attachment
 instead*
 
-[[Jetty-JettyJMXsupport]]
-Jetty JMX support
-^^^^^^^^^^^^^^^^^
+### Jetty JMX support
 
 From Camel 2.3.0, camel-jetty supports the enabling of Jetty's JMX
 capabilities at the component and endpoint level with the endpoint
@@ -748,9 +710,7 @@ sharing the same MBeanServer between the instances, you can provide both
 instances with a reference to the same MBeanContainer in order to avoid
 name collisions when registering Jetty MBeans.
 
-[[Jetty-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -758,4 +718,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:http.html[HTTP]
-

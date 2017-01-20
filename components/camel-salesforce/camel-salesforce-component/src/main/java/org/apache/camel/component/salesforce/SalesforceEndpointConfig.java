@@ -41,7 +41,7 @@ import org.apache.camel.spi.UriParams;
 public class SalesforceEndpointConfig implements Cloneable {
 
     // default API version
-    public static final String DEFAULT_VERSION = "33.0";
+    public static final String DEFAULT_VERSION = "34.0";
 
     // general parameter
     public static final String API_VERSION = "apiVersion";

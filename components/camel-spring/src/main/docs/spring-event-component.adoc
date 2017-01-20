@@ -1,6 +1,4 @@
-[[SpringEvent-SpringEventComponent]]
-Spring Event Component
-~~~~~~~~~~~~~~~~~~~~~~
+## Spring Event Component
 
 The *spring-event:* component provides access to the Spring
 `ApplicationEvent` objects. This allows you to publish
@@ -10,9 +8,7 @@ link:enterprise-integration-patterns.html[Enterprise Integration
 Patterns] to process them such as link:message-filter.html[Message
 Filter].
 
-[[SpringEvent-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 --------------------------------
@@ -22,9 +18,7 @@ spring-event://default[?options]
 Note, at the moment there are no options for this component. That can
 easily change in future releases, so please check back.
 
-[[Spring-Event-Options]]
-Spring Event Options
-^^^^^^^^^^^^^^^^^^^^
+### Spring Event Options
 
 
 
@@ -34,10 +28,10 @@ The Spring Event component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| applicationContext | ApplicationContext | The Spring ApplicationContext
+| Name | Group | Default | Java Type | Description
+| applicationContext | common |  | ApplicationContext | The Spring ApplicationContext
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -53,8 +47,8 @@ The Spring Event component supports 5 endpoint options which are listed below:
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | name | common |  | String | Name of endpoint
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
@@ -62,12 +56,9 @@ The Spring Event component supports 5 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[SpringEvent-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

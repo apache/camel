@@ -1,6 +1,4 @@
-[[Rest-RestComponent]]
-Rest Component
-~~~~~~~~~~~~~~
+## REST Component
 
 *Available as of Camel 2.14*
 
@@ -10,18 +8,14 @@ REST transport.
 
 From Camel 2.18 onwards the rest component can also be used as a client (producer) to call REST services.
 
-[[Rest-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 --------------------------------------------
   rest://method:path[:uriTemplate]?[options]
 --------------------------------------------
 
-[[Rest-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 // component options: START
 The REST component supports 3 options which are listed below.
@@ -29,12 +23,12 @@ The REST component supports 3 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| componentName | String | The Camel Rest component to use for the REST transport such as restlet spark-rest. If no component has been explicit configured then Camel will lookup if there is a Camel component that integrates with the Rest DSL or if a org.apache.camel.spi.RestConsumerFactory (consumer) or org.apache.camel.spi.RestProducerFactory (producer) is registered in the registry. If either one is found then that is being used.
-| apiDoc | String | The swagger api doc resource to use. The resource is loaded from classpath by default and must be in JSon format.
-| host | String | Host and port of HTTP service to use (override host in swagger schema)
+| Name | Group | Default | Java Type | Description
+| componentName | common |  | String | The Camel Rest component to use for the REST transport such as restlet spark-rest. If no component has been explicit configured then Camel will lookup if there is a Camel component that integrates with the Rest DSL or if a org.apache.camel.spi.RestConsumerFactory (consumer) or org.apache.camel.spi.RestProducerFactory (producer) is registered in the registry. If either one is found then that is being used.
+| apiDoc | producer |  | String | The swagger api doc resource to use. The resource is loaded from classpath by default and must be in JSon format.
+| host | producer |  | String | Host and port of HTTP service to use (override host in swagger schema)
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -67,9 +61,7 @@ The REST component supports 17 endpoint options which are listed below:
 {% endraw %}
 // endpoint options: END
 
-[[Components-Supported]]
-Supported rest components
-^^^^^^^^^^^^^^^^^^^^^^^^^
+### Supported rest components
 
 The following components support rest consumer (link:rest-dsl.html[Rest DSL]):
 
@@ -91,9 +83,7 @@ The following components support rest producer:
 * camel-restlet
 * camel-undertow
 
-[[Rest-PathanduriTemplatesyntax]]
-Path and uriTemplate syntax
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Path and uriTemplate syntax
 
 The path and uriTemplate option is defined using a REST syntax where you
 define the REST context path using support for parameters. 
@@ -132,9 +122,7 @@ have two REST services configured using uriTemplates.
     .transform().simple("Bonjour ${header.me}");
 ------------------------------------------------
 
-[[Rest-Producer]]
-Rest producer examples
-^^^^^^^^^^^^^^^^^^^^^^
+### Rest producer examples
 
 You can use the rest component to call REST services like any other Camel component.
 
@@ -185,9 +173,7 @@ to use http4 you can do:
 --------------------------------------------
 
 
-[[Rest-Producer-Binding]]
-Rest producer binding
-^^^^^^^^^^^^^^^^^^^^^
+### Rest producer binding
 
 The REST producer supports binding using JSon or XML like the rest-dsl does.
 
@@ -231,9 +217,7 @@ For example if the REST service returns a JSon payload that binds to `com.foo.My
 IMPORTANT: You must configure `outType` option if you want POJO binding to happen for the response messages received from calling the REST service.
 
 
-[[Rest-Moreexamples]]
-More examples
-^^^^^^^^^^^^^
+### More examples
 
 See link:rest-dsl.html[Rest DSL] which offers more examples and how you
 can use the Rest DSL to define those in a nicer RESTful way.
@@ -244,9 +228,7 @@ link:rest-dsl.html[Rest DSL] with link:servlet.html[SERVLET] as
 transport that can be deployed on Apache Tomcat, or similar web
 containers.
 
-[[Rest-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -255,4 +237,3 @@ See Also
 
 * link:rest-dsl.html[Rest DSL]
 * link:servlet.html[SERVLET]
-

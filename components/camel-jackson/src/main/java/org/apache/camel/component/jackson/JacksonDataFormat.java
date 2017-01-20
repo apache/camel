@@ -68,6 +68,8 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
     private String enableFeatures;
     private String disableFeatures;
     private boolean enableJacksonTypeConverter;
+    private boolean allowUnmarshallType;
+    private boolean contentTypeHeader = true;
 
     /**
      * Use the default Jackson {@link ObjectMapper} and {@link Object}
@@ -152,13 +154,24 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         this.objectMapper.writerWithView(jsonView).writeValue(stream, graph);
+
+        if (contentTypeHeader) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            }
+        }
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
 
         // is there a header with the unmarshal type?
         Class<?> clazz = unmarshalType;
-        String type = exchange.getIn().getHeader(JacksonConstants.UNMARSHAL_TYPE, String.class);
+        String type = null;
+        if (allowUnmarshallType) {
+            type = exchange.getIn().getHeader(JacksonConstants.UNMARSHAL_TYPE, String.class);
+        }
         if (type == null && isAllowJmsType()) {
             type = exchange.getIn().getHeader("JMSType", String.class);
         }
@@ -325,6 +338,30 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
      */
     public void setEnableJacksonTypeConverter(boolean enableJacksonTypeConverter) {
         this.enableJacksonTypeConverter = enableJacksonTypeConverter;
+    }
+    
+    public boolean isAllowUnmarshallType() {
+        return allowUnmarshallType;
+    }
+
+    /**
+     * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the unmarshalling.
+     * <p/>
+     * This should only be enabled when desired to be used.
+     */
+    public void setAllowUnmarshallType(boolean allowJacksonUnmarshallType) {
+        this.allowUnmarshallType = allowJacksonUnmarshallType;
+    }
+
+    public boolean isContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    /**
+     * If enabled then Jackson will set the Content-Type header to <tt>application/json</tt> when marshalling.
+     */
+    public void setContentTypeHeader(boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 
     public String getEnableFeatures() {

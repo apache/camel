@@ -17,11 +17,15 @@
 package org.apache.camel.component.salesforce.api.dto;
 
 import java.util.List;
+import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 //CHECKSTYLE:OFF
 public class RestError extends AbstractDTOBase {
 
+    @XStreamAlias("statusCode")
     private String errorCode;
     private String message;
     @XStreamImplicit
@@ -63,6 +67,36 @@ public class RestError extends AbstractDTOBase {
 
     public void setFields(List<String> fields) {
         this.fields = fields;
+    }
+
+    @JsonSetter("statusCode")
+    void setStatusCode(final String statusCode) {
+        errorCode = statusCode;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+
+        if (!(obj instanceof RestError)) {
+            return false;
+        }
+
+        final RestError other = (RestError) obj;
+
+        return Objects.equals(errorCode, other.errorCode) && Objects.equals(message, other.message) && Objects.equals(fields, other.fields);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((errorCode == null) ? 0 : errorCode.hashCode());
+        result = prime * result + ((fields == null) ? 0 : fields.hashCode());
+        result = prime * result + ((message == null) ? 0 : message.hashCode());
+        return result;
     }
 
 }

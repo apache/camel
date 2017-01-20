@@ -49,7 +49,7 @@
     <jdk.version>1.8</jdk.version>
     <compiler.fork>false</compiler.fork>
 
-    <maven-compiler-plugin-version>3.5.1</maven-compiler-plugin-version>
+    <maven-compiler-plugin-version>3.6.0</maven-compiler-plugin-version>
     <maven-surefire-plugin-version>2.19.1</maven-surefire-plugin-version>
 
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
@@ -138,9 +138,9 @@
     <module>buildingtools</module>
     <module>camel-core</module>
     <module>components</module>
-    <module>components-starter</module>
     <module>tooling</module>
     <module>platforms</module>
+    <module>connectors</module>
     <module>tests</module>
     <module>examples</module>
   </modules>
@@ -280,6 +280,7 @@
                 <exclude>**/MerchandiseRestResource.apxc</exclude>
                 <exclude>**/file-sig-api.txt</exclude>
                 <exclude>**/Tasks__c.java</exclude>
+                <exclude>**/additional-spring-configuration-metadata.json</exclude>
               </excludes>
             </configuration>
           </plugin>

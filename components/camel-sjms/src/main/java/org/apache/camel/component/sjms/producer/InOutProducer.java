@@ -36,6 +36,7 @@ import org.apache.camel.component.sjms.MessageProducerResources;
 import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms.SjmsMessage;
 import org.apache.camel.component.sjms.SjmsProducer;
+import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.component.sjms.jms.JmsConstants;
 import org.apache.camel.component.sjms.jms.JmsMessageHelper;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
@@ -75,7 +76,8 @@ public class InOutProducer extends SjmsProducer {
         @Override
         public MessageConsumerResources makeObject() throws Exception {
             MessageConsumerResources answer;
-            Connection conn = getConnectionResource().borrowConnection();
+            ConnectionResource connectionResource = getOrCreateConnectionResource();
+            Connection conn = connectionResource.borrowConnection();
             try {
                 Session session;
                 if (isEndpointTransacted()) {
@@ -111,7 +113,7 @@ public class InOutProducer extends SjmsProducer {
                 log.error("Unable to create the MessageConsumerResource: " + e.getLocalizedMessage());
                 throw new CamelException(e);
             } finally {
-                getConnectionResource().returnConnection(conn);
+                connectionResource.returnConnection(conn);
             }
             return answer;
         }
@@ -140,10 +142,6 @@ public class InOutProducer extends SjmsProducer {
 
         if (isEndpointTransacted()) {
             throw new IllegalArgumentException("InOut exchange pattern is incompatible with transacted=true as it cuases a deadlock. Please use transacted=false or InOnly exchange pattern.");
-        }
-
-        if (getConnectionResource() == null) {
-            throw new IllegalArgumentException(String.format("ConnectionResource or ConnectionFactory must be configured for %s", this));
         }
 
         if (ObjectHelper.isEmpty(getNamedReplyTo())) {

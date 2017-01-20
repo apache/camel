@@ -1,6 +1,4 @@
-[[RSS-RSSComponent]]
-RSS Component
-~~~~~~~~~~~~~
+## RSS Component
 
 The *rss:* component is used for polling RSS feeds. Camel will default
 poll the feed every 60th seconds.
@@ -26,9 +24,7 @@ version] of http://rometools.github.io/rome/[ROME] hosted on ServiceMix
 to solve some OSGi https://issues.apache.org/jira/browse/SMX4-510[class
 loading issues].
 
-[[RSS-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------
@@ -40,9 +36,7 @@ Where `rssUri` is the URI to the RSS feed to poll.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[RSS-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -59,7 +53,7 @@ The RSS component supports 28 endpoint options which are listed below:
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | feedUri | consumer |  | String | *Required* The URI to the feed to poll.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | feedHeader | consumer | true | boolean | Sets whether to add the feed object as a header
 | filter | consumer | true | boolean | Sets whether to use filtering or not of the entries.
 | lastUpdate | consumer |  | Date | Sets the timestamp to be used for filtering entries from the atom feeds. This options is only in conjunction with the splitEntries.
@@ -69,7 +63,7 @@ The RSS component supports 28 endpoint options which are listed below:
 | splitEntries | consumer | true | boolean | Sets whether or not entries should be sent individually or whether the entire feed should be sent as a single message
 | throttleEntries | consumer | true | boolean | Sets whether all entries identified in a single feed poll should be delivered immediately. If true only one entry is processed per consumer.delay. Only applicable when splitEntries = true.
 | username | consumer |  | String | Sets the username to be used for basic authentication when polling from a HTTP feed
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
@@ -91,9 +85,7 @@ The RSS component supports 28 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[RSS-Exchangedatatypes]]
-Exchange data types
-^^^^^^^^^^^^^^^^^^^
+### Exchange data types
 
 Camel initializes the In body on the Exchange with a ROME `SyndFeed`.
 Depending on the value of the `splitEntries` flag, Camel returns either
@@ -108,9 +100,7 @@ a `SyndFeed` with one `SyndEntry` or a `java.util.List` of `SyndEntrys`.
 |`splitEntries` |`false` |The entire list of entries from the current feed is set in the exchange.
 |=======================================================================
 
-[[RSS-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -119,9 +109,7 @@ Message Headers
 |`CamelRssFeed` |The entire `SyncFeed` object.
 |=======================================================================
 
-[[RSS-RSSDataformat]]
-RSS Dataformat
-^^^^^^^^^^^^^^
+### RSS Dataformat
 
 The RSS component ships with an RSS dataformat that can be used to
 convert between String (as XML) and ROME RSS model objects.
@@ -142,9 +130,7 @@ understand them as well, for example if the feed uses `alt=rss`, then
 you can for example do 
 `from("rss:http://someserver.com/feeds/posts/default?alt=rss&splitEntries=false&consumer.delay=1000").to("bean:rss");`
 
-[[RSS-Filteringentries]]
-Filtering entries
-^^^^^^^^^^^^^^^^^
+### Filtering entries
 
 You can filter out entries quite easily using XPath, as shown in the
 data format section above. You can also exploit Camel's
@@ -154,9 +140,7 @@ would be:
 
 The custom bean for this would be:
 
-[[RSS-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -164,4 +148,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:atom.html[Atom]
-

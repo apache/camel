@@ -112,7 +112,7 @@ public class WsEndpoint extends AhcEndpoint {
             config = new DefaultAsyncHttpClientConfig.Builder().build();
             client = new DefaultAsyncHttpClient(config);
         } else {
-            client = new DefaultAsyncHttpClient();
+            client = new DefaultAsyncHttpClient(config);
         }
         return client;
     }

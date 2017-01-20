@@ -20,49 +20,25 @@ package org.apache.camel.component.mllp;
  * Base class for HL7 Application Acknowledgement Exceptions
  */
 public abstract class MllpAcknowledgementException extends MllpException {
-    private final byte[] hl7Message;
-    private final byte[] hl7Acknowledgement;
+
+    public MllpAcknowledgementException(String message) {
+        super(message);
+    }
+
+    public MllpAcknowledgementException(String message, byte[] hl7Message) {
+        super(message, hl7Message);
+    }
 
     public MllpAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement) {
-        super(message);
-        this.hl7Message = hl7Message;
-        this.hl7Acknowledgement = hl7Acknowledgement;
+        super(message, hl7Message, hl7Acknowledgement);
+    }
+
+    public MllpAcknowledgementException(String message, byte[] hl7Message, Throwable cause) {
+        super(message, hl7Message, cause);
     }
 
     public MllpAcknowledgementException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
-        super(message, cause);
-        this.hl7Message = hl7Message;
-        this.hl7Acknowledgement = hl7Acknowledgement;
+        super(message, hl7Message, hl7Acknowledgement, cause);
     }
 
-    public byte[] getHl7Message() {
-        return hl7Message;
-    }
-
-    public byte[] getHl7Acknowledgement() {
-        return hl7Acknowledgement;
-    }
-
-    @Override
-    public String getMessage() {
-        if (isLogPhi()) {
-            return String.format("%s:\n\tHL7 Message: %s\n\tHL7 Acknowledgement: %s",
-                    super.getMessage(), covertBytesToPrintFriendlyString(hl7Message), covertBytesToPrintFriendlyString(hl7Acknowledgement));
-        } else {
-            return super.getMessage();
-        }
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder stringBuilder = new StringBuilder(this.getClass().getName());
-
-        stringBuilder.append(": {hl7Message=")
-                .append(covertBytesToPrintFriendlyString(hl7Message))
-                .append(", hl7Acknowledgement=")
-                .append(covertBytesToPrintFriendlyString(hl7Acknowledgement))
-                .append("}");
-
-        return stringBuilder.toString();
-    }
 }

@@ -16,15 +16,7 @@
  */
 package org.apache.camel.example.transformer.cdi;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.dataformat.JaxbDataFormat;
-import org.apache.camel.model.transformer.DataFormatTransformerDefinition;
-import org.apache.camel.model.transformer.EndpointTransformerDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Configures all our Camel routes, components, endpoints and beans
@@ -33,11 +25,10 @@ public class MyRoutes extends RouteBuilder {
 
     @Override
     public void configure() {
-        EndpointTransformerDefinition eptd = new EndpointTransformerDefinition();
-        eptd.setUri("xslt:transform.xsl");
-        eptd.setFrom("xml:MyRequest");
-        eptd.setTo("xml:MyResponse");
-        getContext().getTransformers().add(eptd);
+        transformer()
+            .fromType("xml:MyRequest")
+            .toType("xml:MyResponse")
+            .withUri("xslt:transform.xsl");
         
         from("timer:foo?period=5000").id("timer-route")
             .log("start -->")

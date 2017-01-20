@@ -46,7 +46,8 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
     public OptaPlannerEndpoint(String uri, Component component, OptaPlannerConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
-        solverFactory = SolverFactory.createFromXmlResource(configuration.getConfigFile());
+        ClassLoader classLoader = getCamelContext().getApplicationContextClassLoader();
+        solverFactory = SolverFactory.createFromXmlResource(configuration.getConfigFile(), classLoader);
     }
 
     protected Solver getOrCreateSolver(String solverId) throws Exception {

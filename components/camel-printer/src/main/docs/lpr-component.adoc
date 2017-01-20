@@ -1,6 +1,4 @@
-[[Printer-PrinterComponent]]
-Printer Component
-~~~~~~~~~~~~~~~~~
+## Printer Component
 
 *Available as of Camel 2.1*
 
@@ -29,9 +27,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Printer-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 Since the URI scheme for a printer has not been standardized (the
 nearest thing to a standard being the IETF print standard) and therefore
@@ -46,9 +42,7 @@ lpr://remotehost:port/path/to/printer[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Printer-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -83,25 +77,17 @@ The Printer component supports 14 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Printer-SendingMessagestoaPrinter]]
-Sending Messages to a Printer
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Sending Messages to a Printer
 
-[[Printer-PrinterProducer]]
-Printer Producer
-++++++++++++++++
+#### Printer Producer
 
 Sending data to the printer is very straightforward and involves
 creating a producer endpoint that can be sent message exchanges on in
 route.
 
-[[Printer-UsageSamples]]
-Usage Samples
-^^^^^^^^^^^^^
+### Usage Samples
 
-[[Printer-Example1:PrintingtextbasedpayloadsonaDefaultprinterusingletterstationaryandone-sidedmode]]
-Example 1: Printing text based payloads on a Default printer using letter stationary and one-sided mode
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Example 1: Printing text based payloads on a Default printer using letter stationary and one-sided mode
 
 [source,java]
 -----------------------------------------------
@@ -116,9 +102,7 @@ RouteBuilder builder = new RouteBuilder() {
     }};
 -----------------------------------------------
 
-[[Printer-Example2:PrintingGIFbasedpayloadsonaRemoteprinterusingA4stationaryandone-sidedmode]]
-Example 2: Printing GIF based payloads on a Remote printer using A4 stationary and one-sided mode
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Example 2: Printing GIF based payloads on a Remote printer using A4 stationary and one-sided mode
 
 [source,java]
 --------------------------------------------------
@@ -132,9 +116,7 @@ RouteBuilder builder = new RouteBuilder() {
    }};
 --------------------------------------------------
 
-[[Printer-Example3:PrintingJPEGbasedpayloadsonaRemoteprinterusingJapanesePostcardstationaryandone-sidedmode]]
-Example 3: Printing JPEG based payloads on a Remote printer using Japanese Postcard stationary and one-sided mode
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Example 3: Printing JPEG based payloads on a Remote printer using Japanese Postcard stationary and one-sided mode
 
 [source,java]
 --------------------------------------------------

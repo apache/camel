@@ -90,7 +90,7 @@ public class ClassLoadingAwareObjectInputStream extends ObjectInputStream {
             }
         }
         // fallback
-        final Class<?> clazz = (Class<?>) PRIM_CLASSES.get(className);
+        final Class<?> clazz = PRIM_CLASSES.get(className);
         if (clazz != null) {
             return clazz;
         } else {

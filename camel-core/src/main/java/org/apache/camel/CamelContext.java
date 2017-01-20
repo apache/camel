@@ -33,7 +33,7 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.remote.ServiceCallConfigurationDefinition;
+import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
@@ -63,6 +63,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RoutePolicyFactory;
@@ -72,6 +73,7 @@ import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
@@ -568,14 +570,13 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     Collection<RestConfiguration> getRestConfigurations();
 
     /**
-     * Gets the service call configuration by the given name. If no name is given and there is only one configuration
-     * which matches the type then this configuration is returned.
+     * Gets the service call configuration by the given name. If no name is given
+     * the default configuration is returned, see <tt>setServiceCallConfiguration</tt>
      *
      * @param serviceName name of service, or <tt>null</tt> to return the default configuration
-     * @param type implementation of the configuration such as kubernetes, ribbon etc.
      * @return the configuration, or <tt>null</tt> if no configuration has been registered
      */
-    <T extends ServiceCallConfigurationDefinition> T getServiceCallConfiguration(String serviceName, Class<T> type);
+    ServiceCallConfigurationDefinition getServiceCallConfiguration(String serviceName);
 
     /**
      * Sets the default service call configuration
@@ -583,6 +584,13 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param configuration the configuration
      */
     void setServiceCallConfiguration(ServiceCallConfigurationDefinition configuration);
+
+    /**
+     * Sets the service call configurations
+     *
+     * @param configurations the configuration list
+     */
+    void setServiceCallConfigurations(List<ServiceCallConfigurationDefinition> configurations);
 
     /**
      * Adds the service call configuration
@@ -1251,41 +1259,64 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     Transformer resolveTransformer(DataType from, DataType to);
 
     /**
-     * Sets the properties that can be referenced in the camel context
-     * <p/>
-     * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
-     * which are used to configure global settings on CamelContext, such as a maximum debug logging length etc.
-     * For property placeholders use {@link #resolvePropertyPlaceholders(String)} method and see more details
-     * at the <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
-     *
-     * @param properties properties
+     * Gets the {@link org.apache.camel.spi.TransformerRegistry}
+     * @return the TransformerRegistry
      */
+    TransformerRegistry getTransformerRegistry();
+
+    /**
+     * @deprecated use {@link #setGlobalOptions(Map) setGlobalOptions(Map<String,String>) instead}.
+     */
+    @Deprecated
     void setProperties(Map<String, String> properties);
 
     /**
-     * Gets the properties that can be referenced in the camel context.
+     * Sets global options that can be referenced in the camel context
      * <p/>
      * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
-     * which are used to configure global settings on CamelContext, such as a maximum debug logging length etc.
+     * which are used to configure global options on CamelContext, such as a maximum debug logging length etc.
      * For property placeholders use {@link #resolvePropertyPlaceholders(String)} method and see more details
      * at the <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
      *
-     * @return the properties
+     * @param globalOptions global options that can be referenced in the camel context
      */
+    void setGlobalOptions(Map<String, String> globalOptions);
+
+    /**
+     * @deprecated use {@link #getGlobalOptions()} instead.
+     */
+    @Deprecated
     Map<String, String> getProperties();
 
     /**
-     * Gets the property value that can be referenced in the camel context
+     * Gets global options that can be referenced in the camel context.
      * <p/>
      * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
-     * which are used to configure global settings on CamelContext, such as a maximum debug logging length etc.
+     * which are used to configure global options on CamelContext, such as a maximum debug logging length etc.
      * For property placeholders use {@link #resolvePropertyPlaceholders(String)} method and see more details
      * at the <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
      *
-     * @return the string value of property
+     * @return global options for this context
+     */
+    Map<String, String> getGlobalOptions();
+
+    /**
+     * @deprecated use {@link #getGlobalOption(String)} instead.
      */
     String getProperty(String name);
-    
+
+    /**
+     * Gets the global option value that can be referenced in the camel context
+     * <p/>
+     * <b>Important:</b> This has nothing to do with property placeholders, and is just a plain set of key/value pairs
+     * which are used to configure global options on CamelContext, such as a maximum debug logging length etc.
+     * For property placeholders use {@link #resolvePropertyPlaceholders(String)} method and see more details
+     * at the <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> documentation.
+     *
+     * @return the string value of the global option
+     */
+    String getGlobalOption(String name);
+
     /**
      * Gets the default FactoryFinder which will be used for the loading the factory class from META-INF
      *
@@ -1842,5 +1873,17 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param modelJAXBContextFactory a JAXB Context factory
      */
     void setModelJAXBContextFactory(ModelJAXBContextFactory modelJAXBContextFactory);
+
+    /**
+     * Returns the {@link ReloadStrategy} if in use.
+     *
+     * @return the strategy, or <tt>null</tt> if none has been configured.
+     */
+    ReloadStrategy getReloadStrategy();
+
+    /**
+     * Sets a custom {@link ReloadStrategy} to be used
+     */
+    void setReloadStrategy(ReloadStrategy reloadStrategy);
 
 }

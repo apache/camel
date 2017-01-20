@@ -99,6 +99,7 @@ public final class UnsafeUriCharactersEncoder {
         List<Pair> answer = new ArrayList<Pair>();
         // Check all occurrences
         while (matcher.find()) {
+            // TODO: should likely be matcher.end() - 1
             answer.add(new Pair(matcher.start(), matcher.end()));
         }
         return answer;

@@ -20,6 +20,7 @@ package org.apache.camel.component.mllp;
  * Raised when a MLLP Consumer cannot deliver the MLLP Acknowledgement
  */
 public class MllpAcknowledgementDeliveryException extends MllpAcknowledgementException {
+
     static final String EXCEPTION_MESSAGE = "HL7 Acknowledgment Delivery Failed";
 
     public MllpAcknowledgementDeliveryException(byte[] hl7Message, byte[] hl7Acknowledgement) {
@@ -28,5 +29,13 @@ public class MllpAcknowledgementDeliveryException extends MllpAcknowledgementExc
 
     public MllpAcknowledgementDeliveryException(byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
         super(EXCEPTION_MESSAGE, hl7Message, hl7Acknowledgement, cause);
+    }
+
+    public MllpAcknowledgementDeliveryException(String message, byte[] hl7Message, byte[] hl7Acknowledgement) {
+        super(message, hl7Message, hl7Acknowledgement);
+    }
+
+    public MllpAcknowledgementDeliveryException(String message, byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
+        super(message, hl7Message, hl7Acknowledgement, cause);
     }
 }

@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.salesforce;
 
+import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import static java.util.Optional.ofNullable;
 
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.client.SalesforceHttpRequest;
@@ -26,7 +29,9 @@ import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.HttpClientTransport;
 import org.eclipse.jetty.client.HttpConversation;
 import org.eclipse.jetty.client.HttpRequest;
+import org.eclipse.jetty.client.ProtocolHandler;
 import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.client.http.HttpClientTransportOverHTTP;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
@@ -45,15 +50,38 @@ public class SalesforceHttpClient extends HttpClient {
     private int maxContentLength = DEFAULT_MAX_CONTENT_LENGTH;
     private long timeout = DEFAULT_TIMEOUT;
 
+    private final Method addSecuirtyHandlerMethod;
+
+    private final Method getProtocolHandlersMethod;
+
     public SalesforceHttpClient() {
+        this(null);
     }
 
     public SalesforceHttpClient(SslContextFactory sslContextFactory) {
-        super(sslContextFactory);
+        this(null, sslContextFactory);
     }
 
     public SalesforceHttpClient(HttpClientTransport transport, SslContextFactory sslContextFactory) {
-        super(transport, sslContextFactory);
+        super(ofNullable(transport).orElse(new HttpClientTransportOverHTTP()), sslContextFactory);
+
+        // Jetty 9.3, as opposed to 9.2 the way to add ProtocolHandler to
+        // HttpClient changed in 9.2 HttpClient::getProtocolHandlers returned
+        // List<ProtocolHandler, in 9.3 onward it returns ProtocolHandlers
+        // instance, this enables us to work with user supplied Jetty (>= 9.2)
+        try {
+            final Class<?> getProtocolHandlersType = HttpClient.class.getMethod("getProtocolHandlers").getReturnType();
+            final boolean isJetty92 = List.class.equals(getProtocolHandlersType);
+            if (isJetty92) {
+                addSecuirtyHandlerMethod = List.class.getMethod("add", Object.class);
+            } else {
+                addSecuirtyHandlerMethod = getProtocolHandlersType.getMethod("put", ProtocolHandler.class);
+            }
+
+            getProtocolHandlersMethod = HttpClient.class.getMethod("getProtocolHandlers");
+        } catch (NoSuchMethodException e) {
+            throw new IllegalStateException("Found no method of adding SalesforceSecurityHandler as ProtocolHandler to Jetty HttpClient. You need Jetty 9.2 or newer on the classpath.");
+        }
     }
 
     @Override
@@ -73,7 +101,11 @@ public class SalesforceHttpClient extends HttpClient {
         if (getSession() == null) {
             throw new IllegalStateException("Missing SalesforceSession in property session!");
         }
-        getProtocolHandlers().add(new SalesforceSecurityHandler(this));
+
+        // compensate for Jetty 9.2 vs 9.3 API change
+        final Object protocolHandlers = getProtocolHandlersMethod.invoke(this);
+        addSecuirtyHandlerMethod.invoke(protocolHandlers, new SalesforceSecurityHandler(this));
+
         super.doStart();
     }
 

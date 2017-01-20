@@ -1,6 +1,4 @@
-[[Dropbox-CamelDropboxcomponent]]
-Camel Dropbox component
-~~~~~~~~~~~~~~~~~~~~~~~
+## Dropbox Component
 
 *Available as of Camel 2.14*
 
@@ -28,9 +26,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Dropbox-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -------------------------------
@@ -40,9 +36,7 @@ dropbox://[operation]?[options]
 Where *operation* is the specific action (typically is a CRUD action) to
 perform on Dropbox remote folder.
 
-[[Dropbox-Operations]]
-Operations
-^^^^^^^^^^
+### Operations
 
 [width="100%",cols="40%,60%",options="header",]
 |=======================================================================
@@ -62,9 +56,7 @@ Operations
 *Operations* require additional options to work, some are mandatory for
 the specific operation.
 
-[[Dropbox-Options]]
-Options
-^^^^^^^
+### Options
 
 In order to work with Dropbox API you need to obtain an *accessToken*
 and a *clientIdentifier.* +
@@ -92,17 +84,15 @@ The Dropbox component supports 13 endpoint options which are listed below:
 | query | common |  | String | A space-separated list of sub-strings to search for. A file matches only if it contains all the sub-strings. If this option is not set all files will be matched.
 | remotePath | common |  | String | Original file or folder to move
 | uploadMode | common |  | DropboxUploadMode | Which mode to upload. in case of add the new file will be renamed if a file with the same name already exists on dropbox. in case of force if a file with the same name already exists on dropbox this will be overwritten.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}
 // endpoint options: END
 
-[[Dropbox-Deloperation]]
-Del operation
-^^^^^^^^^^^^^
+### Del operation
 
 Delete files on Dropbox.
 
@@ -117,9 +107,7 @@ Below are listed the options for this operation:
 |`remotePath` |`true` |Folder or file to delete on Dropbox
 |=======================================================================
 
-[[Dropbox-Samples]]
-Samples
-+++++++
+#### Samples
 
 [source,java]
 -------------------------------
@@ -128,9 +116,7 @@ from("direct:start").to("dropbox://del?accessToken=XXX&clientIdentifier=XXX&remo
 from("direct:start").to("dropbox://del?accessToken=XXX&clientIdentifier=XXX&remotePath=/root/folder1/file1.tar.gz").to("mock:result");
 -------------------------------
 
-[[Dropbox-ResultMessageHeaders]]
-Result Message Headers
-++++++++++++++++++++++
+#### Result Message Headers
 
 The following headers are set on message result:
 
@@ -141,9 +127,7 @@ The following headers are set on message result:
 |`DELETED_PATH` |name of the path deleted on dropbox
 |=======================================================================
 
-[[Dropbox-ResultMessageBody]]
-Result Message Body
-+++++++++++++++++++
+#### Result Message Body
 
 The following objects are set on message body result:
 
@@ -154,9 +138,7 @@ The following objects are set on message body result:
 |`String` |name of the path deleted on dropbox
 |=======================================================================
 
-[[Dropbox-Getoperation]]
-Get (download) operation
-^^^^^^^^^^^^^^^^^^^^^^^^
+### Get (download) operation
 
 Download files from Dropbox.
 
@@ -171,9 +153,7 @@ Below are listed the options for this operation:
 |`remotePath` |`true` |Folder or file to download from Dropbox
 |=======================================================================
 
-[[Dropbox-Samples.1]]
-Samples
-+++++++
+#### Samples
 
 [source,java]
 -------------------------------
@@ -184,9 +164,7 @@ from("direct:start").to("dropbox://get?accessToken=XXX&clientIdentifier=XXX&remo
 from("dropbox://get?accessToken=XXX&clientIdentifier=XXX&remotePath=/root/folder1").to("file:///home/kermit/");
 -------------------------------
 
-[[Dropbox-ResultMessageHeaders.1]]
-Result Message Headers
-++++++++++++++++++++++
+#### Result Message Headers
 
 The following headers are set on message result:
 
@@ -199,9 +177,7 @@ The following headers are set on message result:
 |`DOWNLOADED_FILES` |in case of multiple files download, path of the remote files downloaded
 |=======================================================================
 
-[[Dropbox-ResultMessageBody.1]]
-Result Message Body
-+++++++++++++++++++
+#### Result Message Body
 
 The following objects are set on message body result:
 
@@ -216,9 +192,7 @@ remote file downloaded and as value the stream representing the file
 downloaded
 |=======================================================================
 
-[[Dropbox-Moveoperation]]
-Move operation
-^^^^^^^^^^^^^^
+### Move operation
 
 Move files on Dropbox between one folder to another.
 
@@ -235,18 +209,14 @@ Below are listed the options for this operation:
 |`newRemotePath` |`true` |Destination file or folder
 |=======================================================================
 
-[[Dropbox-Samples.2]]
-Samples
-+++++++
+#### Samples
 
 [source,java]
 -------------------------------
 from("direct:start").to("dropbox://move?accessToken=XXX&clientIdentifier=XXX&remotePath=/root/folder1&newRemotePath=/root/folder2").to("mock:result");
 -------------------------------
 
-[[Dropbox-ResultMessageHeaders.2]]
-Result Message Headers
-++++++++++++++++++++++
+#### Result Message Headers
 
 The following headers are set on message result:
 
@@ -257,9 +227,7 @@ The following headers are set on message result:
 |`MOVED_PATH` |name of the path moved on dropbox
 |=======================================================================
 
-[[Dropbox-ResultMessageBody.2]]
-Result Message Body
-+++++++++++++++++++
+#### Result Message Body
 
 The following objects are set on message body result:
 
@@ -270,9 +238,7 @@ The following objects are set on message body result:
 |`String` |name of the path moved on dropbox
 |=======================================================================
 
-[[Dropbox-Putoperation]]
-Put (upload) operation
-^^^^^^^^^^^^^^^^^^^^^^
+### Put (upload) operation
 
 Upload files on Dropbox.
 
@@ -295,9 +261,7 @@ dropbox, this will be overwritten.
 will upload the file on a remote path equal to the local path.
 |=======================================================================
 
-[[Dropbox-Samples.3]]
-Samples
-+++++++
+#### Samples
 
 [source,java]
 -------------------------------
@@ -306,9 +270,7 @@ from("direct:start").to("dropbox://put?accessToken=XXX&clientIdentifier=XXX&uplo
 from("direct:start").to("dropbox://put?accessToken=XXX&clientIdentifier=XXX&uploadMode=add&localPath=/root/folder1&remotePath=/root/folder2").to("mock:result");
 -------------------------------
 
-[[Dropbox-ResultMessageHeaders.3]]
-Result Message Headers
-++++++++++++++++++++++
+#### Result Message Headers
 
 The following headers are set on message result:
 
@@ -321,9 +283,7 @@ The following headers are set on message result:
 |`UPLOADED_FILES` |in case of multiple files upload, string with the remote paths uploaded
 |=======================================================================
 
-[[Dropbox-ResultMessageBody.3]]
-Result Message Body
-+++++++++++++++++++
+#### Result Message Body
 
 The following objects are set on message body result:
 
@@ -338,9 +298,7 @@ remote file uploaded and as value the result of the upload operation, OK
 or KO
 |=======================================================================
 
-[[Dropbox-Searchoperation]]
-Search operation
-^^^^^^^^^^^^^^^^
+### Search operation
 
 Search inside a remote Dropbox folder including its sub directories.
 
@@ -359,9 +317,7 @@ if it contains all the sub-strings. If this option is not set, all files
 will be matched.
 |=======================================================================
 
-[[Dropbox-Samples.4]]
-Samples
-+++++++
+#### Samples
 
 [source,java]
 -------------------------------
@@ -370,9 +326,7 @@ from("dropbox://search?accessToken=XXX&clientIdentifier=XXX&remotePath=/XXX&quer
 from("direct:start").to("dropbox://search?accessToken=XXX&clientIdentifier=XXX&remotePath=/XXX").to("mock:result");
 -------------------------------
 
-[[Dropbox-ResultMessageHeaders.4]]
-Result Message Headers
-++++++++++++++++++++++
+#### Result Message Headers
 
 The following headers are set on message result:
 
@@ -383,9 +337,7 @@ The following headers are set on message result:
 |`FOUNDED_FILES` |list of file path founded
 |=======================================================================
 
-[[Dropbox-ResultMessageBody.4]]
-Result Message Body
-+++++++++++++++++++
+#### Result Message Body
 
 The following objects are set on message body result:
 

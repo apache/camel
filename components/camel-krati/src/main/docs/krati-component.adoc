@@ -1,6 +1,4 @@
-[[Krati-KratiComponent]]
-Krati Component
-~~~~~~~~~~~~~~~
+## Krati Component
 
 *Available as of Camel 2.9*
 
@@ -27,9 +25,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Krati-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -------------------------------------------
@@ -42,9 +38,7 @@ krati will use for its datastore.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Krati-KratiOptions]]
-Krati Options
-^^^^^^^^^^^^^
+### Krati Options
 
 
 // component options: START
@@ -70,10 +64,10 @@ The Krati component supports 30 endpoint options which are listed below:
 | segmentFactory | common |  | SegmentFactory | Sets the segment factory of the target store.
 | segmentFileSize | common | 64 | int | Data store segments size in MB.
 | valueSerializer | common |  | Object> | The serializer that will be used to serialize the value.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | maxMessagesPerPoll | consumer |  | int | The maximum number of messages which can be received in one poll. This can be used to avoid reading in too much data and taking up too much memory.
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | key | producer |  | String | The key.
@@ -109,9 +103,7 @@ krati:/tmp/krati?operation=CamelKratiGet&initialCapacity=10000&keySerializer=#my
 For producer endpoint you can override all of the above URI options by
 passing the appropriate headers to the message.
 
-[[Krati-MessageHeadersfordatastore]]
-Message Headers for datastore
-+++++++++++++++++++++++++++++
+#### Message Headers for datastore
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -125,13 +117,9 @@ CamelKratiDelete, CamelKratiDeleteAll
 |`CamelKratiValue` |The value.
 |=======================================================================
 
-[[Krati-UsageSamples]]
-Usage Samples
-^^^^^^^^^^^^^
+### Usage Samples
 
-[[Krati-Example1:Puttingtothedatastore.]]
-Example 1: Putting to the datastore.
-++++++++++++++++++++++++++++++++++++
+#### Example 1: Putting to the datastore.
 
 This example will show you how you can store any message inside a
 datastore.
@@ -154,9 +142,7 @@ route.
         </route>
 ------------------------------------------------------------
 
-[[Krati-Example2:GettingReadingfromadatastore]]
-Example 2: Getting/Reading from a datastore
-+++++++++++++++++++++++++++++++++++++++++++
+#### Example 2: Getting/Reading from a datastore
 
 This example will show you how you can read the contnet of a datastore.
 
@@ -180,9 +166,7 @@ route.
 </route>
 -----------------------------------------------------------------------------
 
-[[Krati-Example3:Consumingfromadatastore]]
-Example 3: Consuming from a datastore
-+++++++++++++++++++++++++++++++++++++
+#### Example 3: Consuming from a datastore
 
 This example will consume all items that are under the specified
 datastore.
@@ -203,9 +187,7 @@ You can achieve the same goal by using xml, as you can see below.
 </route>
 ------------------------------------------------------
 
-[[Krati-IdempotentRepository]]
-Idempotent Repository
-^^^^^^^^^^^^^^^^^^^^^
+### Idempotent Repository
 
 As already mentioned this component also offers and idemptonet
 repository which can be used for filtering out duplicate messages.
@@ -215,8 +197,6 @@ repository which can be used for filtering out duplicate messages.
 from("direct://in").idempotentConsumer(header("messageId"), new KratiIdempotentRepositroy("/tmp/idempotent").to("log://out");
 -----------------------------------------------------------------------------------------------------------------------------
 
-[[Krati-Seealso]]
-See also
-++++++++
+#### See also
 
 http://sna-projects.com/krati/[Krati Website]

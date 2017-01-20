@@ -1,6 +1,4 @@
-[[Paho-PahoComponent]]
-Paho Component
-~~~~~~~~~~~~~~
+## Paho Component
 
 INFO: Available as of Camel 2.16 
 
@@ -9,9 +7,7 @@ the https://eclipse.org/paho/[Eclipse Paho] library. Paho is one of the
 most popular MQTT libraries, so if you would like to integrate it with
 your Java project - Camel Paho connector is a way to go.
 
-[[Paho-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------------------
@@ -49,9 +45,7 @@ from("paho:some/queue?brokerUrl=tcp://iot.eclipse.org:1883").
 
  
 
-[[Paho-Addingthecomponenttotheproject]]
-Adding the component to the project
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Adding the component to the project
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -82,9 +76,7 @@ you need to add Eclipse Paho repository to your POM xml file:
 </repositories>
 --------------------------------------------------------------------------
 
-[[Paho-Defaultpayloadtype]]
-Default payload type
-^^^^^^^^^^^^^^^^^^^^
+### Default payload type
 
  
 
@@ -120,9 +112,7 @@ String payload = "message";
 producerTemplate.sendBody("paho:topic", payload);
 --------------------------------------------------------------------------
 
-[[Paho-URIOptions]]
-Paho Options
-^^^^^^^^^^^^
+### Paho Options
 
 
 
@@ -132,12 +122,12 @@ The Paho component supports 3 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| brokerUrl | String | The URL of the MQTT broker.
-| clientId | String | MQTT client identifier.
-| connectOptions | MqttConnectOptions | Client connection options
+| Name | Group | Default | Java Type | Description
+| brokerUrl | common |  | String | The URL of the MQTT broker.
+| clientId | common |  | String | MQTT client identifier.
+| connectOptions | advanced |  | MqttConnectOptions | Client connection options
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -156,12 +146,12 @@ The Paho component supports 12 endpoint options which are listed below:
 | brokerUrl | common | tcp://localhost:1883 | String | The URL of the MQTT broker.
 | clientId | common |  | String | MQTT client identifier.
 | connectOptions | common |  | MqttConnectOptions | Client connection options
-| filePersistenceDirectory | common | Current directory | String | Base directory used by the file persistence provider.
+| filePersistenceDirectory | common |  | String | Base directory used by the file persistence provider.
 | persistence | common | MEMORY | PahoPersistence | Client persistence to be used - memory or file.
 | qos | common | 2 | int | Client quality of service level (0-2).
 | retained | common | false | boolean | Retain option
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
@@ -169,9 +159,7 @@ The Paho component supports 12 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Paho-Headers]]
-Headers
-^^^^^^^
+### Headers
 
 The following headers are recognized by the Paho component:
 
@@ -189,12 +177,9 @@ stored as a header but on the
 |=======================================================================
  
 
-[[Paho-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

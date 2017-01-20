@@ -71,7 +71,7 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends Contex
                 + ", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"\\\"\""));
 
         List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
-        assertEquals(9, rows.size());
+        assertEquals(10, rows.size());
 
         Map<String, String> found = null;
         for (Map<String, String> row : rows) {
@@ -105,7 +105,7 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends Contex
                 + " \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"\\\\\", \"description\": \"The escape character.\""));
 
         List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
-        assertEquals(15, rows.size());
+        assertEquals(16, rows.size());
 
         Map<String, String> found = null;
         for (Map<String, String> row : rows) {

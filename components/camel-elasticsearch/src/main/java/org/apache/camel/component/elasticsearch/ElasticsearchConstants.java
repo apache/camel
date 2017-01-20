@@ -29,6 +29,7 @@ public interface ElasticsearchConstants {
     String OPERATION_GET_BY_ID = "GET_BY_ID";
     String OPERATION_MULTIGET = "MULTIGET";
     String OPERATION_DELETE = "DELETE";
+    String OPERATION_DELETE_INDEX = "DELETE_INDEX";
     String OPERATION_SEARCH = "SEARCH";
     String OPERATION_MULTISEARCH = "MULTISEARCH";
     String OPERATION_EXISTS = "EXISTS";

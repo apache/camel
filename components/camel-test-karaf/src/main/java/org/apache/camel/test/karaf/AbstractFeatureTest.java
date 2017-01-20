@@ -219,7 +219,16 @@ public abstract class AbstractFeatureTest {
         return mavenBundle().
                 groupId("org.apache.camel.karaf").
                 artifactId("apache-camel").
-                versionAsInProject().type("xml/features");
+                version(getCamelKarafFeatureVersion()).
+                type("xml/features");
+    }
+
+    private static String getCamelKarafFeatureVersion() {
+        String camelKarafFeatureVersion = System.getProperty("camelKarafFeatureVersion");
+        if (camelKarafFeatureVersion == null) {
+            throw new RuntimeException("Please specify the maven artifact version to use for org.apache.camel.karaf/apache-camel through the camelKarafFeatureVersion System property");
+        }
+        return camelKarafFeatureVersion;
     }
 
     private static void switchPlatformEncodingToUTF8() {
@@ -247,7 +256,7 @@ public abstract class AbstractFeatureTest {
         }
         if (karafVersion == null) {
             // setup the default version of it
-            karafVersion = "4.0.6";
+            karafVersion = "4.0.8";
         }
         return karafVersion;
     }

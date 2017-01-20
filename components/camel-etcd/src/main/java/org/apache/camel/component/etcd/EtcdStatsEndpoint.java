@@ -21,7 +21,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 
-public class EtcdStatsEndpoint extends AbstractEtcdEndpoint {
+public class EtcdStatsEndpoint extends AbstractEtcdPollingEndpoint {
 
     public EtcdStatsEndpoint(
         String uri, EtcdComponent component, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {
@@ -35,7 +35,7 @@ public class EtcdStatsEndpoint extends AbstractEtcdEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        EtcdStatsConsumer consumer = new EtcdStatsConsumer(this, processor, getConfiguration(), getNamespace(), getPath());
+        EtcdStatsConsumer consumer = new EtcdStatsConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
     }

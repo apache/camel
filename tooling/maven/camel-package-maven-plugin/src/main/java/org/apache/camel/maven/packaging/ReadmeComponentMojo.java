@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.ComponentOptionModel;
@@ -46,7 +47,7 @@ import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 import static org.apache.camel.maven.packaging.StringHelper.isEmpty;
 
 /**
- * Generate or updates the component/dataformat/language readme.md file in the project root directory.
+ * Generate or updates the component/dataformat/language readme.md and .adoc files in the project root directory.
  *
  * @goal update-readme
  */
@@ -130,6 +131,9 @@ public class ReadmeComponentMojo extends AbstractMojo {
 
                     boolean exists = file.exists();
                     boolean updated = false;
+
+                    updated |= updateTitles(file, model.getTitle() + " Component");
+
                     if (model.getComponentOptions() != null) {
                         String options = templateComponentOptions(model);
                         updated |= updateComponentOptions(file, options);
@@ -178,6 +182,9 @@ public class ReadmeComponentMojo extends AbstractMojo {
 
                     boolean exists = file.exists();
                     boolean updated = false;
+
+                    updated |= updateTitles(file, model.getTitle() + " DataFormat");
+
                     if (model.getDataFormatOptions() != null) {
                         String options = templateDataFormatOptions(model);
                         updated |= updateDataFormatOptions(file, options);
@@ -253,6 +260,9 @@ public class ReadmeComponentMojo extends AbstractMojo {
 
                     boolean exists = file.exists();
                     boolean updated = false;
+
+                    updated |= updateTitles(file, model.getTitle() + " Language");
+
                     if (model.getLanguageOptions() != null) {
                         String options = templateLanguageOptions(model);
                         updated |= updateLanguageOptions(file, options);
@@ -271,6 +281,71 @@ public class ReadmeComponentMojo extends AbstractMojo {
                 }
             }
         }
+    }
+
+    private boolean updateTitles(File file, String title) throws MojoExecutionException {
+        if (!file.exists()) {
+            return false;
+        }
+
+        boolean updated = false;
+
+        try {
+            String text = loadText(new FileInputStream(file));
+
+            List<String> newLines = new ArrayList<>();
+
+            String[] lines = text.split("\n");
+            for (int i = 0; i < lines.length; i++) {
+                String line = lines[i];
+
+                if (i == 0) {
+                    // first line is the title to make the text less noisy we use level 2
+                    String newLine = "## " + title;
+                    newLines.add(newLine);
+                    updated = !line.equals(newLine);
+                    continue;
+                }
+
+                // use single line headers with # as level instead of the cumbersome adoc weird style
+                if (line.startsWith("^^^") || line.startsWith("~~~") || line.startsWith("+++")) {
+                    String level = line.startsWith("+++") ? "####" : "###";
+
+                    // transform legacy heading into new style
+                    int idx = newLines.size() - 1;
+                    String prev = newLines.get(idx);
+
+                    newLines.set(idx, level + " " + prev);
+
+                    // okay if 2nd-prev line is a [[title]] we need to remove that too
+                    // so we have nice clean sub titles
+                    idx = newLines.size() - 2;
+                    if (idx >= 0) {
+                        prev = newLines.get(idx);
+                        if (prev.startsWith("[[")) {
+                            // remove
+                            newLines.remove(idx);
+                        }
+                    }
+
+                    updated = true;
+                } else {
+                    // okay normal text so just add it
+                    newLines.add(line);
+                }
+            }
+
+
+            if (updated) {
+                // build the new updated text
+                String newText = newLines.stream().collect(Collectors.joining("\n"));
+                writeText(file, newText);
+            }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
+        }
+
+        return updated;
     }
 
     private boolean updateComponentOptions(File file, String changed) throws MojoExecutionException {
@@ -496,10 +571,20 @@ public class ReadmeComponentMojo extends AbstractMojo {
             ComponentOptionModel option = new ComponentOptionModel();
             option.setName(getSafeValue("name", row));
             option.setKind(getSafeValue("kind", row));
+            option.setGroup(getSafeValue("group", row));
+            option.setRequired(getSafeValue("required", row));
             option.setType(getSafeValue("type", row));
             option.setJavaType(getSafeValue("javaType", row));
+            option.setEnums(getSafeValue("enum", row));
             option.setDeprecated(getSafeValue("deprecated", row));
+            option.setSecret(getSafeValue("secret", row));
+            option.setDefaultValue(getSafeValue("defaultValue", row));
             option.setDescription(getSafeValue("description", row));
+            // lets put required in the description
+            if ("true".equals(option.getRequired())) {
+                String desc = "*Required* " + option.getDescription();
+                option.setDescription(desc);
+            }
             component.addComponentOption(option);
         }
 
@@ -516,6 +601,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
             option.setPrefix(getSafeValue("prefix", row));
             option.setMultiValue(getSafeValue("multiValue", row));
             option.setDeprecated(getSafeValue("deprecated", row));
+            option.setSecret(getSafeValue("secret", row));
             option.setDefaultValue(getSafeValue("defaultValue", row));
             option.setDescription(getSafeValue("description", row));
             // lets put required in the description

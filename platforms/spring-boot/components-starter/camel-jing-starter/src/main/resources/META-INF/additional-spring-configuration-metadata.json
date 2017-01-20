@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.jing.enabled",
+      "description": "Enable jing component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

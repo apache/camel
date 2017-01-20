@@ -36,6 +36,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatcher;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -100,7 +101,7 @@ public class GaugeRouteTest {
         public MetricRegistry getMetricRegistry() {
             MetricRegistry registry = Mockito.mock(MetricRegistry.class);
             when(registry.getGauges()).thenReturn(mockGauges);
-            when(registry.register(Mockito.anyString(), Mockito.any(CamelMetricsGauge.class))).then(
+            when(registry.register(Matchers.anyString(), Matchers.any(CamelMetricsGauge.class))).then(
                     new Answer<CamelMetricsGauge>() {
                         @Override
                         public CamelMetricsGauge answer(InvocationOnMock invocation) throws Throwable {

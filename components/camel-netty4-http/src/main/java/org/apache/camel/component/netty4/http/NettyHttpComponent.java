@@ -32,6 +32,7 @@ import org.apache.camel.component.netty4.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty4.http.handlers.HttpServerMultiplexChannelHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
@@ -56,8 +57,11 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     // factories which is created by this component and therefore manage their lifecycles
     private final Map<Integer, HttpServerConsumerChannelFactory> multiplexChannelHandlers = new HashMap<Integer, HttpServerConsumerChannelFactory>();
     private final Map<String, HttpServerBootstrapFactory> bootstrapFactories = new HashMap<String, HttpServerBootstrapFactory>();
+    @Metadata(label = "advanced")
     private NettyHttpBinding nettyHttpBinding;
+    @Metadata(label = "advanced")
     private HeaderFilterStrategy headerFilterStrategy;
+    @Metadata(label = "security")
     private NettyHttpSecurityConfiguration securityConfiguration;
     
     public NettyHttpComponent() {
@@ -221,6 +225,15 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
      */
     public void setNettyHttpBinding(NettyHttpBinding nettyHttpBinding) {
         this.nettyHttpBinding = nettyHttpBinding;
+    }
+
+    @Override
+    public NettyHttpConfiguration getConfiguration() {
+        return (NettyHttpConfiguration) super.getConfiguration();
+    }
+
+    public void setConfiguration(NettyHttpConfiguration configuration) {
+        super.setConfiguration(configuration);
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {

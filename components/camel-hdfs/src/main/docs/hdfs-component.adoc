@@ -1,6 +1,4 @@
-[[HDFS-HDFSComponent]]
-HDFS Component
-~~~~~~~~~~~~~~
+## HDFS Component
 
 *Available as of Camel 2.8*
 
@@ -21,9 +19,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[HDFS-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------------
@@ -53,9 +49,7 @@ fileMode=Append to append each of the chunks together.
 
  
 
-[[HDFS-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -66,10 +60,10 @@ The HDFS component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| jAASConfiguration | Configuration | To use the given configuration for security with JAAS.
+| Name | Group | Default | Java Type | Description
+| jAASConfiguration | common |  | Configuration | To use the given configuration for security with JAAS.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -96,12 +90,12 @@ The HDFS component supports 41 endpoint options which are listed below:
 | keyType | common | NULL | WritableType | The type for the key in case of sequence or map files.
 | owner | common |  | String | The file owner must match this owner for the consumer to pickup the file. Otherwise the file is skipped.
 | valueType | common | BYTES | WritableType | The type for the key in case of sequence or map files
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | delay | consumer | 1000 | long | The interval (milliseconds) between the directory scans.
 | initialDelay | consumer |  | long | For the consumer how much to wait (milliseconds) before to start scanning the directory.
 | pattern | consumer | * | String | The pattern used for scanning the directory
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | append | producer | false | boolean | Append to existing file. Notice that not all HDFS file systems support the append option.
@@ -136,9 +130,7 @@ The HDFS component supports 41 endpoint options which are listed below:
 
 
 
-[[HDFS-KeyTypeandValueType]]
-KeyType and ValueType
-+++++++++++++++++++++
+#### KeyType and ValueType
 
 * NULL it means that the key or the value is absent
 * BYTE for writing a byte, the java Byte class is mapped into a BYTE
@@ -154,9 +146,7 @@ BYTES is also used with everything else, for example, in Camel a file is
 sent around as an InputStream, int this case is written in a sequence
 file or a map file as a sequence of bytes.
 
-[[HDFS-SplittingStrategy]]
-Splitting Strategy
-^^^^^^^^^^^^^^^^^^
+### Splitting Strategy
 
 In the current version of Hadoop opening a file in append mode is
 disabled since it's not very reliable. So, for the moment, it's only
@@ -199,15 +189,11 @@ than 1 second or if more than 5 bytes have been written. So, running
 `hadoop fs -ls /tmp/simple-file` you'll see that multiple files have
 been created.
 
-[[HDFS-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 The following headers are supported by this component:
 
-[[HDFS-Produceronly]]
-Producer only
-+++++++++++++
+#### Producer only
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -219,9 +205,7 @@ link:expression.html[Expression] object. Only relevant when not using a
 split strategy.
 |=======================================================================
 
-[[HDFS-Controllingtoclosefilestream]]
-Controlling to close file stream
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Controlling to close file stream
 
 *Available as of Camel 2.10.4*
 
@@ -236,9 +220,7 @@ the stream should be closed or not.
 Notice this does not apply if you use a split strategy, as there are
 various strategies that can control when the stream is closed.
 
-[[HDFS-UsingthiscomponentinOSGi]]
-Using this component in OSGi
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using this component in OSGi
 
 This component is fully functional in an OSGi environment, however, it
 requires some actions from the user. Hadoop uses the thread context

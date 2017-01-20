@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.asterisk.enabled",
+      "description": "Enable asterisk component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

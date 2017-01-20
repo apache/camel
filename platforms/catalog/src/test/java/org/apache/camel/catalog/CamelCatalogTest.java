@@ -286,6 +286,31 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testEndpointLenientProperties() throws Exception {
+        Map<String, String> map = catalog.endpointLenientProperties("http:myserver?throwExceptionOnFailure=false&foo=123&bar=456");
+        assertNotNull(map);
+        assertEquals(2, map.size());
+
+        assertEquals("123", map.get("foo"));
+        assertEquals("456", map.get("bar"));
+
+        map = catalog.endpointLenientProperties("http:myserver?throwExceptionOnFailure=false&foo=123&bar=456&httpClient.timeout=5000&httpClient.soTimeout=10000");
+        assertNotNull(map);
+        assertEquals(2, map.size());
+
+        assertEquals("123", map.get("foo"));
+        assertEquals("456", map.get("bar"));
+
+        map = catalog.endpointLenientProperties("http:myserver?throwExceptionOnFailure=false&foo=123&bar=456&httpClient.timeout=5000&httpClient.soTimeout=10000&myPrefix.baz=beer");
+        assertNotNull(map);
+        assertEquals(3, map.size());
+
+        assertEquals("123", map.get("foo"));
+        assertEquals("456", map.get("bar"));
+        assertEquals("beer", map.get("myPrefix.baz"));
+    }
+
+    @Test
     public void testEndpointPropertiesPlaceholders() throws Exception {
         Map<String, String> map = catalog.endpointProperties("timer:foo?period={{howoften}}&repeatCount=5");
         assertNotNull(map);
@@ -599,6 +624,36 @@ public class CamelCatalogTest {
         assertFalse(result.isSuccess());
         assertTrue(result.getUnknown().contains("foo"));
 
+        // lenient off consumer only
+        result = catalog.validateEndpointProperties("netty4-http:http://myserver?foo=bar", false, true, false);
+        assertFalse(result.isSuccess());
+        // consumer should still fail because we cannot use lenient option in consumer mode
+        assertEquals("foo", result.getUnknown().iterator().next());
+        assertNull(result.getLenient());
+        // lenient off producer only
+        result = catalog.validateEndpointProperties("netty4-http:http://myserver?foo=bar", false, false, true);
+        assertTrue(result.isSuccess());
+        // foo is the lenient option
+        assertEquals(1, result.getLenient().size());
+        assertEquals("foo", result.getLenient().iterator().next());
+
+        // lenient on consumer only
+        result = catalog.validateEndpointProperties("netty4-http:http://myserver?foo=bar", true, true, false);
+        assertFalse(result.isSuccess());
+        // consumer should still fail because we cannot use lenient option in consumer mode
+        assertEquals("foo", result.getUnknown().iterator().next());
+        assertNull(result.getLenient());
+        // lenient on producer only
+        result = catalog.validateEndpointProperties("netty4-http:http://myserver?foo=bar", true, false, true);
+        assertFalse(result.isSuccess());
+        assertEquals("foo", result.getUnknown().iterator().next());
+        assertNull(result.getLenient());
+
+        // lenient on rss consumer only
+        result = catalog.validateEndpointProperties("rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&consumer.delay=50&foo=bar", false, true, false);
+        assertTrue(result.isSuccess());
+        assertEquals("foo", result.getLenient().iterator().next());
+
         // data format
         result = catalog.validateEndpointProperties("dataformat:string:marshal?charset=utf-8", true);
         assertTrue(result.isSuccess());
@@ -793,28 +848,71 @@ public class CamelCatalogTest {
 
     @Test
     public void testSimpleExpression() throws Exception {
-        SimpleValidationResult result = catalog.validateSimpleExpression("${body}");
+        SimpleValidationResult result = catalog.validateSimpleExpression(null, "${body}");
         assertTrue(result.isSuccess());
         assertEquals("${body}", result.getSimple());
 
-        result = catalog.validateSimpleExpression("${body");
+        result = catalog.validateSimpleExpression(null, "${body");
         assertFalse(result.isSuccess());
         assertEquals("${body", result.getSimple());
         LOG.info(result.getError());
         assertTrue(result.getError().startsWith("expected symbol functionEnd but was eol at location 5"));
+        assertEquals("expected symbol functionEnd but was eol", result.getShortError());
+        assertEquals(5, result.getIndex());
     }
 
     @Test
     public void testSimplePredicate() throws Exception {
-        SimpleValidationResult result = catalog.validateSimplePredicate("${body} == 'abc'");
+        SimpleValidationResult result = catalog.validateSimplePredicate(null, "${body} == 'abc'");
         assertTrue(result.isSuccess());
         assertEquals("${body} == 'abc'", result.getSimple());
 
-        result = catalog.validateSimplePredicate("${body} > ${header.size");
+        result = catalog.validateSimplePredicate(null, "${body} > ${header.size");
         assertFalse(result.isSuccess());
         assertEquals("${body} > ${header.size", result.getSimple());
         LOG.info(result.getError());
         assertTrue(result.getError().startsWith("expected symbol functionEnd but was eol at location 22"));
+        assertEquals("expected symbol functionEnd but was eol", result.getShortError());
+        assertEquals(22, result.getIndex());
+    }
+
+    @Test
+    public void testSimplePredicatePlaceholder() throws Exception {
+        SimpleValidationResult result = catalog.validateSimplePredicate(null, "${body} contains '{{danger}}'");
+        assertTrue(result.isSuccess());
+        assertEquals("${body} contains '{{danger}}'", result.getSimple());
+
+        result = catalog.validateSimplePredicate(null, "${bdy} contains '{{danger}}'");
+        assertFalse(result.isSuccess());
+        assertEquals("${bdy} contains '{{danger}}'", result.getSimple());
+        LOG.info(result.getError());
+        assertTrue(result.getError().startsWith("Unknown function: bdy at location 0"));
+        assertTrue(result.getError().contains("'{{danger}}'"));
+        assertEquals("Unknown function: bdy", result.getShortError());
+        assertEquals(0, result.getIndex());
+    }
+
+    @Test
+    public void testValidateLanguage() throws Exception {
+        LanguageValidationResult result = catalog.validateLanguageExpression(null, "simple", "${body}");
+        assertTrue(result.isSuccess());
+        assertEquals("${body}", result.getText());
+
+        result = catalog.validateLanguageExpression(null, "header", "foo");
+        assertTrue(result.isSuccess());
+        assertEquals("foo", result.getText());
+
+        result = catalog.validateLanguagePredicate(null, "simple", "${body} > 10");
+        assertTrue(result.isSuccess());
+        assertEquals("${body} > 10", result.getText());
+
+        result = catalog.validateLanguagePredicate(null, "header", "bar");
+        assertTrue(result.isSuccess());
+        assertEquals("bar", result.getText());
+
+        result = catalog.validateLanguagePredicate(null, "foobar", "bar");
+        assertFalse(result.isSuccess());
+        assertEquals("Unknown language foobar", result.getError());
     }
 
     @Test
@@ -864,6 +962,44 @@ public class CamelCatalogTest {
         String doc = catalog.languageAsciiDoc("jsonpath");
         assertNotNull(doc);
         assertTrue(doc.contains("JSonPath language"));
+    }
+
+    @Test
+    public void testValidateEndpointTwitterSpecial() throws Exception {
+        String uri = "twitter://search?{{%s}}&keywords=java";
+
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess());
+
+        uri = "twitter://search?{{%s}}";
+        result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess());
+    }
+
+    @Test
+    public void testValidateEndpointConsumerOnly() throws Exception {
+        String uri = "file:inbox?bufferSize=4096&readLock=changed&delete=true";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertTrue(result.isSuccess());
+
+        uri = "file:inbox?bufferSize=4096&readLock=changed&delete=true&fileExist=Append";
+        result = catalog.validateEndpointProperties(uri, false, true, false);
+        assertFalse(result.isSuccess());
+
+        assertEquals("fileExist", result.getNotConsumerOnly().iterator().next());
+    }
+
+    @Test
+    public void testValidateEndpointProducerOnly() throws Exception {
+        String uri = "file:outbox?bufferSize=4096&fileExist=Append";
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertTrue(result.isSuccess());
+
+        uri = "file:outbox?bufferSize=4096&fileExist=Append&delete=true";
+        result = catalog.validateEndpointProperties(uri, false, false, true);
+        assertFalse(result.isSuccess());
+
+        assertEquals("delete", result.getNotProducerOnly().iterator().next());
     }
 
 }

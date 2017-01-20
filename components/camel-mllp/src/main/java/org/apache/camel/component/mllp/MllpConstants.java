@@ -21,6 +21,7 @@ public final class MllpConstants {
     public static final String MLLP_REMOTE_ADDRESS = "CamelMllpRemoteAddress";
 
     public static final String MLLP_ACKNOWLEDGEMENT = "CamelMllpAcknowledgement";
+    public static final String MLLP_ACKNOWLEDGEMENT_STRING = "CamelMllpAcknowledgementString";
     public static final String MLLP_ACKNOWLEDGEMENT_TYPE = "CamelMllpAcknowledgementType";
 
     public static final String MLLP_ACKNOWLEDGEMENT_EXCEPTION = "CamelMllpAcknowledgementException";

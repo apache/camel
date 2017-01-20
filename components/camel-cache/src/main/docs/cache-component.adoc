@@ -1,6 +1,4 @@
-[[Cache-CacheComponent]]
-Cache Component
-~~~~~~~~~~~~~~~
+## EHCache Component
 
 *Available as of Camel 2.1*
 
@@ -29,9 +27,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Cache-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------
@@ -41,9 +37,7 @@ cache://cacheName[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=#beanRef&...`
 
-[[Cache-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -55,12 +49,12 @@ The EHCache component supports 3 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| cacheManagerFactory | CacheManagerFactory | To use the given CacheManagerFactory for creating the CacheManager. By default the DefaultCacheManagerFactory is used.
-| configuration | CacheConfiguration | Sets the Cache configuration
-| configurationFile | String | Sets the location of the ehcache.xml file to load from classpath or file system. By default the file is loaded from classpath:ehcache.xml
+| Name | Group | Default | Java Type | Description
+| cacheManagerFactory | advanced |  | CacheManagerFactory | To use the given CacheManagerFactory for creating the CacheManager. By default the DefaultCacheManagerFactory is used.
+| configuration | common |  | CacheConfiguration | Sets the Cache configuration
+| configurationFile | common | classpath:ehcache.xml | String | Sets the location of the ehcache.xml file to load from classpath or file system. By default the file is loaded from classpath:ehcache.xml
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -90,8 +84,8 @@ The EHCache component supports 20 endpoint options which are listed below:
 | overflowToDisk | common | true | boolean | Specifies whether cache may overflow to disk
 | timeToIdleSeconds | common | 300 | long | The maximum amount of time between accesses before an element expires
 | timeToLiveSeconds | common | 300 | long | The maximum time between creation time and when an element expires. Is used only if the element is not eternal
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | cacheLoaderRegistry | advanced |  | CacheLoaderRegistry | To configure cache loader using the CacheLoaderRegistry
 | cacheManagerFactory | advanced |  | CacheManagerFactory | To use a custom CacheManagerFactory for creating the CacheManager to be used by this endpoint. By default the CacheManagerFactory configured on the component is used.
@@ -102,13 +96,9 @@ The EHCache component supports 20 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Cache-SendingReceivingMessagestofromthecache]]
-Sending/Receiving Messages to/from the cache
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Sending/Receiving Messages to/from the cache
 
-[[Cache-MessageHeadersuptoCamel2.7]]
-Message Headers up to Camel 2.7
-+++++++++++++++++++++++++++++++
+#### Message Headers up to Camel 2.7
 
 [width="100%",cols="20%,80%",options="header",]
 |=======================================================================
@@ -127,12 +117,8 @@ Message Headers up to Camel 2.7
 |`CACHE_KEY` |The cache key used to store the Message in the cache. The cache key is
 optional if the CACHE_OPERATION is DELETEALL
 |=======================================================================
-[[Cache-MessageHeadersCamel2.8]]
-Message Headers Camel 2.8+
-++++++++++++++++++++++++++
+#### Message Headers Camel 2.8+
 
-[Info]
-====
 Header changes in Camel 2.8
 
 The header names and supported values have changed to be prefixed with
@@ -142,7 +128,6 @@ remain unchanged, just their values have been changed. Also, these
 headers are now removed from the exchange after the cache operation is
 performed.
 
-====
 
 [width="100%",cols="20%,80%",options="header",]
 |=======================================================================
@@ -175,9 +160,7 @@ headers:
 |`CamelCacheEternal` |`Boolean` |*Camel 2.11:* Whether the content is eternal.
 |=======================================================================
 
-[[Cache-CacheProducer]]
-Cache Producer
-++++++++++++++
+#### Cache Producer
 
 Sending data to the cache involves the ability to direct payloads in
 exchanges to be stored in a pre-existing or created-on-demand cache. The
@@ -187,9 +170,7 @@ mechanics of doing this involve
 * ensuring that the Message Exchange Body contains the message directed
 to the cache
 
-[[Cache-CacheConsumer]]
-Cache Consumer
-++++++++++++++
+#### Cache Consumer
 
 Receiving data from the cache involves the ability of the CacheConsumer
 to listen on a pre-existing or created-on-demand Cache using an event
@@ -203,9 +184,7 @@ Body containing the just added/updated payload is placed and sent.
 * in case of a CamelCacheDeleteAll operation, the Message Exchange
 Header CamelCacheKey and the Message Exchange Body are not populated.
 
-[[Cache-CacheProcessors]]
-Cache Processors
-++++++++++++++++
+#### Cache Processors
 
 There are a set of nice processors with the ability to perform cache
 lookups and selectively replace payload content at the
@@ -214,13 +193,9 @@ lookups and selectively replace payload content at the
 * token
 * xpath level
 
-[[Cache-CacheUsageSamples]]
-Cache Usage Samples
-^^^^^^^^^^^^^^^^^^^
+### Cache Usage Samples
 
-[[Cache-Example1:Configuringthecache]]
-Example 1: Configuring the cache
-++++++++++++++++++++++++++++++++
+#### Example 1: Configuring the cache
 
 [source,java]
 -------------------------------------------------
@@ -236,9 +211,7 @@ from("cache://MyApplicationCache" +
           "&diskExpiryThreadIntervalSeconds=300")
 -------------------------------------------------
 
-[[Cache-Example2:Addingkeystothecache]]
-Example 2: Adding keys to the cache
-+++++++++++++++++++++++++++++++++++
+#### Example 2: Adding keys to the cache
 
 [source,java]
 ---------------------------------------------------------------------------------------------
@@ -252,9 +225,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ---------------------------------------------------------------------------------------------
 
-[[Cache-Example2:Updatingexistingkeysinacache]]
-Example 2: Updating existing keys in a cache
-++++++++++++++++++++++++++++++++++++++++++++
+#### Example 2: Updating existing keys in a cache
 
 [source,java]
 ------------------------------------------------------------------------------------------------
@@ -268,9 +239,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ------------------------------------------------------------------------------------------------
 
-[[Cache-Example3:Deletingexistingkeysinacache]]
-Example 3: Deleting existing keys in a cache
-++++++++++++++++++++++++++++++++++++++++++++
+#### Example 3: Deleting existing keys in a cache
 
 [source,java]
 --------------------------------------------------------------------------------------
@@ -284,9 +253,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 --------------------------------------------------------------------------------------
 
-[[Cache-Example4:Deletingallexistingkeysinacache]]
-Example 4: Deleting all existing keys in a cache
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Example 4: Deleting all existing keys in a cache
 
 [source,java]
 -----------------------------------------------------------------------------------------
@@ -299,9 +266,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 -----------------------------------------------------------------------------------------
 
-[[Cache-Example5:NotifyinganychangesregisteringinaCachetoProcessorsandotherProducers]]
-Example 5: Notifying any changes registering in a Cache to Processors and other Producers
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Example 5: Notifying any changes registering in a Cache to Processors and other Producers
 
 [source,java]
 --------------------------------------------------------------------------------------------------
@@ -321,9 +286,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 --------------------------------------------------------------------------------------------------
 
-[[Cache-Example6:UsingProcessorstoselectivelyreplacepayloadwithcachevalues]]
-Example 6: Using Processors to selectively replace payload with cache values
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Example 6: Using Processors to selectively replace payload with cache values
 
 [source,java]
 ---------------------------------------------------------------------------------------
@@ -353,9 +316,7 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ---------------------------------------------------------------------------------------
 
-[[Cache-Example7:GettinganentryfromtheCache]]
-Example 7: Getting an entry from the Cache
-++++++++++++++++++++++++++++++++++++++++++
+#### Example 7: Getting an entry from the Cache
 
 [source,java]
 ------------------------------------------------------------------------------------------------
@@ -375,9 +336,7 @@ from("direct:start")
     .to("direct:nextPhase");
 ------------------------------------------------------------------------------------------------
 
-[[Cache-Example8:CheckingforanentryintheCache]]
-Example 8: Checking for an entry in the Cache
-+++++++++++++++++++++++++++++++++++++++++++++
+#### Example 8: Checking for an entry in the Cache
 
 Note: The CHECK command tests existence of an entry in the cache but
 doesn't place a message in the body.
@@ -399,9 +358,7 @@ from("direct:start")
     .end();
 ------------------------------------------------------------------------------------------------
 
-[[Cache-ManagementofEHCache]]
-Management of EHCache
-^^^^^^^^^^^^^^^^^^^^^
+### Management of EHCache
 
 http://ehcache.org/[EHCache] has its own statistics and management from
 link:camel-jmx.html[JMX].
@@ -435,9 +392,7 @@ ManagementService.registerMBeans(CacheManager.getInstance(), mbeanServer, true, 
 You can get cache hits, misses, in-memory hits, disk hits, size stats
 this way. You can also change CacheConfiguration parameters on the fly.
 
-[[Cache-CachereplicationCamel2.8]]
-Cache replication Camel 2.8
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Cache replication Camel 2.8
 
 The Camel Cache component is able to distribute a cache across server
 nodes using several different replication mechanisms including: RMI,
@@ -466,22 +421,13 @@ replication options are set per `CacheManager` and per `CacheEndpoint`.
 Also it is the only way when cache names are not know at the development
 phase.
 
-[Note]
-====
-
-
-It might be useful to read the http://ehcache.org/documentation[EHCache
+*Note*: It might be useful to read the http://ehcache.org/documentation[EHCache
 manual] to get a better understanding of the Camel Cache replication
 mechanism.
 
-====
-
-[[Cache-Example:JMScachereplication]]
-Example: JMS cache replication
-++++++++++++++++++++++++++++++
+#### Example: JMS cache replication
 
 JMS replication is the most powerful and secured replication method.
 Used together with Camel Cache replication makes it also rather
 simple. An example is available on link:cachereplicationjmsexample.html[a
 separate page].
-

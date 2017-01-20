@@ -1,6 +1,4 @@
-[[MINA-MINAComponent]]
-MINA Component
-~~~~~~~~~~~~~~
+## Mina Component
 
 *Deprecated*
 
@@ -23,9 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[MINA-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------------------------------
@@ -59,9 +55,7 @@ exchange itself over the wire. See options below.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[MINA-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -73,10 +67,10 @@ The Mina component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| configuration | MinaConfiguration | To use the shared mina configuration.
+| Name | Group | Default | Java Type | Description
+| configuration | advanced |  | MinaConfiguration | To use the shared mina configuration.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -102,10 +96,10 @@ The Mina component supports 24 endpoint options which are listed below:
 | minaLogger | common | false | boolean | You can enable the Apache MINA logging filter. Apache MINA uses slf4j logging at INFO level to log all input and output.
 | sync | common | true | boolean | Setting to set endpoint as one-way or request-response.
 | timeout | common | 30000 | long | You can configure the timeout that specifies how long to wait for a response from a remote server. The timeout unit is in milliseconds so 60000 is 60 seconds.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | clientMode | consumer | false | boolean | If the clientMode is true mina consumer will connect the address as a TCP client.
 | disconnectOnNoReply | consumer (advanced) | true | boolean | If sync is enabled then this option dictates MinaConsumer if it should disconnect where there is no reply to send back.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | noReplyLogLevel | consumer (advanced) | WARN | LoggingLevel | If sync is enabled this option dictates MinaConsumer which logging level to use when logging a there is no reply to send back.
 | lazySessionCreation | producer (advanced) | true | boolean | Sessions can be lazily created to avoid exceptions if the remote server is not up and running when the Camel producer is started.
@@ -126,9 +120,7 @@ The Mina component supports 24 endpoint options which are listed below:
 
 
 
-[[MINA-Usingacustomcodec]]
-Using a custom codec
-^^^^^^^^^^^^^^^^^^^^
+### Using a custom codec
 
 See the http://mina.apache.org/tutorial-on-protocolcodecfilter.html[Mina
 documentation] how to write your own codec. To use your custom codec
@@ -137,9 +129,7 @@ link:registry.html[Registry]; for example, by creating a bean in the
 Spring XML file. Then use the `codec` option to specify the bean ID of
 your codec. See link:hl7.html[HL7] that has a custom codec.
 
-[[MINA-Samplewithsync=false]]
-Sample with sync=false
-^^^^^^^^^^^^^^^^^^^^^^
+### Sample with sync=false
 
 In this sample, Camel exposes a service that listens for TCP connections
 on port 6200. We use the *textline* codec. In our route, we create a
@@ -148,9 +138,7 @@ Mina consumer endpoint that listens on port 6200:
 As the sample is part of a unit test, we test it by sending some data to
 it on port 6200.
 
-[[MINA-Samplewithsync=true]]
-Sample with sync=true
-^^^^^^^^^^^^^^^^^^^^^
+### Sample with sync=true
 
 In the next sample, we have a more common use case where we expose a TCP
 service on port 6201 also use the textline codec. However, this time we
@@ -162,9 +150,7 @@ using the `template.requestBody()` method. As we know the response is a
 `String`, we cast it to `String` and can assert that the response is, in
 fact, something we have dynamically set in our processor code logic.
 
-[[MINA-SamplewithSpringDSL]]
-Sample with Spring DSL
-^^^^^^^^^^^^^^^^^^^^^^
+### Sample with Spring DSL
 
 Spring DSL can, of course, also be used for link:mina.html[MINA]. In the
 sample below we expose a TCP server on port 5555:
@@ -190,9 +176,7 @@ could be implemented as follows:
    }
 -----------------------------------------------
 
-[[MINA-ConfiguringMinaendpointsusingSpringbeanstyle]]
-Configuring Mina endpoints using Spring bean style
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Configuring Mina endpoints using Spring bean style
 
 Configuration of Mina endpoints is possible using regular Spring bean
 style configuration in the Spring DSL.
@@ -208,9 +192,7 @@ The sample below shows the factory approach:
 
 And then we can refer to our endpoint directly in the route, as follows:
 
-[[MINA-ClosingSessionWhenComplete]]
-Closing Session When Complete
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Closing Session When Complete
 
 When acting as a server you sometimes want to close the session when,
 for example, a client conversion is finished. To instruct Camel to close
@@ -231,9 +213,7 @@ written the `bye` message back to the client:
         });
 --------------------------------------------------------------------------------------------------
 
-[[MINA-GettheIoSessionformessage]]
-Get the IoSession for message
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Get the IoSession for message
 
 *Available since Camel 2.1* 
 You can get the IoSession from the message header with this key
@@ -241,9 +221,7 @@ MinaEndpoint.HEADER_MINA_IOSESSION, and also get the local host address
 with the key MinaEndpoint.HEADER_LOCAL_ADDRESS and remote host address
 with the key MinaEndpoint.HEADER_REMOTE_ADDRESS.
 
-[[MINA-ConfiguringMinafilters]]
-Configuring Mina filters
-^^^^^^^^^^^^^^^^^^^^^^^^
+### Configuring Mina filters
 
 Filters permit you to use some Mina Filters, such as `SslFilter`. You
 can also implement some customized filters. Please note that `codec` and
@@ -336,9 +314,7 @@ Then, you can configure your endpoint using Spring DSL:
 </bean>
 ----------------------------------------------------------------------------------
 
-[[MINA-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -347,4 +323,3 @@ See Also
 
 * link:mina2.html[MINA2]
 * link:netty.html[Netty]
-

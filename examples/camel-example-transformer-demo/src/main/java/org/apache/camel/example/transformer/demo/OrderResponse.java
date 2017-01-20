@@ -21,12 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.util.IOHelper;
-import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 /**
  * The OrderResponse.
  */

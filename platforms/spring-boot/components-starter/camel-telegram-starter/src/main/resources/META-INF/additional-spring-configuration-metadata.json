@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.telegram.enabled",
+      "description": "Enable telegram component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

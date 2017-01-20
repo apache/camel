@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.xstream.enabled",
+      "description": "Enable xstream dataformat",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.dataformat.json-xstream.enabled",
+      "description": "Enable json-xstream dataformat",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -1,6 +1,4 @@
-[[MQTT-MQTTComponent]]
-MQTT Component
-~~~~~~~~~~~~~~
+## MQTT Component
 
 *Available as of Camel 2.10*
 
@@ -22,9 +20,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[MQTT-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------
@@ -33,9 +29,7 @@ mqtt://name[?options]
 
 Where *name* is the name you want to assign the component.
 
-[[MQTT-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -46,12 +40,12 @@ The MQTT component supports 3 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| host | String | The URI of the MQTT broker to connect too - this component also supports SSL - e.g. ssl://127.0.0.1:8883
-| userName | String | Username to be used for authentication against the MQTT broker
-| password | String | Password to be used for authentication against the MQTT broker
+| Name | Group | Default | Java Type | Description
+| host | common |  | String | The URI of the MQTT broker to connect too - this component also supports SSL - e.g. ssl://127.0.0.1:8883
+| userName | security |  | String | Username to be used for authentication against the MQTT broker
+| password | security |  | String | Password to be used for authentication against the MQTT broker
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -103,8 +97,8 @@ The MQTT component supports 40 endpoint options which are listed below:
 | willQos | common | AtMostOnce | QoS | Sets the quality of service to use for the Will message. Defaults to AT_MOST_ONCE.
 | willRetain | common |  | QoS | Set to true if you want the Will to be published with the retain option.
 | willTopic | common |  | String | If set the server will publish the client's Will message to the specified topics if the client has an unexpected disconnection.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | lazySessionCreation | producer (advanced) | true | boolean | Sessions can be lazily created to avoid exceptions if the remote server is not up and running when the Camel producer is started.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
@@ -114,9 +108,7 @@ The MQTT component supports 40 endpoint options which are listed below:
 
 
 
-[[MQTT-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 Sending messages:
 
@@ -132,9 +124,7 @@ Consuming messages:
 from("mqtt:bar?subscribeTopicName=test.mqtt.topic").transform(body().convertToString()).to("mock:result")
 ---------------------------------------------------------------------------------------------------------
 
-[[MQTT-Endpoints]]
-Endpoints
-~~~~~~~~~
+### Endpoints
 
 Camel supports the link:message-endpoint.html[Message Endpoint] pattern
 using the
@@ -160,12 +150,9 @@ implements the link:polling-consumer.html[Polling Consumer] pattern for
 consuming message exchanges from the endpoint via a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/PollingConsumer.html[PollingConsumer]
 
-[[MQTT-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:message-endpoint.html[Message Endpoint] pattern
 * link:uris.html[URIs]
 * link:writing-components.html[Writing Components]
-

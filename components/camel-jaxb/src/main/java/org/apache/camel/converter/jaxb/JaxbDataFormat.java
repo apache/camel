@@ -106,6 +106,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
     private TypeConverter typeConverter;
     private Schema cachedSchema;
     private Map<String, Object> jaxbProviderProperties;
+    private boolean contentTypeHeader = true;
 
     public JaxbDataFormat() {
     }
@@ -166,6 +167,13 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
             }
             marshal(exchange, graph, stream, marshaller);
 
+            if (contentTypeHeader) {
+                if (exchange.hasOut()) {
+                    exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+                } else {
+                    exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+                }
+            }
         } catch (Exception e) {
             throw new IOException(e);
         }
@@ -436,6 +444,18 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     public void setJaxbProviderProperties(Map<String, Object> jaxbProviderProperties) {
         this.jaxbProviderProperties = jaxbProviderProperties;
+    }
+
+
+    public boolean isContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    /**
+     * If enabled then JAXB will set the Content-Type header to <tt>application/xml</tt> when marshalling.
+     */
+    public void setContentTypeHeader(boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 
     @Override

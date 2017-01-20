@@ -1,6 +1,4 @@
-[[Cometd-CometdComponent]]
-Cometd Component
-~~~~~~~~~~~~~~~~
+## CometD Component
 
 The *cometd:* component is a transport for working with the
 http://www.mortbay.org/jetty[jetty] implementation of the
@@ -23,9 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Cometd-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------------------------------------
@@ -35,9 +31,7 @@ cometd://host:port/channelName[?options]
 The *channelName* represents a topic that can be subscribed to by the
 Camel endpoints.
 
-[[Cometd-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
 ------------------------------------------
 cometd://localhost:8080/service/mychannel
@@ -46,9 +40,7 @@ cometds://localhost:8443/service/mychannel
 
 where `cometds:` represents an SSL configured endpoint.
 
-[[Cometd-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -59,15 +51,15 @@ The CometD component supports 6 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| sslKeyPassword | String | The password for the keystore when using SSL.
-| sslPassword | String | The password when using SSL.
-| sslKeystore | String | The path to the keystore.
-| securityPolicy | SecurityPolicy | To use a custom configured SecurityPolicy to control authorization
-| extensions | List | To use a list of custom BayeuxServer.Extension that allows modifying incoming and outgoing requests.
-| sslContextParameters | SSLContextParameters | To configure security using SSLContextParameters
+| Name | Group | Default | Java Type | Description
+| sslKeyPassword | security |  | String | The password for the keystore when using SSL.
+| sslPassword | security |  | String | The password when using SSL.
+| sslKeystore | security |  | String | The path to the keystore.
+| securityPolicy | security |  | SecurityPolicy | To use a custom configured SecurityPolicy to control authorization
+| extensions | common |  | List | To use a list of custom BayeuxServer.Extension that allows modifying incoming and outgoing requests.
+| sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -97,9 +89,9 @@ The CometD component supports 19 endpoint options which are listed below:
 | maxInterval | common | 30000 | int | The max client side poll timeout in milliseconds. A client will be removed if a connection is not received in this time.
 | multiFrameInterval | common | 1500 | int | The client side poll timeout if multiple connections are detected from the same browser.
 | timeout | common | 240000 | int | The server side poll timeout in milliseconds. This is how long the server will hold a reconnect request before responding.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | sessionHeadersEnabled | consumer | false | boolean | Whether to include the server session headers in the Camel message when creating a Camel Message for incoming requests.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | disconnectLocalSession | producer | false | boolean | Whether to disconnect local sessions after publishing a message to its channel. Disconnecting local session is needed as they are not swept by default by CometD and therefore you can run out of memory.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
@@ -120,9 +112,7 @@ For file (for webapp resources located in the Web Application directory
 the webapp folder -->
 cometd://localhost:8080?resourceBase=classpath:webapp
 
-[[Cometd-Authentication]]
-Authentication
-^^^^^^^^^^^^^^
+### Authentication
 
 *Available as of Camel 2.8*
 
@@ -130,13 +120,9 @@ You can configure custom `SecurityPolicy` and `Extension`'s to the
 `CometdComponent` which allows you to use authentication as
 http://cometd.org/documentation/howtos/authentication[documented here]
 
-[[Cometd-SettingupSSLforCometdComponent]]
-Setting up SSL for Cometd Component
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Setting up SSL for Cometd Component
 
-[[Cometd-UsingtheJSSEConfigurationUtility]]
-Using the JSSE Configuration Utility
-++++++++++++++++++++++++++++++++++++
+#### Using the JSSE Configuration Utility
 
 As of Camel 2.9, the Cometd component supports SSL/TLS configuration
 through the link:camel-configuration-utilities.html[Camel JSSE
@@ -198,12 +184,9 @@ Spring DSL based configuration of endpoint
   <to uri="cometds://127.0.0.1:443/service/test?baseResource=file:./target/test-classes/webapp&timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2"/>...
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[Cometd-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-
