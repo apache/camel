@@ -61,6 +61,11 @@ public class GitEndpoint extends DefaultEndpoint {
     @UriParam
     private String remoteName;
 
+    @UriParam
+    // Set to true For backward compatibility , better to set to false (native git behavior)
+    @Metadata(defaultValue = "true", label = "producer")
+    private boolean allowEmpty = true;
+
     @UriParam(enums = "clone,init,add,remove,commit,commitAll,createBranch,deleteBranch,createTag,deleteTag,status,log,push,pull,showBranches,cherryPick", label = "producer")
     private String operation;
 
@@ -190,4 +195,14 @@ public class GitEndpoint extends DefaultEndpoint {
         this.remoteName = remoteName;
     }
 
+    /**
+     * The flag to manage empty git commits
+     */
+    public boolean isAllowEmpty() {
+        return allowEmpty;
+    }
+
+    public void setAllowEmpty(boolean allowEmpty) {
+        this.allowEmpty = allowEmpty;
+    }
 }
