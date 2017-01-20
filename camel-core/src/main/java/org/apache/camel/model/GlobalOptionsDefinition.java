@@ -16,9 +16,9 @@
  */
 package org.apache.camel.model;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -50,11 +50,7 @@ public class GlobalOptionsDefinition {
     }
 
     public Map<String, String> asMap() {
-        Map<String, String> globalOptionsAsMap = new HashMap<>();
-        for (GlobalOptionDefinition globalOption : getGlobalOptions()) {
-            globalOptionsAsMap.put(globalOption.getKey(), globalOption.getValue());
-        }
-        return globalOptionsAsMap;
+        return getGlobalOptions().stream().collect(Collectors.toMap(o -> o.getKey(), o -> o.getValue(), (o1, o2) -> o2));
     }
 
 }
