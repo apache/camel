@@ -59,7 +59,7 @@ public class SbComponent extends UriEndpointComponent {
         boolean noCredentials = isBlank(configuration.getSasKeyName()) || isBlank(configuration.getSasKey());
         boolean noNamespace = isBlank(configuration.getNamespace()) || isBlank(configuration.getServiceBusRootUri());
 
-        if (noClient || (noCredentials && noNamespace)) {
+        if (noClient && (noCredentials || noNamespace)) {
             throw new IllegalArgumentException("serviceBusContract or sasKey, sasKeyName, serviceBusRootUri and namespace must be present.");
         }
 
