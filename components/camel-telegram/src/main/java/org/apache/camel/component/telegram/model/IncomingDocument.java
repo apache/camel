@@ -85,7 +85,7 @@ public class IncomingDocument {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("IncomingAudio{");
+        final StringBuilder sb = new StringBuilder("IncomingDocument{");
         sb.append("fileId='").append(fileId).append('\'');
         sb.append(", thumbSize='").append(thumb).append('\'');
         sb.append(", fileName='").append(fileName).append('\'');
