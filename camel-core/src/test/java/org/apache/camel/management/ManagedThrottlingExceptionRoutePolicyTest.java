@@ -123,11 +123,11 @@ public class ManagedThrottlingExceptionRoutePolicyTest  extends ManagementTestSu
         myState = proxy.currentState();
         assertTrue(myState.contains("State closed, failures 1, last failure"));
         
-        // the route has no failures
+        // the route has 1 failure
         val = proxy.getCurrentFailures();
         assertEquals(1, val.intValue());
         
-        // the route has no failures
+        // the route has 1 failure X mills ago
         lastFail = proxy.getLastFailure();
         assertTrue(lastFail.longValue() > 0);
     }
@@ -153,6 +153,8 @@ public class ManagedThrottlingExceptionRoutePolicyTest  extends ManagementTestSu
 
         @Override
         public void process(Exchange exchange) throws Exception {
+            // need to sleep a little to cause last failure to be slow
+            Thread.sleep(50);
             throw new RuntimeException("boom!");
         }
         
