@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.azure.servicebus;
 
-import java.util.Collection;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -26,8 +24,6 @@ import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.util.URISupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.microsoft.windowsazure.exception.ServiceException;
 import com.microsoft.windowsazure.services.servicebus.ServiceBusContract;
@@ -35,22 +31,14 @@ import com.microsoft.windowsazure.services.servicebus.models.BrokeredMessage;
 import com.microsoft.windowsazure.services.servicebus.models.ReceiveMessageOptions;
 
 public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractSbConsumer.class);
-    private transient String sbConsumerToString;
-    private Collection<String> attributeNames;
-    private Collection<String> messageAttributeNames;
 
-    public AbstractSbConsumer(Endpoint endpoint, Processor processor) {
+    private String sbConsumerToString;
+
+    AbstractSbConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
         setExceptionHandler(new LoggingExceptionHandler(endpoint.getCamelContext(), getClass(), LoggingLevel.ERROR));
     }
 
-    //    private boolean shouldDelete(Exchange exchange) {
-//        return getConfiguration().isPeekLock();
-////        return exchange.getProperty(Exchange.FILTER_MATCHED) != null
-////                && getConfiguration().isPeekLock()
-////                && exchange.getProperty(Exchange.FILTER_MATCHED, false, Boolean.class);
-//    }
     protected SbConfiguration getConfiguration() {
         return getEndpoint().getConfiguration();
     }
@@ -69,8 +57,8 @@ public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
             if (getConfiguration().isPeekLock()) {
                 BrokeredMessage delMsg = getLockBrokeredMessage(exchange);
                 getClient().deleteMessage(delMsg);
-                LOG.debug("delete message - LOCK_LOCATION: " + exchange.getIn().getHeader(SbConstants.LOCK_LOCATION, String.class));
-                LOG.debug("delete message - LOCK_TOKEN: " + exchange.getIn().getHeader(SbConstants.LOCK_TOKEN, String.class));
+                log.debug("delete message - LOCK_LOCATION: " + exchange.getIn().getHeader(SbConstants.LOCK_LOCATION, String.class));
+                log.debug("delete message - LOCK_TOKEN: " + exchange.getIn().getHeader(SbConstants.LOCK_TOKEN, String.class));
             }
         } catch (ServiceException e) {
             getExceptionHandler().handleException("Error occurred during deleting message from the Service Bus. This exception is ignored.", exchange, e);
@@ -88,11 +76,11 @@ public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
         if (getConfiguration().isPeekLock()) {
             try {
                 getClient().unlockMessage(getLockBrokeredMessage(exchange));
-                LOG.debug("unlock message - LOCK_LOCATION: " + exchange.getIn().getHeader(SbConstants.LOCK_LOCATION, String.class));
-                LOG.debug("unlock message - LOCK_TOKEN: " + exchange.getIn().getHeader(SbConstants.LOCK_TOKEN, String.class));
+                log.debug("unlock message - LOCK_LOCATION: " + exchange.getIn().getHeader(SbConstants.LOCK_LOCATION, String.class));
+                log.debug("unlock message - LOCK_TOKEN: " + exchange.getIn().getHeader(SbConstants.LOCK_TOKEN, String.class));
             } catch (ServiceException e) {
                 // do nothing. Because it will be unlock after timeout anyway.
-                LOG.debug("failed unlocking a message", e);
+                log.debug("failed unlocking a message", e);
             }
         }
 
@@ -144,8 +132,8 @@ public abstract class AbstractSbConsumer extends ScheduledPollConsumer {
                 }
             });
 
-            LOG.debug("Processing exchange [{}]...", exchange);
-            getAsyncProcessor().process(exchange, doneSync -> LOG.debug("Processing exchange [{}] done.", exchange));
+            log.debug("Processing exchange [{}]...", exchange);
+            getAsyncProcessor().process(exchange, doneSync -> log.debug("Processing exchange [{}] done.", exchange));
 
             return 1;
         } else {

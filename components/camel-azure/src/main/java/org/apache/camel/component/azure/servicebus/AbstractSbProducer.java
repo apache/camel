@@ -20,21 +20,18 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Map;
 
-import com.microsoft.windowsazure.exception.ServiceException;
-import com.microsoft.windowsazure.services.servicebus.ServiceBusContract;
-import com.microsoft.windowsazure.services.servicebus.models.BrokeredMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.URISupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import com.microsoft.windowsazure.exception.ServiceException;
+import com.microsoft.windowsazure.services.servicebus.ServiceBusContract;
+import com.microsoft.windowsazure.services.servicebus.models.BrokeredMessage;
 
 public abstract class AbstractSbProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractSbProducer.class);
 
     private transient String sbProducerToString;
-
 
     public AbstractSbProducer(AbstractSbEndpoint abstractSbEndpoint) throws NoFactoryAvailableException {
         super(abstractSbEndpoint);
@@ -110,7 +107,7 @@ public abstract class AbstractSbProducer extends DefaultProducer {
 
         translateAttributes(brokeredMessage, exchange.getIn().getHeaders());
 
-        LOG.trace("Sending request [{}] from exchange [{}]...", brokeredMessage, exchange);
+        log.trace("Sending request [{}] from exchange [{}]...", brokeredMessage, exchange);
 
         sendMessage(brokeredMessage);
     }

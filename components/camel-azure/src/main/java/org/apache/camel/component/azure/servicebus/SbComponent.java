@@ -16,7 +16,12 @@
  */
 package org.apache.camel.component.azure.servicebus;
 
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -32,91 +37,79 @@ public class SbComponent extends UriEndpointComponent {
         super(context, AbstractSbEndpoint.class);
     }
 
-    private EntityType toEntityType(String s) {
-        switch (s) {
-        case "queue":
-            return EntityType.QUEUE;
-        case "topic":
-            return EntityType.TOPIC;
-        case "event":
-            return EntityType.EVENT;
-        default:
-            throw new IllegalArgumentException("Entities type should be: queue/topic/event.");
-        }
-    }
-
     /**
-     * Usage:
      *
-     *   azure-sb://queue?queueName=MyQueue&ServiceBusContract=#MyServiceBusContract&timeout=2000&peekLock=true
-     *   azure-sb://<sasKeyName>:<sasKey>@<namespace>.<serviceBusRootUri>/<queue>?queueName=<queueName>&timeout=<timeout>&peekLock=<peekLock>
-     *
+     * @param uri full URI (e.g. azure-sb://queue or azure-sb://<sasKeyName>:<sasKey>@<namespace>.<serviceBusRootUri>/topic)
+     * @param remaining URI without the location part (e.g. <sasKeyName>:<sasKey>@<namespace>.<serviceBusRootUri>/queue)
+     * @param parameters URI parameters passed in (e.g. queueName, timeout, peekLock)
+     * @return a Camel endpoint for Azure Service Bus
      */
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        SbConfiguration configuration = new SbConfiguration();
-        setProperties(configuration, parameters);
-        //"azure-sb://queue?queueName=MyQueue&ServiceBusContract=#MyServiceBusContract&timeout=2000&peekLock=true
-        // azure-sb://<sasKeyName>:<sasKey>@<namespace>.<serviceBusRootUri>/<queue>?queueName=<queueName>&timeout=<timeout>&peekLock=<peekLock>
-        if (remaining == null || remaining.trim().length() == 0) {
-            throw new IllegalArgumentException("Entities must be specified.");
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
+
+        SbConfiguration configuration = parseRemaining(remaining);
+
+        try {
+            setProperties(configuration, parameters);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("failed to set Camel properties from passed in parameters", e);
         }
 
-        if (remaining.contains("/")) {
-            if (remaining.contains("@")) {
-                String[] siteParts = remaining.split("@");
-                String[] parts = siteParts[1].split("/");
-                if (parts.length != 2) {
-                    throw new IllegalArgumentException("1.Endpoint must be in format <sasKeyName>:<sasKey>@<namespace>.<serviceBusRootUri>/<entities>.");
-                }
-                if (siteParts.length != 2) {
-                    throw new IllegalArgumentException("2.Endpoint must be in format <sasKeyName>:<sasKey>@<namespace>.<serviceBusRootUri>.");
-                }
-                String[] sasParts = siteParts[0].split(":");
-                if (sasParts.length != 2) {
-                    throw new IllegalArgumentException("3.Endpoint must be in format <sasKeyName>:<sasKey>@<namespace>.<serviceBusRootUri>.");
-                }
-                configuration.setEntities(toEntityType(parts[1]));
+        boolean noClient = configuration.getServiceBusContract() == null;
+        boolean noCredentials = isBlank(configuration.getSasKeyName()) || isBlank(configuration.getSasKey());
+        boolean noNamespace = isBlank(configuration.getNamespace()) || isBlank(configuration.getServiceBusRootUri());
 
-                configuration.setSasKeyName(sasParts[0]);
-                configuration.setSasKey(sasParts[1]);
-                String[] domainParts = parts[0].split("\\.");
-                if (domainParts.length < 2) {
-                    throw new IllegalArgumentException("4.Endpoint must be in format <sasKeyName>:<sasKey>@<namespace>.<serviceBusRootUri>.");
-                }
-                configuration.setNamespace(domainParts[0]);
-                configuration.setServiceBusRootUri(parts[0].substring(domainParts[0].length()));
-
-            } else {
-                throw new IllegalArgumentException("5.Endpoint must be in format <sasKeyName>:<sasKey>@<namespace>.<serviceBusRootUri>.");
-            }
-        } else {
-            configuration.setEntities(toEntityType(remaining));
+        if (noClient || (noCredentials && noNamespace)) {
+            throw new IllegalArgumentException("serviceBusContract or sasKey, sasKeyName, serviceBusRootUri and namespace must be present.");
         }
 
-        if (configuration.getServiceBusContract() == null && (
-                configuration.getSasKey() == null
-                        || configuration.getSasKeyName() == null
-                        || configuration.getServiceBusRootUri() == null
-                        || configuration.getNamespace() == null)) {
-            throw new IllegalArgumentException("serviceBusContract or sasKey, sasKeyName, serviceBusRootUri and namespace must be specified.");
-        }
-
-        AbstractSbEndpoint abstractSbEndpoint;
+        AbstractSbEndpoint endpoint;
         switch (configuration.getEntities()) {
         case QUEUE:
-            abstractSbEndpoint = new SbQueueEndpoint(uri, this, configuration);
+            endpoint = new SbQueueEndpoint(uri, this, configuration);
             break;
         case TOPIC:
-            abstractSbEndpoint = new SbTopicEndpoint(uri, this, configuration);
+            endpoint = new SbTopicEndpoint(uri, this, configuration);
             break;
         case EVENT:
-            abstractSbEndpoint = new SbEventEndpoint(uri, this, configuration);
+            endpoint = new SbEventEndpoint(uri, this, configuration);
             break;
         default:
-            throw new Exception("Bad entities chanel.");
+            throw new IllegalArgumentException("Bad entities chanel.");
         }
-        abstractSbEndpoint.setConsumerProperties(parameters);
-        return abstractSbEndpoint;
+
+        endpoint.setConsumerProperties(parameters);
+        return endpoint;
+    }
+
+    static SbConfiguration parseRemaining(String remaining) {
+        SbConfiguration configuration = new SbConfiguration();
+
+        Pattern pattern = Pattern.compile("(.+):(.+)@(.+)/(.+)");
+        Matcher matcher = pattern.matcher(remaining);
+
+        if (defaultString(remaining).toUpperCase().matches("QUEUE|TOPIC|EVENT")) {
+            configuration.setEntities(SbConstants.EntityType.valueOf(remaining.toUpperCase()));
+        } else if (matcher.find()) {
+            configuration.setSasKeyName(matcher.group(1).trim());
+            configuration.setSasKey(matcher.group(2).trim());
+
+            String asbHost = matcher.group(3).trim();
+            String[] asbHostParts = asbHost.split("\\.", 2);
+            if (asbHostParts.length > 1) {
+                configuration.setNamespace(asbHostParts[0].trim());
+                configuration.setServiceBusRootUri("." + asbHostParts[1]);
+            } else {
+                configuration.setNamespace(asbHost);
+            }
+
+            SbConstants.EntityType entity = SbConstants.EntityType.valueOf(matcher.group(4).toUpperCase());
+            configuration.setEntities(entity);
+        } else {
+            String message = String.format("valid enpoint formats are:%n  <entity>?<parameter1=value1>&<parameter2=value>%n  <sasKeyName>:<sasKey>@<namespace>.<serviceBusRootUri>/<entity>?<parameter1=value1>&<parameter2=value>");
+            throw new IllegalArgumentException(message);
+        }
+
+        return configuration;
     }
 }

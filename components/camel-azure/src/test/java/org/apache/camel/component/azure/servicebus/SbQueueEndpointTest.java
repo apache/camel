@@ -1,15 +1,16 @@
 package org.apache.camel.component.azure.servicebus;
 
-import com.microsoft.windowsazure.services.servicebus.ServiceBusContract;
-import com.microsoft.windowsazure.services.servicebus.models.ListQueuesResult;
-import com.microsoft.windowsazure.services.servicebus.models.QueueInfo;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.impl.DefaultCamelContext;
 import org.easymock.EasyMock;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.microsoft.windowsazure.services.servicebus.ServiceBusContract;
+import com.microsoft.windowsazure.services.servicebus.models.ListQueuesResult;
+import com.microsoft.windowsazure.services.servicebus.models.QueueInfo;
 
 public class SbQueueEndpointTest {
     private AbstractSbEndpoint endpoint;
@@ -22,7 +23,7 @@ public class SbQueueEndpointTest {
         SbConfiguration config = new SbConfiguration();
         config.setServiceBusContract(sbContract);
         config.setQueueName("MyQueue");
-        config.setEntities(EntityType.QUEUE);
+        config.setEntities(SbConstants.EntityType.QUEUE);
 
         endpoint = new SbQueueEndpoint("azure-sb://queue?queueName=MyQueue", new SbComponent(new DefaultCamelContext()), config);
 

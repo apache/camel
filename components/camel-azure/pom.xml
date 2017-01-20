@@ -54,6 +54,7 @@
             <artifactId>azure-servicebus</artifactId>
             <version>0.9.7</version>
         </dependency>
+
         <!-- support camel documentation -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -65,18 +66,12 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.21</version>
+            <version>1.7.22</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.21</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
+            <version>1.7.22</version>
             <scope>test</scope>
         </dependency>
 

@@ -16,15 +16,16 @@
  */
 package org.apache.camel.component.azure.servicebus;
 
-import com.microsoft.windowsazure.services.servicebus.ServiceBusContract;
-import com.microsoft.windowsazure.services.servicebus.implementation.EntityStatus;
-import com.microsoft.windowsazure.services.servicebus.implementation.PartitioningPolicy;
-import com.microsoft.windowsazure.services.servicebus.models.ReceiveMode;
+import javax.xml.datatype.Duration;
+
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 
-import javax.xml.datatype.Duration;
+import com.microsoft.windowsazure.services.servicebus.ServiceBusContract;
+import com.microsoft.windowsazure.services.servicebus.implementation.EntityStatus;
+import com.microsoft.windowsazure.services.servicebus.implementation.PartitioningPolicy;
+import com.microsoft.windowsazure.services.servicebus.models.ReceiveMode;
 
 /**
  * azure-sb://<queue>?queueName=<queueName>&ServiceBusContract=<ServiceBusContract>
@@ -73,10 +74,8 @@ public class SbConfiguration {
     @UriParam(description = "placeholder")
     private String wrapRootUri;
 
-
-
     @UriParam(description = "placeholder")
-    private EntityType entities;
+    private SbConstants.EntityType entities;
     //common properties for topic, queue & event hub
     @UriParam(description = "placeholder")
     private Duration autoDeleteOnIdle;
@@ -505,11 +504,11 @@ public class SbConfiguration {
     public void setDefaultRuleDescription(String defaultRuleDescription) {
         this.defaultRuleDescription = defaultRuleDescription;
     }
-    public EntityType getEntities() {
+    public SbConstants.EntityType getEntities() {
         return entities;
     }
 
-    public void setEntities(EntityType entities) {
+    public void setEntities(SbConstants.EntityType entities) {
         this.entities = entities;
     }
     public String getRuleName() {
@@ -534,4 +533,5 @@ public class SbConfiguration {
     public void setDefaultMessageRetention(Long defaultMessageRetention) {
         this.defaultMessageRetention = defaultMessageRetention;
     }
+
 }

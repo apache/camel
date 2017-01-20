@@ -42,6 +42,12 @@ public final class SbConstants {
 
     public static final String DEFAULT_CONTENT_TYPE = "application/json";
 
+    public enum EntityType {
+        QUEUE,
+        TOPIC,
+        EVENT
+    }
+
     private SbConstants() {
     }
 }
