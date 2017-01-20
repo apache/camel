@@ -46,7 +46,7 @@ The AWS S3 Storage Service component has no options.
 
 
 // endpoint options: START
-The AWS S3 Storage Service component supports 40 endpoint options which are listed below:
+The AWS S3 Storage Service component supports 41 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -61,6 +61,7 @@ The AWS S3 Storage Service component supports 40 endpoint options which are list
 | proxyHost | common |  | String | Camel 2.16: To define a proxy host when instantiating the SQS client
 | proxyPort | common |  | Integer | Camel 2.16: Specify a proxy port to be used inside the client definition.
 | secretKey | common |  | String | Amazon AWS Secret Key
+| autocloseBody | consumer | true | boolean | If this option is true and includeBody is true then the S3Object.close() method will be called on exchange completion
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | deleteAfterRead | consumer | true | boolean | Delete objects from S3 after they have been retrieved. The delete is only performed if the Exchange is committed. If a rollback occurs the object is not deleted. If this option is false then the same objects will be retrieve over and over again on the polls. Therefore you need to use the Idempotent Consumer EIP in the route to filter out duplicates. You can filter using the link S3ConstantsBUCKET_NAME and link S3ConstantsKEY headers or only the link S3ConstantsKEY header.
 | fileName | consumer |  | String | To get the object from the bucket with the given file name
