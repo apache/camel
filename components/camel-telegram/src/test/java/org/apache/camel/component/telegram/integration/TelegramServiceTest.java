@@ -20,7 +20,12 @@ import java.io.IOException;
 
 import org.apache.camel.component.telegram.TelegramService;
 import org.apache.camel.component.telegram.TelegramServiceProvider;
-import org.apache.camel.component.telegram.model.*;
+import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
+import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
+import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
+import org.apache.camel.component.telegram.model.OutgoingTextMessage;
+import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
+import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.junit.Assert;
 import org.junit.BeforeClass;
