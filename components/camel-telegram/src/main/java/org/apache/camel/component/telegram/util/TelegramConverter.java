@@ -158,17 +158,16 @@ public final class TelegramConverter {
         }
         case DOCUMENT:
         default: {
-                // this can be any file
-                OutgoingDocumentMessage document = new OutgoingDocumentMessage();
-                String title = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
-                String fileName = "file." + type.getFileExtension();
+            // this can be any file
+            OutgoingDocumentMessage document = new OutgoingDocumentMessage();
+            String title = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
 
-                document.setCaption(title);
-                document.setFilenameWithExtension(fileName);
-                document.setDocument(message);
+            document.setCaption(title);
+            document.setFilenameWithExtension("file");
+            document.setDocument(message);
 
-                result = document;
-                break;
+            result = document;
+            break;
             }
         }
 
