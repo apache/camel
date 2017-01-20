@@ -37,6 +37,7 @@
     <module>camel-example-box-osgi</module>
     <module>camel-example-cafe</module>
     <module>camel-example-cdi</module>
+    <module>camel-example-cdi-aws-s3</module>
     <module>camel-example-cdi-cassandraql</module>
     <module>camel-example-cdi-kubernetes</module>
     <module>camel-example-cdi-metrics</module>
