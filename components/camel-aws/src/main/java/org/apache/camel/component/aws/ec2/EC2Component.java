@@ -40,8 +40,8 @@ public class EC2Component extends UriEndpointComponent {
         EC2Configuration configuration = new EC2Configuration();
         setProperties(configuration, parameters);
         
-        if (configuration.getAmazonEc2Client() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("amazonEC2Client or accessKey and secretKey must be specified");
+        if (configuration.getAmazonEc2Client() == null) {
+            throw new IllegalArgumentException("amazonEC2Client must be specified");
         }
         
         EC2Endpoint endpoint = new EC2Endpoint(uri, this, configuration);

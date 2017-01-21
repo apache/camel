@@ -135,14 +135,27 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
 
     AmazonDynamoDB createDdbClient() {
         AmazonDynamoDB client = null;
-        AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+        ClientConfiguration clientConfiguration = null;
+        boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-            ClientConfiguration clientConfiguration = new ClientConfiguration();
+            clientConfiguration = new ClientConfiguration();
             clientConfiguration.setProxyHost(configuration.getProxyHost());
             clientConfiguration.setProxyPort(configuration.getProxyPort());
-            client = new AmazonDynamoDBClient(credentials, clientConfiguration);
+            isClientConfigFound = true;
+        }
+        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+            AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+            if (isClientConfigFound) {
+                client = new AmazonDynamoDBClient(credentials, clientConfiguration);
+            } else {
+                client = new AmazonDynamoDBClient(credentials);
+            }
         } else {
-            client = new AmazonDynamoDBClient(credentials);
+            if (isClientConfigFound) {
+                client = new AmazonDynamoDBClient();
+            } else {
+                client = new AmazonDynamoDBClient(clientConfiguration);
+            }
         }
         return client;
     }
