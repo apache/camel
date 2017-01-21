@@ -53,8 +53,8 @@ public class SqsComponent extends UriEndpointComponent {
             configuration.setQueueName(remaining);
         }
 
-        if (configuration.getAmazonSQSClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("AmazonSQSClient or accessKey and secretKey must be specified.");
+        if (configuration.getAmazonSQSClient() == null) {
+            throw new IllegalArgumentException("AmazonSQSClient must be specified.");
         }
         
         // Verify that visibilityTimeout is set if extendMessageVisibility is set to true.
