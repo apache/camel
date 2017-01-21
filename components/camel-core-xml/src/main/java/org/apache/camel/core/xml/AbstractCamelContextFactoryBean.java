@@ -175,6 +175,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getGlobalOptions() != null) {
             mergedOptions.putAll(getGlobalOptions().asMap());
         }
+
         getContext().setGlobalOptions(mergedOptions);
 
         // and enable lazy loading of type converters if applicable
