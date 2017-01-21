@@ -41,7 +41,6 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(scheme = "gridfs", title = "MongoDBGridFS", syntax = "gridfs:connectionBean", label = "database,nosql")
 public class GridFsEndpoint extends DefaultEndpoint {
 
-    ;
     public static final String GRIDFS_OPERATION = "gridfs.operation";
     public static final String GRIDFS_METADATA = "gridfs.metadata";
     public static final String GRIDFS_CHUNKSIZE = "gridfs.chunksize";
