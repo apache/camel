@@ -25,7 +25,7 @@ public class BeverageTest extends CamelTestSupport {
 
     @Test
     public void testBeverage() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Total 2 of wine ordered");
+        getMockEndpoint("mock:result").expectedBodiesReceived("total 2 of wine ordered");
 
         template.sendBody("direct:bar", "Hello World");
 
