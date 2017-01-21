@@ -136,7 +136,7 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
     public static class MyTransformer extends Transformer {
         @Override
         public void transform(Message message, DataType from, DataType to) throws Exception {
-            return;
+            // empty
         }
     }
 }
