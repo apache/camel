@@ -98,12 +98,12 @@ public class CwEndpoint extends DefaultEndpoint {
         ClientConfiguration clientConfiguration = null;
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-        	clientConfiguration = new ClientConfiguration();
+            clientConfiguration = new ClientConfiguration();
             clientConfiguration.setProxyHost(configuration.getProxyHost());
             clientConfiguration.setProxyPort(configuration.getProxyPort());
             isClientConfigFound = true;
         }
-        if( (configuration.getAccessKey() != null && configuration.getSecretKey() != null) ) {
+        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             if (isClientConfigFound) {
                 client = new AmazonCloudWatchClient(credentials, clientConfiguration);
@@ -111,8 +111,8 @@ public class CwEndpoint extends DefaultEndpoint {
                 client = new AmazonCloudWatchClient(credentials);
             }
         } else {
-        	if (isClientConfigFound) {
-        		client = new AmazonCloudWatchClient();
+            if (isClientConfigFound) {
+                client = new AmazonCloudWatchClient();
             } else {
                 client = new AmazonCloudWatchClient(clientConfiguration);
             }
