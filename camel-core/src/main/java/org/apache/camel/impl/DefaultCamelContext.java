@@ -4282,18 +4282,18 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     @Deprecated
     @Override
-    public String getProperty(String name) {
-        return getGlobalOption(name);
+    public String getProperty(String key) {
+        return getGlobalOption(key);
     }
 
     @Override
-    public String getGlobalOption(String name) {
-        String value = getGlobalOptions().get(name);
+    public String getGlobalOption(String key) {
+        String value = getGlobalOptions().get(key);
         if (ObjectHelper.isNotEmpty(value)) {
             try {
                 value = resolvePropertyPlaceholders(value);
             } catch (Exception e) {
-                throw new RuntimeCamelException("Error getting global option: " + name, e);
+                throw new RuntimeCamelException("Error getting global option: " + key, e);
             }
         }
         return value;
