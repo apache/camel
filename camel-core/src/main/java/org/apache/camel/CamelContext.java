@@ -1303,7 +1303,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * @deprecated use {@link #getGlobalOption(String)} instead.
      */
-    String getProperty(String name);
+    String getProperty(String key);
 
     /**
      * Gets the global option value that can be referenced in the camel context
@@ -1315,7 +1315,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @return the string value of the global option
      */
-    String getGlobalOption(String name);
+    String getGlobalOption(String key);
 
     /**
      * Gets the default FactoryFinder which will be used for the loading the factory class from META-INF

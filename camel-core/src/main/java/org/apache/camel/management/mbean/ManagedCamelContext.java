@@ -143,19 +143,37 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         }
     }
 
+    @Deprecated
     public Map<String, String> getProperties() {
+        return getGlobalOptions();
+    }
+
+    @Override
+    public Map<String, String> getGlobalOptions() {
         if (context.getGlobalOptions().isEmpty()) {
             return null;
         }
         return context.getGlobalOptions();
     }
 
-    public String getProperty(String name) throws Exception {
-        return context.getGlobalOption(name);
+    @Deprecated
+    public String getProperty(String key) throws Exception {
+        return getGlobalOption(key);
     }
 
-    public void setProperty(String name, String value) throws Exception {
-        context.getGlobalOptions().put(name, value);
+    @Override
+    public String getGlobalOption(String key) throws Exception {
+        return context.getGlobalOption(key);
+    }
+
+    @Deprecated
+    public void setProperty(String key, String value) throws Exception {
+        setGlobalOption(key, value);
+    }
+
+    @Override
+    public void setGlobalOption(String key, String value) throws Exception {
+        context.getGlobalOptions().put(key, value);
     }
 
     public Boolean getTracing() {
