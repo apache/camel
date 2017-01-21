@@ -269,14 +269,27 @@ public class SqsEndpoint extends ScheduledPollEndpoint implements HeaderFilterSt
      */
     AmazonSQS createClient() {
         AmazonSQS client = null;
-        AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+        ClientConfiguration clientConfiguration = null;
+        boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-            ClientConfiguration clientConfiguration = new ClientConfiguration();
+            clientConfiguration = new ClientConfiguration();
             clientConfiguration.setProxyHost(configuration.getProxyHost());
             clientConfiguration.setProxyPort(configuration.getProxyPort());
-            client = new AmazonSQSClient(credentials, clientConfiguration);
+            isClientConfigFound = true;
+        }
+        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+            AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+            if (isClientConfigFound) {
+                client = new AmazonSQSClient(credentials, clientConfiguration);
+            } else {
+                client = new AmazonSQSClient(credentials);
+            }
         } else {
-            client = new AmazonSQSClient(credentials);
+            if (isClientConfigFound) {
+                client = new AmazonSQSClient();
+            } else {
+                client = new AmazonSQSClient(clientConfiguration);
+            }
         }
         return client;
     }
