@@ -48,7 +48,7 @@ The CouchDB component has no options.
 // component options: END
 
 // endpoint options: START
-The CouchDB component supports 15 endpoint options which are listed below:
+The CouchDB component supports 16 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -62,6 +62,7 @@ The CouchDB component supports 15 endpoint options which are listed below:
 | deletes | common | true | boolean | Document deletes are published as events
 | heartbeat | common | 30000 | long | How often to send an empty message to keep socket alive in millis
 | password | common |  | String | Password for authenticated databases
+| since | common |  | String | Start tracking changes immediately after the given update sequence. The default null will start monitoring from the latest sequence.
 | style | common | main_only | String | Specifies how many revisions are returned in the changes array. The default main_only will only return the current winning revision; all_docs will return all leaf revisions (including conflicts and deleted former conflicts.)
 | updates | common | true | boolean | Document inserts/updates are published as events
 | username | common |  | String | Username in case of authenticated databases
