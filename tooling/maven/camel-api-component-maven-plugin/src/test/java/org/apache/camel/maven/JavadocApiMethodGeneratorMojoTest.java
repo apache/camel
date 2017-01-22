@@ -38,6 +38,15 @@ public class JavadocApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest
             outFile.delete();
         }
 
+        final JavadocApiMethodGeneratorMojo mojo = createGeneratorMojo();
+        mojo.execute();
+
+        // check target file was generated
+        assertExists(outFile);
+    }
+
+    @Override
+    protected JavadocApiMethodGeneratorMojo createGeneratorMojo() {
         final JavadocApiMethodGeneratorMojo mojo = new JavadocApiMethodGeneratorMojo();
 
         configureSourceGeneratorMojo(mojo);
@@ -52,11 +61,6 @@ public class JavadocApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest
         mojo.excludePackages = JavadocApiMethodGeneratorMojo.DEFAULT_EXCLUDE_PACKAGES;
         mojo.includeMethods = ".+";
         mojo.excludeMethods = "clone|Current|internal|icache";
-
-        mojo.execute();
-
-        // check target file was generated
-        assertExists(outFile);
+        return mojo;
     }
-
 }
