@@ -39,6 +39,9 @@ public class GlobalOptionDefinition {
     public GlobalOptionDefinition() {
     }
 
+    /**
+     * Global option key
+     */
     public void setKey(String key) {
         this.key = key;
     }
@@ -47,6 +50,9 @@ public class GlobalOptionDefinition {
         return key;
     }
 
+    /**
+     * Global option value
+     */
     public void setValue(String value) {
         this.value = value;
     }
