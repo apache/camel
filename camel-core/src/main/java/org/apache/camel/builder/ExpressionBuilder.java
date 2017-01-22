@@ -647,8 +647,19 @@ public final class ExpressionBuilder {
      * Returns an expression for the properties of exchange
      *
      * @return an expression object which will return the properties
+     * @deprecated use {@link #exchangeExceptionExpression()} instead
      */
+    @Deprecated
     public static Expression propertiesExpression() {
+        return exchangeExceptionExpression();
+    }
+    
+    /**
+     * Returns an expression for the exchange properties of exchange
+     *
+     * @return an expression object which will return the exchange properties
+     */
+    public static Expression exchangePropertiesExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getProperties();
@@ -656,11 +667,11 @@ public final class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "properties";
+                return "exchangeProperties";
             }
         };
     }
-    
+
     /**
      * Returns an expression for the properties of the camel context
      *

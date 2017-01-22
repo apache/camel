@@ -200,9 +200,19 @@ public class ExpressionClauseSupport<T> {
 
     /**
      * An expression of the exchange properties
+     *
+     * @deprecated use {@link #exchangeProperties()} instead
      */
+    @Deprecated
     public T properties() {
-        return expression(ExpressionBuilder.propertiesExpression());
+        return exchangeProperties();
+    }
+
+    /**
+     * An expression of the exchange properties
+     */
+    public T exchangeProperties() {
+        return expression(ExpressionBuilder.exchangePropertiesExpression());
     }
 
     // Languages
