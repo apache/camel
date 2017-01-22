@@ -16,9 +16,9 @@
  */
 package org.apache.camel.maven;
 
-import org.apache.maven.plugins.annotations.Parameter;
-
 import java.io.File;
+
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Base class for API based code generation MOJOs.
@@ -40,18 +40,19 @@ public abstract class AbstractSourceGeneratorMojo extends AbstractGeneratorMojo 
 
     protected void setCompileSourceRoots() {
         switch (addCompileSourceRoots) {
-            case source:
-                project.addCompileSourceRoot(generatedSrcDir.getAbsolutePath());
-                project.addCompileSourceRoot(generatedTestDir.getAbsolutePath());
-                break;
-            case test:
-                project.addTestCompileSourceRoot(generatedSrcDir.getAbsolutePath());
-                project.addTestCompileSourceRoot(generatedTestDir.getAbsolutePath());
-                break;
-            case all:
-                project.addCompileSourceRoot(generatedSrcDir.getAbsolutePath());
-                project.addTestCompileSourceRoot(generatedTestDir.getAbsolutePath());
-                break;
+        case source:
+            project.addCompileSourceRoot(generatedSrcDir.getAbsolutePath());
+            project.addCompileSourceRoot(generatedTestDir.getAbsolutePath());
+            break;
+        case test:
+            project.addTestCompileSourceRoot(generatedSrcDir.getAbsolutePath());
+            project.addTestCompileSourceRoot(generatedTestDir.getAbsolutePath());
+            break;
+        case all:
+            project.addCompileSourceRoot(generatedSrcDir.getAbsolutePath());
+            project.addTestCompileSourceRoot(generatedTestDir.getAbsolutePath());
+            break;
+        default:
         }
     }
 
