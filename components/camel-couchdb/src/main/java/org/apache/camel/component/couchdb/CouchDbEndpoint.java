@@ -64,6 +64,8 @@ public class CouchDbEndpoint extends DefaultEndpoint {
     private boolean deletes = true;
     @UriParam(defaultValue = "true")
     private boolean updates = true;
+    @UriParam
+    private String since;
 
     public CouchDbEndpoint() {
     }
@@ -243,5 +245,17 @@ public class CouchDbEndpoint extends DefaultEndpoint {
      */
     public void setUpdates(boolean updates) {
         this.updates = updates;
+    }
+
+    public String getSince() {
+        return since;
+    }
+
+    /**
+     * Start tracking changes immediately after the given update sequence.
+     * The default, null, will start monitoring from the latest sequence.
+     */
+    public void setSince(String since) {
+        this.since = since;
     }
 }
