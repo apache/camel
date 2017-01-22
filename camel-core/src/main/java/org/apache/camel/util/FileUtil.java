@@ -267,14 +267,23 @@ public final class FileUtil {
      * and uses OS specific file separators (eg {@link java.io.File#separator}).
      */
     public static String compactPath(String path) {
-        return compactPath(path, File.separatorChar);
+        return compactPath(path, "" + File.separatorChar);
+    }
+
+    /**
+     * Compacts a path by stacking it and reducing <tt>..</tt>,
+     * and uses the given separator.
+     *
+     */
+    public static String compactPath(String path, char separator) {
+        return compactPath(path, "" + separator);
     }
 
     /**
      * Compacts a path by stacking it and reducing <tt>..</tt>,
      * and uses the given separator.
      */
-    public static String compactPath(String path, char separator) {
+    public static String compactPath(String path, String separator) {
         if (path == null) {
             return null;
         }
