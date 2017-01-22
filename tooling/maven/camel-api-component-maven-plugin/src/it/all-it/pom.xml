@@ -126,6 +126,7 @@
               <goal>fromApis</goal>
             </goals>
             <configuration>
+              <addCompileSourceRoots>test</addCompileSourceRoots>
               <apis>
                 <api>
                   <apiName>test</apiName>
@@ -185,26 +186,6 @@
                   </aliases>
                 </api>
               </apis>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <!-- add generated source and test source to build for test-compile -->
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <version>@build-helper-maven-plugin-version@</version>
-        <executions>
-          <execution>
-            <id>add-generated-test-sources</id>
-            <goals>
-              <goal>add-test-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${project.build.directory}/generated-sources/camel-component</source>
-                <source>${project.build.directory}/generated-test-sources/camel-component</source>
-              </sources>
             </configuration>
           </execution>
         </executions>
