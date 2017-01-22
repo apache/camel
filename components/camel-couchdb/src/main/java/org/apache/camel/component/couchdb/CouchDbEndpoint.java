@@ -50,21 +50,21 @@ public class CouchDbEndpoint extends DefaultEndpoint {
     private int port;
     @UriPath @Metadata(required = "true")
     private String database;
-    @UriParam(enums = "all_docs,main_only", defaultValue = DEFAULT_STYLE)
+    @UriParam(label = "consumer", enums = "all_docs,main_only", defaultValue = DEFAULT_STYLE)
     private String style = DEFAULT_STYLE;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String username;
-    @UriParam
+    @UriParam(label = "security", secret = true)
     private String password;
-    @UriParam(defaultValue = "" + DEFAULT_HEARTBEAT)
+    @UriParam(label = "consumer", defaultValue = "" + DEFAULT_HEARTBEAT)
     private long heartbeat = DEFAULT_HEARTBEAT;
     @UriParam
     private boolean createDatabase;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "true")
     private boolean deletes = true;
-    @UriParam(defaultValue = "true")
+    @UriParam(label = "consumer", defaultValue = "true")
     private boolean updates = true;
-    @UriParam
+    @UriParam(label = "consumer")
     private String since;
 
     public CouchDbEndpoint() {
