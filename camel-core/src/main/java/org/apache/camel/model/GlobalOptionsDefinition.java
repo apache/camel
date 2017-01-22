@@ -16,9 +16,10 @@
  */
 package org.apache.camel.model;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -27,38 +28,29 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * A series of key value pair
- *
- * @deprecated Use {@link GlobalOptionsDefinition} instead.
+ * Models a series of string key/value pairs for configuring some global options
+ * on a Camel context such as max debug log length.
  */
 @Metadata(label = "configuration")
-@XmlRootElement(name = "properties")
+@XmlRootElement(name = "globalOptions")
 @XmlAccessorType(XmlAccessType.FIELD)
-@Deprecated
-public class PropertiesDefinition {
-    @XmlElement(name = "property")
-    private List<PropertyDefinition> properties;
-    
-    public PropertiesDefinition() {
+public class GlobalOptionsDefinition {
+    @XmlElement(name = "globalOption")
+    private List<GlobalOptionDefinition> globalOptions;
+
+    public GlobalOptionsDefinition() {
     }
 
-    /**
-     * A series of properties as key value pairs
-     */
-    public void setProperties(List<PropertyDefinition> properties) {
-        this.properties = properties;
+    public void setGlobalOptions(List<GlobalOptionDefinition> globalOptions) {
+        this.globalOptions = globalOptions;
     }
-    
-    public List<PropertyDefinition> getProperties() {
-        return properties;
+
+    public List<GlobalOptionDefinition> getGlobalOptions() {
+        return globalOptions;
     }
-    
+
     public Map<String, String> asMap() {
-        Map<String, String> propertiesAsMap = new HashMap<String, String>();
-        for (PropertyDefinition propertyType : getProperties()) {
-            propertiesAsMap.put(propertyType.getKey(), propertyType.getValue());
-        }
-        return propertiesAsMap;
+        return getGlobalOptions().stream().collect(Collectors.toMap(o -> o.getKey(), o -> o.getValue(), (o1, o2) -> o2));
     }
 
 }

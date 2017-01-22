@@ -30,6 +30,8 @@ ExpressionSubElementDefinition
 FilterDefinition
 FinallyDefinition
 FromDefinition
+GlobalOptionsDefinition
+GlobalOptionDefinition
 HystrixDefinition
 HystrixConfigurationDefinition
 IdempotentConsumerDefinition

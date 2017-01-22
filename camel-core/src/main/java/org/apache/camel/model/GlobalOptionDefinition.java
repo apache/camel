@@ -16,49 +16,42 @@
  */
 package org.apache.camel.model;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.spi.Metadata;
 
 /**
- * A series of key value pair
- *
- * @deprecated Use {@link GlobalOptionsDefinition} instead.
+ * Models a string key/value pair for configuring some global options on a Camel
+ * context such as max debug log length.
  */
 @Metadata(label = "configuration")
-@XmlRootElement(name = "properties")
+@XmlRootElement(name = "globalOption")
 @XmlAccessorType(XmlAccessType.FIELD)
-@Deprecated
-public class PropertiesDefinition {
-    @XmlElement(name = "property")
-    private List<PropertyDefinition> properties;
-    
-    public PropertiesDefinition() {
+public class GlobalOptionDefinition {
+    @XmlAttribute(required = true)
+    String key;
+    @XmlAttribute(required = true)
+    String value;
+
+    public GlobalOptionDefinition() {
     }
 
-    /**
-     * A series of properties as key value pairs
-     */
-    public void setProperties(List<PropertyDefinition> properties) {
-        this.properties = properties;
-    }
-    
-    public List<PropertyDefinition> getProperties() {
-        return properties;
-    }
-    
-    public Map<String, String> asMap() {
-        Map<String, String> propertiesAsMap = new HashMap<String, String>();
-        for (PropertyDefinition propertyType : getProperties()) {
-            propertiesAsMap.put(propertyType.getKey(), propertyType.getValue());
-        }
-        return propertiesAsMap;
+    public void setKey(String key) {
+        this.key = key;
     }
 
+    public String getKey() {
+        return key;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }
