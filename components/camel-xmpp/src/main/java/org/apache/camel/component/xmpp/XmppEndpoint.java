@@ -107,13 +107,16 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public Producer createProducer() throws Exception {
         if (room != null) {
             return createGroupChatProducer();
+
         } else {
             if (isPubsub()) {
                 return createPubSubProducer();
             }
-            if (getParticipant() == null) {
-                throw new IllegalArgumentException("No room or participant configured on this endpoint: " + this);
+
+            if (getParticipant(true) == null) {
+            	return createDirectProducer();
             }
+
             return createPrivateChatProducer(getParticipant());
         }
     }
@@ -128,6 +131,10 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     public Producer createPubSubProducer() throws Exception {
         return new XmppPubSubProducer(this);
+    }
+
+    public Producer createDirectProducer() throws Exception {
+        return new XmppDirectProducer(this);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -369,6 +376,11 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
      */
     public void setRoom(String room) {
         this.room = room;
+    }
+    
+    private String getParticipant(boolean isStrict) {
+    	if (isStrict) return participant;
+    	else return getParticipant();
     }
 
     public String getParticipant() {
