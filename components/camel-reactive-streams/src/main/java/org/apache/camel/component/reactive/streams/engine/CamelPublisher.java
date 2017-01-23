@@ -70,15 +70,18 @@ public class CamelPublisher implements Publisher<StreamPayload<Exchange>>, AutoC
     public void publish(StreamPayload<Exchange> data) {
         // freeze the subscriptions
         List<CamelSubscription> subs = new LinkedList<>(subscriptions);
+
         DispatchCallback<Exchange> originalCallback = data.getCallback();
         if (originalCallback != null && subs.size() > 0) {
-            // Notify processing once if multiple subscribers are present
-            AtomicInteger counter = new AtomicInteger(0);
+            // When multiple subscribers have an active subscription,
+            // we aknowledge the exchange once it has been delivered to every
+            // subscriber (or their subscription is cancelled)
+            AtomicInteger counter = new AtomicInteger(subs.size());
+            // Use just the first exception in the callback when multiple exceptions are thrown
             AtomicReference<Throwable> thrown = new AtomicReference<>(null);
             data = new StreamPayload<>(data.getItem(), (ex, error) -> {
-                int status = counter.incrementAndGet();
                 thrown.compareAndSet(null, error);
-                if (status == subs.size()) {
+                if (counter.decrementAndGet() == 0) {
                     originalCallback.processed(ex, thrown.get());
                 }
             });
