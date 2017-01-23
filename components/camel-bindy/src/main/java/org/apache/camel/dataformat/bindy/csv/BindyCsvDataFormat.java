@@ -140,7 +140,9 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             int count = 0;
 
             if (factory.isMultiLine()) {
-                try (final CSVParser parser = new CSVParser(in, CSVFormat.RFC4180)) {
+                try (final CSVParser parser = new CSVParser(in, factory.getSkipFirstLine() ? CSVFormat.RFC4180.withFirstRecordAsHeader()
+                                                                                           : CSVFormat.RFC4180)) {
+
                     final Iterator<CSVRecord> csvRecords = parser.iterator();
                     while (csvRecords.hasNext()) {
                         final CSVRecord csvRecord = csvRecords.next();

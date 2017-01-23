@@ -51,7 +51,8 @@ public class BindyMultilineCsvUnmarshallTest extends AbstractJUnit4SpringContext
     @DirtiesContext
     public void testMultilineCsvUnmarshall() throws Exception {
 
-        expected = "ACDT,\"Australian Central Daylight Savings Time\r\nUTC+10:30\",,A,\"1000\",1000,1.000,\"1.000\",\r\n" 
+        expected = "name,description,comment,char,number1,number2,number3,number4,number5\r\n" 
+                 + "ACDT,\"Australian Central Daylight Savings Time\r\nUTC+10:30\",,A,\"1000\",1000,1.000,\"1.000\",\r\n" 
                  + "\"BST\",\"British Summer Time\r\nUTC+01\",\"a.k.a British Standard Time \"\"from Feb, 1968 to Oct, 1971\"\"\",B,2000,\"2000\",\"2.000\",2.000,\"20.02\"\r\n" 
                  + "\"CDT\",\"Central Daylight Time\r\nUTC-05\",\"North America\",\"C\",,3000,,\"3.000\",\"30.03\"\r\n" 
                  + "\"AEST\",\"\"\"Australia\"\" Eastern Summer Time\r\nUTC+10\",E.g. Brisbane,,\"4000\",4000,4.000,\"4.000\",\"40.04\"\r\n" 
@@ -130,7 +131,7 @@ public class BindyMultilineCsvUnmarshallTest extends AbstractJUnit4SpringContext
 
     }
 
-    @CsvRecord(separator = ",", multiLine = true)
+    @CsvRecord(separator = ",", skipFirstLine = true, multiLine = true)
     public static class MultiLineModel {
 
         @DataField(pos = 1)
