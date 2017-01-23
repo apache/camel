@@ -66,6 +66,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private boolean messageOrdered;
     private String quote;
     private boolean quoting;
+    private boolean multiLine;
     private boolean autospanLine;
 
     public BindyCsvFactory(Class<?> type) throws Exception {
@@ -397,7 +398,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                 if (obj != null) {
 
                     // Retrieve the format, pattern and precision associated to the type
-                    Class<?> type = field.getType();
+//                    Class<?> type = field.getType(); // unused
 
                     // Create format
                     FormattingOptions formattingOptions = ConverterUtils.convert(datafield,
@@ -568,6 +569,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     quoting = record.quoting();
                     LOG.debug("CSV will be quoted: {}", quoting);
 
+                    multiLine = record.multiLine();
+                    LOG.debug("Multi Line: {}", multiLine);
+
                     autospanLine = record.autospanLine();
                     LOG.debug("Autospan line in last record: {}", autospanLine);
                 }
@@ -647,6 +651,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     public String getQuote() {
         return quote;
+    }
+
+    public boolean isMultiLine() {
+        return multiLine;
     }
 
     public int getMaxpos() {

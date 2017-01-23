@@ -85,4 +85,9 @@ public @interface CsvRecord {
      */
     boolean autospanLine() default false;
 
+    /**
+     * Indicate if any of the fields contain new line character(s)
+     * (optional)
+     */
+    boolean multiLine() default false;
 }
