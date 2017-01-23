@@ -78,12 +78,8 @@ public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfigurat
     protected void doStart() throws Exception {
         super.doStart();
 
-        if (cachedBoxClient == null) {
-            if (configuration != null) {
-                cachedBoxClient = BoxClientHelper.createBoxClient(configuration);
-            } else {
-                throw new IllegalArgumentException("Unable to connect, Box component configuration is missing");
-            }
+        if (cachedBoxClient == null && configuration != null) {
+            cachedBoxClient = BoxClientHelper.createBoxClient(configuration);
         }
     }
 
