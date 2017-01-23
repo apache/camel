@@ -46,16 +46,18 @@ public class UnwrappingPublisher<R> implements Publisher<R> {
             private Subscription subscription;
 
             @Override
-            public void onSubscribe(Subscription subscription) {
-                if (subscription == null) {
+            public void onSubscribe(Subscription newSubscription) {
+                if (newSubscription == null) {
                     throw new NullPointerException("subscription is null");
+                } else if (newSubscription == this.subscription) {
+                    throw new IllegalArgumentException("already subscribed to the subscription: " + newSubscription);
                 }
 
                 if (this.subscription != null) {
-                    subscription.cancel();
+                    newSubscription.cancel();
                 } else {
-                    this.subscription = subscription;
-                    subscriber.onSubscribe(subscription);
+                    this.subscription = newSubscription;
+                    subscriber.onSubscribe(newSubscription);
                 }
             }
 

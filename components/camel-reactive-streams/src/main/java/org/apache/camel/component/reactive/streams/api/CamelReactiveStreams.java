@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -40,7 +41,7 @@ public final class CamelReactiveStreams {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelReactiveStreams.class);
 
-    private static Map<CamelContext, CamelReactiveStreams> instances = new HashMap<>();
+    private static Map<CamelContext, CamelReactiveStreams> instances = new ConcurrentHashMap<>();
 
     private CamelReactiveStreamsService service;
 
@@ -48,17 +49,16 @@ public final class CamelReactiveStreams {
         this.service = service;
     }
 
-    public static synchronized CamelReactiveStreams get(CamelContext context) {
-        if (!instances.containsKey(context)) {
+    public static CamelReactiveStreams get(CamelContext context) {
+        instances.computeIfAbsent(context, ctx -> {
             CamelReactiveStreamsService service = resolveReactiveStreamsService(context);
             try {
-                context.addService(service, true, true);
+                ctx.addService(service, true, true);
             } catch (Exception ex) {
                 throw new IllegalStateException("Cannot add the CamelReactiveStreamsService to the Camel context", ex);
             }
-
-            instances.put(context, new CamelReactiveStreams(service));
-        }
+            return new CamelReactiveStreams(service);
+        });
 
         return instances.get(context);
     }
@@ -81,7 +81,7 @@ public final class CamelReactiveStreams {
             try {
                 service = serviceClass.newInstance();
                 LOG.info("Created reactive stream service from class: " + serviceClass.getName());
-            } catch (InstantiationException | IllegalAccessException e) {
+            } catch (Exception e) {
                 LOG.debug("Unable to create a reactive stream service of class " + serviceClass.getName(), e);
             }
         }

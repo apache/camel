@@ -40,13 +40,4 @@ public class StreamPayload<D> {
         return callback;
     }
 
-
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder("StreamPayload{");
-        sb.append("item=").append(item);
-        sb.append(", callback=").append(callback);
-        sb.append('}');
-        return sb.toString();
-    }
 }

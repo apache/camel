@@ -71,7 +71,7 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
 
             executorService.execute(() -> this.getAsyncProcessor().process(exchange, doneSync -> {
                 if (exchange.getException() != null) {
-                    LOG.warn("Error processing the exchange " + exchange + " from reactive-streams", exchange.getException());
+                    getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
                 }
 
                 callback.done(doneSync);

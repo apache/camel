@@ -43,9 +43,7 @@ public class ReactiveStreamsProducer<T> extends DefaultAsyncProducer {
                 data.setException(error);
             }
 
-            if (callback != null) {
-                callback.done(false);
-            }
+            callback.done(false);
         });
         return false;
     }
