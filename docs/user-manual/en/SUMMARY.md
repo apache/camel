@@ -302,6 +302,7 @@
 	* [Stream](stream-component.adoc)
 	* [String Template](string-template-component.adoc)
 	* [Telegram](telegram-component.adoc)
+	* [Tika](tika-component.adoc)
 	* [Twitter](twitter-component.adoc)
 	* [Undertow](undertow-component.adoc)
 	* [Velocity](velocity-component.adoc)

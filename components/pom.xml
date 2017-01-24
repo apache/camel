@@ -264,6 +264,7 @@
     <module>camel-tagsoup</module>
     <module>camel-tarfile</module>
     <module>camel-telegram</module>
+    <module>camel-tika</module>
     <module>camel-twitter</module>
     <module>camel-undertow</module>
     <module>camel-univocity-parsers</module>
