@@ -543,6 +543,9 @@ Components
 | link:camel-telegram/src/main/docs/telegram-component.adoc[Telegram] (camel-telegram) +
 `telegram:type/authorizationToken` | The telegram component provides access to the Telegram Bot API.
 
+| link:camel-tika/src/main/docs/tika-component.adoc[Tika] (camel-tika) +
+`tika:operation` | This component integrates with Apache Tika to extract content and metadata from thousands of file types.
+
 | link:camel-twitter/src/main/docs/twitter-component.adoc[Twitter] (camel-twitter) +
 `twitter:kind` | This component integrates with Twitter to send tweets or search for tweets and more.
 
