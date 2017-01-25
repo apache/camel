@@ -51,6 +51,10 @@ public class EtcdConfiguration {
 
     private final CamelContext camelContext;
 
+    public EtcdConfiguration() {
+        this.camelContext = null;
+    }
+
     public EtcdConfiguration(CamelContext camelContext) {
         this.camelContext = camelContext;
     }

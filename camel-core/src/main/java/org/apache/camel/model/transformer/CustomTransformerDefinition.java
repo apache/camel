@@ -35,6 +35,7 @@ import org.apache.camel.spi.Transformer;
 @XmlType(name = "customTransformer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomTransformerDefinition extends TransformerDefinition {
+
     @XmlAttribute
     private String ref;
     @XmlAttribute
@@ -64,8 +65,8 @@ public class CustomTransformerDefinition extends TransformerDefinition {
         }
         transformer.setCamelContext(context);
         return transformer.setModel(getScheme())
-                          .setFrom(getFrom())
-                          .setTo(getTo());
+                          .setFrom(getFromType())
+                          .setTo(getToType());
     }
 
     public String getRef() {
@@ -74,6 +75,7 @@ public class CustomTransformerDefinition extends TransformerDefinition {
 
     /**
      * Set a bean reference of the Transformer
+     *
      * @param ref the bean reference of the Transformer
      */
     public void setRef(String ref) {
@@ -86,7 +88,8 @@ public class CustomTransformerDefinition extends TransformerDefinition {
 
     /**
      * Set a class name of the Transformer
-     * @param ref the class name of the Transformer
+     *
+     * @param type the class name of the Transformer
      */
     public void setType(String type) {
         this.type = type;

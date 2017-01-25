@@ -17,7 +17,6 @@
 package org.apache.camel.component.salesforce.api.dto.composite;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 

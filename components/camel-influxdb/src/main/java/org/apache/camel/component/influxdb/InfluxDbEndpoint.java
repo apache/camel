@@ -24,6 +24,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.CamelContextHelper;
 import org.influxdb.InfluxDB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,121 +40,124 @@ public class InfluxDbEndpoint extends DefaultEndpoint {
     private InfluxDB influxDB;
 
     @UriPath
-    @Metadata(required = "true", description = "Connection to the influx database, of class InfluxDB.class")
+    @Metadata(required = "true")
     private String connectionBean;
-
-    @UriParam(description = "the name of the series where the points will be created, name can be modified dynamically by headers")
+    @UriParam
     private String databaseName;
-
-    @UriParam(defaultValue = "default", description = "defines the retention policy for the points created in influxdb")
+    @UriParam(defaultValue = "default")
     private String retentionPolicy = "default";
-
-    /**
-     * @param uri
-     * @param influxDbComponent
-     */
-    public InfluxDbEndpoint(String uri, InfluxDbComponent influxDbComponent, InfluxDB dbConn) {
-        super(uri, influxDbComponent);
-
-        if (dbConn == null) {
-            throw new IllegalArgumentException("dbConn is null");
-        }
-
-        this.influxDB = dbConn;
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Prepairing influxdb enpoint with uri {}", uri);
-        }
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating influx db producer connectionBean:{}, databaseName:{}, retentionPolicy:{}", connectionBean, databaseName, retentionPolicy);
-        }
-
+    @UriParam(defaultValue = "false")
+    private boolean batch;
+    @UriParam(defaultValue = InfluxDbOperations.INSERT)
+    private String operation = InfluxDbOperations.INSERT;
+    @UriParam
+    private String query;
+    
+    public InfluxDbEndpoint(String uri, InfluxDbComponent component) {
+        super(uri, component);
     }
 
     @Override
     public Producer createProducer() throws Exception {
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating influx db producer");
-        }
         return new InfluxDbProducer(this);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating influx db consumer");
-        }
         throw new UnsupportedOperationException("You cannot receive messages from this endpoint");
+    }
+    
+    @Override
+    protected void doStart() throws Exception {
+        influxDB = CamelContextHelper.mandatoryLookup(getCamelContext(), connectionBean, InfluxDB.class);
+        LOG.debug("Resolved the connection with the name {} as {}", connectionBean, influxDB);
+        super.doStart();  
+    }
+    
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
     }
 
     @Override
     public boolean isSingleton() {
-        return false;
+        return true;
     }
-
-
 
     public InfluxDB getInfluxDB() {
         return influxDB;
     }
 
+    /**
+     * The Influx DB to use
+     */
     public void setInfluxDB(InfluxDB influxDB) {
         this.influxDB = influxDB;
     }
 
-    /**
-     * Getter for databaseName
-     * 
-     * @return the name of the database where the time series will be stored
-     */
     public String getDatabaseName() {
         return databaseName;
     }
 
     /**
-     * Setter for databaseName
-     * 
-     * @param databaseName
+     * The name of the database where the time series will be stored
      */
     public void setDatabaseName(String databaseName) {
         this.databaseName = databaseName;
     }
 
-    /**
-     * Getter for retentionPolicy
-     * 
-     * @return the string that defines the retention policy to the data created
-     *         by the endpoint
-     */
     public String getRetentionPolicy() {
         return retentionPolicy;
     }
 
     /**
-     * Setter for retentionPolicy
-     * 
-     * @param retentionPolicy
+     * The string that defines the retention policy to the data created by the endpoint
      */
     public void setRetentionPolicy(String retentionPolicy) {
         this.retentionPolicy = retentionPolicy;
     }
 
-    /**
-     * Getter for connectionBean
-     * 
-     * @return the name of the bean for the {@link org.influxdb.InfluxDB}
-     *         connection
-     */
     public String getConnectionBean() {
         return connectionBean;
     }
 
     /**
-     * Name of {@link org.influxdb.InfluxDB} to use.
+     * Connection to the influx database, of class InfluxDB.class
      */
     public void setConnectionBean(String connectionBean) {
         this.connectionBean = connectionBean;
+    }
+
+    public boolean isBatch() {
+        return batch;
+    }
+
+    /**
+     * Define if this operation is a batch operation or not
+     */
+    public void setBatch(boolean batch) {
+        this.batch = batch;
+    }
+
+    public String getOperation() {
+        return operation;
+    }
+
+    /**
+     * Define if this operation is an insert or a query
+     */
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    /**
+     * Define the query in case of operation query
+     */
+    public void setQuery(String query) {
+        this.query = query;
     }
 }

@@ -42,7 +42,7 @@ public class ResourceHelperTest extends TestSupport {
 
         String text = context.getTypeConverter().convertTo(String.class, is);
         assertNotNull(text);
-        assertTrue(text.contains("log4j"));
+        assertTrue(text.contains("rootLogger"));
         is.close();
 
         context.stop();
@@ -60,7 +60,7 @@ public class ResourceHelperTest extends TestSupport {
 
         String text = context.getTypeConverter().convertTo(String.class, is);
         assertNotNull(text);
-        assertTrue(text.contains("log4j"));
+        assertTrue(text.contains("rootLogger"));
         is.close();
 
         context.stop();
@@ -75,7 +75,7 @@ public class ResourceHelperTest extends TestSupport {
 
         String text = context.getTypeConverter().convertTo(String.class, is);
         assertNotNull(text);
-        assertTrue(text.contains("log4j"));
+        assertTrue(text.contains("rootLogger"));
         is.close();
 
         context.stop();
@@ -83,7 +83,7 @@ public class ResourceHelperTest extends TestSupport {
 
     public void testLoadRegistry() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
-        registry.put("myBean", "This is a log4j logging configuation file");
+        registry.put("myBean", "This is a log4j logging configuration file");
 
         CamelContext context = new DefaultCamelContext(registry);
         context.start();
@@ -107,7 +107,7 @@ public class ResourceHelperTest extends TestSupport {
 
         String text = context.getTypeConverter().convertTo(String.class, is);
         assertNotNull(text);
-        assertTrue(text.contains("log4j"));
+        assertTrue(text.contains("rootLogger"));
         is.close();
 
         context.stop();
@@ -150,7 +150,7 @@ public class ResourceHelperTest extends TestSupport {
 
         String text = context.getTypeConverter().convertTo(String.class, url);
         assertNotNull(text);
-        assertTrue(text.contains("log4j"));
+        assertTrue(text.contains("rootLogger"));
 
         context.stop();
     }
@@ -164,7 +164,7 @@ public class ResourceHelperTest extends TestSupport {
 
         String text = context.getTypeConverter().convertTo(String.class, url);
         assertNotNull(text);
-        assertTrue(text.contains("log4j"));
+        assertTrue(text.contains("rootLogger"));
 
         context.stop();
     }

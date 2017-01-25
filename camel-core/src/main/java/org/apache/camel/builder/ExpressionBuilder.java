@@ -21,7 +21,6 @@ import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
@@ -71,6 +70,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
+import org.apache.camel.util.SkipIterator;
 import org.apache.camel.util.StringHelper;
 
 
@@ -647,8 +647,19 @@ public final class ExpressionBuilder {
      * Returns an expression for the properties of exchange
      *
      * @return an expression object which will return the properties
+     * @deprecated use {@link #exchangeExceptionExpression()} instead
      */
+    @Deprecated
     public static Expression propertiesExpression() {
+        return exchangeExceptionExpression();
+    }
+    
+    /**
+     * Returns an expression for the exchange properties of exchange
+     *
+     * @return an expression object which will return the exchange properties
+     */
+    public static Expression exchangePropertiesExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getProperties();
@@ -656,11 +667,11 @@ public final class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "properties";
+                return "exchangeProperties";
             }
         };
     }
-    
+
     /**
      * Returns an expression for the properties of the camel context
      *
@@ -669,7 +680,7 @@ public final class ExpressionBuilder {
     public static Expression camelContextPropertiesExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getContext().getProperties();
+                return exchange.getContext().getGlobalOptions();
             }
 
             @Override
@@ -689,7 +700,7 @@ public final class ExpressionBuilder {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 String text = simpleExpression(propertyName).evaluate(exchange, String.class);
-                return exchange.getContext().getProperty(text);
+                return exchange.getContext().getGlobalOption(text);
             }
 
             @Override
@@ -1667,6 +1678,22 @@ public final class ExpressionBuilder {
         };
     }
 
+    public static Expression skipIteratorExpression(final Expression expression, final int skip) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                // evaluate expression as iterator
+                Iterator<?> it = expression.evaluate(exchange, Iterator.class);
+                ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
+                return new SkipIterator(exchange, it, skip);
+            }
+
+            @Override
+            public String toString() {
+                return "skip " + expression + " " + skip + " times";
+            }
+        };
+    }
+
     /**
      * Returns a sort expression which will sort the expression with the given comparator.
      * <p/>
@@ -2332,6 +2359,24 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns an iterator to skip (iterate) the given expression
+     */
+    public static Expression skipExpression(final String expression, final int number) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                // use simple language
+                Expression exp = exchange.getContext().resolveLanguage("simple").createExpression(expression);
+                return ExpressionBuilder.skipIteratorExpression(exp, number).evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                return "skip(" + expression + "," + number + ")";
+            }
+        };
+    }
+
+    /**
      * Returns an iterator to collate (iterate) the given expression
      */
     public static Expression collateExpression(final String expression, final int group) {
@@ -2379,7 +2424,7 @@ public final class ExpressionBuilder {
                         def.setShowHeaders(true);
                         def.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
                         try {
-                            Integer maxChars = CamelContextHelper.parseInteger(camelContext, camelContext.getProperty(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
+                            Integer maxChars = CamelContextHelper.parseInteger(camelContext, camelContext.getGlobalOption(Exchange.LOG_DEBUG_BODY_MAX_CHARS));
                             if (maxChars != null) {
                                 def.setMaxChars(maxChars);
                             }

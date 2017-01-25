@@ -21,12 +21,14 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.sshd.common.KeyPairProvider;
 
 /**
  * Represents the component that manages {@link SshEndpoint}.
  */
 public class SshComponent extends UriEndpointComponent {
+    @Metadata(label = "advanced")
     private SshConfiguration configuration;
 
     public SshComponent() {
@@ -97,6 +99,7 @@ public class SshComponent extends UriEndpointComponent {
      *
      * @param username String representing login username.
      */
+    @Metadata(label = "security", secret = true)
     public void setUsername(String username) {
         getConfiguration().setUsername(username);
     }
@@ -111,6 +114,7 @@ public class SshComponent extends UriEndpointComponent {
      *
      * @param password String representing password for username at remote host.
      */
+    @Metadata(label = "security", secret = true)
     public void setPassword(String password) {
         getConfiguration().setPassword(password);
     }
@@ -142,6 +146,7 @@ public class SshComponent extends UriEndpointComponent {
      *
      * @see KeyPairProvider
      */
+    @Metadata(label = "security")
     public void setKeyPairProvider(KeyPairProvider keyPairProvider) {
         getConfiguration().setKeyPairProvider(keyPairProvider);
     }
@@ -158,6 +163,7 @@ public class SshComponent extends UriEndpointComponent {
      *
      * @see KeyPairProvider
      */
+    @Metadata(label = "security")
     public void setKeyType(String keyType) {
         getConfiguration().setKeyType(keyType);
     }
@@ -190,6 +196,7 @@ public class SshComponent extends UriEndpointComponent {
      * @deprecated As of version 2.11, replaced by {@link #setCertResource(String)}
      */
     @Deprecated
+    @Metadata(label = "security")
     public void setCertFilename(String certFilename) {
         getConfiguration().setCertFilename(certFilename);
     }
@@ -204,6 +211,7 @@ public class SshComponent extends UriEndpointComponent {
      *
      * @param certResource String file, classpath, or http url for the certificate
      */
+    @Metadata(label = "security")
     public void setCertResource(String certResource) {
         getConfiguration().setCertResource(certResource);
     }

@@ -96,7 +96,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         return true;
     }
 
-    protected void processEndpointClass(final RoundEnvironment roundEnv, final TypeElement classElement) {
+    private void processEndpointClass(final RoundEnvironment roundEnv, final TypeElement classElement) {
         final UriEndpoint uriEndpoint = classElement.getAnnotation(UriEndpoint.class);
         if (uriEndpoint != null) {
             String scheme = uriEndpoint.scheme();
@@ -108,11 +108,18 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                 // for example camel-mail has a bunch of component schema names that does that
                 String[] schemes = scheme.split(",");
                 String[] titles = title.split(",");
-                String[] extendsSchemes = extendsScheme != null ? extendsScheme.split(",") : null;
+                String[] extendsSchemes = extendsScheme.split(",");
                 for (int i = 0; i < schemes.length; i++) {
                     final String alias = schemes[i];
-                    final String extendsAlias = extendsSchemes != null ? (i < extendsSchemes.length ? extendsSchemes[i] : extendsSchemes[0]) : null;
-                    final String aliasTitle = i < titles.length ? titles[i] : titles[0];
+                    final String extendsAlias = i < extendsSchemes.length ? extendsSchemes[i] : extendsSchemes[0];
+                    String aTitle = i < titles.length ? titles[i] : titles[0];
+
+                    // some components offer a secure alternative which we need to amend the title accordingly
+                    if (secureAlias(schemes[0], alias)) {
+                        aTitle += " (Secure)";
+                    }
+                    final String aliasTitle = aTitle;
+
                     // write html documentation
                     String name = canonicalClassName(classElement.getQualifiedName().toString());
                     String packageName = name.substring(0, name.lastIndexOf("."));
@@ -182,7 +189,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
         writeHtmlDocumentationAndFieldInjections(writer, roundEnv, componentModel, classElement, "", uriEndpoint.excludeProperties());
 
-        // only if its a consuemr capable component
+        // only if its a consumer capable component
         if (uriEndpoint.consumerOnly() || !uriEndpoint.producerOnly()) {
             // This code is not my fault, it seems to honestly be the hacky way to find a class name in APT :)
             TypeMirror consumerType = null;
@@ -294,16 +301,20 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             doc = sanitizeDescription(doc, false);
             Boolean required = entry.getRequired() != null ? Boolean.valueOf(entry.getRequired()) : null;
             String defaultValue = entry.getDefaultValue();
-            // component option do not have default value for boolean (as we dont really known if its true or false)
+            if (Strings.isNullOrEmpty(defaultValue) && "boolean".equals(entry.getType())) {
+                // fallback as false for boolean types
+                defaultValue = "false";
+            }
 
             // component options do not have prefix
             String optionalPrefix = "";
             String prefix = "";
             boolean multiValue = false;
+            boolean asPredicate = false;
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), "property", required, entry.getType(), defaultValue, doc,
-                    entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null,
-                    optionalPrefix, prefix, multiValue));
+                entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
+                false, null, asPredicate, optionalPrefix, prefix, multiValue));
         }
         buffer.append("\n  },");
 
@@ -351,10 +362,11 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             String optionalPrefix = "";
             String prefix = "";
             boolean multiValue = false;
+            boolean asPredicate = false;
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), "path", required, entry.getType(), defaultValue, doc,
-                    entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null,
-                    optionalPrefix, prefix, multiValue));
+                entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
+                false, null, asPredicate, optionalPrefix, prefix, multiValue));
         }
 
         // sort the endpoint options in the standard order we prefer
@@ -396,10 +408,11 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             String optionalPrefix = entry.getOptionalPrefix();
             String prefix = entry.getPrefix();
             boolean multiValue = entry.isMultiValue();
+            boolean asPredicate = false;
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), "parameter", required, entry.getType(), defaultValue,
-                    doc, entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(), false, null,
-                    optionalPrefix, prefix, multiValue));
+                doc, entry.isDeprecated(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
+                false, null, asPredicate, optionalPrefix, prefix, multiValue));
         }
         buffer.append("\n  }");
 
@@ -589,7 +602,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
                 String required = metadata != null ? metadata.required() : null;
                 String label = metadata != null ? metadata.label() : null;
-                boolean secret = metadata != null ? metadata.secret() : false;
+                boolean secret = metadata != null && metadata.secret();
 
                 // we do not yet have default values / notes / as no annotation support yet
                 // String defaultValueNote = param.defaultValueNote();
@@ -618,15 +631,27 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
                 // gather enums
                 Set<String> enums = new LinkedHashSet<String>();
-                boolean isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
-                if (isEnum) {
-                    TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
-                    // find all the enum constants which has the possible enum value that can be used
-                    List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
-                    for (VariableElement var : fields) {
-                        if (var.getKind() == ElementKind.ENUM_CONSTANT) {
-                            String val = var.toString();
-                            enums.add(val);
+
+                boolean isEnum;
+                if (metadata != null && !Strings.isNullOrEmpty(metadata.enums())) {
+                    isEnum = true;
+                    String[] values = metadata.enums().split(",");
+                    for (String val : values) {
+                        enums.add(val);
+                    }
+                } else {
+                    isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
+                    if (isEnum) {
+                        TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
+                        if (enumClass != null) {
+                            // find all the enum constants which has the possible enum value that can be used
+                            List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
+                            for (VariableElement var : fields) {
+                                if (var.getKind() == ElementKind.ENUM_CONSTANT) {
+                                    String val = var.toString();
+                                    enums.add(val);
+                                }
+                            }
                         }
                     }
                 }
@@ -679,7 +704,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     }
 
                     String defaultValue = path.defaultValue();
-                    if (defaultValue == null && metadata != null) {
+                    if (Strings.isNullOrEmpty(defaultValue) && metadata != null) {
                         defaultValue = metadata.defaultValue();
                     }
                     String defaultValueNote = path.defaultValueNote();
@@ -713,11 +738,13 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                         if (isEnum) {
                             TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
                             // find all the enum constants which has the possible enum value that can be used
-                            List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
-                            for (VariableElement var : fields) {
-                                if (var.getKind() == ElementKind.ENUM_CONSTANT) {
-                                    String val = var.toString();
-                                    enums.add(val);
+                            if (enumClass != null) {
+                                List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
+                                for (VariableElement var : fields) {
+                                    if (var.getKind() == ElementKind.ENUM_CONSTANT) {
+                                        String val = var.toString();
+                                        enums.add(val);
+                                    }
                                 }
                             }
                         }
@@ -800,12 +827,14 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                             isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;
                             if (isEnum) {
                                 TypeElement enumClass = findTypeElement(processingEnv, roundEnv, fieldTypeElement.asType().toString());
-                                // find all the enum constants which has the possible enum value that can be used
-                                List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
-                                for (VariableElement var : fields) {
-                                    if (var.getKind() == ElementKind.ENUM_CONSTANT) {
-                                        String val = var.toString();
-                                        enums.add(val);
+                                if (enumClass != null) {
+                                    // find all the enum constants which has the possible enum value that can be used
+                                    List<VariableElement> fields = ElementFilter.fieldsIn(enumClass.getEnclosedElements());
+                                    for (VariableElement var : fields) {
+                                        if (var.getKind() == ElementKind.ENUM_CONSTANT) {
+                                            String val = var.toString();
+                                            enums.add(val);
+                                        }
                                     }
                                 }
                             }
@@ -850,7 +879,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         return false;
     }
 
-    protected static Map<String, String> parseAsMap(String data) {
+    private static Map<String, String> parseAsMap(String data) {
         Map<String, String> answer = new HashMap<String, String>();
         String[] lines = data.split("\n");
         for (String line : lines) {
@@ -864,6 +893,19 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             }
         }
         return answer;
+    }
+
+    private static boolean secureAlias(String scheme, String alias) {
+        if (scheme.equals(alias)) {
+            return false;
+        }
+
+        // if alias is like scheme but with ending s its secured
+        if ((scheme + "s").equals(alias)) {
+            return true;
+        }
+
+        return false;
     }
 
     // CHECKSTYLE:ON

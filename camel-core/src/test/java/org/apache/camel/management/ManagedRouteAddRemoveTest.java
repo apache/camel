@@ -33,7 +33,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
     
-    private int services = 8;
+    private int services = 9;
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

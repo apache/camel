@@ -132,7 +132,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         PRIMITIVEMAP.put("float", "java.lang.Float");
     }
 
-    private static final String[] IGNORE_MODULES = {/* Non-standard -> */ "camel-grape"};
+    private static final String[] IGNORE_MODULES = {/* Non-standard -> */ "camel-grape", "camel-connector"};
 
     /**
      * The maven project.
@@ -368,7 +368,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             if (!type.endsWith(INNER_TYPE_SUFFIX)
                 && type.indexOf('[') == -1
                 && !EXCLUDE_INNER_PATTERN.matcher(type).matches()
-                && Strings.isBlank(option.getEnumValues())
+                && Strings.isBlank(option.getEnums())
                 && (javaClassSource == null || (javaClassSource.isClass() && !javaClassSource.isAbstract()))) {
                 // add nested configuration annotation for complex properties
                 prop.getField().addAnnotation(NestedConfigurationProperty.class);
@@ -392,7 +392,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     prop.getField().setLiteralInitializer(value);
                 } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
                     prop.getField().setLiteralInitializer(option.getDefaultValue());
-                } else if (!Strings.isBlank(option.getEnumValues())) {
+                } else if (!Strings.isBlank(option.getEnums())) {
                     String enumShortName = type.substring(type.lastIndexOf(".") + 1);
                     prop.getField().setLiteralInitializer(enumShortName + "." + option.getDefaultValue());
                     javaClass.addImport(model.getJavaType());
@@ -1230,7 +1230,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             option.setDeprecated(getSafeValue("deprecated", row));
             option.setDescription(getSafeValue("description", row));
             option.setDefaultValue(getSafeValue("defaultValue", row));
-            option.setEnumValues(getSafeValue("enum", row));
+            option.setEnums(getSafeValue("enum", row));
             component.addComponentOption(option);
         }
 

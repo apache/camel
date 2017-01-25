@@ -21,6 +21,7 @@ import javax.xml.validation.SchemaFactory;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.validator.ValidatorComponent;
+import org.apache.camel.spi.Metadata;
 
 /**
  * The <a href="http://camel.apache.org/msv.html">MSV Component</a> uses the
@@ -29,6 +30,7 @@ import org.apache.camel.component.validator.ValidatorComponent;
  * @version 
  */
 public class MsvComponent extends ValidatorComponent {
+    @Metadata(label = "advanced")
     private SchemaFactory schemaFactory;
 
     public MsvComponent() {

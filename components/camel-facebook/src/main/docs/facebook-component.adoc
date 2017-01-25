@@ -1,6 +1,4 @@
-[[Facebook-FacebookComponent]]
-Facebook Component
-~~~~~~~~~~~~~~~~~~
+## Facebook Component
 
 *Available as of Camel 2.12*
 
@@ -34,18 +32,14 @@ for this component:
     </dependency>
 -----------------------------------------------
 
-[[Facebook-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------
   facebook://[endpoint]?[options]
 ---------------------------------
 
-[[Facebook-FacebookComponent.1]]
-FacebookComponent
-^^^^^^^^^^^^^^^^^
+### FacebookComponent
 
 The facebook component can be configured with the Facebook account
 settings below, which are mandatory. The values can be provided to the
@@ -63,10 +57,10 @@ The Facebook component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| configuration | FacebookConfiguration | To use the shared configuration
+| Name | Group | Default | Java Type | Description
+| configuration | advanced |  | FacebookConfiguration | To use the shared configuration
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -171,8 +165,8 @@ The Facebook component supports 103 endpoint options which are listed below:
 | useSSL | common | true | Boolean | Use SSL
 | videoBaseURL | common | https://graph-video.facebook.com/ | String | Video API base URL
 | videoId | common |  | String | The video ID
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | httpProxyHost | proxy |  | String | HTTP proxy server host name
@@ -190,9 +184,7 @@ The Facebook component supports 103 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Facebook-ProducerEndpoints:]]
-Producer Endpoints:
-^^^^^^^^^^^^^^^^^^^
+### Producer Endpoints:
 
 Producer endpoints can use endpoint names and options from the table
 below. Endpoints can also use the short name without the *get* or
@@ -226,9 +218,7 @@ return a boolean, return true for success and false otherwise. In case
 of Facebook API errors the endpoint will throw a RuntimeCamelException
 with a facebook4j.FacebookException cause.
 
-[[Facebook-ConsumerEndpoints:]]
-Consumer Endpoints:
-^^^^^^^^^^^^^^^^^^^
+### Consumer Endpoints:
 
 Any of the producer endpoints that take a
 https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=reading&linkCreation=true&fromPageId=34020899[reading#reading]
@@ -243,9 +233,7 @@ camel-facebook creates one route exchange per returned object. As an
 example, if *"facebook://home"* results in five posts, the route will be
 executed five times (once for each Post).
 
-[[Facebook-ReadingOptions]]
-Reading Options
-^^^^^^^^^^^^^^^
+### Reading Options
 
 The *reading* option of type *facebook4j.Reading* adds support for
 reading parameters, which allow selecting specific fields, limits the
@@ -263,18 +251,14 @@ The reading option can be a reference or value of type
 options in either the endpoint URI or exchange header with
 *CamelFacebook.* prefix.
 
-[[Facebook-Messageheader]]
-Message header
-^^^^^^^^^^^^^^
+### Message header
 
 Any of the
 https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=URI+options&linkCreation=true&fromPageId=34020899[URI
 options#urioptions] can be provided in a message header for producer
 endpoints with *CamelFacebook.* prefix.
 
-[[Facebook-Messagebody]]
-Message body
-^^^^^^^^^^^^
+### Message body
 
 All result message bodies utilize objects provided by the Facebook4J
 API. Producer endpoints can specify the option name for incoming message
@@ -284,9 +268,7 @@ For endpoints that return an array, or *facebook4j.ResponseList*, or
 *java.util.List*, a consumer endpoint will map every elements in the
 list to distinct messages.
 
-[[Facebook-Usecases]]
-Use cases
-^^^^^^^^^
+### Use cases
 
 To create a post within your Facebook profile, send this producer a
 facebook4j.PostUpdate body.

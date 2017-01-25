@@ -64,6 +64,8 @@ public class S3Configuration implements Cloneable {
     private boolean pathStyleAccess;
     @UriParam(label = "producer", enums = "copyObject,deleteBucket,listBuckets")
     private S3Operations operation;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean autocloseBody = true;
 
     public long getPartSize() {
         return partSize;
@@ -294,7 +296,20 @@ public class S3Configuration implements Cloneable {
         this.operation = operation;
     }
 
+    public boolean isAutocloseBody() {
+        return autocloseBody;
+    }
+
+    /**
+     * If this option is true and includeBody is true, then the S3Object.close() method will be called on exchange completion
+     */
+    public void setAutocloseBody(boolean autocloseBody) {
+        this.autocloseBody = autocloseBody;
+    }
+
     boolean hasProxyConfiguration() {
         return ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort());
     }
+    
+    
 }

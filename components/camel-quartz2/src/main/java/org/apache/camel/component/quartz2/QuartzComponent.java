@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.StartupListener;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -50,14 +51,20 @@ import org.slf4j.LoggerFactory;
  */
 public class QuartzComponent extends UriEndpointComponent implements StartupListener {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzComponent.class);
-    private SchedulerFactory schedulerFactory;
+    @Metadata(label = "advanced")
     private Scheduler scheduler;
+    @Metadata(label = "advanced")
+    private SchedulerFactory schedulerFactory;
     private Properties properties;
     private String propertiesFile;
+    @Metadata(label = "scheduler")
     private int startDelayedSeconds;
+    @Metadata(label = "scheduler", defaultValue = "true")
     private boolean autoStartScheduler = true;
-    private boolean prefixJobNameWithEndpointId;
+    @Metadata(defaultValue = "true")
     private boolean enableJmx = true;
+    private boolean prefixJobNameWithEndpointId;
+    @Metadata(defaultValue = "true")
     private boolean prefixInstanceName = true;
 
     public QuartzComponent() {

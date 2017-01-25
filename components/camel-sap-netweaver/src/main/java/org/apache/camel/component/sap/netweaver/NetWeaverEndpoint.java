@@ -40,9 +40,9 @@ public class NetWeaverEndpoint extends DefaultEndpoint {
     private boolean jsonAsMap = true;
     @UriParam(defaultValue = "true")
     private boolean flatternMap = true;
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = "true", secret = true)
     private String username;
-    @UriParam @Metadata(required = "true")
+    @UriParam @Metadata(required = "true", secret = true)
     private String password;
 
     public NetWeaverEndpoint(String endpointUri, Component component) {

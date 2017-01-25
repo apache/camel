@@ -1,6 +1,4 @@
-[[Jing-JingComponent]]
-Jing Component
-~~~~~~~~~~~~~~
+## Jing Component
 
 The Jing component uses the
 http://www.thaiopensource.com/relaxng/jing.html[Jing Library] to perform
@@ -26,9 +24,7 @@ for this component:
 Note that the link:msv.html[MSV] component can also support RelaxNG XML
 syntax.
 
-[[Jing-URIformatCamel2.16]]
-URI format Camel 2.16
-^^^^^^^^^^^^^^^^^^^^^
+### URI format Camel 2.16
 
 [source,java]
 ------------------------------
@@ -38,9 +34,7 @@ jing:someLocalOrRemoteResource
 From Camel 2.16 the component use jing as name, and you can use the
 option compactSyntax to turn on either RNG or RNC mode.
 
-[[Jing-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -66,9 +60,7 @@ The Jing component supports 3 endpoint options which are listed below:
 
 
 
-[[Jing-Example]]
-Example
-^^^^^^^
+### Example
 
 The following
 http://svn.apache.org/repos/asf/camel/trunk/components/camel-jing/src/test/resources/org/apache/camel/component/validator/jing/rnc-context.xml[example]
@@ -78,12 +70,9 @@ based on whether or not the XML matches the given
 http://relaxng.org/compact-tutorial-20030326.html[RelaxNG Compact
 Syntax] schema (which is supplied on the classpath).
 
-[[Jing-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

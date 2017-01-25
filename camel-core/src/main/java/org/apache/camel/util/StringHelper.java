@@ -16,6 +16,9 @@
  */
 package org.apache.camel.util;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
@@ -613,4 +616,36 @@ public final class StringHelper {
         }
         return sb.toString();
     }
+
+    /**
+     * Compares old and new text content and report back which lines are changed
+     *
+     * @param oldText  the old text
+     * @param newText  the new text
+     * @return a list of line numbers that are changed in the new text
+     */
+    public static List<Integer> changedLines(String oldText, String newText) {
+        if (oldText == null || oldText.equals(newText)) {
+            return Collections.emptyList();
+        }
+
+        List<Integer> changed = new ArrayList<>();
+
+        String[] oldLines = oldText.split("\n");
+        String[] newLines = newText.split("\n");
+
+        for (int i = 0; i < newLines.length; i++) {
+            String newLine = newLines[i];
+            String oldLine = i < oldLines.length ? oldLines[i] : null;
+            if (oldLine == null) {
+                changed.add(i);
+            } else if (!newLine.equals(oldLine)) {
+                changed.add(i);
+            }
+        }
+
+        return changed;
+    }
+
+
 }

@@ -35,7 +35,7 @@ public class SlackEndpoint extends DefaultEndpoint {
     private String channel;
     @UriParam
     private String webhookUrl;
-    @UriParam
+    @UriParam(secret = true)
     private String username;
     @UriParam
     private String iconUrl;

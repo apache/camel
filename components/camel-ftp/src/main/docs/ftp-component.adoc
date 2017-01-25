@@ -1,9 +1,14 @@
-[[FTPComponent]]
-FTP/SFTP/FTPS Component
-~~~~~~~~~~~~~~~~~~~~~~~
+## FTP Component
 
 This component provides access to remote file systems over the FTP and
 SFTP protocols.
+
+When consuming from remote FTP server make sure you read the section titled _Default when consuming files_
+further below for details related to consuming files.
+
+Absolute path is *not* supported. *Camel 2.16* will translate absolute path to relative by trimming all
+leading slashes from `directoryname`. There'll be WARN message printed
+in the logs.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -18,39 +23,8 @@ for this component:
 </dependency>
 -----------------------------------------------------------------------
 
-[Info]
-====
-More options
 
-See link:file2.html[File] for more options as all the options from
-link:file2.html[File] is inherited.
-
-====
-
-[Info]
-====
-Absolute paths
-
-Absolute path is *not* supported.
-
-*Camel 2.16* will translate absolute path to relative by trimming all
-leading slashes from `directoryname`. There'll be WARN message printed
-in the logs.
-
-====
-
-[Tip]
-====
-Consuming from remote FTP server
-
-Make sure you read the section titled _Default when consuming files_
-further below for details related to consuming files.
-
-====
-
-[[FTP2-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------------------------------
@@ -91,30 +65,14 @@ The FTPS component is only available in Camel 2.2 or newer. +
 support for the Transport Layer Security (TLS) and the Secure Sockets
 Layer (SSL) cryptographic protocols.
 
-[[FTP2-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 The options below are exclusive for the FTP component.
 
-[Info]
-====
-More options
-
-See link:file2.html[File] for more options as all the options from
-link:file2.html[File] is inherited.
-
-====
 
 // component options: START
 The FTP component has no options.
 // component options: END
-
-
-
-
-
-
 
 
 
@@ -136,7 +94,7 @@ The FTP component supports 105 endpoint options which are listed below:
 | passiveMode | common | false | boolean | Sets passive mode connections. Default is active mode connections.
 | separator | common | UNIX | PathSeparator | Sets the path separator to be used. UNIX = Uses unix style path separator Windows = Uses windows style path separator Auto = (is default) Use existing path separator in file name
 | fastExistsCheck | common (advanced) | false | boolean | If set this option to be true camel-ftp will use the list file directly to check if the file exists. Since some FTP server may not support to list the file directly if the option is false camel-ftp will use the old way to list the directory and check if the file exists. This option also influences readLock=changed to control whether it performs a fast check to update file information or not. This can be used to speed up the process if the FTP server has a lot of files.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | delete | consumer | false | boolean | If true the file will be deleted after it is processed successfully.
 | moveFailed | consumer |  | String | Sets the move failure expression based on Simple language. For example to move files into a .error subdirectory use: .error. Note: When moving the files to the fail location Camel will handle the error and will not pick up the file again.
 | noop | consumer | false | boolean | If true the file is not moved or deleted in any way. This option is good for readonly data or for ETL type requirements. If noop=true Camel will set idempotent=true as well to avoid consuming the same files over and over again.
@@ -146,7 +104,7 @@ The FTP component supports 105 endpoint options which are listed below:
 | streamDownload | consumer | false | boolean | Sets the download method to use when not using a local working directory. If set to true the remote files are streamed to the route as they are read. When set to false the remote files are loaded into memory before being sent into the route.
 | directoryMustExist | consumer (advanced) | false | boolean | Similar to startingDirectoryMustExist but this applies during polling recursive sub directories.
 | download | consumer (advanced) | false | boolean | Whether the FTP consumer should download the file. If this option is set to false then the message body will be null but the consumer will still trigger a Camel Exchange that has details about the file such as file name file size etc. It's just that the file will not be downloaded.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | ignoreFileNotFoundOrPermissionError | consumer (advanced) | false | boolean | Whether to ignore when trying to download a file which does not exist or due to permission error. By default when a file does not exists or insufficient permission then an exception is thrown. Setting this option to true allows to ignore that instead.
 | inProgressRepository | consumer (advanced) |  | String> | A pluggable in-progress repository org.apache.camel.spi.IdempotentRepository. The in-progress repository is used to account the current in progress files being consumed. By default a memory based repository is used.
@@ -236,16 +194,7 @@ The FTP component supports 105 endpoint options which are listed below:
 
 
 
-
-
-
-
-
-
-
-[Info]
-====
-FTPS component default trust store
+### FTPS component default trust store
 
 When using the `ftpClient.` properties related to SSL with the FTPS
 component, the trust store accept all certificates. If you only want
@@ -255,8 +204,6 @@ the `ftpClient.trustStore.xxx` options or by configuring a custom
 
 When using `sslContextParameters`, the trust store is managed by the
 configuration of the provided SSLContextParameters instance.
-
-====
 
 You can configure additional options on the `ftpClient` and
 `ftpClientConfig` from the URI directly by using the `ftpClient.` or
@@ -306,30 +253,18 @@ url.
 from("ftp://foo@myserver?password=secret&ftpClientConfig=#myConfig").to("bean:foo");
 ------------------------------------------------------------------------------------
 
-[[FTP2-MoreURIoptions]]
-More URI options
-^^^^^^^^^^^^^^^^
-
-[Info]
-====
+### More URI options
 
 
-See link:file2.html[File2] as all the options there also applies for
-this component.
-
-====
-
-[[FTP2-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
 `ftp://someone@someftpserver.com/public/upload/images/holiday2008?password=secret&binary=true` +
 
 `ftp://someoneelse@someotherftpserver.co.uk:12049/reports/2008/password=secret&binary=false` +
  `ftp://publicftpserver.com/download`
 
-[Warning]
-====
+### Concurrency
+
 FTP Consumer does not support concurrency
 
 The FTP consumer (with the same endpoint) does not support concurrency
@@ -339,11 +274,7 @@ is only a single endpoint that does not support concurrent consumers.
 
 The FTP producer does *not* have this issue, it supports concurrency.
 
-====
-
-[Tip]
-====
-More information
+### More information
 
 This component is an extension of the link:file2.html[File] component.
 So there are more samples and details on the link:file2.html[File]
@@ -351,9 +282,7 @@ component page.
 
 ====
 
-[[FTP2-Defaultwhenconsumingfiles]]
-Default when consuming files
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Default when consuming files
 
 The link:ftp2.html[FTP] consumer will by default leave the consumed
 files untouched on the remote FTP server. You have to configure it
@@ -366,9 +295,7 @@ default move files to a `.camel` sub directory. The reason Camel does
 *not* do this by default for the FTP consumer is that it may lack
 permissions by default to be able to move or delete files.
 
-[[FTP2-limitations]]
-limitations
-+++++++++++
+#### limitations
 
 The option *readLock* can be used to force Camel *not* to consume files
 that is currently in the progress of being written. However, this option
@@ -384,9 +311,7 @@ restricted to the FTP_ROOT folder. That prevents you from moving files
 outside the FTP area. If you want to move files to another area you can
 use soft links and move files into a soft linked folder.
 
-[[FTP2-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 The following message headers can be used to affect the behavior of the
 component
@@ -425,9 +350,7 @@ In addition the FTP/FTPS consumer and producer will enrich the Camel
 |`CamelFtpReplyString` | *Camel 2.11.1:* The FTP client reply string
 |=======================================================================
 
-[[FTP2-Abouttimeouts]]
-About timeouts
-^^^^^^^^^^^^^^
+### About timeouts
 
 The two set of libraries (see top) has different API for setting
 timeout. You can use the `connectTimeout` option for both of them to set
@@ -438,9 +361,7 @@ a timeout in millis to establish a network connection. An individual
 for FTP/FTSP as the data timeout, which corresponds to the
 `ftpClient.dataTimeout` value. All timeout values are in millis.
 
-[[FTP2-UsingLocalWorkDirectory]]
-Using Local Work Directory
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using Local Work Directory
 
 Camel supports consuming from remote FTP servers and downloading the
 files directly into a local work directory. This avoids reading the
@@ -476,9 +397,7 @@ copy, as the work file is meant to be deleted anyway.
 
 ====
 
-[[FTP2-Stepwisechangingdirectories]]
-Stepwise changing directories
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Stepwise changing directories
 
 Camel link:ftp2.html[FTP] can operate in two modes in terms of
 traversing directories when consuming files (eg downloading) or
@@ -520,9 +439,7 @@ FTP server we need to traverse and download files:
 And that we have a file in each of sub-a (a.txt) and sub-b (b.txt)
 folder.
 
-[[FTP2-Usingstepwise]]
-Using stepwise=true (default mode)
-++++++++++++++++++++++++++++++++++
+#### Using stepwise=true (default mode)
 
 [source,java]
 ----------------------------------------------------------
@@ -612,9 +529,7 @@ disconnected.
 As you can see when stepwise is enabled, it will traverse the directory
 structure using CD xxx.
 
-[[FTP2-Notusingstepwise]]
-Using stepwise=false
-++++++++++++++++++++
+#### Using stepwise=false
 
 [source,java]
 -------------------------------------------
@@ -661,9 +576,7 @@ disconnected.
 As you can see when not using stepwise, there are no CD operation
 invoked at all.
 
-[[FTP2-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 In the sample below we set up Camel to download all the reports from the
 FTP server once every hour (60 min) as BINARY content and store it as
@@ -679,9 +592,7 @@ And the route using Spring DSL:
   </route>
 ------------------------------------------------------------------------------------------------------
 
-[[FTP2-ConsumingaremoteFTPSserverimplicitSSLandclientauthentication]]
-Consuming a remote FTPS server (implicit SSL) and client authentication
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Consuming a remote FTPS server (implicit SSL) and client authentication
 
 [source,java]
 --------------------------------------------------------------------------------------------------
@@ -691,9 +602,7 @@ from("ftps://admin@localhost:2222/public/camel?password=admin&securityProtocol=S
   .to("bean:foo");
 --------------------------------------------------------------------------------------------------
 
-[[FTP2-ConsumingaremoteFTPSserverexplicitTLSandacustomtruststoreconfiguration]]
-Consuming a remote FTPS server (explicit TLS) and a custom trust store configuration
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Consuming a remote FTPS server (explicit TLS) and a custom trust store configuration
 
 [source,java]
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -701,9 +610,7 @@ from("ftps://admin@localhost:2222/public/camel?password=admin&ftpClient.trustSto
   .to("bean:foo");
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[FTP2-Filterusingorg.apache.camel.component.file.GenericFileFilter]]
-Filter using `org.apache.camel.component.file.GenericFileFilter`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Filter using `org.apache.camel.component.file.GenericFileFilter`
 
 Camel supports pluggable filtering strategies. This strategy it to use
 the build in `org.apache.camel.component.file.GenericFileFilter` in
@@ -728,9 +635,7 @@ spring XML file:
   </route>
 ---------------------------------------------------------------------------------------
 
-[[FTP2-FilteringusingANTpathmatcher]]
-Filtering using ANT path matcher
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Filtering using ANT path matcher
 
 The ANT path matcher is a filter that is shipped out-of-the-box in the
 *camel-spring* jar. So you need to depend on *camel-spring* if you are
@@ -747,9 +652,7 @@ The file paths are matched with the following rules:
 
 The sample below demonstrates how to use it:
 
-[[FTP2-UsingaproxywithSFTP]]
-Using a proxy with SFTP
-^^^^^^^^^^^^^^^^^^^^^^^
+### Using a proxy with SFTP
 
 To use an HTTP proxy to connect to your remote host, you can configure
 your route in the following way:
@@ -772,9 +675,7 @@ You can also assign a user name and password to the proxy, if necessary.
 Please consult the documentation for `com.jcraft.jsch.Proxy` to discover
 all options.
 
-[[FTP2-SettingpreferredSFTPauthenticationmethod]]
-Setting preferred SFTP authentication method
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Setting preferred SFTP authentication method
 
 If you want to explicitly specify the list of authentication methods
 that should be used by `sftp` component, use `preferredAuthentications`
@@ -789,9 +690,7 @@ from("sftp://localhost:9999/root?username=admin&password=admin&preferredAuthenti
   to("bean:processFile");
 -------------------------------------------------------------------------------------------------------------
 
-[[FTP2-Consumingasinglefileusingafixedname]]
-Consuming a single file using a fixed name
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Consuming a single file using a fixed name
 
 When you want to download a single file and knows the file name, you can
 use `fileName=myFileName.txt` to tell Camel the name of the file to
@@ -826,16 +725,12 @@ single file (if it exists) and grab the file content as a String type:
 String data = template.retrieveBodyNoWait("ftp://admin@localhost:21/nolist/?password=admin&stepwise=false&useList=false&ignoreFileNotFoundOrPermissionError=true&fileName=report.txt&delete=true", String.class);
 -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[FTP2-Debuglogging]]
-Debug logging
-^^^^^^^^^^^^^
+### Debug logging
 
 This component has log level *TRACE* that can be helpful if you have
 problems.
 
-[[FTP2-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -843,4 +738,3 @@ See Also
 * link:getting-started.html[Getting Started]
 
 * link:file2.html[File2]
-

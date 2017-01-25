@@ -43,11 +43,11 @@ public class KinesisEndpoint extends ScheduledPollEndpoint {
     private AmazonKinesis amazonKinesisClient;
     @UriParam(label = "consumer", description = "Maximum number of records that will be fetched in each poll", defaultValue = "1")
     private int maxResultsPerRequest = 1;
-    @UriParam(label = "consumer", description = "Defines where in the Kinesis stream to start getting records")
+    @UriParam(label = "consumer", description = "Defines where in the Kinesis stream to start getting records", defaultValue = "TRIM_HORIZON")
     private ShardIteratorType iteratorType = ShardIteratorType.TRIM_HORIZON;
     @UriParam(label = "consumer", description = "Defines which shardId in the Kinesis stream to get records from")
     private String shardId = "";
-    @UriParam(label = "consumer", description = "The sequence number to start polling from")
+    @UriParam(label = "consumer", description = "The sequence number to start polling from. Required if iteratorType is set to AFTER_SEQUENCE_NUMBER or AT_SEQUENCE_NUMBER")
     private String sequenceNumber = "";
 
     public KinesisEndpoint(String uri, String streamName, KinesisComponent component) {

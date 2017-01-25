@@ -1,6 +1,4 @@
-[[GitHub-GitHub]]
-GitHub
-~~~~~~
+## GitHub Component
 
 *Available as of Camel 2.15*
 
@@ -34,18 +32,14 @@ for this component:
 </dependency>
 -----------------------------------------
 
-[[GitHub-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,text]
 ---------------------------
 github://endpoint[?options]
 ---------------------------
 
-[[GitHub-MandatoryOptions:]]
-Mandatory Options:
-^^^^^^^^^^^^^^^^^^
+### Mandatory Options:
 
 Note that these can be configured directly through the endpoint.
 
@@ -70,8 +64,8 @@ The GitHub component supports 14 endpoint options which are listed below:
 | repoName | common |  | String | *Required* GitHub repository name
 | repoOwner | common |  | String | *Required* GitHub repository owner (organization)
 | username | common |  | String | GitHub username required unless oauthToken is provided
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | encoding | producer |  | String | To use the given encoding when getting a git commit file
 | state | producer |  | String | To set git commit status state
@@ -83,9 +77,7 @@ The GitHub component supports 14 endpoint options which are listed below:
 
 
 
-[[GitHub-ConsumerEndpoints:]]
-Consumer Endpoints:
-^^^^^^^^^^^^^^^^^^^
+### Consumer Endpoints:
 
 [width="100%",cols="20%,20%,60%",options="header",]
 |=======================================================================
@@ -102,9 +94,7 @@ request discussion) or org.eclipse.egit.github.core.CommitComment
 |commit |polling |org.eclipse.egit.github.core.RepositoryCommit
 |=======================================================================
 
-[[GitHub-ProducerEndpoints:]]
-Producer Endpoints:
-^^^^^^^^^^^^^^^^^^^
+### Producer Endpoints:
 
 [width="100%",cols="20%,20%,60%",options="header",]
 |=======================================================================

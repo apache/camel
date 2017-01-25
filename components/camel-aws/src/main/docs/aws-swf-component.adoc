@@ -1,6 +1,4 @@
-[[AWS-SWF-SWFComponent]]
-SWF Component
-~~~~~~~~~~~~~
+## AWS Simple Workflow Component
 
 *Available as of Camel 2.13*
 
@@ -13,9 +11,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon Simple Workflow. More information are available
 at http://aws.amazon.com/swf/[Amazon Simple Workflow].
 
-[[AWS-SWF-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 ---------------------------------------
@@ -25,9 +21,7 @@ aws-swf://<workflow|activity>[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-[[AWS-SWF-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 
 // component options: START
@@ -52,8 +46,8 @@ The AWS Simple Workflow component supports 30 endpoint options which are listed 
 | eventName | common |  | String | The workflow or activity event name to use.
 | secretKey | common |  | String | Amazon AWS Secret Key.
 | version | common |  | String | The workflow or activity event version to use.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | clientConfigurationParameters | advanced |  | Map | To configure the ClientConfiguration using the key/values from the Map.
 | startWorkflowOptionsParameters | advanced |  | Map | To configure the StartWorkflowOptions using the key/values from the Map.
@@ -86,13 +80,9 @@ You have to provide the amazonSWClient in the
 link:registry.html[Registry] or your accessKey and secretKey to access
 the http://aws.amazon.com/swf[Amazon's Simple Workflow Service].
 
-[[AWS-SWF-Usage]]
-Usage
-^^^^^
+### Usage
 
-[[AWS-SWF-MessageheadersevaluatedbytheSWFWorkflowProducer]]
-Message headers evaluated by the SWF Workflow Producer
-++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers evaluated by the SWF Workflow Producer
 
 A workflow producer allows interacting with a workflow. It can start a
 new workflow execution, query its state, send signals to a running
@@ -122,9 +112,7 @@ workflow, or terminate and cancel it.
 |`CamelSWFChildPolicy` |`String` |The policy to use on child workflows when terminating a workflow.
 |=======================================================================
 
-[[AWS-SWF-MessageheaderssetbytheSWFWorkflowProducer]]
-Message headers set by the SWF Workflow Producer
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set by the SWF Workflow Producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -135,9 +123,7 @@ Message headers set by the SWF Workflow Producer
 |`CamelAwsDdbKeyCamelSWFRunId` |`String` |The worfklow run ID used or generated.
 |=======================================================================
 
-[[AWS-SWF-MessageheaderssetbytheSWFWorkflowConsumer]]
-Message headers set by the SWF Workflow Consumer
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set by the SWF Workflow Consumer
 
 A workflow consumer represents the workflow logic. When it is started,
 it will start polling workflow decision tasks and process them. In
@@ -159,9 +145,7 @@ CamelSWFSignalReceivedAction or CamelSWFGetStateAction.
 |`CamelSWFWorkflowStartTime` |`long` |The time of the start event for this decision task.
 |=======================================================================
 
-[[AWS-SWF-MessageheaderssetbytheSWFActivityProducer]]
-Message headers set by the SWF Activity Producer
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set by the SWF Activity Producer
 
 An activity producer allows scheduling activity tasks. An activity
 producer can be used only from a thread started by a workflow consumer
@@ -176,9 +160,7 @@ ie, it can process synchronous exchanges started by a workflow consumer.
 |`CamelSWFVersion` |`String` |The activity version to schedule.
 |=======================================================================
 
-[[AWS-SWF-MessageheaderssetbytheSWFActivityConsumer]]
-Message headers set by the SWF Activity Consumer
-++++++++++++++++++++++++++++++++++++++++++++++++
+#### Message headers set by the SWF Activity Consumer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -188,9 +170,7 @@ Message headers set by the SWF Activity Consumer
 completed tasks.
 |=======================================================================
 
-[[AWS-SWF-AdvancedamazonSWClientconfiguration]]
-Advanced amazonSWClient configuration
-+++++++++++++++++++++++++++++++++++++
+#### Advanced amazonSWClient configuration
 
 If you need more control over the AmazonSimpleWorkflowClient instance
 configuration you can create your own instance and refer to it from the
@@ -213,9 +193,7 @@ AmazonSimpleWorkflowClient client = new AmazonSimpleWorkflowClient(awsCredential
 registry.bind("client", client);
 --------------------------------------------------------------------------------------------------------
 
-[[AWS-SWF-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -233,9 +211,7 @@ Maven users will need to add the following dependency to their pom.xml.
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.13 or higher).
 
-[[AWS-SWF-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]

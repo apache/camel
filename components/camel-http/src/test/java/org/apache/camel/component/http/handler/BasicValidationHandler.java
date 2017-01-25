@@ -28,7 +28,6 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 
 /**
  *
- * @version 
  */
 public class BasicValidationHandler extends AbstractHandler {
 

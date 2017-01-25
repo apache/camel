@@ -135,7 +135,7 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
                 case XMLStreamConstants.START_ELEMENT: {
                     // namespaces
                     for (int i = 0; i < streamReader.getNamespaceCount(); i++) {
-                        String nsPrefix = streamReader.getNamespacePrefix(i);
+                        String nsPrefix = nullToEmpty(streamReader.getNamespacePrefix(i));
                         String nsUri = nullToEmpty(streamReader.getNamespaceURI(i));
                         contentHandler.startPrefixMapping(nsPrefix, nsUri);
                     }

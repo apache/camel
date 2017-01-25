@@ -1,6 +1,4 @@
-[[CM-SMS]]
-CM-SMS
-~~~~~~
+## CM SMS Gateway Component
 
 *Available as of Camel 2.18*
 
@@ -29,9 +27,7 @@ for this component:
 </dependency>
 ---------------------------------------------------------
 
-[[CM-SMS-Options]]
-Options
-~~~~~~~
+### Options
 
 
 // component options: START
@@ -58,8 +54,6 @@ The CM SMS Gateway component supports 6 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[CM-SMS-Sample]]
-Sample
-~~~~~~
+### Sample
 
 You can try https://github.com/oalles/camel-cm-sample[this project] to see how camel-cm-sms can be integrated in a camel route. 

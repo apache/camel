@@ -24,9 +24,7 @@ import com.thoughtworks.xstream.annotations.XStreamConverter;
 
 import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
-import org.apache.camel.component.salesforce.api.dto.ChildRelationShip;
 import org.apache.camel.component.salesforce.api.dto.InfoUrls;
-import org.apache.camel.component.salesforce.api.dto.NamedLayoutInfo;
 import org.apache.camel.component.salesforce.api.dto.RecordTypeInfo;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescriptionUrls;

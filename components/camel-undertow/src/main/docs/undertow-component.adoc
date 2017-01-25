@@ -1,6 +1,4 @@
-[[Undertow-UndertowComponent]]
-Undertow Component
-~~~~~~~~~~~~~~~~~~
+## Undertow Component
 
 *Available as of Camel 2.16*
 
@@ -23,9 +21,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Undertow-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -------------------------------------------------------
@@ -35,9 +31,7 @@ undertow:http://hostname[:port][/resourceUri][?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Undertow-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -49,11 +43,11 @@ The Undertow component supports 2 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| undertowHttpBinding | UndertowHttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
-| sslContextParameters | SSLContextParameters | To configure security using SSLContextParameters
+| Name | Group | Default | Java Type | Description
+| undertowHttpBinding | advanced |  | UndertowHttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
+| sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -72,11 +66,11 @@ The Undertow component supports 18 endpoint options which are listed below:
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | httpURI | common |  | URI | *Required* The url of the HTTP endpoint to use.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | httpMethodRestrict | consumer |  | String | Used to only allow consuming if the HttpMethod matches such as GET/POST/PUT etc. Multiple methods can be specified separated by comma.
 | matchOnUriPrefix | consumer | true | Boolean | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.
 | optionsEnabled | consumer | false | boolean | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | cookieHandler | producer |  | CookieHandler | Configure a cookie handler to maintain a HTTP session
 | keepAlive | producer | true | Boolean | Setting to ensure socket is not closed due to inactivity
@@ -95,9 +89,7 @@ The Undertow component supports 18 endpoint options which are listed below:
 
 
 
-[[Undertow-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 Camel uses the same message headers as the link:http.html[HTTP]
 component. 
@@ -110,9 +102,7 @@ example, given a client request with the URL,
 `http://myserver/myserver?orderid=123`, the exchange will contain a
 header named `orderid` with the value 123.
 
-[[Undertow-ProducerExample]]
-Producer Example
-^^^^^^^^^^^^^^^^
+### Producer Example
 
 The following is a basic example of how to send an HTTP request to an
 existing HTTP endpoint.
@@ -134,9 +124,7 @@ or in Spring XML
 <route>
 ----------------------------------------------
 
-[[Undertow-ConsumerExample]]
-Consumer Example
-^^^^^^^^^^^^^^^^
+### Consumer Example
 
 In this sample we define a route that exposes a HTTP service at
 `http://localhost:8080/myapp/myservice`:
@@ -169,9 +157,7 @@ Servlet, you should instead refer to the
 https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=46339[Servlet
 Transport].
 
-[[Undertow-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -180,4 +166,3 @@ See Also
 
 * link:jetty.html[Jetty]
 * link:http.html[HTTP]
-

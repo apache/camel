@@ -98,6 +98,13 @@
       <version>${gson-version}</version>
     </dependency>
 
+    <!-- asciidoc to convert adoc to html files -->
+    <dependency>
+      <groupId>org.asciidoctor</groupId>
+      <artifactId>asciidoctorj</artifactId>
+      <version>${asciidoctorj-version}</version>
+    </dependency>
+
     <!-- roaster to create java source for Spring Boot auto configuration support -->
     <dependency>
       <groupId>org.jboss.forge.roaster</groupId>

@@ -21,7 +21,7 @@ then boot up a Spring ApplicationContext using the XML configuration files on th
 
 If you want to boot up your Camel routes a little faster, you could try the `camel:embedded` instead.
 
-== Running OSGi Blueprint
+=== Running OSGi Blueprint
 
 The `camel:run` plugin also supports running a Blueprint application, and by default it scans for OSGi blueprint files in
 `OSGI-INF/blueprint/*.xml`
@@ -67,8 +67,7 @@ loading the persistence properties file.
 
 The `configAdminFileName` is the file name which will be used to load the configuration admin service properties file.
 
-
-== Running CDI
+=== Running CDI
 
 The `camel:run` plugin also supports running a CDI application
 
@@ -80,7 +79,7 @@ From the source of Camel you can run a CDI example via
     cd examples/camel-example-cdi
     mvn compile camel:run
 
-== Logging the classpath
+=== Logging the classpath
 
 You can configure whether the classpath should be logged when `camel:run` executes.
 You can enable this in the configuration using:
@@ -93,6 +92,23 @@ You can enable this in the configuration using:
       </configuration>
     </plugin>
 
+=== Using live reload of XML files
+
+You can configure the plugin to scan for XML file changes and trigger a reload of the Camel routes which are contained in those XML files.
+
+    <plugin>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-maven-plugin</artifactId>
+      <configuration>
+        <fileWatcherDirectory>src/main/resources/META-INF/spring</fileWatcherDirectory>
+      </configuration>
+    </plugin>
+
+Then the plugin watches this directory. This allows you to edit the source code from your editor and save the file, and have
+    the running Camel application pickup those changes.
+
+Notice its only changes of Camel routes, eg `<routes>`, or `<route>` which is supported.
+You cannot change Spring or OSGi Blueprint `<bean>` elements.
 
 == camel:validate
 

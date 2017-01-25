@@ -1,6 +1,4 @@
-[[Flatpack-FlatpackComponent]]
-Flatpack Component
-~~~~~~~~~~~~~~~~~~
+## Flatpack Component
 
 The Flatpack component supports fixed width and delimited file parsing
 via the http://flatpack.sourceforge.net[FlatPack library]. +
@@ -21,9 +19,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Flatpack-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------------------------------
@@ -40,9 +36,7 @@ flatpack:someName[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Flatpack-URIOptions]]
-URI Options
-^^^^^^^^^^^
+### URI Options
 
 // component options: START
 The Flatpack component has no options.
@@ -55,7 +49,7 @@ The Flatpack component supports 27 endpoint options which are listed below:
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| type | common |  | FlatpackType | Whether to use fixed or delimiter
+| type | common | delim | FlatpackType | Whether to use fixed or delimiter
 | resourceUri | common |  | String | *Required* URL for loading the flatpack mapping file from classpath or file system
 | allowShortLines | common | false | boolean | Allows for lines to be shorter than expected and ignores the extra characters
 | delimiter | common | , | char | The default character delimiter for delimited files.
@@ -63,9 +57,9 @@ The Flatpack component supports 27 endpoint options which are listed below:
 | ignoreFirstRecord | common | true | boolean | Whether the first line is ignored for delimited files (for the column headers).
 | splitRows | common | true | boolean | Sets the Component to send each row as a separate exchange once parsed
 | textQualifier | common |  | char | The text qualifier for delimited files.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
@@ -86,9 +80,7 @@ The Flatpack component supports 27 endpoint options which are listed below:
 {% endraw %}
 // endpoint options: END
 
-[[Flatpack-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
 * `flatpack:fixed:foo.pzmap.xml` creates a fixed-width endpoint using
 the `foo.pzmap.xml` file configuration.
@@ -97,9 +89,7 @@ the `foo.pzmap.xml` file configuration.
 * `flatpack:foo` creates a delimited endpoint called `foo` with no file
 configuration.
 
-[[Flatpack-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 Camel will store the following headers on the IN message:
 
@@ -111,9 +101,7 @@ Camel will store the following headers on the IN message:
 number of rows.
 |=======================================================================
 
-[[Flatpack-MessageBody]]
-Message Body
-^^^^^^^^^^^^
+### Message Body
 
 The component delivers the data in the IN message as a
 `org.apache.camel.component.flatpack.DataSetList` object that has
@@ -142,9 +130,7 @@ However, you can also always get it as a `List` (even for
   String firstName = row.get("FIRSTNAME");
 ---------------------------------------------------
 
-[[Flatpack-HeaderandTrailerrecords]]
-Header and Trailer records
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Header and Trailer records
 
 The header and trailer notions in Flatpack are supported. However, you
 *must* use fixed record IDs:
@@ -175,9 +161,7 @@ trailer. You can omit one or both of them if not needed.
     </RECORD>
 ---------------------------------------------------------------------------
 
-[[Flatpack-Usingtheendpoint]]
-Using the endpoint
-^^^^^^^^^^^^^^^^^^
+### Using the endpoint
 
 A common use case is sending a file to this endpoint for further
 processing in a separate route. For example:
@@ -200,9 +184,7 @@ processing in a separate route. For example:
 You can also convert the payload of each message created to a `Map` for
 easy link:bean-integration.html[Bean Integration]
 
-[[Flatpack-FlatpackDataFormat]]
-Flatpack DataFormat
-~~~~~~~~~~~~~~~~~~~
+### Flatpack DataFormat
 
 The link:flatpack.html[Flatpack] component ships with the Flatpack data
 format that can be used to format between fixed width or delimited text
@@ -220,9 +202,7 @@ link:splitter.html[Splitter].
 *Notice:* The Flatpack library does currently not support header and
 trailers for the marshal operation.
 
-[[Flatpack-Options]]
-Options
-^^^^^^^
+### Options
 
 The data format has the following options:
 
@@ -251,9 +231,7 @@ expected and ignores the extra characters.
 expected and ignores the extra characters.
 |=======================================================================
 
-[[Flatpack-Usage]]
-Usage
-^^^^^
+### Usage
 
 To use the data format, simply instantiate an instance and invoke the
 marshal or unmarshal operation in the route builder:
@@ -288,9 +266,7 @@ in Java code from e.g. a processor. We marshal the data according to the
 Flatpack format and convert the result as a `String` object and store it
 on a JMS queue.
 
-[[Flatpack-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use Flatpack in your camel routes you need to add the a dependency on
 *camel-flatpack* which implements this data format.
@@ -308,12 +284,9 @@ link:download.html[the download page for the latest versions]).
 </dependency>
 -----------------------------------------
 
-[[Flatpack-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

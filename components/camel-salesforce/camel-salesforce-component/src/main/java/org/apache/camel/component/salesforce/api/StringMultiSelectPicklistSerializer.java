@@ -44,7 +44,7 @@ public class StringMultiSelectPicklistSerializer extends StdSerializer<Object> {
             // construct a string of form value1;value2;...
             final StringBuilder buffer = new StringBuilder();
             for (int i = 0; i < length; i++) {
-                buffer.append((String) a[i].trim());
+                buffer.append(a[i].trim());
                 if (i < (length - 1)) {
                     buffer.append(';');
                 }

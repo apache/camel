@@ -41,8 +41,8 @@ public class DdbComponent extends UriEndpointComponent {
         }
         configuration.setTableName(remaining);
 
-        if (configuration.getAmazonDDBClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("amazonDDBClient or accessKey and secretKey must be specified");
+        if (configuration.getAmazonDDBClient() == null) {
+            throw new IllegalArgumentException("amazonDDBClient must be specified");
         }
 
         DdbEndpoint endpoint = new DdbEndpoint(uri, this, configuration);

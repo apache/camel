@@ -20,3 +20,6 @@
   UPDATE projects
   SET license = :lic
   WHERE id = :id
+@NAME(insertProject)
+  INSERT INTO projects (id, project, license)
+  VALUES (:id, :project, :license)

@@ -14,23 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.spi;
 
-import java.util.List;
-
 /**
- * Allows SPIs to implement custom load balancing strategies for the Service Call EIP.
+ * Represents a load balancer for the Service Call EIP.
  *
- * @see ServiceCallServerListStrategy
+ * @see ServiceCallServiceChooser
+ * @see ServiceCallServiceDiscovery
  */
-public interface ServiceCallLoadBalancer<T extends ServiceCallServer> {
-
-    /**
-     * Chooses one of the servers to use using the implemented strategy.
-     *
-     * @param servers  list of servers
-     * @return the chosen server to use.
-     */
-    T chooseServer(List<T> servers);
-
+@FunctionalInterface
+public interface ServiceCallLoadBalancer {
+    <T> T process(String serviceName, ServiceCallLoadBalancerRequest<T> request) throws Exception;
 }

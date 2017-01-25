@@ -1,6 +1,4 @@
-[[Yammer-Yammer]]
-Yammer
-~~~~~~
+## Yammer Component
 
 *Available as of Camel 2.12*
 
@@ -27,18 +25,14 @@ for this component:
 </dependency>
 ----
 
-[[Yammer-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source]
 ----
 yammer:[function]?[options]
 ----
 
-[[Yammer-ComponentOptions]]
-Component options
-^^^^^^^^^^^^^^^^^
+### Component options
 
 The Yammer component can be configured with the Yammer account settings
 which are mandatory to configure before using.
@@ -52,13 +46,13 @@ The Yammer component supports 4 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| consumerKey | String | The consumer key
-| consumerSecret | String | The consumer secret
-| accessToken | String | The access token
-| config | YammerConfiguration | To use a shared yammer configuration
+| Name | Group | Default | Java Type | Description
+| consumerKey | security |  | String | The consumer key
+| consumerSecret | security |  | String | The consumer secret
+| accessToken | security |  | String | The access token
+| config | advanced |  | YammerConfiguration | To use a shared yammer configuration
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -68,9 +62,7 @@ The Yammer component supports 4 options which are listed below.
 
 You can also configure these options directly in the endpoint.
 
-[[Yammer-EndpointOptions]]
-Endpoint options
-^^^^^^^^^^^^^^^^^
+### Endpoint options
 
 
 
@@ -82,11 +74,8 @@ The Yammer component supports 29 endpoint options which are listed below:
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | function | common |  | YammerFunctionType | *Required* The function to use
-| accessToken | common |  | String | *Required* The access token
-| consumerKey | common |  | String | *Required* The consumer key
-| consumerSecret | common |  | String | *Required* The consumer secret
 | useJson | common | false | boolean | Set to true if you want to use raw JSON rather than converting to POJOs.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | delay | consumer | 5000 | long | Delay between polling in millis
 | limit | consumer | -1 | int | Return only the specified number of messages. Works for threaded=true and threaded=extended.
 | newerThan | consumer | -1 | int | Returns messages newer than the message ID specified as a numeric string. This should be used when polling for new messages. If you're looking at messages and the most recent message returned is 3516 you can make a request with the parameter newerThan=3516 to ensure that you do not get duplicate copies of messages already on your page.
@@ -94,7 +83,7 @@ The Yammer component supports 29 endpoint options which are listed below:
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
 | threaded | consumer |  | String | threaded=true will only return the first message in each thread. This parameter is intended for apps which display message threads collapsed. threaded=extended will return the thread starter messages in order of most recently active as well as the two most recent messages as they are viewed in the default view on the Yammer web interface.
 | userId | consumer |  | String | The user id
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
@@ -110,6 +99,9 @@ The Yammer component supports 29 endpoint options which are listed below:
 | startScheduler | scheduler | true | boolean | Whether the scheduler should be auto started.
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
+| accessToken | security |  | String | *Required* The access token
+| consumerKey | security |  | String | *Required* The consumer key
+| consumerSecret | security |  | String | *Required* The consumer secret
 |=======================================================================
 {% endraw %}
 // endpoint options: END
@@ -117,9 +109,7 @@ The Yammer component supports 29 endpoint options which are listed below:
 
 
 
-[[Yammer-Consumingmessages]]
-Consuming messages
-^^^^^^^^^^^^^^^^^^
+### Consuming messages
 
 The Yammer component provides several endpoints for consuming
 messages:
@@ -150,9 +140,7 @@ and topics that the user is following.
 |=======================================================================
 
 
-[[Yammer-Messageformat]]
-Message format
-++++++++++++++
+#### Message format
 
 All messages by default are converted to a POJO model provided in the
 `org.apache.camel.component.yammer.model` package. The original message
@@ -261,9 +249,7 @@ That said, marshaling this data into POJOs is not free so if you need
 you can switch back to using pure JSON by adding the `useJson=false`
 option to your URI.
 
-[[Yammer-Creatingmessages]]
-Creating messages
-^^^^^^^^^^^^^^^^^
+### Creating messages
 
 To create a new message in the account of the current user, you can use
 the following URI:
@@ -308,9 +294,7 @@ assertEquals(1, messages.getMessages().size());
 assertEquals("Hi from Camel!", messages.getMessages().get(0).getBody().getPlain());
 ----
 
-[[Yammer-Retrievinguserrelationships]]
-Retrieving user relationships
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Retrieving user relationships
 
 The Yammer component can retrieve user relationships:
 
@@ -320,9 +304,7 @@ yammer:relationships?[options]
 ----
 
 
-[[Yammer-Retrievingusers]]
-Retrieving users
-^^^^^^^^^^^^^^^^
+### Retrieving users
 
 The Yammer component provides several endpoints for retrieving
 users:
@@ -337,9 +319,7 @@ users:
 |=====================================================
 
 
-[[Yammer-Usinganenricher]]
-Using an enricher
-^^^^^^^^^^^^^^^^^
+### Using an enricher
 
 It is helpful sometimes (or maybe always in the case of users or
 relationship consumers) to use an enricher pattern rather than a route
@@ -363,9 +343,7 @@ from("direct:start")
 This will go out and fetch the current user's `User` object and set it as
 the Camel message body.
 
-[[Yammer-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]

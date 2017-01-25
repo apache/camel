@@ -19,6 +19,7 @@ package org.apache.camel.component.cmis;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.chemistry.opencmis.client.api.ItemIterable;
@@ -36,6 +37,11 @@ public class CMISQueryProducer extends DefaultProducer {
         super(endpoint);
         this.sessionFacadeFactory = sessionFacadeFactory;
         this.sessionFacade = null;
+    }
+
+    @Override
+    public CMISEndpoint getEndpoint() {
+        return (CMISEndpoint) super.getEndpoint();
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -63,7 +69,7 @@ public class CMISQueryProducer extends DefaultProducer {
 
     private CMISSessionFacade getSessionFacade() throws Exception {
         if (sessionFacade == null) {
-            sessionFacade = sessionFacadeFactory.create();
+            sessionFacade = sessionFacadeFactory.create(getEndpoint());
             sessionFacade.initSession();
         }
 

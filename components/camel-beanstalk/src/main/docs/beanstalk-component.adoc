@@ -1,6 +1,4 @@
-[[Beanstalk-Beanstalkcomponent]]
-Beanstalk component
-~~~~~~~~~~~~~~~~~~~
+## Beanstalk Component
 
 *Available in Camel 2.15*
 
@@ -11,9 +9,7 @@ You can find the detailed explanation of Beanstalk job lifecycle
 at http://github.com/kr/beanstalkd/blob/v1.3/doc/protocol.txt[Beanstalk
 protocol].
 
-[[Beanstalk-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 Maven users need to add the following dependency to their `pom.xml`
 
@@ -29,9 +25,7 @@ Maven users need to add the following dependency to their `pom.xml`
 where `${camel-version`} must be replaced by the actual version of Camel
 (2.15.0 or higher).
 
-[[Beanstalk-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,xml]
 ------------------------------------------
@@ -58,9 +52,7 @@ details here].
 By the way, you cannot specify several tubes when you are writing jobs
 into Beanstalk.
 
-[[Beanstalk-options]]
-Beanstalk options
-^^^^^^^^^^^^^^^^^
+### Beanstalk options
 
 
 
@@ -70,10 +62,10 @@ The Beanstalk component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| connectionSettingsFactory | ConnectionSettingsFactory | Custom ConnectionSettingsFactory. Specify which ConnectionSettingsFactory to use to make connections to Beanstalkd. Especially useful for unit testing without beanstalkd daemon (you can mock ConnectionSettings)
+| Name | Group | Default | Java Type | Description
+| connectionSettingsFactory | common |  | ConnectionSettingsFactory | Custom ConnectionSettingsFactory. Specify which ConnectionSettingsFactory to use to make connections to Beanstalkd. Especially useful for unit testing without beanstalkd daemon (you can mock ConnectionSettings)
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -94,11 +86,11 @@ The Beanstalk component supports 27 endpoint options which are listed below:
 | jobPriority | common | 1000 | long | Job priority. (0 is the highest see Beanstalk protocol)
 | jobTimeToRun | common | 60 | int | Job time to run in seconds. (when 0 the beanstalkd daemon raises it to 1 automatically see Beanstalk protocol)
 | awaitJob | consumer | true | boolean | Whether to wait for job to complete before ack the job from beanstalk
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | onFailure | consumer |  | BeanstalkCommand | Command to use when processing failed.
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
 | useBlockIO | consumer | true | boolean | Whether to use blockIO.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
@@ -148,9 +140,7 @@ Consumer] which means there is more options you can configure, such as
 how frequent the consumer should poll. For more details
 see link:polling-consumer.html[Polling Consumer].
 
-[[Beanstalk-ConsumerHeaders]]
-Consumer Headers
-^^^^^^^^^^^^^^^^
+### Consumer Headers
 
 The consumer stores a number of job headers in the Exchange message:
 
@@ -180,9 +170,7 @@ queue
 |_beanstalk.kicks_ |int |the number of times this job has been kicked
 |=======================================================================
 
-[[Beanstalk-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
 This Camel component lets you both request the jobs for processing and
 supply them to Beanstalkd daemon. Our simple demo routes may look like
@@ -222,12 +210,9 @@ out of buried and/or delayed state to the normal queue.
 
  
 
-[[Beanstalk-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

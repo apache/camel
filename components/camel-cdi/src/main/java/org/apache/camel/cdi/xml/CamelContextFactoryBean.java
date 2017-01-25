@@ -45,6 +45,8 @@ import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ContextScanDefinition;
+import org.apache.camel.model.GlobalOptionsDefinition;
+import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
@@ -57,6 +59,7 @@ import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
+import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -137,6 +140,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     @XmlElement(name = "properties")
     private PropertiesDefinition properties;
 
+    @XmlElement(name = "globalOptions")
+    private GlobalOptionsDefinition globalOptions;
+
     @XmlElement(name = "propertyPlaceholder", type = CamelPropertyPlaceholderDefinition.class)
     private CamelPropertyPlaceholderDefinition camelPropertyPlaceholder;
 
@@ -159,9 +165,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
         @XmlElement(name = "consumerTemplate", type = ConsumerTemplateFactoryBean.class),
         @XmlElement(name = "redeliveryPolicyProfile", type = RedeliveryPolicyFactoryBean.class),
         @XmlElement(name = "template", type = ProducerTemplateFactoryBean.class),
-        @XmlElement(name = "threadPool", type = ThreadPoolFactoryBean.class)
+        @XmlElement(name = "threadPool", type = ThreadPoolFactoryBean.class),
     })
-    private List<AbstractCamelFactoryBean<?>> beans;
+    private List<AbstractCamelFactoryBean<?>> beansFactory;
+
+    @XmlElements({
+        @XmlElement(name = "serviceCallConfiguration", type = ServiceCallConfigurationDefinition.class),
+        @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class)})
+    private List<?> beans;
 
     @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class)
     private List<ErrorHandlerDefinition> errorHandlers;
@@ -303,11 +314,20 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
         return context;
     }
 
-    public List<AbstractCamelFactoryBean<?>> getBeans() {
+    public List<AbstractCamelFactoryBean<?>> getBeansFactory() {
+        return beansFactory;
+    }
+
+    public void setBeansFactory(List<AbstractCamelFactoryBean<?>> beansFactory) {
+        this.beansFactory = beansFactory;
+    }
+
+    @Override
+    public List<?> getBeans() {
         return beans;
     }
 
-    public void setBeans(List<AbstractCamelFactoryBean<?>> beans) {
+    public void setBeans(List<?> beans) {
         this.beans = beans;
     }
 
@@ -381,6 +401,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setProperties(PropertiesDefinition properties) {
         this.properties = properties;
+    }
+
+    public GlobalOptionsDefinition getGlobalOptions() {
+        return globalOptions;
+    }
+
+    public void setGlobalOptions(GlobalOptionsDefinition globalOptions) {
+        this.globalOptions = globalOptions;
     }
 
     public String[] getPackages() {

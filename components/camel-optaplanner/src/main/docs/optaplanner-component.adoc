@@ -1,6 +1,4 @@
-[[OptaPlanner-OptaPlanner]]
-OptaPlanner
-~~~~~~~~~~~
+## OptaPlanner Component
 
 *Available as of Camel 2.13*
 
@@ -24,9 +22,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------------------------------
 
-[[OptaPlanner-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------------------------------
@@ -39,9 +35,7 @@ example `/org/foo/barSolverConfig.xml`.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[OptaPlanner-URIOptions]]
-OptaPlanner Options
-^^^^^^^^^^^
+### OptaPlanner Options
 
 
 // component options: START
@@ -59,8 +53,8 @@ The OptaPlanner component supports 8 endpoint options which are listed below:
 | Name | Group | Default | Java Type | Description
 | configFile | common |  | String | *Required* Specifies the location to the solver file
 | solverId | common | DEFAULT_SOLVER | String | Specifies the solverId to user for the solver instance key
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | async | producer | false | boolean | Specifies to perform operations in async mode
 | threadPoolSize | producer | 10 | int | Specifies the thread pool size to use when async is true
@@ -70,9 +64,7 @@ The OptaPlanner component supports 8 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[OptaPlanner-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 [width="100%",cols="10%,10%,10%,10%,60%",options="header",]
 |=======================================================================
@@ -84,9 +76,7 @@ Message Headers
 rather than blocking the current thread.
 |=======================================================================
 
-[[OptaPlanner-MessageBody]]
-Message Body
-^^^^^^^^^^^^
+### Message Body
 
 Camel takes the planning problem for the IN body, solves it and returns
 it on the OUT body. (since v 2.16) The IN body object supports the following use cases:
@@ -100,9 +90,7 @@ wait till isEveryProblemFactChangeProcessed before returning result.
 * If the body is none of the above types, then the producer will return
 the best result from the solver identified by solverId
 
-[[OptaPlanner-Termination]]
-Termination
-^^^^^^^^^^^
+### Termination
 
 The solving will take as long as specified in the `solverConfig`.
 
@@ -122,9 +110,7 @@ The solving will take as long as specified in the `solverConfig`.
 
  
 
-[[OptaPlanner-Samples]]
-Samples
-+++++++
+#### Samples
 
 Solve an planning problem that's on the ActiveMQ queue with OptaPlanner:
 
@@ -142,12 +128,9 @@ from("cxfrs:bean:rsServer?bindingStyle=SimpleConsumer")
   .to("optaplanner:/org/foo/barSolverConfig.xml");
 -------------------------------------------------------
 
-[[OptaPlanner-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

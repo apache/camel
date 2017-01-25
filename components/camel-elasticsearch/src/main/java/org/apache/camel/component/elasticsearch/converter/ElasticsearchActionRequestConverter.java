@@ -24,6 +24,7 @@ import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.elasticsearch.ElasticsearchConstants;
 import org.elasticsearch.action.WriteConsistencyLevel;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.exists.ExistsRequest;
@@ -164,6 +165,14 @@ public final class ElasticsearchActionRequestConverter {
                 .type(exchange.getIn().getHeader(
                         ElasticsearchConstants.PARAM_INDEX_TYPE,
                         String.class)).id(id);
+    }
+    
+    @Converter
+    public static DeleteIndexRequest toDeleteIndexRequest(String id, Exchange exchange) {
+        return new DeleteIndexRequest()
+                .indices(exchange.getIn().getHeader(
+                        ElasticsearchConstants.PARAM_INDEX_NAME,
+                        String.class));
     }
 
     @Converter

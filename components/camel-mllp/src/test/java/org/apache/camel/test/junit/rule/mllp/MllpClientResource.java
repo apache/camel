@@ -257,9 +257,9 @@ public class MllpClientResource extends ExternalResource {
             } else {
                 log.warn("Not sending START_OF_BLOCK");
             }
-            for (int i = 0; i < payloadBytes.length; ++i) {
-                outputStream.write(payloadBytes[i]);
-                if (flushByte == payloadBytes[i]) {
+            for (byte payloadByte : payloadBytes) {
+                outputStream.write(payloadByte);
+                if (flushByte == payloadByte) {
                     outputStream.flush();
                 }
             }

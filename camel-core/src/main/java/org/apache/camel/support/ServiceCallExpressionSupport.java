@@ -17,85 +17,53 @@
 package org.apache.camel.support;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.model.remote.ServiceCallDefinition;
+import org.apache.camel.impl.cloud.ServiceCallConstants;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/**
- * Support class for custom implementations of {@link ServiceCallDefinition ServiceCall EIP} components.
- * <p/>
- * Below are some examples how to call a service and what Camel endpoint URI is constructed based on the input:
- * <pre>
-     serviceCall("myService") -> http://hostname:port
-     serviceCall("myService/foo") -> http://hostname:port/foo
-     serviceCall("http:myService/foo") -> http:hostname:port/foo
-     serviceCall("myService", "http:myService.host:myService.port/foo") -> http:hostname:port/foo
-     serviceCall("myService", "netty4:tcp:myService?connectTimeout=1000") -> netty:tcp:hostname:port?connectTimeout=1000
- * </pre>
- */
 public abstract class ServiceCallExpressionSupport extends ExpressionAdapter {
+    private String hostHeader;
+    private String portHeader;
 
-    private static final Logger LOG = LoggerFactory.getLogger(ServiceCallExpressionSupport.class);
-
-    private final String name;
-    private final String scheme;
-    private final String contextPath;
-    private final String uri;
-
-    public ServiceCallExpressionSupport(String name, String scheme, String contextPath, String uri) {
-        this.name = name;
-        this.scheme = scheme;
-        this.contextPath = contextPath;
-        this.uri = uri;
+    public ServiceCallExpressionSupport() {
+        this(ServiceCallConstants.SERVICE_HOST, ServiceCallConstants.SERVICE_PORT);
     }
 
-    public abstract String getIp(Exchange exchange) throws Exception;
+    public ServiceCallExpressionSupport(String hostHeader, String portHeader) {
+        this.hostHeader = hostHeader;
+        this.portHeader = portHeader;
+    }
 
-    public abstract int getPort(Exchange exchange) throws Exception;
+    public String getHostHeader() {
+        return hostHeader;
+    }
+
+    public void setHostHeader(String hostHeader) {
+        this.hostHeader = hostHeader;
+    }
+
+    public String getPortHeader() {
+        return portHeader;
+    }
+
+    public void setPortHeader(String portHeader) {
+        this.portHeader = portHeader;
+    }
 
     @Override
     public Object evaluate(Exchange exchange) {
         try {
-            String ip = getIp(exchange);
-            int port = getPort(exchange);
-            return buildCamelEndpointUri(ip, port, name, uri, contextPath, scheme);
+            return buildCamelEndpointUri(
+                ExchangeHelper.getMandatoryHeader(exchange, ServiceCallConstants.SERVICE_NAME, String.class),
+                ExchangeHelper.getMandatoryHeader(exchange, hostHeader, String.class),
+                exchange.getIn().getHeader(portHeader, Integer.class),
+                exchange.getIn().getHeader(ServiceCallConstants.SERVICE_CALL_URI, String.class),
+                exchange.getIn().getHeader(ServiceCallConstants.SERVICE_CALL_CONTEXT_PATH, String.class),
+                exchange.getIn().getHeader(ServiceCallConstants.SERVICE_CALL_SCHEME, String.class));
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
 
-    protected static String buildCamelEndpointUri(String ip, int port, String name, String uri, String contextPath, String scheme) {
-        // build basic uri if none provided
-        String answer = uri;
-        if (answer == null) {
-            if (scheme == null) {
-                // use http/https by default if no scheme has been configured
-                if (port == 443) {
-                    scheme = "https";
-                } else {
-                    scheme = "http";
-                }
-            }
-            answer = scheme + "://" + ip + ":" + port;
-            if (contextPath != null) {
-                answer += "" + contextPath;
-            }
-        } else {
-            // we have existing uri, then replace the serviceName with ip:port
-            if (answer.contains(name + ".host")) {
-                answer = answer.replaceFirst(name + "\\.host", ip);
-            }
-            if (answer.contains(name + ".port")) {
-                answer = answer.replaceFirst(name + "\\.port", "" + port);
-            }
-            if (answer.contains(name)) {
-                answer = answer.replaceFirst(name, ip + ":" + port);
-            }
-        }
-
-        LOG.debug("Camel endpoint uri: {} for calling service: {} on server {}:{}", answer, name, ip, port);
-        return answer;
-    }
-
+    protected abstract String buildCamelEndpointUri(String name, String host, Integer port, String uri, String contextPath, String scheme);
 }

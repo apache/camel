@@ -19,7 +19,8 @@ package org.apache.camel.component.mllp;
 /**
  * Raised when a MLLP Producer receives a HL7 Commit Error Acknowledgement
  */
-public class MllpCommitErrorAcknowledgementException extends MllpAcknowledgementException {
+public class MllpCommitErrorAcknowledgementException extends MllpNegativeAcknowledgementException {
+
     static final String EXCEPTION_MESSAGE = "HL7 Commit Error Acknowledgment Received";
 
     public MllpCommitErrorAcknowledgementException(byte[] hl7Message, byte[] hl7Acknowledgement) {
@@ -28,5 +29,10 @@ public class MllpCommitErrorAcknowledgementException extends MllpAcknowledgement
 
     public MllpCommitErrorAcknowledgementException(byte[] hl7Message, byte[] hl7Acknowledgement, Throwable cause) {
         super(EXCEPTION_MESSAGE, hl7Message, hl7Acknowledgement, cause);
+    }
+
+    @Override
+    public String getAcknowledgmentType() {
+        return "CE";
     }
 }

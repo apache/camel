@@ -183,12 +183,6 @@
       <version>${cglib-version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>asm</groupId>
-      <artifactId>asm</artifactId>
-      <version>${asm-version}</version>
-      <scope>test</scope>
-    </dependency>
 
   </dependencies>
 

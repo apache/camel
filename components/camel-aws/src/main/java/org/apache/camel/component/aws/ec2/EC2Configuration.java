@@ -28,20 +28,21 @@ public class EC2Configuration {
 
     @UriPath(description = "Logical name") @Metadata(required = "true")
     private String label;
-    @UriParam
-    private AmazonEC2Client amazonEc2Client;
-    @UriParam
-    private String accessKey;
-    @UriParam
-    private String secretKey;
-    @UriParam
-    private String amazonEc2Endpoint;
     @UriParam(label = "producer")
+    private AmazonEC2Client amazonEc2Client;
+    @UriParam(label = "producer", secret = true)
+    private String accessKey;
+    @UriParam(label = "producer", secret = true)
+    private String secretKey;
+    @UriParam(label = "producer")
+    private String amazonEc2Endpoint;
+    @UriParam(label = "producer", enums = "createAndRunInstances, startInstances, stopInstances, terminateInstances, describeInstances, "
+        + "describeInstancesStatus, rebootInstances, monitorInstances, unmonitorInstances, createTags, deleteTags")
     @Metadata(required = "true")
     private EC2Operations operation;
-    @UriParam
+    @UriParam(label = "producer")
     private String proxyHost;
-    @UriParam
+    @UriParam(label = "producer")
     private Integer proxyPort;
     
     public AmazonEC2Client getAmazonEc2Client() {

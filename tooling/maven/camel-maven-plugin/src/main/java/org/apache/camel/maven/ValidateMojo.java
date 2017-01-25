@@ -400,8 +400,15 @@ public class ValidateMojo extends AbstractExecMojo {
 
         int simpleErrors = 0;
         for (CamelSimpleExpressionDetails detail : simpleExpressions) {
-            getLog().debug("Validating simple expression: " + detail.getSimple());
-            SimpleValidationResult result = catalog.validateSimpleExpression(detail.getSimple());
+            SimpleValidationResult result;
+            boolean predicate = detail.isPredicate();
+            if (predicate) {
+                getLog().debug("Validating simple predicate: " + detail.getSimple());
+                result = catalog.validateSimplePredicate(detail.getSimple());
+            } else {
+                getLog().debug("Validating simple expression: " + detail.getSimple());
+                result = catalog.validateSimpleExpression(detail.getSimple());
+            }
             if (!result.isSuccess()) {
                 simpleErrors++;
 

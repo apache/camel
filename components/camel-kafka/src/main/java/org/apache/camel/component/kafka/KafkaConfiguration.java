@@ -20,12 +20,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
+import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.StateRepository;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.jsse.CipherSuitesParameters;
+import org.apache.camel.util.jsse.KeyManagersParameters;
+import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.SecureSocketProtocolsParameters;
+import org.apache.camel.util.jsse.TrustManagersParameters;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -102,6 +110,8 @@ public class KafkaConfiguration {
     private String consumerId;
     @UriParam(label = "consumer", defaultValue = "true")
     private Boolean autoCommitEnable = true;
+    @UriParam(label = "consumer")
+    private StateRepository<String, String> offsetRepository;
 
     //Producer configuration properties
     @UriParam(label = "producer", defaultValue = "100")
@@ -177,21 +187,25 @@ public class KafkaConfiguration {
     //reconnect.backoff.ms
     @UriParam(label = "producer", defaultValue = "50")
     private Integer reconnectBackoffMs = 50;
+
+    // SSL
+    @UriParam(label = "common,security")
+    private SSLContextParameters sslContextParameters;
     // SSL
     // ssl.key.password
-    @UriParam(label = "producer,security")
+    @UriParam(label = "producer,security", secret = true)
     private String sslKeyPassword;
     // ssl.keystore.location
     @UriParam(label = "producer,security")
     private String sslKeystoreLocation;
     // ssl.keystore.password
-    @UriParam(label = "producer,security")
+    @UriParam(label = "producer,security", secret = true)
     private String sslKeystorePassword;
     //ssl.truststore.location
     @UriParam(label = "producer,security")
     private String sslTruststoreLocation;
     //ssl.truststore.password
-    @UriParam(label = "producer,security")
+    @UriParam(label = "producer,security", secret = true)
     private String sslTruststorePassword;
     //SSL
     //ssl.enabled.protocols
@@ -261,6 +275,7 @@ public class KafkaConfiguration {
         addPropertyIfNotNull(props, ProducerConfig.COMPRESSION_TYPE_CONFIG, getCompressionCodec());
         addPropertyIfNotNull(props, ProducerConfig.RETRIES_CONFIG, getRetries());
         // SSL
+        applySslConfiguration(props, getSslContextParameters());
         addPropertyIfNotNull(props, SslConfigs.SSL_KEY_PASSWORD_CONFIG, getSslKeyPassword());
         addPropertyIfNotNull(props, SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, getSslKeystoreLocation());
         addPropertyIfNotNull(props, SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, getSslKeystorePassword());
@@ -319,6 +334,7 @@ public class KafkaConfiguration {
         addPropertyIfNotNull(props, ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, getSessionTimeoutMs());
         addPropertyIfNotNull(props, ConsumerConfig.MAX_POLL_RECORDS_CONFIG, getMaxPollRecords());
         // SSL
+        applySslConfiguration(props, getSslContextParameters());
         addPropertyIfNotNull(props, SslConfigs.SSL_KEY_PASSWORD_CONFIG, getSslKeyPassword());
         addPropertyIfNotNull(props, SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, getSslKeystoreLocation());
         addPropertyIfNotNull(props, SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, getSslKeystorePassword());
@@ -365,6 +381,54 @@ public class KafkaConfiguration {
         return props;
     }
 
+    /**
+     * Uses the standard camel {@link SSLContextParameters} object to fill the Kafka SSL properties
+     *
+     * @param props Kafka properties
+     * @param sslContextParameters SSL configuration
+     */
+    private void applySslConfiguration(Properties props, SSLContextParameters sslContextParameters) {
+        if (sslContextParameters != null) {
+            addPropertyIfNotNull(props, SslConfigs.SSL_PROTOCOL_CONFIG, sslContextParameters.getSecureSocketProtocol());
+            addPropertyIfNotNull(props, SslConfigs.SSL_PROVIDER_CONFIG, sslContextParameters.getProvider());
+
+            CipherSuitesParameters cipherSuites = sslContextParameters.getCipherSuites();
+            if (cipherSuites != null) {
+                addCommaSeparatedList(props, SslConfigs.SSL_CIPHER_SUITES_CONFIG, cipherSuites.getCipherSuite());
+            }
+
+            SecureSocketProtocolsParameters secureSocketProtocols = sslContextParameters.getSecureSocketProtocols();
+            if (secureSocketProtocols != null) {
+                addCommaSeparatedList(props, SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG, secureSocketProtocols.getSecureSocketProtocol());
+            }
+
+            KeyManagersParameters keyManagers = sslContextParameters.getKeyManagers();
+            if (keyManagers != null) {
+                addPropertyIfNotNull(props, SslConfigs.SSL_KEYMANAGER_ALGORITHM_CONFIG, keyManagers.getAlgorithm());
+                addPropertyIfNotNull(props, SslConfigs.SSL_KEY_PASSWORD_CONFIG, keyManagers.getKeyPassword());
+
+                KeyStoreParameters keyStore = keyManagers.getKeyStore();
+                if (keyStore != null) {
+                    addPropertyIfNotNull(props, SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, keyStore.getType());
+                    addPropertyIfNotNull(props, SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, keyStore.getResource());
+                    addPropertyIfNotNull(props, SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, keyStore.getPassword());
+                }
+            }
+
+            TrustManagersParameters trustManagers = sslContextParameters.getTrustManagers();
+            if (trustManagers != null) {
+                addPropertyIfNotNull(props, SslConfigs.SSL_TRUSTMANAGER_ALGORITHM_CONFIG, trustManagers.getAlgorithm());
+
+                KeyStoreParameters keyStore = trustManagers.getKeyStore();
+                if (keyStore != null) {
+                    addPropertyIfNotNull(props, SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, keyStore.getType());
+                    addPropertyIfNotNull(props, SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, keyStore.getResource());
+                    addPropertyIfNotNull(props, SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, keyStore.getPassword());
+                }
+            }
+        }
+    }
+
     private static <T> void addPropertyIfNotNull(Properties props, String key, T value) {
         if (value != null) {
             // Kafka expects all properties as String
@@ -378,6 +442,12 @@ public class KafkaConfiguration {
             String[] values = value.toString().split(",");
             List<String> list = Arrays.asList(values);
             props.put(key, list);
+        }
+    }
+
+    private static void addCommaSeparatedList(Properties props, String key, List<String> values) {
+        if (values != null && !values.isEmpty()) {
+            props.put(key, values.stream().collect(Collectors.joining(",")));
         }
     }
 
@@ -461,7 +531,7 @@ public class KafkaConfiguration {
     }
 
     public Boolean isAutoCommitEnable() {
-        return autoCommitEnable;
+        return offsetRepository == null ? autoCommitEnable : false;
     }
 
     /**
@@ -470,6 +540,18 @@ public class KafkaConfiguration {
      */
     public void setAutoCommitEnable(Boolean autoCommitEnable) {
         this.autoCommitEnable = autoCommitEnable;
+    }
+
+    public StateRepository<String, String> getOffsetRepository() {
+        return offsetRepository;
+    }
+
+    /**
+     * The offset repository to use in order to locally store the offset of each partition of the topic.
+     * Defining one will disable the autocommit.
+     */
+    public void setOffsetRepository(StateRepository<String, String> offsetRepository) {
+        this.offsetRepository = offsetRepository;
     }
 
     public Integer getAutoCommitIntervalMs() {
@@ -804,7 +886,7 @@ public class KafkaConfiguration {
     }
 
     /**
-     * The Simple Authentication and Security Layer (SASL) Mechanism used. 
+     * The Simple Authentication and Security Layer (SASL) Mechanism used.
      * For the valid values see <a href="http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml">http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.xhtml</a>
      */
     public void setSaslMechanism(String saslMechanism) {
@@ -820,6 +902,17 @@ public class KafkaConfiguration {
      */
     public void setSecurityProtocol(String securityProtocol) {
         this.securityProtocol = securityProtocol;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    /**
+     * SSL configuration using a Camel {@link SSLContextParameters} object. If configured it's applied before the other SSL endpoint parameters.
+     */
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     public String getSslKeyPassword() {

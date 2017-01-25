@@ -41,6 +41,9 @@ public class EndpointValidationResult implements Serializable {
     // options
     private Set<String> unknown;
     private Map<String, String[]> unknownSuggestions;
+    private Set<String> lenient;
+    private Set<String> notConsumerOnly;
+    private Set<String> notProducerOnly;
     private Set<String> required;
     private Map<String, String> invalidEnum;
     private Map<String, String[]> invalidEnumChoices;
@@ -66,6 +69,9 @@ public class EndpointValidationResult implements Serializable {
     public boolean isSuccess() {
         boolean ok = syntaxError == null && unknownComponent == null && incapable == null
                 && unknown == null && required == null;
+        if (ok) {
+            ok = notConsumerOnly == null && notProducerOnly == null;
+        }
         if (ok) {
             ok = invalidEnum == null && invalidEnumChoices == null && invalidReference == null
                 && invalidBoolean == null && invalidInteger == null && invalidNumber == null;
@@ -103,6 +109,15 @@ public class EndpointValidationResult implements Serializable {
             unknownSuggestions = new LinkedHashMap<String, String[]>();
         }
         unknownSuggestions.put(name, suggestions);
+    }
+
+    public void addLenient(String name) {
+        if (lenient == null) {
+            lenient = new LinkedHashSet<String>();
+        }
+        if (!lenient.contains(name)) {
+            lenient.add(name);
+        }
     }
 
     public void addRequired(String name) {
@@ -186,6 +201,26 @@ public class EndpointValidationResult implements Serializable {
         defaultValues.put(name, value);
     }
 
+    public void addNotConsumerOnly(String name) {
+        if (notConsumerOnly == null) {
+            notConsumerOnly = new LinkedHashSet<String>();
+        }
+        if (!notConsumerOnly.contains(name)) {
+            notConsumerOnly.add(name);
+            errors++;
+        }
+    }
+
+    public void addNotProducerOnly(String name) {
+        if (notProducerOnly == null) {
+            notProducerOnly = new LinkedHashSet<String>();
+        }
+        if (!notProducerOnly.contains(name)) {
+            notProducerOnly.add(name);
+            errors++;
+        }
+    }
+
     public String getSyntaxError() {
         return syntaxError;
     }
@@ -196,6 +231,10 @@ public class EndpointValidationResult implements Serializable {
 
     public Set<String> getUnknown() {
         return unknown;
+    }
+
+    public Set<String> getLenient() {
+        return lenient;
     }
 
     public Map<String, String[]> getUnknownSuggestions() {
@@ -238,6 +277,14 @@ public class EndpointValidationResult implements Serializable {
         return defaultValues;
     }
 
+    public Set<String> getNotConsumerOnly() {
+        return notConsumerOnly;
+    }
+
+    public Set<String> getNotProducerOnly() {
+        return notProducerOnly;
+    }
+
     /**
      * A human readable summary of the validation errors.
      *
@@ -272,6 +319,16 @@ public class EndpointValidationResult implements Serializable {
                 } else {
                     options.put(name, "Unknown option");
                 }
+            }
+        }
+        if (notConsumerOnly != null) {
+            for (String name : notConsumerOnly) {
+                options.put(name, "Option not applicable in consumer only mode");
+            }
+        }
+        if (notProducerOnly != null) {
+            for (String name : notProducerOnly) {
+                options.put(name, "Option not applicable in producer only mode");
             }
         }
         if (required != null) {

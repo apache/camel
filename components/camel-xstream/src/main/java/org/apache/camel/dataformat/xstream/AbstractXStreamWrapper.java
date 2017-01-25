@@ -62,6 +62,7 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements D
     private Map<String, String[]> implicitCollections;
     private String permissions;
     private String mode;
+    private boolean contentTypeHeader = true;
 
     public AbstractXStreamWrapper() {
     }
@@ -318,6 +319,19 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements D
 
     public void setMode(String mode) {
         this.mode = mode;
+    }
+
+
+    public boolean isContentTypeHeader() {
+        return contentTypeHeader;
+    }
+
+    /**
+     * If enabled then XStream will set the Content-Type header to <tt>application/json</tt> when marshalling to JSon
+     * and <tt>application/xml</tt> when marshalling to XML.
+     */
+    public void setContentTypeHeader(boolean contentTypeHeader) {
+        this.contentTypeHeader = contentTypeHeader;
     }
 
     public XStream getXstream() {

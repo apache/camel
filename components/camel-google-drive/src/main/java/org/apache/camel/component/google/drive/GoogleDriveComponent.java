@@ -21,6 +21,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiName;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.component.AbstractApiComponent;
 
 /**
@@ -28,7 +29,9 @@ import org.apache.camel.util.component.AbstractApiComponent;
  */
 public class GoogleDriveComponent extends AbstractApiComponent<GoogleDriveApiName, GoogleDriveConfiguration, GoogleDriveApiCollection> {
 
+    @Metadata(label = "advanced")
     private Drive client;
+    @Metadata(label = "advanced")
     private GoogleDriveClientFactory clientFactory;
     
     public GoogleDriveComponent() {

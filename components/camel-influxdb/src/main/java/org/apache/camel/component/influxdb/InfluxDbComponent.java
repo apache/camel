@@ -20,41 +20,21 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.util.CamelContextHelper;
-import org.influxdb.InfluxDB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 public class InfluxDbComponent extends UriEndpointComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(InfluxDbComponent.class);
 
-    InfluxDB influxDbConnection;
-
-
     public InfluxDbComponent() {
         super(InfluxDbEndpoint.class);
-        this.influxDbConnection = null;
     }
-
-
-
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating influx db endpoint");
-        }
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Looking for influxDb connection bean, remaining {}", remaining);
-        }
-
-        if (influxDbConnection == null) {
-            influxDbConnection = CamelContextHelper.mandatoryLookup(getCamelContext(), remaining, InfluxDB.class);
-        }
-
-        return new InfluxDbEndpoint(uri, this, influxDbConnection);
+        InfluxDbEndpoint endpoint = new InfluxDbEndpoint(uri, this);
+        endpoint.setConnectionBean(remaining);
+        return endpoint;
     }
 }

@@ -1,6 +1,4 @@
-[[Consul-ConsulComponent]]
-Consul Component
-~~~~~~~~~~~~~~~~
+## Consul Component
 
 *Available as of Camel 2.18*
 
@@ -18,9 +16,7 @@ for this component:
     </dependency>
 -------------------------------------------------
 
-[[Consul-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------------
@@ -33,9 +29,7 @@ You can append query options to the URI in the following format:
     ?option=value&option=value&...
 ---------------------------------------
 
-[[Consul-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -65,8 +59,8 @@ The Consul component supports 22 endpoint options which are listed below:
 | tags | common |  | String | Set tags. You can separate multiple tags by comma.
 | url | common |  | String | The Consul agent URL
 | writeTimeoutMillis | common |  | Long | Write timeout for OkHttpClient
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | action | producer |  | String | The default action. Can be overridden by CamelConsulAction
 | valueAsString | producer | false | boolean | Default to transform values retrieved from Consul i.e. on KV endpoint to string.
@@ -85,9 +79,7 @@ The Consul component supports 22 endpoint options which are listed below:
 
 
 
-[[Consul-Headers]]
-Headers
-^^^^^^^
+### Headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================

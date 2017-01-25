@@ -1,6 +1,4 @@
-[[APNS-ApnsComponent]]
-Apns Component
-~~~~~~~~~~~~~~
+## APNS Component
 
 *Available as of Camel 2.8*
 
@@ -32,9 +30,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[APNS-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 To send notifications:
 
@@ -50,9 +46,7 @@ To consume feedback:
 apns:consumer[?options]
 -----------------------
 
-[[APNS-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -62,10 +56,10 @@ The APNS component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| apnsService | ApnsService | To use a custom link ApnsService
+| Name | Group | Default | Java Type | Description
+| apnsService | common |  | ApnsService | *Required* The ApnsService to use. The org.apache.camel.component.apns.factory.ApnsServiceFactory can be used to build a ApnsService
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -82,9 +76,9 @@ The APNS component supports 21 endpoint options which are listed below:
 | Name | Group | Default | Java Type | Description
 | name | common |  | String | Name of the endpoint
 | tokens | common |  | String | Configure this property in case you want to statically declare tokens related to devices you want to notify. Tokens are separated by comma.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
@@ -109,9 +103,7 @@ The APNS component supports 21 endpoint options which are listed below:
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[APNS-Component]]
-Component
-+++++++++
+#### Component
 
 The `ApnsComponent` must be configured with a
 `com.notnoop.apns.ApnsService`. The service can be created and
@@ -121,18 +113,14 @@ further below for an example. And as well in the
 https://svn.apache.org/repos/asf/camel/trunk/components/camel-apns/[test
 source code].
 
-[[APNS-Exchangedataformat]]
-Exchange data format
-^^^^^^^^^^^^^^^^^^^^
+### Exchange data format
 
 When Camel will fetch feedback data corresponding to inactive devices,
 it will retrieve a List of InactiveDevice objects. Each InactiveDevice
 object of the retrieved list will be setted as the In body, and then
 processed by the consumer endpoint.
 
-[[APNS-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 Camel Apns uses these headers.
 
@@ -147,9 +135,7 @@ onwards APNS_NOTIFICATION is used for sending message body as
 com.notnoop.apns.ApnsNotification types.
 |=======================================================================
 
-[[APNS-ApnsServiceFactorybuildercallback]]
-ApnsServiceFactory builder callback
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### ApnsServiceFactory builder callback
 
 `ApnsServiceFactory` comes with the empty callback method that could be
 used to configure (or even replace) the default `ApnsServiceBuilder`
@@ -174,13 +160,9 @@ ApnsServiceFactory proxiedApnsServiceFactory = new ApnsServiceFactory(){
 };
 -------------------------------------------------------------------------------------------
 
-[[APNS-Samples]]
-Samples
-^^^^^^^
+### Samples
 
-[[APNS-CamelXmlroute]]
-Camel Xml route
-+++++++++++++++
+#### Camel Xml route
 
 [source,xml]
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -236,9 +218,7 @@ Camel Xml route
 </beans>
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[APNS-CamelJavaroute]]
-Camel Java route
-++++++++++++++++
+#### Camel Java route
 
 [[APNS-Createcamelcontextanddeclareapnscomponentprogrammatically]]
 Create camel context and declare apns component programmatically
@@ -303,13 +283,10 @@ from("apns:consumer?initialDelay=10&delay=3600&timeUnit=SECONDS")
     .to("mock:result");
 --------------------------------------------------------------------------
 
-[[APNS-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * http://camel.apache.org/component.html[Component]
 * http://camel.apache.org/endpoint.html[Endpoint]
 *
 http://blog.xebia.fr/2010/09/30/creer-un-composant-apache-camel-de-connexion-a-lapns-1-sur-3/[Blog
 about using APNS (in french)]
-

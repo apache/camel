@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.cxf.message.Message;
@@ -35,6 +36,7 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(CxfComponent.class);
 
+    @Metadata(label = "advanced")
     private Boolean allowStreaming;
 
     public CxfComponent() {

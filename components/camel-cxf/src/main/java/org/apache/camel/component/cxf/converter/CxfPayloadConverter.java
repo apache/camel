@@ -210,7 +210,7 @@ public final class CxfPayloadConverter {
                     if (payload.getNsMap() != null) {
                         r = new DelegatingXMLStreamReader(r, payload.getNsMap());
                     }
-                    return (T)tc.convertTo(type, exchange, r);
+                    return tc.convertTo(type, exchange, r);
                 }
                 tc = registry.lookup(type, Source.class);
                 if (tc != null) {
@@ -225,7 +225,7 @@ public final class CxfPayloadConverter {
                             s = new StAXSource(new DelegatingXMLStreamReader(r, payload.getNsMap()));
                         }
                     }
-                    return (T)tc.convertTo(type, exchange, s);
+                    return tc.convertTo(type, exchange, s);
                 }
             }
             TypeConverter tc = registry.lookup(type, NodeList.class);

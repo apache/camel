@@ -1,6 +1,4 @@
-[[ICal-ICalDataFormat]]
-ICal DataFormat
-~~~~~~~~~~~~~~~
+## iCal DataFormat
 
 *Available as of Camel 2.11.1*
 
@@ -28,12 +26,10 @@ END:VEVENT
 END:VCALENDAR
 ----------------------------------------------------------------------
 
-[[ICal-Options]]
-Options
-^^^^^^^
+### Options
 
 // dataformat options: START
-The iCal dataformat supports 1 options which are listed below.
+The iCal dataformat supports 2 options which are listed below.
 
 
 
@@ -42,13 +38,12 @@ The iCal dataformat supports 1 options which are listed below.
 |=======================================================================
 | Name | Default | Java Type | Description
 | validating | false | Boolean | Whether to validate.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
 {% endraw %}
 // dataformat options: END
 
-[[ICal-BasicUsage]]
-Basic Usage
-^^^^^^^^^^^
+### Basic Usage
 
 To unmarshal and marshal the message shown above, your route will look
 like the following:
@@ -75,12 +70,9 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[ICal-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

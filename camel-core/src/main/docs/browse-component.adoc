@@ -1,15 +1,11 @@
-[[Browse-BrowseComponent]]
-Browse Component
-~~~~~~~~~~~~~~~~
+## Browse Component
 
 The Browse component provides a simple
 link:browsableendpoint.html[BrowsableEndpoint] which can be useful for
 testing, visualisation tools or debugging. The exchanges sent to the
 endpoint are all available to be browsed.
 
-[[Browse-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -------------------------
@@ -19,9 +15,7 @@ browse:someName[?options]
 Where *someName* can be any string to uniquely identify the endpoint.
 
 
-[[Gora-Options]]
-Options
-~~~~~~~
+### Options
 
 
 // component options: START
@@ -47,9 +41,7 @@ The Browse component supports 5 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Browse-Sample]]
-Sample
-^^^^^^
+### Sample
 
 In the route below, we insert a `browse:` component to be able to browse
 the Exchanges that are passing through:
@@ -77,12 +69,9 @@ We can now inspect the received exchanges from within the Java code:
    }
 --------------------------------------------------------------------------------------------------------
 
-[[Browse-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

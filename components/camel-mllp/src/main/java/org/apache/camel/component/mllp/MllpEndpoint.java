@@ -100,6 +100,12 @@ public class MllpEndpoint extends DefaultEndpoint {
     @UriParam(defaultValue = "true")
     boolean hl7Headers = true;
 
+    @UriParam(defaultValue = "true")
+    boolean bufferWrites = true;
+
+    @UriParam(defaultValue = "false")
+    boolean validatePayload;
+
     @UriParam(label = "codec")
     String charsetName;
 
@@ -390,5 +396,39 @@ public class MllpEndpoint extends DefaultEndpoint {
      */
     public void setHl7Headers(boolean hl7Headers) {
         this.hl7Headers = hl7Headers;
+    }
+
+    public boolean isValidatePayload() {
+        return validatePayload;
+    }
+
+    /**
+     * Enable/Disable the validation of HL7 Payloads
+     *
+     * If enabled, HL7 Payloads received from external systems will be validated (see Hl7Util.generateInvalidPayloadExceptionMessage for details on the validation).
+     * If and invalid payload is detected, a MllpInvalidMessageException (for consumers) or a MllpInvalidAcknowledgementException will be thrown.
+     *
+     * @param validatePayload enabled if true, otherwise disabled
+     */
+    public void setValidatePayload(boolean validatePayload) {
+        this.validatePayload = validatePayload;
+    }
+
+    public boolean isBufferWrites() {
+        return bufferWrites;
+    }
+
+    /**
+     * Enable/Disable the validation of HL7 Payloads
+     *
+     * If enabled, MLLP Payloads are buffered and written to the external system in a single write(byte[]) operation.
+     * If disabled, the MLLP payload will not be buffered, and three write operations will be used.  The first operation
+     * will write the MLLP start-of-block character {0x0b (ASCII VT)}, the second operation will write the HL7 payload, and the
+     * third operation will writh the MLLP end-of-block character and the MLLP end-of-data character {[0x1c, 0x0d] (ASCII [FS, CR])}.
+     *
+     * @param bufferWrites enabled if true, otherwise disabled
+     */
+    public void setBufferWrites(boolean bufferWrites) {
+        this.bufferWrites = bufferWrites;
     }
 }

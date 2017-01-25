@@ -1,12 +1,8 @@
-[[GoogleCalendar-GoogleCalendarComponent]]
-GoogleCalendar Component
-~~~~~~~~~~~~~~~~~~~~~~~~
+## Google Calendar Component
 
 *Available as of Camel 2.15*
 
-[[GoogleCalendar-ComponentDescription]]
-Component Description
-^^^^^^^^^^^^^^^^^^^^^
+### Component Description
 
 The Google Calendar component provides access
 to http://google.com/calendar[Google Calendar] via
@@ -35,9 +31,7 @@ for this component:
         
 ----------------------------------------------------------
 
-[[GoogleCalendar-options]]
-1. Google Calendar Options
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### 1. Google Calendar Options
 
 
 
@@ -48,11 +42,11 @@ The Google Calendar component supports 2 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| configuration | GoogleCalendarConfiguration | To use the shared configuration
-| clientFactory | GoogleCalendarClientFactory | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleCalendarClientFactory
+| Name | Group | Default | Java Type | Description
+| configuration | common |  | GoogleCalendarConfiguration | To use the shared configuration
+| clientFactory | advanced |  | GoogleCalendarClientFactory | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleCalendarClientFactory
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -83,8 +77,8 @@ The Google Calendar component supports 16 endpoint options which are listed belo
 | refreshToken | common |  | String | OAuth 2 refresh token. Using this the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived.
 | scopes | common | https://www.googleapis.com/auth/calendar | List | Specifies the level of permissions you want a calendar application to have to a user account. See https://developers.google.com/google-apps/calendar/auth for more info.
 | user | common |  | String | The email address of the user the application is trying to impersonate in the service account flow
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
@@ -92,9 +86,7 @@ The Google Calendar component supports 16 endpoint options which are listed belo
 // endpoint options: END
 
 
-[[GoogleCalendar-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 The GoogleCalendar Component uses the following URI format:
 
@@ -114,9 +106,7 @@ Endpoint prefix can be one of:
 * list
 * settings
 
-[[GoogleCalendar-ProducerEndpoints]]
-Producer Endpoints
-^^^^^^^^^^^^^^^^^^
+### Producer Endpoints
 
 Producer endpoints can use endpoint prefixes followed by endpoint names
 and associated options described next. A shorthand alias can be used for
@@ -135,9 +125,7 @@ overrides message header, i.e. the endpoint option `inBody=option` would
 override a `CamelGoogleCalendar.option` header.
 
 
-[[GoogleCalendar-ConsumerEndpoints]]
-Consumer Endpoints
-^^^^^^^^^^^^^^^^^^
+### Consumer Endpoints
 
 Any of the producer endpoints can be used as a consumer endpoint.
 Consumer endpoints can use
@@ -147,16 +135,12 @@ invocation. Consumer endpoints that return an array or collection will
 generate one exchange per element, and their routes will be executed
 once for each exchange.
 
-[[GoogleCalendar-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 Any URI option can be provided in a message header for producer
 endpoints with a `CamelGoogleCalendar.` prefix.
 
-[[GoogleCalendar-MessageBody]]
-Message Body
-^^^^^^^^^^^^
+### Message Body
 
 All result message bodies utilize objects provided by the underlying
 APIs used by the GoogleCalendarComponent. Producer endpoints can specify

@@ -1,6 +1,4 @@
-[[Salesforce-Salesforcecomponent]]
-Salesforce component
-~~~~~~~~~~~~~~~~~~~~
+## Salesforce Component
 
 *Available as of Camel 2.12*
 
@@ -22,9 +20,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Salesforce-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 The URI scheme for a salesforce component is as follows
 
@@ -36,18 +32,14 @@ salesforce:topic?options
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Salesforce-SupportedSalesforceAPIs]]
-Supported Salesforce APIs
-^^^^^^^^^^^^^^^^^^^^^^^^^
+### Supported Salesforce APIs
 
 The component supports the following Salesforce APIs
 
 Producer endpoints can use the following APIs. Most of the APIs process
 one record at a time, the Query API can retrieve multiple Records.
 
-[[Salesforce-RestAPI]]
-Rest API
-++++++++
+#### Rest API
 
 * getVersions - Gets supported Salesforce REST API versions
 * getResources - Gets available Salesforce REST Resource endpoints
@@ -88,9 +80,7 @@ list of errors while creating the new object.
     ...to("salesforce:upsertSObject?sObjectIdName=Name")...
 -----------------------------------------------------------
 
-[[Salesforce-RestBulkAPI]]
-Rest Bulk API
-+++++++++++++
+#### Rest Bulk API
 
 Producer endpoints can use the following APIs. All Job data formats,
 i.e. xml, csv, zip/xml, and zip/csv are supported.  +
@@ -126,9 +116,7 @@ error.
     ...to("salesforce:createBatchJob")..
 ----------------------------------------
 
-[[Salesforce-RestStreamingAPI]]
-Rest Streaming API
-++++++++++++++++++
+#### Rest Streaming API
 
 Consumer endpoints can use the following sytax for streaming endpoints
 to receive Salesforce notifications on create/update.
@@ -147,13 +135,9 @@ To subscribe to an existing topic
     from("salesforce:CamelTestTopic&sObjectName=Merchandise__c")...
 -------------------------------------------------------------------
 
-[[Salesforce-Examples]]
-Examples
-~~~~~~~~
+### Examples
 
-[[Salesforce-UploadingadocumenttoaContentWorkspace]]
-Uploading a document to a ContentWorkspace
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Uploading a document to a ContentWorkspace
 
 Create the ContentVersion in Java, using a Processor instance:
 
@@ -193,9 +177,7 @@ Give the output from the processor to the Salesforce component:
         .to("salesforce:createSObject"); 
 -----------------------------------------------------------------------------------------------------
 
-[[Salesforce-LimitsAPI]]
-Using Salesforce Limits API
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Using Salesforce Limits API
 
 With `salesforce:limits` operation you can fetch of API limits from Salesforce and then act upon that data received.
 The result of `salesforce:limits` operation is mapped to `org.apache.camel.component.salesforce.api.dto.Limits`
@@ -223,9 +205,7 @@ from("direct:querySalesforce")
     .endChoice()
 -----------------------------------------------------------------------------------------------------
 
-[[Salesforce-Approval]]
-Working with approvals
-^^^^^^^^^^^^^^^^^^^^^^
+### Working with approvals
 
 All the properties are named exactly the same as in the Salesforce REST API prefixed with `approval.`. You can set
 approval properties by setting `approval.PropertyName` of the Endpoint these will be used as template -- meaning
@@ -270,9 +250,7 @@ body.put("nextApproverIds", userId);
 final ApprovalResult result = template.requestBody("direct:example1", body, ApprovalResult.class);
 -----------------------------------------------------------------------------------------------------
 
-[[Salesforce-RecentItems]]
-Using Salesforce Recent Items API
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Using Salesforce Recent Items API
 
 To fetch the recent items use `salesforce:recent` operation. This operation returns an `java.util.List` of
 `org.apache.camel.component.salesforce.api.dto.RecentItem` objects (`List<RecentItem>`) that in turn contain
@@ -287,8 +265,7 @@ from("direct:fetchRecentItems")
             .log("${body.name} at ${body.attributes.url}");
 -----------------------------------------------------------------------------------------------------
 
-Working with approvals
-^^^^^^^^^^^^^^^^^^^^^^
+### Working with approvals
 
 All the properties are named exactly the same as in the Salesforce REST API prefixed with `approval.`. You can set
 approval properties by setting `approval.PropertyName` of the Endpoint these will be used as template -- meaning
@@ -333,9 +310,7 @@ body.put("nextApproverIds", userId);
 final ApprovalResult result = template.requestBody("direct:example1", body, ApprovalResult.class);
 -----------------------------------------------------------------------------------------------------
 
-[[Salesforce-CompositeAPI-Tree]]
-Using Salesforce Composite API to submit SObject tree
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Using Salesforce Composite API to submit SObject tree
 
 To create up to 200 records including parent-child relationships use `salesforce:composite-tree` operation. This
 requires an instance of `org.apache.camel.component.salesforce.api.dto.composite.SObjectTree` in the input 
@@ -377,9 +352,7 @@ final List<SObjectNode> succeeded = result.get(false);
 final String firstId = succeeded.get(0).getId();
 -----------------------------------------------------------------------------------------------------
 
-[[Salesforce-CompositeAPI-Batch]]
-Using Salesforce Composite API to submit multiple requests in a batch
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Using Salesforce Composite API to submit multiple requests in a batch
 The Composite API batch operation (`composite-batch`) allows you to accumulate multiple requests in a batch and then
 submit them in one go, saving the round trip cost of multiple individual requests. Each response is then received in a
 list of responses with the order perserved, so that the n-th requests response is in the n-th place of the response.
@@ -436,16 +409,12 @@ final Object updateResultData = deleteResult.getResult(); // probably null
 
 -----------------------------------------------------------------------------------------------------
 
-[[Salesforce-CamelSalesforceMavenPlugin]]
-Camel Salesforce Maven Plugin
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Camel Salesforce Maven Plugin
 
 This Maven plugin generates DTOs for the Camel
 link:salesforce.html[Salesforce].
 
-[[Salesforce-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -459,25 +428,25 @@ The Salesforce component supports 16 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| loginConfig | SalesforceLoginConfig | To use the shared SalesforceLoginConfig as login configuration
-| config | SalesforceEndpointConfig | To use the shared SalesforceLoginConfig as configuration
-| httpClientProperties | Map | Used for configuring HTTP client properties as key/value pairs
-| sslContextParameters | SSLContextParameters | To configure security using SSLContextParameters
-| httpProxyHost | String | To configure HTTP proxy host
-| httpProxyPort | Integer | To configure HTTP proxy port
-| httpProxyUsername | String | To configure HTTP proxy username
-| httpProxyPassword | String | To configure HTTP proxy password
-| isHttpProxySocks4 | boolean | Enable for Socks4 proxy false by default
-| isHttpProxySecure | boolean | Enable for TLS connections true by default
-| httpProxyIncludedAddresses | Set | HTTP proxy included addresses
-| httpProxyExcludedAddresses | Set | HTTP proxy excluded addresses
-| httpProxyAuthUri | String | HTTP proxy authentication URI
-| httpProxyRealm | String | HTTP proxy authentication realm
-| httpProxyUseDigestAuth | boolean | Use HTTP proxy Digest authentication false by default
-| packages | String[] | Package names to scan for DTO classes (multiple packages can be separated by comma).
+| Name | Group | Default | Java Type | Description
+| loginConfig | security |  | SalesforceLoginConfig | To use the shared SalesforceLoginConfig as login configuration
+| config | advanced |  | SalesforceEndpointConfig | To use the shared SalesforceLoginConfig as configuration
+| httpClientProperties | advanced |  | Map | Used for configuring HTTP client properties as key/value pairs
+| sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
+| httpProxyHost | proxy |  | String | To configure HTTP proxy host
+| httpProxyPort | proxy |  | Integer | To configure HTTP proxy port
+| httpProxyUsername | security |  | String | To configure HTTP proxy username
+| httpProxyPassword | security |  | String | To configure HTTP proxy password
+| isHttpProxySocks4 | proxy | false | boolean | Enable for Socks4 proxy false by default
+| isHttpProxySecure | security | false | boolean | Enable for TLS connections true by default
+| httpProxyIncludedAddresses | proxy |  | Set | HTTP proxy included addresses
+| httpProxyExcludedAddresses | proxy |  | Set | HTTP proxy excluded addresses
+| httpProxyAuthUri | security |  | String | HTTP proxy authentication URI
+| httpProxyRealm | security |  | String | HTTP proxy authentication realm
+| httpProxyUseDigestAuth | security | false | boolean | Use HTTP proxy Digest authentication false by default
+| packages | common |  | String[] | Package names to scan for DTO classes (multiple packages can be separated by comma).
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -536,8 +505,8 @@ The Salesforce component supports 42 endpoint options which are listed below:
 | sObjectQuery | common |  | String | Salesforce SOQL query string
 | sObjectSearch | common |  | String | Salesforce SOSL search string
 | updateTopic | common | false | boolean | Whether to update an existing Push Topic when using the Streaming API defaults to false
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
@@ -562,12 +531,9 @@ The generated DTOs use Jackson and XStream annotations. All Salesforce
 field types are supported. Date and time fields are mapped to Joda
 DateTime, and picklist fields are mapped to generated Java Enumerations.
 
-[[Salesforce-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

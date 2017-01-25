@@ -77,7 +77,7 @@ public class RestletEndpoint extends DefaultEndpoint implements AsyncEndpoint, H
     private RestletBinding restletBinding;
     @UriParam(label = "producer", defaultValue = "true")
     private boolean throwExceptionOnFailure = true;
-    @UriParam(label = "advanced")
+    @UriParam(label = "consumer,advanced")
     private boolean disableStreamCache;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;

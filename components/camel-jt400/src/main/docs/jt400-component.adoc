@@ -1,6 +1,4 @@
-[[JT400-JT400Component]]
-JT/400 Component
-~~~~~~~~~~~~~~~~
+## JT400 Component
 
 The *`jt400`* component allows you to exchanges messages with an AS/400
 system using data queues.
@@ -18,9 +16,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[JT400-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ----------------------------------------------------------------------
@@ -37,9 +33,7 @@ jt400://user:password@system/QSYS.LIB/LIBRARY.LIB/program.PGM[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[JT400-options]]
-JT400 options
-^^^^^^^^^^^^^
+### JT400 options
 
 // component options: START
 The JT400 component supports 1 options which are listed below.
@@ -47,10 +41,10 @@ The JT400 component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| connectionPool | AS400ConnectionPool | Returns the default connection pool used by this component.
+| Name | Group | Default | Java Type | Description
+| connectionPool | advanced |  | AS400ConnectionPool | Returns the default connection pool used by this component.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -76,11 +70,10 @@ The JT400 component supports 34 endpoint options which are listed below:
 | outputFieldsLengthArray | common |  | Integer[] | Specifies the fields (program parameters) length as in the AS/400 program definition.
 | searchKey | common |  | String | Search key for keyed data queues.
 | searchType | common | EQ | SearchType | Search type such as EQ for equal etc.
-| secured | common | false | boolean | Whether connections to AS/400 are secured with SSL.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | readTimeout | consumer | 30000 | int | Timeout in millis the consumer will wait while trying to read a new message of the data queue.
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
@@ -97,14 +90,13 @@ The JT400 component supports 34 endpoint options which are listed below:
 | startScheduler | scheduler | true | boolean | Whether the scheduler should be auto started.
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
+| secured | security | false | boolean | Whether connections to AS/400 are secured with SSL.
 |=======================================================================
 {% endraw %}
 // endpoint options: END
 
 
-[[JT400-Usage]]
-Usage
-^^^^^
+### Usage
 
 When configured as a consumer endpoint, the endpoint will poll a data
 queue on a remote system. For every entry on the data queue, a new
@@ -113,9 +105,7 @@ formatted either as a `String` or a `byte[]`, depending on the format.
 For a provider endpoint, the _In_ message body contents will be put on
 the data queue as either raw bytes or text.
 
-[[JT400-Connectionpool]]
-Connection pool
-^^^^^^^^^^^^^^^
+### Connection pool
 
 *Available as of Camel 2.10*
 
@@ -123,9 +113,7 @@ Connection pooling is in use from Camel 2.10 onwards. You can explicit
 configure a connection pool on the Jt400Component, or as an uri option
 on the endpoint.
 
-[[JT400-Remoteprogramcall]]
-Remote program call (*Camel 2.7*)
-+++++++++++++++++++++++++++++++++
+#### Remote program call (*Camel 2.7*)
 
 This endpoint expects the input to be either a String array or byte[]
 array (depending on format) and handles all the CCSID handling through
@@ -136,9 +124,7 @@ String array or byte[] array with the values as they were returned by
 the program (the input only parameters will contain the same data as the
 beginning of the invocation). This endpoint does not implement a provider endpoint!
 
-[[JT400-Example]]
-Example
-^^^^^^^
+### Example
 
 In the snippet below, the data for an exchange sent to the
 `direct:george` endpoint will be put in the data queue `PENNYLANE` in
@@ -157,9 +143,7 @@ public class Jt400RouteBuilder extends RouteBuilder {
 }
 -------------------------------------------------------------------------------------------------------
 
-[[JT400-Remoteprogramcallexample]]
-Remote program call example (*Camel 2.7*)
-+++++++++++++++++++++++++++++++++++++++++
+#### Remote program call example (*Camel 2.7*)
 
 In the snippet below, the data Exchange sent to the direct:work endpoint
 will contain three string that will be used as the arguments for the
@@ -177,9 +161,7 @@ public class Jt400RouteBuilder extends RouteBuilder {
 }
 ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[[JT400-Writingtokeyeddataqueues]]
-Writing to keyed data queues
-++++++++++++++++++++++++++++
+#### Writing to keyed data queues
 
 [source,java]
 ------------------------------------------------------------------------
@@ -187,9 +169,7 @@ from("jms:queue:input")
 .to("jt400://username:password@system/lib.lib/MSGINDQ.DTAQ?keyed=true");
 ------------------------------------------------------------------------
 
-[[JT400-Readingfromkeyeddataqueues]]
-Reading from keyed data queues
-++++++++++++++++++++++++++++++
+#### Reading from keyed data queues
 
 [source,java]
 -------------------------------------------------------------------------------------------------------
@@ -197,12 +177,9 @@ from("jt400://username:password@system/lib.lib/MSGOUTDQ.DTAQ?keyed=true&searchKe
 .to("jms:queue:output");
 -------------------------------------------------------------------------------------------------------
 
-[[JT400-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

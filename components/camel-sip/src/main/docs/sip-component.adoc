@@ -1,6 +1,4 @@
-[[Sip-SIPComponent]]
-SIP Component
-~~~~~~~~~~~~~
+## SIP Component
 
 *Available as of Camel 2.5*
 
@@ -47,9 +45,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Sip-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 The URI scheme for a sip endpoint is as follows:
 
@@ -65,9 +61,7 @@ UDP.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Sip-Options]]
-Options
-^^^^^^^
+### Options
 
 The SIP Component offers an extensive set of configuration options &
 capability to create custom stateful headers needed to propagate state
@@ -103,10 +97,10 @@ The SIP component supports 45 endpoint options which are listed below:
 | toPort | common |  | int | Portname of the message receiver. Mandatory setting unless a registry based ToHeader is specified
 | toUser | common |  | String | Username of the message receiver. Mandatory setting unless a registry based custom ToHeader is specified.
 | transport | common | tcp | String | Setting for choice of transport protocol. Valid choices are tcp or udp.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | consumer | consumer | false | boolean | This setting is used to determine whether the kind of header (FromHeaderToHeader etc) that needs to be created for this endpoint
 | presenceAgent | consumer | false | boolean | This setting is used to distinguish between a Presence Agent & a consumer. This is due to the fact that the SIP Camel component ships with a basic Presence Agent (for testing purposes only). Consumers have to set this flag to true.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | addressFactory | advanced |  | AddressFactory | To use a custom AddressFactory
 | callIdHeader | advanced |  | CallIdHeader | A custom Header object containing call details. Must implement the type javax.sip.header.CallIdHeader
@@ -136,13 +130,9 @@ The SIP component supports 45 endpoint options which are listed below:
 {% endraw %}
 // endpoint options: END
 
-[[Sip-SendingMessagestofromaSIPendpoint]]
-Sending Messages to/from a SIP endpoint
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Sending Messages to/from a SIP endpoint
 
-[[Sip-CreatingaCamelSIPPublisher]]
-Creating a Camel SIP Publisher
-++++++++++++++++++++++++++++++
+#### Creating a Camel SIP Publisher
 
 In the example below, a SIP Publisher is created to send SIP Event
 publications to  +
@@ -166,9 +156,7 @@ producerTemplate.sendBodyAndHeader(
     Request.PUBLISH);  
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
-[[Sip-CreatingaCamelSIPSubscriber]]
-Creating a Camel SIP Subscriber
-+++++++++++++++++++++++++++++++
+#### Creating a Camel SIP Subscriber
 
 In the example below, a SIP Subscriber is created to receive SIP Event
 publications sent to  +

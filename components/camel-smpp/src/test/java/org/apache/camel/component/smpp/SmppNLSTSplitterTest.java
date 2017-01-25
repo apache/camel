@@ -16,12 +16,7 @@
  */
 package org.apache.camel.component.smpp;
 
-import java.nio.charset.Charset;
-
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -57,7 +52,7 @@ public class SmppNLSTSplitterTest {
 
         assertEquals(2, result.length);
         assertArrayEquals(new byte[]{
-            SmppNLSTSplitter.UDHIE_NLI_MULTI_MSG_HEADER_LENGTH, SmppNLSTSplitter.UDHIE_IDENTIFIER_SAR, SmppNLSTSplitter.UDHIE_SAR_LENGTH, 1, 2, 1,
+            SmppNLSTSplitter.UDHIE_NLI_MULTI_MSG_HEADER_LENGTH, SmppSplitter.UDHIE_IDENTIFIER_SAR, SmppSplitter.UDHIE_SAR_LENGTH, 1, 2, 1,
             SmppNLSTSplitter.UDHIE_NLI_IDENTIFIER, SmppNLSTSplitter.UDHIE_NLI_HEADER_LENGTH, turkishLanguageIdentifier,
             49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48,
             49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53,
@@ -65,7 +60,7 @@ public class SmppNLSTSplitterTest {
             49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57}, result[0]);
 
         assertArrayEquals(new byte[]{
-            SmppNLSTSplitter.UDHIE_NLI_MULTI_MSG_HEADER_LENGTH, SmppNLSTSplitter.UDHIE_IDENTIFIER_SAR, SmppNLSTSplitter.UDHIE_SAR_LENGTH, 1, 2, 2,
+            SmppNLSTSplitter.UDHIE_NLI_MULTI_MSG_HEADER_LENGTH, SmppSplitter.UDHIE_IDENTIFIER_SAR, SmppSplitter.UDHIE_SAR_LENGTH, 1, 2, 2,
             SmppNLSTSplitter.UDHIE_NLI_IDENTIFIER, SmppNLSTSplitter.UDHIE_NLI_HEADER_LENGTH, turkishLanguageIdentifier,
             48, 49, 50, 51, 52, 53, 54}, result[1]);
 

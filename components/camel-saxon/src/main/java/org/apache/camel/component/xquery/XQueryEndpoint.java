@@ -47,23 +47,23 @@ public class XQueryEndpoint extends ProcessorEndpoint {
 
     @UriPath @Metadata(required = "true")
     private String resourceUri;
-    @UriParam
+    @UriParam(label = "advanced")
     private Configuration configuration;
-    @UriParam
+    @UriParam(label = "advanced")
     private StaticQueryContext staticQueryContext;
-    @UriParam
+    @UriParam(label = "advanced")
     private Map<String, Object> parameters = new HashMap<String, Object>();
     @UriParam
     private Map<String, String> namespacePrefixes = new HashMap<String, String>();
     @UriParam(defaultValue = "DOM")
     private ResultFormat resultsFormat = ResultFormat.DOM;
-    @UriParam
+    @UriParam(label = "advanced")
     private Properties properties = new Properties();
     @UriParam
     private Class<?> resultType;
     @UriParam(defaultValue = "true")
     private boolean stripsAllWhiteSpace = true;
-    @UriParam
+    @UriParam(label = "advanced")
     private ModuleURIResolver moduleURIResolver;
     @UriParam
     private boolean allowStAX;

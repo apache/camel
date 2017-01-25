@@ -23,7 +23,7 @@
 
     <!-- START SNIPPET: e1 -->
     <transformers>
-        <endpointTransformer uri="xslt:transform.xsl" from="xml:MyRequest" to="xml:MyResponse"/>
+        <endpointTransformer uri="xslt:transform.xsl" fromType="xml:MyRequest" toType="xml:MyResponse"/>
     </transformers>
     <!-- END SNIPPET: e1 -->
 

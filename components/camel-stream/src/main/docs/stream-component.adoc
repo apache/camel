@@ -1,6 +1,4 @@
-[[Stream-StreamComponent]]
-Stream Component
-~~~~~~~~~~~~~~~~
+## Stream Component
 
 The *stream:* component provides access to the `System.in`, `System.out`
 and `System.err` streams as well as allowing streaming of file and URL.
@@ -18,9 +16,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Stream-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -----------------------
@@ -45,9 +41,7 @@ producers (that is, it cannot appear in `from()`).
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[Stream-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -67,7 +61,7 @@ The Stream component supports 19 endpoint options which are listed below:
 | encoding | common |  | String | You can configure the encoding (is a charset name) to use text-based streams (for example message body is a String object). If not provided Camel uses the JVM default Charset.
 | fileName | common |  | String | When using the stream:file URI format this option specifies the filename to stream to/from.
 | url | common |  | String | When using the stream:url URI format this option specifies the URL to stream to/from. The input/output stream will be opened using the JDK URLConnection facility.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | groupLines | consumer |  | int | To group X number of lines in the consumer. For example to group 10 lines and therefore only spit out an Exchange with 10 lines instead of 1 Exchange per line.
 | groupStrategy | consumer |  | GroupStrategy | Allows to use a custom GroupStrategy to control how to group lines.
 | initialPromptDelay | consumer | 2000 | long | Initial delay in milliseconds before showing the message prompt. This delay occurs only once. Can be used during system startup to avoid message prompts being written while other logging is done to the system out.
@@ -76,7 +70,7 @@ The Stream component supports 19 endpoint options which are listed below:
 | retry | consumer | false | boolean | Will retry opening the file if it's overwritten somewhat like tail --retry
 | scanStream | consumer | false | boolean | To be used for continuously reading a stream such as the unix tail command.
 | scanStreamDelay | consumer |  | long | Delay in milliseconds between read attempts when using scanStream.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | autoCloseCount | producer |  | int | Number of messages to process before closing stream on Producer side. Never close stream by default (only when Producer is stopped). If more messages are sent the stream is reopened for another autoCloseCount batch.
 | closeOnDone | producer | false | boolean | This option is used in combination with Splitter and streaming to the same file. The idea is to keep the stream open and only close when the Splitter is done to improve performance. Mind this requires that you only stream to the same file and not 2 or more files.
@@ -87,9 +81,7 @@ The Stream component supports 19 endpoint options which are listed below:
 // endpoint options: END
 
 
-[[Stream-Messagecontent]]
-Message content
-^^^^^^^^^^^^^^^
+### Message content
 
 The *stream:* component supports either `String` or `byte[]` for writing
 to streams. Just add either `String` or `byte[]` content to the
@@ -102,9 +94,7 @@ add a `java.io.OutputStream` object to `message.in.header` in the key
 `header`. +
  See samples for an example.
 
-[[Stream-Samples]]
-Samples
-^^^^^^^
+### Samples
 
 In the following sample we route messages from the `direct:in` endpoint
 to the `System.out` stream:
@@ -140,12 +130,9 @@ file will be re-opened and scanned with each iteration of
 scanStreamDelay. Until NIO2 is available we cannot reliably detect when
 a file is deleted/recreated.
 
-[[Stream-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

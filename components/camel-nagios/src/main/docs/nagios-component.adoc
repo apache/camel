@@ -1,6 +1,4 @@
-[[Nagios-Nagios]]
-Nagios
-~~~~~~
+## Nagios Component
 
 *Available as of Camel 2.3*
 
@@ -20,9 +18,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Nagios-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ------------------------------
@@ -35,9 +31,7 @@ its endpoint. +
  Camel also provides a link:camel-jmx.html[EventNotifer] which allows
 you to send notifications to Nagios.
 
-[[Nagios-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -49,10 +43,10 @@ The Nagios component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| configuration | NagiosConfiguration | To use a shared NagiosConfiguration
+| Name | Group | Default | Java Type | Description
+| configuration | advanced |  | NagiosConfiguration | To use a shared NagiosConfiguration
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -73,20 +67,18 @@ The Nagios component supports 8 endpoint options which are listed below:
 | host | producer |  | String | *Required* This is the address of the Nagios host where checks should be send.
 | port | producer |  | int | *Required* The port number of the host.
 | connectionTimeout | producer | 5000 | int | Connection timeout in millis.
-| encryptionMethod | producer |  | NagiosEncryptionMethod | To specify an encryption method.
-| password | producer |  | String | Password to be authenticated when sending checks to Nagios.
 | sendSync | producer | true | boolean | Whether or not to use synchronous when sending a passive check. Setting it to false will allow Camel to continue routing the message and the passive check message will be send asynchronously.
 | timeout | producer | 5000 | int | Sending timeout in millis.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| encryptionMethod | security |  | NagiosEncryptionMethod | To specify an encryption method.
+| password | security |  | String | Password to be authenticated when sending checks to Nagios.
 |=======================================================================
 {% endraw %}
 // endpoint options: END
 
 
 
-[[Nagios-Sendingmessageexamples]]
-Sending message examples
-^^^^^^^^^^^^^^^^^^^^^^^^
+### Sending message examples
 
 You can send a message to Nagios where the message payload contains the
 message. By default it will be `OK` level and use the
@@ -113,9 +105,7 @@ To send a `CRITICAL` message you can send the headers such as:
         template.sendBodyAndHeaders("direct:start", "Hello Nagios", headers);
 -----------------------------------------------------------------------------
 
-[[Nagios-UsingNagiosEventNotifer]]
-Using `NagiosEventNotifer`
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using `NagiosEventNotifer`
 
 The link:nagios.html[Nagios] component also provides an
 link:camel-jmx.html[EventNotifer] which you can use to send events to
@@ -138,12 +128,9 @@ In Spring XML its just a matter of defining a Spring bean with the type
 link:advanced-configuration-of-camelcontext-using-spring.html[Advanced
 configuration of CamelContext using Spring].
 
-[[Nagios-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

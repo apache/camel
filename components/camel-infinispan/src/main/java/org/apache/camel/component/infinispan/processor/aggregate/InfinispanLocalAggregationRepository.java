@@ -67,13 +67,13 @@ public class InfinispanLocalAggregationRepository extends ServiceSupport impleme
     public Exchange add(final CamelContext camelContext, final String key, final Exchange exchange) {
         LOG.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
         DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange, true, allowSerializedHeaders);
-        DefaultExchangeHolder oldHolder = (DefaultExchangeHolder) cache.put(key, newHolder);
+        DefaultExchangeHolder oldHolder = cache.put(key, newHolder);
         return unmarshallExchange(camelContext, oldHolder);
     }
 
     @Override
     public Exchange get(CamelContext camelContext, String key) {
-        return unmarshallExchange(camelContext, (DefaultExchangeHolder) cache.get(key));
+        return unmarshallExchange(camelContext, cache.get(key));
     }
 
     @Override

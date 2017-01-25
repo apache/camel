@@ -291,13 +291,13 @@ public final class ServiceHelper {
     /**
      * Resumes the given {@code service}.
      * <p/>
-     * If {@code service} is a {@link org.apache.camel.SuspendableService} then
-     * it's {@link org.apache.camel.SuspendableService#resume()} is called but
+     * If {@code service} is both {@link org.apache.camel.Suspendable} and {@link org.apache.camel.SuspendableService} then
+     * its {@link org.apache.camel.SuspendableService#resume()} is called but
      * <b>only</b> if {@code service} is already {@link #isSuspended(Object)
      * suspended}.
      * <p/>
      * If {@code service} is <b>not</b> a
-     * {@link org.apache.camel.SuspendableService} then it's
+     * {@link org.apache.camel.Suspendable} and {@link org.apache.camel.SuspendableService} then its
      * {@link org.apache.camel.Service#start()} is called.
      * <p/>
      * Calling this method has no effect if {@code service} is {@code null}.
@@ -310,7 +310,7 @@ public final class ServiceHelper {
      * @see #startService(Service)
      */
     public static boolean resumeService(Object service) throws Exception {
-        if (service instanceof SuspendableService) {
+        if (service instanceof Suspendable && service instanceof SuspendableService) {
             SuspendableService ss = (SuspendableService) service;
             if (ss.isSuspended()) {
                 LOG.debug("Resuming service {}", service);
@@ -363,12 +363,12 @@ public final class ServiceHelper {
      * Suspends the given {@code service}.
      * <p/>
      * If {@code service} is both {@link org.apache.camel.Suspendable} and {@link org.apache.camel.SuspendableService} then
-     * it's {@link org.apache.camel.SuspendableService#suspend()} is called but
+     * its {@link org.apache.camel.SuspendableService#suspend()} is called but
      * <b>only</b> if {@code service} is <b>not</b> already
      * {@link #isSuspended(Object) suspended}.
      * <p/>
      * If {@code service} is <b>not</b> a
-     * {@link org.apache.camel.Suspendable} and {@link org.apache.camel.SuspendableService} then it's
+     * {@link org.apache.camel.Suspendable} and {@link org.apache.camel.SuspendableService} then its
      * {@link org.apache.camel.Service#stop()} is called.
      * <p/>
      * Calling this method has no effect if {@code service} is {@code null}.

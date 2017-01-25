@@ -89,6 +89,10 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     private JmsKeyFormatStrategy jmsKeyFormatStrategy;
     @UriParam(label = "advanced")
     private ScheduledExecutorService timeoutCheckerExecutorService;
+    @UriParam(label = "advanced")
+    private boolean asyncStartListener;
+    @UriParam(label = "advanced", defaultValue = "5000")
+    private int recoveryInterval = 5000;
 
     public SjmsBatchEndpoint() {
     }
@@ -107,6 +111,11 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     @Override
     public boolean isSingleton() {
         return true;
+    }
+
+    @Override
+    public SjmsBatchComponent getComponent() {
+        return (SjmsBatchComponent) super.getComponent();
     }
 
     @Override
@@ -365,5 +374,34 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
      */
     public void setTimeoutCheckerExecutorService(ScheduledExecutorService timeoutCheckerExecutorService) {
         this.timeoutCheckerExecutorService = timeoutCheckerExecutorService;
+    }
+
+    public boolean isAsyncStartListener() {
+        return asyncStartListener;
+    }
+
+    /**
+     * Whether to startup the consumer message listener asynchronously, when starting a route.
+     * For example if a JmsConsumer cannot get a connection to a remote JMS broker, then it may block while retrying
+     * and/or failover. This will cause Camel to block while starting routes. By setting this option to true,
+     * you will let routes startup, while the JmsConsumer connects to the JMS broker using a dedicated thread
+     * in asynchronous mode. If this option is used, then beware that if the connection could not be established,
+     * then an exception is logged at WARN level, and the consumer will not be able to receive messages;
+     * You can then restart the route to retry.
+     */
+    public void setAsyncStartListener(boolean asyncStartListener) {
+        this.asyncStartListener = asyncStartListener;
+    }
+
+    public int getRecoveryInterval() {
+        return recoveryInterval;
+    }
+
+    /**
+     * Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds.
+     * The default is 5000 ms, that is, 5 seconds.
+     */
+    public void setRecoveryInterval(int recoveryInterval) {
+        this.recoveryInterval = recoveryInterval;
     }
 }

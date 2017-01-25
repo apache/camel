@@ -31,14 +31,14 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * <code>CuratorLeaderRoutePolicy</code> uses Apache Curator LeaderElection receipe to implement the behavior of having
+ * <code>CuratorLeaderRoutePolicy</code> uses Apache Curator LeaderElection recipe to implement the behavior of having
  * at max 1 instance of a route, controlled by a specific policy, running. It is typically used in
  * fail-over scenarios controlling identical instances of a route across a
  * cluster of Camel based servers.
  * <p>
  * The policy affects the normal startup lifecycle of CamelContext and Routes, automatically set autoStart property of
  * routes controlled by this policy to false.
- * After Curator receipe identiffies the current Policy instance as the Leader between a set of clients that are
+ * After Curator recipe identifies the current Policy instance as the Leader between a set of clients that are
  * competing for the role, it will start the route, and only at that moment the route will start its business.
  * This specific behavior is designed to avoid scenarios where such a policy would kick in only after a route had
  * already been started, with the risk, for consumers for example, that some source event might have already been

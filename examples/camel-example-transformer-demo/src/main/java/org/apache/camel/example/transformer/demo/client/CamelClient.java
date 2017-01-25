@@ -21,16 +21,11 @@ import java.io.File;
 import java.io.FileReader;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.example.transformer.demo.Order;
 import org.apache.camel.example.transformer.demo.OrderResponse;
-import org.apache.camel.spring.Main;
-import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**

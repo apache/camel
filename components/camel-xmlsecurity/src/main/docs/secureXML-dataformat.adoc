@@ -1,6 +1,4 @@
-[[XMLSecurityDataFormat-XMLSecurityDataFormat]]
-XMLSecurity Data Format
-~~~~~~~~~~~~~~~~~~~~~~~
+## XML Security DataFormat
 
 The XMLSecurity Data Format facilitates encryption and decryption of XML
 payloads at the Document, Element, and Element Content levels (including
@@ -35,12 +33,10 @@ configuration. This enables true namespace matching, even if the prefix
 values in the XPath query and the target xml document are not equivalent
 strings.
 
-[[XMLSecurityDataFormat-Options]]
-XMLSecurity Options
-^^^^^^^^^^^^^^^^^^^
+### XMLSecurity Options
 
 // dataformat options: START
-The XML Security dataformat supports 11 options which are listed below.
+The XML Security dataformat supports 12 options which are listed below.
 
 
 
@@ -59,14 +55,13 @@ The XML Security dataformat supports 11 options which are listed below.
 | digestAlgorithm | SHA1 | String | The digest algorithm to use with the RSA OAEP algorithm. The available choices are: XMLCipher.SHA1 XMLCipher.SHA256 XMLCipher.SHA512 The default value is XMLCipher.SHA1
 | mgfAlgorithm | MGF1_SHA1 | String | The MGF Algorithm to use with the RSA OAEP algorithm. The available choices are: EncryptionConstants.MGF1_SHA1 EncryptionConstants.MGF1_SHA256 EncryptionConstants.MGF1_SHA512 The default value is EncryptionConstants.MGF1_SHA1
 | addKeyValueForEncryptedKey | true | Boolean | Whether to add the public key used to encrypt the session key as a KeyValue in the EncryptedKey structure or not.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
 {% endraw %}
 // dataformat options: END
 
 
-[[XMLSecurityDataFormat-KeyCipherAlgorithm]]
-Key Cipher Algorithm
-++++++++++++++++++++
+#### Key Cipher Algorithm
 
 As of Camel 2.12.0, the default Key Cipher Algorithm is now
 XMLCipher.RSA_OAEP instead of XMLCipher.RSA_v1dot5. Usage of
@@ -74,30 +69,22 @@ XMLCipher.RSA_v1dot5 is discouraged due to various attacks. Requests
 that use RSA v1.5 as the key cipher algorithm will be rejected unless it
 has been explicitly configured as the key cipher algorithm.
 
-[[XMLSecurityDataFormat-Marshal]]
-Marshal
-^^^^^^^
+### Marshal
 
 In order to encrypt the payload, the `marshal` processor needs to be
 applied on the route followed by the *`secureXML()`* tag.
 
-[[XMLSecurityDataFormat-Unmarshal]]
-Unmarshal
-^^^^^^^^^
+### Unmarshal
 
 In order to decrypt the payload, the `unmarshal` processor needs to be
 applied on the route followed by the *`secureXML()`* tag.
 
-[[XMLSecurityDataFormat-Examples]]
-Examples
-^^^^^^^^
+### Examples
 
 Given below are several examples of how marshalling could be performed
 at the Document, Element, and Content levels.
 
-[[XMLSecurityDataFormat-FullPayloadencryptiondecryption]]
-Full Payload encryption/decryption
-++++++++++++++++++++++++++++++++++
+#### Full Payload encryption/decryption
 
 [source,java]
 ----------------------------
@@ -107,9 +94,7 @@ from("direct:start")
     .to("direct:end");
 ----------------------------
 
-[[XMLSecurityDataFormat-PartialPayloadContentOnlyencryptiondecryption]]
-Partial Payload Content Only encryption/decryption
-++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Partial Payload Content Only encryption/decryption
 
 [source,java]
 ------------------------------------------------------
@@ -122,9 +107,7 @@ from("direct:start")
     .to("direct:end");
 ------------------------------------------------------
 
-[[XMLSecurityDataFormat-PartialMultiNodePayloadContentOnlyencryptiondecryption]]
-Partial Multi Node Payload Content Only encryption/decryption
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Partial Multi Node Payload Content Only encryption/decryption
 
 [source,java]
 ------------------------------------------------------
@@ -137,9 +120,7 @@ from("direct:start")
     .to("direct:end");
 ------------------------------------------------------
 
-[[XMLSecurityDataFormat-PartialPayloadContentOnlyencryptiondecryptionwithchoiceofpassPhrasepassword]]
-Partial Payload Content Only encryption/decryption with choice of passPhrase(password)
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Partial Payload Content Only encryption/decryption with choice of passPhrase(password)
 
 [source,java]
 ------------------------------------------------------------------
@@ -153,9 +134,7 @@ from("direct:start")
     .to("direct:end");
 ------------------------------------------------------------------
 
-[[XMLSecurityDataFormat-PartialPayloadContentOnlyencryptiondecryptionwithpassPhrasepasswordandAlgorithm]] 
-Partial Payload Content Only encryption/decryption with passPhrase(password) and Algorithm
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Partial Payload Content Only encryption/decryption with passPhrase(password) and Algorithm
 
 [source,java]
 -----------------------------------------------------------------------------
@@ -171,9 +150,7 @@ from("direct:start")
     .to("direct:end");
 -----------------------------------------------------------------------------
 
-[[XMLSecurityDataFormat-PartialPayloadContentwithNamespacesupport]]
-Partial Payload Content with Namespace support
-++++++++++++++++++++++++++++++++++++++++++++++
+#### Partial Payload Content with Namespace support
 
 [[XMLSecurityDataFormat-JavaDSL]]
 Java DSL
@@ -218,9 +195,7 @@ attribute of the `secureXML` element.
             ...
 ---------------------------------------------------------------------------------
 
-[[XMLSecurityDataFormat-AsymmetricKeyEncryption]]
-Asymmetric Key Encryption
-+++++++++++++++++++++++++
+#### Asymmetric Key Encryption
 
 [[XMLSecurityDataFormat-SpringXMLSender]]
 Spring XML Sender
@@ -272,8 +247,6 @@ Spring XML Recipient
             ...
 ----------------------------------------------------------------------------------------------
 
-[[XMLSecurityDataFormat-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 This data format is provided within the *camel-xmlsecurity* component.

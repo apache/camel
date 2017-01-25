@@ -1,6 +1,4 @@
-[[Jsch-Jsch]]
-Jsch
-~~~~
+## SCP Component
 
 The *camel-jsch* component supports the
 http://en.wikipedia.org/wiki/Secure_copy[SCP protocol] using the Client
@@ -21,9 +19,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Jsch-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------------
@@ -37,9 +33,7 @@ The file name can be specified either in the <path> part of the URI or
 as a "CamelFileName" header on the message (`Exchange.FILE_NAME` if used
 in code).
 
-[[Jsch-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -50,10 +44,10 @@ The SCP component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| verboseLogging | boolean | JSCH is verbose logging out of the box. Therefore we turn the logging down to DEBUG logging by default. But setting this option to true turns on the verbose logging again.
+| Name | Group | Default | Java Type | Description
+| verboseLogging | producer | false | boolean | JSCH is verbose logging out of the box. Therefore we turn the logging down to DEBUG logging by default. But setting this option to true turns on the verbose logging again.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -104,20 +98,15 @@ The SCP component supports 22 endpoint options which are listed below:
 
 
 
-[[Jsch-Limitations]]
-Limitations
-^^^^^^^^^^^
+### Limitations
 
 Currently camel-jsch only supports a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Producer.html[Producer]
 (i.e. copy files to another host). 
 
-[[Jsch-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

@@ -66,7 +66,7 @@ public class CallableStatementWrapperTest extends CamelTestSupport {
                 statementWrapper.populateStatement(null, exchange);
 
                 Map resultOfQuery = (Map) statementWrapper.executeStatement();
-                Assert.assertEquals(Integer.valueOf(-1), ((Map) resultOfQuery).get("resultofsub"));
+                Assert.assertEquals(-1, resultOfQuery.get("resultofsub"));
             }
         });
     }

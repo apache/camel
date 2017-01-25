@@ -64,6 +64,19 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
         return encoding;
     }
 
+    @Override
+    public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
+        super.marshal(exchange, body, stream);
+
+        if (isContentTypeHeader()) {
+            if (exchange.hasOut()) {
+                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            } else {
+                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+            }
+        }
+    }
+
     /**
      * A factory method which takes a collection of types to be annotated
      */

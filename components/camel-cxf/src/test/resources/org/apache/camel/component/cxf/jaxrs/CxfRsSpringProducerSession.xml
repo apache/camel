@@ -49,39 +49,39 @@
     <endpoint id="fromEndpoint" uri="jetty://http://127.0.0.1:${CxfRsProducerSessionTest.jetty}/CxfRsProducerSessionTest/echoservice"/>
     <route>
        <from uri="direct://proxy"/>
-       <to uri="cxfrs://bean://rsClientProxy"/>
+       <to uri="cxfrs://bean://rsClientProxy?synchronous=true"/>
        <convertBodyTo type="java.lang.String"/>
-       <to uri="cxfrs://bean://rsClientProxy"/>
+       <to uri="cxfrs://bean://rsClientProxy?synchronous=true"/>
     </route>
     <route>
        <from uri="direct://proxyinstance"/>
-       <to uri="cxfrs://bean://rsClientProxy?cookieHandler=#instanceCookieHandler"/>
+       <to uri="cxfrs://bean://rsClientProxy?cookieHandler=#instanceCookieHandler&amp;synchronous=true"/>
        <convertBodyTo type="java.lang.String"/>
-       <to uri="cxfrs://bean://rsClientProxy?cookieHandler=#instanceCookieHandler"/>
+       <to uri="cxfrs://bean://rsClientProxy?cookieHandler=#instanceCookieHandler&amp;synchronous=true"/>
     </route>
     <route>
        <from uri="direct://proxyexchange"/>
-       <to uri="cxfrs://bean://rsClientProxy?cookieHandler=#exchangeCookieHandler"/>
+       <to uri="cxfrs://bean://rsClientProxy?cookieHandler=#exchangeCookieHandler&amp;synchronous=true"/>
        <convertBodyTo type="java.lang.String"/>
-       <to uri="cxfrs://bean://rsClientProxy?cookieHandler=#exchangeCookieHandler"/>
+       <to uri="cxfrs://bean://rsClientProxy?cookieHandler=#exchangeCookieHandler&amp;synchronous=true"/>
     </route>
     <route>
        <from uri="direct://http"/>
-       <to uri="cxfrs://bean://rsClientHttp"/>
+       <to uri="cxfrs://bean://rsClientHttp?synchronous=true"/>
        <convertBodyTo type="java.lang.String"/>
-       <to uri="cxfrs://bean://rsClientHttp"/>
+       <to uri="cxfrs://bean://rsClientHttp?synchronous=true"/>
     </route>
     <route>
        <from uri="direct://httpinstance"/>
-       <to uri="cxfrs://bean://rsClientHttp?cookieHandler=#instanceCookieHandler"/>
+       <to uri="cxfrs://bean://rsClientHttp?cookieHandler=#instanceCookieHandler&amp;synchronous=true"/>
        <convertBodyTo type="java.lang.String"/>
-       <to uri="cxfrs://bean://rsClientHttp?cookieHandler=#instanceCookieHandler"/>
+       <to uri="cxfrs://bean://rsClientHttp?cookieHandler=#instanceCookieHandler&amp;synchronous=true"/>
     </route>
     <route>
        <from uri="direct://httpexchange"/>
-       <to uri="cxfrs://bean://rsClientHttp?cookieHandler=#exchangeCookieHandler"/>
+       <to uri="cxfrs://bean://rsClientHttp?cookieHandler=#exchangeCookieHandler&amp;synchronous=true"/>
        <convertBodyTo type="java.lang.String"/>
-       <to uri="cxfrs://bean://rsClientHttp?cookieHandler=#exchangeCookieHandler"/>
+       <to uri="cxfrs://bean://rsClientHttp?cookieHandler=#exchangeCookieHandler&amp;synchronous=true"/>
     </route>
   </camelContext>
 

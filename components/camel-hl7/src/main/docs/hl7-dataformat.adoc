@@ -1,6 +1,4 @@
-[[HL7-HL7Component]]
-HL7 Component
-~~~~~~~~~~~~~
+## HL7 DataFormat
 
 The *HL7* component is used for working with the HL7 MLLP protocol and
 http://www.hl7.org/implement/standards/product_brief.cfm?product_id=185[HL7
@@ -28,9 +26,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[HL7-HL7MLLPprotocol]]
-HL7 MLLP protocol
-^^^^^^^^^^^^^^^^^
+### HL7 MLLP protocol
 
 HL7 is often used with the HL7 MLLP protocol, which is a text based TCP
 socket based protocol. This component ships with a Mina and Netty4 Codec
@@ -68,9 +64,7 @@ the HL7 message content.
 segment terminators. The HAPI library requires the use of `\r`.
 |=======================================================================
 
-[[HL7-ExposinganHL7listenerusingMina]]
-Exposing an HL7 listener using Mina
-+++++++++++++++++++++++++++++++++++
+#### Exposing an HL7 listener using Mina
 
 In the Spring XML file, we configure a mina2 endpoint to listen for HL7
 requests using TCP on port `8888`:
@@ -130,9 +124,7 @@ public class PatientLookupService {
     }
 ----------------------------------------------------------------------------------------------------
 
-[[HL7-ExposinganHL7listenerusingNetty]]
-Exposing an HL7 listener using Netty (available from Camel 2.15 onwards)
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Exposing an HL7 listener using Netty (available from Camel 2.15 onwards)
 
 In the Spring XML file, we configure a netty4 endpoint to listen for HL7
 requests using TCP on port `8888`:
@@ -162,9 +154,7 @@ consumer, as this Java DSL example illustrates:
     from("hl7NettyListener").beanRef("patientLookupService");
 -------------------------------------------------------------
 
-[[HL7-HL7Modelusingjava.lang.Stringorbyte]]
-HL7 Model using java.lang.String or byte[]
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### HL7 Model using java.lang.String or byte[]
 
 The HL7 MLLP codec uses plain String as its data format. Camel uses its
 link:type-converter.html[Type Converter] to convert to/from strings to
@@ -176,9 +166,7 @@ plain `byte[]` as its data format by setting the `produceString`
 property to false. The Type Converter is also capable of converting
 the `byte[]` to/from HAPI HL7 model objects.
 
-[[HL7-HL7v2ModelusingHAPI]]
-HL7v2 Model using HAPI
-^^^^^^^^^^^^^^^^^^^^^^
+### HL7v2 Model using HAPI
 
 The HL7v2 model uses Java objects from the HAPI library. Using this
 library, you can encode and decode from the EDI format (ER7) that is
@@ -214,15 +202,13 @@ QRY_A19 msg = exchange.getIn().getBody(QRY_A19.class);
 String patientId = msg.getQRD().getWhoSubjectFilter(0).getIDNumber().getValue();
 --------------------------------------------------------------------------------
 
-[[HL7-HL7DataFormat]]
-HL7 DataFormat
-^^^^^^^^^^^^^^
+### HL7 DataFormat
 
 The link:hl7.html[HL7] component ships with a HL7 data format that can
 be used to marshal or unmarshal HL7 model objects.
 
 // dataformat options: START
-The HL7 dataformat supports 1 options which are listed below.
+The HL7 dataformat supports 2 options which are listed below.
 
 
 
@@ -231,6 +217,7 @@ The HL7 dataformat supports 1 options which are listed below.
 |=======================================================================
 | Name | Default | Java Type | Description
 | validate | true | Boolean | Whether to validate the HL7 message Is by default true.
+| contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
 {% endraw %}
 // dataformat options: END
@@ -301,9 +288,7 @@ object:
   from("jms:queue:hl7out").unmarshal().hl7().to("patientLookupService");
 ------------------------------------------------------------------------
 
-[[HL7-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 The unmarshal operation adds these fields from the MSH segment as
 headers on the Camel message:
@@ -344,9 +329,7 @@ that was used to parse the message
 All headers except `CamelHL7Context `are `String` types. If a header
 value is missing, its value is `null`.
 
-[[HL7-Options]]
-Options
-^^^^^^^
+### Options
 
 The HL7 Data Format supports the following options:
 
@@ -370,9 +353,7 @@ custom ValidationContext etc. This gives you full control over the HL7
 parsing and rendering process.
 |=======================================================================
 
-[[HL7-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 To use HL7 in your Camel routes you'll need to add a dependency on
 *camel-hl7* listed above, which implements this data format.
@@ -435,9 +416,7 @@ repository].
 </dependency>
 -------------------------------------------
 
-[[HL7-Terserlanguage]]
-Terser language
-^^^^^^^^^^^^^^^
+### Terser language
 
 http://hl7api.sourceforge.net[HAPI] provides a
 http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/util/Terser.html[Terser]
@@ -464,9 +443,7 @@ import static org.apache.camel.component.hl7.HL7.terser;
       .to("mock:test2");
 --------------------------------------------------------------------------------------------------
 
-[[HL7-HL7Validationpredicate]]
-HL7 Validation predicate
-^^^^^^^^^^^^^^^^^^^^^^^^
+### HL7 Validation predicate
 
 Often it is preferable to first parse a HL7v2 message and in a separate
 step validate it against a HAPI
@@ -489,9 +466,7 @@ import ca.uhn.hl7v2.validation.impl.DefaultValidation;
       .to("mock:test1");
 ----------------------------------------------------------------------
 
-[[HL7-HL7ValidationpredicateusingtheHapiContext]]
-HL7 Validation predicate using the HapiContext (Camel 2.14)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### HL7 Validation predicate using the HapiContext (Camel 2.14)
 
 The HAPI Context is always configured with a
 http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/ValidationContext.html[ValidationContext]
@@ -534,9 +509,7 @@ import static org.apache.camel.component.hl7.HL7.messageConforms
 
  
 
-[[HL7-HL7Acknowledgementexpression]]
-HL7 Acknowledgement expression
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### HL7 Acknowledgement expression
 
 A common task in HL7v2 processing is to generate an acknowledgement
 message as response to an incoming HL7v2 message, e.g. based on a
@@ -565,9 +538,7 @@ import ca.uhn.hl7v2.validation.impl.DefaultValidation;
       .transform(ack())
 ------------------------------------------------------------------------------------------
 
-[[HL7-MoreSamples]]
-More Samples
-^^^^^^^^^^^^
+### More Samples
 
 In the following example, a plain `String` HL7 request is sent to an HL7
 listener that sends back a response:
@@ -585,12 +556,9 @@ the example above.
 
  
 
-[[HL7-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

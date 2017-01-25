@@ -1,6 +1,5 @@
-[[ControlBus-ControlBus]]
-ControlBus
-^^^^^^^^^^
+## Control Bus Component
+### ControlBus
 
 The http://www.eaipatterns.com/ControlBus.html[Control Bus] from the
 link:enterprise-integration-patterns.html[EIP patterns] allows for the
@@ -25,9 +24,7 @@ link:controlbus-component.html[ControlBus Component] that allows you to
 send messages to a control bus link:endpoint.html[Endpoint] that reacts
 accordingly.
 
-[[ControlBus-ControlBusComponent]]
-ControlBus Component
-~~~~~~~~~~~~~~~~~~~~
+### ControlBus Component
 
 *Available as of Camel 2.11*
 
@@ -46,9 +43,7 @@ controlbus:command[?options]
 Where *command* can be any string to identify which type of command to
 use.
 
-[[ControlBus-Commands]]
-Commands
-^^^^^^^^
+### Commands
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -61,9 +56,7 @@ evaluating the message body. If there is any result from the evaluation,
 then the result is put in the message body.
 |=======================================================================
 
-[[ControlBus-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -94,13 +87,9 @@ The Control Bus component supports 7 endpoint options which are listed below:
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-[[ControlBus-Samples]]
-Samples
-^^^^^^^
+### Samples
 
-[[ControlBus-Usingroutecommand]]
-Using route command
-+++++++++++++++++++
+#### Using route command
 
 The route command allows you to do common tasks on a given route very
 easily, for example to start a route, you can send an empty message to
@@ -145,9 +134,7 @@ just omit the routeId parameter as shown below:
 String xml = template.requestBody("controlbus:route?action=stats", null, String.class);
 ---------------------------------------------------------------------------------------
 
-[[ControlBus-Usinglanguage]]
-Using link:simple.html[Simple] language
-+++++++++++++++++++++++++++++++++++++++
+#### Using link:simple.html[Simple] language
 
 You can use the link:simple.html[Simple] language with the control bus,
 for example to stop a specific route, you can send a message to the
@@ -185,9 +172,7 @@ message we sent to the control bus component.
 
 TIP:You can also use other languages such as link:groovy.html[Groovy], etc.
 
-[[ControlBus-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -198,9 +183,7 @@ See Also
 * link:jmx.html[JMX] Component
 * Using link:camel-jmx.html[JMX] with Camel
 
-[[ControlBus-UsingThisPattern]]
-Using This Pattern
-++++++++++++++++++
+#### Using This Pattern
 
 If you would like to use this EIP Pattern then please read the
 link:getting-started.html[Getting Started], you may also find the

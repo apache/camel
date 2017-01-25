@@ -1,6 +1,4 @@
-[[Kestrel-KestrelComponent]]
-Kestrel Component
-~~~~~~~~~~~~~~~~~
+## Kestrel Component
 
 The Kestrel component allows messages to be sent to a
 https://github.com/robey/kestrel[Kestrel] queue, or messages to be
@@ -12,9 +10,7 @@ WARNING: The kestrel project is inactive and the Camel team regard this
 components as deprecated.
 
 
-[[Kestrel-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 -------------------------------------------
@@ -61,9 +57,7 @@ concurrently from a queue:
 kestrel://kserver03:22133/massive?concurrentConsumers=25&waitTimeMs=500
 -----------------------------------------------------------------------
 
-[[Kestrel-Options]]
-Options
-^^^^^^^
+### Options
 
 
 
@@ -75,10 +69,10 @@ The Kestrel component supports 1 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| configuration | KestrelConfiguration | To use a shared configured configuration as base for creating new endpoints.
+| Name | Group | Default | Java Type | Description
+| configuration | advanced |  | KestrelConfiguration | To use a shared configured configuration as base for creating new endpoints.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -100,8 +94,8 @@ The Kestrel component supports 8 endpoint options which are listed below:
 | queue | common |  | String | *Required* The queue we are polling
 | concurrentConsumers | common | 1 | int | How many concurrent listeners to schedule for the thread pool
 | waitTimeMs | common | 100 | int | How long a given wait should block (server side) in milliseconds
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
@@ -110,9 +104,7 @@ The Kestrel component supports 8 endpoint options which are listed below:
 
 
 
-[[Kestrel-ConfiguringtheKestrelcomponentusingSpringXML]]
-Configuring the Kestrel component using Spring XML
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Configuring the Kestrel component using Spring XML
 
 The simplest form of explicit configuration is as follows:
 
@@ -164,13 +156,9 @@ can set up a KestrelConfiguration POJO as follows:
 </beans>
 ---------------------------------------------------------------------------------------------------------------
 
-[[Kestrel-UsageExamples]]
-Usage Examples
-^^^^^^^^^^^^^^
+### Usage Examples
 
-[[Kestrel-Example1:Consuming]]
-Example 1: Consuming
-++++++++++++++++++++
+#### Example 1: Consuming
 
 [source,java]
 -------------------------------------------------------------------------------
@@ -187,9 +175,7 @@ public class MyConsumer {
 }
 -------------------------------------------
 
-[[Kestrel-Example2:Producing]]
-Example 2: Producing
-++++++++++++++++++++
+#### Example 2: Producing
 
 [source,java]
 ------------------------------------------------------------------------------
@@ -203,9 +189,7 @@ public class MyProducer {
 }
 ------------------------------------------------------------------------------
 
-[[Kestrel-Example3:SpringXMLConfiguration]]
-Example 3: Spring XML Configuration
-+++++++++++++++++++++++++++++++++++
+#### Example 3: Spring XML Configuration
 
 [source,xml]
 ----------------------------------------------------------------------------------------
@@ -230,17 +214,13 @@ public class MyBean {
 }
 -------------------------------------------
 
-[[Kestrel-Dependencies]]
-Dependencies
-^^^^^^^^^^^^
+### Dependencies
 
 The Kestrel component has the following dependencies:
 
 * `spymemcached` 2.5 (or greater)
 
-[[Kestrel-spymemcached]]
-spymemcached
-++++++++++++
+#### spymemcached
 
 You *must* have the `spymemcached` jar on your classpath. Here is a
 snippet you can use in your pom.xml:
@@ -275,12 +255,9 @@ you may need to set `enableAssertions` to `false`. Please refer to the
 http://maven.apache.org/plugins/maven-surefire-plugin/test-mojo.html[surefire:test
 reference] for details.
 
-[[Kestrel-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-

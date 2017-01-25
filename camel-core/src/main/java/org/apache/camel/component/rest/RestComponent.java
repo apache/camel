@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 
@@ -28,8 +29,11 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class RestComponent extends UriEndpointComponent {
 
+    @Metadata(label = "common")
     private String componentName;
+    @Metadata(label = "producer")
     private String apiDoc;
+    @Metadata(label = "producer")
     private String host;
 
     public RestComponent() {

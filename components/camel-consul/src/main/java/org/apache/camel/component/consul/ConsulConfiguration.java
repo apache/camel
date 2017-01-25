@@ -70,6 +70,10 @@ public class ConsulConfiguration {
 
     private final CamelContext context;
 
+    public ConsulConfiguration() {
+        this.context = null;
+    }
+
     public ConsulConfiguration(CamelContext context) {
         this.context = context;
     }

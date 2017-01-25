@@ -27,7 +27,7 @@ public class LogGlobalLogNameTest extends LogProcessorTest {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getProperties().put(Exchange.LOG_EIP_NAME, "com.foo.myapp");
+        context.getGlobalOptions().put(Exchange.LOG_EIP_NAME, "com.foo.myapp");
         return context;
     }
 }

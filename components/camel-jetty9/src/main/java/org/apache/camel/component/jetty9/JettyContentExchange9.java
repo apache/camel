@@ -16,18 +16,22 @@
  */
 package org.apache.camel.component.jetty9;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import static javax.servlet.http.HttpServletResponse.SC_OK;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
@@ -39,13 +43,15 @@ import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.api.Result;
-import org.eclipse.jetty.client.util.BufferingResponseListener;
 import org.eclipse.jetty.client.util.BytesContentProvider;
 import org.eclipse.jetty.client.util.InputStreamContentProvider;
+import org.eclipse.jetty.client.util.InputStreamResponseListener;
 import org.eclipse.jetty.client.util.StringContentProvider;
 import org.eclipse.jetty.http.HttpFields;
+import org.eclipse.jetty.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * Jetty specific exchange which keeps track of the the request and response.
@@ -80,7 +86,7 @@ public class JettyContentExchange9 implements JettyContentExchange {
         closeRequestContentSource();
     }
 
-    protected void onResponseComplete(Result result, byte[] content, String contentType) {
+    protected void onResponseComplete(Result result, byte[] content) {
         LOG.trace("onResponseComplete");
         done.countDown();
         this.response = result.getResponse();
@@ -214,14 +220,25 @@ public class JettyContentExchange9 implements JettyContentExchange {
             }
 
         };
-        BufferingResponseListener responseListener = new BufferingResponseListener() {
+
+        InputStreamResponseListener responseListener = new InputStreamResponseListener() {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+            @Override
+            public void onContent(Response response, ByteBuffer content, Callback callback) {
+                byte[] buffer = new byte[content.limit()];
+                content.get(buffer);
+                baos.write(buffer, 0, buffer.length);
+
+                callback.succeeded();
+            }
 
             @Override
             public void onComplete(Result result) {
                 if (result.isFailed()) {
                     doTaskCompleted(result.getFailure());
                 } else {
-                    onResponseComplete(result, getContent(), getMediaType());
+                    onResponseComplete(result, baos.toByteArray());
                 }
             }
         };

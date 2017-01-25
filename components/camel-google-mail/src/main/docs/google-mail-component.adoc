@@ -1,12 +1,8 @@
-[[GoogleMail-GoogleMailComponent]]
-GoogleMail Component
-~~~~~~~~~~~~~~~~~~~~
+## Google Mail Component
 
 *Available as of Camel 2.15*
 
-[[GoogleMail-ComponentDescription]]
-Component Description
-^^^^^^^^^^^^^^^^^^^^^
+### Component Description
 
 The Google Mail component provides access
 to http://gmail.com/[Gmail] via
@@ -35,9 +31,7 @@ for this component:
         
 ------------------------------------------------------
 
-[[GoogleMail-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 The GoogleMail Component uses the following URI format:
 
@@ -56,9 +50,7 @@ Endpoint prefix can be one of:
 * threads
 * users
 
-[[GoogleMail-GoogleMailComponent.1]]
-GoogleMailComponent
-^^^^^^^^^^^^^^^^^^^
+### GoogleMailComponent
 
 
 
@@ -70,11 +62,11 @@ The Google Mail component supports 2 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| configuration | GoogleMailConfiguration | To use the shared configuration
-| clientFactory | GoogleMailClientFactory | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleMailClientFactory
+| Name | Group | Default | Java Type | Description
+| configuration | common |  | GoogleMailConfiguration | To use the shared configuration
+| clientFactory | advanced |  | GoogleMailClientFactory | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleMailClientFactory
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -101,8 +93,8 @@ The Google Mail component supports 13 endpoint options which are listed below:
 | inBody | common |  | String | Sets the name of a parameter to be passed in the exchange In Body
 | refreshToken | common |  | String | OAuth 2 refresh token. Using this the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived.
 | scopes | common |  | List | Specifies the level of permissions you want a mail application to have to a user account. See https://developers.google.com/gmail/api/auth/scopes for more info.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
@@ -111,9 +103,7 @@ The Google Mail component supports 13 endpoint options which are listed below:
 
 
 
-[[GoogleMail-ProducerEndpoints]]
-Producer Endpoints
-^^^^^^^^^^^^^^^^^^
+### Producer Endpoints
 
 Producer endpoints can use endpoint prefixes followed by endpoint names
 and associated options described next. A shorthand alias can be used for
@@ -134,9 +124,7 @@ override a `CamelGoogleMail.option` header.
 For more information on the endpoints and options see API documentation
 at: https://developers.google.com/gmail/api/v1/reference/[https://developers.google.com/gmail/api/v1/reference/]
 
-[[GoogleMail-ConsumerEndpoints]]
-Consumer Endpoints
-^^^^^^^^^^^^^^^^^^
+### Consumer Endpoints
 
 Any of the producer endpoints can be used as a consumer endpoint.
 Consumer endpoints can use
@@ -146,16 +134,12 @@ invocation. Consumer endpoints that return an array or collection will
 generate one exchange per element, and their routes will be executed
 once for each exchange.
 
-[[GoogleMail-MessageHeaders]]
-Message Headers
-^^^^^^^^^^^^^^^
+### Message Headers
 
 Any URI option can be provided in a message header for producer
 endpoints with a `CamelGoogleMail.` prefix.
 
-[[GoogleMail-MessageBody]]
-Message Body
-^^^^^^^^^^^^
+### Message Body
 
 All result message bodies utilize objects provided by the underlying
 APIs used by the GoogleMailComponent. Producer endpoints can specify the

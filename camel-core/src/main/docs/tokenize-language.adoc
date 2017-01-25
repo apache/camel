@@ -1,6 +1,4 @@
-[[Tokenizer-Tokenizer]]
-Tokenizer
-~~~~~~~~~
+## Tokenize Language
 
 The tokenizer language is a built-in language in camel-core, which is
 most often used only with the link:splitter.html[Splitter] EIP to split
@@ -13,9 +11,7 @@ language is recommended as it offers a faster, more efficient
 tokenization specifically for XML documents. For more details
 see link:splitter.html[Splitter].
 
-[[Tokenize-Options]]
-Tokenize Options
-^^^^^^^^^^^^^^^^
+### Tokenize Options
 
 // language options: START
 The Tokenize language supports 10 options which are listed below.

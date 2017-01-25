@@ -71,10 +71,10 @@ public class Jt400Configuration {
 
     private final AS400ConnectionPool connectionPool;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = "true", secret = true)
     private String userID;
 
-    @UriPath @Metadata(required = "true")
+    @UriPath @Metadata(required = "true", secret = true)
     private String password;
 
     @UriPath @Metadata(required = "true")
@@ -104,7 +104,7 @@ public class Jt400Configuration {
     @UriParam(defaultValue = "EQ")
     private SearchType searchType = SearchType.EQ;
 
-    @UriParam
+    @UriParam(label = "security")
     private boolean secured;
 
     @UriParam

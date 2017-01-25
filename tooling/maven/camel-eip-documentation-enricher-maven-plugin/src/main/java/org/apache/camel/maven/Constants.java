@@ -38,6 +38,7 @@ public final class Constants {
     public static final String JSON_SUFIX = ".json";
     public static final String DESCRIPTION_ATTRIBUTE_NAME = "description";
     public static final String DEFAULT_VALUE_ATTRIBUTE_NAME = "defaultValue";
+    public static final String DEPRECATED_ATTRIBUTE_NAME = "deprecated";
     public static final String MODEL_ATTRIBUTE_NAME = "model";
 
     private Constants() { }

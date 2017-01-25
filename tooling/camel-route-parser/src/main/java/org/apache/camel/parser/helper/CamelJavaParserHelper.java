@@ -32,6 +32,8 @@ import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ClassInstanceCrea
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.Expression;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ExpressionStatement;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.IAnnotationBinding;
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.ITypeBinding;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.InfixExpression;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.MemberValuePair;
 import org.jboss.forge.roaster._shade.org.eclipse.jdt.core.dom.MethodDeclaration;
@@ -242,6 +244,16 @@ public final class CamelJavaParserHelper {
                     }
                 }
             }
+            if ("interceptFrom".equals(name)) {
+                List args = mi.arguments();
+                // the first argument is where the uri is
+                if (args != null && args.size() >= 1) {
+                    Object arg = args.get(0);
+                    if (isValidArgument(name, arg)) {
+                        extractEndpointUriFromArgument(name, clazz, block, uris, arg, strings, fields);
+                    }
+                }
+            }
             if ("pollEnrich".equals(name)) {
                 List args = mi.arguments();
                 // the first argument is where the uri is
@@ -419,8 +431,37 @@ public final class CamelJavaParserHelper {
                 Object arg = args.get(0);
                 String simple = getLiteralValue(clazz, block, (Expression) arg);
                 if (!Strings.isBlank(simple)) {
+                    // is this a simple expression that is called as a predicate or expression
+                    boolean predicate = false;
+                    Expression parent = mi.getExpression();
+                    if (parent == null) {
+                        // maybe its an argument
+                        // simple maybe be passed in as an argument
+                        List list = mi.arguments();
+                        // must be a single argument
+                        if (list != null && list.size() == 1) {
+                            ASTNode o = (ASTNode) list.get(0);
+                            ASTNode p = o.getParent();
+                            if (p instanceof MethodInvocation) {
+                                // this is simple
+                                String pName = ((MethodInvocation) p).getName().getIdentifier();
+                                if ("simple".equals(pName)) {
+                                    // okay find the parent of simple which is the method that uses simple
+                                    parent = (Expression) p.getParent();
+                                }
+                            }
+                        }
+                    }
+                    if (parent != null && parent instanceof MethodInvocation) {
+                        MethodInvocation emi = (MethodInvocation) parent;
+                        String parentName = emi.getName().getIdentifier();
+                        predicate = isSimplePredicate(parentName);
+                    }
+
                     int position = ((Expression) arg).getStartPosition();
-                    expressions.add(new ParserResult(node, position, simple));
+                    ParserResult result = new ParserResult(node, position, simple);
+                    result.setPredicate(predicate);
+                    expressions.add(result);
                 }
             }
         }
@@ -435,6 +476,25 @@ public final class CamelJavaParserHelper {
                 }
             }
         }
+    }
+
+    /**
+     * Using simple expressions in the Java DSL may be used in certain places as predicate only
+     */
+    private static boolean isSimplePredicate(String name) {
+        if (name == null) {
+            return false;
+        }
+        if (name.equals("completionPredicate") || name.equals("completion")) {
+            return true;
+        }
+        if (name.equals("onWhen") || name.equals("when") || name.equals("handled") || name.equals("continued")) {
+            return true;
+        }
+        if (name.equals("retryWhile") || name.equals("filter") || name.equals("validate") || name.equals("loopDoWhile")) {
+            return true;
+        }
+        return false;
     }
 
     @SuppressWarnings("unchecked")

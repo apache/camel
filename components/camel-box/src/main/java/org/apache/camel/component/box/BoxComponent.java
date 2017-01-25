@@ -22,6 +22,7 @@ import org.apache.camel.component.box.internal.BoxApiCollection;
 import org.apache.camel.component.box.internal.BoxApiName;
 import org.apache.camel.component.box.internal.BoxClientHelper;
 import org.apache.camel.component.box.internal.CachedBoxClient;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.component.AbstractApiComponent;
 
 /**
@@ -29,6 +30,7 @@ import org.apache.camel.util.component.AbstractApiComponent;
  */
 public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfiguration, BoxApiCollection> {
 
+    @Metadata(label = "advanced")
     private CachedBoxClient cachedBoxClient;
 
     public BoxComponent() {
@@ -76,12 +78,8 @@ public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfigurat
     protected void doStart() throws Exception {
         super.doStart();
 
-        if (cachedBoxClient == null) {
-            if (configuration != null) {
-                cachedBoxClient = BoxClientHelper.createBoxClient(configuration);
-            } else {
-                throw new IllegalArgumentException("Unable to connect, Box component configuration is missing");
-            }
+        if (cachedBoxClient == null && configuration != null) {
+            cachedBoxClient = BoxClientHelper.createBoxClient(configuration);
         }
     }
 

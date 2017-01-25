@@ -58,7 +58,7 @@ public class ExecStartCmdHeaderTest extends BaseDockerHeaderTest<ExecStartCmd> {
     @Override
     protected void setupMocks() {
         Mockito.when(dockerClient.execStartCmd(Matchers.anyString())).thenReturn(mockObject);
-        Mockito.when(mockObject.exec(Mockito.anyObject())).thenReturn(callback);
+        Mockito.when(mockObject.exec(Matchers.anyObject())).thenReturn(callback);
         try {
             Mockito.when(callback.awaitCompletion()).thenReturn(callback);
         } catch (InterruptedException e) {

@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -34,11 +35,15 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import edu.emory.mathcs.backport.java.util.concurrent.ConcurrentHashMap;
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
+import org.asciidoctor.Asciidoctor;
+import org.asciidoctor.OptionsBuilder;
 
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 
@@ -265,7 +270,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 for (Map<String, String> row : rows) {
                     String name = row.get("name");
                     // skip checking these as they have no documentation
-                    if ("outputs".equals(name)) {
+                    if ("outputs".equals(name) || "transforms".equals(name)) {
                         continue;
                     }
 
@@ -799,6 +804,11 @@ public class PrepareCatalogMojo extends AbstractMojo {
         // make sure to create out dir
         documentsOutDir.mkdirs();
 
+        // use ascii doctor to convert the adoc files to html so we have documentation in this format as well
+        Asciidoctor asciidoctor = Asciidoctor.Factory.create();
+
+        int converted = 0;
+
         for (File file : adocFiles) {
             File to = new File(documentsOutDir, file.getName());
             if (to.exists()) {
@@ -810,6 +820,39 @@ public class PrepareCatalogMojo extends AbstractMojo {
             } catch (IOException e) {
                 throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
             }
+
+            // convert adoc to html as well
+            if (file.getName().endsWith(".adoc")) {
+                String newName = file.getName().substring(0, file.getName().length() - 5) + ".html";
+                File toHtml = new File(documentsOutDir, newName);
+
+                getLog().debug("Converting ascii document to html -> " + toHtml);
+                asciidoctor.convertFile(file, OptionsBuilder.options().toFile(toHtml));
+
+                converted++;
+
+                try {
+                    // now fix the html file because we don't want to include certain lines
+                    List<String> lines = FileUtils.readLines(toHtml);
+                    List<String> output = new ArrayList<>();
+                    for (String line : lines) {
+                        // skip these lines
+                        if (line.contains("% raw %") || line.contains("% endraw %")) {
+                            continue;
+                        }
+                        output.add(line);
+                    }
+                    if (lines.size() != output.size()) {
+                        FileUtils.writeLines(toHtml, output, false);
+                    }
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+        }
+
+        if (converted > 0) {
+            getLog().info("Converted " + converted + " ascii documents to HTML");
         }
 
         Set<String> docs = new LinkedHashSet<>();

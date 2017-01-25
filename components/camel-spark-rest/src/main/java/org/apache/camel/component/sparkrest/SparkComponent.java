@@ -26,6 +26,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
@@ -38,19 +39,30 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
 
     private static final Pattern PATTERN = Pattern.compile("\\{(.*?)\\}");
 
+    @Metadata(defaultValue = "4567")
     private int port = 4567;
+    @Metadata(defaultValue = "0.0.0.0")
     private String ipAddress;
 
+    @Metadata(label = "advanced")
     private int minThreads;
+    @Metadata(label = "advanced")
     private int maxThreads;
+    @Metadata(label = "advanced")
     private int timeOutMillis;
 
+    @Metadata(label = "security")
     private String keystoreFile;
+    @Metadata(label = "security", secret = true)
     private String keystorePassword;
+    @Metadata(label = "security")
     private String truststoreFile;
+    @Metadata(label = "security", secret = true)
     private String truststorePassword;
 
+    @Metadata(label = "advanced")
     private SparkConfiguration sparkConfiguration = new SparkConfiguration();
+    @Metadata(label = "advanced")
     private SparkBinding sparkBinding = new DefaultSparkBinding();
 
     public SparkComponent() {

@@ -25,8 +25,7 @@
   <packaging>jar</packaging>
   <version>${version}</version>
 
-  <name>A Camel Route</name>
-  <url>http://www.myorganization.org</url>
+  <name>A Groovy Camel Route</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -35,6 +34,7 @@
 
   <dependencyManagement>
     <dependencies>
+      <!-- Camel BOM -->
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
@@ -90,6 +90,7 @@
     <defaultGoal>install</defaultGoal>
 
     <plugins>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
@@ -98,6 +99,7 @@
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
+
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven-compiler-plugin-version}</version>
@@ -127,6 +129,7 @@
           </dependency>
         </dependencies>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-eclipse-plugin</artifactId>

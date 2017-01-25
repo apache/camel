@@ -53,6 +53,12 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
         CwComponent component = new CwComponent(context);
         component.createEndpoint("aws-cw://camel.apache.org/test?accessKey=xxx");
     }
+    
+    @Test
+    public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
+        CwComponent component = new CwComponent(context);
+        component.createEndpoint("aws-cw://camel.apache.org/test?amazonCwClient=#amazonCwClient&accessKey=xxx");
+    }
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {

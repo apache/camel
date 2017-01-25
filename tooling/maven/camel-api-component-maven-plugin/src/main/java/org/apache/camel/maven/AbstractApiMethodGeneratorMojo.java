@@ -52,6 +52,8 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
+        setCompileSourceRoots();
+
         // load proxy class and get enumeration file to generate
         final Class proxyType = getProxyType();
 

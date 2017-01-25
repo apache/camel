@@ -1,6 +1,4 @@
-[[ServiceNow-ServiceNowComponent]]
-ServiceNow Component
-~~~~~~~~~~~~~~~~~~~~
+## ServiceNow Component
 
 *Available as of Camel 2.18*
 
@@ -21,18 +19,14 @@ for this component:
     </dependency>
 -------------------------------------------------
 
-[[ServiceNow-URIformat]]
-URI format
-^^^^^^^^^^
+### URI format
 
 [source,java]
 ---------------------------------------
     servicenow://instanceName?[options]
 ---------------------------------------
 
-[[ServiceNow-Options]]
-Options
-^^^^^^^
+### Options
 
 
 // component options: START
@@ -41,16 +35,16 @@ The ServiceNow component supports 7 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| configuration | ServiceNowConfiguration | The ServiceNow default configuration
-| apiUrl | String | The ServiceNow REST API url
-| userName | String | ServiceNow user account name
-| password | String | ServiceNow account password
-| oauthClientId | String | OAuth2 ClientID
-| oauthClientSecret | String | OAuth2 ClientSecret
-| oauthTokenUrl | String | OAuth token Url
+| Name | Group | Default | Java Type | Description
+| configuration | advanced |  | ServiceNowConfiguration | The ServiceNow default configuration
+| apiUrl | producer |  | String | The ServiceNow REST API url
+| userName | security |  | String | ServiceNow user account name
+| password | security |  | String | ServiceNow account password
+| oauthClientId | security |  | String | OAuth2 ClientID
+| oauthClientSecret | security |  | String | OAuth2 ClientSecret
+| oauthTokenUrl | security |  | String | OAuth token Url
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -110,9 +104,7 @@ The ServiceNow component supports 41 endpoint options which are listed below:
 
 
 
-[[ServiceNow-Headers]]
-Headers
-^^^^^^^
+### Headers
 
 [width="100%",cols="10%,10%,10%,10%,60%",options="header",]
 |===
@@ -265,9 +257,7 @@ NOTE: link:http://wiki.servicenow.com/index.php?title=REST_API#Available_APIs[Fu
 
 NOTE: https://docs.servicenow.com/bundle/helsinki-servicenow-platform/page/integrate/inbound-rest/reference/r_RESTResources.html[Helsinki REST API Documentation]
 
-[[ServiceNow-Usageexamples]]
-Usage examples:
-^^^^^^^^^^^^^^^
+### Usage examples:
  
 {% raw %}
 [source,java]

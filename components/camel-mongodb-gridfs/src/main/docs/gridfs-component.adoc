@@ -1,6 +1,4 @@
-[[MongoDBGridFS-CamelMongoDBGridFScomponent]]
-Camel MongoDB GridFS component
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## MongoDBGridFS Component
 
 *Available as of Camel 2.17*
 
@@ -17,18 +15,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[MongoDBGridFS-URIformat]]
-URI format
-~~~~~~~~~~
+### URI format
 
 [source,java]
 ------------------------------------------------------------------------------
 gridfs:connectionBean?database=databaseName&bucket=bucketName[&moreOptions...]
 ------------------------------------------------------------------------------
 
-[[MongoDBGridFS-options]]
-MongoDB GridFS options
-~~~~~~~~~~~~~~~~~~~~~~
+### MongoDB GridFS options
 
 
 // component options: START
@@ -51,7 +45,7 @@ The MongoDBGridFS component supports 18 endpoint options which are listed below:
 | readPreference | common |  | ReadPreference | Sets a MongoDB ReadPreference on the Mongo connection. Read preferences set directly on the connection will be overridden by this setting. The link com.mongodb.ReadPreferencevalueOf(String) utility method is used to resolve the passed readPreference value. Some examples for the possible values are nearest primary or secondary etc.
 | writeConcern | common |  | WriteConcern | Set the WriteConcern for write operations on MongoDB using the standard ones. Resolved from the fields of the WriteConcern class by calling the link WriteConcernvalueOf(String) method.
 | writeConcernRef | common |  | WriteConcern | Set the WriteConcern for write operations on MongoDB passing in the bean ref to a custom WriteConcern which exists in the Registry. You can also use standard WriteConcerns by passing in their key. See the link setWriteConcern(String) setWriteConcern method.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | delay | consumer | 500 | long | Sets the delay between polls within the Consumer. Default is 500ms
 | fileAttributeName | consumer | camel-processed | String | If the QueryType uses a FileAttribute this sets the name of the attribute that is used. Default is camel-processed.
 | initialDelay | consumer | 1000 | long | Sets the initialDelay before the consumer will start polling. Default is 1000ms
@@ -59,7 +53,7 @@ The MongoDBGridFS component supports 18 endpoint options which are listed below:
 | persistentTSObject | consumer | camel-timestamp | String | If the QueryType uses a persistent timestamp this is the ID of the object in the collection to store the timestamp.
 | query | consumer |  | String | Additional query parameters (in JSON) that are used to configure the query used for finding files in the GridFsConsumer
 | queryStrategy | consumer | TimeStamp | QueryStrategy | Sets the QueryStrategy that is used for polling for new files. Default is Timestamp
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | operation | producer |  | String | Sets the operation this endpoint will execute against GridRS.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
@@ -69,9 +63,7 @@ The MongoDBGridFS component supports 18 endpoint options which are listed below:
 
 
 
-[[MongoDBGridFS-ConfigurationofdatabaseinSpringXML]]
-Configuration of database in Spring XML
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### Configuration of database in Spring XML
 
 The following Spring XML creates a bean defining the connection to a
 MongoDB instance.
@@ -88,9 +80,7 @@ MongoDB instance.
 </beans>
 ----------------------------------------------------------------------------------------------------------------------------------
 
-[[MongoDBGridFS-Sampleroute]]
-Sample route
-^^^^^^^^^^^^
+### Sample route
 
 The following route defined in Spring XML executes the operation
 link:mongodb-gridfs.html[*findOne*] on a collection.
@@ -109,13 +99,9 @@ link:mongodb-gridfs.html[*findOne*] on a collection.
 
  
 
-[[MongoDBGridFS-GridFSoperations-producerendpoint]]
-GridFS operations - producer endpoint
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+### GridFS operations - producer endpoint
 
-[[MongoDBGridFS-count]]
-count
-+++++
+#### count
 
 Returns the total number of file in the collection, returning an Integer
 as the OUT message body. +
@@ -138,9 +124,7 @@ headers.put(Exchange.FILE_NAME, "filename.txt");
 Integer count = template.requestBodyAndHeaders("direct:count", query, headers);
 -------------------------------------------------------------------------------
 
-[[MongoDBGridFS-listAll]]
-listAll
-+++++++
+#### listAll
 
 Returns an Reader that lists all the filenames and their IDs in a tab
 separated stream.
@@ -156,9 +140,7 @@ filename2.txt   2897651254
 
  
 
-[[MongoDBGridFS-findOne]]
-*findOne*
-+++++++++
+#### *findOne*
 
 Finds a file in the GridFS system and sets the body to an InputStream of
 the content.   Also provides the metadata has headers.  It uses
@@ -175,9 +157,7 @@ InputStream result = template.requestBodyAndHeaders("direct:findOne", "irrelevan
 
  
 
-[[MongoDBGridFS-create]]
-create
-++++++
+#### create
 
 Creates a new file in the GridFs database. It uses the
 Exchange.FILE_NAME from the incoming headers for the name and the body
@@ -192,9 +172,7 @@ InputStream stream = ... the data for the file ...
 template.requestBodyAndHeaders("direct:create", stream, headers);
 ------------------------------------------------------------------------
 
-[[MongoDBGridFS-remove]]
-remove
-++++++
+#### remove
 
 Removes a file from the GridFS database.
 
@@ -206,9 +184,7 @@ headers.put(Exchange.FILE_NAME, "filename.txt");
 template.requestBodyAndHeaders("direct:remove", "", headers);
 ------------------------------------------------------------------------
 
-[[MongoDBGridFS-GridFSConsumer]]
-GridFS Consumer
-^^^^^^^^^^^^^^^
+### GridFS Consumer
 
 See also
 
@@ -219,4 +195,3 @@ current version]
 *
 http://svn.apache.org/viewvc/camel/trunk/components/camel-mongodb/src/test/[Unit
 tests] for more examples of usage
-

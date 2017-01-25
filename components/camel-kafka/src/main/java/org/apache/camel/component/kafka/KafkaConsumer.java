@@ -16,15 +16,18 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.spi.StateRepository;
 import org.apache.camel.util.IOHelper;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -43,6 +46,8 @@ public class KafkaConsumer extends DefaultConsumer {
     private final KafkaEndpoint endpoint;
     private final Processor processor;
     private final Long pollTimeoutMs;
+    // This list helps working around the infinite loop of KAFKA-1894
+    private final List<KafkaFetchRecords> tasks = new ArrayList<>();
 
     public KafkaConsumer(KafkaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -73,7 +78,9 @@ public class KafkaConsumer extends DefaultConsumer {
 
         executor = endpoint.createExecutor();
         for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
-            executor.submit(new KafkaFetchRecords(endpoint.getConfiguration().getTopic(), i + "", getProps()));
+            KafkaFetchRecords task = new KafkaFetchRecords(endpoint.getConfiguration().getTopic(), i + "", getProps());
+            executor.submit(task);
+            tasks.add(task);
         }
     }
 
@@ -87,7 +94,12 @@ public class KafkaConsumer extends DefaultConsumer {
             } else {
                 executor.shutdownNow();
             }
+            if (!executor.isTerminated()) {
+                tasks.forEach(KafkaFetchRecords::shutdown);
+                executor.shutdownNow();
+            }
         }
+        tasks.clear();
         executor = null;
 
         super.doStop();
@@ -104,11 +116,11 @@ public class KafkaConsumer extends DefaultConsumer {
             this.topicName = topicName;
             this.threadId = topicName + "-" + "Thread " + id;
             this.kafkaProps = kafkaProps;
-            
+
             ClassLoader threadClassLoader = Thread.currentThread().getContextClassLoader();
             try {
-                //Fix for running camel-kafka in OSGI see KAFKA-3218
-                Thread.currentThread().setContextClassLoader(null);
+                // Kafka uses reflection for loading authentication settings, use its classloader
+                Thread.currentThread().setContextClassLoader(org.apache.kafka.clients.consumer.KafkaConsumer.class.getClassLoader());
                 this.consumer = new org.apache.kafka.clients.consumer.KafkaConsumer(kafkaProps);
             } finally {
                 Thread.currentThread().setContextClassLoader(threadClassLoader);
@@ -122,7 +134,30 @@ public class KafkaConsumer extends DefaultConsumer {
                 LOG.info("Subscribing {} to topic {}", threadId, topicName);
                 consumer.subscribe(Arrays.asList(topicName.split(",")));
 
-                if (endpoint.getConfiguration().isSeekToBeginning()) {
+                StateRepository<String, String> offsetRepository = endpoint.getConfiguration().getOffsetRepository();
+                if (offsetRepository != null) {
+                    // This poll to ensures we have an assigned partition otherwise seek won't work
+                    ConsumerRecords poll = consumer.poll(100);
+
+                    for (TopicPartition topicPartition : (Set<TopicPartition>) consumer.assignment()) {
+                        String offsetState = offsetRepository.getState(serializeOffsetKey(topicPartition));
+                        if (offsetState != null && !offsetState.isEmpty()) {
+                            // The state contains the last read offset so you need to seek from the next one
+                            long offset = deserializeOffsetValue(offsetState) + 1;
+                            LOG.debug("Resuming partition {} from offset {} from state", topicPartition.partition(), offset);
+                            consumer.seek(topicPartition, offset);
+                        } else {
+                            // If the init poll has returned some data of a currently unknown topic/partition in the state
+                            // then resume from their offset in order to avoid losing data
+                            List<ConsumerRecord<Object, Object>> partitionRecords = poll.records(topicPartition);
+                            if (!partitionRecords.isEmpty()) {
+                                long offset = partitionRecords.get(0).offset();
+                                LOG.debug("Resuming partition {} from offset {}", topicPartition.partition(), offset);
+                                consumer.seek(topicPartition, offset);
+                            }
+                        }
+                    }
+                } else if (endpoint.getConfiguration().isSeekToBeginning()) {
                     LOG.debug("{} is seeking to the beginning on topic {}", threadId, topicName);
                     // This poll to ensures we have an assigned partition otherwise seek won't work
                     consumer.poll(100);
@@ -144,9 +179,12 @@ public class KafkaConsumer extends DefaultConsumer {
                                 getExceptionHandler().handleException("Error during processing", exchange, e);
                             }
                         }
-                        // if autocommit is false
-                        if (endpoint.getConfiguration().isAutoCommitEnable() != null
+                        if (offsetRepository != null) {
+                            long partitionLastOffset = partitionRecords.get(partitionRecords.size() - 1).offset();
+                            offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(partitionLastOffset));
+                        } else if (endpoint.getConfiguration().isAutoCommitEnable() != null
                             && !endpoint.getConfiguration().isAutoCommitEnable()) {
+                            // if autocommit is false
                             long partitionLastoffset = partitionRecords.get(partitionRecords.size() - 1).offset();
                             consumer.commitSync(Collections.singletonMap(
                                 partition, new OffsetAndMetadata(partitionLastoffset + 1)));
@@ -167,7 +205,23 @@ public class KafkaConsumer extends DefaultConsumer {
                 IOHelper.close(consumer);
             }
         }
+
+        private void shutdown() {
+            // As advised in the KAFKA-1894 ticket, calling this wakeup method breaks the infinite loop
+            consumer.wakeup();
+        }
     }
 
+    protected String serializeOffsetKey(TopicPartition topicPartition) {
+        return topicPartition.topic() + '/' + topicPartition.partition();
+    }
+
+    protected String serializeOffsetValue(long offset) {
+        return String.valueOf(offset);
+    }
+
+    protected long deserializeOffsetValue(String offset) {
+        return Long.parseLong(offset);
+    }
 }
 

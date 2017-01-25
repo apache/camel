@@ -1,6 +1,4 @@
-[[Atmosphere-Websocket-AtmosphereWebsocketServletComponent]]
-Atmosphere Websocket Servlet Component
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## Atmosphere Websocket Component
 
 *Available as of Camel 2.14*
 
@@ -31,9 +29,7 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
-[[Atmosphere-Websocket-Options]]
-Atmosphere-Websocket Options
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Atmosphere-Websocket Options
 
 
 
@@ -43,16 +39,16 @@ The Atmosphere Websocket component supports 7 options which are listed below.
 
 
 {% raw %}
-[width="100%",cols="2,1m,7",options="header"]
+[width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
-| Name | Java Type | Description
-| servletName | String | Default name of servlet to use. The default name is CamelServlet.
-| httpRegistry | HttpRegistry | To use a custom org.apache.camel.component.servlet.HttpRegistry.
-| attachmentMultipartBinding | boolean | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.
-| httpBinding | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
-| httpConfiguration | HttpConfiguration | To use the shared HttpConfiguration as base configuration.
-| allowJavaSerializedObject | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
-| headerFilterStrategy | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+| Name | Group | Default | Java Type | Description
+| servletName | common |  | String | Default name of servlet to use. The default name is CamelServlet.
+| httpRegistry | common |  | HttpRegistry | To use a custom org.apache.camel.component.servlet.HttpRegistry.
+| attachmentMultipartBinding | common | false | boolean | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.
+| httpBinding | advanced |  | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
+| httpConfiguration | advanced |  | HttpConfiguration | To use the shared HttpConfiguration as base configuration.
+| allowJavaSerializedObject | advanced | false | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
+| headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -76,7 +72,7 @@ The Atmosphere Websocket component supports 36 endpoint options which are listed
 | transferException | common | false | boolean | If enabled and an Exchange failed processing on the consumer side and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
 | useStreaming | common | false | boolean | To enable streaming to send data as multiple text fragments.
 | async | consumer | false | boolean | Configure the consumer to work in async mode
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | eagerCheckContentAvailable | consumer | false | boolean | Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present. This can be turned on in case HTTP clients do not send streamed data.
 | httpMethodRestrict | consumer |  | String | Used to only allow consuming if the HttpMethod matches such as GET/POST/PUT etc. Multiple methods can be specified separated by comma.
 | matchOnUriPrefix | consumer | false | boolean | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.
@@ -85,7 +81,7 @@ The Atmosphere Websocket component supports 36 endpoint options which are listed
 | servletName | consumer | CamelServlet | String | Name of the servlet to use
 | traceEnabled | consumer | false | boolean | Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off.
 | attachmentMultipartBinding | consumer (advanced) | false | boolean | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | authMethodPriority | producer |  | String | Authentication method for proxy either as Basic Digest or NTLM.
 | bridgeEndpoint | producer | false | boolean | If the option is true HttpProducer will ignore the Exchange.HTTP_URI header and use the endpoint's URI for request. You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back.
@@ -108,26 +104,20 @@ The Atmosphere Websocket component supports 36 endpoint options which are listed
 // endpoint options: END
 
 
-[[Atmosphere-Websocket-URIFormat]]
-URI Format
-^^^^^^^^^^
+### URI Format
 
 [source,java]
 -----------------------------------------------
 atmosphere-websocket:///relative path[?options]
 -----------------------------------------------
 
-[[Atmosphere-Websocket-ReadingandWritingDataoverWebsocket]]
-Reading and Writing Data over Websocket
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Reading and Writing Data over Websocket
 
 An atmopshere-websocket endpoint can either write data to the socket or
 read from the socket, depending on whether the endpoint is configured as
 the producer or the consumer, respectively.
 
-[[Atmosphere-Websocket-ConfiguringURItoReadorWriteData]]
-Configuring URI to Read or Write Data
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Configuring URI to Read or Write Data
 
 In the route below, Camel will read from the specified websocket
 connection.
@@ -173,9 +163,7 @@ And the equivalent Spring sample:
 
  
 
-[[Atmosphere-Websocket-SeeAlso]]
-See Also
-^^^^^^^^
+### See Also
 
 * link:configuring-camel.html[Configuring Camel]
 * link:component.html[Component]
@@ -186,4 +174,3 @@ See Also
 * link:ahc-ws.html[AHC-WS]
 *
 https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=39621544[Websocket]
-

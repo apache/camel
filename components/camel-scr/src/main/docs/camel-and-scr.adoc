@@ -1,6 +1,4 @@
-[[CamelandSCR-WorkingwithCamelandSCR]]
-Working with Camel and SCR
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+## Working with Camel and SCR
 
 SCR stands for Service Component Runtime and is an implementation of
 OSGi Declarative Services specification. SCR enables any plain old Java
@@ -17,9 +15,7 @@ completely in Java world; there is no need to edit XML or properties
 files. This offers you full control over everything and means your IDE
 of choice knows exactly what is going on in your project.
 
-[[CamelandSCR-CamelSCRsupport]]
-Camel SCR support
-^^^^^^^^^^^^^^^^^
+### Camel SCR support
 
 INFO: *Available as of Camel 2.15.0*. 
 Camel-scr bundle is not included in Apache Camel versions prior 2.15.0,
@@ -49,12 +45,8 @@ the following `org.apache.felix.scr.annotations` on class level:
 })
 ---------------------------------------------------------------------------------------------------------------
 
- 
-
 Then implement `getRouteBuilders()` method which returns the Camel
 routes you want to run:
-
- 
 
 *Implement getRouteBuilders()*
 
@@ -311,9 +303,7 @@ allows you to create more instances of your routes just by providing
 alternative configurations. More on this in section _Using Camel SCR
 bundle as a template_.
 
-[[CamelandSCR-AbstractCamelRunnerlifecycleinSCR]]
-AbstractCamelRunner's lifecycle in SCR
-++++++++++++++++++++++++++++++++++++++
+### AbstractCamelRunner's lifecycle in SCR
 
 1.  When component's configuration policy and mandatory references are
 satisfied SCR calls `activate()`. This creates and sets up a
@@ -339,9 +329,7 @@ In (non-OSGi) unit tests you should use `prepare()` → `run()` → `stop()`
 instead of `activate()` → `deactivate()` for more fine-grained control.
 Also, this allows us to avoid possible SCR specific operations in tests.
 
-[[CamelandSCR-Usingcamel-archetype-scr]]
-Using camel-archetype-scr
-^^^^^^^^^^^^^^^^^^^^^^^^^
+### Using camel-archetype-scr
 
 The easiest way to create an Camel SCR bundle project is to use
 `camel-archetype-scr` and Maven.
@@ -389,9 +377,7 @@ mvn install
 
 and the bundle is ready to be deployed.
 
-[[CamelandSCR-UnittestingCamelroutes]]
-Unit testing Camel routes
-^^^^^^^^^^^^^^^^^^^^^^^^^
+### Unit testing Camel routes
 
 Service Component is a POJO and has no special requirements for
 (non-OSGi) unit testing. There are however some techniques that are
@@ -581,9 +567,7 @@ Here we start the Service Component and along with it the routes.
 
 Here we send a message to a route in test.
 
-[[CamelandSCR-RunningthebundleinApacheKaraf]]
-Running the bundle in Apache Karaf
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+### Running the bundle in Apache Karaf
 
 Once the bundle has been built with `mvn install` it's ready to be
 deployed. To deploy the bundle on Apache Karaf perform the following
@@ -611,9 +595,7 @@ karaf@root> log:tail -n 10
 Press ctrl-c to stop watching the log.
 ------------------------------------------------------------------------
 
-[[CamelandSCR-Overridingthedefaultconfiguration]]
-Overriding the default configuration
-++++++++++++++++++++++++++++++++++++
+#### Overriding the default configuration
 
 By default, Service Component's configuration PID equals the fully
 qualified name of its class. You can change the example bundle's
@@ -630,9 +612,7 @@ karaf@root> config:propset -p example.CamelScrExample messageOk "This is better 
 Or you can change the configuration by editing property files in Karaf's
 `etc` folder.
 
-[[CamelandSCR-UsingCamelSCRbundleasatemplate]]
-Using Camel SCR bundle as a template
-++++++++++++++++++++++++++++++++++++
+#### Using Camel SCR bundle as a template
 
 Let's say you have a Camel SCR bundle that implements an integration
 pattern that you use frequently, say, *from → to*, with success/failure
@@ -662,9 +642,7 @@ karaf@root> config:update
 This will start a new CamelContext with your overridden properties. How
 convenient.
 
-[Tip]
-====
-
+### Notes
 
 When designing a Service Component to be a template you typically don't
 want it to start without a "tailed" configuration i.e. with the default
@@ -673,5 +651,3 @@ configuration.
 To prevent your Service Component from starting with the default
 configuration add `policy = ConfigurationPolicy.REQUIRE `to the class
 level `@Component` annotation.
-
-====

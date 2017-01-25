@@ -26,6 +26,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.Metadata;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 
@@ -34,6 +35,7 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
  */
 public class ElasticsearchComponent extends UriEndpointComponent {
 
+    @Metadata(label = "advanced")
     private Client client;
 
     public ElasticsearchComponent() {
