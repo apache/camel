@@ -45,8 +45,8 @@ public class SnsComponent extends UriEndpointComponent {
             configuration.setTopicName(remaining);
         }
 
-        if (configuration.getAmazonSNSClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("AmazonSNSClient or accessKey and secretKey must be specified");
+        if (configuration.getAmazonSNSClient() == null) {
+            throw new IllegalArgumentException("AmazonSNSClient must be specified");
         }
 
         SnsEndpoint endpoint = new SnsEndpoint(uri, this, configuration);

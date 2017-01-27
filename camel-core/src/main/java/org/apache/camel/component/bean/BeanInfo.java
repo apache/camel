@@ -38,6 +38,7 @@ import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeException;
+import org.apache.camel.ExchangeProperties;
 import org.apache.camel.ExchangeProperty;
 import org.apache.camel.Expression;
 import org.apache.camel.Handler;
@@ -974,7 +975,9 @@ public class BeanInfo {
             ExchangeProperty propertyAnnotation = (ExchangeProperty)annotation;
             return ExpressionBuilder.exchangePropertyExpression(propertyAnnotation.value());
         } else if (annotation instanceof Properties) {
-            return ExpressionBuilder.propertiesExpression();
+            return ExpressionBuilder.exchangePropertiesExpression();
+        } else if (annotation instanceof ExchangeProperties) {
+            return ExpressionBuilder.exchangePropertiesExpression();
         } else if (annotation instanceof Header) {
             Header headerAnnotation = (Header)annotation;
             return ExpressionBuilder.headerExpression(headerAnnotation.value());

@@ -51,6 +51,11 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
+        // resolve transformers explicitly as the route doesn't actually use them
+        context.resolveTransformer(new DataType("xml:foo"), new DataType("json:bar"));
+        context.resolveTransformer(new DataType(ManagedTransformerRegistryTest.class), new DataType("xml:test"));
+        context.resolveTransformer("custom");
+
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=services,*"), null);
@@ -136,7 +141,7 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
     public static class MyTransformer extends Transformer {
         @Override
         public void transform(Message message, DataType from, DataType to) throws Exception {
-            return;
+            // empty
         }
     }
 }

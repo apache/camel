@@ -187,7 +187,7 @@ public class TelegramServiceTest {
         OutgoingDocumentMessage msg = new OutgoingDocumentMessage();
         msg.setDocument(document);
         msg.setChatId(chatId);
-        msg.setFilenameWithExtension("file.png");
+        msg.setFilenameWithExtension("file.txt");
 
 
         service.sendMessage(authorizationToken, msg);

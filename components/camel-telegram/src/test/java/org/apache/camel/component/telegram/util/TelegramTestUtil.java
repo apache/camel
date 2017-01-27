@@ -59,7 +59,7 @@ public final class TelegramTestUtil {
     }
 
     public static byte[] createSampleDocument() throws IOException {
-        byte[] document = IOUtils.readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.png"));
+        byte[] document = IOUtils.readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.txt"));
         return document;
     }
 }
