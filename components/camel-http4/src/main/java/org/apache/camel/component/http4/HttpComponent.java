@@ -165,18 +165,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Map<String, Object> httpClientParameters = new HashMap<String, Object>(parameters);
-        // http client can be configured from URI options
-        HttpClientBuilder clientBuilder = HttpClientBuilder.create();
-        // allow the builder pattern
-        Map<String, Object> httpClientOptions = IntrospectionSupport.extractProperties(parameters, "httpClient.");
-        IntrospectionSupport.setProperties(clientBuilder, httpClientOptions);
-        // set the Request configure this way and allow the builder pattern
-        RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
-        IntrospectionSupport.setProperties(requestConfigBuilder, httpClientOptions);
-        clientBuilder.setDefaultRequestConfig(requestConfigBuilder.build());
-        
-        // validate that we could resolve all httpClient. parameters as this component is lenient
-        validateParameters(uri, httpClientOptions, null);
+        final Map<String, Object> httpClientOptions = new HashMap<>();
+        final HttpClientBuilder clientBuilder = createHttpClientBuilder(uri, parameters, httpClientOptions);
         
         HttpBinding httpBinding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         HttpContext httpContext = resolveAndRemoveReferenceParameter(parameters, "httpContext", HttpContext.class);
@@ -290,7 +280,25 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         
         return endpoint;
     }
-    
+
+    protected HttpClientBuilder createHttpClientBuilder(final String uri, final Map<String, Object> parameters,
+            final Map<String, Object> httpClientOptions) throws Exception {
+        // http client can be configured from URI options
+        HttpClientBuilder clientBuilder = HttpClientBuilder.create();
+        // allow the builder pattern
+        httpClientOptions.putAll(IntrospectionSupport.extractProperties(parameters, "httpClient."));
+        IntrospectionSupport.setProperties(clientBuilder, httpClientOptions);
+        // set the Request configure this way and allow the builder pattern
+        RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
+        IntrospectionSupport.setProperties(requestConfigBuilder, httpClientOptions);
+        clientBuilder.setDefaultRequestConfig(requestConfigBuilder.build());
+
+        // validate that we could resolve all httpClient. parameters as this component is lenient
+        validateParameters(uri, httpClientOptions, null);
+
+        return clientBuilder;
+    }
+
     protected Registry<ConnectionSocketFactory> createConnectionRegistry(X509HostnameVerifier x509HostnameVerifier, SSLContextParameters sslContextParams)
         throws GeneralSecurityException, IOException {
         // create the default connection registry to use
