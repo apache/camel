@@ -19,6 +19,7 @@ package org.apache.camel.component.reactive.streams.api;
 /**
  * A callback used to signal when a item coming from a Camel route has been delivered to the external stream processor.
  */
+@FunctionalInterface
 public interface DispatchCallback<T> {
 
     /**
