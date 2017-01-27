@@ -168,7 +168,7 @@ public final class TelegramConverter {
 
             result = document;
             break;
-            }
+        }
         }
 
         return result;
