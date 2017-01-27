@@ -32,7 +32,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "routing,cloud,service-discovery")
 @XmlRootElement(name = "multiServiceDiscovery")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MultiServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
+public class ChainedServiceCallServiceDiscoveryConfiguration extends ServiceCallServiceDiscoveryConfiguration {
     @XmlElements({
         @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
@@ -43,12 +43,12 @@ public class MultiServiceCallServiceDiscoveryConfiguration extends ServiceCallSe
     )
     private List<ServiceCallServiceDiscoveryConfiguration> serviceDiscoveryConfigurations;
 
-    public MultiServiceCallServiceDiscoveryConfiguration() {
+    public ChainedServiceCallServiceDiscoveryConfiguration() {
         this(null);
     }
 
-    public MultiServiceCallServiceDiscoveryConfiguration(ServiceCallDefinition parent) {
-        super(parent, "multi-service-discovery");
+    public ChainedServiceCallServiceDiscoveryConfiguration(ServiceCallDefinition parent) {
+        super(parent, "chained-service-discovery");
     }
 
     // *************************************************************************
@@ -85,7 +85,7 @@ public class MultiServiceCallServiceDiscoveryConfiguration extends ServiceCallSe
     /**
      *  List of ServiceDiscovery configuration to use
      */
-    public MultiServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfigurations(List<ServiceCallServiceDiscoveryConfiguration> serviceDiscoveryConfigurations) {
+    public ChainedServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfigurations(List<ServiceCallServiceDiscoveryConfiguration> serviceDiscoveryConfigurations) {
         setServiceDiscoveryConfigurations(serviceDiscoveryConfigurations);
         return this;
     }
@@ -93,7 +93,7 @@ public class MultiServiceCallServiceDiscoveryConfiguration extends ServiceCallSe
     /**
      *  Add a ServiceDiscovery configuration
      */
-    public MultiServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration(ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
+    public ChainedServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration(ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration) {
         addServiceDiscoveryConfigurations(serviceDiscoveryConfiguration);
         return this;
     }
@@ -137,8 +137,8 @@ public class MultiServiceCallServiceDiscoveryConfiguration extends ServiceCallSe
         return conf;
     }
 
-    public MultiServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
-        MultiServiceCallServiceDiscoveryConfiguration conf = new MultiServiceCallServiceDiscoveryConfiguration();
+    public ChainedServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
+        ChainedServiceCallServiceDiscoveryConfiguration conf = new ChainedServiceCallServiceDiscoveryConfiguration();
         addServiceDiscoveryConfigurations(conf);
 
         return conf;

@@ -22,11 +22,19 @@ import java.util.List;
 final class ServiceCallConstants {
     public static final List<ServiceCallServiceDiscoveryConfiguration> SERVICE_DISCOVERY_CONFIGURATIONS = Arrays.asList(
         new CachingServiceCallServiceDiscoveryConfiguration(),
+        new ChainedServiceCallServiceDiscoveryConfiguration(),
         new ConsulServiceCallServiceDiscoveryConfiguration(),
         new DnsServiceCallServiceDiscoveryConfiguration(),
         new EtcdServiceCallServiceDiscoveryConfiguration(),
-        new KubernetesServiceCallServiceDiscoveryConfiguration(),
-        new MultiServiceCallServiceDiscoveryConfiguration()
+        new KubernetesServiceCallServiceDiscoveryConfiguration()
+    );
+
+    public static final List<ServiceCallServiceFilterConfiguration> SERVICE_FILTER_CONFIGURATIONS = Arrays.asList(
+        new BlacklistServiceCallServiceFilterConfiguration(),
+        new ChainedServiceCallServiceFilterConfiguration(),
+        new CustomServiceCallServiceFilterConfiguration(),
+        new HealthyServiceCallServiceFilterConfiguration(),
+        new PassThroughServiceCallServiceFilterConfiguration()
     );
 
     public static final List<ServiceCallLoadBalancerConfiguration> LOAD_BALANCER_CONFIGURATIONS = Arrays.asList(

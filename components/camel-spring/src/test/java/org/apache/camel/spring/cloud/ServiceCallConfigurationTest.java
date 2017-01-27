@@ -16,7 +16,10 @@
  */
 package org.apache.camel.spring.cloud;
 
-import org.apache.camel.model.cloud.MultiServiceCallServiceDiscoveryConfiguration;
+import org.apache.camel.model.cloud.BlacklistServiceCallServiceFilterConfiguration;
+import org.apache.camel.model.cloud.ChainedServiceCallServiceDiscoveryConfiguration;
+import org.apache.camel.model.cloud.ChainedServiceCallServiceFilterConfiguration;
+import org.apache.camel.model.cloud.HealthyServiceCallServiceFilterConfiguration;
 import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration;
 import org.apache.camel.spring.SpringCamelContext;
@@ -44,7 +47,7 @@ public class ServiceCallConfigurationTest {
         assertNotNull("No ServiceCallConfiguration (2)", conf2);
         assertNotNull("No ServiceDiscoveryConfiguration (2)", conf2.getServiceDiscoveryConfiguration());
 
-        MultiServiceCallServiceDiscoveryConfiguration discovery2 = (MultiServiceCallServiceDiscoveryConfiguration)conf2.getServiceDiscoveryConfiguration();
+        ChainedServiceCallServiceDiscoveryConfiguration discovery2 = (ChainedServiceCallServiceDiscoveryConfiguration)conf2.getServiceDiscoveryConfiguration();
         assertEquals(2, discovery2.getServiceDiscoveryConfigurations().size());
         assertTrue(discovery2.getServiceDiscoveryConfigurations().get(0) instanceof StaticServiceCallServiceDiscoveryConfiguration);
         assertTrue(discovery2.getServiceDiscoveryConfigurations().get(1) instanceof StaticServiceCallServiceDiscoveryConfiguration);
@@ -55,7 +58,12 @@ public class ServiceCallConfigurationTest {
 
         StaticServiceCallServiceDiscoveryConfiguration sconf2 = (StaticServiceCallServiceDiscoveryConfiguration)discovery2.getServiceDiscoveryConfigurations().get(1);
         assertEquals(1, sconf2.getServers().size());
-        assertEquals("localhost:9093,localhost:9094", sconf2.getServers().get(0));
+        assertEquals("localhost:9093,localhost:9094,localhost:9095,localhost:9096", sconf2.getServers().get(0));
+
+        ChainedServiceCallServiceFilterConfiguration filter = (ChainedServiceCallServiceFilterConfiguration)conf2.getServiceFilterConfiguration();
+        assertEquals(2, filter.getServiceFilterConfigurations().size());
+        assertTrue(filter.getServiceFilterConfigurations().get(0) instanceof HealthyServiceCallServiceFilterConfiguration);
+        assertTrue(filter.getServiceFilterConfigurations().get(1) instanceof BlacklistServiceCallServiceFilterConfiguration);
     }
 
     protected SpringCamelContext createContext(String classpathConfigFile) {

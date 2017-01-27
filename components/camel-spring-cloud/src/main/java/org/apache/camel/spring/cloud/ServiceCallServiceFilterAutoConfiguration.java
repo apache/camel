@@ -17,10 +17,14 @@
 
 package org.apache.camel.spring.cloud;
 
+import java.util.Map;
+
 import org.apache.camel.cloud.ServiceFilter;
-import org.apache.camel.impl.cloud.AllServiceFilter;
+import org.apache.camel.impl.cloud.BlacklistServiceFilter;
+import org.apache.camel.impl.cloud.ChainedServiceFilter;
 import org.apache.camel.impl.cloud.HealthyServiceFilter;
 import org.apache.camel.spring.boot.util.GroupCondition;
+import org.apache.camel.util.StringHelper;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -33,18 +37,24 @@ import org.springframework.context.annotation.Scope;
 public class ServiceCallServiceFilterAutoConfiguration {
     @Lazy
     @Scope("prototype")
-    @Bean(name = "service-filter-healthy")
+    @Bean(name = "service-filter-chained")
     @Conditional(ServiceCallServiceFilterAutoConfiguration.ServiceFilterCondition.class)
-    public ServiceFilter healthyServiceFilter() {
-        return new HealthyServiceFilter();
-    }
+    public ServiceFilter chainedServiceFilter(ServiceCallConfigurationProperties properties) {
+        BlacklistServiceFilter blacklist = new BlacklistServiceFilter();
 
-    @Lazy
-    @Scope("prototype")
-    @Bean(name = "service-filter-all")
-    @Conditional(ServiceCallServiceFilterAutoConfiguration.ServiceFilterCondition.class)
-    public ServiceFilter allServiceFilter() {
-        return new AllServiceFilter();
+        Map<String, String> services = properties.getServiceFilter().getBlacklist();
+        for (Map.Entry<String, String> entry : services.entrySet()) {
+
+            String[] parts = entry.getValue().split(",");
+            for (String part : parts) {
+                String host = StringHelper.before(part, ":");
+                String port = StringHelper.after(part, ":");
+
+                blacklist.addServer(entry.getKey(), host, Integer.parseInt(port));
+            }
+        }
+
+        return ChainedServiceFilter.wrap(new HealthyServiceFilter(), blacklist);
     }
 
     public static class ServiceFilterCondition extends GroupCondition {

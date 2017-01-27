@@ -19,26 +19,26 @@ package org.apache.camel.impl.cloud;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.cloud.ServiceDiscovery;
-import org.apache.camel.cloud.ServiceDiscoveryFactory;
+import org.apache.camel.cloud.ServiceFilter;
+import org.apache.camel.cloud.ServiceFilterFactory;
 import org.apache.camel.util.ObjectHelper;
 
-public class MultiServiceDiscoveryFactory implements ServiceDiscoveryFactory {
-    private List<ServiceDiscovery> serviceDiscoveryList;
+public class ChainedServiceFilterFactory implements ServiceFilterFactory {
+    private List<ServiceFilter> serviceFilterList;
 
-    public MultiServiceDiscoveryFactory() {
+    public ChainedServiceFilterFactory() {
     }
 
     // *************************************************************************
     // Properties
     // *************************************************************************
 
-    public List<ServiceDiscovery> getServiceDiscoveryList() {
-        return serviceDiscoveryList;
+    public List<ServiceFilter> getServiceFilterList() {
+        return serviceFilterList;
     }
 
-    public void setServiceDiscoveryList(List<ServiceDiscovery> serviceDiscoveryList) {
-        this.serviceDiscoveryList = serviceDiscoveryList;
+    public void setServiceFilterList(List<ServiceFilter> serviceFilterList) {
+        this.serviceFilterList = serviceFilterList;
     }
 
     // *************************************************************************
@@ -46,9 +46,9 @@ public class MultiServiceDiscoveryFactory implements ServiceDiscoveryFactory {
     // *************************************************************************
 
     @Override
-    public ServiceDiscovery newInstance(CamelContext camelContext) throws Exception {
-        ObjectHelper.notNull(serviceDiscoveryList, "ServiceDiscovery list");
+    public ServiceFilter newInstance(CamelContext camelContext) throws Exception {
+        ObjectHelper.notNull(serviceFilterList, "ServiceFilter list");
 
-        return new MultiServiceDiscovery(serviceDiscoveryList);
+        return new ChainedServiceFilter(serviceFilterList);
     }
 }

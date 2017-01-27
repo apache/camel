@@ -22,11 +22,11 @@ import java.util.List;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceFilter;
 
-public class AllServiceFilter implements ServiceFilter {
-    public static final ServiceFilter INSTANCE = new AllServiceFilter();
+public class PassThroughServiceFilter implements ServiceFilter {
+    public static final ServiceFilter INSTANCE = new PassThroughServiceFilter();
 
     @Override
-    public <T extends ServiceDefinition> List<T> apply(List<T> services) {
+    public List<ServiceDefinition> apply(List<ServiceDefinition> services) {
         return services;
     }
 }

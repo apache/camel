@@ -94,5 +94,31 @@ public class DefaultServiceDefinition implements ServiceDefinition {
         return "DefaultServiceCallService[" + name + "@" + host + ":" + port + "]";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
+        DefaultServiceDefinition that = (DefaultServiceDefinition) o;
+
+        if (port != that.port) {
+            return false;
+        }
+        if (name != null ? !name.equals(that.name) : that.name != null) {
+            return false;
+        }
+        return host != null ? host.equals(that.host) : that.host == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (host != null ? host.hashCode() : 0);
+        result = 31 * result + port;
+        return result;
+    }
 }

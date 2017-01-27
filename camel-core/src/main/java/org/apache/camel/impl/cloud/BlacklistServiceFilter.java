@@ -19,27 +19,23 @@ package org.apache.camel.impl.cloud;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.camel.cloud.ServiceDefinition;
+import org.apache.camel.cloud.ServiceFilter;
 import org.apache.camel.util.StringHelper;
 
-/**
- * A static list of known servers Camel Service Call EIP.
- */
-public class StaticServiceDiscovery extends DefaultServiceDiscovery {
-    private final List<ServiceDefinition> services;
+public class BlacklistServiceFilter implements ServiceFilter {
+    private List<ServiceDefinition> services;
 
-    public StaticServiceDiscovery() {
+    public BlacklistServiceFilter() {
         this.services = new ArrayList<>();
     }
 
-    public StaticServiceDiscovery(List<ServiceDefinition> servers) {
-        this.services = new ArrayList<>(servers);
+    public BlacklistServiceFilter(List<ServiceDefinition> blacklist) {
+        this.services = new ArrayList<>(blacklist);
     }
 
     /**
@@ -108,52 +104,30 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
         services.add(new DefaultServiceDefinition(name, host, port, meta));
     }
 
-    /**
-     * Remove an existing server from the list of known servers.
-     */
-    public void removeServer(String host, int port) {
-        services.removeIf(
-            s -> Objects.equals(host, s.getHost()) && port == s.getPort()
-        );
-    }
-
-    /**
-     * Remove an existing server from the list of known servers.
-     */
-    public void removeServer(String name, String host, int port) {
-        services.removeIf(
-            s -> Objects.equals(name, s.getName()) && Objects.equals(host, s.getHost()) && port == s.getPort()
-        );
-    }
-
     @Override
-    public List<ServiceDefinition> getUpdatedListOfServices(String name) {
-        return Collections.unmodifiableList(
-            services.stream()
-                .filter(s -> Objects.isNull(s.getName()) || Objects.equals(name, s.getName()))
-                .collect(Collectors.toList())
-        );
+    public List<ServiceDefinition> apply(List<ServiceDefinition> services) {
+        return services.stream().filter(s -> !this.services.contains(s)).collect(Collectors.toList());
     }
 
     // *************************************************************************
     // Helpers
     // *************************************************************************
 
-    public static StaticServiceDiscovery forServices(Collection<ServiceDefinition> definitions) {
-        StaticServiceDiscovery discovery = new StaticServiceDiscovery();
+    public static BlacklistServiceFilter forServices(Collection<ServiceDefinition> definitions) {
+        BlacklistServiceFilter filter = new BlacklistServiceFilter();
         for (ServiceDefinition definition: definitions) {
-            discovery.addServer(definition);
+            filter.addServer(definition);
         }
 
-        return discovery;
+        return filter;
     }
 
-    public static StaticServiceDiscovery forServices(ServiceDefinition... definitions) {
-        StaticServiceDiscovery discovery = new StaticServiceDiscovery();
+    public static BlacklistServiceFilter forServices(ServiceDefinition... definitions) {
+        BlacklistServiceFilter filter = new BlacklistServiceFilter();
         for (ServiceDefinition definition: definitions) {
-            discovery.addServer(definition);
+            filter.addServer(definition);
         }
 
-        return discovery;
+        return filter;
     }
 }

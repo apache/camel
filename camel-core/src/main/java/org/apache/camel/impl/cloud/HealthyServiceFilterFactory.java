@@ -14,17 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.impl.cloud;
 
-import java.util.List;
-
-import org.apache.camel.cloud.ServiceDefinition;
+import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceFilter;
+import org.apache.camel.cloud.ServiceFilterFactory;
 
-public class DefaultServiceFilter implements ServiceFilter {
+public class HealthyServiceFilterFactory implements ServiceFilterFactory {
+    public HealthyServiceFilterFactory() {
+    }
+
+    // *************************************************************************
+    // Factory
+    // *************************************************************************
+
     @Override
-    public List<ServiceDefinition> apply(List<ServiceDefinition> services) {
-        return services;
+    public ServiceFilter newInstance(CamelContext camelContext) throws Exception {
+        return new HealthyServiceFilter();
     }
 }
