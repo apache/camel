@@ -40,6 +40,9 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
     @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers = 1;
 
+    @UriParam
+    private String serviceName;
+
     public ReactiveStreamsEndpoint(String endpointUri, ReactiveStreamsComponent component) {
         super(endpointUri, component);
     }
@@ -94,4 +97,14 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
         this.concurrentConsumers = concurrentConsumers;
     }
 
+    public String getServiceName() {
+        return serviceName;
+    }
+
+    /**
+     * Allows using an alternative CamelReactiveStreamService implementation. The implementation is looked up from the registry.
+     */
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
 }
