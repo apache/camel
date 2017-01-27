@@ -25,36 +25,28 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
 
-    <serviceCallConfiguration id="conf1">
-      <staticServiceDiscovery>
-        <servers>localhost:9091</servers>
-      </staticServiceDiscovery>
-    </serviceCallConfiguration>
+    <interceptSendToEndpoint uri="file:*" skipSendToOriginalEndpoint="true">
+      <to uri="mock:result"/>
+    </interceptSendToEndpoint>
 
-    <serviceCallConfiguration id="conf2">
-      <chainedServiceDiscovery>
+    <route id="test">
+      <from uri="direct:start"/>
+      <serviceCall name="test" component="file">
+
         <staticServiceDiscovery>
-          <servers>localhost:9092</servers>
+          <servers>test@host1:9093</servers>
+          <servers>test@host2:9093</servers>
+          <servers>unknown@host1:9094</servers>
+          <servers>test@host3:9093</servers>
+          <servers>test@host4:9094</servers>
         </staticServiceDiscovery>
-        <staticServiceDiscovery>
-          <servers>localhost:9093,localhost:9094,localhost:9095,localhost:9096</servers>
-        </staticServiceDiscovery>
-      </chainedServiceDiscovery>
-      <chainedServiceFilter>
-        <healthyServiceFilter/>
+
         <blacklistServiceFilter>
-          <servers>localhost:9095,localhost:9096</servers>
+          <servers>test@host2:9093</servers>
+          <servers>test@host3:9093</servers>
         </blacklistServiceFilter>
-      </chainedServiceFilter>
-    </serviceCallConfiguration>
+      </serviceCall>
 
-    <route id="test1">
-      <from uri="direct:start1"/>
-      <serviceCall name="test" configurationRef="conf1"/>
-    </route>
-    <route id="test2">
-      <from uri="direct:start2"/>
-      <serviceCall name="test" configurationRef="conf2"/>
     </route>
   </camelContext>
 

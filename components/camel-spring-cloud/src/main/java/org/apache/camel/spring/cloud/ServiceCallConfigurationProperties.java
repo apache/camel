@@ -89,6 +89,7 @@ public class ServiceCallConfigurationProperties {
 
     public static class ServiceFilter {
         private boolean enabled = true;
+        private Map<String, String> blacklist = new HashMap<>();
 
         public boolean isEnabled() {
             return enabled;
@@ -96,6 +97,10 @@ public class ServiceCallConfigurationProperties {
 
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
+        }
+
+        public Map<String, String> getBlacklist() {
+            return blacklist;
         }
     }
 

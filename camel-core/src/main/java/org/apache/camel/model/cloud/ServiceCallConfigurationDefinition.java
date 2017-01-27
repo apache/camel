@@ -68,14 +68,23 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     private Expression expression;
     @XmlElements({
         @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "chainedServiceDiscovery", type = ChainedServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "multiServiceDiscovery", type = MultiServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class)}
     )
     private ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration;
+
+    @XmlElements({
+        @XmlElement(name = "blacklistServiceFilter", type = BlacklistServiceCallServiceFilterConfiguration.class),
+        @XmlElement(name = "chainedServiceFilter", type = ChainedServiceCallServiceFilterConfiguration.class),
+        @XmlElement(name = "customServiceFilter", type = CustomServiceCallServiceFilterConfiguration.class),
+        @XmlElement(name = "healthyServiceFilter", type = HealthyServiceCallServiceFilterConfiguration.class),
+        @XmlElement(name = "passThroughServiceFilter", type = PassThroughServiceCallServiceFilterConfiguration.class)}
+    )
+    private ServiceCallServiceFilterConfiguration serviceFilterConfiguration;
 
     @XmlElements({
         @XmlElement(name = "ribbonLoadBalancer", type = RibbonServiceCallLoadBalancerConfiguration.class)}
@@ -246,6 +255,17 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         this.serviceDiscoveryConfiguration = serviceDiscoveryConfiguration;
     }
 
+    public ServiceCallServiceFilterConfiguration getServiceFilterConfiguration() {
+        return serviceFilterConfiguration;
+    }
+
+    /**
+     * Configures the ServiceFilter using the given configuration.
+     */
+    public void setServiceFilterConfiguration(ServiceCallServiceFilterConfiguration serviceFilterConfiguration) {
+        this.serviceFilterConfiguration = serviceFilterConfiguration;
+    }
+
     public ServiceCallLoadBalancerConfiguration getLoadBalancerConfiguration() {
         return loadBalancerConfiguration;
     }
@@ -392,6 +412,14 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     }
 
     /**
+     * Configures the ServiceFilter using the given configuration.
+     */
+    public ServiceCallConfigurationDefinition serviceFilterConfiguration(ServiceCallServiceFilterConfiguration serviceFilterConfiguration) {
+        setServiceFilterConfiguration(serviceFilterConfiguration);
+        return this;
+    }
+
+    /**
      * Configures the LoadBalancer using the given configuration.
      */
     public ServiceCallConfigurationDefinition loadBalancerConfiguration(ServiceCallLoadBalancerConfiguration loadBalancerConfiguration) {
@@ -494,8 +522,8 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         return this;
     }
 
-    public MultiServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
-        MultiServiceCallServiceDiscoveryConfiguration conf = new MultiServiceCallServiceDiscoveryConfiguration();
+    public ChainedServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
+        ChainedServiceCallServiceDiscoveryConfiguration conf = new ChainedServiceCallServiceDiscoveryConfiguration();
         setServiceDiscoveryConfiguration(conf);
 
         return conf;
@@ -506,6 +534,49 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         setServiceDiscoveryConfiguration(conf);
 
         return conf;
+    }
+
+    // *****************************
+    // Shortcuts - ServiceFilter
+    // *****************************
+
+    public ServiceCallConfigurationDefinition healthyFilter() {
+        HealthyServiceCallServiceFilterConfiguration conf = new HealthyServiceCallServiceFilterConfiguration();
+        setServiceFilterConfiguration(conf);
+
+        return this;
+    }
+
+    public ServiceCallConfigurationDefinition passThroughFilter() {
+        PassThroughServiceCallServiceFilterConfiguration conf = new PassThroughServiceCallServiceFilterConfiguration();
+        setServiceFilterConfiguration(conf);
+
+        return this;
+    }
+
+    public ChainedServiceCallServiceFilterConfiguration multiFilter() {
+        ChainedServiceCallServiceFilterConfiguration conf = new ChainedServiceCallServiceFilterConfiguration();
+        setServiceFilterConfiguration(conf);
+
+        return conf;
+    }
+
+    public ServiceCallConfigurationDefinition customFilter(String serviceFilter) {
+        CustomServiceCallServiceFilterConfiguration conf = new CustomServiceCallServiceFilterConfiguration();
+        conf.setServiceFilterRef(serviceFilter);
+
+        setServiceFilterConfiguration(conf);
+
+        return this;
+    }
+
+    public ServiceCallConfigurationDefinition customFilter(ServiceFilter serviceFilter) {
+        CustomServiceCallServiceFilterConfiguration conf = new CustomServiceCallServiceFilterConfiguration();
+        conf.setServiceFilter(serviceFilter);
+
+        setServiceFilterConfiguration(conf);
+
+        return this;
     }
 
     // *****************************

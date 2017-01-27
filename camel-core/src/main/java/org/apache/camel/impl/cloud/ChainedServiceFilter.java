@@ -14,17 +14,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.impl.cloud;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceFilter;
 
-public class DefaultServiceFilter implements ServiceFilter {
+public class ChainedServiceFilter implements ServiceFilter {
+    private final List<ServiceFilter> delegates;
+    private final int delegatesSize;
+
+    public ChainedServiceFilter(List<ServiceFilter> delegates) {
+        this.delegates = Collections.unmodifiableList(new ArrayList<>(delegates));
+        this.delegatesSize = this.delegates.size();
+    }
+
+    public List<ServiceFilter> getDelegates() {
+        return this.delegates;
+    }
+
+
     @Override
     public List<ServiceDefinition> apply(List<ServiceDefinition> services) {
+        for (int i = 0; i < delegatesSize; i++) {
+            services = delegates.get(i).apply(services);
+        }
+
         return services;
+    }
+
+    // **********************
+    // Helpers
+    // **********************
+
+    public static ChainedServiceFilter wrap(ServiceFilter... delegates) {
+        return new ChainedServiceFilter(Arrays.asList(delegates));
     }
 }

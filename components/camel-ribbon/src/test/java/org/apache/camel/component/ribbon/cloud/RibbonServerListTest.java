@@ -17,15 +17,11 @@
 
 package org.apache.camel.component.ribbon.cloud;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.netflix.loadbalancer.LoadBalancerBuilder;
 import com.netflix.loadbalancer.RoundRobinRule;
 import com.netflix.loadbalancer.Server;
 import com.netflix.loadbalancer.ZoneAwareLoadBalancer;
-import org.apache.camel.cloud.ServiceDefinition;
-import org.apache.camel.cloud.ServiceDiscovery;
+import org.apache.camel.impl.cloud.PassThroughServiceFilter;
 import org.apache.camel.impl.cloud.StaticServiceDiscovery;
 import org.junit.Test;
 
@@ -34,14 +30,14 @@ import static org.junit.Assert.assertEquals;
 public class RibbonServerListTest {
     @Test
     public void testFixedServerList() throws Exception {
-        List<ServiceDefinition> servers = new ArrayList<>();
-        servers.add(new RibbonServiceDefinition("unknown", "localhost", 9090));
-        servers.add(new RibbonServiceDefinition("unknown", "localhost", 9091));
-
-        ServiceDiscovery list = new StaticServiceDiscovery(servers);
-
         ZoneAwareLoadBalancer<RibbonServiceDefinition> lb = LoadBalancerBuilder.<RibbonServiceDefinition>newBuilder()
-            .withDynamicServerList(new RibbonLoadBalancer.RibbonServerList("unknown", list))
+            .withDynamicServerList(new RibbonLoadBalancer.RibbonServerList(
+                "unknown",
+                StaticServiceDiscovery.forServices(
+                    new RibbonServiceDefinition("unknown", "localhost", 9090),
+                    new RibbonServiceDefinition("unknown", "localhost", 9091)
+                ),
+                PassThroughServiceFilter.INSTANCE))
             .withRule(new RoundRobinRule())
             .buildDynamicServerListLoadBalancer();
 

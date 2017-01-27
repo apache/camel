@@ -14,17 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.model.cloud;
 
-package org.apache.camel.impl.cloud;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import java.util.List;
+import org.apache.camel.spi.Metadata;
 
-import org.apache.camel.cloud.ServiceDefinition;
-import org.apache.camel.cloud.ServiceFilter;
+@Metadata(label = "routing,cloud,service-filter")
+@XmlRootElement(name = "passThroughServiceFilter")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class PassThroughServiceCallServiceFilterConfiguration extends ServiceCallServiceFilterConfiguration {
+    public PassThroughServiceCallServiceFilterConfiguration() {
+        this(null);
+    }
 
-public class DefaultServiceFilter implements ServiceFilter {
-    @Override
-    public List<ServiceDefinition> apply(List<ServiceDefinition> services) {
-        return services;
+    public PassThroughServiceCallServiceFilterConfiguration(ServiceCallDefinition parent) {
+        super(parent, "pass-through-service-filter");
     }
 }

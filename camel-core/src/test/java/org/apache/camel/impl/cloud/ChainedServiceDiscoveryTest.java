@@ -19,14 +19,14 @@ package org.apache.camel.impl.cloud;
 import java.util.Arrays;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.model.cloud.MultiServiceCallServiceDiscoveryConfiguration;
+import org.apache.camel.model.cloud.ChainedServiceCallServiceDiscoveryConfiguration;
 import org.apache.camel.model.cloud.StaticServiceCallServiceDiscoveryConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class MultiServiceDiscoveryTest extends ContextTestSupport {
+public class ChainedServiceDiscoveryTest extends ContextTestSupport {
     @Test
-    public void testCachingServiceDiscovery() throws Exception {
+    public void testMultiServiceDiscovery() throws Exception {
         StaticServiceDiscovery discovery1 = new StaticServiceDiscovery();
         discovery1.addServer(new DefaultServiceDefinition("discovery1", "localhost", 1111));
         discovery1.addServer(new DefaultServiceDefinition("discovery1", "localhost", 1112));
@@ -35,35 +35,35 @@ public class MultiServiceDiscoveryTest extends ContextTestSupport {
         discovery2.addServer(new DefaultServiceDefinition("discovery1", "localhost", 1113));
         discovery2.addServer(new DefaultServiceDefinition("discovery2", "localhost", 1114));
 
-        MultiServiceDiscovery discovery = MultiServiceDiscovery.wrap(discovery1, discovery2);
+        ChainedServiceDiscovery discovery = ChainedServiceDiscovery.wrap(discovery1, discovery2);
         Assert.assertEquals(3, discovery.getUpdatedListOfServices("discovery1").size());
         Assert.assertEquals(1, discovery.getUpdatedListOfServices("discovery2").size());
     }
 
     @Test
-    public void testCachingServiceDiscoveryConfiguration() throws Exception {
+    public void testMultiServiceDiscoveryConfiguration() throws Exception {
         StaticServiceCallServiceDiscoveryConfiguration staticConf1 = new StaticServiceCallServiceDiscoveryConfiguration();
         staticConf1.setServers(Arrays.asList("discovery1@localhost:1111", "discovery1@localhost:1112"));
 
         StaticServiceCallServiceDiscoveryConfiguration staticConf2 = new StaticServiceCallServiceDiscoveryConfiguration();
         staticConf2.setServers(Arrays.asList("discovery1@localhost:1113", "discovery2@localhost:1114"));
 
-        MultiServiceCallServiceDiscoveryConfiguration multiConf = new MultiServiceCallServiceDiscoveryConfiguration();
+        ChainedServiceCallServiceDiscoveryConfiguration multiConf = new ChainedServiceCallServiceDiscoveryConfiguration();
         multiConf.setServiceDiscoveryConfigurations(Arrays.asList(staticConf1, staticConf2));
 
-        MultiServiceDiscovery discovery = (MultiServiceDiscovery)multiConf.newInstance(context);
+        ChainedServiceDiscovery discovery = (ChainedServiceDiscovery)multiConf.newInstance(context);
         Assert.assertEquals(2, discovery.getDelegates().size());
         Assert.assertEquals(3, discovery.getUpdatedListOfServices("discovery1").size());
         Assert.assertEquals(1, discovery.getUpdatedListOfServices("discovery2").size());
     }
 
     @Test
-    public void testCachingServiceDiscoveryConfigurationDsl() throws Exception {
-        MultiServiceCallServiceDiscoveryConfiguration multiConf = new MultiServiceCallServiceDiscoveryConfiguration();
+    public void testMultiServiceDiscoveryConfigurationDsl() throws Exception {
+        ChainedServiceCallServiceDiscoveryConfiguration multiConf = new ChainedServiceCallServiceDiscoveryConfiguration();
         multiConf.staticServiceDiscovery().setServers(Arrays.asList("discovery1@localhost:1111", "discovery1@localhost:1112"));
         multiConf.staticServiceDiscovery().setServers(Arrays.asList("discovery1@localhost:1113", "discovery2@localhost:1114"));
 
-        MultiServiceDiscovery discovery = (MultiServiceDiscovery)multiConf.newInstance(context);
+        ChainedServiceDiscovery discovery = (ChainedServiceDiscovery)multiConf.newInstance(context);
         Assert.assertEquals(2, discovery.getDelegates().size());
         Assert.assertEquals(3, discovery.getUpdatedListOfServices("discovery1").size());
         Assert.assertEquals(1, discovery.getUpdatedListOfServices("discovery2").size());

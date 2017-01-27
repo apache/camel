@@ -24,10 +24,10 @@ import java.util.stream.Collectors;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceDiscovery;
 
-public class MultiServiceDiscovery implements ServiceDiscovery {
+public class ChainedServiceDiscovery implements ServiceDiscovery {
     private final List<ServiceDiscovery> delegates;
 
-    public MultiServiceDiscovery(List<ServiceDiscovery> delegates) {
+    public ChainedServiceDiscovery(List<ServiceDiscovery> delegates) {
         this.delegates = Collections.unmodifiableList(delegates);
     }
 
@@ -53,7 +53,7 @@ public class MultiServiceDiscovery implements ServiceDiscovery {
     // Helpers
     // **********************
 
-    public static MultiServiceDiscovery wrap(ServiceDiscovery... delegates) {
-        return new MultiServiceDiscovery(Arrays.asList(delegates));
+    public static ChainedServiceDiscovery wrap(ServiceDiscovery... delegates) {
+        return new ChainedServiceDiscovery(Arrays.asList(delegates));
     }
 }
