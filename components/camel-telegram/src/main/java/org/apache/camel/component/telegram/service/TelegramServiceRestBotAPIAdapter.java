@@ -27,8 +27,8 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 import org.apache.camel.component.telegram.TelegramService;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
-import org.apache.camel.component.telegram.model.OutgoingMessage;
 import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
+import org.apache.camel.component.telegram.model.OutgoingMessage;
 import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
@@ -65,7 +65,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             this.sendMessage(authorizationToken, (OutgoingAudioMessage) message);
         } else if (message instanceof OutgoingVideoMessage) {
             this.sendMessage(authorizationToken, (OutgoingVideoMessage) message);
-        } else if(message instanceof OutgoingDocumentMessage) {
+        } else if (message instanceof OutgoingDocumentMessage) {
             this.sendMessage(authorizationToken, (OutgoingDocumentMessage) message);
         } else {
             throw new IllegalArgumentException("Unsupported message type " + (message != null ? message.getClass().getName() : null));
