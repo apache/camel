@@ -111,11 +111,4 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      */
     void detachConsumer(String name);
 
-    /**
-     * Returns the name of this service implementation if present.
-     * The name of any named implementation must match their lookup key in the registry.
-     * @return the name of the service implementation or null (for the default implementation)
-     */
-    String getName();
-
 }

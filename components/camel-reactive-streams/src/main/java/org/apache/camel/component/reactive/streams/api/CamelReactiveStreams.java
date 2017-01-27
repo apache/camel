@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.reactive.streams.api;
 
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.reactive.streams.engine.CamelReactiveStreamsServiceImpl;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +36,8 @@ public final class CamelReactiveStreams {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelReactiveStreams.class);
 
+    private static Map<CamelContext, String> serviceNames = new ConcurrentHashMap<>();
+
     private CamelReactiveStreams() {
     }
 
@@ -40,37 +46,77 @@ public final class CamelReactiveStreams {
     }
 
     public static CamelReactiveStreamsService get(CamelContext context, String serviceName) {
-        CamelReactiveStreamsService service = context.hasService(CamelReactiveStreamsService.class);
-        if (service == null) {
-            service = resolveReactiveStreamsService(context, serviceName);
-            try {
-                context.addService(service, true, true);
-            } catch (Exception ex) {
-                throw new IllegalStateException("Cannot add the CamelReactiveStreamsService to the Camel context", ex);
-            }
+        if (serviceName != null && serviceName.trim().length() == 0) {
+            throw new IllegalArgumentException("the service name cannot be an empty String");
         }
 
-        if (!ObjectHelper.equal(service.getName(), serviceName)) {
+        String lookupName = serviceName != null ? serviceName : "";
+        serviceNames.computeIfAbsent(context, ctx -> {
+            CamelReactiveStreamsService service = context.hasService(CamelReactiveStreamsService.class);
+            if (service == null) {
+                service = resolveReactiveStreamsService(context, serviceName);
+                try {
+                    context.addService(service, true, true);
+                } catch (Exception ex) {
+                    throw new IllegalStateException("Cannot add the CamelReactiveStreamsService to the Camel context", ex);
+                }
+            }
+
+            return lookupName;
+        });
+
+        if (!ObjectHelper.equal(serviceNames.get(context), lookupName)) {
             // only a single implementation of the CamelReactiveStreamService can be present per Camel context
             throw new IllegalArgumentException("Cannot use two different implementations of CamelReactiveStreamsService in the same CamelContext: "
-                    + "existing service name [" + service.getName() + "] - requested [" + serviceName + "]");
+                    + "existing service name [" + serviceNames.get(context) + "] - requested [" + lookupName + "]");
         }
 
-        return service;
+        return context.hasService(CamelReactiveStreamsService.class);
     }
 
     private static CamelReactiveStreamsService resolveReactiveStreamsService(CamelContext context, String serviceName) {
         CamelReactiveStreamsService service = null;
         if (serviceName != null) {
+            // lookup in the registry
             service = context.getRegistry().lookupByNameAndType(serviceName, CamelReactiveStreamsService.class);
-        }
 
-        if (service == null) {
-            LOG.info("Using default reactive stream service");
-            service = new CamelReactiveStreamsServiceImpl();
+            if (service == null) {
+                service = resolveServiceUsingFactory(context, serviceName);
+            }
+        } else {
+            Set<CamelReactiveStreamsService> set = context.getRegistry().findByType(CamelReactiveStreamsService.class);
+            if (set.size() == 1) {
+                service = set.iterator().next();
+            }
+
+            if (service == null) {
+                LOG.info("Using default reactive stream service");
+                service = resolveServiceUsingFactory(context, null);
+            }
         }
 
         return service;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static CamelReactiveStreamsService resolveServiceUsingFactory(CamelContext context, String name) {
+        if (name == null) {
+            name = "default-service";
+        }
+
+        String path = "META-INF/services/org/apache/camel/reactive-streams/";
+        Class<? extends CamelReactiveStreamsService> serviceClass = null;
+        try {
+            FactoryFinder finder = context.getFactoryFinder(path);
+            LOG.trace("Using FactoryFinder: {}", finder);
+            serviceClass = (Class<? extends CamelReactiveStreamsService>) finder.findClass(name);
+            return serviceClass.newInstance();
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Class referenced in '" + path + name + "' not found", e);
+        } catch (Exception e) {
+            throw new IllegalStateException("Unable to create the reactive stream service defined in '" + path + name + "'", e);
+        }
+
     }
 
 }

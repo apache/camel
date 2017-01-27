@@ -51,13 +51,13 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
             executor = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, getEndpoint().getEndpointUri(), poolSize);
         }
 
-        CamelReactiveStreams.get(endpoint.getCamelContext()).attachConsumer(endpoint.getStream(), this);
+        CamelReactiveStreams.get(endpoint.getCamelContext(), endpoint.getServiceName()).attachConsumer(endpoint.getStream(), this);
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        CamelReactiveStreams.get(endpoint.getCamelContext()).detachConsumer(endpoint.getStream());
+        CamelReactiveStreams.get(endpoint.getCamelContext(), endpoint.getServiceName()).detachConsumer(endpoint.getStream());
 
         if (executor != null) {
             endpoint.getCamelContext().getExecutorServiceManager().shutdownNow(executor);

@@ -25,7 +25,9 @@ import org.apache.camel.impl.DefaultAsyncProducer;
 /**
  * The Camel reactive-streams producer.
  */
-public class ReactiveStreamsProducer<T> extends DefaultAsyncProducer {
+public class ReactiveStreamsProducer extends DefaultAsyncProducer {
+
+    private ReactiveStreamsEndpoint endpoint;
 
     private String name;
 
@@ -33,6 +35,7 @@ public class ReactiveStreamsProducer<T> extends DefaultAsyncProducer {
 
     public ReactiveStreamsProducer(ReactiveStreamsEndpoint endpoint, String name) {
         super(endpoint);
+        this.endpoint = endpoint;
         this.name = name;
     }
 
@@ -51,7 +54,7 @@ public class ReactiveStreamsProducer<T> extends DefaultAsyncProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        this.service = CamelReactiveStreams.get(getEndpoint().getCamelContext());
+        this.service = CamelReactiveStreams.get(endpoint.getCamelContext(), endpoint.getServiceName());
     }
 
 }

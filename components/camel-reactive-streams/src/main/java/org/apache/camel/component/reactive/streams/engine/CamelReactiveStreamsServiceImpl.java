@@ -131,8 +131,4 @@ public class CamelReactiveStreamsServiceImpl implements CamelReactiveStreamsServ
         return this.context;
     }
 
-    @Override
-    public String getName() {
-        return null;
-    }
 }
