@@ -130,4 +130,9 @@ public class CamelReactiveStreamsServiceImpl implements CamelReactiveStreamsServ
     public CamelContext getCamelContext() {
         return this.context;
     }
+
+    @Override
+    public String getName() {
+        return null;
+    }
 }

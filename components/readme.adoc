@@ -439,7 +439,7 @@ Components
 `rabbitmq:hostname:portNumber/exchangeName` | The rabbitmq component allows you produce and consume messages from RabbitMQ instances.
 
 | link:camel-reactive-streams/src/main/docs/reactive-streams-component.adoc[Reactive Streams] (camel-reactive-streams) +
-`reactive-streams:/stream` | The Camel reactive-streams endpoint.
+`reactive-streams:stream` | The Camel reactive-streams endpoint.
 
 | link:camel-restlet/src/main/docs/restlet-component.adoc[Restlet] (camel-restlet) +
 `restlet:protocol:host:port/uriPattern` | Component for consuming and producing Restful resources using Restlet.

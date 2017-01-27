@@ -81,7 +81,7 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      */
 
     /**
-     * Sends the exchange to all active subscriptions on the given stream.
+     * Used by Camel to send the exchange to all active subscriptions on the given stream.
      * The callback is used to signal that the exchange has been delivered to the subscribers.
      *
      * @param name the stream name
@@ -95,7 +95,7 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      */
 
     /**
-     * Associate the subscriber of the stream with the given name to a specific Camel consumer.
+     * Used by Camel to associate the subscriber of the stream with the given name to a specific Camel consumer.
      * This method is used to bind a Camel route to a reactive stream.
      *
      * @param name the stream name
@@ -105,10 +105,17 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
     void attachConsumer(String name, ReactiveStreamsConsumer consumer);
 
     /**
-     * Deassociate the existing consumer from the given stream.
+     * Used by Camel to detach the existing consumer from the given stream.
      *
      * @param name the stream name
      */
     void detachConsumer(String name);
+
+    /**
+     * Returns the name of this service implementation if present.
+     * The name of any named implementation must match their lookup key in the registry.
+     * @return the name of the service implementation or null (for the default implementation)
+     */
+    String getName();
 
 }
