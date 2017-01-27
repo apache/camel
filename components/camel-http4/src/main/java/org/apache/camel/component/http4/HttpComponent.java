@@ -21,6 +21,7 @@ import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
@@ -165,26 +166,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Map<String, Object> httpClientParameters = new HashMap<String, Object>(parameters);
-        // http client can be configured from URI options
-        HttpClientBuilder clientBuilder = HttpClientBuilder.create();
-        // allow the builder pattern
-        Map<String, Object> httpClientOptions = IntrospectionSupport.extractProperties(parameters, "httpClient.");
-        IntrospectionSupport.setProperties(clientBuilder, httpClientOptions);
-        // set the Request configure this way and allow the builder pattern
-        RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
-        IntrospectionSupport.setProperties(requestConfigBuilder, httpClientOptions);
-        clientBuilder.setDefaultRequestConfig(requestConfigBuilder.build());
-        
-        // validate that we could resolve all httpClient. parameters as this component is lenient
-        validateParameters(uri, httpClientOptions, null);
+        final Map<String, Object> httpClientOptions = new HashMap<>();
+        final HttpClientBuilder clientBuilder = createHttpClientBuilder(uri, parameters, httpClientOptions);
         
         HttpBinding httpBinding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         HttpContext httpContext = resolveAndRemoveReferenceParameter(parameters, "httpContext", HttpContext.class);
-
-        X509HostnameVerifier x509HostnameVerifier = resolveAndRemoveReferenceParameter(parameters, "x509HostnameVerifier", X509HostnameVerifier.class);
-        if (x509HostnameVerifier == null) {
-            x509HostnameVerifier = getX509HostnameVerifier();
-        }
 
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
         if (sslContextParameters == null) {
@@ -235,13 +221,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         String endpointUriString = endpointUri.toString();
 
         LOG.debug("Creating endpoint uri {}", endpointUriString);
-        HttpClientConnectionManager localConnectionManager = clientConnectionManager;
-        if (localConnectionManager == null) {
-            // need to check the parameters of maxTotalConnections and connectionsPerRoute
-            int maxTotalConnections = getAndRemoveParameter(parameters, "maxTotalConnections", int.class, 0);
-            int connectionsPerRoute = getAndRemoveParameter(parameters, "connectionsPerRoute", int.class, 0);
-            localConnectionManager = createConnectionManager(createConnectionRegistry(x509HostnameVerifier, sslContextParameters), maxTotalConnections, connectionsPerRoute);
-        }
+        final HttpClientConnectionManager localConnectionManager = createConnectionManager(parameters, sslContextParameters);
         HttpEndpoint endpoint = new HttpEndpoint(endpointUriString, this, clientBuilder, localConnectionManager, configurer);
         if (urlRewrite != null) {
             // let CamelContext deal with the lifecycle of the url rewrite
@@ -290,7 +270,43 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         
         return endpoint;
     }
-    
+
+    protected HttpClientConnectionManager createConnectionManager(final Map<String, Object> parameters,
+            final SSLContextParameters sslContextParameters) throws GeneralSecurityException, IOException {
+        if (clientConnectionManager != null) {
+            return clientConnectionManager;
+        }
+
+        final X509HostnameVerifier resolvedHostnameVerifier = resolveAndRemoveReferenceParameter(parameters, "x509HostnameVerifier", X509HostnameVerifier.class);
+        final X509HostnameVerifier hostnameVerifier = Optional.ofNullable(resolvedHostnameVerifier).orElse(x509HostnameVerifier);
+
+        // need to check the parameters of maxTotalConnections and connectionsPerRoute
+        final int maxTotalConnections = getAndRemoveParameter(parameters, "maxTotalConnections", int.class, 0);
+        final int connectionsPerRoute = getAndRemoveParameter(parameters, "connectionsPerRoute", int.class, 0);
+
+        final Registry<ConnectionSocketFactory> connectionRegistry = createConnectionRegistry(hostnameVerifier, sslContextParameters);
+
+        return createConnectionManager(connectionRegistry, maxTotalConnections, connectionsPerRoute);
+    }
+
+    protected HttpClientBuilder createHttpClientBuilder(final String uri, final Map<String, Object> parameters,
+            final Map<String, Object> httpClientOptions) throws Exception {
+        // http client can be configured from URI options
+        HttpClientBuilder clientBuilder = HttpClientBuilder.create();
+        // allow the builder pattern
+        httpClientOptions.putAll(IntrospectionSupport.extractProperties(parameters, "httpClient."));
+        IntrospectionSupport.setProperties(clientBuilder, httpClientOptions);
+        // set the Request configure this way and allow the builder pattern
+        RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
+        IntrospectionSupport.setProperties(requestConfigBuilder, httpClientOptions);
+        clientBuilder.setDefaultRequestConfig(requestConfigBuilder.build());
+
+        // validate that we could resolve all httpClient. parameters as this component is lenient
+        validateParameters(uri, httpClientOptions, null);
+
+        return clientBuilder;
+    }
+
     protected Registry<ConnectionSocketFactory> createConnectionRegistry(X509HostnameVerifier x509HostnameVerifier, SSLContextParameters sslContextParams)
         throws GeneralSecurityException, IOException {
         // create the default connection registry to use
