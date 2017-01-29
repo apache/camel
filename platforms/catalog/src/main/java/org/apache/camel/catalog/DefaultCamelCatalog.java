@@ -1329,7 +1329,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         // special for activemq/jms where the enum for destinationType causes a token issue as it includes a colon
         // for 'temp:queue' and 'temp:topic' values
-        if ("activemq".equals(scheme) || "jms".equals("scheme")) {
+        if ("activemq".equals(scheme) || "jms".equals(scheme)) {
             if (uriPath.startsWith("temp:")) {
                 prevPath = 5;
             }
