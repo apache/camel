@@ -111,6 +111,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
                         return new BeanInstantiationException(type, "Could not instantiate proxy of type " + type.getName() + " on endpoint " + endpoint, e);
                     }
 
+                    @Override
                     protected boolean isSingleton(Object bean, String beanName) {
                         // no application context has been injected which means the bean
                         // has not been enlisted in Spring application context
@@ -121,7 +122,8 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
                         }
                     }
 
-                    protected void startService(Service service, Object bean, String beanName) throws Exception {
+                    @Override
+                    protected void startService(Service service, CamelContext camelContext, Object bean, String beanName) throws Exception {
                         if (isSingleton(bean, beanName)) {
                             getCamelContext().addService(service);
                         } else {
