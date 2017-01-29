@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring;
 
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -25,10 +26,12 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Service;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.impl.CamelPostProcessorHelper;
 import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanInstantiationException;
@@ -47,6 +50,8 @@ import org.springframework.context.ApplicationContextAware;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware {
     private static final Logger LOG = LoggerFactory.getLogger(CamelBeanPostProcessor.class);
+    @XmlTransient
+    Set<String> prototypeBeans = new LinkedHashSet<>();
     @XmlTransient
     private CamelContext camelContext;
     @XmlTransient
@@ -108,6 +113,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
                         return new BeanInstantiationException(type, "Could not instantiate proxy of type " + type.getName() + " on endpoint " + endpoint, e);
                     }
 
+                    @Override
                     protected boolean isSingleton(Object bean, String beanName) {
                         // no application context has been injected which means the bean
                         // has not been enlisted in Spring application context
@@ -115,6 +121,21 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
                             return super.isSingleton(bean, beanName);
                         } else {
                             return applicationContext.isSingleton(beanName);
+                        }
+                    }
+
+                    @Override
+                    protected void startService(Service service, CamelContext context, Object bean, String beanName) throws Exception {
+                        if (isSingleton(bean, beanName)) {
+                            getCamelContext().addService(service);
+                        } else {
+                            // only start service and do not add it to CamelContext
+                            ServiceHelper.startService(service);
+                            if (prototypeBeans.add(beanName)) {
+                                // do not spam the log with WARN so do this only once per bean name
+                                CamelBeanPostProcessor.LOG.warn("The bean with id [" + beanName + "] is prototype scoped and cannot stop the injected service when bean is destroyed: "
+                                    + service + ". You may want to stop the service manually from the bean.");
+                            }
                         }
                     }
                 };
@@ -126,6 +147,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     public CamelBeanPostProcessor() {
     }
 
+    @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         try {
             return delegate.postProcessBeforeInitialization(bean, beanName);
@@ -138,6 +160,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
         }
     }
 
+    @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
         try {
             return delegate.postProcessAfterInitialization(bean, beanName);
@@ -153,6 +176,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     // Properties
     // -------------------------------------------------------------------------
 
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
