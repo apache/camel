@@ -22,10 +22,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.io.Writer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Locale;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerConfigurationException;
@@ -57,10 +53,13 @@ public class TikaProducer extends DefaultProducer {
     private final Parser parser;
 
     private final Detector detector;
+    
+    private final String encoding;
 
     public TikaProducer(TikaEndpoint endpoint) {
         super(endpoint);
         this.tikaConfiguration = endpoint.getTikaConfiguration();
+        this.encoding = this.tikaConfiguration.getTikaParseOutputEncoding();
         TikaConfig config = this.tikaConfiguration.getTikaConfig();
         this.parser = new AutoDetectParser(config);
         this.detector = config.getDetector();
@@ -111,7 +110,7 @@ public class TikaProducer extends DefaultProducer {
     private void convertMetadataToHeaders(Metadata metadata, Exchange exchange) {
         if (metadata != null) {
             for (String metaname : metadata.names()) {
-                exchange.getIn().setHeader("Tika" + metaname, metadata.get(metaname));
+                exchange.getIn().setHeader(metaname, metadata.get(metaname));
             }
         }
     }
@@ -122,19 +121,18 @@ public class TikaProducer extends DefaultProducer {
         ContentHandler result = null;
 
         TikaParseOutputFormat outputFormat = configuration.getTikaParseOutputFormat();
-        String encoding = Charset.defaultCharset().name();
         switch (outputFormat) {
         case xml:
-            result = getTransformerHandler(outputStream, "xml", encoding, true);
+            result = getTransformerHandler(outputStream, "xml", true);
             break;
         case text:
-            result = new BodyContentHandler(outputStream);
+            result = new BodyContentHandler(new OutputStreamWriter(outputStream, this.encoding));
             break;
         case textMain:
-            result = new BoilerpipeContentHandler(getOutputWriter(outputStream, encoding));
+            result = new BoilerpipeContentHandler(new OutputStreamWriter(outputStream, this.encoding));
             break;
         case html:
-            result = new ExpandedTitleContentHandler(getTransformerHandler(outputStream, "html", encoding, true));
+            result = new ExpandedTitleContentHandler(getTransformerHandler(outputStream, "html", true));
             break;
         default:
             throw new IllegalArgumentException(
@@ -143,26 +141,16 @@ public class TikaProducer extends DefaultProducer {
         return result;
     }
 
-    private TransformerHandler getTransformerHandler(OutputStream output, String method, String encoding,
-            boolean prettyPrint) throws TransformerConfigurationException {
+    private TransformerHandler getTransformerHandler(OutputStream output, String method,
+            boolean prettyPrint) throws TransformerConfigurationException, UnsupportedEncodingException {
         SAXTransformerFactory factory = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
         TransformerHandler handler = factory.newTransformerHandler();
         handler.getTransformer().setOutputProperty(OutputKeys.METHOD, method);
         handler.getTransformer().setOutputProperty(OutputKeys.INDENT, prettyPrint ? "yes" : "no");
-        if (encoding != null) {
-            handler.getTransformer().setOutputProperty(OutputKeys.ENCODING, encoding);
+        if (this.encoding != null) {
+            handler.getTransformer().setOutputProperty(OutputKeys.ENCODING, this.encoding);
         }
-        handler.setResult(new StreamResult(output));
+        handler.setResult(new StreamResult(new OutputStreamWriter(output, this.encoding)));
         return handler;
-    }
-
-    private Writer getOutputWriter(OutputStream output, String encoding) throws UnsupportedEncodingException {
-        if (encoding != null) {
-            return new OutputStreamWriter(output, encoding);
-        } else if (System.getProperty("os.name").toLowerCase(Locale.ROOT).startsWith("mac os x")) {
-            return new OutputStreamWriter(output, StandardCharsets.UTF_8);
-        } else {
-            return new OutputStreamWriter(output, Charset.defaultCharset());
-        }
     }
 }
