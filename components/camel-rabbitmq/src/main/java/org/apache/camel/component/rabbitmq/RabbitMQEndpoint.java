@@ -18,6 +18,7 @@ package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -141,6 +142,12 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean mandatory;
     @UriParam(label = "producer")
     private boolean immediate;
+    @UriParam(label = "advanced")
+    private Map<String, Object> exchangeArgs = new HashMap<>();
+    @UriParam(label = "advanced")
+    private Map<String, Object> queueArgs = new HashMap<>();
+    @UriParam(label = "advanced")
+    private Map<String, Object> bindingArgs = new HashMap<>();
     @UriParam(label = "advanced")
     private ArgsConfigurer queueArgsConfigurer;
     @UriParam(label = "advanced")
@@ -752,6 +759,39 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
      */
     public void setImmediate(boolean immediate) {
         this.immediate = immediate;
+    }
+
+    /**
+     * Key/value args for configuring the exchange parameters when declare=true
+     */
+    public void setExchangeArgs(Map<String, Object> exchangeArgs) {
+        this.exchangeArgs = exchangeArgs;
+    }
+
+    public Map<String, Object> getExchangeArgs() {
+        return exchangeArgs;
+    }
+
+    /**
+     * Key/value args for configuring the queue parameters when declare=true
+     */
+    public void setQueueArgs(Map<String, Object> queueArgs) {
+        this.queueArgs = queueArgs;
+    }
+
+    public Map<String, Object> getQueueArgs() {
+        return queueArgs;
+    }
+
+    /**
+     * Key/value args for configuring the queue binding parameters when declare=true
+     */
+    public void setBindingArgs(Map<String, Object> bindingArgs) {
+        this.bindingArgs = bindingArgs;
+    }
+
+    public Map<String, Object> getBindingArgs() {
+        return bindingArgs;
     }
 
     public ArgsConfigurer getQueueArgsConfigurer() {

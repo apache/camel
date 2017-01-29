@@ -18,7 +18,10 @@ package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
@@ -30,18 +33,27 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class RabbitMQConsumerIntTest extends CamelTestSupport {
+public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
 
     private static final String EXCHANGE = "ex1";
+    private static final String HEADERS_EXCHANGE = "ex2";
+    private static final String QUEUE = "q1";
+    private static final String HEADER_KEY = "foo";
+    private static final String HEADER_VALUE = "bar";
+    private static final String MSG = "hello world";
 
     @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE + "?username=cameltest&password=cameltest")
     private Endpoint from;
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint to;
+
+    @EndpointInject(uri = "rabbitmq:localhost:5672/" + HEADERS_EXCHANGE + "?username=cameltest&password=cameltest&exchangeType=headers&queue=" + QUEUE + "&bindingArgs=#bindArgs")
+    private Endpoint headersExchangeWithQueue;
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -50,8 +62,19 @@ public class RabbitMQConsumerIntTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from(from).to(to);
+                from(headersExchangeWithQueue).to(to);
             }
         };
+    }
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+
+        Map<String, Object> bindingArgs = new HashMap<>();
+        jndi.bind("bindArgs", bindingArgs);
+
+        return jndi;
     }
 
     @Test
@@ -60,19 +83,11 @@ public class RabbitMQConsumerIntTest extends CamelTestSupport {
         to.expectedMessageCount(1);
         to.expectedHeaderReceived(RabbitMQConstants.REPLY_TO, "myReply");
 
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
-        factory.setPort(5672);
-        factory.setUsername("cameltest");
-        factory.setPassword("cameltest");
-        factory.setVirtualHost("/");
-        Connection conn = factory.newConnection();
-
         AMQP.BasicProperties.Builder properties = new AMQP.BasicProperties.Builder();
         properties.replyTo("myReply");
 
-        Channel channel = conn.createChannel();
-        channel.basicPublish(EXCHANGE, "", properties.build(), "hello world".getBytes());
+        Channel channel = connection().createChannel();
+        channel.basicPublish(EXCHANGE, "", properties.build(), MSG.getBytes());
 
         to.assertIsSatisfied();
     }
@@ -84,19 +99,36 @@ public class RabbitMQConsumerIntTest extends CamelTestSupport {
         to.expectedMessageCount(1);
         to.expectedHeaderReceived(RabbitMQConstants.TIMESTAMP, timestamp);
 
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
-        factory.setPort(5672);
-        factory.setUsername("cameltest");
-        factory.setPassword("cameltest");
-        factory.setVirtualHost("/");
-        Connection conn = factory.newConnection();
 
         AMQP.BasicProperties.Builder properties = new AMQP.BasicProperties.Builder();
         properties.timestamp(timestamp);
 
-        Channel channel = conn.createChannel();
-        channel.basicPublish(EXCHANGE, "", properties.build(), "hello world".getBytes());
+        Channel channel = connection().createChannel();
+        channel.basicPublish(EXCHANGE, "", properties.build(), MSG.getBytes());
+
+        to.assertIsSatisfied();
+    }
+
+    /**
+     * Tests the proper rabbit binding arguments are in place when the headersExchangeWithQueue is created.
+     * Should only receive messages with the header [foo=bar]
+     */
+    @Test
+    public void sentMessageIsReceivedWithHeadersRouting() throws InterruptedException, IOException, TimeoutException {
+        //should only be one message that makes it through because only
+        //one has the correct header set
+        to.expectedMessageCount(1);
+
+        AMQP.BasicProperties.Builder properties = new AMQP.BasicProperties.Builder();
+        properties.headers(Collections.singletonMap(HEADER_KEY, HEADER_VALUE));
+
+        AMQP.BasicProperties.Builder nonMatchingProperties = new AMQP.BasicProperties.Builder();
+        nonMatchingProperties.headers(Collections.singletonMap(HEADER_KEY, "wrong-value"));
+
+        Channel channel = connection().createChannel();
+        channel.basicPublish(HEADERS_EXCHANGE, "", properties.build(), MSG.getBytes());
+        channel.basicPublish(HEADERS_EXCHANGE, "", null, MSG.getBytes());
+        channel.basicPublish(HEADERS_EXCHANGE, "", nonMatchingProperties.build(), MSG.getBytes());
 
         to.assertIsSatisfied();
     }

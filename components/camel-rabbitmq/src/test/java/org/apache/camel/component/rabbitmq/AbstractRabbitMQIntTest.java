@@ -16,25 +16,28 @@
  */
 package org.apache.camel.component.rabbitmq;
 
-import java.util.Map;
+import java.io.IOException;
+import java.util.concurrent.TimeoutException;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import org.apache.camel.test.junit4.CamelTestSupport;
 
-/**
- * @deprecated The endpoint uri properties
- * <ul>
- *     <li>{@link RabbitMQEndpoint#setExchangeArgs(Map)}</li>
- *     <li>{@link RabbitMQEndpoint#setQueueArgs(Map)}</li>
- *     <li>{@link RabbitMQEndpoint#setBindingArgs(Map)}</li>
- * </ul>
- *
- * are favoured over their configurer counterparts.
- */
-@Deprecated
-public interface ArgsConfigurer {
-    
+public abstract class AbstractRabbitMQIntTest extends CamelTestSupport {
+
     /**
-     * Configure the args maps for RabbitMQ to use
-     * @param args the map need to be configured
+     * Helper method for creating a rabbitmq connection to the test instance of the
+     * rabbitmq server.
+     * @return
+     * @throws IOException
+     * @throws TimeoutException
      */
-    void configurArgs(Map<String, Object> args);
-
+    protected Connection connection() throws IOException, TimeoutException {
+        ConnectionFactory factory = new ConnectionFactory();
+        factory.setHost("localhost");
+        factory.setPort(5672);
+        factory.setUsername("cameltest");
+        factory.setPassword("cameltest");
+        factory.setVirtualHost("/");
+        return factory.newConnection();
+    }
 }
