@@ -283,6 +283,7 @@
     <module>camel-tagsoup-starter</module>
     <module>camel-tarfile-starter</module>
     <module>camel-telegram-starter</module>
+    <module>camel-tika-starter</module>
     <module>camel-twitter-starter</module>
     <module>camel-undertow-starter</module>
     <module>camel-univocity-parsers-starter</module>
