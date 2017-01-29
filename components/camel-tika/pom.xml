@@ -36,10 +36,12 @@
   </properties>
 
   <dependencies>
+
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-core</artifactId>
@@ -50,6 +52,7 @@
       <artifactId>tika-parsers</artifactId>
       <version>${tika-version}</version>
     </dependency>
+
     <!-- test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
