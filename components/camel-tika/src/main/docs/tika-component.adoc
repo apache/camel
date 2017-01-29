@@ -1,5 +1,4 @@
 ## Tika Component
-### TIKA
 
 **Available as of Camel 2.19.0**
 
@@ -90,7 +89,3 @@ from("direct:start")
 * link:component.html[Component]
 * link:endpoint.html[Endpoint]
 * link:getting-started.html[Getting Started]
-
--
-
--
