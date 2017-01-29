@@ -51,8 +51,14 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
             public void configurArgs(Map<String, Object> args) {
                 // do nothing here
             }
-            
+
         });
+
+        HashMap<String, Object> args = new HashMap<>();
+        args.put("foo", "bar");
+        registry.bind("args", args);
+
+
         return registry;
     }
 
@@ -159,10 +165,39 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
     }
 
     @Test
-    public void testArgConfigurer() throws Exception {
+    public void testQueueArgsConfigurer() throws Exception {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?queueArgsConfigurer=#argsConfigurer", RabbitMQEndpoint.class);
         assertNotNull("We should get the queueArgsConfigurer here.", endpoint.getQueueArgsConfigurer());
         assertNull("We should not get the exchangeArgsConfigurer here.", endpoint.getExchangeArgsConfigurer());
+        assertTrue("We should not get the bindingArgsConfigurer here.", endpoint.getBindingArgs().isEmpty());
+    }
+
+    @Test
+    public void testBindingArgs() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?bindingArgs=#args", RabbitMQEndpoint.class);
+        assertEquals("We should get the bindingArgsConfigurer here.", 1, endpoint.getBindingArgs().size());
+        assertNull("We should not get the queueArgsConfigurer here.", endpoint.getQueueArgsConfigurer());
+        assertNull("We should not get the exchangeArgsConfigurer here.", endpoint.getExchangeArgsConfigurer());
+    }
+
+    @Test
+    public void testQueueArgs() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?queueArgs=#args", RabbitMQEndpoint.class);
+        assertEquals("We should get the queueArgs here.", 1, endpoint.getQueueArgs().size());
+        assertTrue("We should not get the binding args here.", endpoint.getBindingArgs().isEmpty());
+        assertTrue("We should not get the exchange args here.", endpoint.getExchangeArgs().isEmpty());
+        assertNull("We should not get the exchangeArgsConfigurer here.", endpoint.getExchangeArgsConfigurer());
+        assertNull("We should not get the queueArgsConfigurer here.", endpoint.getQueueArgsConfigurer());
+    }
+
+    @Test
+    public void testExchangeArgs() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?exchangeArgs=#args", RabbitMQEndpoint.class);
+        assertEquals("We should get the exchangeArgs here.", 1, endpoint.getExchangeArgs().size());
+        assertTrue("We should not get the binding args here.", endpoint.getBindingArgs().isEmpty());
+        assertTrue("We should not get the queue args here.", endpoint.getQueueArgs().isEmpty());
+        assertNull("We should not get the exchangeArgsConfigurer here.", endpoint.getExchangeArgsConfigurer());
+        assertNull("We should not get the queueArgsConfigurer here.", endpoint.getQueueArgsConfigurer());
     }
 
     @Test
