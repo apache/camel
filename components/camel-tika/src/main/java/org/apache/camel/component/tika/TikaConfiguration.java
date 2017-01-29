@@ -17,6 +17,7 @@
 package org.apache.camel.component.tika;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import org.xml.sax.SAXException;
 
@@ -36,6 +37,8 @@ public class TikaConfiguration {
     private TikaOperation operation;
     @UriParam(defaultValue = "xml")
     private TikaParseOutputFormat tikaParseOutputFormat = TikaParseOutputFormat.xml;
+    @UriParam(description = "Tika Parse Output Encoding")
+    private String tikaParseOutputEncoding = Charset.defaultCharset().name();
     @UriParam(description = "Tika Config")
     private TikaConfig tikaConfig = TikaConfig.getDefaultConfig();
     @UriParam(description = "Tika Config Url")
@@ -64,11 +67,30 @@ public class TikaConfiguration {
 
     /**
      * 
-     * Tika Output Format. Supported output formats are xml, html, text, textMain
+     * Tika Output Format. Supported output formats. 
+     * <ul>
+     *   <li>xml: Returns Parsed Content as XML. </li>
+     *   <li>html: Returns Parsed Content as HTML. </li>
+     *   <li>text: Returns Parsed Content as Text. </li>
+     *   <li>textMain: Uses the <a href="http://code.google.com/p/boilerpipe/">boilerpipe</a> library to automatically extract the main content from a web page. </li>
+     * </ul>
      * 
      */
     public void setTikaParseOutputFormat(TikaParseOutputFormat tikaParseOutputFormat) {
         this.tikaParseOutputFormat = tikaParseOutputFormat;
+    }
+    
+    public String getTikaParseOutputEncoding() {
+        return tikaParseOutputEncoding;
+    }
+    
+    /**
+     * Tika Parse Output Encoding - Used to specify the character encoding of the parsed output.  
+     * Defaults to Charset.defaultCharset() .
+     * 
+     */
+    public void setTikaParseOutputEncoding(String tikaParseOutputEncoding) {
+        this.tikaParseOutputEncoding = tikaParseOutputEncoding;
     }
 
     public TikaConfig getTikaConfig() {
@@ -90,7 +112,7 @@ public class TikaConfiguration {
 
     /**
      * 
-     * Tika Config Uri
+     * Tika Config Uri: The URI of  tika-config.xml
      * 
      */
     public void setTikaConfigUri(String tikaConfigUri) throws TikaException, IOException, SAXException {
