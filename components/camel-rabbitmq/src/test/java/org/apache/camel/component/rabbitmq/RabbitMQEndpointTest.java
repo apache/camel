@@ -163,6 +163,15 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?queueArgsConfigurer=#argsConfigurer", RabbitMQEndpoint.class);
         assertNotNull("We should get the queueArgsConfigurer here.", endpoint.getQueueArgsConfigurer());
         assertNull("We should not get the exchangeArgsConfigurer here.", endpoint.getExchangeArgsConfigurer());
+        assertNull("We should not get the bindingArgsConfigurer here.", endpoint.getBindingArgsConfigurer());
+    }
+
+    @Test
+    public void testBindingArgsConfigurer() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?bindingArgsConfigurer=#argsConfigurer", RabbitMQEndpoint.class);
+        assertNotNull("We should get the bindingArgsConfigurer here.", endpoint.getBindingArgsConfigurer());
+        assertNull("We should not get the queueArgsConfigurer here.", endpoint.getQueueArgsConfigurer());
+        assertNull("We should not get the exchangeArgsConfigurer here.", endpoint.getExchangeArgsConfigurer());
     }
 
     @Test

@@ -146,6 +146,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     @UriParam(label = "advanced")
     private ArgsConfigurer exchangeArgsConfigurer;
     @UriParam(label = "advanced")
+    private ArgsConfigurer bindingArgsConfigurer;
+    @UriParam(label = "advanced")
     private long requestTimeout = 20000;
     @UriParam(label = "advanced")
     private long requestTimeoutCheckerInterval = 1000;
@@ -774,6 +776,18 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
      */
     public void setExchangeArgsConfigurer(ArgsConfigurer exchangeArgsConfigurer) {
         this.exchangeArgsConfigurer = exchangeArgsConfigurer;
+    }
+
+    /**
+     * Set the configurer for setting the queue binding parameters in Channel.queueBind
+     * @return
+     */
+    public void setBindingArgsConfigurer(ArgsConfigurer bindingArgsConfigurer) {
+        this.bindingArgsConfigurer = bindingArgsConfigurer;
+    }
+
+    public ArgsConfigurer getBindingArgsConfigurer() {
+        return bindingArgsConfigurer;
     }
 
     /**
