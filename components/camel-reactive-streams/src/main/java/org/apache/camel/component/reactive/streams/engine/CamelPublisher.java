@@ -28,6 +28,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsBackpressureStrategy;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsComponent;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsEndpoint;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsProducer;
 import org.apache.camel.component.reactive.streams.api.DispatchCallback;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
@@ -48,6 +50,8 @@ public class CamelPublisher implements Publisher<StreamPayload<Exchange>>, AutoC
     private ReactiveStreamsBackpressureStrategy backpressureStrategy;
 
     private List<CamelSubscription> subscriptions = new CopyOnWriteArrayList<>();
+
+    private ReactiveStreamsProducer producer;
 
     public CamelPublisher(ExecutorService workerPool, CamelContext context, String name) {
         this.workerPool = workerPool;
@@ -96,6 +100,28 @@ public class CamelPublisher implements Publisher<StreamPayload<Exchange>>, AutoC
         } else {
             data.getCallback().processed(data.getItem(), new IllegalStateException("The stream has no active subscriptions"));
         }
+    }
+
+
+    public void attachProducer(ReactiveStreamsProducer producer) {
+        Objects.requireNonNull(producer, "producer cannot be null, use the detach method");
+        if (this.producer != null) {
+            throw new IllegalStateException("A producer is already attached to the stream '" + name + "'");
+        }
+        this.producer = producer;
+
+        // Apply endpoint options if available
+        ReactiveStreamsEndpoint endpoint = producer.getEndpoint();
+        if (endpoint.getBackpressureStrategy() != null) {
+            this.backpressureStrategy = endpoint.getBackpressureStrategy();
+            for (CamelSubscription sub : this.subscriptions) {
+                sub.setBackpressureStrategy(endpoint.getBackpressureStrategy());
+            }
+        }
+    }
+
+    public void detachProducer() {
+        this.producer = null;
     }
 
     @Override

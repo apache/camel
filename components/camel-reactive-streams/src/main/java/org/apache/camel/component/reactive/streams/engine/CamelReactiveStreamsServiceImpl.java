@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsComponent;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsProducer;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
 import org.apache.camel.component.reactive.streams.api.DispatchCallback;
 import org.apache.camel.component.reactive.streams.util.ConvertingPublisher;
@@ -112,13 +113,23 @@ public class CamelReactiveStreamsServiceImpl implements CamelReactiveStreamsServ
     }
 
     @Override
-    public void attachConsumer(String name, ReactiveStreamsConsumer consumer) {
+    public void attachCamelConsumer(String name, ReactiveStreamsConsumer consumer) {
         getSubscriber(name).attachConsumer(consumer);
     }
 
     @Override
-    public void detachConsumer(String name) {
+    public void detachCamelConsumer(String name) {
         getSubscriber(name).detachConsumer();
+    }
+
+    @Override
+    public void attachCamelProducer(String name, ReactiveStreamsProducer producer) {
+        getPayloadPublisher(name).attachProducer(producer);
+    }
+
+    @Override
+    public void detachCamelProducer(String name) {
+        getPayloadPublisher(name).detachProducer();
     }
 
     @Override

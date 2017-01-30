@@ -43,6 +43,9 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
     @UriParam
     private String serviceName;
 
+    @UriParam(label = "producer")
+    private ReactiveStreamsBackpressureStrategy backpressureStrategy;
+
     public ReactiveStreamsEndpoint(String endpointUri, ReactiveStreamsComponent component) {
         super(endpointUri, component);
     }
@@ -107,4 +110,17 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
     }
+
+    public ReactiveStreamsBackpressureStrategy getBackpressureStrategy() {
+        return backpressureStrategy;
+    }
+
+    /**
+     * The backpressure strategy to use when pushing events to a slow subscriber.
+     */
+    public void setBackpressureStrategy(ReactiveStreamsBackpressureStrategy backpressureStrategy) {
+        this.backpressureStrategy = backpressureStrategy;
+    }
+
+
 }

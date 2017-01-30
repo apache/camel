@@ -20,6 +20,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Service;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsProducer;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
@@ -77,8 +78,25 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
     <T> Subscriber<T> getSubscriber(String name, Class<T> type);
 
     /*
-     * Methods for producers.
+     * Methods for Camel producers.
      */
+
+    /**
+     * Used by Camel to associate the publisher of the stream with the given name to a specific Camel producer.
+     * This method is used to bind a Camel route to a reactive stream.
+     *
+     * @param name the stream name
+     * @param producer the producer of the route
+     * @throws IllegalStateException if another producer is already associated with the given stream name
+     */
+    void attachCamelProducer(String name, ReactiveStreamsProducer producer);
+
+    /**
+     * Used by Camel to detach the existing producer from the given stream.
+     *
+     * @param name the stream name
+     */
+    void detachCamelProducer(String name);
 
     /**
      * Used by Camel to send the exchange to all active subscriptions on the given stream.
@@ -91,7 +109,7 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
     void process(String name, Exchange exchange, DispatchCallback<Exchange> callback);
 
     /*
-     * Methods for consumers.
+     * Methods for Camel consumers.
      */
 
     /**
@@ -102,13 +120,13 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      * @param consumer the consumer of the route
      * @throws IllegalStateException if another consumer is already associated with the given stream name
      */
-    void attachConsumer(String name, ReactiveStreamsConsumer consumer);
+    void attachCamelConsumer(String name, ReactiveStreamsConsumer consumer);
 
     /**
      * Used by Camel to detach the existing consumer from the given stream.
      *
      * @param name the stream name
      */
-    void detachConsumer(String name);
+    void detachCamelConsumer(String name);
 
 }

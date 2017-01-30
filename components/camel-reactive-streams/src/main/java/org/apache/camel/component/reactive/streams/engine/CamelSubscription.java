@@ -248,5 +248,9 @@ public class CamelSubscription implements Subscription {
         checkAndFlush();
     }
 
-
+    public void setBackpressureStrategy(ReactiveStreamsBackpressureStrategy backpressureStrategy) {
+        mutex.lock();
+        this.backpressureStrategy = backpressureStrategy;
+        mutex.unlock();
+    }
 }

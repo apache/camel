@@ -57,7 +57,7 @@ public class CamelSubscriber implements Subscriber<Exchange>, Closeable {
     public void attachConsumer(ReactiveStreamsConsumer consumer) {
         synchronized (this) {
             if (this.consumer != null) {
-                throw new IllegalStateException("A consumer is already attached on stream '" + name + "'");
+                throw new IllegalStateException("A consumer is already attached to the stream '" + name + "'");
             }
             this.consumer = consumer;
         }
