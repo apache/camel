@@ -14,26 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.reactive.streams;
+package org.apache.camel.component.reactive.streams.tck;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultExchange;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.tck.SubscriberBlackboxVerification;
 import org.reactivestreams.tck.TestEnvironment;
 
-public class CamelSubscriberConversionVerificationTest extends SubscriberBlackboxVerification<Integer> {
+public class CamelSubscriberVerificationTest extends SubscriberBlackboxVerification<Exchange> {
 
     private CamelContext context;
 
-    public CamelSubscriberConversionVerificationTest() {
+    public CamelSubscriberVerificationTest() {
         super(new TestEnvironment(2000L));
     }
 
     @Override
-    public Subscriber<Integer> createSubscriber() {
+    public Subscriber<Exchange> createSubscriber() {
         this.context = new DefaultCamelContext();
         RouteBuilder builder = new RouteBuilder() {
             @Override
@@ -43,7 +45,7 @@ public class CamelSubscriberConversionVerificationTest extends SubscriberBlackbo
             }
         };
 
-        Subscriber<Integer> sub = CamelReactiveStreams.get(context).getSubscriber("sub", Integer.class);
+        Subscriber<Exchange> sub = CamelReactiveStreams.get(context).getSubscriber("sub");
 
         try {
             builder.addRoutesToCamelContext(context);
@@ -56,7 +58,9 @@ public class CamelSubscriberConversionVerificationTest extends SubscriberBlackbo
     }
 
     @Override
-    public Integer createElement(int element) {
-        return element;
+    public Exchange createElement(int element) {
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setBody(element);
+        return exchange;
     }
 }

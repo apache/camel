@@ -504,6 +504,7 @@
     <quartz2-version>2.2.3</quartz2-version>
     <quickfixj-version>1.6.3</quickfixj-version>
     <rabbitmq-amqp-client-version>4.0.2</rabbitmq-amqp-client-version>
+    <reactor-version>3.0.4.RELEASE</reactor-version>
     <reflections-bundle-version>0.9.10_3</reflections-bundle-version>
     <regexp-bundle-version>1.4_1</regexp-bundle-version>
     <rest-assured-version>3.0.1</rest-assured-version>
