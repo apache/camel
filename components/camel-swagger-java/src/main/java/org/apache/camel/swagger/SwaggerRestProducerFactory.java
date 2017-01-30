@@ -84,7 +84,7 @@ public class SwaggerRestProducerFactory implements RestProducerFactory {
         return producer;
     }
 
-    private Swagger loadSwaggerModel(CamelContext camelContext, String apiDoc) throws Exception {
+    Swagger loadSwaggerModel(CamelContext camelContext, String apiDoc) throws Exception {
         InputStream is = resolveMandatoryResourceAsInputStream(camelContext, apiDoc);
         try {
             SwaggerParser parser = new SwaggerParser();
