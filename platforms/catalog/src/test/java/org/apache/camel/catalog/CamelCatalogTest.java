@@ -461,9 +461,9 @@ public class CamelCatalogTest {
         assertTrue(result.isSuccess());
         result = catalog.validateEndpointProperties("activemq:temp:queue:cheese?jmsMessageType=Bytes");
         assertTrue(result.isSuccess());
-        result = catalog.validateEndpointProperties("activemq:temp:queue:cheese?jmsMessageType=Bytes", false, true, false);
+        result = catalog.validateEndpointProperties("activemq:temp:queue:cheese?jmsMessageType=Bytes", false);
         assertTrue(result.isSuccess());
-        result = catalog.validateEndpointProperties("activemq:temp:queue:cheese?jmsMessageType=Bytes", false, false, true);
+        result = catalog.validateEndpointProperties("activemq:temp:queue:cheese?jmsMessageType=Bytes", true);
         assertTrue(result.isSuccess());
     }
 
@@ -474,9 +474,9 @@ public class CamelCatalogTest {
         assertTrue(result.isSuccess());
         result = catalog.validateEndpointProperties("jms:temp:queue:cheese?jmsMessageType=Bytes");
         assertTrue(result.isSuccess());
-        result = catalog.validateEndpointProperties("jms:temp:queue:cheese?jmsMessageType=Bytes", false, true, false);
+        result = catalog.validateEndpointProperties("jms:temp:queue:cheese?jmsMessageType=Bytes", false);
         assertTrue(result.isSuccess());
-        result = catalog.validateEndpointProperties("jms:temp:queue:cheese?jmsMessageType=Bytes", false, false, true);
+        result = catalog.validateEndpointProperties("jms:temp:queue:cheese?jmsMessageType=Bytes", true);
         assertTrue(result.isSuccess());
     }
 
