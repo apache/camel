@@ -14,38 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.reactive.streams;
+package org.apache.camel.component.reactive.streams.tck;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.tck.SubscriberBlackboxVerification;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.tck.PublisherVerification;
 import org.reactivestreams.tck.TestEnvironment;
 
-public class CamelSubscriberVerificationTest extends SubscriberBlackboxVerification<Exchange> {
+public class CamelPublisherConversionVerificationTest extends PublisherVerification<Long> {
 
-    private CamelContext context;
-
-    public CamelSubscriberVerificationTest() {
+    public CamelPublisherConversionVerificationTest() {
         super(new TestEnvironment(2000L));
     }
 
     @Override
-    public Subscriber<Exchange> createSubscriber() {
-        this.context = new DefaultCamelContext();
+    public Publisher<Long> createPublisher(long l) {
+
+        CamelContext context = new DefaultCamelContext();
         RouteBuilder builder = new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("reactive-streams:sub?maxInflightExchanges=20")
-                        .to("log:INFO");
+                from("timer:tick?delay=500&period=50&repeatCount=" + l)
+                        .setBody().simple("random(1000)")
+                        .to("reactive-streams:prod");
             }
         };
 
-        Subscriber<Exchange> sub = CamelReactiveStreams.get(context).getSubscriber("sub");
+        Publisher<Long> pub = CamelReactiveStreams.get(context).getPublisher("prod", Long.class);
 
         try {
             builder.addRoutesToCamelContext(context);
@@ -54,13 +52,17 @@ public class CamelSubscriberVerificationTest extends SubscriberBlackboxVerificat
             throw new RuntimeException(e);
         }
 
-        return sub;
+        return pub;
     }
 
     @Override
-    public Exchange createElement(int element) {
-        Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setBody(element);
-        return exchange;
+    public long maxElementsFromPublisher() {
+        // It's an active publisher
+        return publisherUnableToSignalOnComplete(); // == Long.MAX_VALUE == unbounded
+    }
+
+    @Override
+    public Publisher<Long> createFailedPublisher() {
+        return null;
     }
 }

@@ -14,36 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.reactive.streams;
+package org.apache.camel.component.reactive.streams.tck;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.reactivestreams.Publisher;
-import org.reactivestreams.tck.PublisherVerification;
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.tck.SubscriberBlackboxVerification;
 import org.reactivestreams.tck.TestEnvironment;
 
-public class CamelPublisherConversionVerificationTest extends PublisherVerification<Long> {
+public class CamelSubscriberConversionVerificationTest extends SubscriberBlackboxVerification<Integer> {
 
-    public CamelPublisherConversionVerificationTest() {
+    private CamelContext context;
+
+    public CamelSubscriberConversionVerificationTest() {
         super(new TestEnvironment(2000L));
     }
 
     @Override
-    public Publisher<Long> createPublisher(long l) {
-
-        CamelContext context = new DefaultCamelContext();
+    public Subscriber<Integer> createSubscriber() {
+        this.context = new DefaultCamelContext();
         RouteBuilder builder = new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:tick?delay=500&period=50&repeatCount=" + l)
-                        .setBody().simple("random(1000)")
-                        .to("reactive-streams:prod");
+                from("reactive-streams:sub?maxInflightExchanges=20")
+                        .to("log:INFO");
             }
         };
 
-        Publisher<Long> pub = CamelReactiveStreams.get(context).getPublisher("prod", Long.class);
+        Subscriber<Integer> sub = CamelReactiveStreams.get(context).getSubscriber("sub", Integer.class);
 
         try {
             builder.addRoutesToCamelContext(context);
@@ -52,17 +52,11 @@ public class CamelPublisherConversionVerificationTest extends PublisherVerificat
             throw new RuntimeException(e);
         }
 
-        return pub;
+        return sub;
     }
 
     @Override
-    public long maxElementsFromPublisher() {
-        // It's an active publisher
-        return publisherUnableToSignalOnComplete(); // == Long.MAX_VALUE == unbounded
-    }
-
-    @Override
-    public Publisher<Long> createFailedPublisher() {
-        return null;
+    public Integer createElement(int element) {
+        return element;
     }
 }
