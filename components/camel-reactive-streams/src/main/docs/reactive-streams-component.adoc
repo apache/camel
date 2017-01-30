@@ -193,6 +193,17 @@ In other circumstances, eg. when using a `http` consumer, the route suspension m
 using the default configuration (no policy, unbounded buffer) should be preferable. Users should try to avoid memory issues
 by limiting the number of requests to the http service (eg. scaling out).
 
+In contexts where a certain amount of data loss is acceptable, setting a backpressure strategy other than `BUFFER` can
+ be a solution for dealing with fast sources.
+
+[source,java]
+---------------------------------------------------------
+from("direct:thermostat")
+.to("reactive-streams:flow?backpressureStrategy=LATEST");
+---------------------------------------------------------
+
+When the `LATEST` backpressure strategy is used, only the last exchange received from the route is kept by the publisher, while older data is discarded (other options are available).
+
 ### Controlling Backpressure (consumer side)
 
 When Camel consumes items from a reactive-streams publisher, the maximum number of inflight exchanges can be set as endpoint option.
