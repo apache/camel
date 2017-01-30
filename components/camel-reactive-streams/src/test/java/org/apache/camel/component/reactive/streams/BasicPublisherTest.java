@@ -104,6 +104,23 @@ public class BasicPublisherTest extends CamelTestSupport {
         disp3.dispose();
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void testOnlyOneCamelProducerPerPublisher() throws Exception {
+
+        new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:one")
+                        .to("reactive-streams:stream");
+
+                from("direct:two")
+                        .to("reactive-streams:stream");
+            }
+        }.addRoutesToCamelContext(context);
+
+        context.start();
+    }
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;

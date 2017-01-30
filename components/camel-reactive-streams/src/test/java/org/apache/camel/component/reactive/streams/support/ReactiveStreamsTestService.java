@@ -19,6 +19,7 @@ package org.apache.camel.component.reactive.streams.support;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
+import org.apache.camel.component.reactive.streams.ReactiveStreamsProducer;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
 import org.apache.camel.component.reactive.streams.api.DispatchCallback;
 import org.reactivestreams.Publisher;
@@ -84,12 +85,22 @@ public class ReactiveStreamsTestService implements CamelReactiveStreamsService {
     }
 
     @Override
-    public void attachConsumer(String name, ReactiveStreamsConsumer consumer) {
+    public void attachCamelConsumer(String name, ReactiveStreamsConsumer consumer) {
 
     }
 
     @Override
-    public void detachConsumer(String name) {
+    public void detachCamelConsumer(String name) {
+
+    }
+
+    @Override
+    public void attachCamelProducer(String name, ReactiveStreamsProducer producer) {
+
+    }
+
+    @Override
+    public void detachCamelProducer(String name) {
 
     }
 

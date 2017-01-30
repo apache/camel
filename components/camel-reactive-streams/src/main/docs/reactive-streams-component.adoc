@@ -55,7 +55,7 @@ The Reactive Streams component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Reactive Streams component supports 8 endpoint options which are listed below:
+The Reactive Streams component supports 9 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -68,6 +68,7 @@ The Reactive Streams component supports 8 endpoint options which are listed belo
 | maxInflightExchanges | consumer | 128 | Integer | Maximum number of exchanges concurrently being processed by Camel. This parameter controls backpressure on the stream. Setting a non-positive value will disable backpressure.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| backpressureStrategy | producer |  | ReactiveStreamsBackpressureStrategy | The backpressure strategy to use when pushing events to a slow subscriber.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}

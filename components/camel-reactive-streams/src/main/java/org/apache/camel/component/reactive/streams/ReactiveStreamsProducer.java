@@ -55,6 +55,19 @@ public class ReactiveStreamsProducer extends DefaultAsyncProducer {
     protected void doStart() throws Exception {
         super.doStart();
         this.service = CamelReactiveStreams.get(endpoint.getCamelContext(), endpoint.getServiceName());
+        this.service.attachCamelProducer(endpoint.getStream(), this);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        this.service.detachCamelProducer(endpoint.getStream());
+    }
+
+    @Override
+    public ReactiveStreamsEndpoint getEndpoint() {
+        return endpoint;
     }
 
 }
