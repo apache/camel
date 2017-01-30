@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.HostnameVerifier;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
@@ -51,13 +53,12 @@ import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.BrowserCompatHostnameVerifier;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLContexts;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.ssl.SSLContexts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +81,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     @Metadata(label = "security")
     protected SSLContextParameters sslContextParameters;
     @Metadata(label = "security")
-    protected X509HostnameVerifier x509HostnameVerifier = new BrowserCompatHostnameVerifier();
+    protected HostnameVerifier x509HostnameVerifier = new DefaultHostnameVerifier();
     @Metadata(label = "producer")
     protected CookieStore cookieStore;
 
@@ -277,8 +278,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             return clientConnectionManager;
         }
 
-        final X509HostnameVerifier resolvedHostnameVerifier = resolveAndRemoveReferenceParameter(parameters, "x509HostnameVerifier", X509HostnameVerifier.class);
-        final X509HostnameVerifier hostnameVerifier = Optional.ofNullable(resolvedHostnameVerifier).orElse(x509HostnameVerifier);
+        final HostnameVerifier resolvedHostnameVerifier = resolveAndRemoveReferenceParameter(parameters, "x509HostnameVerifier", HostnameVerifier.class);
+        final HostnameVerifier hostnameVerifier = Optional.ofNullable(resolvedHostnameVerifier).orElse(x509HostnameVerifier);
 
         // need to check the parameters of maxTotalConnections and connectionsPerRoute
         final int maxTotalConnections = getAndRemoveParameter(parameters, "maxTotalConnections", int.class, 0);
@@ -307,7 +308,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         return clientBuilder;
     }
 
-    protected Registry<ConnectionSocketFactory> createConnectionRegistry(X509HostnameVerifier x509HostnameVerifier, SSLContextParameters sslContextParams)
+    protected Registry<ConnectionSocketFactory> createConnectionRegistry(HostnameVerifier x509HostnameVerifier, SSLContextParameters sslContextParams)
         throws GeneralSecurityException, IOException {
         // create the default connection registry to use
         RegistryBuilder<ConnectionSocketFactory> builder = RegistryBuilder.<ConnectionSocketFactory>create();
@@ -465,15 +466,15 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         this.sslContextParameters = sslContextParameters;
     }
 
-    public X509HostnameVerifier getX509HostnameVerifier() {
+    public HostnameVerifier getX509HostnameVerifier() {
         return x509HostnameVerifier;
     }
 
     /**
-     * To use a custom X509HostnameVerifier such as org.apache.http.conn.ssl.StrictHostnameVerifier
-     * or org.apache.http.conn.ssl.AllowAllHostnameVerifier.
+     * To use a custom X509HostnameVerifier such as {@link DefaultHostnameVerifier}
+     * or {@link org.apache.http.conn.ssl.NoopHostnameVerifier}.
      */
-    public void setX509HostnameVerifier(X509HostnameVerifier x509HostnameVerifier) {
+    public void setX509HostnameVerifier(HostnameVerifier x509HostnameVerifier) {
         this.x509HostnameVerifier = x509HostnameVerifier;
     }
 
