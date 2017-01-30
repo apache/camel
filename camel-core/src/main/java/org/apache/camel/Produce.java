@@ -43,4 +43,5 @@ public @interface Produce {
     String ref() default "";
     String property() default "";
     String context() default "";
+    boolean binding() default true;
 }

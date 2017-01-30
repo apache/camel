@@ -183,7 +183,7 @@ public class DefaultCamelBeanPostProcessor {
 
                 Produce produce = field.getAnnotation(Produce.class);
                 if (produce != null && getPostProcessorHelper().matchContext(produce.context())) {
-                    injectField(field, produce.uri(), produce.ref(), produce.property(), bean, beanName);
+                    injectField(field, produce.uri(), produce.ref(), produce.property(), bean, beanName, produce.binding());
                 }
             }
         });
@@ -191,9 +191,14 @@ public class DefaultCamelBeanPostProcessor {
 
     public void injectField(Field field, String endpointUri, String endpointRef, String endpointProperty,
                                Object bean, String beanName) {
+        injectField(field, endpointUri, endpointRef, endpointProperty, bean, beanName, true);
+    }
+    
+    public void injectField(Field field, String endpointUri, String endpointRef, String endpointProperty,
+                               Object bean, String beanName, boolean binding) {
         ReflectionHelper.setField(field, bean,
                 getPostProcessorHelper().getInjectionValue(field.getType(), endpointUri, endpointRef, endpointProperty,
-                        field.getName(), bean, beanName));
+                        field.getName(), bean, beanName, binding));
     }
 
     public void injectFieldBean(Field field, String name, Object bean, String beanName) {
