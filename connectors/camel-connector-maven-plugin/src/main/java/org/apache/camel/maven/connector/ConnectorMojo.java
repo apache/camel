@@ -43,6 +43,65 @@ import java.util.stream.Collectors;
 public class ConnectorMojo extends AbstractJarMojo {
 
     /**
+     * Little helper class to read/write the json models.
+     */
+    public static class ComponentDTO {
+        public ComponentHeaderDTO component = new ComponentHeaderDTO();
+        public Map<String, Map> componentProperties = new HashMap<>();
+        public Map<String, Map> properties = new HashMap<>();
+    }
+
+    public static class ComponentHeaderDTO {
+        public String gitUrl;
+        public String kind;
+        public String baseScheme;
+        public String scheme;
+        public String syntax;
+        public String title;
+        public String description;
+        public String label;
+        public Boolean deprecated;
+        public String async;
+        public Boolean producerOnly;
+        public Boolean consumerOnly;
+        public String lenientProperties;
+        public String javaType;
+        public String groupId;
+        public String artifactId;
+        public String version;
+    }
+
+    public static class ConnectorsDTO {
+        public String gitUrl;
+        public String baseGroupId;
+        public String baseArtifactId;
+        public String baseVersion;
+        public String groupId;
+        public String artifactId;
+        public String version;
+        public String description;
+        public ArrayList<String> labels = new ArrayList<>();
+        public ArrayList<ConnectorDTO> connectors = new ArrayList<ConnectorDTO>();
+    }
+
+    public static class ConnectorDTO {
+        public String baseGroupId;
+        public String baseArtifactId;
+        public String baseVersion;
+        public String baseJavaType;
+        public String baseScheme;
+        public String name;
+        public String scheme;
+        public String javaType;
+        public String description;
+        public ArrayList<String> labels = new ArrayList<>();
+        public String pattern;
+        public ArrayList<String> endpointOptions = new ArrayList<>();
+        public Map<String, String> endpointValues = new HashMap<>();
+        public Map<String, Object> endpointOverrides = new HashMap<>();
+    }
+
+    /**
      * Directory containing the classes and resource files that should be packaged into the JAR.
      */
     @Parameter(defaultValue = "${project.build.outputDirectory}", required = true)
@@ -100,28 +159,38 @@ public class ConnectorMojo extends AbstractJarMojo {
             }
 
             try {
-                ComponentDTO allNewJsons = new ComponentDTO();
+                ArrayList<ComponentDTO> allNewJsons = new ArrayList<>();
 
-                ArrayList<Map> connectorConfigs = new ArrayList<Map>();
+                ConnectorsDTO connectors = mapper.readValue(file, ConnectorsDTO.class);
 
-                Map data = mapper.readValue(file, Map.class);
-                if( data.containsKey("connectors") ) {
-                    connectorConfigs.addAll((Collection<? extends Map>) data.get("connectors"));
-                } else {
-                    connectorConfigs.add(data);
-                    data = new HashMap();
+                // embed gitUrl in camel-connector.json file
+                if (gitUrl != null) {
+                    String existingGitUrl = connectors.gitUrl;
+                    if (existingGitUrl == null || !existingGitUrl.equals(gitUrl)) {
+                        connectors.gitUrl = gitUrl;
+                        // update file
+                        mapper.writeValue(file, connectors);
+                        // update source file also
+                        File root = classesDirectory.getParentFile().getParentFile();
+                        file = new File(root, "src/main/resources/camel-connector.json");
+                        if (file.exists()) {
+                            getLog().info("Updating gitUrl to " + file);
+                            mapper.writeValue(file, connectors);
+                        }
+                    }
                 }
 
-                for (Map config : connectorConfigs) {
+                // Lets supplement the settings connectors, with info form the root
+                for (ConnectorDTO connector : connectors.connectors) {
+                    if( connector.baseArtifactId == null )
+                        connector.baseArtifactId = connectors.baseArtifactId;
+                    if( connector.baseGroupId == null )
+                        connector.baseGroupId = connectors.baseGroupId;
+                    if( connector.baseVersion == null )
+                        connector.baseVersion = connectors.baseVersion;
 
-                    // Lets merge the 2 maps so you can define common settings in the parent and override
-                    // in the child connector level.
-                    HashMap dto = new HashMap(data);
-                    dto.putAll(config);
-
-                    ComponentDTO newJson = processConnector(gitUrl, file, dto);
-                    allNewJsons= newJson;
-                    // allNewJsons.add(newJson);
+                    ComponentDTO newJson = processConnector(gitUrl, connector);
+                    allNewJsons.add(newJson);
                 }
 
                 // also write the file in the root folder so its easier to find that for tooling
@@ -139,54 +208,8 @@ public class ConnectorMojo extends AbstractJarMojo {
         return super.createArchive();
     }
 
-    /**
-     * Little helper class to read/write the json models.
-     */
-    public static class ComponentDTO {
-        public ComponentHeaderDTO component = new ComponentHeaderDTO();
-        public Map<String, Map> componentProperties = new HashMap<>();
-        public Map<String, Map> properties = new HashMap<>();
-    }
-
-    public static class ComponentHeaderDTO {
-        public String gitUrl;
-        public String kind;
-        public String baseScheme;
-        public String scheme;
-        public String syntax;
-        public String title;
-        public String description;
-        public String label;
-        public Boolean deprecated;
-        public String async;
-        public Boolean producerOnly;
-        public Boolean consumerOnly;
-        public String lenientProperties;
-        public String javaType;
-        public String groupId;
-        public String artifactId;
-        public String version;
-    }
-
-    private ComponentDTO processConnector(String gitUrl, File file, Map dto) throws MojoExecutionException, Exception, JsonProcessingException {
-        // embed gitUrl in camel-connector.json file
-        if (gitUrl != null) {
-            String existingGitUrl = (String) dto.get("gitUrl");
-            if (existingGitUrl == null || !existingGitUrl.equals(gitUrl)) {
-                dto.put("gitUrl", gitUrl);
-                // update file
-                mapper.writerWithDefaultPrettyPrinter().writeValue(file, dto);
-                // update source file also
-                File root = classesDirectory.getParentFile().getParentFile();
-                file = new File(root, "src/main/resources/camel-connector.json");
-                if (file.exists()) {
-                    getLog().info("Updating gitUrl to " + file);
-                    mapper.writerWithDefaultPrettyPrinter().writeValue(file, dto);
-                }
-            }
-        }
-
-        File schema = embedCamelComponentSchema(file);
+    private ComponentDTO processConnector(String gitUrl, ConnectorDTO connector) throws MojoExecutionException, Exception, JsonProcessingException {
+        File schema = embedCamelComponentSchema(connector);
         ComponentDTO newJson = null;
         if (schema != null) {
 
@@ -194,20 +217,20 @@ public class ConnectorMojo extends AbstractJarMojo {
 
             newJson = new ComponentDTO();
 
-            newJson.component = buildComponentHeaderSchema(json, dto, gitUrl);
+            newJson.component = buildComponentHeaderSchema(json, connector, gitUrl);
             getLog().debug(mapper.writeValueAsString(newJson.component));
 
-            newJson.componentProperties = buildComponentOptionsSchema(json, dto);
+            newJson.componentProperties = buildComponentOptionsSchema(json, connector);
             getLog().debug(mapper.writeValueAsString(newJson.componentProperties));
 
-            newJson.properties = buildEndpointOptionsSchema(json, dto);
+            newJson.properties = buildEndpointOptionsSchema(json, connector);
             getLog().debug(mapper.writeValueAsString(newJson.properties));
 
             // generate the json file
             String newScheme = newJson.component.scheme;
 
             // write the json file to the target directory as if camel apt would do it
-            String javaType = (String) dto.get("javaType");
+            String javaType = connector.javaType;
             String dir = javaType.substring(0, javaType.lastIndexOf("."));
             dir = dir.replace('.', '/');
             File subDir = new File(classesDirectory, dir);
@@ -240,7 +263,7 @@ public class ConnectorMojo extends AbstractJarMojo {
         return null;
     }
 
-    private Map<String, Map> buildComponentOptionsSchema(ComponentDTO source, Map dto) throws JsonProcessingException {
+    private Map<String, Map> buildComponentOptionsSchema(ComponentDTO component, ConnectorDTO connector) throws JsonProcessingException {
         HashMap<String, Map> rc = new HashMap<>();
         // we do not offer editing component properties (yet) so skip this for now..
 //        for (Map.Entry<String, Map> entry : source.componentProperties.entrySet()) {
@@ -249,14 +272,14 @@ public class ConnectorMojo extends AbstractJarMojo {
         return rc;
     }
 
-    private Map<String, Map> buildEndpointOptionsSchema(ComponentDTO source, Map dto) throws JsonProcessingException {
+    private Map<String, Map> buildEndpointOptionsSchema(ComponentDTO component, ConnectorDTO connector) throws JsonProcessingException {
         // find the endpoint options
-        List options = (List) dto.get("endpointOptions");
-        Map values = (Map) dto.get("endpointValues");
-        Map overrides = (Map) dto.get("endpointOverrides");
+        List options = connector.endpointOptions;
+        Map values = connector.endpointValues;
+        Map overrides = connector.endpointOverrides;
 
         HashMap<String, Map> rc = new HashMap<>();
-        for (Map.Entry<String, Map> entry : source.properties.entrySet()) {
+        for (Map.Entry<String, Map> entry : component.properties.entrySet()) {
             HashMap<String, String> row = new HashMap<>(entry.getValue());
             String key = entry.getKey();
 
@@ -285,25 +308,25 @@ public class ConnectorMojo extends AbstractJarMojo {
     }
 
 
-    private ComponentHeaderDTO buildComponentHeaderSchema(ComponentDTO soruce, Map dto, String gitUrl) throws Exception {
-        String baseScheme = (String) dto.get("baseScheme");
-        String title = (String) dto.get("name");
+    private ComponentHeaderDTO buildComponentHeaderSchema(ComponentDTO component, ConnectorDTO connector, String gitUrl) throws Exception {
+        String baseScheme = connector.baseScheme;
+        String title = connector.name;
         String scheme = StringHelper.camelCaseToDash(title);
-        String baseSyntax = soruce.component.syntax;
+        String baseSyntax = component.component.syntax;
         String syntax = baseSyntax.replaceFirst(baseScheme, scheme);
 
-        String description = (String) dto.get("description");
+        String description = connector.description;
         // dto has labels
         String label = null;
-        List<String> labels = (List<String>) dto.get("labels");
+        List<String> labels = connector.labels;
         if (labels != null) {
             label = labels.stream().collect(Collectors.joining(","));
         }
-        String async = soruce.component.async;
-        String pattern = (String) dto.get("pattern");
+        String async = component.component.async;
+        String pattern = connector.pattern;
         boolean producerOnly = "To".equalsIgnoreCase(pattern);
         boolean consumerOnly = "From".equalsIgnoreCase(pattern);
-        String lenientProperties = soruce.component.lenientProperties;
+        String lenientProperties = component.component.lenientProperties;
         String javaType = extractJavaType(scheme);
         String groupId = getProject().getGroupId();
         String artifactId = getProject().getArtifactId();
@@ -333,15 +356,13 @@ public class ConnectorMojo extends AbstractJarMojo {
     /**
      * Finds and embeds the Camel component JSon schema file
      */
-    private File embedCamelComponentSchema(File file) throws MojoExecutionException {
+    private File embedCamelComponentSchema(ConnectorDTO connector) throws MojoExecutionException {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            Map dto = mapper.readValue(file, Map.class);
 
-            String scheme = extractScheme(dto);
-            String groupId = extractGroupId(dto);
-            String artifactId = extractArtifactId(dto);
-            String version = extractVersion(dto);
+            String scheme = connector.baseScheme;
+            String groupId = connector.baseGroupId;
+            String artifactId = connector.baseArtifactId;
+            String version = connector.baseVersion;
 
             // find the artifact on the classpath that has the Camel component this connector is using
             // then we want to grab its json schema file to embed in this JAR so we have all files together
@@ -404,22 +425,6 @@ public class ConnectorMojo extends AbstractJarMojo {
             }
         }
         return null;
-    }
-
-    private String extractScheme(Map map) {
-        return (String) map.get("baseScheme");
-    }
-
-    private String extractGroupId(Map map) {
-        return (String) map.get("baseGroupId");
-    }
-
-    private String extractArtifactId(Map map) {
-        return (String) map.get("baseArtifactId");
-    }
-
-    private String extractVersion(Map map) {
-        return (String) map.get("baseVersion");
     }
 
 }
