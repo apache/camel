@@ -16,19 +16,11 @@
  */
 package org.apache.camel.maven.connector;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.jar.AbstractJarMojo;
@@ -36,6 +28,15 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Mojo(name = "jar", defaultPhase = LifecyclePhase.PREPARE_PACKAGE, requiresProject = true, threadSafe = true,
         requiresDependencyResolution = ResolutionScope.RUNTIME)
@@ -52,6 +53,13 @@ public class ConnectorMojo extends AbstractJarMojo {
      */
     @Parameter(defaultValue = "false")
     private boolean includeGitUrl;
+
+    private ObjectMapper mapper = new ObjectMapper();
+    {
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+    }
 
     @Override
     protected File getClassesDirectory() {
@@ -92,76 +100,35 @@ public class ConnectorMojo extends AbstractJarMojo {
             }
 
             try {
-                ObjectMapper mapper = new ObjectMapper();
-                Map dto = mapper.readValue(file, Map.class);
+                ComponentDTO allNewJsons = new ComponentDTO();
 
-                // embed girUrl in camel-connector.json file
-                if (gitUrl != null) {
-                    String existingGitUrl = (String) dto.get("gitUrl");
-                    if (existingGitUrl == null || !existingGitUrl.equals(gitUrl)) {
-                        dto.put("gitUrl", gitUrl);
-                        // update file
-                        mapper.writerWithDefaultPrettyPrinter().writeValue(file, dto);
-                        // update source file also
-                        File root = classesDirectory.getParentFile().getParentFile();
-                        file = new File(root, "src/main/resources/camel-connector.json");
-                        if (file.exists()) {
-                            getLog().info("Updating gitUrl to " + file);
-                            mapper.writerWithDefaultPrettyPrinter().writeValue(file, dto);
-                        }
-                    }
+                ArrayList<Map> connectorConfigs = new ArrayList<Map>();
+
+                Map data = mapper.readValue(file, Map.class);
+                if( data.containsKey("connectors") ) {
+                    connectorConfigs.addAll((Collection<? extends Map>) data.get("connectors"));
+                } else {
+                    connectorConfigs.add(data);
+                    data = new HashMap();
                 }
 
-                File schema = embedCamelComponentSchema(file);
-                if (schema != null) {
-                    String json = FileHelper.loadText(new FileInputStream(schema));
+                for (Map config : connectorConfigs) {
 
-                    List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
-                    String header = buildComponentHeaderSchema(rows, dto, gitUrl);
-                    getLog().debug(header);
+                    // Lets merge the 2 maps so you can define common settings in the parent and override
+                    // in the child connector level.
+                    HashMap dto = new HashMap(data);
+                    dto.putAll(config);
 
-                    rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
-                    // we do not offer editing component properties (yet) so clear the rows
-                    rows.clear();
-                    String componentOptions = buildComponentOptionsSchema(rows, dto);
-                    getLog().debug(componentOptions);
-
-                    rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
-                    String endpointOptions = buildEndpointOptionsSchema(rows, dto);
-                    getLog().debug(endpointOptions);
-
-                    // generate the json file
-                    StringBuilder jsonSchema = new StringBuilder();
-                    jsonSchema.append("{\n");
-                    jsonSchema.append(header);
-                    jsonSchema.append(componentOptions);
-                    jsonSchema.append(endpointOptions);
-                    jsonSchema.append("}\n");
-
-                    String newJson = jsonSchema.toString();
-
-                    // parse ourselves
-                    rows = JSonSchemaHelper.parseJsonSchema("component", newJson, false);
-                    String newScheme = getOption(rows, "scheme");
-
-                    // write the json file to the target directory as if camel apt would do it
-                    String javaType = (String) dto.get("javaType");
-                    String dir = javaType.substring(0, javaType.lastIndexOf("."));
-                    dir = dir.replace('.', '/');
-                    File subDir = new File(classesDirectory, dir);
-                    String name = newScheme + ".json";
-                    File out = new File(subDir, name);
-
-                    FileOutputStream fos = new FileOutputStream(out, false);
-                    fos.write(newJson.getBytes());
-                    fos.close();
-
-                    // also write the file in the root folder so its easier to find that for tooling
-                    out = new File(classesDirectory,"camel-connector-schema.json");
-                    fos = new FileOutputStream(out, false);
-                    fos.write(newJson.getBytes());
-                    fos.close();
+                    ComponentDTO newJson = processConnector(gitUrl, file, dto);
+                    allNewJsons= newJson;
+                    // allNewJsons.add(newJson);
                 }
+
+                // also write the file in the root folder so its easier to find that for tooling
+                File out = new File(classesDirectory,"camel-connector-schema.json");
+                FileOutputStream fos = new FileOutputStream(out, false);
+                mapper.writeValue(fos, allNewJsons);
+                fos.close();
 
                 // build json schema for component that only has the selectable options
             } catch (Exception e) {
@@ -170,6 +137,88 @@ public class ConnectorMojo extends AbstractJarMojo {
         }
 
         return super.createArchive();
+    }
+
+    /**
+     * Little helper class to read/write the json models.
+     */
+    public static class ComponentDTO {
+        public ComponentHeaderDTO component = new ComponentHeaderDTO();
+        public Map<String, Map> componentProperties = new HashMap<>();
+        public Map<String, Map> properties = new HashMap<>();
+    }
+
+    public static class ComponentHeaderDTO {
+        public String gitUrl;
+        public String kind;
+        public String baseScheme;
+        public String scheme;
+        public String syntax;
+        public String title;
+        public String description;
+        public String label;
+        public Boolean deprecated;
+        public String async;
+        public Boolean producerOnly;
+        public Boolean consumerOnly;
+        public String lenientProperties;
+        public String javaType;
+        public String groupId;
+        public String artifactId;
+        public String version;
+    }
+
+    private ComponentDTO processConnector(String gitUrl, File file, Map dto) throws MojoExecutionException, Exception, JsonProcessingException {
+        // embed gitUrl in camel-connector.json file
+        if (gitUrl != null) {
+            String existingGitUrl = (String) dto.get("gitUrl");
+            if (existingGitUrl == null || !existingGitUrl.equals(gitUrl)) {
+                dto.put("gitUrl", gitUrl);
+                // update file
+                mapper.writerWithDefaultPrettyPrinter().writeValue(file, dto);
+                // update source file also
+                File root = classesDirectory.getParentFile().getParentFile();
+                file = new File(root, "src/main/resources/camel-connector.json");
+                if (file.exists()) {
+                    getLog().info("Updating gitUrl to " + file);
+                    mapper.writerWithDefaultPrettyPrinter().writeValue(file, dto);
+                }
+            }
+        }
+
+        File schema = embedCamelComponentSchema(file);
+        ComponentDTO newJson = null;
+        if (schema != null) {
+
+            ComponentDTO json = mapper.readValue(schema, ComponentDTO.class);
+
+            newJson = new ComponentDTO();
+
+            newJson.component = buildComponentHeaderSchema(json, dto, gitUrl);
+            getLog().debug(mapper.writeValueAsString(newJson.component));
+
+            newJson.componentProperties = buildComponentOptionsSchema(json, dto);
+            getLog().debug(mapper.writeValueAsString(newJson.componentProperties));
+
+            newJson.properties = buildEndpointOptionsSchema(json, dto);
+            getLog().debug(mapper.writeValueAsString(newJson.properties));
+
+            // generate the json file
+            String newScheme = newJson.component.scheme;
+
+            // write the json file to the target directory as if camel apt would do it
+            String javaType = (String) dto.get("javaType");
+            String dir = javaType.substring(0, javaType.lastIndexOf("."));
+            dir = dir.replace('.', '/');
+            File subDir = new File(classesDirectory, dir);
+            String name = newScheme + ".json";
+            File out = new File(subDir, name);
+
+            FileOutputStream fos = new FileOutputStream(out, false);
+            mapper.writeValue(fos, newJson);
+            fos.close();
+        }
+        return newJson;
     }
 
     private String extractJavaType(String scheme) throws Exception {
@@ -191,47 +240,25 @@ public class ConnectorMojo extends AbstractJarMojo {
         return null;
     }
 
-    private String buildComponentOptionsSchema(List<Map<String, String>> rows, Map dto) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("  \"componentProperties\": {\n");
-
-        for (int i = 0; i < rows.size(); i++) {
-            Map<String, String> row = rows.get(i);
-            String key = row.get("name");
-            row.remove("name");
-            String line = mapper.writeValueAsString(row);
-
-            sb.append("    \"" + key + "\": ");
-            sb.append(line);
-            if (i < rows.size() - 1) {
-                sb.append(",\n");
-            } else {
-                sb.append("\n");
-            }
-        }
-
-        sb.append("  },\n");
-        return sb.toString();
+    private Map<String, Map> buildComponentOptionsSchema(ComponentDTO source, Map dto) throws JsonProcessingException {
+        HashMap<String, Map> rc = new HashMap<>();
+        // we do not offer editing component properties (yet) so skip this for now..
+//        for (Map.Entry<String, Map> entry : source.componentProperties.entrySet()) {
+//            rc.put(entry.getKey(), entry.getValue());
+//        }
+        return rc;
     }
 
-    private String buildEndpointOptionsSchema(List<Map<String, String>> rows, Map dto) throws JsonProcessingException {
+    private Map<String, Map> buildEndpointOptionsSchema(ComponentDTO source, Map dto) throws JsonProcessingException {
         // find the endpoint options
         List options = (List) dto.get("endpointOptions");
         Map values = (Map) dto.get("endpointValues");
         Map overrides = (Map) dto.get("endpointOverrides");
 
-        ObjectMapper mapper = new ObjectMapper();
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("  \"properties\": {\n");
-
-        boolean first = true;
-        for (int i = 0; i < rows.size(); i++) {
-            Map<String, String> row = rows.get(i);
-            String key = row.get("name");
-            row.remove("name");
+        HashMap<String, Map> rc = new HashMap<>();
+        for (Map.Entry<String, Map> entry : source.properties.entrySet()) {
+            HashMap<String, String> row = new HashMap<>(entry.getValue());
+            String key = entry.getKey();
 
             if (options == null || !options.contains(key)) {
                 continue;
@@ -252,32 +279,17 @@ public class ConnectorMojo extends AbstractJarMojo {
                     row.putAll(over);
                 }
             }
-
-            // we should build the json as one-line which is how Camel does it today
-            // which makes its internal json parser support loading our generated schema file
-            String line = mapper.writeValueAsString(row);
-
-            if (!first) {
-                sb.append(",\n");
-            }
-            sb.append("    \"" + key + "\": ");
-            sb.append(line);
-
-            first = false;
+            rc.put(key, row);
         }
-        if (!first) {
-            sb.append("\n");
-        }
-
-        sb.append("  }\n");
-        return sb.toString();
+        return rc;
     }
 
-    private String buildComponentHeaderSchema(List<Map<String, String>> rows, Map dto, String gitUrl) throws Exception {
+
+    private ComponentHeaderDTO buildComponentHeaderSchema(ComponentDTO soruce, Map dto, String gitUrl) throws Exception {
         String baseScheme = (String) dto.get("baseScheme");
         String title = (String) dto.get("name");
         String scheme = StringHelper.camelCaseToDash(title);
-        String baseSyntax = getOption(rows, "syntax");
+        String baseSyntax = soruce.component.syntax;
         String syntax = baseSyntax.replaceFirst(baseScheme, scheme);
 
         String description = (String) dto.get("description");
@@ -287,51 +299,35 @@ public class ConnectorMojo extends AbstractJarMojo {
         if (labels != null) {
             label = labels.stream().collect(Collectors.joining(","));
         }
-        String async = getOption(rows, "async");
+        String async = soruce.component.async;
         String pattern = (String) dto.get("pattern");
-        String producerOnly = "To".equalsIgnoreCase(pattern) ? "true" : null;
-        String consumerOnly = "From".equalsIgnoreCase(pattern) ? "true" : null;
-        String lenientProperties = getOption(rows, "lenientProperties");
+        boolean producerOnly = "To".equalsIgnoreCase(pattern);
+        boolean consumerOnly = "From".equalsIgnoreCase(pattern);
+        String lenientProperties = soruce.component.lenientProperties;
         String javaType = extractJavaType(scheme);
         String groupId = getProject().getGroupId();
         String artifactId = getProject().getArtifactId();
         String version = getProject().getVersion();
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("  \"component\": {\n");
-        if (gitUrl != null) {
-            sb.append("    \"girUrl\": \"" + StringHelper.nullSafe(gitUrl) + "\",\n");
-        }
-        sb.append("    \"kind\": \"component\",\n");
-        sb.append("    \"baseScheme\": \"" + StringHelper.nullSafe(baseScheme) + "\",\n");
-        sb.append("    \"scheme\": \"" + scheme + "\",\n");
-        sb.append("    \"syntax\": \"" + syntax + "\",\n");
-        sb.append("    \"title\": \"" + title + "\",\n");
-        if (description != null) {
-            sb.append("    \"description\": \"" + description + "\",\n");
-        }
-        if (label != null) {
-            sb.append("    \"label\": \"" + label + "\",\n");
-        }
-        sb.append("    \"deprecated\": \"false\",\n");
-        if (async != null) {
-            sb.append("    \"async\": \"" + async + "\",\n");
-        }
-        if (producerOnly != null) {
-            sb.append("    \"producerOnly\": \"" + producerOnly + "\",\n");
-        } else if (consumerOnly != null) {
-            sb.append("    \"consumerOnly\": \"" + consumerOnly + "\",\n");
-        }
-        if (lenientProperties != null) {
-            sb.append("    \"lenientProperties\": \"" + lenientProperties + "\",\n");
-        }
-        sb.append("    \"javaType\": \"" + javaType + "\",\n");
-        sb.append("    \"groupId\": \"" + groupId + "\",\n");
-        sb.append("    \"artifactId\": \"" + artifactId + "\",\n");
-        sb.append("    \"version\": \"" + version + "\"\n");
-        sb.append("  },\n");
-
-        return sb.toString();
+        ComponentHeaderDTO rc = new ComponentHeaderDTO();
+        rc.gitUrl = gitUrl;
+        rc.kind = "component";
+        rc.baseScheme = StringHelper.nullSafe(baseScheme);
+        rc.scheme = scheme;
+        rc.syntax = syntax;
+        rc.title = title;
+        rc.description = description;
+        rc.label = label;
+        rc.deprecated = false;
+        rc.async = async;
+        rc.producerOnly = producerOnly;
+        rc.consumerOnly = consumerOnly;
+        rc.lenientProperties = lenientProperties;
+        rc.javaType = javaType;
+        rc.groupId = groupId;
+        rc.artifactId = artifactId;
+        rc.version = version;
+        return rc;
     }
 
     /**
