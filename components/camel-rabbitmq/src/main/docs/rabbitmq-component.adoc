@@ -243,7 +243,7 @@ Declaring a headers exchange and queue
 
 [source,java]
 ---------------------------------------------------------------------------------
-from("rabbitmq://localhost/ex?exchangeType=headers&queue=q&bindingArgs=bindArgs")
+from("rabbitmq://localhost/ex?exchangeType=headers&queue=q&bindingArgs=#bindArgs")
 ---------------------------------------------------------------------------------
 
 and place corresponding Map<String, Object> with the id of "bindArgs" in the Registry.
