@@ -18,6 +18,6 @@ package org.apache.camel.spring.remoting;
 
 public interface MyMultiArgumentServiceInterface {
 
-    public void doSomething(String arg1, String arg2, Long arg3);
+    void doSomething(String arg1, String arg2, Long arg3);
 
 }
