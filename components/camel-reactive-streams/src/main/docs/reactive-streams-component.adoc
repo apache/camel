@@ -1,0 +1,221 @@
+## Reactive Streams Component
+
+*Available as of Camel 2.19*
+
+The *reactive-streams:* component allows you exchanging messages with reactive
+stream processing libraries compatible with the
+http://www.reactive-streams.org/[reactive streams] standard.
+
+The component supports backpressure and has been tested using the reactive streams technology
+compatibility kit (TCK).
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-reactive-streams</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+### URI format
+
+[source,java]
+-------------------------------------------------
+reactive-streams://stream?[options]
+-------------------------------------------------
+
+Where *stream* is a logical stream name used to bind Camel routes to the
+external stream processing systems.
+
+### Options
+
+
+// component options: START
+The Reactive Streams component supports 2 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| internalEngineConfiguration | common |  | ReactiveStreamsEngineConfiguration | Configures the internal engine for Reactive Streams.
+| backpressureStrategy | common |  | ReactiveStreamsBackpressureStrategy | The backpressure strategy to use when pushing events to a slow subscriber.
+|=======================================================================
+{% endraw %}
+// component options: END
+
+
+
+
+
+// endpoint options: START
+The Reactive Streams component supports 8 endpoint options which are listed below:
+
+{% raw %}
+[width="100%",cols="2,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| stream | common |  | String | Name of the stream channel used by the endpoint to exchange messages.
+| serviceName | common |  | String | Allows using an alternative CamelReactiveStreamService implementation. The implementation is looked up from the registry.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| concurrentConsumers | consumer | 1 | int | Number of threads used to process exchanges in the Camel route.
+| maxInflightExchanges | consumer | 128 | Integer | Maximum number of exchanges concurrently being processed by Camel. This parameter controls backpressure on the stream. Setting a non-positive value will disable backpressure.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+|=======================================================================
+{% endraw %}
+// endpoint options: END
+
+
+
+### Usage
+
+External reactive streams compatible systems can be configured as Subscribers or Publishers,
+to consume or send events to Camel routes respectively.
+
+### Subscribing to Camel exchanges
+In order to subscribe to exchanges flowing in a Camel route, exchanges should be redirected to
+a named stream, like in the following snippet:
+
+[source,java]
+---------------------------------------------------------
+from("timer:clock")
+.setBody().header(Exchange.TIMER_COUNTER)
+.to("reactive-streams:numbers");
+---------------------------------------------------------
+
+Routes can also be written using the XML DSL.
+
+In the example, an unbounded stream of numbers is associated to the name `numbers`.
+The stream can be accessed using the `CamelReactiveStreams` utility class.
+
+[source,java]
+---------------------------------------------------------
+CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
+
+// Getting a stream of exchanges
+Publisher<Exchange> exchanges = camel.getPublisher("numbers");
+
+// Getting a stream of Integers (using Camel standard conversion system)
+Publisher<Integer> numbers = camel.getPublisher("numbers", Integer.class);
+---------------------------------------------------------
+
+The stream can be used easily with any reactive streams compatible library.
+Here is an example of how to use it with https://github.com/ReactiveX/RxJava[RxJava 2]
+(although any reactive framework can be used to process events).
+
+[source,java]
+---------------------------------------------------------
+Flowable.fromPublisher(integers)
+    .doOnNext(System.out::println)
+    .subscribe();
+---------------------------------------------------------
+
+The example prints all numbers generated by Camel into `System.out`.
+
+### Publishing to a Camel route
+When an external library needs to push events into a Camel route, the Reactive Streams
+endpoint must be set as consumer.
+
+[source,java]
+---------------------------------------------------------
+from("reactive-streams:elements")
+.to("log:INFO");
+---------------------------------------------------------
+
+A handle to the `elements` stream can be obtained from the `CamelReactiveStreams` utility class.
+
+[source,java]
+---------------------------------------------------------
+CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
+
+Subscriber<String> elements = camel.getSubscriber("elements", String.class);
+---------------------------------------------------------
+
+The subscriber can be used to push events to the Camel route that consumes from the `elements` stream.
+
+Here is an example of how to use it with https://github.com/ReactiveX/RxJava[RxJava 2]
+(although any reactive framework can be used to publish events).
+
+[source,java]
+---------------------------------------------------------
+Flowable.interval(1, TimeUnit.SECONDS)
+    .map(i -> "Item " + i)
+    .subscribe(elements);
+---------------------------------------------------------
+
+String items are generated every second by RxJava in the example and they are pushed into the Camel route defined above.
+
+### Controlling Backpressure (producer side)
+
+When routing Camel exchanges to an external subscriber, backpressure is handled by an internal buffer that caches exchanges
+before delivering them.
+If the subscriber is slower than the exchange rate, the buffer may become too big. In many circumstances this must be avoided.
+
+Considering the following route:
+
+[source,java]
+---------------------------------------------------------
+from("jms:queue")
+.to("reactive-streams:flow");
+---------------------------------------------------------
+
+If the JMS queue contains a high number of messages and the Subscriber associated with the `flow` stream is too slow,
+messages are dequeued from JMS and appended to the buffer, possibly causing a "out of memory" error.
+To avoid such problems, a `ThrottlingInflightRoutePolicy` can be set in the route.
+
+[source,java]
+---------------------------------------------------------
+ThrottlingInflightRoutePolicy policy = new ThrottlingInflightRoutePolicy();
+policy.setMaxInflightExchanges(10);
+
+from("jms:queue")
+.routePolicy(policy)
+.to("reactive-streams:flow");
+---------------------------------------------------------
+
+The policy limits the maximum number of active exchanges (and so the maximum size of the buffer),
+keeping it lower than the threshold (`10` in the example).
+When more than `10` messages are in flight, the route is suspended, waiting for the subscriber to process them.
+
+With this mechanism, the subscriber controls the route suspension/resume automatically, through backpressure.
+When multiple subscribers are consuming items from the same stream, the slowest one controls the route status automatically.
+
+In other circumstances, eg. when using a `http` consumer, the route suspension makes the http service unavailable, so
+using the default configuration (no policy, unbounded buffer) should be preferable. Users should try to avoid memory issues
+by limiting the number of requests to the http service (eg. scaling out).
+
+### Controlling Backpressure (consumer side)
+
+When Camel consumes items from a reactive-streams publisher, the maximum number of inflight exchanges can be set as endpoint option.
+
+The subscriber associated with the consumer interacts with the publisher to keep the number of messages in the route lower than the threshold.
+
+An example of backpressure-aware route:
+
+[source,java]
+---------------------------------------------------------
+from("reactive-streams:numbers?maxInflightExchanges=10")
+.to("direct:endpoint");
+---------------------------------------------------------
+
+The number of items that Camel requests to the source publisher (through the reactive streams backpressure mechanism)
+is always lower than `10`. Messages are processed by a single thread in the Camel side.
+
+The number of concurrent consumers (threads) can also be set as endpoint option (`concurrentConsumers`).
+When using 1 consumer (the default), the order of items in the source stream is maintained.
+When this value is increased, items will be processed concurrently by multiple threads (so not preserving the order).
+
+### See Also
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]
