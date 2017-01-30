@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.reactive.streams.engine;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -205,44 +209,31 @@ public class CamelSubscription implements Subscription {
     }
 
     public void publish(StreamPayload<Exchange> message) {
-        StreamPayload<Exchange> discardedMessage = null;
-        String discardReason = null;
+        Map<StreamPayload<Exchange>, String> discardedMessages = null;
         try {
             mutex.lock();
             if (!this.terminating && !this.terminated) {
-                if (this.backpressureStrategy == ReactiveStreamsBackpressureStrategy.BUFFER) {
-                    buffer.addLast(message);
-                } else if (this.backpressureStrategy == ReactiveStreamsBackpressureStrategy.DROP) {
-                    if (buffer.size() > 0) {
-                        LOG.warn("Exchange " + message.getItem() + " dropped according to the backpressure strategy " + ReactiveStreamsBackpressureStrategy.DROP);
-                        discardedMessage = message;
-                        discardReason = "the backpressure strategy (DROP) does not allow buffering";
-                    } else {
-                        buffer.addLast(message);
+                Collection<StreamPayload<Exchange>> discarded = this.backpressureStrategy.update(buffer, message);
+                if (discarded.iterator().hasNext()) {
+                    discardedMessages = new HashMap<>();
+                    for (StreamPayload<Exchange> ex : discarded) {
+                        discardedMessages.put(ex, "Exchange " + ex.getItem() + " discarded by backpressure strategy " + this.backpressureStrategy);
                     }
-                } else if (this.backpressureStrategy == ReactiveStreamsBackpressureStrategy.LATEST) {
-                    if (buffer.size() > 0) {
-                        StreamPayload<Exchange> older = buffer.removeFirst();
-                        LOG.warn("Exchange " + message.getItem() + " dropped according to the backpressure strategy " + ReactiveStreamsBackpressureStrategy.LATEST);
-                        discardedMessage = older;
-                        discardReason = "the backpressure strategy (LATEST) does not allow buffering";
-                    }
-                    buffer.addLast(message);
-                } else {
-                    throw new IllegalStateException("Unsupported backpressure strategy: " + this.backpressureStrategy);
                 }
-
             } else {
-                discardedMessage = message;
-                discardReason = "subscription closed";
+                // acknowledge
+                discardedMessages = Collections.singletonMap(message, "Exchange " + message.getItem() + " discarded: subscription closed");
             }
         } finally {
             mutex.unlock();
         }
 
-        if (discardedMessage != null) {
-            // acknowledge
-            discardedMessage.getCallback().processed(message.getItem(), new IllegalStateException("Exchange discarded: " + discardReason));
+        // discarding outside of mutex scope
+        if (discardedMessages != null) {
+            for (Map.Entry<StreamPayload<Exchange>, String> discarded : discardedMessages.entrySet()) {
+                StreamPayload<Exchange> m = discarded.getKey();
+                m.getCallback().processed(m.getItem(), new IllegalStateException(discarded.getValue()));
+            }
         }
 
         checkAndFlush();
