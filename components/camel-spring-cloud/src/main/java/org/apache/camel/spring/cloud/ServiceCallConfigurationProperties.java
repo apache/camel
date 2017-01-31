@@ -18,6 +18,7 @@
 package org.apache.camel.spring.cloud;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -72,7 +73,7 @@ public class ServiceCallConfigurationProperties {
 
     public static class ServiceDiscovery {
         private boolean enabled = true;
-        private Map<String, String> services = new HashMap<>();
+        private Map<String, List<String>> services = new HashMap<>();
 
         public boolean isEnabled() {
             return enabled;
@@ -82,14 +83,14 @@ public class ServiceCallConfigurationProperties {
             this.enabled = enabled;
         }
 
-        public Map<String, String> getServices() {
+        public Map<String, List<String>> getServices() {
             return services;
         }
     }
 
     public static class ServiceFilter {
         private boolean enabled = true;
-        private Map<String, String> blacklist = new HashMap<>();
+        private Map<String, List<String>> blacklist = new HashMap<>();
 
         public boolean isEnabled() {
             return enabled;
@@ -99,7 +100,7 @@ public class ServiceCallConfigurationProperties {
             this.enabled = enabled;
         }
 
-        public Map<String, String> getBlacklist() {
+        public Map<String, List<String>> getBlacklist() {
             return blacklist;
         }
     }
