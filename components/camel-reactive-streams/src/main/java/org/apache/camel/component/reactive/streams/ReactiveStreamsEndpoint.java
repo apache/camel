@@ -34,14 +34,20 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
     @UriPath
     private String stream;
 
+    @UriParam
+    private String serviceName;
+
     @UriParam(label = "consumer", defaultValue = "128")
     private Integer maxInflightExchanges = 128;
 
     @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers = 1;
 
-    @UriParam
-    private String serviceName;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean forwardOnComplete;
+
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean forwardOnError;
 
     @UriParam(label = "producer")
     private ReactiveStreamsBackpressureStrategy backpressureStrategy;
@@ -122,5 +128,27 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
         this.backpressureStrategy = backpressureStrategy;
     }
 
+    public boolean isForwardOnComplete() {
+        return forwardOnComplete;
+    }
+
+    /**
+     * Determines if onComplete events should be pushed to the Camel route.
+     */
+    public void setForwardOnComplete(boolean forwardOnComplete) {
+        this.forwardOnComplete = forwardOnComplete;
+    }
+
+    public boolean isForwardOnError() {
+        return forwardOnError;
+    }
+
+    /**
+     * Determines if onError events should be pushed to the Camel route.
+     * Exceptions will be set as message body.
+     */
+    public void setForwardOnError(boolean forwardOnError) {
+        this.forwardOnError = forwardOnError;
+    }
 
 }

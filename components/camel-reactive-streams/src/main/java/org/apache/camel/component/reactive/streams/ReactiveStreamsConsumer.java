@@ -71,6 +71,32 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        exchange.getIn().setHeader(ReactiveStreamsConstants.REACTIVE_STREAMS_EVENT_TYPE, "onNext");
+        return doSend(exchange, callback);
+    }
+
+    public void onComplete() {
+        if (endpoint.isForwardOnComplete()) {
+            Exchange exchange = endpoint.createExchange();
+            exchange.getIn().setHeader(ReactiveStreamsConstants.REACTIVE_STREAMS_EVENT_TYPE, "onComplete");
+
+            doSend(exchange, done -> {
+            });
+        }
+    }
+
+    public void onError(Throwable error) {
+        if (endpoint.isForwardOnError()) {
+            Exchange exchange = endpoint.createExchange();
+            exchange.getIn().setHeader(ReactiveStreamsConstants.REACTIVE_STREAMS_EVENT_TYPE, "onError");
+            exchange.getIn().setBody(error);
+
+            doSend(exchange, done -> {
+            });
+        }
+    }
+
+    private boolean doSend(Exchange exchange, AsyncCallback callback) {
         ExecutorService executorService = this.executor;
         if (executorService != null && this.isRunAllowed()) {
 
