@@ -28,13 +28,13 @@ public class SampleCamelRoutes extends RouteBuilder {
 
         // Generating numbers every 3 seconds and forwarding to the stream "numbers"
         from("timer:clock?period=3000")
-        .setBody().header(Exchange.TIMER_COUNTER)
-        .to("reactive-streams:numbers");
+                .setBody().header(Exchange.TIMER_COUNTER)
+                .to("reactive-streams:numbers");
 
         // Generating strings every 2.9 seconds and forwarding to the stream "strings"
         from("timer:clock2?period=2900&delay=1000")
-        .setBody().simple("Hello World ${header.CamelTimerCounter}!")
-        .to("reactive-streams:strings");
+                .setBody().simple("Hello World ${header.CamelTimerCounter}!")
+                .to("reactive-streams:strings");
 
     }
 }
