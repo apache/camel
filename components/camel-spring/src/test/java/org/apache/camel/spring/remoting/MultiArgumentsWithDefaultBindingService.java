@@ -17,10 +17,12 @@
 package org.apache.camel.spring.remoting;
 
 import java.util.Date;
-import org.apache.camel.Consume;
+
 import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.assertNotNull;
+import static junit.framework.TestCase.assertTrue;
+
+import org.apache.camel.Consume;
 
 public class MultiArgumentsWithDefaultBindingService implements MultiArgumentsWithDefaultBindingServiceInterface {
 
