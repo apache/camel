@@ -58,7 +58,7 @@ public class ChainedServiceFilterTest extends ContextTestSupport {
         ));
 
         Assert.assertEquals(2, services.size());
-        Assert.assertFalse(services.stream().anyMatch(s -> s.getHealth().isHealthy() == false));
+        Assert.assertFalse(services.stream().anyMatch(s -> !s.getHealth().isHealthy()));
         Assert.assertFalse(services.stream().anyMatch(s -> s.getPort() > 2000));
         Assert.assertTrue(services.stream().anyMatch(s -> s.getPort() == 1000));
         Assert.assertTrue(services.stream().anyMatch(s -> s.getPort() == 1002));

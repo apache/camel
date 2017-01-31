@@ -36,7 +36,13 @@ public class LoadBalancerTest extends ContextTestSupport {
         loadBalancer.setServiceDiscovery(serviceDiscovery);
         loadBalancer.setServiceFilter(services -> services.stream().filter(s -> s.getPort() < 2000).collect(Collectors.toList()));
         loadBalancer.setServiceChooser(new RoundRobinServiceChooser());
-        loadBalancer.process("no-name", service -> { assertEquals(1001, service.getPort()); return false; });
-        loadBalancer.process("no-name", service -> { assertEquals(1002, service.getPort()); return false; });
+        loadBalancer.process("no-name", service -> {
+            assertEquals(1001, service.getPort());
+            return false;
+        });
+        loadBalancer.process("no-name", service -> {
+            assertEquals(1002, service.getPort());
+            return false;
+        });
     }
 }
