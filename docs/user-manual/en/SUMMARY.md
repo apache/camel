@@ -175,6 +175,7 @@
 	* [Ehcache](ehcache-component.adoc)
 	* [EJB](ejb-component.adoc)
 	* [Elasticsearch](elasticsearch-component.adoc)
+	* [Elasticsearch5](elasticsearch5-component.adoc)
 	* [ElSQL](elsql-component.adoc)
 	* [etcd](etcd-component.adoc)
 	* [Exec](exec-component.adoc)

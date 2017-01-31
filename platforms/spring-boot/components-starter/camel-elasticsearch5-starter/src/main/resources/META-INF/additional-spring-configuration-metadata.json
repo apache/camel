@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.elasticsearch5.enabled",
+      "description": "Enable elasticsearch5 component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}
