@@ -31,12 +31,14 @@
   <description>An example showing how to work with Camel and Spring Boot using Spring Boot Starter</description>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <spring.boot-version>${spring-boot-version}</spring.boot-version>
   </properties>
 
-  <!-- import Spring-Boot and Camel BOM -->
   <dependencyManagement>
     <dependencies>
+      <!-- Spring Boot BOM -->
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-dependencies</artifactId>
@@ -44,10 +46,11 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      <!-- Camel BOM -->
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-boot-dependencies</artifactId>
-        <version>${project.version}</version>
+        <version>${camel-version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -56,13 +59,21 @@
 
   <dependencies>
 
-    <!-- spring-web -->
+    <!-- Spring Boot -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-undertow</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-actuator</artifactId>
+    </dependency>
 
-    <!-- camel -->
+    <!-- Camel -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-boot-starter</artifactId>
@@ -92,6 +103,13 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
         <version>${spring-boot-version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
