@@ -78,9 +78,7 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                 for (RoutesBuilder routesBuilder : applicationContext.getBeansOfType(RoutesBuilder.class, configurationProperties.isIncludeNonSingletons(), true).values()) {
                     // filter out abstract classes
                     boolean abs = Modifier.isAbstract(routesBuilder.getClass().getModifiers());
-                    // filter out FatJarRouter which can be in the spring app context
-                    boolean farJarRouter = FatJarRouter.class.equals(routesBuilder.getClass());
-                    if (!abs && !farJarRouter) {
+                    if (!abs) {
                         try {
                             LOG.debug("Injecting following route into the CamelContext: {}", routesBuilder);
                             camelContext.addRoutes(routesBuilder);
