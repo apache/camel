@@ -149,16 +149,31 @@ public class CamelSubscriber implements Subscriber<Exchange>, Closeable {
         }
 
         LOG.error("Error in reactive stream '" + name + "'", throwable);
+
+        ReactiveStreamsConsumer consumer;
         synchronized (this) {
+            consumer = this.consumer;
             this.subscription = null;
         }
+
+        if (consumer != null) {
+            consumer.onError(throwable);
+        }
+
     }
 
     @Override
     public void onComplete() {
         LOG.info("Reactive stream '{}' completed", name);
+
+        ReactiveStreamsConsumer consumer;
         synchronized (this) {
+            consumer = this.consumer;
             this.subscription = null;
+        }
+
+        if (consumer != null) {
+            consumer.onComplete();
         }
     }
 
