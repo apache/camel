@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.spring.boot.util.GroupCondition;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -41,15 +42,15 @@ public class ServiceCallServiceDiscoveryAutoConfiguration {
     public DiscoveryClient serviceDiscoveryClient(ServiceCallConfigurationProperties properties) {
         CamelCloudDiscoveryClient client = new CamelCloudDiscoveryClient("service-discovery-client");
 
-        Map<String, String> services = properties.getServiceDiscovery().getServices();
-        for (Map.Entry<String, String> entry : services.entrySet()) {
-
-            String[] parts = entry.getValue().split(",");
-            for (String part : parts) {
+        Map<String, List<String>> services = properties.getServiceDiscovery().getServices();
+        for (Map.Entry<String, List<String>> entry : services.entrySet()) {
+            for (String part : entry.getValue()) {
                 String host = StringHelper.before(part, ":");
                 String port = StringHelper.after(part, ":");
 
-                client.addServiceInstance(entry.getKey(), host, Integer.parseInt(port));
+                if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
+                    client.addServiceInstance(entry.getKey(), host, Integer.parseInt(port));
+                }
             }
         }
 

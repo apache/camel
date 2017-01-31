@@ -17,6 +17,7 @@
 
 package org.apache.camel.spring.cloud;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.cloud.ServiceFilter;
@@ -24,6 +25,7 @@ import org.apache.camel.impl.cloud.BlacklistServiceFilter;
 import org.apache.camel.impl.cloud.ChainedServiceFilter;
 import org.apache.camel.impl.cloud.HealthyServiceFilter;
 import org.apache.camel.spring.boot.util.GroupCondition;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -42,15 +44,15 @@ public class ServiceCallServiceFilterAutoConfiguration {
     public ServiceFilter chainedServiceFilter(ServiceCallConfigurationProperties properties) {
         BlacklistServiceFilter blacklist = new BlacklistServiceFilter();
 
-        Map<String, String> services = properties.getServiceFilter().getBlacklist();
-        for (Map.Entry<String, String> entry : services.entrySet()) {
-
-            String[] parts = entry.getValue().split(",");
-            for (String part : parts) {
+        Map<String, List<String>> services = properties.getServiceFilter().getBlacklist();
+        for (Map.Entry<String, List<String>> entry : services.entrySet()) {
+            for (String part : entry.getValue()) {
                 String host = StringHelper.before(part, ":");
                 String port = StringHelper.after(part, ":");
 
-                blacklist.addServer(entry.getKey(), host, Integer.parseInt(port));
+                if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
+                    blacklist.addServer(entry.getKey(), host, Integer.parseInt(port));
+                }
             }
         }
 
