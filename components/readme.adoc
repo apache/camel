@@ -159,6 +159,9 @@ Components
 | link:camel-elasticsearch/src/main/docs/elasticsearch-component.adoc[Elasticsearch] (camel-elasticsearch) +
 `elasticsearch:clusterName` | The elasticsearch component is used for interfacing with ElasticSearch server.
 
+| link:camel-elasticsearch5/src/main/docs/elasticsearch5-component.adoc[Elasticsearch5] (camel-elasticsearch5) +
+`elasticsearch5:clusterName` | The elasticsearch component is used for interfacing with ElasticSearch server.
+
 | link:camel-elsql/src/main/docs/elsql-component.adoc[ElSQL] (camel-elsql) +
 `elsql:elsqlName:resourceUri` | The elsql component is an extension to the existing SQL Component that uses ElSql to define the SQL queries.
 
