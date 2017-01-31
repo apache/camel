@@ -159,6 +159,9 @@ Components
 | link:camel-elasticsearch/src/main/docs/elasticsearch-component.adoc[Elasticsearch] (camel-elasticsearch) +
 `elasticsearch:clusterName` | The elasticsearch component is used for interfacing with ElasticSearch server.
 
+| link:camel-elasticsearch5/src/main/docs/elasticsearch5-component.adoc[Elasticsearch5] (camel-elasticsearch5) +
+`elasticsearch5:clusterName` | The elasticsearch component is used for interfacing with ElasticSearch server.
+
 | link:camel-elsql/src/main/docs/elsql-component.adoc[ElSQL] (camel-elsql) +
 `elsql:elsqlName:resourceUri` | The elsql component is an extension to the existing SQL Component that uses ElSql to define the SQL queries.
 
@@ -204,26 +207,11 @@ Components
 | link:camel-google-drive/src/main/docs/google-drive-component.adoc[Google Drive] (camel-google-drive) +
 `google-drive:apiName/methodName` | The google-drive component provides access to Google Drive file storage service.
 
-| link:camel-gae/src/main/docs/gauth-component.adoc[Google GAuth] (camel-gae) +
-`gauth:name` | The gauth component is used by web applications to implement a Google-specific OAuth consumer.
-
-| link:camel-gae/src/main/docs/ghttp-component.adoc[Google HTTP] (camel-gae) +
-`ghttp:httpUri` | The ghttp component provides HTTP connectivity to the GAE.
-
-| link:camel-gae/src/main/docs/glogin-component.adoc[Google Login] (camel-gae) +
-`glogin:hostName` | The glogin component is used by Camel applications outside Google App Engine (GAE) for programmatic login to GAE applications.
-
-| link:camel-gae/src/main/docs/gmail-component.adoc[Google mail] (camel-gae) +
-`gmail:sender` | The gmail component is used for sending emails to GAE.
-
 | link:camel-google-mail/src/main/docs/google-mail-component.adoc[Google Mail] (camel-google-mail) +
 `google-mail:apiName/methodName` | The google-mail component provides access to Google Mail.
 
 | link:camel-google-pubsub/src/main/docs/google-pubsub-component.adoc[Google Pubsub] (camel-google-pubsub) +
 `google-pubsub:projectId:destinationName` | Messaging client for Google Cloud Platform PubSub Service: https://cloud.google.com/pubsub/
-
-| link:camel-gae/src/main/docs/gtask-component.adoc[Google Task] (camel-gae) +
-`gtask:queueName` | The gtask component is used for sending messages to GAE task queue service.
 
 | link:camel-gora/src/main/docs/gora-component.adoc[Gora] (camel-gora) +
 `gora:name` | The gora component allows you to work with NoSQL databases using the Apache Gora framework.
