@@ -606,7 +606,7 @@
     <swagger-java-version>1.5.12</swagger-java-version>
     <swagger-java-parser-version>1.0.25</swagger-java-parser-version>
     <swagger-java-guava-version>18.0</swagger-java-guava-version>
-    <swagger-ui-version>2.2.8</swagger-ui-version>
+    <swagger-ui-version>2.2.10</swagger-ui-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stax2-api-bundle-version>3.1.4</stax2-api-bundle-version>
     <stringtemplate-bundle-version>4.0.8_1</stringtemplate-bundle-version>
