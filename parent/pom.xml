@@ -84,7 +84,7 @@
     <bouncycastle-version>1.55</bouncycastle-version>
     <boxjavalibv2.version>3.2.1</boxjavalibv2.version>
     <braintree-gateway-version>2.63.0</braintree-gateway-version>
-    <brave-zipkin-version>4.0.3</brave-zipkin-version>
+    <brave-zipkin-version>4.0.5</brave-zipkin-version>
     <brave-zipkin-bundle-version>3.7.0_1</brave-zipkin-bundle-version>
     <build-helper-maven-plugin-version>1.10</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.2</c3p0-version>
