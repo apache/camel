@@ -19,6 +19,7 @@ package org.apache.camel.example.reactive.streams;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+//CHECKSTYLE:OFF
 @SpringBootApplication
 public class ReactiveStreamsSpringBootApp {
 
@@ -27,3 +28,4 @@ public class ReactiveStreamsSpringBootApp {
     }
 
 }
+//CHECKSTYLE:ON
