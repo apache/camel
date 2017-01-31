@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.language;
+package org.apache.camel.itest.doc;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointConfiguration;
+import org.apache.camel.component.xslt.XsltComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class LanguageComponentConfigurationAndDocumentationTest extends ContextTestSupport {
+public class XsltComponentConfigurationAndDocumentationTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,23 +33,24 @@ public class LanguageComponentConfigurationAndDocumentationTest extends ContextT
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        LanguageComponent comp = context.getComponent("language", LanguageComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("language:simple:foo?transform=false");
+        XsltComponent comp = context.getComponent("xslt", XsltComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("xslt:foo?deleteOutputFile=true");
 
-        assertEquals("false", conf.getParameter("transform"));
+        assertEquals("true", conf.getParameter("deleteOutputFile"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"languageName\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
-        assertTrue(json.contains("\"script\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"string\""));
+        assertTrue(json.contains("\"resourceUri\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
+        assertTrue(json.contains("\"allowStAX\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"transformerFactoryClass\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\""));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("language");
+        String html = context.getComponentDocumentation("xslt");
         assertNotNull("Should have found some auto-generated HTML", html);
     }
 

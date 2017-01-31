@@ -14,18 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.itest.doc;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
-public class EipDocumentationTest extends ContextTestSupport {
+public class EipDocumentationTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
 
+    @Test
     public void testDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String json = context.getEipParameterJsonSchema("from");
@@ -37,6 +40,7 @@ public class EipDocumentationTest extends ContextTestSupport {
         assertTrue(json.contains("\"ref\": { \"kind\": \"attribute\""));
     }
 
+    @Test
     public void testSplitDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String json = context.getEipParameterJsonSchema("split");
@@ -50,6 +54,7 @@ public class EipDocumentationTest extends ContextTestSupport {
         assertTrue(json.contains("\"outputs\": { \"kind\": \"element\", \"required\": \"true\", \"type\": \"array\", \"javaType\""));
     }
 
+    @Test
     public void testSimpleDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String json = context.getEipParameterJsonSchema("simple");
@@ -60,6 +65,7 @@ public class EipDocumentationTest extends ContextTestSupport {
         assertTrue(json.contains("\"name\": \"simple\""));
     }
 
+    @Test
     public void testFailOverDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String json = context.getEipParameterJsonSchema("failover");
@@ -68,9 +74,10 @@ public class EipDocumentationTest extends ContextTestSupport {
 
         assertTrue(json.contains("\"name\": \"failover\""));
         assertTrue(json.contains("\"exception\": { \"kind\": \"element\", \"required\": \"false\", \"type\": \"array\""
-                + ", \"javaType\": \"java.util.List<java.lang.String>\", \"deprecated\": \"false\""));
+            + ", \"javaType\": \"java.util.List<java.lang.String>\", \"deprecated\": \"false\""));
     }
 
+    @Test
     public void testNotFound() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String json = context.getEipParameterJsonSchema("unknown");

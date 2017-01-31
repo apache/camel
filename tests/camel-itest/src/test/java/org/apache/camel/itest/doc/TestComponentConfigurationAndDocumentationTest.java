@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file;
+package org.apache.camel.itest.doc;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointConfiguration;
+import org.apache.camel.component.test.TestComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class FileComponentConfigurationAndDocumentationTest extends ContextTestSupport {
+public class TestComponentConfigurationAndDocumentationTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,24 +33,23 @@ public class FileComponentConfigurationAndDocumentationTest extends ContextTestS
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        FileComponent comp = context.getComponent("file", FileComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("file:target/foo?delete=true");
+        TestComponent comp = context.getComponent("test", TestComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("test:my:foo?timeout=1000");
 
-        assertEquals("true", conf.getParameter("delete"));
+        assertEquals("1000", conf.getParameter("timeout"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"directoryName\": { \"kind\": \"path\", \"group\": \"common\", \"required\": \"true\""));
-        assertTrue(json.contains("\"autoCreate\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\", \"type\": \"boolean\""));
-        assertTrue(json.contains("\"readLockMinAge\": { \"kind\": \"parameter\", \"group\": \"lock\", \"label\": \"consumer,lock\""));
+        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
+        assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\""));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("file");
+        String html = context.getComponentDocumentation("test");
         assertNotNull("Should have found some auto-generated HTML", html);
     }
 

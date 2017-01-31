@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.log;
+package org.apache.camel.itest.doc;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointConfiguration;
+import org.apache.camel.component.directvm.DirectVmComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class LogComponentConfigurationAndDocumentationTest extends ContextTestSupport {
+public class DirectVmComponentConfigurationAndDocumentationTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,24 +33,23 @@ public class LogComponentConfigurationAndDocumentationTest extends ContextTestSu
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        LogComponent comp = context.getComponent("log", LogComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("log:foo?level=DEBUG");
+        DirectVmComponent comp = context.getComponent("direct-vm", DirectVmComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("direct-vm:foo?block=false");
 
-        assertEquals("DEBUG", conf.getParameter("level"));
+        assertEquals("false", conf.getParameter("block"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
-        assertTrue(json.contains("\"level\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"string\""));
-        assertTrue(json.contains("\"showBody\": { \"kind\": \"parameter\", \"group\": \"formatting\", \"label\": \"formatting\""));
+        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"group\": \"common\", \"required\": \"true\", \"type\": \"string\""));
+        assertTrue(json.contains("\"timeout\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\", \"type\": \"integer\""));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("log");
+        String html = context.getComponentDocumentation("direct-vm");
         assertNotNull("Should have found some auto-generated HTML", html);
     }
 
