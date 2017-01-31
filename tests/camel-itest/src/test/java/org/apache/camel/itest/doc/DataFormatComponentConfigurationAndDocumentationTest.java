@@ -14,20 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dataformat;
+package org.apache.camel.itest.doc;
 
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointConfiguration;
+import org.apache.camel.component.dataformat.DataFormatComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.JsonSchemaHelper;
 import org.junit.Test;
 
-public class DataFormatComponentConfigurationAndDocumentationTest extends ContextTestSupport {
+public class DataFormatComponentConfigurationAndDocumentationTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -46,7 +47,7 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends Contex
         assertNotNull(json);
 
         assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\", \"type\": \"string\", \"javaType\": \"java.lang.String\","
-                        + " \"deprecated\": \"false\", \"secret\": \"false\", \"description\": \"Name of data format\" }"));
+            + " \"deprecated\": \"false\", \"secret\": \"false\", \"description\": \"Name of data format\" }"));
         assertTrue(json.contains("\"operation\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\", \"type\": \"string\""));
         assertTrue(json.contains("\"synchronous\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\", \"type\": \"boolean\""));
     }
@@ -68,7 +69,7 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends Contex
 
         // the default value is a bit tricky as its ", which is written escaped as \"
         assertTrue(json.contains("\"textQualifier\": { \"kind\": \"attribute\", \"required\": \"false\", \"type\": \"string\""
-                + ", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"\\\"\""));
+            + ", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"\\\"\""));
 
         List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
         assertEquals(10, rows.size());
@@ -102,7 +103,7 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends Contex
 
         // the default value is a bit tricky as its \, which is written escaped as \\
         assertTrue(json.contains("\"escapeChar\": { \"kind\": \"attribute\", \"required\": \"false\", \"type\": \"string\", \"javaType\": \"java.lang.String\","
-                + " \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"\\\\\", \"description\": \"The escape character.\""));
+            + " \"deprecated\": \"false\", \"secret\": \"false\", \"defaultValue\": \"\\\\\", \"description\": \"The escape character.\""));
 
         List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
         assertEquals(16, rows.size());

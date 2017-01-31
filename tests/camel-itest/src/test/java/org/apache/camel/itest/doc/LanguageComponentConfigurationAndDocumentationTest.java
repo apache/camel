@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.direct;
+package org.apache.camel.itest.doc;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointConfiguration;
+import org.apache.camel.component.language.LanguageComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class DirectComponentConfigurationAndDocumentationTest extends ContextTestSupport {
+public class LanguageComponentConfigurationAndDocumentationTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,31 +33,24 @@ public class DirectComponentConfigurationAndDocumentationTest extends ContextTes
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        DirectComponent comp = context.getComponent("direct", DirectComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("direct:foo?block=true");
+        LanguageComponent comp = context.getComponent("language", LanguageComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("language:simple:foo?transform=false");
 
-        assertEquals("true", conf.getParameter("block"));
+        assertEquals("false", conf.getParameter("transform"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"group\": \"common\", \"required\": \"true\", \"type\": \"string\""));
-        assertTrue(json.contains("\"timeout\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"languageName\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
+        assertTrue(json.contains("\"script\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"string\""));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("direct");
+        String html = context.getComponentDocumentation("language");
         assertNotNull("Should have found some auto-generated HTML", html);
-    }
-
-    @Test
-    public void testComponentJsonSchema() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String json = context.getComponentParameterJsonSchema("direct");
-        assertNotNull("Should have found some auto-generated JSON", json);
     }
 
 }

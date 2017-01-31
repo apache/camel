@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.directvm;
+package org.apache.camel.itest.doc;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointConfiguration;
+import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class DirectVmComponentConfigurationAndDocumentationTest extends ContextTestSupport {
+public class SedaComponentConfigurationAndDocumentationTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,23 +33,23 @@ public class DirectVmComponentConfigurationAndDocumentationTest extends ContextT
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        DirectVmComponent comp = context.getComponent("direct-vm", DirectVmComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("direct-vm:foo?block=false");
+        SedaComponent comp = context.getComponent("seda", SedaComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("seda:foo?blockWhenFull=true");
 
-        assertEquals("false", conf.getParameter("block"));
+        assertEquals("true", conf.getParameter("blockWhenFull"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"group\": \"common\", \"required\": \"true\", \"type\": \"string\""));
-        assertTrue(json.contains("\"timeout\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"concurrentConsumers\": { \"kind\": \"parameter\", \"group\": \"consumer\", \"label\": \"consumer\""));
+        assertTrue(json.contains("\"timeout\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\""));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("direct-vm");
+        String html = context.getComponentDocumentation("seda");
         assertNotNull("Should have found some auto-generated HTML", html);
     }
 

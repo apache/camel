@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl;
+package org.apache.camel.itest.doc;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class StringDataFormatConfigurationAndDocumentationTest extends ContextTestSupport {
+public class SimpleLanguageConfigurationAndDocumentationTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -28,15 +29,16 @@ public class StringDataFormatConfigurationAndDocumentationTest extends ContextTe
     }
 
     @Test
-    public void testDataFormatJsonSchema() throws Exception {
+    public void testLanguageJsonSchema() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String json = context.getDataFormatParameterJsonSchema("string");
+        String json = context.getLanguageParameterJsonSchema("simple");
         assertNotNull("Should have found some auto-generated JSON", json);
         log.info(json);
 
-        assertTrue(json.contains("\"name\": \"string\""));
-        assertTrue(json.contains("\"modelName\": \"string\""));
-        assertTrue(json.contains("\"charset\": { \"kind\": \"attribute\", \"required\": \"false\", \"type\": \"string\", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\""));
+        assertTrue(json.contains("\"name\": \"simple\""));
+        assertTrue(json.contains("\"modelName\": \"simple\""));
+        assertTrue(json.contains("\"resultType\": { \"kind\": \"attribute\", \"required\": \"false\", \"type\": \"string\", \"javaType\": \"java.lang.String\", \"deprecated\": \"false\""));
     }
 
 }
+

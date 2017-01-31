@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mock;
+package org.apache.camel.itest.doc;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointConfiguration;
+import org.apache.camel.component.controlbus.ControlBusComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class MockComponentConfigurationAndDocumentationTest extends ContextTestSupport {
+public class ControlBusComponentConfigurationAndDocumentationTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,33 +33,24 @@ public class MockComponentConfigurationAndDocumentationTest extends ContextTestS
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        MockComponent comp = context.getComponent("mock", MockComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("mock:foo?retainFirst=10");
+        ControlBusComponent comp = context.getComponent("controlbus", ControlBusComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("controlbus:route?routeId=bar&action=stop");
 
-        assertEquals("10", conf.getParameter("retainFirst"));
+        assertEquals("bar", conf.getParameter("routeId"));
+        assertEquals("stop", conf.getParameter("action"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
-        assertTrue(json.contains("\"expectedCount\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\""));
-        assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\""));
-    }
-
-    @Test
-    public void testEndpointExplain() throws Exception {
-        String json = context.explainEndpointJson("mock:foo?retainFirst=10", true);
-        assertNotNull(json);
-
-        assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\", \"type\": \"integer\","
-                + " \"javaType\": \"int\", \"deprecated\": \"false\", \"secret\": \"false\", \"value\": \"10\""));
+        assertTrue(json.contains("\"action\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"string\""));
+        assertTrue(json.contains("\"async\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"boolean\""));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("mock");
+        String html = context.getComponentDocumentation("controlbus");
         assertNotNull("Should have found some auto-generated HTML", html);
     }
 

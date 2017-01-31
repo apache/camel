@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.seda;
+package org.apache.camel.itest.doc;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointConfiguration;
+import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class SedaComponentConfigurationAndDocumentationTest extends ContextTestSupport {
+public class FileComponentConfigurationAndDocumentationTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,23 +33,24 @@ public class SedaComponentConfigurationAndDocumentationTest extends ContextTestS
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        SedaComponent comp = context.getComponent("seda", SedaComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("seda:foo?blockWhenFull=true");
+        FileComponent comp = context.getComponent("file", FileComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("file:target/foo?delete=true");
 
-        assertEquals("true", conf.getParameter("blockWhenFull"));
+        assertEquals("true", conf.getParameter("delete"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"concurrentConsumers\": { \"kind\": \"parameter\", \"group\": \"consumer\", \"label\": \"consumer\""));
-        assertTrue(json.contains("\"timeout\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\""));
+        assertTrue(json.contains("\"directoryName\": { \"kind\": \"path\", \"group\": \"common\", \"required\": \"true\""));
+        assertTrue(json.contains("\"autoCreate\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"readLockMinAge\": { \"kind\": \"parameter\", \"group\": \"lock\", \"label\": \"consumer,lock\""));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("seda");
+        String html = context.getComponentDocumentation("file");
         assertNotNull("Should have found some auto-generated HTML", html);
     }
 

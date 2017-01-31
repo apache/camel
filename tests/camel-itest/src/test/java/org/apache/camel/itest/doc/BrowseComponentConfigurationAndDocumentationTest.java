@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.bean;
+package org.apache.camel.itest.doc;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointConfiguration;
+import org.apache.camel.component.browse.BrowseComponent;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class BeanComponentConfigurationAndDocumentationTest extends ContextTestSupport {
+public class BrowseComponentConfigurationAndDocumentationTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,23 +33,23 @@ public class BeanComponentConfigurationAndDocumentationTest extends ContextTestS
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        BeanComponent comp = context.getComponent("bean", BeanComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("bean:foo?method=bar");
+        BrowseComponent comp = context.getComponent("browse", BrowseComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("browse:seda:foo?synchronous=true");
 
-        assertEquals("bar", conf.getParameter("method"));
+        assertEquals("true", conf.getParameter("synchronous"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"method\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"string\""));
-        assertTrue(json.contains("\"cache\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"group\": \"common\", \"required\": \"true\", \"type\": \"string\""));
+        assertTrue(json.contains("\"synchronous\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\", \"type\": \"boolean\""));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("bean");
+        String html = context.getComponentDocumentation("browse");
         assertNotNull("Should have found some auto-generated HTML", html);
     }
 
