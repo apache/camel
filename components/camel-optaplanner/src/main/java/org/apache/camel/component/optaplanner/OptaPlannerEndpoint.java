@@ -32,7 +32,7 @@ import org.optaplanner.core.api.solver.SolverFactory;
 /**
  * Solves the planning problem contained in a message with OptaPlanner.
  */
-@UriEndpoint(scheme = "optaplanner", title = "OptaPlanner", syntax = "optaplanner:configFile", label = "engine,planning")
+@UriEndpoint(firstVersion = "2.13.0", scheme = "optaplanner", title = "OptaPlanner", syntax = "optaplanner:configFile", label = "engine,planning")
 public class OptaPlannerEndpoint extends DefaultEndpoint {
     private static final Map<String, Solver> SOLVERS = new HashMap<String, Solver>();
 

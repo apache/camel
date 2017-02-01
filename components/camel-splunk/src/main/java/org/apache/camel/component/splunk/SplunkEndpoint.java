@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The splunk component allows to publish or search for events in Splunk.
  */
-@UriEndpoint(scheme = "splunk", title = "Splunk", syntax = "splunk:name", consumerClass = SplunkConsumer.class, label = "monitoring")
+@UriEndpoint(firstVersion = "2.13.0", scheme = "splunk", title = "Splunk", syntax = "splunk:name", consumerClass = SplunkConsumer.class, label = "monitoring")
 public class SplunkEndpoint extends ScheduledPollEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(SplunkEndpoint.class);
 
