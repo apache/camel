@@ -47,7 +47,7 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * You can append query options to the URI in the following format, ?options=value&option2=value&...
  */
-@UriEndpoint(scheme = "jmx", title = "JMX", syntax = "jmx:serverURL", consumerOnly = true, consumerClass = JMXConsumer.class, label = "monitoring")
+@UriEndpoint(firstVersion = "2.6.0", scheme = "jmx", title = "JMX", syntax = "jmx:serverURL", consumerOnly = true, consumerClass = JMXConsumer.class, label = "monitoring")
 public class JMXEndpoint extends DefaultEndpoint {
 
     // error messages as constants so they can be asserted on from unit tests

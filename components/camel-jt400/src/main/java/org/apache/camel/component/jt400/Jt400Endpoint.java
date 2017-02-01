@@ -35,7 +35,7 @@ import org.apache.camel.util.URISupport;
 /**
  * The jt400 component allows you to exchanges messages with an AS/400 system using data queues or program call.
  */
-@UriEndpoint(scheme = "jt400", title = "JT400", syntax = "jt400:userID:password/systemName/objectPath.type", consumerClass = Jt400DataQueueConsumer.class, label = "messaging")
+@UriEndpoint(firstVersion = "1.5.0", scheme = "jt400", title = "JT400", syntax = "jt400:userID:password/systemName/objectPath.type", consumerClass = Jt400DataQueueConsumer.class, label = "messaging")
 public class Jt400Endpoint extends ScheduledPollEndpoint {
 
     public static final String KEY = "KEY";

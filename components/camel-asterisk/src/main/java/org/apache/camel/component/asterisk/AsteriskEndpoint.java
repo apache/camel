@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The asterisk component is used to interact with Asterisk PBX Server <a href="http://www.asterisk.org">Asterisk PBX Server</a>.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "asterisk", title = "Asterisk", syntax = "asterisk:name", consumerClass = AsteriskConsumer.class, label = "voip")
+@UriEndpoint(firstVersion = "2.18.0", scheme = "asterisk", title = "Asterisk", syntax = "asterisk:name", consumerClass = AsteriskConsumer.class, label = "voip")
 public class AsteriskEndpoint extends DefaultEndpoint {
     @SuppressWarnings("unused")
     private static final Logger LOG = LoggerFactory.getLogger(AsteriskProducer.class);
