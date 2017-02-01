@@ -25,26 +25,26 @@ import org.junit.Test;
 public class ElasticsearchClusterIndexTest extends ElasticsearchClusterBaseTest {
 
     @Test
-    public void indexWithIp()  throws Exception {
+    public void indexWithIpAndPort()  throws Exception {
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.INDEX);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
         headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "1");
 
-        String indexId = template.requestBodyAndHeaders("direct:indexWithIp", map, headers, String.class);
+        String indexId = template.requestBodyAndHeaders("direct:indexWithIpAndPort", map, headers, String.class);
         assertNotNull("indexId should be set", indexId);
         
         headers.clear();
         
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.INDEX);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
         headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "status");
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "2");
 
 
-        indexId = template.requestBodyAndHeaders("direct:indexWithIp", map, headers, String.class);
+        indexId = template.requestBodyAndHeaders("direct:indexWithIpAndPort", map, headers, String.class);
         assertNotNull("indexId should be set", indexId);
         
         assertEquals("Cluster must be of three nodes", runner.getNodeSize(), 3);
@@ -53,26 +53,10 @@ public class ElasticsearchClusterIndexTest extends ElasticsearchClusterBaseTest 
     }
 
     @Test
-    public void indexWithIpAndPort()  throws Exception {
-        Map<String, String> map = createIndexedData();
-        Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
-        headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "instagram");
-        headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "photo");
-        headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "3");
-
-        String indexId = template.requestBodyAndHeaders("direct:indexWithIpAndPort", map, headers, String.class);
-        assertNotNull("indexId should be set", indexId);
-        
-        assertEquals("Cluster must be of three nodes", runner.getNodeSize(), 3);
-        assertEquals("Index id 3 must exists", true, client.prepareGet("instagram", "photo", "3").get().isExists());
-    }
-
-    @Test
     public void indexWithTransportAddresses()  throws Exception {
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.INDEX);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "facebook");
         headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "post");
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "4");
@@ -88,7 +72,7 @@ public class ElasticsearchClusterIndexTest extends ElasticsearchClusterBaseTest 
     public void indexWithIpAndTransportAddresses()  throws Exception {
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.INDEX);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "ebay");
         headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "search");
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "5");
@@ -106,11 +90,10 @@ public class ElasticsearchClusterIndexTest extends ElasticsearchClusterBaseTest 
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:indexWithIp").to("elasticsearch5://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&port=9301");
-                from("direct:indexWithIpAndPort").to("elasticsearch5://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost&port=9301");
-                from("direct:indexWithTransportAddresses").to("elasticsearch5://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&transportAddresses=localhost:9301");
+                from("direct:indexWithIpAndPort").to("elasticsearch5://" + clusterName + "?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost&port=9301");
+                from("direct:indexWithTransportAddresses").to("elasticsearch5://" + clusterName + "?operation=INDEX&indexName=twitter&indexType=tweet&transportAddresses=localhost:9301");
                 from("direct:indexWithIpAndTransportAddresses").
-                    to("elasticsearch5://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost&port=9301&transportAddresses=localhost:4444,localhost:5555");
+                    to("elasticsearch5://" + clusterName + "?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost&port=9301&transportAddresses=localhost:4444,localhost:5555");
             }
         };
     }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.elasticsearch5;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,23 +34,30 @@ import org.elasticsearch.action.search.MultiSearchRequest;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.common.transport.TransportAddress;
 import org.elasticsearch.index.IndexNotFoundException;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Represents an Elasticsearch producer.
  */
 public class ElasticsearchProducer extends DefaultProducer {
-
-    public ElasticsearchProducer(ElasticsearchEndpoint endpoint) {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchProducer.class);
+    
+    protected final ElasticsearchConfiguration configuration;
+    private TransportClient client;
+    
+    public ElasticsearchProducer(ElasticsearchEndpoint endpoint, ElasticsearchConfiguration configuration) {
         super(endpoint);
+        this.configuration = configuration;
     }
 
-    @Override
-    public ElasticsearchEndpoint getEndpoint() {
-        return (ElasticsearchEndpoint) super.getEndpoint();
-    }
-
-    private String resolveOperation(Exchange exchange) {
+    private ElasticsearchOperation resolveOperation(Exchange exchange) {
         // 1. Operation can be driven by either (in order of preference):
         // a. If the body is an ActionRequest the operation is set by the type
         // of request.
@@ -61,35 +69,33 @@ public class ElasticsearchProducer extends DefaultProducer {
         // an error.
         Object request = exchange.getIn().getBody();
         if (request instanceof IndexRequest) {
-            return ElasticsearchConstants.OPERATION_INDEX;
+            return ElasticsearchOperation.INDEX;
         } else if (request instanceof GetRequest) {
-            return ElasticsearchConstants.OPERATION_GET_BY_ID;
+            return ElasticsearchOperation.GET_BY_ID;
         } else if (request instanceof MultiGetRequest) {
-            return ElasticsearchConstants.OPERATION_MULTIGET;
+            return ElasticsearchOperation.MULTIGET;
         } else if (request instanceof UpdateRequest) {
-            return ElasticsearchConstants.OPERATION_UPDATE;
+            return ElasticsearchOperation.UPDATE;
         } else if (request instanceof BulkRequest) {
             // do we want bulk or bulk_index?
-            if (ElasticsearchConstants.OPERATION_BULK_INDEX.equals(getEndpoint().getConfig().getOperation())) {
-                return ElasticsearchConstants.OPERATION_BULK_INDEX;
+            if (configuration.getOperation() == ElasticsearchOperation.BULK_INDEX) {
+                return configuration.getOperation().BULK_INDEX;
             } else {
-                return ElasticsearchConstants.OPERATION_BULK;
+                return configuration.getOperation().BULK;
             }
         } else if (request instanceof DeleteRequest) {
-            return ElasticsearchConstants.OPERATION_DELETE;
+            return ElasticsearchOperation.DELETE;
         } else if (request instanceof SearchRequest) {
-            return ElasticsearchConstants.OPERATION_EXISTS;
-        } else if (request instanceof SearchRequest) {
-            return ElasticsearchConstants.OPERATION_SEARCH;
+            return ElasticsearchOperation.SEARCH;
         } else if (request instanceof MultiSearchRequest) {
-            return ElasticsearchConstants.OPERATION_MULTISEARCH;
+            return ElasticsearchOperation.MULTISEARCH;
         } else if (request instanceof DeleteIndexRequest) {
-            return ElasticsearchConstants.OPERATION_DELETE_INDEX;
+            return ElasticsearchOperation.DELETE_INDEX;
         }
 
-        String operationConfig = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_OPERATION, String.class);
+        ElasticsearchOperation operationConfig = exchange.getIn().getHeader(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.class);
         if (operationConfig == null) {
-            operationConfig = getEndpoint().getConfig().getOperation();
+            operationConfig = configuration.getOperation();
         }
         if (operationConfig == null) {
             throw new IllegalArgumentException(ElasticsearchConstants.PARAM_OPERATION + " value '" + operationConfig + "' is not supported");
@@ -109,58 +115,57 @@ public class ElasticsearchProducer extends DefaultProducer {
         // will throw.
 
         Message message = exchange.getIn();
-        final String operation = resolveOperation(exchange);
+        final ElasticsearchOperation operation = resolveOperation(exchange);
 
         // Set the index/type headers on the exchange if necessary. This is used
         // for type conversion.
         boolean configIndexName = false;
         String indexName = message.getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class);
         if (indexName == null) {
-            message.setHeader(ElasticsearchConstants.PARAM_INDEX_NAME, getEndpoint().getConfig().getIndexName());
+            message.setHeader(ElasticsearchConstants.PARAM_INDEX_NAME, configuration.getIndexName());
             configIndexName = true;
         }
 
         boolean configIndexType = false;
         String indexType = message.getHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, String.class);
         if (indexType == null) {
-            message.setHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, getEndpoint().getConfig().getIndexType());
+            message.setHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, configuration.getIndexType());
             configIndexType = true;
         }
 
         boolean configWaitForActiveShards = false;
         Integer waitForActiveShards = message.getHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class);
         if (waitForActiveShards == null) {
-            message.setHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, getEndpoint().getConfig().getWaitForActiveShards());
+            message.setHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, configuration.getWaitForActiveShards());
             configWaitForActiveShards = true;
         }
 
-        TransportClient client = getEndpoint().getClient();
-        if (ElasticsearchConstants.OPERATION_INDEX.equals(operation)) {
+        if (operation == ElasticsearchOperation.INDEX) {
             IndexRequest indexRequest = message.getBody(IndexRequest.class);
             message.setBody(client.index(indexRequest).actionGet().getId());
-        } else if (ElasticsearchConstants.OPERATION_UPDATE.equals(operation)) {
+        } else if (operation == ElasticsearchOperation.UPDATE) {
             UpdateRequest updateRequest = message.getBody(UpdateRequest.class);
             message.setBody(client.update(updateRequest).actionGet().getId());
-        } else if (ElasticsearchConstants.OPERATION_GET_BY_ID.equals(operation)) {
+        } else if (operation == ElasticsearchOperation.GET_BY_ID) {
             GetRequest getRequest = message.getBody(GetRequest.class);
             message.setBody(client.get(getRequest));
-        } else if (ElasticsearchConstants.OPERATION_MULTIGET.equals(operation)) {
+        } else if (operation == ElasticsearchOperation.MULTIGET) {
             MultiGetRequest multiGetRequest = message.getBody(MultiGetRequest.class);
             message.setBody(client.multiGet(multiGetRequest));
-        } else if (ElasticsearchConstants.OPERATION_BULK.equals(operation)) {
+        } else if (operation == ElasticsearchOperation.BULK) {
             BulkRequest bulkRequest = message.getBody(BulkRequest.class);
             message.setBody(client.bulk(bulkRequest).actionGet());
-        } else if (ElasticsearchConstants.OPERATION_BULK_INDEX.equals(operation)) {
+        } else if (operation == ElasticsearchOperation.BULK_INDEX) {
             BulkRequest bulkRequest = message.getBody(BulkRequest.class);
             List<String> indexedIds = new ArrayList<String>();
             for (BulkItemResponse response : client.bulk(bulkRequest).actionGet().getItems()) {
                 indexedIds.add(response.getId());
             }
             message.setBody(indexedIds);
-        } else if (ElasticsearchConstants.OPERATION_DELETE.equals(operation)) {
+        } else if (operation == ElasticsearchOperation.DELETE) {
             DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
             message.setBody(client.delete(deleteRequest).actionGet());
-        } else if (ElasticsearchConstants.OPERATION_EXISTS.equals(operation)) {
+        } else if (operation == ElasticsearchOperation.EXISTS) {
             // ExistsRequest API is deprecated, using SearchRequest instead with size=0 and terminate_after=1
             SearchRequest searchRequest = new SearchRequest(exchange.getIn().getHeader(ElasticsearchConstants.PARAM_INDEX_NAME, String.class));
             try {
@@ -169,13 +174,13 @@ public class ElasticsearchProducer extends DefaultProducer {
             } catch (IndexNotFoundException e) {
                 message.setBody(false);
             }
-        } else if (ElasticsearchConstants.OPERATION_SEARCH.equals(operation)) {
+        } else if (operation == ElasticsearchOperation.SEARCH) {
             SearchRequest searchRequest = message.getBody(SearchRequest.class);
             message.setBody(client.search(searchRequest).actionGet());            
-        } else if (ElasticsearchConstants.OPERATION_MULTISEARCH.equals(operation)) {
+        } else if (operation == ElasticsearchOperation.MULTISEARCH) {
             MultiSearchRequest multiSearchRequest = message.getBody(MultiSearchRequest.class);
             message.setBody(client.multiSearch(multiSearchRequest));
-        } else if (ElasticsearchConstants.OPERATION_DELETE_INDEX.equals(operation)) {
+        } else if (operation == ElasticsearchOperation.DELETE_INDEX) {
             DeleteIndexRequest deleteIndexRequest = message.getBody(DeleteIndexRequest.class);
             message.setBody(client.admin().indices().delete(deleteIndexRequest).actionGet());
         } else {
@@ -202,5 +207,47 @@ public class ElasticsearchProducer extends DefaultProducer {
             message.removeHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS);
         }
 
+    }
+    
+    @Override
+    @SuppressWarnings("unchecked")
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (client == null) {
+            LOG.info("Connecting to the ElasticSearch cluster: " + configuration.getClusterName());
+            
+            if (configuration.getIp() != null) {
+                client = new PreBuiltTransportClient(getSettings())
+                    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(configuration.getIp()), configuration.getPort()));
+            } else if (configuration.getTransportAddressesList() != null
+                    && !configuration.getTransportAddressesList().isEmpty()) {
+                List<TransportAddress> addresses = new ArrayList<TransportAddress>(configuration.getTransportAddressesList().size());
+                for (TransportAddress address : configuration.getTransportAddressesList()) {
+                    addresses.add(address);
+                }
+                client = new PreBuiltTransportClient(getSettings()).addTransportAddresses(addresses.toArray(new TransportAddress[addresses.size()]));
+            } else {
+                LOG.info("Incorrect ip address and port parameters settings for ElasticSearch cluster");
+            }
+        }
+    }
+
+    private Settings getSettings() {
+        return Settings.builder()
+                .put("cluster.name", configuration.getClusterName())
+                .put("client.transport.ignore_cluster_name", false)
+                .put("client.transport.sniff", configuration.getClientTransportSniff())
+                .build();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (client != null) {
+            LOG.info("Disconnecting from ElasticSearch cluster: " + configuration.getClusterName());
+            client.close();
+            client = null;
+        }
+        super.doStop();
     }
 }
