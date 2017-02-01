@@ -24,7 +24,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
-@UriEndpoint(scheme = "tika", title = "Tika", syntax = "tika:operation", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "tika", title = "Tika", syntax = "tika:operation", producerOnly = true, label = "transformation")
 public class TikaEndpoint extends DefaultEndpoint {
 
     @UriParam
