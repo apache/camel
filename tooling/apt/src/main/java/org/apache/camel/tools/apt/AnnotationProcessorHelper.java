@@ -336,7 +336,7 @@ public final class AnnotationProcessorHelper {
                 try {
                     file = new File(uri.getPath());
                 } catch (Exception e) {
-                    warning(processingEnv, "Could not convert output directory resource URI to a file " + e);
+                    warning(processingEnv, "Cannot convert output directory resource URI to a file " + e);
                 }
             }
             if (file == null) {
@@ -381,10 +381,11 @@ public final class AnnotationProcessorHelper {
         Filer filer = processingEnv.getFiler();
 
         FileObject resource;
+        String relativeName = packageName + "/" + fileName;
         try {
-            resource = filer.getResource(StandardLocation.CLASS_OUTPUT, "", packageName + "/" + fileName);
+            resource = filer.getResource(StandardLocation.CLASS_OUTPUT, "", relativeName);
         } catch (Throwable e) {
-            return "Crap" + e.getMessage();
+            return "Cannot load classpath resource: " + relativeName + " due: " + e.getMessage();
         }
 
         if (resource == null) {
