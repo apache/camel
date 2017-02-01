@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * The hazelcast component allows you to work with the Hazelcast distributed data grid / cache.
  */
-@UriEndpoint(scheme = "hazelcast", title = "Hazelcast", syntax = "hazelcast:command:cacheName", consumerClass = HazelcastDefaultConsumer.class, label = "cache,datagrid")
+@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast", title = "Hazelcast", syntax = "hazelcast:command:cacheName", consumerClass = HazelcastDefaultConsumer.class, label = "cache,datagrid")
 public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")

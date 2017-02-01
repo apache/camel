@@ -36,7 +36,7 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 /**
  * The google-mail component provides access to Google Mail.
  */
-@UriEndpoint(scheme = "google-mail", title = "Google Mail", syntax = "google-mail:apiName/methodName", consumerClass = GoogleMailConsumer.class, consumerPrefix = "consumer", label = "api,cloud,mail")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "google-mail", title = "Google Mail", syntax = "google-mail:apiName/methodName", consumerClass = GoogleMailConsumer.class, consumerPrefix = "consumer", label = "api,cloud,mail")
 public class GoogleMailEndpoint extends AbstractApiEndpoint<GoogleMailApiName, GoogleMailConfiguration> {
 
     // TODO create and manage API proxy
