@@ -129,14 +129,14 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         //first, INDEX a value
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.INDEX);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
         headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
 
         //now, verify GET
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_GET_BY_ID);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.GET_BY_ID);
         GetResponse response = template.requestBodyAndHeaders("direct:start", indexId, headers, GetResponse.class);
         assertNotNull("response should not be null", response);
         assertNotNull("response source should not be null", response.getSource());
@@ -147,14 +147,14 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         //first, INDEX a value
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.INDEX);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
         headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
 
         //now, verify GET
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_EXISTS);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.EXISTS);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
         Boolean exists = template.requestBodyAndHeaders("direct:exists", "", headers, Boolean.class);
         assertNotNull("response should not be null", exists);
@@ -166,14 +166,14 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         //first, INDEX a value
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.INDEX);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
         headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
 
         //now, verify GET
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_EXISTS);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.EXISTS);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter-tweet");
         Boolean exists = template.requestBodyAndHeaders("direct:exists", "", headers, Boolean.class);
         assertNotNull("response should not be null", exists);
@@ -185,7 +185,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         //first, INDEX two values
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.INDEX);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
         headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "1");
@@ -193,7 +193,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         template.requestBodyAndHeaders("direct:start", map, headers, String.class);
         
         headers.clear();
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.INDEX);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "facebook");
         headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "status");
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "2");
@@ -202,7 +202,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         headers.clear();
 
         //now, verify MULTIGET
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_MULTIGET);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.MULTIGET);
         Item item1 = new Item("twitter", "tweet", "1");
         Item item2 = new Item("facebook", "status", "2");
         Item item3 = new Item("instagram", "latest", "3");
@@ -230,7 +230,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         node.client().prepareIndex("test", "type", "2").setSource("field", "yyy").execute().actionGet();
 
         //now, verify MULTISEARCH
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_MULTISEARCH);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.MULTISEARCH);
         SearchRequestBuilder srb1 = node.client().prepareSearch("test").setTypes("type").setQuery(QueryBuilders.termQuery("field", "xxx"));
         SearchRequestBuilder srb2 = node.client().prepareSearch("test").setTypes("type").setQuery(QueryBuilders.termQuery("field", "yyy"));
         SearchRequestBuilder srb3 = node.client().prepareSearch("instagram")
@@ -253,25 +253,25 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         //first, INDEX a value
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.INDEX);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
         headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
 
         String indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
 
         //now, verify GET
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_GET_BY_ID);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.GET_BY_ID);
         GetResponse response = template.requestBodyAndHeaders("direct:start", indexId, headers, GetResponse.class);
         assertNotNull("response should not be null", response);
         assertNotNull("response source should not be null", response.getSource());
 
         //now, perform DELETE
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_DELETE);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.DELETE);
         DeleteResponse deleteResponse = template.requestBodyAndHeaders("direct:start", indexId, headers, DeleteResponse.class);
         assertNotNull("response should not be null", deleteResponse);
 
         //now, verify GET fails to find the indexed value
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_GET_BY_ID);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.GET_BY_ID);
         response = template.requestBodyAndHeaders("direct:start", indexId, headers, GetResponse.class);
         assertNotNull("response should not be null", response);
         assertNull("response source should be null", response.getSource());
@@ -281,7 +281,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
     public void testUpdateWithIDInHeader() throws Exception {
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.INDEX);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
         headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "123");
@@ -290,7 +290,7 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         assertNotNull("indexId should be set", indexId);
         assertEquals("indexId should be equals to the provided id", "123", indexId);
 
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_UPDATE);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.UPDATE);
 
         indexId = template.requestBodyAndHeaders("direct:start", map, headers, String.class);
         assertNotNull("indexId should be set", indexId);
@@ -340,15 +340,15 @@ public class ElasticsearchGetSearchDeleteExistsUpdateTest extends ElasticsearchB
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("elasticsearch5://elasticsearch?operation=INDEX");
-                from("direct:index").to("elasticsearch5://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet");
-                from("direct:get").to("elasticsearch5://elasticsearch?operation=GET_BY_ID&indexName=twitter&indexType=tweet");
-                from("direct:multiget").to("elasticsearch5://elasticsearch?operation=MULTIGET&indexName=twitter&indexType=tweet");
-                from("direct:delete").to("elasticsearch5://elasticsearch?operation=DELETE&indexName=twitter&indexType=tweet");
-                from("direct:search").to("elasticsearch5://elasticsearch?operation=SEARCH&indexName=twitter&indexType=tweet");
-                from("direct:update").to("elasticsearch5://elasticsearch?operation=UPDATE&indexName=twitter&indexType=tweet");
-                from("direct:exists").to("elasticsearch5://elasticsearch?operation=EXISTS");
-                from("direct:multisearch").to("elasticsearch5://elasticsearch?operation=MULTISEARCH&indexName=test");
+                from("direct:start").to("elasticsearch5://elasticsearch?operation=INDEX&ip=localhost&port=9300");
+                from("direct:index").to("elasticsearch5://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
+                from("direct:get").to("elasticsearch5://elasticsearch?operation=GET_BY_ID&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
+                from("direct:multiget").to("elasticsearch5://elasticsearch?operation=MULTIGET&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
+                from("direct:delete").to("elasticsearch5://elasticsearch?operation=DELETE&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
+                from("direct:search").to("elasticsearch5://elasticsearch?operation=SEARCH&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
+                from("direct:update").to("elasticsearch5://elasticsearch?operation=UPDATE&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
+                from("direct:exists").to("elasticsearch5://elasticsearch?operation=EXISTS&ip=localhost&port=9300");
+                from("direct:multisearch").to("elasticsearch5://elasticsearch?operation=MULTISEARCH&indexName=test&ip=localhost&port=9300");
             }
         };
     }

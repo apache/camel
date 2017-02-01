@@ -94,17 +94,6 @@ public class ElasticsearchClusterBaseTest extends CamelTestSupport {
         return true;
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-
-        // reuse existing client
-        ElasticsearchComponent es = context.getComponent("elasticsearch5", ElasticsearchComponent.class);
-        es.setClient(client);
-
-        return context;
-    }
-
     /**
      * As we don't delete the {@code target/data} folder for <b>each</b> test
      * below (otherwise they would run much slower), we need to make sure
