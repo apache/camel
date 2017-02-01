@@ -96,11 +96,11 @@ public class HttpMethodsTest extends BaseHttpTest {
 
         Message out = exchange.getOut();
         Map<String, Object> headers = out.getHeaders();
-        assertEquals(HttpStatus.SC_NOT_IMPLEMENTED, headers.get(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("Not Implemented", headers.get(Exchange.HTTP_RESPONSE_TEXT));
-        assertEquals("26", headers.get("Content-Length"));
+        assertEquals(HttpStatus.SC_OK, headers.get(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("OK", headers.get(Exchange.HTTP_RESPONSE_TEXT));
+        assertEquals("12", headers.get("Content-Length"));
         assertNotNull("Should have Content-Type header", headers.get("Content-Type"));
-        assertEquals("PATCH method not supported", out.getBody(String.class));
+        assertEquals("camel rocks!", out.getBody(String.class));
     }
 
     @Test
