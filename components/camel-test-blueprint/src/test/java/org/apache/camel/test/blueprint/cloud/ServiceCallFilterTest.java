@@ -28,11 +28,17 @@ public class ServiceCallFilterTest extends CamelBlueprintTestSupport {
     public void testServiceFilter() throws Exception {
         Exchange result;
 
-        result = template.request("direct:start", e -> { return; } );
+        result = template.request("direct:start", e -> { 
+            return; 
+        });
+
         assertHeader(result, ServiceCallConstants.SERVICE_HOST, "host1");
         assertHeader(result, ServiceCallConstants.SERVICE_PORT, 9093);
 
-        result = template.request("direct:start", e -> { return; } );
+        result = template.request("direct:start", e -> { 
+            return;
+        });
+
         assertHeader(result, ServiceCallConstants.SERVICE_HOST, "host4");
         assertHeader(result, ServiceCallConstants.SERVICE_PORT, 9094);
     }
