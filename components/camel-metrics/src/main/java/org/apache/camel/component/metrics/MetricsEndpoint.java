@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * To collect various metrics directly from Camel routes using the DropWizard metrics library.
  */
-@UriEndpoint(scheme = "metrics", title = "Metrics", syntax = "metrics:metricsType:metricsName", producerOnly = true, label = "monitoring")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "metrics", title = "Metrics", syntax = "metrics:metricsType:metricsName", producerOnly = true, label = "monitoring")
 public class MetricsEndpoint extends DefaultEndpoint {
 
     protected final MetricRegistry registry;

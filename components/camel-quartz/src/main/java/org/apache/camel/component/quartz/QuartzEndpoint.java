@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Provides a scheduled delivery of messages using the Quartz 1.x scheduler.
  */
-@UriEndpoint(scheme = "quartz", title = "Quartz", syntax = "quartz:groupName/timerName", consumerOnly = true, consumerClass = QuartzConsumer.class, label = "scheduling")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "quartz", title = "Quartz", syntax = "quartz:groupName/timerName", consumerOnly = true, consumerClass = QuartzConsumer.class, label = "scheduling")
 public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableService {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
 

@@ -30,7 +30,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * SOAP data format
  */
-@Metadata(label = "dataformat,transformation,xml", title = "SOAP")
+@Metadata(firstVersion = "2.3.0", label = "dataformat,transformation,xml", title = "SOAP")
 @XmlRootElement(name = "soapjaxb")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SoapJaxbDataFormat extends DataFormatDefinition {

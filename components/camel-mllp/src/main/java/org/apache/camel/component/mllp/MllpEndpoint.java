@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * property to false.
  * <p/>
  */
-@UriEndpoint(scheme = "mllp", title = "MLLP", syntax = "mllp:hostname:port", consumerClass = MllpTcpServerConsumer.class, label = "mllp")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "mllp", title = "MLLP", syntax = "mllp:hostname:port", consumerClass = MllpTcpServerConsumer.class, label = "mllp")
 public class MllpEndpoint extends DefaultEndpoint {
     public static final char START_OF_BLOCK = 0x0b;      // VT (vertical tab)        - decimal 11, octal 013
     public static final char END_OF_BLOCK = 0x1c;        // FS (file separator)      - decimal 28, octal 034
