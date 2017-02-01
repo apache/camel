@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * Working with Apache Avro for data serialization.
  */
-@UriEndpoint(scheme = "avro", title = "Avro", syntax = "avro:transport:host:port/messageName", consumerClass = AvroConsumer.class, label = "messaging,transformation")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "avro", title = "Avro", syntax = "avro:transport:host:port/messageName", consumerClass = AvroConsumer.class, label = "messaging,transformation")
 public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     @UriParam

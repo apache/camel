@@ -30,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The camel consul component allows you to work with <a href="https://www.consul.io/">Consul</a>, a distributed, highly available, datacenter-aware, service discovery and configuration system.
  */
-@UriEndpoint(scheme = "consul", title = "Consul", syntax = "consul:apiEndpoint", label = "api,cloud")
+@UriEndpoint(firstVersion = "2.18.0", scheme = "consul", title = "Consul", syntax = "consul:apiEndpoint", label = "api,cloud")
 public class ConsulEndpoint extends DefaultEndpoint {
 
     @UriParam(description = "The consul configuration")

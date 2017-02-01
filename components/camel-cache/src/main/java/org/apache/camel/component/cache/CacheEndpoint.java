@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * The Cache consumer is an event based consumer and can be used to listen and respond to specific cache activities.
  * If you need to perform selections from a pre-existing cache, use the processors defined for the cache component.
  */
-@UriEndpoint(scheme = "cache", title = "EHCache", syntax = "cache:cacheName", consumerClass = CacheConsumer.class, label = "cache")
+@UriEndpoint(firstVersion = "2.1.0", scheme = "cache", title = "EHCache", syntax = "cache:cacheName", consumerClass = CacheConsumer.class, label = "cache")
 public class CacheEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(CacheEndpoint.class);
     @UriParam

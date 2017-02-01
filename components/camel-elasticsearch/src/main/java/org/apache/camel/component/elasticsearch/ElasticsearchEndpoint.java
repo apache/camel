@@ -41,7 +41,7 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 /**
  * The elasticsearch component is used for interfacing with ElasticSearch server.
  */
-@UriEndpoint(scheme = "elasticsearch", title = "Elasticsearch", syntax = "elasticsearch:clusterName", producerOnly = true, label = "monitoring,search")
+@UriEndpoint(firstVersion = "2.11.0", scheme = "elasticsearch", title = "Elasticsearch", syntax = "elasticsearch:clusterName", producerOnly = true, label = "monitoring,search")
 public class ElasticsearchEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchEndpoint.class);

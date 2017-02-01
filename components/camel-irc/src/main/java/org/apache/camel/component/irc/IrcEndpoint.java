@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The irc component implements an <a href="https://en.wikipedia.org/wiki/Internet_Relay_Chat">IRC</a> (Internet Relay Chat) transport.
  */
-@UriEndpoint(scheme = "irc", title = "IRC", syntax = "irc:hostname:port", alternativeSyntax = "irc:username:password@hostname:port", consumerClass = IrcConsumer.class, label = "chat")
+@UriEndpoint(firstVersion = "1.1.0", scheme = "irc", title = "IRC", syntax = "irc:hostname:port", alternativeSyntax = "irc:username:password@hostname:port", consumerClass = IrcConsumer.class, label = "chat")
 public class IrcEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(IrcEndpoint.class);
 

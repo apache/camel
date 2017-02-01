@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * The docker component is used for managing Docker containers.
  */
-@UriEndpoint(scheme = "docker", title = "Docker", syntax = "docker:operation",
+@UriEndpoint(firstVersion = "2.15.0", scheme = "docker", title = "Docker", syntax = "docker:operation",
         label = "container,cloud,paas", lenientProperties = true)
 public class DockerEndpoint extends DefaultEndpoint {
 
