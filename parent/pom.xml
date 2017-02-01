@@ -84,8 +84,7 @@
     <bouncycastle-version>1.55</bouncycastle-version>
     <boxjavalibv2.version>3.2.1</boxjavalibv2.version>
     <braintree-gateway-version>2.63.0</braintree-gateway-version>
-    <brave-zipkin-version>4.0.3</brave-zipkin-version>
-    <brave-zipkin-bundle-version>3.7.0_1</brave-zipkin-bundle-version>
+    <brave-zipkin-version>4.0.5</brave-zipkin-version>
     <build-helper-maven-plugin-version>1.10</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.2</c3p0-version>
     <caffeine-version>2.3.5</caffeine-version>
@@ -103,14 +102,14 @@
     <cdi-api-2.0-version>2.0.Beta1</cdi-api-2.0-version>
     <cglib-bundle-version>3.2.4_1</cglib-bundle-version>
     <cglib-version>3.2.4</cglib-version>
-    <chronicle-bytes-version>1.7.29</chronicle-bytes-version>
-    <chronicle-core-version>1.7.12</chronicle-core-version>
+    <chronicle-bytes-version>1.7.31</chronicle-bytes-version>
+    <chronicle-core-version>1.7.13</chronicle-core-version>
     <chronicle-engine-version>1.13.21</chronicle-engine-version>
     <chronicle-map-version>2.4.15</chronicle-map-version>
-    <chronicle-network-version>1.7.9</chronicle-network-version>
-    <chronicle-queue-version>4.5.22</chronicle-queue-version>
-    <chronicle-threads-version>1.7.2</chronicle-threads-version>
-    <chronicle-wire-version>1.7.20</chronicle-wire-version>
+    <chronicle-network-version>1.7.10</chronicle-network-version>
+    <chronicle-queue-version>4.5.24</chronicle-queue-version>
+    <chronicle-threads-version>1.7.5</chronicle-threads-version>
+    <chronicle-wire-version>1.7.23</chronicle-wire-version>
     <chunk-templates-version>3.2.4</chunk-templates-version>
     <chunk-templates-bundle-version>3.2.4_1</chunk-templates-bundle-version>
     <classmate-version>1.3.3</classmate-version>
@@ -558,7 +557,7 @@
     <splunk-version>1.5.0.0_1</splunk-version>
     <spring-batch-version>3.0.7.RELEASE</spring-batch-version>
     <spring-batch-bundle-version>3.0.7.RELEASE_1</spring-batch-bundle-version>
-    <spring-boot-version>1.4.4.RELEASE</spring-boot-version>
+    <spring-boot-version>1.5.1.RELEASE</spring-boot-version>
     <spring-cloud-commons-version>1.1.6.RELEASE</spring-cloud-commons-version>
     <spring-cloud-netflix-version>1.2.4.RELEASE</spring-cloud-netflix-version>
     <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
@@ -634,7 +633,7 @@
     <weld2-version>2.4.1.Final</weld2-version>
     <weld3-version>3.0.0.Beta1</weld3-version>
     <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
-    <wiremock-version>2.5.0</wiremock-version>
+    <wiremock-version>2.5.1</wiremock-version>
     <woodstox-version>4.4.1</woodstox-version>
     <ws-commons-util-bundle-version>1.0.2_2</ws-commons-util-bundle-version>
     <wsdl4j-bundle-version>1.6.2_6</wsdl4j-bundle-version>
@@ -667,7 +666,7 @@
     <xstream-version>1.4.9</xstream-version>
     <xom-version>1.2.5</xom-version>
     <yammer-metrics-version>2.2.0</yammer-metrics-version>
-    <zipkin-version>1.19.2</zipkin-version>
+    <zipkin-version>1.19.4</zipkin-version>
     <zipkin-reporter-version>0.6.12</zipkin-reporter-version>
     <zjsonpatch-version>0.3.0</zjsonpatch-version>
     <zookeeper-version>3.4.9</zookeeper-version>

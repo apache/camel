@@ -15,4 +15,5 @@
 ## limitations under the License.
 ## ------------------------------------------------------------------------
 
-spring.main.sources: ${package}.MySpringBootRouter
+# the name of Camel
+camel.springboot.name = MyCamel

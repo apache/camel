@@ -22,6 +22,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.reactive.streams.api.CamelReactiveStreams;
+import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsService;
 import org.apache.camel.impl.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,8 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
 
     private ExecutorService executor;
 
+    private CamelReactiveStreamsService service;
+
     public ReactiveStreamsConsumer(ReactiveStreamsEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
@@ -46,18 +49,20 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
+        this.service = CamelReactiveStreams.get(endpoint.getCamelContext(), endpoint.getServiceName());
+
         int poolSize = endpoint.getConcurrentConsumers();
         if (executor == null) {
             executor = getEndpoint().getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, getEndpoint().getEndpointUri(), poolSize);
         }
 
-        CamelReactiveStreams.get(endpoint.getCamelContext(), endpoint.getServiceName()).attachConsumer(endpoint.getStream(), this);
+        this.service.attachCamelConsumer(endpoint.getStream(), this);
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        CamelReactiveStreams.get(endpoint.getCamelContext(), endpoint.getServiceName()).detachConsumer(endpoint.getStream());
+        this.service.detachCamelConsumer(endpoint.getStream());
 
         if (executor != null) {
             endpoint.getCamelContext().getExecutorServiceManager().shutdownNow(executor);
@@ -66,6 +71,32 @@ public class ReactiveStreamsConsumer extends DefaultConsumer {
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
+        exchange.getIn().setHeader(ReactiveStreamsConstants.REACTIVE_STREAMS_EVENT_TYPE, "onNext");
+        return doSend(exchange, callback);
+    }
+
+    public void onComplete() {
+        if (endpoint.isForwardOnComplete()) {
+            Exchange exchange = endpoint.createExchange();
+            exchange.getIn().setHeader(ReactiveStreamsConstants.REACTIVE_STREAMS_EVENT_TYPE, "onComplete");
+
+            doSend(exchange, done -> {
+            });
+        }
+    }
+
+    public void onError(Throwable error) {
+        if (endpoint.isForwardOnError()) {
+            Exchange exchange = endpoint.createExchange();
+            exchange.getIn().setHeader(ReactiveStreamsConstants.REACTIVE_STREAMS_EVENT_TYPE, "onError");
+            exchange.getIn().setBody(error);
+
+            doSend(exchange, done -> {
+            });
+        }
+    }
+
+    private boolean doSend(Exchange exchange, AsyncCallback callback) {
         ExecutorService executorService = this.executor;
         if (executorService != null && this.isRunAllowed()) {
 

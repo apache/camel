@@ -55,7 +55,7 @@ The Reactive Streams component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Reactive Streams component supports 8 endpoint options which are listed below:
+The Reactive Streams component supports 11 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -65,9 +65,12 @@ The Reactive Streams component supports 8 endpoint options which are listed belo
 | serviceName | common |  | String | Allows using an alternative CamelReactiveStreamService implementation. The implementation is looked up from the registry.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | concurrentConsumers | consumer | 1 | int | Number of threads used to process exchanges in the Camel route.
+| forwardOnComplete | consumer | false | boolean | Determines if onComplete events should be pushed to the Camel route.
+| forwardOnError | consumer | false | boolean | Determines if onError events should be pushed to the Camel route. Exceptions will be set as message body.
 | maxInflightExchanges | consumer | 128 | Integer | Maximum number of exchanges concurrently being processed by Camel. This parameter controls backpressure on the stream. Setting a non-positive value will disable backpressure.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| backpressureStrategy | producer |  | ReactiveStreamsBackpressureStrategy | The backpressure strategy to use when pushing events to a slow subscriber.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 {% endraw %}
@@ -191,6 +194,17 @@ When multiple subscribers are consuming items from the same stream, the slowest 
 In other circumstances, eg. when using a `http` consumer, the route suspension makes the http service unavailable, so
 using the default configuration (no policy, unbounded buffer) should be preferable. Users should try to avoid memory issues
 by limiting the number of requests to the http service (eg. scaling out).
+
+In contexts where a certain amount of data loss is acceptable, setting a backpressure strategy other than `BUFFER` can
+ be a solution for dealing with fast sources.
+
+[source,java]
+---------------------------------------------------------
+from("direct:thermostat")
+.to("reactive-streams:flow?backpressureStrategy=LATEST");
+---------------------------------------------------------
+
+When the `LATEST` backpressure strategy is used, only the last exchange received from the route is kept by the publisher, while older data is discarded (other options are available).
 
 ### Controlling Backpressure (consumer side)
 

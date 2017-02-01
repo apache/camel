@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.reactive.streams;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
+
 /**
  * A list of possible backpressure strategy to use when the emission of upstream items cannot respect backpressure.
  */
@@ -24,17 +29,55 @@ public enum ReactiveStreamsBackpressureStrategy {
     /**
      * Buffers <em>all</em> onNext values until the downstream consumes it.
      */
-    BUFFER,
+    BUFFER {
+        @Override
+        public <T> Collection<T> update(Deque<T> buffer, T element) {
+            buffer.addLast(element);
+            return Collections.emptySet();
+        }
+    },
 
     /**
      * Drops the most recent onNext value if the downstream can't keep up.
      */
-    DROP,
+    DROP {
+        @Override
+        public <T> Collection<T> update(Deque<T> buffer, T element) {
+            if (buffer.size() > 0) {
+                return Arrays.asList(element);
+            } else {
+                buffer.addLast(element);
+                return Collections.emptySet();
+            }
+        }
+    },
 
     /**
      * Keeps only the latest onNext value, overwriting any previous value if the
      * downstream can't keep up.
      */
-    LATEST
+    LATEST {
+        @Override
+        public <T> Collection<T> update(Deque<T> buffer, T element) {
+            Collection<T> discarded = Collections.emptySet();
+            if (buffer.size() > 0) {
+                discarded = Arrays.asList(buffer.removeFirst());
+            }
+
+            buffer.addLast(element);
+            return discarded;
+        }
+    };
+
+
+    /**
+     * Updates the buffer and returns a list of discarded elements (if any).
+     *
+     * @param buffer the buffer to update
+     * @param element the elment that should possibly be inserted
+     * @param <T> the generic type of the element
+     * @return the list of discarded elements
+     */
+    public abstract <T> Collection<T> update(Deque<T> buffer, T element);
 
 }
