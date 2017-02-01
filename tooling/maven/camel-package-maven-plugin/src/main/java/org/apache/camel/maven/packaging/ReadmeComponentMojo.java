@@ -557,6 +557,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
         component.setAlternativeSchemes(JSonSchemaHelper.getSafeValue("alternativeSchemes", rows));
         component.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
         component.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
+        component.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         component.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
         component.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
         component.setConsumerOnly(JSonSchemaHelper.getSafeValue("consumerOnly", rows));
@@ -623,6 +624,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
         dataFormat.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
         dataFormat.setName(JSonSchemaHelper.getSafeValue("name", rows));
         dataFormat.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
+        dataFormat.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         dataFormat.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
         dataFormat.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
         dataFormat.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));

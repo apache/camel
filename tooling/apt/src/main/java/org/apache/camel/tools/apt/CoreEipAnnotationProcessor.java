@@ -168,6 +168,9 @@ public class CoreEipAnnotationProcessor {
             buffer.append("\n    \"title\": \"").append(asTitle(eipModel.getName())).append("\",");
         }
         buffer.append("\n    \"description\": \"").append(safeNull(eipModel.getDescription())).append("\",");
+        if (eipModel.getFirstVersion() != null) {
+            buffer.append("\n    \"firstVersion\": \"").append(safeNull(eipModel.getFirstVersion())).append("\",");
+        }
         buffer.append("\n    \"javaType\": \"").append(eipModel.getJavaType()).append("\",");
         buffer.append("\n    \"label\": \"").append(safeNull(eipModel.getLabel())).append("\",");
         buffer.append("\n    \"deprecated\": \"").append(eipModel.isDeprecated()).append("\",");
@@ -212,6 +215,9 @@ public class CoreEipAnnotationProcessor {
             }
             if (!Strings.isNullOrEmpty(metadata.title())) {
                 model.setTitle(metadata.title());
+            }
+            if (!Strings.isNullOrEmpty(metadata.firstVersion())) {
+                model.setFirstVersion(metadata.firstVersion());
             }
         }
 
@@ -940,6 +946,7 @@ public class CoreEipAnnotationProcessor {
         private boolean deprecated;
         private boolean input;
         private boolean output;
+        private String firstVersion;
 
         public String getName() {
             return name;
@@ -1013,6 +1020,13 @@ public class CoreEipAnnotationProcessor {
             return output ? "true" : "false";
         }
 
+        public String getFirstVersion() {
+            return firstVersion;
+        }
+
+        public void setFirstVersion(String firstVersion) {
+            this.firstVersion = firstVersion;
+        }
     }
 
     private static final class EipOption {

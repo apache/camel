@@ -28,6 +28,7 @@ public class ComponentModel {
     private String alternativeSchemes;
     private String title;
     private String description;
+    private String firstVersion;
     private String label;
     private String deprecated;
     private String consumerOnly;
@@ -93,6 +94,14 @@ public class ComponentModel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getFirstVersion() {
+        return firstVersion;
+    }
+
+    public void setFirstVersion(String firstVersion) {
+        this.firstVersion = firstVersion;
     }
 
     public String getLabel() {
