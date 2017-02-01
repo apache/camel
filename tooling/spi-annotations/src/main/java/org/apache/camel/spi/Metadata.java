@@ -76,4 +76,9 @@ public @interface Metadata {
      */
     boolean secret() default false;
 
+    /**
+     * The first version this functionality was added to Apache Camel.
+     */
+    String firstVersion() default "";
+
 }

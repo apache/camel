@@ -156,6 +156,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         String syntax = componentModel.getSyntax();
         String alternativeSyntax = componentModel.getAlternativeSyntax();
         String description = componentModel.getDescription();
+        String firstVersion = componentModel.getFirstVersion();
 
         writer.println("<html>");
         writer.println("<header>");
@@ -163,6 +164,9 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         writer.println("</header>");
         writer.println("<body>");
         writer.println("<h1>" + title + "</h1>");
+        if (!Strings.isNullOrEmpty(firstVersion)) {
+            writer.println("<b>Available from version:</b> " + firstVersion + "<br/>");
+        }
         writer.println("<b>Scheme:</b> " + scheme + "<br/>");
         writer.println("<b>Syntax:</b> " + syntax + "<br/>");
         if (alternativeSyntax != null) {
@@ -277,6 +281,9 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             buffer.append("\n    \"lenientProperties\": \"").append("true").append("\",");
         }
         buffer.append("\n    \"javaType\": \"").append(componentModel.getJavaType()).append("\",");
+        if (componentModel.getFirstVersion() != null) {
+            buffer.append("\n    \"firstVersion\": \"").append(componentModel.getFirstVersion()).append("\",");
+        }
         buffer.append("\n    \"groupId\": \"").append(componentModel.getGroupId()).append("\",");
         buffer.append("\n    \"artifactId\": \"").append(componentModel.getArtifactId()).append("\",");
         buffer.append("\n    \"version\": \"").append(componentModel.getVersionId()).append("\"");
@@ -506,6 +513,16 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         model.setProducerOnly(uriEndpoint.producerOnly());
         model.setLenientProperties(uriEndpoint.lenientProperties());
         model.setAsync(implementsInterface(processingEnv, roundEnv, endpointClassElement, "org.apache.camel.AsyncEndpoint"));
+
+        // what is the first version this component was added to Apache Camel
+        String firstVersion = uriEndpoint.firstVersion();
+        if (Strings.isNullOrEmpty(firstVersion) && endpointClassElement.getAnnotation(Metadata.class) != null) {
+            // fallback to @Metadata if not from @UriEndpoint
+            firstVersion = endpointClassElement.getAnnotation(Metadata.class).firstVersion();
+        }
+        if (!Strings.isNullOrEmpty(firstVersion)) {
+            model.setFirstVersion(firstVersion);
+        }
 
         String data = loadResource(processingEnv, "META-INF/services/org/apache/camel/component", scheme);
         if (data != null) {
