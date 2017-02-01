@@ -31,19 +31,19 @@ public class ElasticsearchConfiguration {
 
     @UriPath @Metadata(required = "true")
     private String clusterName;
-    @UriParam(enums = "INDEX, UPDATE, BULK, BULK_INDEX, GET_BY_ID, MULTIGET, DELETE, EXISTS, SEARCH, MULTISEARCH, DELETE_INDEX")
-    private String operation;
+    @UriParam
+    private ElasticsearchOperation operation;
     @UriParam
     private String indexName;
     @UriParam
     private String indexType;
-    @UriParam
+    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_FOR_WAIT_ACTIVE_SHARDS)
     private int waitForActiveShards = ElasticsearchConstants.DEFAULT_FOR_WAIT_ACTIVE_SHARDS;
     @UriParam
     private String ip;
     @UriParam
     private String transportAddresses;
-    @UriParam
+    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_PORT)
     private int port = ElasticsearchConstants.DEFAULT_PORT;
     @UriParam(defaultValue = "true")
     private Boolean clientTransportSniff = true;
@@ -62,11 +62,11 @@ public class ElasticsearchConfiguration {
     /**
      * What operation to perform
      */
-    public String getOperation() {
+    public ElasticsearchOperation getOperation() {
         return operation;
     }
 
-    public void setOperation(String operation) {
+    public void setOperation(ElasticsearchOperation operation) {
         this.operation = operation;
     }
 

@@ -16,21 +16,12 @@
  */
 package org.apache.camel.component.elasticsearch5;
 
-import java.net.InetAddress;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.elasticsearch.client.transport.TransportClient;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.common.transport.TransportAddress;
-import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,18 +33,16 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchEndpoint.class);
 
-    private TransportClient client;
     @UriParam
-    private ElasticsearchConfiguration configuration;
+    protected final ElasticsearchConfiguration configuration;
 
-    public ElasticsearchEndpoint(String uri, ElasticsearchComponent component, ElasticsearchConfiguration config, TransportClient client) throws Exception {
+    public ElasticsearchEndpoint(String uri, ElasticsearchComponent component, ElasticsearchConfiguration config) throws Exception {
         super(uri, component);
         this.configuration = config;
-        this.client = client;
     }
 
     public Producer createProducer() throws Exception {
-        return new ElasticsearchProducer(this);
+        return new ElasticsearchProducer(this, configuration);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -61,60 +50,6 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
     }
     
     public boolean isSingleton() {
-        return false;
-    }
-    
-    @Override
-    @SuppressWarnings("unchecked")
-    protected void doStart() throws Exception {
-        super.doStart();
-
-        if (client == null) {
-            LOG.info("Connecting to the ElasticSearch cluster: " + configuration.getClusterName());
-            
-            if (configuration.getIp() != null) {
-                client = new PreBuiltTransportClient(getSettings())
-                    .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(configuration.getIp()), configuration.getPort()));
-            } else if (configuration.getTransportAddressesList() != null
-                    && !configuration.getTransportAddressesList().isEmpty()) {
-                List<TransportAddress> addresses = new ArrayList<TransportAddress>(configuration.getTransportAddressesList().size());
-                for (TransportAddress address : configuration.getTransportAddressesList()) {
-                    addresses.add(address);
-                }
-                client = new PreBuiltTransportClient(getSettings()).addTransportAddresses(addresses.toArray(new TransportAddress[addresses.size()]));
-            } else {
-                LOG.info("Incorrect ip address and port parameters settings for ElasticSearch cluster");
-            }
-        }
-    }
-
-    private Settings getSettings() {
-        return Settings.builder()
-                .put("cluster.name", configuration.getClusterName())
-                .put("client.transport.ignore_cluster_name", false)
-                .put("client.transport.sniff", configuration.getClientTransportSniff())
-                .build();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        if (client != null) {
-            LOG.info("Disconnecting from ElasticSearch cluster: " + configuration.getClusterName());
-            client.close();
-            client = null;
-        }
-        super.doStop();
-    }
-
-    public TransportClient getClient() {
-        return client;
-    }
-
-    public ElasticsearchConfiguration getConfig() {
-        return configuration;
-    }
-
-    public void setOperation(String operation) {
-        configuration.setOperation(operation);
+        return true;
     }
 }

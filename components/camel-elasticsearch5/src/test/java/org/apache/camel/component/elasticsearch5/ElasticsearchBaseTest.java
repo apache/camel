@@ -49,12 +49,14 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
     }
 
     @BeforeClass
-    public static void cleanupOnce() throws NodeValidationException {
+    public static void cleanupOnce() throws Exception {
         deleteDirectory("target/data");
 
         // create an embedded node to resume
         node = new PluginConfigurableNode(Settings.builder().put("http.enabled", true).put("path.data", "target/data")
                 .put("path.home", "target/home").build(), Arrays.asList(Netty4Plugin.class)).start();
+        client = new PreBuiltTransportClient(Settings.EMPTY)
+                .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
     } 
 
     @AfterClass
@@ -76,14 +78,6 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-
-        // reuse existing client
-        ElasticsearchComponent es = context.getComponent("elasticsearch5", ElasticsearchComponent.class);
-
-        client = new PreBuiltTransportClient(Settings.EMPTY)
-                .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("localhost"), 9300));
-        es.setClient(client);
-
         return context;
     }
 

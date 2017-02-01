@@ -39,17 +39,10 @@ public class ElasticsearchIndexTest extends ElasticsearchBaseTest {
     }
 
     @Test
-    public void testIndexWithWriteConsistency() throws Exception {
-        Map<String, String> map = createIndexedData();
-        String indexId = template.requestBody("direct:indexWithWriteConsistency", map, String.class);
-        assertNotNull("indexId should be set", indexId);
-    }
-
-    @Test
     public void testIndexWithHeaders() throws Exception {
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.INDEX);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
         headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
 
@@ -61,7 +54,7 @@ public class ElasticsearchIndexTest extends ElasticsearchBaseTest {
     public void testIndexWithIDInHeader() throws Exception {
         Map<String, String> map = createIndexedData();
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchConstants.OPERATION_INDEX);
+        headers.put(ElasticsearchConstants.PARAM_OPERATION, ElasticsearchOperation.INDEX);
         headers.put(ElasticsearchConstants.PARAM_INDEX_NAME, "twitter");
         headers.put(ElasticsearchConstants.PARAM_INDEX_TYPE, "tweet");
         headers.put(ElasticsearchConstants.PARAM_INDEX_ID, "123");
@@ -76,10 +69,9 @@ public class ElasticsearchIndexTest extends ElasticsearchBaseTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start").to("elasticsearch5://elasticsearch");
-                from("direct:index").to("elasticsearch5://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet");
-                from("direct:indexWithReplication").to("elasticsearch5://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet");
-                from("direct:indexWithWriteConsistency").to("elasticsearch5://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet");
+                from("direct:start").to("elasticsearch5://elasticsearch?ip=localhost&port=9300");
+                from("direct:index").to("elasticsearch5://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
+                from("direct:indexWithReplication").to("elasticsearch5://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
             }
         };
     }
