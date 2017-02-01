@@ -157,7 +157,7 @@ public class ConnectorMojo extends AbstractJarMojo {
                     fos.close();
 
                     // also write the file in the root folder so its easier to find that for tooling
-                    out = new File(classesDirectory,"camel-connector-schema.json");
+                    out = new File(classesDirectory, "camel-connector-schema.json");
                     fos = new FileOutputStream(out, false);
                     fos.write(newJson.getBytes());
                     fos.close();
