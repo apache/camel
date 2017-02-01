@@ -194,6 +194,9 @@ public class PackageLanguageMojo extends AbstractMojo {
                                 if (row.containsKey("javaType")) {
                                     languageModel.setModelJavaType(row.get("javaType"));
                                 }
+                                if (row.containsKey("firstVersion")) {
+                                    languageModel.setFirstVersion(row.get("firstVersion"));
+                                }
                             }
                             log.debug("Model " + languageModel);
 
@@ -366,6 +369,9 @@ public class PackageLanguageMojo extends AbstractMojo {
         if (languageModel.getDescription() != null) {
             buffer.append("\n    \"description\": \"").append(languageModel.getDescription()).append("\",");
         }
+        if (languageModel.getFirstVersion() != null) {
+            buffer.append("\n    \"firstVersion\": \"").append(languageModel.getFirstVersion()).append("\",");
+        }
         buffer.append("\n    \"label\": \"").append(languageModel.getLabel()).append("\",");
         buffer.append("\n    \"javaType\": \"").append(languageModel.getJavaType()).append("\",");
         if (languageModel.getModelJavaType() != null) {
@@ -386,6 +392,7 @@ public class PackageLanguageMojo extends AbstractMojo {
         private String title;
         private String modelName;
         private String description;
+        private String firstVersion;
         private String label;
         private String javaType;
         private String modelJavaType;
@@ -431,6 +438,14 @@ public class PackageLanguageMojo extends AbstractMojo {
 
         public void setDescription(String description) {
             this.description = description;
+        }
+
+        public String getFirstVersion() {
+            return firstVersion;
+        }
+
+        public void setFirstVersion(String firstVersion) {
+            this.firstVersion = firstVersion;
         }
 
         public String getLabel() {

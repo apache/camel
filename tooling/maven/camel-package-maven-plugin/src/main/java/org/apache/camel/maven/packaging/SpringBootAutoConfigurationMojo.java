@@ -1211,6 +1211,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         component.setAlternativeSyntax(getSafeValue("alternativeSyntax", rows));
         component.setTitle(getSafeValue("title", rows));
         component.setDescription(getSafeValue("description", rows));
+        component.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         component.setLabel(getSafeValue("label", rows));
         component.setDeprecated(getSafeValue("deprecated", rows));
         component.setConsumerOnly(getSafeValue("consumerOnly", rows));
@@ -1264,6 +1265,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         dataFormat.setName(getSafeValue("name", rows));
         dataFormat.setModelName(getSafeValue("modelName", rows));
         dataFormat.setDescription(getSafeValue("description", rows));
+        dataFormat.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         dataFormat.setLabel(getSafeValue("label", rows));
         dataFormat.setDeprecated(getSafeValue("deprecated", rows));
         dataFormat.setJavaType(getSafeValue("javaType", rows));

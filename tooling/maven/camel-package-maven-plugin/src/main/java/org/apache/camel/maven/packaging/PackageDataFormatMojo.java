@@ -188,6 +188,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
                                 if (row.containsKey("javaType")) {
                                     dataFormatModel.setModelJavaType(row.get("javaType"));
                                 }
+                                if (row.containsKey("firstVersion")) {
+                                    dataFormatModel.setFirstVersion(row.get("firstVersion"));
+                                }
                                 // override description for camel-core, as otherwise its too generic
                                 if ("camel-core".equals(project.getArtifactId())) {
                                     if (row.containsKey("description")) {
@@ -417,6 +420,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
         if (dataFormatModel.getDescription() != null) {
             buffer.append("\n    \"description\": \"").append(dataFormatModel.getDescription()).append("\",");
         }
+        if (dataFormatModel.getFirstVersion() != null) {
+            buffer.append("\n    \"firstVersion\": \"").append(dataFormatModel.getFirstVersion()).append("\",");
+        }
         buffer.append("\n    \"label\": \"").append(dataFormatModel.getLabel()).append("\",");
         buffer.append("\n    \"javaType\": \"").append(dataFormatModel.getJavaType()).append("\",");
         if (dataFormatModel.getModelJavaType() != null) {
@@ -437,6 +443,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
         private String title;
         private String modelName;
         private String description;
+        private String firstVersion;
         private String label;
         private String javaType;
         private String modelJavaType;
@@ -482,6 +489,14 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
         public void setDescription(String description) {
             this.description = description;
+        }
+
+        public String getFirstVersion() {
+            return firstVersion;
+        }
+
+        public void setFirstVersion(String firstVersion) {
+            this.firstVersion = firstVersion;
         }
 
         public String getLabel() {
