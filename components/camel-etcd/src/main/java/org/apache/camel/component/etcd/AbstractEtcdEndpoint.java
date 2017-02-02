@@ -18,24 +18,14 @@ package org.apache.camel.component.etcd;
 
 import mousio.etcd4j.EtcdClient;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
 
 /**
  * The camel etcd component allows you to work with <a href="https://coreos.com/etcd">Etcd</a>, a distributed reliable key-value store.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "etcd", title = "etcd", syntax = "etcd:namespace/path", consumerClass = AbstractEtcdConsumer.class, label = "etcd")
 public abstract class AbstractEtcdEndpoint extends DefaultEndpoint implements EtcdEndpoint {
 
-    @UriPath(description = "The API namespace to use", enums = "keys,stats,watch")
-    @Metadata(required = "true")
     private final EtcdNamespace namespace;
-    @UriPath(description = "The path the endpoint refers to")
-    @Metadata(required = "false")
     private final String path;
-    @UriParam
     private final EtcdConfiguration configuration;
 
     protected AbstractEtcdEndpoint(String uri, EtcdComponent component, EtcdConfiguration configuration, EtcdNamespace namespace, String path) {

@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The influxdb component allows you to interact with <a href="https://influxdata.com/time-series-platform/influxdb/">InfluxDB</a>, a time series database.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "influxdb", title = "InfluxDB", syntax = "influxdb:connectionBean", label = "database,ticks", producerOnly = true)
+@UriEndpoint(firstVersion = "2.18.0", scheme = "influxdb", title = "InfluxDB", syntax = "influxdb:connectionBean", label = "database", producerOnly = true)
 public class InfluxDbEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(InfluxDbEndpoint.class);

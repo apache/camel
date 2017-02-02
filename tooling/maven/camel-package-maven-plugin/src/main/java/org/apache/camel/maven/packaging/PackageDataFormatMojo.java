@@ -198,6 +198,13 @@ public class PackageDataFormatMojo extends AbstractMojo {
                                     }
                                 }
                             }
+
+                            // first version special for json
+                            String firstVersion = prepareJsonFirstVersion(name);
+                            if (firstVersion != null) {
+                                dataFormatModel.setFirstVersion(firstVersion);
+                            }
+
                             log.debug("Model " + dataFormatModel);
 
                             // build json schema for the data format
@@ -313,6 +320,20 @@ public class PackageDataFormatMojo extends AbstractMojo {
         }
 
         return properties;
+    }
+
+    private static String prepareJsonFirstVersion(String name) {
+        if ("json-gson".equals(name)) {
+            return "2.10.0";
+        } else if ("json-jackson".equals(name)) {
+            return "2.0.0";
+        } else if ("json-johnzon".equals(name)) {
+            return "2.18.0";
+        } else if ("json-xstream".equals(name)) {
+            return "2.0.0";
+        }
+
+        return null;
     }
 
     private static String readClassFromCamelResource(File file, StringBuilder buffer, BuildContext buildContext) throws MojoExecutionException {
