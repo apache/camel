@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The aws-cw component is used for sending metrics to an Amazon CloudWatch.
  */
-@UriEndpoint(scheme = "aws-cw", title = "AWS CloudWatch", syntax = "aws-cw:namespace", producerOnly = true, label = "cloud,monitoring")
+@UriEndpoint(firstVersion = "2.11.0", scheme = "aws-cw", title = "AWS CloudWatch", syntax = "aws-cw:namespace", producerOnly = true, label = "cloud,monitoring")
 public class CwEndpoint extends DefaultEndpoint {
 
     @UriParam

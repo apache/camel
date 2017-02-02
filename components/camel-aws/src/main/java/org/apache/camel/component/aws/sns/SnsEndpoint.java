@@ -45,7 +45,8 @@ import org.slf4j.LoggerFactory;
 /**
  * The aws-sns component is used for sending messages to an Amazon Simple Notification Topic.
  */
-@UriEndpoint(scheme = "aws-sns", title = "AWS Simple Notification System", syntax = "aws-sns:topicNameOrArn", producerOnly = true, label = "cloud,mobile,messaging")
+@UriEndpoint(firstVersion = "2.8.0", scheme = "aws-sns", title = "AWS Simple Notification System", syntax = "aws-sns:topicNameOrArn",
+    producerOnly = true, label = "cloud,mobile,messaging")
 public class SnsEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SnsEndpoint.class);
