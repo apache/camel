@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsComponent;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsProducer;
@@ -29,10 +30,14 @@ import org.apache.camel.component.reactive.streams.api.CamelReactiveStreamsServi
 import org.apache.camel.component.reactive.streams.api.DispatchCallback;
 import org.apache.camel.component.reactive.streams.util.ConvertingPublisher;
 import org.apache.camel.component.reactive.streams.util.ConvertingSubscriber;
+import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.spi.Synchronization;
 import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 
-
+/**
+ * The default implementation of the reactive streams service.
+ */
 public class CamelReactiveStreamsServiceImpl implements CamelReactiveStreamsService {
 
     private CamelContext context;
@@ -100,6 +105,54 @@ public class CamelReactiveStreamsServiceImpl implements CamelReactiveStreamsServ
         getPayloadPublisher(name).publish(payload);
     }
 
+    @Override
+    public Publisher<Exchange> request(String name, Object data) {
+        Exchange exchange;
+        if (data instanceof Exchange) {
+            exchange = (Exchange) data;
+        } else {
+            exchange = new DefaultExchange(context);
+            exchange.setPattern(ExchangePattern.InOut);
+            exchange.getIn().setBody(data);
+        }
+
+        return doRequest(name, exchange);
+    }
+
+    @Override
+    public <T> Publisher<T> request(String name, Object data, Class<T> type) {
+        return new ConvertingPublisher<>(request(name, data), type);
+    }
+
+    protected Publisher<Exchange> doRequest(String name, Exchange data) {
+        ReactiveStreamsConsumer consumer = getSubscriber(name).getConsumer();
+        if (consumer == null) {
+            throw new IllegalStateException("No consumers attached to the stream " + name);
+        }
+
+        DelayedMonoPublisher<Exchange> publisher = new DelayedMonoPublisher<>(this.workerPool);
+
+        data.addOnCompletion(new Synchronization() {
+            @Override
+            public void onComplete(Exchange exchange) {
+                publisher.setData(exchange);
+            }
+
+            @Override
+            public void onFailure(Exchange exchange) {
+                Throwable throwable = exchange.getException();
+                if (throwable == null) {
+                    throwable = new IllegalStateException("Unknown Exception");
+                }
+                publisher.setException(throwable);
+            }
+        });
+
+        consumer.process(data, doneSync -> {
+        });
+
+        return publisher;
+    }
 
     private CamelPublisher getPayloadPublisher(String name) {
         synchronized (this) {

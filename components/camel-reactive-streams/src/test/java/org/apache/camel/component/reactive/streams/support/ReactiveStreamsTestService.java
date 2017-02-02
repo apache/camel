@@ -104,6 +104,16 @@ public class ReactiveStreamsTestService implements CamelReactiveStreamsService {
 
     }
 
+    @Override
+    public Publisher<Exchange> request(String name, Object data) {
+        return null;
+    }
+
+    @Override
+    public <T> Publisher<T> request(String name, Object data, Class<T> type) {
+        return null;
+    }
+
     public String getName() {
         return name;
     }

@@ -77,6 +77,28 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      */
     <T> Subscriber<T> getSubscriber(String name, Class<T> type);
 
+    /**
+     * Pushes the given data into the specified Camel stream and returns a Publisher (mono) holding
+     * the resulting exchange or an error.
+     *
+     * @param name the stream name
+     * @param data the data to push
+     * @return an publisher with the resulting exchange
+     */
+    Publisher<Exchange> request(String name, Object data);
+
+    /**
+     * Pushes the given data into the specified Camel stream and returns a Publisher (mono) holding
+     * the exchange output or an error.
+     *
+     * @param name the stream name
+     * @param data the data to push
+     * @param type  the type to which the output should be converted
+     * @param <T> the generic type of the resulting Publisher
+     * @return an publisher with the resulting data
+     */
+    <T> Publisher<T> request(String name, Object data, Class<T> type);
+
     /*
      * Methods for Camel producers.
      */

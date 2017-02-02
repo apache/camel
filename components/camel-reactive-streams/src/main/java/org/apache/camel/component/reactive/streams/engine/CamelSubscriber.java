@@ -64,6 +64,10 @@ public class CamelSubscriber implements Subscriber<Exchange>, Closeable {
         refill();
     }
 
+    public synchronized ReactiveStreamsConsumer getConsumer() {
+        return consumer;
+    }
+
     public void detachConsumer() {
         synchronized (this) {
             this.consumer = null;
@@ -86,6 +90,7 @@ public class CamelSubscriber implements Subscriber<Exchange>, Closeable {
         }
 
         if (!allowed) {
+            LOG.warn("There is another active subscription: cancelled");
             subscription.cancel();
         } else {
             refill();
