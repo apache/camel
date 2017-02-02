@@ -208,7 +208,7 @@
 	* [Infinispan](infinispan-component.adoc)
 	* [InfluxDB](influxdb-component.adoc)
 	* [IRC](irc-component.adoc)
-	* [ironmq](ironmq-component.adoc)
+	* [IronMQ](ironmq-component.adoc)
 	* [JavaSpace](javaspace-component.adoc)
 	* [JBPM](jbpm-component.adoc)
 	* [JCache](jcache-component.adoc)

@@ -1,5 +1,7 @@
 ## AMQP Component
 
+*Available as of Camel version 1.2.0*
+
 The *amqp:* component supports the http://www.amqp.org/[AMQP 1.0
 protocol] using the JMS Client API of the http://qpid.apache.org/[Qpid]
 project. In case you want to use AMQP 0.9 (in particular RabbitMQ) you

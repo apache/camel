@@ -372,7 +372,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
             // check the first four lines
             boolean title = lines[0].startsWith("##");
             boolean empty = lines[1].trim().isEmpty();
-            boolean availableFrom = lines[2].trim().contains("Available as of");
+            boolean availableFrom = lines[2].trim().contains("Available as of") || lines[2].trim().contains("Available in");
             boolean empty2 = lines[3].trim().isEmpty();
 
             if (title && empty && availableFrom) {

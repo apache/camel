@@ -1,5 +1,7 @@
 ## MSV Component
 
+*Available as of Camel version 1.1.0*
+
 The MSV component performs XML validation of the message body using the
 https://msv.dev.java.net/[MSV Library] and any of the supported XML
 schema languages, such as http://www.w3.org/XML/Schema[XML Schema] or

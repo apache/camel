@@ -1,5 +1,7 @@
 ## Mina Component
 
+*Available as of Camel version 1.0.0*
+
 *Deprecated*
 
 WARNING: This component is deprecated as the Apache Mina 1.x project is EOL.

@@ -1,5 +1,7 @@
 ## etcd Component
 +[[Etcd-Etcd]]
+*Available as of Camel version 2.18.0*
+
 +Etcd
 
 
@@ -21,7 +23,7 @@ The etcd component supports 31 endpoint options which are listed below:
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | namespace | common |  | EtcdNamespace | *Required* The API namespace to use
-| path | common |  | String | The path the enpoint refers to
+| path | common |  | String | The path the endpoint refers to
 | recursive | common | false | boolean | To apply an action recursively.
 | servicePath | common | /services/ | String | The path to look for for service discovery
 | timeout | common |  | Long | To set the maximum time an action could take to complete.

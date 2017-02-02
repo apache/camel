@@ -1,6 +1,6 @@
 ## Crypto (JCE) Component
 
-*Available as of Camel 2.3* 
+*Available as of Camel version 2.3.0*
 
 *PGP Available as of Camel 2.9*
 

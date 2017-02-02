@@ -1,5 +1,7 @@
 ## Jetty 9 Component
 
+*Available as of Camel version 1.2.0*
+
 The *jetty* component provides HTTP-based link:endpoint.html[endpoints]
 for consuming and producing HTTP requests. That is, the Jetty component
 behaves as a simple Web server. +

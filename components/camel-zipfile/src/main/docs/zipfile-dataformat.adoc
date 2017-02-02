@@ -1,5 +1,7 @@
 ## Zip File DataFormat
 
+*Available as of Camel version 2.11.0*
+
 TIP:*Available since Camel 2.11.0*
 
 The Zip File link:data-format.html[Data Format] is a message compression

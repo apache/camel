@@ -1,5 +1,7 @@
 ## Kestrel Component
 
+*Available as of Camel version 2.6.0*
+
 The Kestrel component allows messages to be sent to a
 https://github.com/robey/kestrel[Kestrel] queue, or messages to be
 consumed from a Kestrel queue. This component uses the
