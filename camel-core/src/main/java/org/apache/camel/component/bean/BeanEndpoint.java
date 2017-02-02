@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * The <a href="http://camel.apache.org/bean.html">bean component</a> is for invoking Java beans from Camel.
  */
-@UriEndpoint(scheme = "bean", title = "Bean", syntax = "bean:beanName", producerOnly = true, label = "core,java")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "bean", title = "Bean", syntax = "bean:beanName", producerOnly = true, label = "core,java")
 public class BeanEndpoint extends DefaultEndpoint {
     private transient BeanHolder beanHolder;
     private transient BeanProcessor processor;

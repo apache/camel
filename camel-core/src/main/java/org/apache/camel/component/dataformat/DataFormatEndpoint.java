@@ -36,7 +36,7 @@ import org.apache.camel.util.ServiceHelper;
 /**
  * The dataformat component is used for working with Data Formats as if it was a regular Component supporting Endpoints and URIs.
  */
-@UriEndpoint(scheme = "dataformat", title = "Data Format", syntax = "dataformat:name:operation", producerOnly = true,
+@UriEndpoint(firstVersion = "2.12.0", scheme = "dataformat", title = "Data Format", syntax = "dataformat:name:operation", producerOnly = true,
         label = "core,transformation", lenientProperties = true)
 public class DataFormatEndpoint extends DefaultEndpoint {
 

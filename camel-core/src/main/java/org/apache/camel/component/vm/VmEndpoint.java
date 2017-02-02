@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriEndpoint;
 /**
  * The vm component provides asynchronous call to another endpoint from the same CamelContext.
  */
-@UriEndpoint(scheme = "vm", title = "VM", syntax = "vm:name", consumerClass = VmConsumer.class, label = "core,endpoint")
+@UriEndpoint(firstVersion = "1.1.0", scheme = "vm", title = "VM", syntax = "vm:name", consumerClass = VmConsumer.class, label = "core,endpoint")
 public class VmEndpoint extends SedaEndpoint {
 
     public VmEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue) {
