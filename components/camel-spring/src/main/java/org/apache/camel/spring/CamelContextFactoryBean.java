@@ -518,6 +518,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.properties = properties;
     }
 
+    /**
+     * Configuration of CamelContext properties such as limit of debug logging
+     * and other general options.
+     */
     public void setGlobalOptions(GlobalOptionsDefinition globalOptions) {
         this.globalOptions = globalOptions;
     }
@@ -924,6 +928,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         return beans;
     }
 
+    /**
+     * Miscellaneous configurations
+     */
     public void setBeans(List<?> beans) {
         this.beans = beans;
     }
