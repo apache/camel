@@ -166,7 +166,7 @@ Components
 `elsql:elsqlName:resourceUri` | The elsql component is an extension to the existing SQL Component that uses ElSql to define the SQL queries.
 
 | link:camel-etcd/src/main/docs/etcd-component.adoc[etcd] (camel-etcd) +
-`etcd:namespace/path` | The camel etcd component allows you to work with Etcd a distributed A distributed reliable key-value store.
+`etcd:namespace/path` | The camel etcd component allows you to work with Etcd a distributed reliable key-value store.
 
 | link:camel-exec/src/main/docs/exec-component.adoc[Exec] (camel-exec) +
 `exec:executable` | The exec component can be used to execute OS system commands.
