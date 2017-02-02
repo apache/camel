@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -130,9 +131,10 @@ public class ReadmeComponentMojo extends AbstractMojo {
                     }
 
                     boolean exists = file.exists();
-                    boolean updated = false;
+                    boolean updated;
 
-                    updated |= updateTitles(file, model.getTitle() + " Component");
+                    updated = updateTitles(file, model.getTitle() + " Component");
+                    updated |= updateAvailableFrom(file, model.getFirstVersion());
 
                     if (model.getComponentOptions() != null) {
                         String options = templateComponentOptions(model);
@@ -181,9 +183,10 @@ public class ReadmeComponentMojo extends AbstractMojo {
                     model.setTitle(title);
 
                     boolean exists = file.exists();
-                    boolean updated = false;
+                    boolean updated;
 
-                    updated |= updateTitles(file, model.getTitle() + " DataFormat");
+                    updated = updateTitles(file, model.getTitle() + " DataFormat");
+                    updated |= updateAvailableFrom(file, model.getFirstVersion());
 
                     if (model.getDataFormatOptions() != null) {
                         String options = templateDataFormatOptions(model);
@@ -214,6 +217,49 @@ public class ReadmeComponentMojo extends AbstractMojo {
         }
     }
 
+    private void executeLanguage() throws MojoExecutionException, MojoFailureException {
+        // find the language names
+        List<String> languageNames = findLanguageNames();
+
+        final Set<File> jsonFiles = new TreeSet<File>();
+        PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
+
+        // only if there is language we should update the documentation files
+        if (!languageNames.isEmpty()) {
+            getLog().debug("Found " + languageNames.size() + " languages");
+            for (String languageName : languageNames) {
+                String json = loadLanguageJson(jsonFiles, languageName);
+                if (json != null) {
+                    File file = new File(docDir, languageName + "-language.adoc");
+
+                    LanguageModel model = generateLanguageModel(languageName, json);
+
+                    boolean exists = file.exists();
+                    boolean updated;
+
+                    updated = updateTitles(file, model.getTitle() + " Language");
+                    updated |= updateAvailableFrom(file, model.getFirstVersion());
+
+                    if (model.getLanguageOptions() != null) {
+                        String options = templateLanguageOptions(model);
+                        updated |= updateLanguageOptions(file, options);
+                    }
+
+                    if (updated) {
+                        getLog().info("Updated doc file: " + file);
+                    } else if (exists) {
+                        getLog().debug("No changes to doc file: " + file);
+                    } else {
+                        getLog().warn("No language doc file: " + file);
+                        if (isFailFast()) {
+                            throw new MojoExecutionException("Failed build due failFast=true");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private static String asComponentTitle(String name, String title) {
         // special for some components which share the same readme file
         if (name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp") || name.equals("smtps")) {
@@ -238,48 +284,6 @@ public class ReadmeComponentMojo extends AbstractMojo {
             return "Bindy";
         } else {
             return title;
-        }
-    }
-
-    private void executeLanguage() throws MojoExecutionException, MojoFailureException {
-        // find the language names
-        List<String> languageNames = findLanguageNames();
-
-        final Set<File> jsonFiles = new TreeSet<File>();
-        PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
-
-        // only if there is language we should update the documentation files
-        if (!languageNames.isEmpty()) {
-            getLog().debug("Found " + languageNames.size() + " languages");
-            for (String languageName : languageNames) {
-                String json = loadLanguageJson(jsonFiles, languageName);
-                if (json != null) {
-                    File file = new File(docDir, languageName + "-language.adoc");
-
-                    LanguageModel model = generateLanguageModel(languageName, json);
-
-                    boolean exists = file.exists();
-                    boolean updated = false;
-
-                    updated |= updateTitles(file, model.getTitle() + " Language");
-
-                    if (model.getLanguageOptions() != null) {
-                        String options = templateLanguageOptions(model);
-                        updated |= updateLanguageOptions(file, options);
-                    }
-
-                    if (updated) {
-                        getLog().info("Updated doc file: " + file);
-                    } else if (exists) {
-                        getLog().debug("No changes to doc file: " + file);
-                    } else {
-                        getLog().warn("No language doc file: " + file);
-                        if (isFailFast()) {
-                            throw new MojoExecutionException("Failed build due failFast=true");
-                        }
-                    }
-                }
-            }
         }
     }
 
@@ -335,6 +339,58 @@ public class ReadmeComponentMojo extends AbstractMojo {
                 }
             }
 
+
+            if (updated) {
+                // build the new updated text
+                String newText = newLines.stream().collect(Collectors.joining("\n"));
+                writeText(file, newText);
+            }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
+        }
+
+        return updated;
+    }
+
+    private boolean updateAvailableFrom(File file, String firstVersion) throws MojoExecutionException {
+        if (firstVersion == null || !file.exists()) {
+            return false;
+        }
+
+        boolean updated = false;
+
+        try {
+            String text = loadText(new FileInputStream(file));
+
+            String[] lines = text.split("\n");
+
+            List<String> newLines = new ArrayList<>();
+
+            // copy over to all new lines
+            newLines.addAll(Arrays.asList(lines));
+
+            // check the first four lines
+            boolean title = lines[0].startsWith("##");
+            boolean empty = lines[1].trim().isEmpty();
+            boolean availableFrom = lines[2].trim().contains("Available as of");
+            boolean empty2 = lines[3].trim().isEmpty();
+
+            if (title && empty && availableFrom) {
+                String newLine = "*Available as of Camel version " + firstVersion + "*";
+                if (!newLine.equals(lines[2])) {
+                    newLines.set(2, newLine);
+                    updated = true;
+                }
+                if (!empty2) {
+                    newLines.add(3, "");
+                    updated = true;
+                }
+            } else if (!availableFrom) {
+                String newLine = "*Available as of Camel version " + firstVersion + "*";
+                newLines.add(2, newLine);
+                newLines.add(3, "");
+                updated = true;
+            }
 
             if (updated) {
                 // build the new updated text

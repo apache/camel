@@ -1,7 +1,4 @@
 ## Cassandra CQL Component
-[[Cassandra-CamelCassandraComponent]]
-Camel Cassandra Component
--------------------------
 
 *Available as of Camel 2.15*
 
