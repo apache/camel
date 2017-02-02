@@ -50,7 +50,8 @@ import static org.apache.camel.util.CamelContextHelper.getMandatoryEndpoint;
  * before its sent to the endpoint and processes messages received by the endpoint consumer before its passed
  * to the real consumer.
  */
-@UriEndpoint(scheme = "binding", title = "Binding", syntax = "binding:bindingName:delegateUri", consumerClass = BindingConsumerProcessor.class, label = "core,transformation")
+@UriEndpoint(firstVersion = "2.11.0", scheme = "binding", title = "Binding", syntax = "binding:bindingName:delegateUri",
+    consumerClass = BindingConsumerProcessor.class, label = "core,transformation")
 public class BindingEndpoint extends DefaultEndpoint implements HasBinding {
 
     @UriPath @Metadata(required = "true")

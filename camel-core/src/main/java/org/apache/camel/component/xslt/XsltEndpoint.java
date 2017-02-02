@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * Transforms the message using a XSLT template.
  */
 @ManagedResource(description = "Managed XsltEndpoint")
-@UriEndpoint(scheme = "xslt", title = "XSLT", syntax = "xslt:resourceUri", producerOnly = true, label = "core,transformation")
+@UriEndpoint(firstVersion = "1.3.0", scheme = "xslt", title = "XSLT", syntax = "xslt:resourceUri", producerOnly = true, label = "core,transformation")
 public class XsltEndpoint extends ProcessorEndpoint {
     public static final String SAXON_TRANSFORMER_FACTORY_CLASS_NAME = "net.sf.saxon.TransformerFactoryImpl";
 
