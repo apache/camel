@@ -19,6 +19,7 @@ package org.apache.camel.component.reactive.streams.engine;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -120,6 +121,11 @@ public class CamelReactiveStreamsServiceImpl implements CamelReactiveStreamsServ
     }
 
     @Override
+    public Function<?, ? extends Publisher<Exchange>> request(String name) {
+        return data -> request(name, data);
+    }
+
+    @Override
     public <T> Publisher<T> request(String name, Object data, Class<T> type) {
         return new ConvertingPublisher<>(request(name, data), type);
     }
@@ -152,6 +158,11 @@ public class CamelReactiveStreamsServiceImpl implements CamelReactiveStreamsServ
         });
 
         return publisher;
+    }
+
+    @Override
+    public <T> Function<Object, Publisher<T>> request(String name, Class<T> type) {
+        return data -> request(name, data, type);
     }
 
     private CamelPublisher getPayloadPublisher(String name) {

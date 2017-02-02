@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.reactive.streams.support;
 
+import java.util.function.Function;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.reactive.streams.ReactiveStreamsConsumer;
@@ -111,6 +113,16 @@ public class ReactiveStreamsTestService implements CamelReactiveStreamsService {
 
     @Override
     public <T> Publisher<T> request(String name, Object data, Class<T> type) {
+        return null;
+    }
+
+    @Override
+    public Function<?, ? extends Publisher<Exchange>> request(String name) {
+        return null;
+    }
+
+    @Override
+    public <T> Function<Object, Publisher<T>> request(String name, Class<T> type) {
         return null;
     }
 

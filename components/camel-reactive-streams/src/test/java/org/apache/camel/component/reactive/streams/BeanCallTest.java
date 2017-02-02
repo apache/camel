@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.reactive.streams.util.UnwrappingStreamProcessor;
+import org.apache.camel.component.reactive.streams.util.UnwrapStreamProcessor;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.reactivestreams.Publisher;
@@ -42,7 +42,8 @@ public class BeanCallTest extends CamelTestSupport {
 
                 from("direct:num")
                         .bean(BeanCallTest.this, "processBody")
-                        .process(new UnwrappingStreamProcessor()).split().body() // Can be removed?
+                        .process(new UnwrapStreamProcessor()) // Can be removed?
+                        .split().body()
                         .to("mock:endpoint");
 
                 from("direct:handle")
@@ -74,7 +75,8 @@ public class BeanCallTest extends CamelTestSupport {
 
                 from("direct:num")
                         .bean(BeanCallTest.this, "processBodyWrongType")
-                        .process(new UnwrappingStreamProcessor()).split().body() // Can be removed?
+                        .process(new UnwrapStreamProcessor()) // Can be removed?
+                        .split().body()
                         .to("mock:endpoint");
 
                 from("direct:handle")
@@ -105,7 +107,8 @@ public class BeanCallTest extends CamelTestSupport {
 
                 from("direct:num")
                         .bean(BeanCallTest.this, "processHeader")
-                        .process(new UnwrappingStreamProcessor()).split().body() // Can be removed?
+                        .process(new UnwrapStreamProcessor()) // Can be removed?
+                        .split().body()
                         .to("mock:endpoint");
 
                 from("direct:handle")

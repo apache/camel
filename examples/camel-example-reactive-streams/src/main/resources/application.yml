@@ -15,3 +15,15 @@
 ## limitations under the License.
 ## ------------------------------------------------------------------------
 
+# All examples are enabled by default.
+# You can turn them on-off here
+examples:
+  basic:
+    camel-to-reactor: true
+    reactor-to-camel: true
+    camel-to-reactor-in-out: true
+    reactor-to-camel-in-out: true
+  others:
+    rest-example: true
+
+

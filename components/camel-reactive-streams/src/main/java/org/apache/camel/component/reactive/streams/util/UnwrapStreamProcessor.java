@@ -30,7 +30,7 @@ import org.reactivestreams.Subscription;
 /**
  * A Processor that converts a Publisher into its content asynchronously.
  */
-public class UnwrappingStreamProcessor implements AsyncProcessor {
+public class UnwrapStreamProcessor implements AsyncProcessor {
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -54,15 +54,27 @@ public class UnwrappingStreamProcessor implements AsyncProcessor {
 
                 @Override
                 public void onError(Throwable throwable) {
-                    exchange.getIn().setBody(data);
+                    addData();
                     exchange.setException(throwable);
                     callback.done(false);
                 }
 
                 @Override
                 public void onComplete() {
-                    exchange.getIn().setBody(data);
+                    addData();
                     callback.done(false);
+                }
+
+                private void addData() {
+                    Object body;
+                    if (data.size() == 0) {
+                        body = null;
+                    } else if (data.size() == 1) {
+                        body = data.get(0);
+                    } else {
+                        body = data;
+                    }
+                    exchange.getIn().setBody(body);
                 }
 
             });
