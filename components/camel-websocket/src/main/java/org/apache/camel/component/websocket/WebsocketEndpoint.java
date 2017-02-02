@@ -38,7 +38,7 @@ import org.eclipse.jetty.server.Handler;
  *
  * This component uses Jetty as the websocket implementation.
  */
-@UriEndpoint(scheme = "websocket", title = "Jetty Websocket", syntax = "websocket:host:port/resourceUri", consumerClass = WebsocketConsumer.class, label = "websocket")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "websocket", title = "Jetty Websocket", syntax = "websocket:host:port/resourceUri", consumerClass = WebsocketConsumer.class, label = "websocket")
 public class WebsocketEndpoint extends DefaultEndpoint {
 
     private WebsocketComponent component;
