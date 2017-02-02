@@ -26,9 +26,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The elasticsearch component is used for interfacing with ElasticSearch server.
+ * The elasticsearch component is used for interfacing with ElasticSearch server using 5.x API.
  */
-@UriEndpoint(scheme = "elasticsearch5", title = "Elasticsearch5", syntax = "elasticsearch5:clusterName", producerOnly = true, label = "monitoring,search")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "elasticsearch5", title = "Elasticsearch5", syntax = "elasticsearch5:clusterName", producerOnly = true, label = "monitoring,search")
 public class ElasticsearchEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchEndpoint.class);
