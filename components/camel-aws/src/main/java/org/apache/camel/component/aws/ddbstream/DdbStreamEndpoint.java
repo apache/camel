@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * The aws-ddbstream component is used for working with Amazon DynamoDB Streams.
  */
-@UriEndpoint(scheme = "aws-ddbstream", title = "AWS DynamoDB Streams",
+@UriEndpoint(firstVersion = "2.17.0", scheme = "aws-ddbstream", title = "AWS DynamoDB Streams",
         consumerOnly = true, syntax = "aws-ddbstream:tableName",
         consumerClass = DdbStreamConsumer.class, label = "cloud,messaging,streams")
 public class DdbStreamEndpoint extends ScheduledPollEndpoint {
