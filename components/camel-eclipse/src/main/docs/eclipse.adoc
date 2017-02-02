@@ -1,6 +1,4 @@
-[[camel-eclipse-camel-eclipse]]
-Eclipse Component
-~~~~~~~~~~~~~~~~~
+## Eclipse Component
 
 *Available as of Camel 2.3*
 

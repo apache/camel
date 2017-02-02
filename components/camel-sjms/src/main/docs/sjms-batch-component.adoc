@@ -1,6 +1,4 @@
 ## Simple JMS Batch Component
-[[ConfluenceContent]]
-### SJMS Batch Component
 
 *Available as of Camel 2.16*
 

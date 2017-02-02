@@ -1,6 +1,4 @@
-[[CryptocomponentforDigitalSignatures]]
-Crypto component for Digital Signatures
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## Crypto
 
 *Available as of Camel 2.3*
 

@@ -1,20 +1,4 @@
 ## Simple JMS Component
-ifdef::env-github[]
-:icon-smile: :smiley:
-:caution-caption: :boom:
-:important-caption: :exclamation:
-:note-caption: :information_source:
-:tip-caption: :bulb:
-:warning-caption: :warning:
-endif::[]
-
-ifndef::env-github[]
-:icons: font
-:icon-smile: icon:smile-o[fw,role=yellow]
-endif::[]
-
-[[ConfluenceContent]]
-### SJMS Component
 
 *Available as of Camel 2.11*
 

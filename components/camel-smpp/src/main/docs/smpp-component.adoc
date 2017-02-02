@@ -1,6 +1,6 @@
 ## SMPP Component
 
-*CamelSmppFinalStatusAvailable as of Camel 2.2*
+*Available as of Camel 2.2*
 
 This component provides access to an SMSC (Short Message Service Center)
 over the http://smsforum.net/SMPP_v3_4_Issue1_2.zip[SMPP] protocol to
