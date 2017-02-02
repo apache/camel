@@ -75,6 +75,7 @@
         <include>org.apache.camel:camel-ehcache</include>
         <include>org.apache.camel:camel-ejb</include>
         <include>org.apache.camel:camel-elasticsearch</include>
+        <include>org.apache.camel:camel-elasticsearch5</include>
         <include>org.apache.camel:camel-elsql</include>
         <include>org.apache.camel:camel-etcd</include>
         <include>org.apache.camel:camel-eventadmin</include>
