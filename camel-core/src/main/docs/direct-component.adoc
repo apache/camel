@@ -1,5 +1,7 @@
 ## Direct Component
 
+*Available as of Camel version 1.0.0*
+
 The *direct:* component provides direct, synchronous invocation of any
 consumers when a producer sends a message exchange. +
  This endpoint can be used to connect existing routes in the *same*

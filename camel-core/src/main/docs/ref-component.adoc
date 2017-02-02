@@ -1,5 +1,7 @@
 ## Ref Component
 
+*Available as of Camel version 1.2.0*
+
 The *ref:* component is used for lookup of existing endpoints bound in
 the link:registry.html[Registry].
 

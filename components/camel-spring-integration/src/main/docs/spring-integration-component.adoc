@@ -1,5 +1,7 @@
 ## Spring Integration Component
 
+*Available as of Camel version 1.4.0*
+
 The *spring-integration:* component provides a bridge for Camel
 components to talk to
 http://www.springsource.org/spring-integration[spring integration

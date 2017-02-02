@@ -1,6 +1,6 @@
 ## FOP Component
 
-*Available as of Camel 2.10*
+*Available as of Camel version 2.10.0*
 
 The FOP component allows you to render a message into different output
 formats using http://xmlgraphics.apache.org/fop/index.html[Apache FOP].

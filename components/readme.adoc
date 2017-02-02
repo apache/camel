@@ -258,7 +258,7 @@ Components
 | link:camel-irc/src/main/docs/irc-component.adoc[IRC] (camel-irc) +
 `irc:hostname:port` | 1.1.0 | The irc component implements an IRC (Internet Relay Chat) transport.
 
-| link:camel-ironmq/src/main/docs/ironmq-component.adoc[ironmq] (camel-ironmq) +
+| link:camel-ironmq/src/main/docs/ironmq-component.adoc[IronMQ] (camel-ironmq) +
 `ironmq:queueName` | 2.17.0 | The ironmq provides integration with IronMQ an elastic and durable hosted message queue as a service.
 
 | link:camel-javaspace/src/main/docs/javaspace-component.adoc[JavaSpace] (camel-javaspace) +

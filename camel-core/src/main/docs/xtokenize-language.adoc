@@ -1,5 +1,7 @@
 ## XML Tokenize Language
 
+*Available as of Camel version 2.14.0*
+
 The xml tokenizer language is a built-in language in camel-core, which
 is a truly XML-aware tokenizer that can be used with the Splitter as the
 conventional link:tokenizer.html[Tokenizer] to efficiently and

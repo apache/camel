@@ -1,6 +1,6 @@
 ## Boon DataFormat
 
-*Available in Camel 2.16*
+*Available as of Camel version 2.16.0*
 
 Boon is a Data Format which uses the
 http://richardhightower.github.io/site/Boon/Welcome.html[Boon

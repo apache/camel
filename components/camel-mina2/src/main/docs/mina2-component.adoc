@@ -1,6 +1,6 @@
 ## Mina2 Component
 
-*Available as of Camel 2.10*
+*Available as of Camel version 2.10.0*
 
 The *mina2:* component is a transport for working with
 http://mina.apache.org/[Apache MINA 2.x]

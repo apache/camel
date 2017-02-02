@@ -1,5 +1,7 @@
 ## Mock Component
 ifdef::env-github[]
+*Available as of Camel version 1.0.0*
+
 :caution-caption: :boom:
 :important-caption: :exclamation:
 :note-caption: :information_source:

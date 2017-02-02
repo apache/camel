@@ -1,5 +1,7 @@
 ## FTPS Component
 
+*Available as of Camel version 2.2.0*
+
 This component provides access to remote file systems over the FTP and
 SFTP protocols.
 

@@ -1,6 +1,6 @@
 ## SIP Component
 
-*Available as of Camel 2.5*
+*Available as of Camel version 2.5.0*
 
 The *sip* component in Camel is a communication component, based on the
 Jain SIP implementation (available under the JCP license).

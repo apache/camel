@@ -1,5 +1,7 @@
 ## Velocity Component
 
+*Available as of Camel version 1.2.0*
+
 The *velocity:* component allows you to process a message using an
 http://velocity.apache.org/[Apache Velocity] template. This can be ideal
 when using link:templating.html[Templating] to generate responses for

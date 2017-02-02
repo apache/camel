@@ -1,5 +1,7 @@
 ## SQL Component
 
+*Available as of Camel version 1.4.0*
+
 The *sql:* component allows you to work with databases using JDBC
 queries. The difference between this component and link:jdbc.html[JDBC]
 component is that in case of SQL the query is a property of the endpoint

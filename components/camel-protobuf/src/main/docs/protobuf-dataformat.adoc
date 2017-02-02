@@ -1,5 +1,7 @@
 ## Protobuf DataFormat
 [[Protobuf-Protobuf-ProtocolBuffers]]
+*Available as of Camel version 2.2.0*
+
 Protobuf - Protocol Buffers
 ---------------------------
 

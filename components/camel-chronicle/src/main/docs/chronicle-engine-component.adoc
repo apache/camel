@@ -1,5 +1,7 @@
 ## Chronicle Engine Component
 
+*Available as of Camel version 2.18.0*
+
 // component options: START
 The Chronicle Engine component has no options.
 // component options: END

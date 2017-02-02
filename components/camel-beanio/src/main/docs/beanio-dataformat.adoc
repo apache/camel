@@ -1,6 +1,6 @@
 ## BeanIO DataFormat
 
-*Available as of Camel 2.10*
+*Available as of Camel version 2.10.0*
 
 The BeanIO link:data-format.html[Data Format] uses
 http://beanio.org/[BeanIO] to handle flat payloads (such as XML, CSV,

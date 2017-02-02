@@ -1,6 +1,6 @@
 ## Mustache Component
 
-*Available as of Camel 2.12*
+*Available as of Camel version 2.12.0*
 
 The *mustache:* component allows for processing a message using a
 http://mustache.github.io/[Mustache] template. This can be ideal when

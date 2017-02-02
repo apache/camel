@@ -1,6 +1,6 @@
 ## Stub Component
 
-*Available as of Camel 2.10*
+*Available as of Camel version 2.10.0*
 
 The *stub:* component provides a simple way to stub out any physical
 endpoints while in development or testing, allowing you for example to

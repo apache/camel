@@ -1,5 +1,7 @@
 ## CXF Component
 
+*Available as of Camel version 1.0.0*
+
 NOTE:When using CXF as a consumer, the link:cxf-bean-component.html[CXF Bean
 Component] allows you to factor out how message payloads are received
 from their processing as a RESTful or SOAP web service. This has the

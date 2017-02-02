@@ -1,5 +1,7 @@
 ## iBatis Component
 
+*Available as of Camel version 1.2.0*
+
 The *ibatis:* component allows you to query, poll, insert, update and
 delete data in a relational database using
 http://ibatis.apache.org/[Apache iBATIS].

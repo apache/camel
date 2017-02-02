@@ -1,5 +1,7 @@
 ## Python Language
 
+*Available as of Camel version 1.0.0*
+
 Camel supports http://www.python.org/[Python] among other
 link:scripting-languages.html[Scripting Languages] to allow an
 link:expression.html[Expression] or link:predicate.html[Predicate] to be

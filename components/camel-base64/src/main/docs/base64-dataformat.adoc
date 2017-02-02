@@ -1,6 +1,7 @@
 ## Base64 DataFormat
 
-*Available as of Camel 2.11* +
+*Available as of Camel version 2.11.0*
+
  The Base64 link:data-format.html[Data Format] is a data format for
 http://en.wikipedia.org/wiki/Base64[base64 encoding and decoding].
 

@@ -1,5 +1,7 @@
 ## Binding Component
 
+*Available as of Camel version 2.11.0*
+
 In Camel terms a _binding_ is a way of wrapping an
 link:endpoint.html[Endpoint] in a contract; such as a
 link:data-format.html[Data Format], a link:content-enricher.html[Content
