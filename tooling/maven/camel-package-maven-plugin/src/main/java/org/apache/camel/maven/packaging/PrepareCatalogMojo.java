@@ -326,6 +326,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Map<String, Set<String>> usedComponentLabels = new TreeMap<String, Set<String>>();
         Set<String> usedOptionLabels = new TreeSet<String>();
         Set<String> unlabeledOptions = new TreeSet<String>();
+        Set<File> missingFirstVersions = new TreeSet<File>();
 
         // find all json files in components and camel-core
         if (componentsDir != null && componentsDir.isDirectory()) {
@@ -461,6 +462,17 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     }
                 }
 
+                // detect missing first version
+                String firstVersion = null;
+                for (Map<String, String> row : rows) {
+                    if (row.get("firstVersion") != null) {
+                        firstVersion = row.get("firstVersion");
+                    }
+                }
+                if (firstVersion == null) {
+                    missingFirstVersions.add(file);
+                }
+
             } catch (IOException e) {
                 // ignore
             }
@@ -498,7 +510,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             throw new MojoFailureException("Error writing to file " + all);
         }
 
-        printComponentsReport(jsonFiles, duplicateJsonFiles, missingComponents, usedComponentLabels, usedOptionLabels, unlabeledOptions);
+        printComponentsReport(jsonFiles, duplicateJsonFiles, missingComponents, usedComponentLabels, usedOptionLabels, unlabeledOptions, missingFirstVersions);
 
         // filter out duplicate component names that are alternative scheme names
         Set<String> answer = new LinkedHashSet<>();
@@ -1003,7 +1015,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
     }
 
     private void printComponentsReport(Set<File> json, Set<File> duplicate, Set<File> missing, Map<String,
-            Set<String>> usedComponentLabels, Set<String> usedOptionsLabels, Set<String> unusedLabels) {
+            Set<String>> usedComponentLabels, Set<String> usedOptionsLabels, Set<String> unusedLabels, Set<File> missingFirstVersions) {
         getLog().info("================================================================================");
         getLog().info("");
         getLog().info("Camel component catalog report");
@@ -1047,6 +1059,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
             getLog().info("");
             getLog().warn("\tMissing components detected: " + missing.size());
             for (File name : missing) {
+                getLog().warn("\t\t" + name.getName());
+            }
+        }
+        if (!missingFirstVersions.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tComponents without firstVersion defined: " + missingFirstVersions.size());
+            for (File name : missingFirstVersions) {
                 getLog().warn("\t\t" + name.getName());
             }
         }
