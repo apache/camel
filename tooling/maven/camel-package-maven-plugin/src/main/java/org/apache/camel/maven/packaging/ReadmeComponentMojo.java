@@ -670,6 +670,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
         language.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
         language.setName(JSonSchemaHelper.getSafeValue("name", rows));
         language.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
+        language.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
         language.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
         language.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
         language.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));

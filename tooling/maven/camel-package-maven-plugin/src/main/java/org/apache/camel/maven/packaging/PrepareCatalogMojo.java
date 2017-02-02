@@ -531,6 +531,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<File> duplicateJsonFiles = new TreeSet<File>();
         Set<File> dataFormatFiles = new TreeSet<File>();
         Map<String, Set<String>> usedLabels = new TreeMap<String, Set<String>>();
+        Set<File> missingFirstVersions = new TreeSet<File>();
 
         // find all data formats from the components directory
         if (componentsDir != null && componentsDir.isDirectory()) {
@@ -585,6 +586,19 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         dataFormats.add(name);
                     }
                 }
+
+                // detect missing first version
+                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("dataformat", text, false);
+                String firstVersion = null;
+                for (Map<String, String> row : rows) {
+                    if (row.get("firstVersion") != null) {
+                        firstVersion = row.get("firstVersion");
+                    }
+                }
+                if (firstVersion == null) {
+                    missingFirstVersions.add(file);
+                }
+
             } catch (IOException e) {
                 // ignore
             }
@@ -622,7 +636,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             throw new MojoFailureException("Error writing to file " + all);
         }
 
-        printDataFormatsReport(jsonFiles, duplicateJsonFiles, usedLabels);
+        printDataFormatsReport(jsonFiles, duplicateJsonFiles, usedLabels, missingFirstVersions);
 
         return answer;
     }
@@ -635,6 +649,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<File> duplicateJsonFiles = new TreeSet<File>();
         Set<File> languageFiles = new TreeSet<File>();
         Map<String, Set<String>> usedLabels = new TreeMap<String, Set<String>>();
+        Set<File> missingFirstVersions = new TreeSet<File>();
 
         // find all languages from the components directory
         if (componentsDir != null && componentsDir.isDirectory()) {
@@ -693,6 +708,19 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         languages.add(name);
                     }
                 }
+
+                // detect missing first version
+                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", text, false);
+                String firstVersion = null;
+                for (Map<String, String> row : rows) {
+                    if (row.get("firstVersion") != null) {
+                        firstVersion = row.get("firstVersion");
+                    }
+                }
+                if (firstVersion == null) {
+                    missingFirstVersions.add(file);
+                }
+
             } catch (IOException e) {
                 // ignore
             }
@@ -730,7 +758,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             throw new MojoFailureException("Error writing to file " + all);
         }
 
-        printLanguagesReport(jsonFiles, duplicateJsonFiles, usedLabels);
+        printLanguagesReport(jsonFiles, duplicateJsonFiles, usedLabels, missingFirstVersions);
 
         return answer;
     }
@@ -1073,7 +1101,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         getLog().info("================================================================================");
     }
 
-    private void printDataFormatsReport(Set<File> json, Set<File> duplicate, Map<String, Set<String>> usedLabels) {
+    private void printDataFormatsReport(Set<File> json, Set<File> duplicate, Map<String, Set<String>> usedLabels, Set<File> missingFirstVersions) {
         getLog().info("================================================================================");
         getLog().info("");
         getLog().info("Camel data format catalog report");
@@ -1099,11 +1127,18 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 }
             }
         }
+        if (!missingFirstVersions.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tDataFormats without firstVersion defined: " + missingFirstVersions.size());
+            for (File name : missingFirstVersions) {
+                getLog().warn("\t\t" + name.getName());
+            }
+        }
         getLog().info("");
         getLog().info("================================================================================");
     }
 
-    private void printLanguagesReport(Set<File> json, Set<File> duplicate, Map<String, Set<String>> usedLabels) {
+    private void printLanguagesReport(Set<File> json, Set<File> duplicate, Map<String, Set<String>> usedLabels, Set<File> missingFirstVersions) {
         getLog().info("================================================================================");
         getLog().info("");
         getLog().info("Camel language catalog report");
@@ -1127,6 +1162,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 for (String name : entry.getValue()) {
                     getLog().info("\t\t\t" + name);
                 }
+            }
+        }
+        if (!missingFirstVersions.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tLanguages without firstVersion defined: " + missingFirstVersions.size());
+            for (File name : missingFirstVersions) {
+                getLog().warn("\t\t" + name.getName());
             }
         }
         getLog().info("");
