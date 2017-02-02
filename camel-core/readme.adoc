@@ -17,7 +17,7 @@ Components
 `binding:bindingName:delegateUri` | The binding component is used for as a of wrapping an Endpoint in a contract with a data format.
 
 | link:src/main/docs/browse-component.adoc[Browse] (camel-core) +
-`browse:name` | The browse component is used for viewsing the messages received on endpoints that supports BrowsableEndpoint.
+`browse:name` | The browse component is used for viewing the messages received on endpoints that supports BrowsableEndpoint.
 
 | link:src/main/docs/class-component.adoc[Class] (camel-core) +
 `class:beanName` | The Class Component is for invoking Java Classes (Java beans) from Camel.
