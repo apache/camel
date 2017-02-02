@@ -1301,17 +1301,18 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     private static LanguageModel generateLanguageModel(String languageName, String json) {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
 
-        LanguageModel dataFormat = new LanguageModel();
-        dataFormat.setTitle(getSafeValue("title", rows));
-        dataFormat.setName(getSafeValue("name", rows));
-        dataFormat.setModelName(getSafeValue("modelName", rows));
-        dataFormat.setDescription(getSafeValue("description", rows));
-        dataFormat.setLabel(getSafeValue("label", rows));
-        dataFormat.setDeprecated(getSafeValue("deprecated", rows));
-        dataFormat.setJavaType(getSafeValue("javaType", rows));
-        dataFormat.setGroupId(getSafeValue("groupId", rows));
-        dataFormat.setArtifactId(getSafeValue("artifactId", rows));
-        dataFormat.setVersion(getSafeValue("version", rows));
+        LanguageModel language = new LanguageModel();
+        language.setTitle(getSafeValue("title", rows));
+        language.setName(getSafeValue("name", rows));
+        language.setModelName(getSafeValue("modelName", rows));
+        language.setDescription(getSafeValue("description", rows));
+        language.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
+        language.setLabel(getSafeValue("label", rows));
+        language.setDeprecated(getSafeValue("deprecated", rows));
+        language.setJavaType(getSafeValue("javaType", rows));
+        language.setGroupId(getSafeValue("groupId", rows));
+        language.setArtifactId(getSafeValue("artifactId", rows));
+        language.setVersion(getSafeValue("version", rows));
 
         rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
         for (Map<String, String> row : rows) {
@@ -1324,10 +1325,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             option.setDescription(getSafeValue("description", row));
             option.setDefaultValue(getSafeValue("defaultValue", row));
             option.setEnumValues(getSafeValue("enum", row));
-            dataFormat.addLanguageOption(option);
+            language.addLanguageOption(option);
         }
 
-        return dataFormat;
+        return language;
     }
 
     private List<String> findComponentNames() {
