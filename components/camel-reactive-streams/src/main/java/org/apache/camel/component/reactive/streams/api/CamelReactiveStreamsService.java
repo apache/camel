@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.reactive.streams.api;
 
+import java.util.function.Function;
+
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Service;
@@ -83,9 +85,20 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      *
      * @param name the stream name
      * @param data the data to push
-     * @return an publisher with the resulting exchange
+     * @return a publisher with the resulting exchange
      */
     Publisher<Exchange> request(String name, Object data);
+
+    /**
+     * Returns a function that pushes data into the specified Camel stream and
+     * returns a Publisher (mono) holding the resulting exchange or an error.
+     *
+     * This is a curryied version of {@link CamelReactiveStreamsService#request(String, Object)}.
+     *
+     * @param name the stream name
+     * @return a function that returns a publisher with the resulting exchange
+     */
+    Function<?, ? extends Publisher<Exchange>> request(String name);
 
     /**
      * Pushes the given data into the specified Camel stream and returns a Publisher (mono) holding
@@ -95,9 +108,22 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      * @param data the data to push
      * @param type  the type to which the output should be converted
      * @param <T> the generic type of the resulting Publisher
-     * @return an publisher with the resulting data
+     * @return a publisher with the resulting data
      */
     <T> Publisher<T> request(String name, Object data, Class<T> type);
+
+    /**
+     * Returns a function that pushes data into the specified Camel stream and
+     * returns a Publisher (mono) holding the exchange output or an error.
+     *
+     * This is a curryied version of {@link CamelReactiveStreamsService#request(String, Object, Class)}.
+     *
+     * @param name the stream name
+     * @param type  the type to which the output should be converted
+     * @param <T> the generic type of the resulting Publisher
+     * @return a function that returns a publisher with the resulting data
+     */
+    <T> Function<Object, Publisher<T>> request(String name, Class<T> type);
 
     /*
      * Methods for Camel producers.

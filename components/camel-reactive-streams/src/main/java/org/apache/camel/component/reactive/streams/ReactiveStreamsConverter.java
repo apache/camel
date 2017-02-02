@@ -16,21 +16,13 @@
  */
 package org.apache.camel.component.reactive.streams;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
-import org.apache.camel.Processor;
-import org.apache.camel.component.bean.BeanInfo;
-import org.apache.camel.component.bean.BeanProcessor;
-import org.apache.camel.component.bean.ConstantBeanHolder;
 import org.apache.camel.component.reactive.streams.util.MonoPublisher;
-import org.apache.camel.component.reactive.streams.util.UnwrappingStreamProcessor;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.reactivestreams.Publisher;
 
 
