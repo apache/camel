@@ -26,7 +26,7 @@
 
   <artifactId>camel-eclipse</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Eclipse</name>
+  <name>Camel :: Eclipse (deprecated)</name>
   <description>Camel Eclipse support</description>
 
   <properties>
