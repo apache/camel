@@ -321,25 +321,42 @@
 
 
 
-
+<!-- others: START -->
 * Other Components
-  * [BAM (Business Activity Monitoring)](bam.adoc)
-  * [CDI](cdi.adoc)
-  * [Eclipse](eclipse.adoc)
-  * [Grape](grape.adoc)
-  * [Guice](guice.adoc)
-  * [HawtDB](hawtdb.adoc)
-  * [Hystrix](hystrix.adoc)
-  * [LevelDB](leveldb.adoc)
-  * [Jasypt](jasypt.adoc)
-  * [Kura](kura.adoc)
-  * [Ribbon](ribbon.adoc)
-  * [RX](rx.adoc)
-  * [SCR](scr.adoc)
-  * [Shiro](shiro.adoc)
-  * [Swagger Java](swagger-java.adoc)
-  * [Zipkin](zipkin.adoc)
-
+	* [Bam](bam.adoc)
+	* [Blueprint](blueprint.adoc)
+	* [Cdi](cdi.adoc)
+	* [Cxf Transport](cxf-transport.adoc)
+	* [Eclipse](eclipse.adoc)
+	* [Guice](guice.adoc)
+	* [Hawtdb](hawtdb.adoc)
+	* [Hystrix](hystrix.adoc)
+	* [Jasypt](jasypt.adoc)
+	* [Kura](kura.adoc)
+	* [Leveldb](leveldb.adoc)
+	* [Ribbon](ribbon.adoc)
+	* [Ruby](ruby.adoc)
+	* [Rx](rx.adoc)
+	* [Scala](scala.adoc)
+	* [Scr](scr.adoc)
+	* [Servletlistener](servletlistener.adoc)
+	* [Shiro](shiro.adoc)
+	* [Spring Boot](spring-boot.adoc)
+	* [Spring Cloud](spring-cloud.adoc)
+	* [Spring Dm](spring-dm.adoc)
+	* [Spring Javaconfig](spring-javaconfig.adoc)
+	* [Spring Security](spring-security.adoc)
+	* [Swagger](swagger.adoc)
+	* [Swagger Java](swagger-java.adoc)
+	* [Test](test.adoc)
+	* [Test Blueprint](test-blueprint.adoc)
+	* [Test Cdi](test-cdi.adoc)
+	* [Test Karaf](test-karaf.adoc)
+	* [Test Spring](test-spring.adoc)
+	* [Testng](testng.adoc)
+	* [Urlrewrite](urlrewrite.adoc)
+	* [Zipkin](zipkin.adoc)
+<!-- others: END -->
 
 
 <!-- dataformats: START -->
