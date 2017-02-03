@@ -94,6 +94,20 @@ public class SpringBootRuntimeProviderTest {
     }
 
     @Test
+    public void testFindOtherNames() throws Exception {
+        List<String> names = catalog.findOtherNames();
+
+        assertNotNull(names);
+        assertFalse(names.isEmpty());
+
+        assertTrue(names.contains("hystrix"));
+        assertTrue(names.contains("spring-boot"));
+        assertTrue(names.contains("zipkin"));
+
+        assertFalse(names.contains("blueprint"));
+    }
+
+    @Test
     public void testComponentArtifactId() throws Exception {
         String json = catalog.componentJSonSchema("ftp");
 
@@ -115,6 +129,14 @@ public class SpringBootRuntimeProviderTest {
 
         assertNotNull(json);
         assertTrue(json.contains("camel-spring-starter"));
+    }
+
+    @Test
+    public void testOtherArtifactId() throws Exception {
+        String json = catalog.otherJSonSchema("zipkin");
+
+        assertNotNull(json);
+        assertTrue(json.contains("camel-zipkin-starter"));
     }
 
 }
