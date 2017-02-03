@@ -79,6 +79,25 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testFindOtherNames() throws Exception {
+        List<String> names = catalog.findOtherNames();
+
+        assertTrue(names.contains("eclipse"));
+        assertTrue(names.contains("hystrix"));
+        assertTrue(names.contains("leveldb"));
+        assertTrue(names.contains("kura"));
+        assertTrue(names.contains("servletlistener"));
+        assertTrue(names.contains("swagger-java"));
+        assertTrue(names.contains("test-spring"));
+
+        assertFalse(names.contains("http-common"));
+        assertFalse(names.contains("core-osgi"));
+        assertFalse(names.contains("file"));
+        assertFalse(names.contains("ftp"));
+        assertFalse(names.contains("jetty"));
+    }
+
+    @Test
     public void testFindNames() throws Exception {
         List<String> names = catalog.findComponentNames();
         assertNotNull(names);
@@ -122,6 +141,9 @@ public class CamelCatalogTest {
         assertNotNull(schema);
 
         schema = catalog.modelJSonSchema("aggregate");
+        assertNotNull(schema);
+
+        schema = catalog.otherJSonSchema("swagger-java");
         assertNotNull(schema);
 
         // lets make it possible to find bean/method using both names
@@ -791,6 +813,17 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testListOthersAsJson() throws Exception {
+        String json = catalog.listOthersAsJson();
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
+    @Test
     public void testSummaryAsJson() throws Exception {
         String json = catalog.summaryAsJson();
         assertNotNull(json);
@@ -981,6 +1014,13 @@ public class CamelCatalogTest {
         String doc = catalog.languageAsciiDoc("jsonpath");
         assertNotNull(doc);
         assertTrue(doc.contains("JSonPath language"));
+    }
+
+    @Test
+    public void testOtherAsciiDoc() throws Exception {
+        String doc = catalog.otherAsciiDoc("swagger-java");
+        assertNotNull(doc);
+        assertTrue(doc.contains("Swagger"));
     }
 
     @Test
