@@ -30,12 +30,16 @@
   <description>Camel Eclipse support</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.component.eclipse.*</camel.osgi.export.pkg>
-	<camel.osgi.import.pkg>
-	   !org.apache.camel.component.eclipse.*,
-	   org.apache.camel.*;${camel.osgi.import.camel.version},	
-	   org.eclipse.core.runtime;common=!
-	</camel.osgi.import.pkg>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.3.0</firstVersion>
+    <label>tooling</label>
+
+    <camel.osgi.export.pkg>org.apache.camel.component.eclipse.*</camel.osgi.export.pkg>
+    <camel.osgi.import.pkg>
+       !org.apache.camel.component.eclipse.*,
+       org.apache.camel.*;${camel.osgi.import.camel.version},
+       org.eclipse.core.runtime;common=!
+    </camel.osgi.import.pkg>
   </properties>
 
   <dependencies>

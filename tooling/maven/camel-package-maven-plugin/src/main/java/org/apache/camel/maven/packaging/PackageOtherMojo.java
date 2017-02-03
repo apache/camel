@@ -33,6 +33,8 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
+import static org.apache.camel.maven.packaging.StringHelper.camelDashToTitle;
+
 /**
  * Analyses the Camel plugins in a project and generates extra descriptor information for easier auto-discovery in Camel.
  *
@@ -55,6 +57,13 @@ public class PackageOtherMojo extends AbstractMojo {
      * @parameter default-value="${project.build.directory}/generated/camel/others"
      */
     protected File otherOutDir;
+
+    /**
+     * The output directory for generated languages file
+     *
+     * @parameter default-value="${project.build.directory}/classes"
+     */
+    protected File schemaOutDir;
 
     /**
      * Maven ProjectHelper.
@@ -81,11 +90,11 @@ public class PackageOtherMojo extends AbstractMojo {
      * @throws MojoFailureException something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
-        prepareOthers(getLog(), project, projectHelper, otherOutDir, buildContext);
+        prepareOthers(getLog(), project, projectHelper, otherOutDir, schemaOutDir, buildContext);
     }
 
-    public static void prepareOthers(Log log, MavenProject project, MavenProjectHelper projectHelper,
-                                     File otherOutDir, BuildContext buildContext) throws MojoExecutionException {
+    public static void prepareOthers(Log log, MavenProject project, MavenProjectHelper projectHelper, File otherOutDir,
+                                     File schemaOutDir, BuildContext buildContext) throws MojoExecutionException {
 
         // are there any components, data formats or languages?
         for (Resource r : project.getBuild().getResources()) {
@@ -121,9 +130,57 @@ public class PackageOtherMojo extends AbstractMojo {
             return;
         }
 
+        String name = project.getArtifactId();
+        // strip leading camel-
+        if (name.startsWith("camel-")) {
+            name = name.substring(6);
+        }
+
+        try {
+            // create json model
+            OtherModel otherModel = new OtherModel();
+            otherModel.setName(name);
+            otherModel.setGroupId(project.getGroupId());
+            otherModel.setArtifactId(project.getArtifactId());
+            otherModel.setVersion(project.getVersion());
+            otherModel.setDescription(project.getDescription());
+            if (project.getName() != null && project.getName().contains("(deprecated)")) {
+                otherModel.setDeprecated("true");
+            } else {
+                otherModel.setDeprecated("false");
+            }
+            otherModel.setFirstVersion(project.getProperties().getProperty("firstVersion"));
+            otherModel.setLabel(project.getProperties().getProperty("label"));
+            String title = project.getProperties().getProperty("title");
+            if (title == null) {
+                title = camelDashToTitle(name);
+            }
+            otherModel.setTitle(title);
+
+            log.debug("Model " + otherModel);
+
+            // write this to the directory
+            File dir = schemaOutDir;
+            dir.mkdirs();
+
+            File out = new File(dir, name + ".json");
+            OutputStream fos = buildContext.newFileOutputStream(out);
+            String json = createJsonSchema(otherModel);
+            fos.write(json.getBytes());
+            fos.close();
+
+            buildContext.refresh(out);
+
+            log.debug("Generated " + out + " containing JSon schema for " + name + " other");
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error loading language model from camel-core. Reason: " + e, e);
+        }
+
+        // now create properties file
         File camelMetaDir = new File(otherOutDir, "META-INF/services/org/apache/camel/");
 
         Properties properties = new Properties();
+        properties.put("name", name);
         properties.put("groupId", project.getGroupId());
         properties.put("artifactId", project.getArtifactId());
         properties.put("version", project.getVersion());
@@ -164,6 +221,130 @@ public class PackageOtherMojo extends AbstractMojo {
 
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to write properties to " + outFile + ". Reason: " + e, e);
+        }
+    }
+
+    private static String createJsonSchema(OtherModel otherModel) {
+        StringBuilder buffer = new StringBuilder("{");
+        // language model
+        buffer.append("\n \"other\": {");
+        buffer.append("\n    \"name\": \"").append(otherModel.getName()).append("\",");
+        buffer.append("\n    \"kind\": \"").append("other").append("\",");
+        if (otherModel.getTitle() != null) {
+            buffer.append("\n    \"title\": \"").append(otherModel.getTitle()).append("\",");
+        }
+        if (otherModel.getDescription() != null) {
+            buffer.append("\n    \"description\": \"").append(otherModel.getDescription()).append("\",");
+        }
+        buffer.append("\n    \"deprecated\": \"").append(otherModel.getDeprecated()).append("\",");
+        if (otherModel.getFirstVersion() != null) {
+            buffer.append("\n    \"firstVersion\": \"").append(otherModel.getFirstVersion()).append("\",");
+        }
+        if (otherModel.getLabel() != null) {
+            buffer.append("\n    \"label\": \"").append(otherModel.getLabel()).append("\",");
+        }
+        buffer.append("\n    \"groupId\": \"").append(otherModel.getGroupId()).append("\",");
+        buffer.append("\n    \"artifactId\": \"").append(otherModel.getArtifactId()).append("\",");
+        buffer.append("\n    \"version\": \"").append(otherModel.getVersion()).append("\"");
+        buffer.append("\n  }");
+        buffer.append("\n}");
+        return buffer.toString();
+    }
+
+    private static class OtherModel {
+        private String name;
+        private String title;
+        private String description;
+        private String deprecated;
+        private String firstVersion;
+        private String label;
+        private String groupId;
+        private String artifactId;
+        private String version;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getDeprecated() {
+            return deprecated;
+        }
+
+        public void setDeprecated(String deprecated) {
+            this.deprecated = deprecated;
+        }
+
+        public String getFirstVersion() {
+            return firstVersion;
+        }
+
+        public void setFirstVersion(String firstVersion) {
+            this.firstVersion = firstVersion;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
+        }
+
+        public String getGroupId() {
+            return groupId;
+        }
+
+        public void setGroupId(String groupId) {
+            this.groupId = groupId;
+        }
+
+        public String getArtifactId() {
+            return artifactId;
+        }
+
+        public void setArtifactId(String artifactId) {
+            this.artifactId = artifactId;
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public void setVersion(String version) {
+            this.version = version;
+        }
+
+        @Override
+        public String toString() {
+            return "OtherModel["
+                + "name='" + name + '\''
+                + ", title='" + title + '\''
+                + ", description='" + description + '\''
+                + ", label='" + label + '\''
+                + ", groupId='" + groupId + '\''
+                + ", artifactId='" + artifactId + '\''
+                + ", version='" + version + '\''
+                + ']';
         }
     }
 
