@@ -30,6 +30,10 @@
   <description>Camel Spring Security support</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.3.0</firstVersion>
+    <label>security,spring</label>
+
     <camel.osgi.export.pkg>org.apache.camel.component.spring.security.*</camel.osgi.export.pkg>
     <camel.osgi.import.before.defaults>org.springframework.security.*;version="[4,5)"</camel.osgi.import.before.defaults>
   </properties>

@@ -30,6 +30,10 @@
     <description>Camel Testing Library using TestNG</description>
 
     <properties>
+        <!-- use by camel-catalog -->
+        <firstVersion>2.8.0</firstVersion>
+        <label>testing,java</label>
+
         <camel.osgi.export.pkg>org.apache.camel.testng.*</camel.osgi.export.pkg>
     </properties>
 

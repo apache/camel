@@ -30,6 +30,10 @@
     <description>Camel HawtDB Support</description>
 
     <properties>
+        <!-- use by camel-catalog -->
+        <firstVersion>2.3.0</firstVersion>
+        <label>database</label>
+
         <camel.osgi.export.pkg>org.apache.camel.component.hawtdb.*</camel.osgi.export.pkg>
     </properties>
 

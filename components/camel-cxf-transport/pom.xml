@@ -29,7 +29,11 @@
   <name>Camel :: CXF :: Transport</name>
   <description>Camel Transport for CXF </description>
 
-   <properties>
+  <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.8.0</firstVersion>
+    <label>soap,webservice</label>
+
     <camel.osgi.import>
       !org.apache.camel.component.cxf.*,
       !META-INF.cxf.camel,

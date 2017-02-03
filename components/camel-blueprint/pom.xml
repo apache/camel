@@ -30,6 +30,10 @@
     <packaging>jar</packaging>
 
     <properties>
+        <!-- use by camel-catalog -->
+        <firstVersion>2.4.0</firstVersion>
+        <label>java,osgi</label>
+
         <camel.osgi.import>
             !org.apache.camel.blueprint.*,
             !org.apache.camel.util.blueprint.*,

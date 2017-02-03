@@ -30,6 +30,10 @@
   <packaging>jar</packaging>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.15.0</firstVersion>
+    <label>osgi</label>
+
     <camel.osgi.export.pkg>org.apache.camel.scr</camel.osgi.export.pkg>
   </properties>
 

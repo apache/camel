@@ -30,6 +30,10 @@
   <description>Camel Swagger support</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.14.0</firstVersion>
+    <label>rest,api</label>
+
     <camel.osgi.import.before.defaults>
       scala.*;version="[2.10,2.11)"
     </camel.osgi.import.before.defaults>

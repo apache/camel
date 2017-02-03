@@ -31,6 +31,10 @@
   <description>Camel Testing Library using JUnit and CDI</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.17.0</firstVersion>
+    <label>testing,java</label>
+
     <camel.osgi.export.pkg>org.apache.camel.test.cdi.*</camel.osgi.export.pkg>
   </properties>
 
