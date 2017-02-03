@@ -78,8 +78,12 @@ public class UnwrapStreamProcessor implements AsyncProcessor {
                 }
 
             });
+
+            return false;
         }
-        return false;
+
+        callback.done(true);
+        return true;
     }
 
     @Override

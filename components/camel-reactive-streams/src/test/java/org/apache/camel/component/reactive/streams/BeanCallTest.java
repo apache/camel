@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.reactive.streams;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
 import io.reactivex.Flowable;
 
 import org.apache.camel.Exchange;
@@ -43,7 +47,6 @@ public class BeanCallTest extends CamelTestSupport {
                 from("direct:num")
                         .bean(BeanCallTest.this, "processBody")
                         .process(new UnwrapStreamProcessor()) // Can be removed?
-                        .split().body()
                         .to("mock:endpoint");
 
                 from("direct:handle")
@@ -76,7 +79,6 @@ public class BeanCallTest extends CamelTestSupport {
                 from("direct:num")
                         .bean(BeanCallTest.this, "processBodyWrongType")
                         .process(new UnwrapStreamProcessor()) // Can be removed?
-                        .split().body()
                         .to("mock:endpoint");
 
                 from("direct:handle")
@@ -108,7 +110,6 @@ public class BeanCallTest extends CamelTestSupport {
                 from("direct:num")
                         .bean(BeanCallTest.this, "processHeader")
                         .process(new UnwrapStreamProcessor()) // Can be removed?
-                        .split().body()
                         .to("mock:endpoint");
 
                 from("direct:handle")
@@ -129,6 +130,110 @@ public class BeanCallTest extends CamelTestSupport {
         assertEquals("HelloHeader 2", exchange.getIn().getBody());
     }
 
+    @Test
+    public void beanCallEmptyPublisherTest() throws Exception {
+        new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+
+                onException(Throwable.class).to("direct:handle").handled(true);
+
+                from("direct:num")
+                        .bean(BeanCallTest.this, "processBodyEmpty")
+                        .process(new UnwrapStreamProcessor()) // Can be removed?
+                        .to("mock:endpoint");
+
+                from("direct:handle")
+                        .setBody().constant("ERR")
+                        .to("mock:endpoint");
+
+            }
+        }.addRoutesToCamelContext(context);
+
+        MockEndpoint mock = getMockEndpoint("mock:endpoint");
+        mock.expectedMessageCount(1);
+
+        context.start();
+
+        template.sendBody("direct:num", 1);
+        mock.assertIsSatisfied();
+
+        Exchange exchange = mock.getExchanges().get(0);
+        Object body = exchange.getIn().getBody();
+        assertEquals(new Integer(1), body); // unchanged
+    }
+
+    @Test
+    public void beanCallTwoElementsTest() throws Exception {
+        new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+
+                onException(Throwable.class).to("direct:handle").handled(true);
+
+                from("direct:num")
+                        .bean(BeanCallTest.this, "processBodyTwoItems")
+                        .process(new UnwrapStreamProcessor()) // Can be removed?
+                        .to("mock:endpoint");
+
+                from("direct:handle")
+                        .setBody().constant("ERR")
+                        .to("mock:endpoint");
+
+            }
+        }.addRoutesToCamelContext(context);
+
+        MockEndpoint mock = getMockEndpoint("mock:endpoint");
+        mock.expectedMessageCount(1);
+
+        context.start();
+
+        template.sendBody("direct:num", 1);
+        mock.assertIsSatisfied();
+
+        Exchange exchange = mock.getExchanges().get(0);
+        Object body = exchange.getIn().getBody();
+        assertTrue(body instanceof Collection);
+        @SuppressWarnings("unchecked")
+        List<String> data = new LinkedList<>((Collection<String>) body);
+        assertListSize(data, 2);
+        assertEquals("HelloBody 1", data.get(0));
+        assertEquals("HelloBody 1", data.get(1));
+    }
+
+    @Test
+    public void beanCallStdReturnTypeTest() throws Exception {
+        new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+
+                onException(Throwable.class).to("direct:handle").handled(true);
+
+                from("direct:num")
+                        .bean(BeanCallTest.this, "processBodyStd")
+                        .process(new UnwrapStreamProcessor()) // Can be removed?
+                        .to("mock:endpoint");
+
+                from("direct:handle")
+                        .setBody().constant("ERR")
+                        .to("mock:endpoint");
+
+            }
+        }.addRoutesToCamelContext(context);
+
+        MockEndpoint mock = getMockEndpoint("mock:endpoint");
+        mock.expectedMessageCount(1);
+
+        context.start();
+
+        template.sendBody("direct:num", 1);
+        mock.assertIsSatisfied();
+
+        Exchange exchange = mock.getExchanges().get(0);
+        Object body = exchange.getIn().getBody();
+        assertEquals("Hello", body);
+    }
+
     public Publisher<String> processBody(Publisher<Integer> data) {
         return Flowable.fromPublisher(data)
                 .map(l -> "HelloBody " + l);
@@ -142,6 +247,19 @@ public class BeanCallTest extends CamelTestSupport {
     public Publisher<String> processHeader(@Header("myheader") Publisher<Integer> data) {
         return Flowable.fromPublisher(data)
                 .map(l -> "HelloHeader " + l);
+    }
+
+    public Publisher<String> processBodyTwoItems(Publisher<Integer> data) {
+        return Flowable.fromPublisher(data).mergeWith(data)
+                .map(l -> "HelloBody " + l);
+    }
+
+    public Publisher<String> processBodyEmpty(Publisher<Integer> data) {
+        return Flowable.empty();
+    }
+
+    public String processBodyStd(Publisher<Integer> data) {
+        return "Hello";
     }
 
     @Override
