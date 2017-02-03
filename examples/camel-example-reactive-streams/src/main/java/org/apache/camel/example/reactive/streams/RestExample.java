@@ -36,7 +36,7 @@ import reactor.core.publisher.Flux;
  * but they can be moved in their own files.
  */
 @Configuration
-@ConditionalOnProperty("examples.others.rest-example")
+@ConditionalOnProperty("examples.others.rest")
 public class RestExample {
 
     /**

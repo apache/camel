@@ -259,7 +259,7 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      * @param exchange the exchange to be forwarded to the external subscribers
      * @param callback the callback that signals the delivery of the exchange
      */
-    void process(String name, Exchange exchange, DispatchCallback<Exchange> callback);
+    void sendCamelExchange(String name, Exchange exchange, DispatchCallback<Exchange> callback);
 
     /*
      * Methods for Camel consumers.

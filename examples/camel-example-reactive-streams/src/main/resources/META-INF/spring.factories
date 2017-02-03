@@ -20,5 +20,7 @@ org.apache.camel.example.reactive.streams.BasicCamelToReactorExample,\
 org.apache.camel.example.reactive.streams.BasicReactorToCamelExample,\
 org.apache.camel.example.reactive.streams.BasicReactorToCamelInOutExample,\
 org.apache.camel.example.reactive.streams.BasicCamelToReactorInOutExample,\
-org.apache.camel.example.reactive.streams.RestExample
+org.apache.camel.example.reactive.streams.RestExample,\
+org.apache.camel.example.reactive.streams.ClientAPIRestExample,\
+org.apache.camel.example.reactive.streams.ClientAPIWorkflowExample
 
