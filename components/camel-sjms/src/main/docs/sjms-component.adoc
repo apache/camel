@@ -43,7 +43,7 @@ for this component:
 </dependency>
 ----
 
-#### URI format
+### URI format
 
 [source]
 ----
