@@ -588,44 +588,79 @@ Components
 
 Other Components
 ^^^^^^^^^^^^^^^^
-[width="100%",cols="4,6",options="header"]
+
+// others: START
+[width="100%",cols="4,1,5",options="header"]
 |=======================================================================
-| Component | Description
-| BAM (camel-bam) | *deprecated* Business Activity Monitoring
-| Blueprint (camel-blueprint) | Using Camel with OSGi Blueprint
-| Core OSGi (camel-core-osgi) | Using Camel with OSGi
-| CDI (camel-cdi) | Using Camel with CDI
-| Eclipse (camel-eclipse) | Camel classpath scanning support for running in Eclipse Desktop Applications
-| Grape (camel-grape) | Using Grape to download and install Camel components into existing running Camel application
-| Guice (camel-guice) | Using Camel with Guice
-| HawtDB (camel-hawtdb) | *deprecated* Using HawtDB as persistent EIP store
-| Hystrix (camel-hystrix) | Circuit Breaker EIP using Hystrix
-| LevelDB (camel-leveldb) | Using LevelDB as persistent EIP store
-| Jasypt (camel-jasypt) | Security using Jasypt
-| Kura (camel-kura) | Using Camel with Eclipse Kura (OSGi)
-| Ribbon (camel-ribbon) | Using Netflixx Ribbon for client side load balancing
-| RX (camel-rx) | Camel Reactive using RxJava library
-| Scala (camel-scala) | Camel Scala DSL
-| SCR (camel-scr) | Camel with OSGi SCR (Declarative Services)
-| Servlet Listener (camel-servletlistener) | Bootstrapping Camel using Servet Listener
-| Shiro (camel-shiro) | Security using Shiro
-| Spring (camel-spring) | Camel Spring XML DSL
-| Spring Boot (camel-spring-boot) | Using Camel with Spring Boot
-| Spring Cloud (camel-spring-cloud) | Using Camel with Spring Cloud
-| Spring DM (camel-spring-dm) | *deprecated* Camel SpringDM (OSGi) XML DSL
-| Spring Java Config (camel-spring-javaconfig) | Using Camel with Spring Java Configuration
-| Spring Security (camel-spring-security) | Security using Spring
-| Swagger (camel-swagger) | *deprecated* Rest-dsl support for using swagger api-doc
-| Swagger Java (camel-swagger) | Rest-dsl support for using swagger api-doc
-| Test (camel-test) | Camel unit testing
-| Test Blueprint (camel-test-blueprint) | Camel unit testing with OSGi Blueprint
-| Test CDI (camel-test-cdi) | Camel unit testing with CDI
-| Test Karaf (camel-test-karaf) | Camel integration testing with Apache Karaf
-| Test Spring (camel-test-spring) | Camel unit testing with Spring
-| TestNG (camel-testng) | *deprecated* Camel unit testing with TestNG
-| UrlRewrite (camel-urlrewrite) | URL rewrite support for HTTP components
-| Zipkin (camel-zipkin) | Distributed message tracing using Zipkin
+| Component | Available From | Description
+
+| link:camel-bam/src/main/docs/bam.adoc[Bam] (camel-bam) |  | *deprecated* Camel Business Activity Monitor support
+
+| link:camel-blueprint/src/main/docs/blueprint.adoc[Blueprint] (camel-blueprint) |  | Camel OSGi Blueprint support
+
+| link:camel-cdi/src/main/docs/cdi.adoc[Cdi] (camel-cdi) |  | Camel Contexts and Dependency Injection Support
+
+| link:camel-cxf-transport/src/main/docs/cxf-transport.adoc[Cxf Transport] (camel-cxf-transport) |  | Camel Transport for CXF
+
+| link:camel-eclipse/src/main/docs/eclipse.adoc[Eclipse] (camel-eclipse) | 2.3.0 | *deprecated* Camel Eclipse support
+
+| link:camel-guice/src/main/docs/guice.adoc[Guice] (camel-guice) |  | Camel Guice
+
+| link:camel-hawtdb/src/main/docs/hawtdb.adoc[Hawtdb] (camel-hawtdb) |  | *deprecated* Camel HawtDB Support
+
+| link:camel-hystrix/src/main/docs/hystrix.adoc[Hystrix] (camel-hystrix) |  | Camel Hystrix support
+
+| link:camel-jasypt/src/main/docs/jasypt.adoc[Jasypt] (camel-jasypt) |  | Camel Jasypt support
+
+| link:camel-kura/src/main/docs/kura.adoc[Kura] (camel-kura) |  | Camel Kura support
+
+| link:camel-leveldb/src/main/docs/leveldb.adoc[Leveldb] (camel-leveldb) |  | Camel LevelDB Support
+
+| link:camel-ribbon/src/main/docs/ribbon.adoc[Ribbon] (camel-ribbon) |  | Camel Components
+
+| link:camel-ruby/src/main/docs/ruby.adoc[Ruby] (camel-ruby) |  | Camel Ruby support
+
+| link:camel-rx/src/main/docs/rx.adoc[Rx] (camel-rx) |  | Camel Reactive Extensions support
+
+| link:camel-scala/src/main/docs/scala.adoc[Scala] (camel-scala) |  | Camel Scala DSL
+
+| link:camel-scr/src/main/docs/scr.adoc[Scr] (camel-scr) |  | Camel SCR support
+
+| link:camel-servletlistener/src/main/docs/servletlistener.adoc[Servletlistener] (camel-servletlistener) |  | Camel servlet listener for bootstrapping Camel in Web Applications
+
+| link:camel-shiro/src/main/docs/shiro.adoc[Shiro] (camel-shiro) |  | Camel Shiro Security support
+
+| link:camel-spring-boot/src/main/docs/spring-boot.adoc[Spring Boot] (camel-spring-boot) |  | Camel :: Spring Boot
+
+| link:camel-spring-cloud/src/main/docs/spring-cloud.adoc[Spring Cloud] (camel-spring-cloud) |  | Camel :: Spring Cloud
+
+| link:camel-spring-dm/src/main/docs/spring-dm.adoc[Spring Dm] (camel-spring-dm) |  | *deprecated* Camel Spring DM support
+
+| link:camel-spring-javaconfig/src/main/docs/spring-javaconfig.adoc[Spring Javaconfig] (camel-spring-javaconfig) |  | Camel Spring JavaConfig support
+
+| link:camel-spring-security/src/main/docs/spring-security.adoc[Spring Security] (camel-spring-security) |  | Camel Spring Security support
+
+| link:camel-swagger/src/main/docs/swagger.adoc[Swagger] (camel-swagger) |  | *deprecated* Camel Swagger support
+
+| link:camel-swagger-java/src/main/docs/swagger-java.adoc[Swagger Java] (camel-swagger-java) |  | Camel Swagger Java support
+
+| link:camel-test/src/main/docs/test.adoc[Test] (camel-test) |  | Camel Testing Library using JUnit
+
+| link:camel-test-blueprint/src/main/docs/test-blueprint.adoc[Test Blueprint] (camel-test-blueprint) |  | Camel Testing Blueprint Library using JUnit
+
+| link:camel-test-cdi/src/main/docs/test-cdi.adoc[Test Cdi] (camel-test-cdi) |  | Camel Testing Library using JUnit and CDI
+
+| link:camel-test-karaf/src/main/docs/test-karaf.adoc[Test Karaf] (camel-test-karaf) |  | Camel Testing Library using Pax Exam, Karaf and JUnit
+
+| link:camel-test-spring/src/main/docs/test-spring.adoc[Test Spring] (camel-test-spring) |  | Camel Testing Library using JUnit and Spring 4.1+
+
+| link:camel-testng/src/main/docs/testng.adoc[Testng] (camel-testng) |  | *deprecated* Camel Testing Library using TestNG
+
+| link:camel-urlrewrite/src/main/docs/urlrewrite.adoc[Urlrewrite] (camel-urlrewrite) |  | Camel URLRewrite support
+
+| link:camel-zipkin/src/main/docs/zipkin.adoc[Zipkin] (camel-zipkin) |  | Camel Zipkin Support
 |=======================================================================
+// others: END
 
 
 
