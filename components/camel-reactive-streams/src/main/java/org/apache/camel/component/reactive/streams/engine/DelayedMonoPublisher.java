@@ -138,8 +138,11 @@ public class DelayedMonoPublisher<T> implements Publisher<T> {
 
         @Override
         public void request(long l) {
-            if (terminated) {
-                throw new IllegalStateException("The subscription is terminated");
+            synchronized (this) {
+                if (terminated) {
+                    // just ignore the request
+                    return;
+                }
             }
 
             if (l <= 0) {
@@ -153,6 +156,7 @@ public class DelayedMonoPublisher<T> implements Publisher<T> {
                 }
             }
 
+            flushCycle();
         }
 
         public void flush() {
