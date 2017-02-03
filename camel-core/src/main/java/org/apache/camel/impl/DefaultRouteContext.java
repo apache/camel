@@ -35,6 +35,7 @@ import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
+import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.InterceptStrategy;
@@ -195,7 +196,7 @@ public class DefaultRouteContext implements RouteContext {
 
             // wrap in contract
             if (contract != null) {
-                internal.addAdvice(new CamelInternalProcessor.ContractAdvice(contract));
+                internal.addAdvice(new ContractAdvice(contract));
             }
 
             // and create the route that wraps the UoW
