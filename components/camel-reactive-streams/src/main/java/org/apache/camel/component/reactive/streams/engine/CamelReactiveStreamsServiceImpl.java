@@ -103,7 +103,7 @@ public class CamelReactiveStreamsServiceImpl implements CamelReactiveStreamsServ
     }
 
     @Override
-    public void process(String name, Exchange exchange, DispatchCallback<Exchange> callback) {
+    public void sendCamelExchange(String name, Exchange exchange, DispatchCallback<Exchange> callback) {
         StreamPayload<Exchange> payload = new StreamPayload<>(exchange, callback);
         getPayloadPublisher(name).publish(payload);
     }

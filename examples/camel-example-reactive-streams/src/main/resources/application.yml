@@ -23,7 +23,9 @@ examples:
     reactor-to-camel: true
     camel-to-reactor-in-out: true
     reactor-to-camel-in-out: true
+  client-api:
+    rest: true
+    workflow: true
   others:
-    rest-example: true
-
+    rest: true
 

@@ -84,7 +84,7 @@ public class UnwrapStreamProcessor implements AsyncProcessor {
                         exchange.getProperties().clear();
                         exchange.getProperties().putAll(copy.getProperties());
                     } else {
-                        exchange.getIn().setBody(body);
+                        exchange.getOut().setBody(body);
                     }
                 }
 

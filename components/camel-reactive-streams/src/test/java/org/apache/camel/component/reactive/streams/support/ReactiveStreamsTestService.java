@@ -82,7 +82,7 @@ public class ReactiveStreamsTestService implements CamelReactiveStreamsService {
     }
 
     @Override
-    public void process(String name, Exchange exchange, DispatchCallback<Exchange> callback) {
+    public void sendCamelExchange(String name, Exchange exchange, DispatchCallback<Exchange> callback) {
 
     }
 
