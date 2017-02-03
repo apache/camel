@@ -116,7 +116,7 @@ public class PrepareComponentMojo extends AbstractMojo {
         prepareComponent(getLog(), project, projectHelper, componentOutDir, buildContext);
         prepareDataFormat(getLog(), project, projectHelper, dataFormatOutDir, schemaOutDir, buildContext);
         prepareLanguage(getLog(), project, projectHelper, languageOutDir, schemaOutDir, buildContext);
-        prepareOthers(getLog(), project, projectHelper, otherOutDir, buildContext);
+        prepareOthers(getLog(), project, projectHelper, otherOutDir, schemaOutDir, buildContext);
     }
 
 }
