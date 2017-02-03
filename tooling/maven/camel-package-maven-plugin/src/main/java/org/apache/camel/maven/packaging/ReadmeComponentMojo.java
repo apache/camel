@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -35,7 +34,6 @@ import org.apache.camel.maven.packaging.model.DataFormatOptionModel;
 import org.apache.camel.maven.packaging.model.EndpointOptionModel;
 import org.apache.camel.maven.packaging.model.LanguageModel;
 import org.apache.camel.maven.packaging.model.LanguageOptionModel;
-import org.apache.camel.maven.packaging.model.OtherModel;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -50,7 +48,7 @@ import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 import static org.apache.camel.maven.packaging.StringHelper.isEmpty;
 
 /**
- * Generate or updates the component/dataformat/language/other readme.md and .adoc files in the project root directory.
+ * Generate or updates the component/dataformat/language readme.md and .adoc files in the project root directory.
  *
  * @goal update-readme
  */
@@ -98,7 +96,6 @@ public class ReadmeComponentMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         executeComponent();
-        executeOther();
         executeDataFormat();
         executeLanguage();
     }
@@ -154,44 +151,6 @@ public class ReadmeComponentMojo extends AbstractMojo {
                         getLog().debug("No changes to doc file: " + file);
                     } else {
                         getLog().warn("No component doc file: " + file);
-                        if (isFailFast()) {
-                            throw new MojoExecutionException("Failed build due failFast=true");
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private void executeOther() throws MojoExecutionException, MojoFailureException {
-        // find the other names
-        List<String> otherNames = findOtherNames();
-
-        final Set<File> jsonFiles = new TreeSet<File>();
-        PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelOthersModelFilter());
-
-        // only if there is other we should update the documentation files
-        if (!otherNames.isEmpty()) {
-            getLog().debug("Found " + otherNames.size() + " others");
-            for (String otherName : otherNames) {
-                String json = loadOtherJson(jsonFiles, otherName);
-                if (json != null) {
-                    File file = new File(docDir, otherName + ".adoc");
-
-                    OtherModel model = generateOtherModel(otherName, json);
-
-                    boolean exists = file.exists();
-                    boolean updated;
-
-                    updated = updateTitles(file, model.getTitle());
-                    updated |= updateAvailableFrom(file, model.getFirstVersion());
-
-                    if (updated) {
-                        getLog().info("Updated doc file: " + file);
-                    } else if (exists) {
-                        getLog().debug("No changes to doc file: " + file);
-                    } else {
-                        getLog().warn("No other doc file: " + file);
                         if (isFailFast()) {
                             throw new MojoExecutionException("Failed build due failFast=true");
                         }
@@ -644,23 +603,6 @@ public class ReadmeComponentMojo extends AbstractMojo {
         return null;
     }
 
-    private String loadOtherJson(Set<File> jsonFiles, String otherName) {
-        try {
-            for (File file : jsonFiles) {
-                if (file.getName().equals(otherName + ".json")) {
-                    String json = loadText(new FileInputStream(file));
-                    boolean isOther = json.contains("\"kind\": \"other\"");
-                    if (isOther) {
-                        return json;
-                    }
-                }
-            }
-        } catch (IOException e) {
-            // ignore
-        }
-        return null;
-    }
-
     private ComponentModel generateComponentModel(String componentName, String json) {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
 
@@ -815,23 +757,6 @@ public class ReadmeComponentMojo extends AbstractMojo {
         return language;
     }
 
-    private OtherModel generateOtherModel(String otherName, String json) {
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("other", json, false);
-
-        OtherModel other = new OtherModel();
-        other.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
-        other.setName(JSonSchemaHelper.getSafeValue("name", rows));
-        other.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
-        other.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
-        other.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
-        other.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
-        other.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
-        other.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
-        other.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
-
-        return other;
-    }
-
     private String templateComponentHeader(ComponentModel model) throws MojoExecutionException {
         try {
             String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("component-header.mvel"));
@@ -908,30 +833,6 @@ public class ReadmeComponentMojo extends AbstractMojo {
             }
         }
         return componentNames;
-    }
-
-    private List<String> findOtherNames() {
-        List<String> otherNames = new ArrayList<String>();
-        for (Resource r : project.getBuild().getResources()) {
-            File f = new File(r.getDirectory());
-            if (!f.exists()) {
-                f = new File(project.getBasedir(), r.getDirectory());
-            }
-            f = new File(f, "META-INF/services/org/apache/camel/other.properties");
-
-            if (f.exists() && f.isFile()) {
-                try {
-                    Properties prop = new Properties();
-                    prop.load(new FileInputStream(f));
-
-                    String name = prop.getProperty("name");
-                    otherNames.add(name);
-                } catch (Exception e) {
-                    // ignore
-                }
-            }
-        }
-        return otherNames;
     }
 
     private List<String> findDataFormatNames() {

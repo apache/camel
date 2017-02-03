@@ -30,6 +30,10 @@
   <description>Camel :: Spring Cloud</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.19.0</firstVersion>
+    <label>spring,microservice</label>
+
     <camel.osgi.export.pkg/>
   </properties>
 

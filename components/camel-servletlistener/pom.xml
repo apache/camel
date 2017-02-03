@@ -30,6 +30,10 @@
   <description>Camel servlet listener for bootstrapping Camel in Web Applications</description>
   
   <properties>
+      <!-- use by camel-catalog -->
+      <firstVersion>2.11.0</firstVersion>
+      <label>java</label>
+
       <camel.osgi.import.before.defaults>
           javax.servlet.*;version="${servlet-version-range}"
       </camel.osgi.import.before.defaults>

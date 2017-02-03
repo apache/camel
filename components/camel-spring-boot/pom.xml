@@ -30,6 +30,10 @@
   <description>Camel :: Spring Boot</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.15.0</firstVersion>
+    <label>spring,microservice</label>
+
     <camel.osgi.export.pkg/>
   </properties>
 

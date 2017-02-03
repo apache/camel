@@ -33,6 +33,10 @@
     <description>Camel Kura support</description>
 
     <properties>
+        <!-- use by camel-catalog -->
+        <firstVersion>2.15.0</firstVersion>
+        <label>iot,osgi</label>
+
         <camel.osgi.export.pkg>org.apache.camel.component.kura</camel.osgi.export.pkg>
 
         <kura-slf4j.version>1.6.4</kura-slf4j.version>

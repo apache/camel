@@ -26,10 +26,14 @@
 
   <artifactId>camel-ruby</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Ruby</name>
+  <name>Camel :: Ruby (deprecated)</name>
   <description>Camel Ruby support</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>1.0.0</firstVersion>
+    <label>dsl,script</label>
+
     <camel.osgi.export.pkg>org.apache.camel.ruby.*</camel.osgi.export.pkg>
   </properties>
 

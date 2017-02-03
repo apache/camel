@@ -30,6 +30,10 @@
   <description>Camel Contexts and Dependency Injection Support</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.10.0</firstVersion>
+    <label>java</label>
+
     <camel.osgi.import>
       !org.apache.camel.cdi.*,
       !org.apache.deltaspike.cdise.api.*,

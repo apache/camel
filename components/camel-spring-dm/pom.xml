@@ -31,6 +31,10 @@
   <packaging>jar</packaging>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.18.0</firstVersion>
+    <label>osgi,spring</label>
+
     <!-- spring-dm only supports spring 3.x so we need to import that range -->
     <camel.osgi.import>
       !org.apache.camel.spring.*,
