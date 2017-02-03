@@ -126,6 +126,46 @@ public class ReactiveStreamsTestService implements CamelReactiveStreamsService {
         return null;
     }
 
+    @Override
+    public Publisher<Exchange> publishURI(String uri) {
+        return null;
+    }
+
+    @Override
+    public <T> Publisher<T> publishURI(String uri, Class<T> type) {
+        return null;
+    }
+
+    @Override
+    public Publisher<Exchange> requestURI(String uri, Object data) {
+        return null;
+    }
+
+    @Override
+    public Function<?, ? extends Publisher<Exchange>> requestURI(String uri) {
+        return null;
+    }
+
+    @Override
+    public <T> Publisher<T> requestURI(String uri, Object data, Class<T> type) {
+        return null;
+    }
+
+    @Override
+    public <T> Function<Object, Publisher<T>> requestURI(String uri, Class<T> type) {
+        return null;
+    }
+
+    @Override
+    public void processFromURI(String uri, Function<? super Publisher<Exchange>, ?> processor) {
+
+    }
+
+    @Override
+    public <T> void processFromURI(String uri, Class<T> type, Function<? super Publisher<T>, ?> processor) {
+
+    }
+
     public String getName() {
         return name;
     }

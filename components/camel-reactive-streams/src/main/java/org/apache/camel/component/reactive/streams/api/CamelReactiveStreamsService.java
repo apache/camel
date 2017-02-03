@@ -126,6 +126,111 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
     <T> Function<Object, Publisher<T>> request(String name, Class<T> type);
 
     /*
+     * Direct client API methods
+     */
+
+    /**
+     * Creates a new stream from the endpoint URI (used as Camel Consumer) and returns
+     * the associated {@code Publisher}.
+     *
+     * If a stream has already been created, the existing {@link Publisher} is returned.
+     *
+     * @param uri the consumer uri
+     * @return the publisher associated to the uri
+     */
+    Publisher<Exchange> publishURI(String uri);
+
+    /**
+     * Creates a new stream of the given type from the endpoint URI (used as Camel Consumer) and returns
+     * the associated {@code Publisher}.
+     *
+     * If a stream has already been created, the existing {@link Publisher} is returned.
+     *
+     * @param uri the consumer uri
+     * @param type the type of items emitted by the publisher
+     * @param <T> the type to which Camel should convert exchanges to
+     * @return the publisher associated to the uri
+     */
+    <T> Publisher<T> publishURI(String uri, Class<T> type);
+
+    /**
+     * Creates a new route that uses the endpoint URI as producer, pushes the given data to the route
+     * and returns a {@code Publisher} that will eventually return the resulting exchange or an error.
+     *
+     * @param uri the producer uri
+     * @param data the data to push
+     * @return a publisher with the resulting exchange
+     */
+    Publisher<Exchange> requestURI(String uri, Object data);
+
+    /**
+     * Creates a new route that uses the endpoint URI as producer, and returns a
+     * function that pushes the data into the route and returns the
+     * {@code Publisher} that holds the resulting exchange or the error.
+     *
+     *
+     * This is a curryied version of {@link CamelReactiveStreamsService#requestURI(String, Object)}.
+     *
+     * @param uri the producer uri
+     * @return a function that returns a publisher with the resulting exchange
+     */
+    Function<?, ? extends Publisher<Exchange>> requestURI(String uri);
+
+    /**
+     * Creates a new route that uses the endpoint URI as producer, pushes the given data to the route
+     * and returns a {@code Publisher} that will eventually return the exchange output or an error.
+     *
+     * @param uri the producer uri
+     * @param data the data to push
+     * @param type  the type to which the output should be converted
+     * @param <T> the generic type of the resulting Publisher
+     * @return a publisher with the resulting data
+     */
+    <T> Publisher<T> requestURI(String uri, Object data, Class<T> type);
+
+    /**
+     * Creates a new route that uses the endpoint URI as producer, and returns a
+     * function that pushes the data into the route and returns the
+     * {@code Publisher} that holds the exchange output or an error.
+     *
+     * This is a curryied version of {@link CamelReactiveStreamsService#requestURI(String, Object, Class)}.
+     *
+     * @param uri the producer uri
+     * @param type  the type to which the output should be converted
+     * @param <T> the generic type of the resulting Publisher
+     * @return a function that returns a publisher with the resulting data
+     */
+    <T> Function<Object, Publisher<T>> requestURI(String uri, Class<T> type);
+
+    /**
+     * Adds a processing step at the specified endpoint uri (usually a "direct:name") that delegates
+     * to the given reactive processor.
+     *
+     * The processor receives a {@link Publisher} of exchanges and returns an object.
+     * If the output of the processor is a {@link Publisher}, it will be unwrapped before
+     * delivering the result to the source route.
+     *
+     * @param uri the uri where the processor should be attached
+     * @param processor the reactive processor
+     */
+    void processFromURI(String uri, Function<? super Publisher<Exchange>, ?> processor);
+
+    /**
+     * Adds a processing step at the specified endpoint uri (usually a "direct:name") that delegates
+     * to the given reactive processor.
+     *
+     * The processor receives a {@link Publisher} of items of the given type and returns an object.
+     * If the output of the processor is a {@link Publisher}, it will be unwrapped before
+     * delivering the result to the source route.
+     *
+     * @param uri the uri where the processor should be attached
+     * @param type  the type to which the body of the exchange should be converted
+     * @param <T> the generic type of the Publisher that should be processed
+     * @param processor the reactive processor
+     */
+    <T> void processFromURI(String uri, Class<T> type, Function<? super Publisher<T>, ?> processor);
+
+    /*
      * Methods for Camel producers.
      */
 
