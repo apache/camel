@@ -43,8 +43,10 @@ public class MonoPublisher<T> implements Publisher<T> {
             @Override
             public void request(long l) {
                 if (terminated) {
-                    throw new IllegalStateException("The subscription is terminated");
+                    // subscription is terminated, ignore
+                    return;
                 }
+                terminated = true;
 
                 if (l <= 0) {
                     subscriber.onError(new IllegalArgumentException("3.9"));
@@ -52,7 +54,6 @@ public class MonoPublisher<T> implements Publisher<T> {
                     subscriber.onNext(item);
                     subscriber.onComplete();
                 }
-                terminated = true;
             }
 
             @Override
