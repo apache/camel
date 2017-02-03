@@ -7,8 +7,6 @@ Protobuf - Protocol Buffers
 
 "Protocol Buffers - Google's data interchange format"
 
-INFO: Available from Camel 2.2
-
 Camel provides a link:data-format.html[Data Format] to serialse between
 Java and the Protocol Buffer protocol. The project's site details why
 you may wish to
