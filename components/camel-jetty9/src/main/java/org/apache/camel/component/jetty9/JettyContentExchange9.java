@@ -37,8 +37,10 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.component.jetty.JettyContentExchange;
 import org.apache.camel.component.jetty.JettyHttpBinding;
+import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
@@ -222,15 +224,18 @@ public class JettyContentExchange9 implements JettyContentExchange {
         };
 
         InputStreamResponseListener responseListener = new InputStreamResponseListener() {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            OutputStreamBuilder osb = OutputStreamBuilder.withExchange(exchange);
 
             @Override
             public void onContent(Response response, ByteBuffer content, Callback callback) {
                 byte[] buffer = new byte[content.limit()];
                 content.get(buffer);
-                baos.write(buffer, 0, buffer.length);
-
-                callback.succeeded();
+                try {
+                    osb.write(buffer);
+                    callback.succeeded();
+                } catch (IOException e) {
+                    callback.failed(e);
+                }
             }
 
             @Override
@@ -238,7 +243,19 @@ public class JettyContentExchange9 implements JettyContentExchange {
                 if (result.isFailed()) {
                     doTaskCompleted(result.getFailure());
                 } else {
-                    onResponseComplete(result, baos.toByteArray());
+                    try {
+                        Object content = osb.build();
+                        if (content instanceof byte[]) {
+                            onResponseComplete(result, (byte[]) content);
+                        } else {
+                            StreamCache cos = (StreamCache) content;
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            cos.writeTo(baos);
+                            onResponseComplete(result, baos.toByteArray());
+                        }
+                    } catch (IOException e) {
+                        doTaskCompleted(e);
+                    }
                 }
             }
         };
