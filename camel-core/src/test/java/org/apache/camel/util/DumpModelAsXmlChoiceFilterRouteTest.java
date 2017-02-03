@@ -57,7 +57,7 @@ public class DumpModelAsXmlChoiceFilterRouteTest extends ContextTestSupport {
                             .filter().header("extra-gold")
                                 .to("mock:extra-gold")
                             .endChoice()
-                        .when().simple("${body} contains Camel")
+                        .when().simple("${body} contains 'Camel'")
                             .to("mock:camel")
                         .otherwise()
                             .to("mock:other")
