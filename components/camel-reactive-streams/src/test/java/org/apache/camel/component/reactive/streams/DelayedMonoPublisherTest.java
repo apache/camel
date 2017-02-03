@@ -17,15 +17,18 @@
 package org.apache.camel.component.reactive.streams;
 
 import java.util.LinkedList;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Flowable;
 
 import org.apache.camel.component.reactive.streams.engine.DelayedMonoPublisher;
+import org.apache.camel.component.reactive.streams.support.TestSubscriber;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -222,6 +225,31 @@ public class DelayedMonoPublisherTest {
         for (Throwable t : exceptions) {
             assertEquals(ex, t);
         }
+    }
+
+    @Test
+    public void testDelayedRequest() throws Exception {
+
+        DelayedMonoPublisher<Integer> pub = new DelayedMonoPublisher<>(service);
+        pub.setData(2);
+
+        BlockingQueue<Integer> queue = new LinkedBlockingDeque<>();
+
+        TestSubscriber<Integer> sub = new TestSubscriber<Integer>() {
+            @Override
+            public void onNext(Integer o) {
+                queue.add(o);
+            }
+        };
+        sub.setInitiallyRequested(0);
+
+        pub.subscribe(sub);
+
+        Thread.sleep(100);
+        sub.request(1);
+
+        Integer res = queue.poll(1, TimeUnit.SECONDS);
+        assertEquals(new Integer(2), res);
     }
 
     @Test(expected = IllegalStateException.class)
