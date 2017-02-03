@@ -33,6 +33,7 @@ import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.DataFormatModel;
 import org.apache.camel.maven.packaging.model.EipModel;
 import org.apache.camel.maven.packaging.model.LanguageModel;
+import org.apache.camel.maven.packaging.model.OtherModel;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -44,7 +45,7 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 
 /**
- * Prepares the readme.md files content up to date with the components, data formats, and languages.
+ * Prepares the readme.md files content up to date with the components, data formats, languages, and others.
  *
  * @goal prepare-readme
  */
@@ -88,6 +89,13 @@ public class PrepareReadmeMojo extends AbstractMojo {
     protected File languagesDir;
 
     /**
+     * The directory for others catalog
+     *
+     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/others"
+     */
+    protected File othersDir;
+
+    /**
      * The directory for camel-core
      *
      * @parameter default-value="${project.directory}/../../../camel-core"
@@ -124,6 +132,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
         executeLanguagesReadme(true);
         // update readme file in components
         executeComponentsReadme(false);
+        executeOthersReadme();
         executeDataFormatsReadme(false);
         executeLanguagesReadme(false);
     }
@@ -230,6 +239,48 @@ public class PrepareReadmeMojo extends AbstractMojo {
             boolean exists = file.exists();
             String changed = templateComponents(components);
             boolean updated = updateComponents(file, changed);
+
+            if (updated) {
+                getLog().info("Updated readme.adoc file: " + file);
+            } else if (exists) {
+                getLog().debug("No changes to readme.adoc file: " + file);
+            } else {
+                getLog().warn("No readme.adoc file: " + file);
+            }
+
+        } catch (IOException e) {
+            throw new MojoFailureException("Error due " + e.getMessage(), e);
+        }
+    }
+
+    protected void executeOthersReadme() throws MojoExecutionException, MojoFailureException {
+        Set<File> otherFiles = new TreeSet<>();
+
+        if (othersDir != null && othersDir.isDirectory()) {
+            File[] files = othersDir.listFiles();
+            if (files != null) {
+                otherFiles.addAll(Arrays.asList(files));
+            }
+        }
+
+        try {
+            List<OtherModel> others = new ArrayList<>();
+            for (File file : otherFiles) {
+                String json = loadText(new FileInputStream(file));
+                OtherModel model = generateOtherModel(json);
+                others.add(model);
+            }
+
+            // sort the models
+            Collections.sort(others, new OtherComparator());
+
+            // update the big readme file in the components dir
+            File file = new File(readmeComponentsDir, "readme.adoc");
+
+            // update regular components
+            boolean exists = file.exists();
+            String changed = templateOthers(others);
+            boolean updated = updateOthers(file, changed);
 
             if (updated) {
                 getLog().info("Updated readme.adoc file: " + file);
@@ -388,6 +439,18 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
+    private String templateOthers(List<OtherModel> models) throws MojoExecutionException {
+        try {
+            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("readme-others.mvel"));
+            Map<String, Object> map = new HashMap<>();
+            map.put("others", models);
+            String out = (String) TemplateRuntime.eval(template, map);
+            return out;
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
+        }
+    }
+
     private String templateDataFormats(List<DataFormatModel> models) throws MojoExecutionException {
         try {
             String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("readme-dataformats.mvel"));
@@ -473,6 +536,40 @@ public class PrepareReadmeMojo extends AbstractMojo {
                 getLog().warn("Add the following markers");
                 getLog().warn("\t// components: START");
                 getLog().warn("\t// components: END");
+                return false;
+            }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
+        }
+    }
+
+    private boolean updateOthers(File file, String changed) throws MojoExecutionException {
+        if (!file.exists()) {
+            return false;
+        }
+
+        try {
+            String text = loadText(new FileInputStream(file));
+
+            String existing = StringHelper.between(text, "// others: START", "// others: END");
+            if (existing != null) {
+                // remove leading line breaks etc
+                existing = existing.trim();
+                changed = changed.trim();
+                if (existing.equals(changed)) {
+                    return false;
+                } else {
+                    String before = StringHelper.before(text, "// others: START");
+                    String after = StringHelper.after(text, "// others: END");
+                    text = before + "// others: START\n" + changed + "\n// others: END" + after;
+                    writeText(file, text);
+                    return true;
+                }
+            } else {
+                getLog().warn("Cannot find markers in file " + file);
+                getLog().warn("Add the following markers");
+                getLog().warn("\t// others: START");
+                getLog().warn("\t// others: END");
                 return false;
             }
         } catch (Exception e) {
@@ -566,6 +663,15 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
+    private static class OtherComparator implements Comparator<OtherModel> {
+
+        @Override
+        public int compare(OtherModel o1, OtherModel o2) {
+            // lets sort by title
+            return o1.getTitle().compareToIgnoreCase(o2.getTitle());
+        }
+    }
+
     private static class DataFormatComparator implements Comparator<DataFormatModel> {
 
         @Override
@@ -621,6 +727,23 @@ public class PrepareReadmeMojo extends AbstractMojo {
         component.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
 
         return component;
+    }
+
+    private OtherModel generateOtherModel(String json) {
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("other", json, false);
+
+        OtherModel other = new OtherModel();
+        other.setName(JSonSchemaHelper.getSafeValue("name", rows));
+        other.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
+        other.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
+        other.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
+        other.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
+        other.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
+        other.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
+        other.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
+        other.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
+
+        return other;
     }
 
     private DataFormatModel generateDataFormatModel(String json) {
