@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 217
+Number of Components: 218
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -428,6 +428,9 @@ Number of Components: 217
 | link:camel-netty4-http/src/main/docs/netty4-http-component.adoc[Netty4 HTTP] (camel-netty4-http) +
 `netty4-http:protocol:host:port/path` | 2.14.0 | Netty HTTP server and client using the Netty 4.x library.
 
+| link:camel-olingo2/src/main/docs/olingo2-component.adoc[Olingo2] (camel-olingo2) +
+`olingo2:apiName/methodName` | 2.14.0 | Communicates with OData 2.0 and 3.0 services using Apache Olingo.
+
 | link:camel-openshift/src/main/docs/openshift-component.adoc[OpenShift] (camel-openshift) +
 `openshift:clientId` | 2.14.0 | *deprecated* To manage your Openshift 2.x applications.
 
@@ -842,7 +845,7 @@ Expression Languages
 ^^^^^^^^^^^^^^^^^^^^
 
 // languages: START
-Number of Data Formats: 14
+Number of Languages: 14
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================

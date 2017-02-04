@@ -251,6 +251,7 @@
 	* [Netty HTTP](netty-http-component.adoc)
 	* [Netty4](netty4-component.adoc)
 	* [Netty4 HTTP](netty4-http-component.adoc)
+	* [Olingo2](olingo2-component.adoc)
 	* [OpenShift](openshift-component.adoc)
 	* [OpenStack Cinder](openstack-cinder-component.adoc)
 	* [OpenStack Glance](openstack-glance-component.adoc)
