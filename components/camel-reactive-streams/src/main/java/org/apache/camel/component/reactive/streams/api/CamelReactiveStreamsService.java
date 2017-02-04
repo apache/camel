@@ -174,7 +174,7 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      * @param uri the producer uri
      * @return a function that returns a publisher with the resulting exchange
      */
-    Function<?, ? extends Publisher<Exchange>> requestURI(String uri);
+    Function<Object, Publisher<Exchange>> requestURI(String uri);
 
     /**
      * Creates a new route that uses the endpoint URI as producer, pushes the given data to the route

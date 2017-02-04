@@ -212,7 +212,7 @@ public class CamelReactiveStreamsServiceImpl implements CamelReactiveStreamsServ
     }
 
     @Override
-    public Function<?, ? extends Publisher<Exchange>> requestURI(String uri) {
+    public Function<Object, Publisher<Exchange>> requestURI(String uri) {
         return data -> requestURI(uri, data);
     }
 
