@@ -1229,8 +1229,8 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         if (handlers != null && !handlers.isEmpty()) {
             for (Handler handler : handlers) {
                 if (handler instanceof HandlerWrapper) {
-                    // avoid setting the security handler more than once
-                    if (!handler.equals(server.getHandler())) {
+                    // avoid setting a handler more than once
+                    if (!isHandlerInChain(server.getHandler(), handler)) {
                         ((HandlerWrapper) handler).setHandler(server.getHandler());
                         server.setHandler(handler);
                     }
@@ -1242,6 +1242,21 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
                 }
             }
         }
+    }
+
+    protected boolean isHandlerInChain(Handler current, Handler handler) {
+    	
+    	if (handler.equals(current)) {
+    		//Found a match in the chain
+    		return true;
+    	} else if (current instanceof HandlerWrapper) {
+    		//Inspect the next handler in the chain
+    		return isHandlerInChain(((HandlerWrapper) current).getHandler(), handler);
+    	} else {
+    		//End of chain
+    		return false;
+    	}
+    	
     }
     
     protected Server createServer() {
