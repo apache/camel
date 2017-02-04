@@ -1261,18 +1261,17 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
     }
 
     protected boolean isHandlerInChain(Handler current, Handler handler) {
-    	
-    	if (handler.equals(current)) {
-    		//Found a match in the chain
-    		return true;
-    	} else if (current instanceof HandlerWrapper) {
-    		//Inspect the next handler in the chain
-    		return isHandlerInChain(((HandlerWrapper) current).getHandler(), handler);
-    	} else {
-    		//End of chain
-    		return false;
-    	}
-    	
+  
+        if (handler.equals(current)) {
+            //Found a match in the chain
+            return true;
+        } else if (current instanceof HandlerWrapper) {
+            //Inspect the next handler in the chain
+            return isHandlerInChain(((HandlerWrapper) current).getHandler(), handler);
+        } else {
+            //End of chain
+            return false;
+        }
     }
     
     protected Server createServer() {
