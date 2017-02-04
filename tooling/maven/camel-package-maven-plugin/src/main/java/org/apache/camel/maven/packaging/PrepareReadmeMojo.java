@@ -45,7 +45,7 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 
 /**
- * Prepares the readme.md files content up to date with the components, data formats, languages, and others.
+ * Prepares the readme.md files content up to date with all the artifacts that Apache Camel ships.
  *
  * @goal prepare-readme
  */
@@ -185,7 +185,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
-    protected void executeComponentsReadme(boolean core) throws MojoExecutionException, MojoFailureException {
+    protected void executeComponentsReadme(boolean coreOnly) throws MojoExecutionException, MojoFailureException {
         Set<File> componentFiles = new TreeSet<>();
 
         if (componentsDir != null && componentsDir.isDirectory()) {
@@ -199,7 +199,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
             List<ComponentModel> models = new ArrayList<>();
             for (File file : componentFiles) {
                 String json = loadText(new FileInputStream(file));
-                ComponentModel model = generateComponentModel(json);
+                ComponentModel model = generateComponentModel(json, coreOnly);
 
                 // filter out alternative schemas which reuses documentation
                 boolean add = true;
@@ -220,16 +220,20 @@ public class PrepareReadmeMojo extends AbstractMojo {
             // filter out unwanted components
             List<ComponentModel> components = new ArrayList<>();
             for (ComponentModel model : models) {
-                if (core && "camel-core".equals(model.getArtifactId())) {
-                    components.add(model);
-                } else if (!core && !"camel-core".equals(model.getArtifactId())) {
+                if (coreOnly) {
+                    if ("camel-core".equals(model.getArtifactId())) {
+                        // only include core components
+                        components.add(model);
+                    }
+                } else {
+                    // we want to include everything in the big file (also from camel-core)
                     components.add(model);
                 }
             }
 
             // update the big readme file in the core/components dir
             File file;
-            if (core) {
+            if (coreOnly) {
                 file = new File(readmeCoreDir, "readme.adoc");
             } else {
                 file = new File(readmeComponentsDir, "readme.adoc");
@@ -706,10 +710,10 @@ public class PrepareReadmeMojo extends AbstractMojo {
         return eip;
     }
 
-    private ComponentModel generateComponentModel(String json) {
+    private ComponentModel generateComponentModel(String json, boolean coreOnly) {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
 
-        ComponentModel component = new ComponentModel();
+        ComponentModel component = new ComponentModel(coreOnly);
         component.setScheme(JSonSchemaHelper.getSafeValue("scheme", rows));
         component.setSyntax(JSonSchemaHelper.getSafeValue("syntax", rows));
         component.setAlternativeSyntax(JSonSchemaHelper.getSafeValue("alternativeSyntax", rows));

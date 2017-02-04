@@ -21,6 +21,8 @@ import java.util.List;
 
 public class ComponentModel {
 
+    private final boolean coreOnly;
+
     private String kind;
     private String scheme;
     private String syntax;
@@ -39,6 +41,10 @@ public class ComponentModel {
     private String version;
     private final List<ComponentOptionModel> componentOptions = new ArrayList<ComponentOptionModel>();
     private final List<EndpointOptionModel> endpointOptions = new ArrayList<EndpointOptionModel>();
+
+    public ComponentModel(boolean coreOnly) {
+        this.coreOnly = coreOnly;
+    }
 
     public String getKind() {
         return kind;
@@ -202,7 +208,7 @@ public class ComponentModel {
 
     public String getDocLink() {
         if ("camel-core".equals(artifactId)) {
-            return "src/main/docs";
+            return coreOnly ? "src/main/docs" : "../camel-core/src/main/docs";
         } else {
             return artifactId + "/src/main/docs";
         }

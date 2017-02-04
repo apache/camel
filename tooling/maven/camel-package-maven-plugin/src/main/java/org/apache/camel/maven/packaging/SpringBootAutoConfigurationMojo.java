@@ -1213,7 +1213,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     private static ComponentModel generateComponentModel(String componentName, String json) {
         List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
 
-        ComponentModel component = new ComponentModel();
+        ComponentModel component = new ComponentModel(true);
         component.setScheme(getSafeValue("scheme", rows));
         component.setSyntax(getSafeValue("syntax", rows));
         component.setAlternativeSyntax(getSafeValue("alternativeSyntax", rows));
