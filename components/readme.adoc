@@ -381,7 +381,7 @@ Number of Components: 217
 `mina2:protocol:host:port` | 2.10.0 | Socket level networking using TCP or UDP with the Apache Mina 2.x library.
 
 | link:camel-mllp/src/main/docs/mllp-component.adoc[MLLP] (camel-mllp) +
-`mllp:hostname:port` | 2.17.0 | The MLLP component is designed to handle the MLLP protocol and provide the functionality required by Healthcare providers to communicate with other systems using the MLLP protocol.
+`mllp:hostname:port` | 2.17.0 | Provides functionality required by Healthcare providers to communicate with other systems using the MLLP protocol.
 
 | link:../camel-core/src/main/docs/mock-component.adoc[Mock] (camel-core) +
 `mock:name` | 1.0.0 | The mock component is used for testing routes and mediation rules using mocks.
