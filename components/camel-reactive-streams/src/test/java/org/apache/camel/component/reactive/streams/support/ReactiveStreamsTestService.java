@@ -142,7 +142,7 @@ public class ReactiveStreamsTestService implements CamelReactiveStreamsService {
     }
 
     @Override
-    public Function<?, ? extends Publisher<Exchange>> requestURI(String uri) {
+    public Function<Object, Publisher<Exchange>> requestURI(String uri) {
         return null;
     }
 

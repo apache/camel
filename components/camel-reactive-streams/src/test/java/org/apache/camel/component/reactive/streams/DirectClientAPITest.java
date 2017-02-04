@@ -94,6 +94,64 @@ public class DirectClientAPITest extends ReactiveStreamsTestSupport {
     }
 
     @Test
+    public void testDirectCallOverload() throws Exception {
+        context.start();
+
+        BlockingQueue<String> queue = new LinkedBlockingDeque<>();
+
+        Flowable.just(1, 2, 3)
+                .flatMap(e -> camel.requestURI("bean:hello", e, String.class))
+                .doOnNext(queue::add)
+                .subscribe();
+
+        for (int i = 1; i <= 3; i++) {
+            String res = queue.poll(1, TimeUnit.SECONDS);
+            assertEquals("Hello " + i, res);
+        }
+
+    }
+
+    @Test
+    public void testDirectCallWithExchange() throws Exception {
+        context.start();
+
+        BlockingQueue<String> queue = new LinkedBlockingDeque<>();
+
+        Flowable.just(1, 2, 3)
+                .flatMap(camel.requestURI("bean:hello")::apply)
+                .map(ex -> ex.getOut().getBody(String.class))
+                .doOnNext(queue::add)
+                .subscribe();
+
+        for (int i = 1; i <= 3; i++) {
+            String res = queue.poll(1, TimeUnit.SECONDS);
+            assertEquals("Hello " + i, res);
+        }
+
+    }
+
+    @Test
+    public void testDirectCallWithExchangeOverload() throws Exception {
+        context.start();
+
+        BlockingQueue<String> queue = new LinkedBlockingDeque<>();
+
+        Flowable.just(1, 2, 3)
+                .flatMap(e -> camel.requestURI("bean:hello", e))
+                .map(ex -> ex.getOut().getBody(String.class))
+                .doOnNext(queue::add)
+                .subscribe();
+
+        for (int i = 1; i <= 3; i++) {
+            String res = queue.poll(1, TimeUnit.SECONDS);
+            assertEquals("Hello " + i, res);
+        }
+
+    }
+
+
+
+    @Test
     public void testProxiedDirectCall() throws Exception {
         context.start();
 
@@ -158,6 +216,7 @@ public class DirectClientAPITest extends ReactiveStreamsTestSupport {
             assertEquals("after stream: " + (-id++), content);
         }
     }
+
 
     @Test
     public void testDirectCallFromCamelWithConversion() throws Exception {
