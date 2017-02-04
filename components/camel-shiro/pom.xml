@@ -27,7 +27,7 @@
 	<artifactId>camel-shiro</artifactId>
 	<packaging>jar</packaging>
 	<name>Camel :: Shiro </name>
-	<description>Camel Shiro Security support</description>
+	<description>Security using Shiro</description>
 
 	<properties>
     <!-- use by camel-catalog -->

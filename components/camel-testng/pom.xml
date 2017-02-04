@@ -27,7 +27,7 @@
     <artifactId>camel-testng</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: TestNG (deprecated)</name>
-    <description>Camel Testing Library using TestNG</description>
+    <description>Camel unit testing with TestNG</description>
 
     <properties>
         <!-- use by camel-catalog -->

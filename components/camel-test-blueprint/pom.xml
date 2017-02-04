@@ -27,7 +27,7 @@
     <artifactId>camel-test-blueprint</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Test :: Blueprint</name>
-    <description>Camel Testing Blueprint Library using JUnit</description>
+    <description>Camel unit testing with OSGi Blueprint</description>
 
     <properties>
         <!-- use by camel-catalog -->

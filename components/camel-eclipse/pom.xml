@@ -27,7 +27,7 @@
   <artifactId>camel-eclipse</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: Eclipse (deprecated)</name>
-  <description>Camel Eclipse support</description>
+  <description>Camel classpath scanning support for running in Eclipse Desktop Applications</description>
 
   <properties>
     <!-- use by camel-catalog -->

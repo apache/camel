@@ -27,7 +27,7 @@
   <artifactId>camel-cxf-transport</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: CXF :: Transport</name>
-  <description>Camel Transport for CXF </description>
+  <description>Camel Transport for Apache CXF </description>
 
   <properties>
     <!-- use by camel-catalog -->

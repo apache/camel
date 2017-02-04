@@ -26,7 +26,7 @@
 
   <artifactId>camel-spring</artifactId>
   <name>Camel :: Spring</name>
-  <description>Camel Spring support</description>
+  <description>Camel Spring with XML DSL</description>
   <packaging>jar</packaging>
 
   <properties>

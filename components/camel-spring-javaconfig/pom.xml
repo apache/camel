@@ -26,7 +26,7 @@
 
   <artifactId>camel-spring-javaconfig</artifactId>
   <name>Camel :: Spring JavaConfig</name>
-  <description>Camel Spring JavaConfig support</description>
+  <description> Using Camel with Spring Java Configuration</description>
   <packaging>jar</packaging>
 
   <properties>

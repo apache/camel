@@ -28,7 +28,7 @@
   <artifactId>camel-hystrix</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: Hystrix</name>
-  <description>Camel Hystrix support</description>
+  <description>Circuit Breaker EIP using Netflix Hystrix</description>
 
   <properties>
     <!-- use by camel-catalog -->

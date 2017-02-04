@@ -27,7 +27,7 @@
     <artifactId>camel-test</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Test</name>
-    <description>Camel Testing Library using JUnit</description>
+    <description>Camel unit testing</description>
 
     <properties>
         <!-- use by camel-catalog -->

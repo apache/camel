@@ -27,7 +27,7 @@
 
   <name>Camel :: Spring Boot</name>
   <artifactId>camel-spring-boot</artifactId>
-  <description>Camel :: Spring Boot</description>
+  <description>Using Camel with Spring Boot</description>
 
   <properties>
     <!-- use by camel-catalog -->
