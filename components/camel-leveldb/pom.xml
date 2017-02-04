@@ -27,7 +27,7 @@
     <artifactId>camel-leveldb</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: LevelDB</name>
-    <description>Camel LevelDB Support</description>
+    <description>Using LevelDB as persistent EIP store</description>
 
     <properties>
         <!-- use by camel-catalog -->

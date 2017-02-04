@@ -26,7 +26,7 @@
 
     <artifactId>camel-blueprint</artifactId>
     <name>Camel :: Blueprint</name>
-    <description>Camel OSGi Blueprint support</description>
+    <description>Using Camel with OSGi Blueprint</description>
     <packaging>jar</packaging>
 
     <properties>

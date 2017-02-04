@@ -30,7 +30,7 @@
     <artifactId>camel-kura</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Kura</name>
-    <description>Camel Kura support</description>
+    <description>Using Camel with Eclipse Kura (OSGi)</description>
 
     <properties>
         <!-- use by camel-catalog -->

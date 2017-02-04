@@ -27,7 +27,7 @@
   <artifactId>camel-guice</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: Guice</name>
-  <description>Camel Guice</description>
+  <description>Using Camel with Guice</description>
 
   <properties>
     <!-- use by camel-catalog -->

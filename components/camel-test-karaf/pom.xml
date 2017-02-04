@@ -29,7 +29,7 @@
   <artifactId>camel-test-karaf</artifactId>
   <name>Camel :: Test :: Karaf</name>
   <packaging>jar</packaging>
-  <description>Camel Testing Library using Pax Exam, Karaf and JUnit</description>
+  <description>Camel integration testing with Apache Karaf</description>
 
   <properties>
     <!-- use by camel-catalog -->

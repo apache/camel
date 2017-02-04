@@ -28,7 +28,7 @@
 
   <artifactId>camel-ribbon</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Ribbon</name>
+  <name>Using Netflix Ribbon for client side load balancing</name>
 
   <properties>
     <!-- use by camel-catalog -->

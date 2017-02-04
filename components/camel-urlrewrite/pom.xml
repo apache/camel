@@ -26,8 +26,8 @@
 
   <artifactId>camel-urlrewrite</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: URLRewrite</name>
-  <description>Camel URLRewrite support</description>
+  <name>Camel :: URLRewrite (deprecated)</name>
+  <description>URL rewrite support for HTTP components</description>
 
   <properties>
     <!-- use by camel-catalog -->

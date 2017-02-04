@@ -27,7 +27,7 @@
 
   <artifactId>camel-spring-dm</artifactId>
   <name>Camel :: Spring DM (deprecated)</name>
-  <description>Camel Spring DM support</description>
+  <description>Camel SpringDM (OSGi) XML DSL</description>
   <packaging>jar</packaging>
 
   <properties>

@@ -27,7 +27,7 @@
   <artifactId>camel-servletlistener</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: Servlet Listener</name>
-  <description>Camel servlet listener for bootstrapping Camel in Web Applications</description>
+  <description>Bootstrapping Camel using Servet Listener</description>
   
   <properties>
       <!-- use by camel-catalog -->

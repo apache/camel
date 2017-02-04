@@ -27,7 +27,7 @@
   <artifactId>camel-ruby</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: Ruby (deprecated)</name>
-  <description>Camel Ruby support</description>
+  <description>Camel Ruby DSL</description>
 
   <properties>
     <!-- use by camel-catalog -->

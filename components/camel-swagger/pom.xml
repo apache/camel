@@ -27,7 +27,7 @@
   <artifactId>camel-swagger</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: Swagger (deprecated)</name>
-  <description>Camel Swagger support</description>
+  <description>Rest-dsl support for using swagger api-doc</description>
 
   <properties>
     <!-- use by camel-catalog -->

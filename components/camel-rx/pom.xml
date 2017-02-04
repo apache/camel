@@ -27,7 +27,7 @@
   <artifactId>camel-rx</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: RX</name>
-  <description>Camel Reactive Extensions support</description>
+  <description>Camel Reactive using RxJava library</description>
 
   <properties>
     <!-- use by camel-catalog -->

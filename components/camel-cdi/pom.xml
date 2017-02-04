@@ -27,7 +27,7 @@
   <artifactId>camel-cdi</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: CDI</name>
-  <description>Camel Contexts and Dependency Injection Support</description>
+  <description>Using Camel with CDI</description>
 
   <properties>
     <!-- use by camel-catalog -->

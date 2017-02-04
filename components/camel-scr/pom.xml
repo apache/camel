@@ -26,7 +26,7 @@
 
   <artifactId>camel-scr</artifactId>
   <name>Camel :: SCR</name>
-  <description>Camel SCR support</description>
+  <description>Camel with OSGi SCR (Declarative Services)</description>
   <packaging>jar</packaging>
 
   <properties>

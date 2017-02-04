@@ -27,7 +27,7 @@
     <artifactId>camel-hawtdb</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: HawtDB (deprecated)</name>
-    <description>Camel HawtDB Support</description>
+    <description>Using HawtDB as persistent EIP store</description>
 
     <properties>
         <!-- use by camel-catalog -->
