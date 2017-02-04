@@ -2,6 +2,8 @@ Components
 ^^^^^^^^^^
 
 // components: START
+Number of Components: 217
+
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
 | Component | Available From | Description
@@ -72,11 +74,17 @@ Components
 | link:camel-aws/src/main/docs/aws-sdb-component.adoc[AWS SimpleDB] (camel-aws) +
 `aws-sdb:domainName` | 2.9.0 | The aws-sdb component is for storing and retrieving data from/to Amazon's SDB service.
 
+| link:../camel-core/src/main/docs/bean-component.adoc[Bean] (camel-core) +
+`bean:beanName` | 1.0.0 | The bean component is for invoking Java beans from Camel.
+
 | link:camel-bean-validator/src/main/docs/bean-validator-component.adoc[Bean Validator] (camel-bean-validator) +
 `bean-validator:label` | 2.3.0 | The Validator component performs bean validation of the message body using the Java Bean Validation API.
 
 | link:camel-beanstalk/src/main/docs/beanstalk-component.adoc[Beanstalk] (camel-beanstalk) +
 `beanstalk:connectionSettings` | 2.15.0 | The beanstalk component is used for job retrieval and post-processing of Beanstalk jobs.
+
+| link:../camel-core/src/main/docs/binding-component.adoc[Binding] (camel-core) +
+`binding:bindingName:delegateUri` | 2.11.0 | The binding component is used for as a of wrapping an Endpoint in a contract with a data format.
 
 | link:camel-bonita/src/main/docs/bonita-component.adoc[Bonita] (camel-bonita) +
 `bonita:operation` | 2.19.0 | Camel Bonita support
@@ -86,6 +94,9 @@ Components
 
 | link:camel-braintree/src/main/docs/braintree-component.adoc[Braintree] (camel-braintree) +
 `braintree:apiName/methodName` | 2.17.0 | The braintree component is used for integrating with the Braintree Payment System.
+
+| link:../camel-core/src/main/docs/browse-component.adoc[Browse] (camel-core) +
+`browse:name` | 1.3.0 | The browse component is used for viewing the messages received on endpoints that supports BrowsableEndpoint.
 
 | link:camel-context/src/main/docs/context-component.adoc[Camel Context] (camel-context) +
 `context:contextId:localEndpointUrl` | 2.7.0 | *deprecated* The context component allows to send/receive messages between Camel routes in a black box way.
@@ -98,6 +109,9 @@ Components
 
 | link:camel-chunk/src/main/docs/chunk-component.adoc[Chunk] (camel-chunk) +
 `chunk:resourceUri` | 2.15.0 | Transforms the message using a Chunk template.
+
+| link:../camel-core/src/main/docs/class-component.adoc[Class] (camel-core) +
+`class:beanName` | 2.4.0 | The Class Component is for invoking Java Classes (Java beans) from Camel.
 
 | link:camel-cm-sms/src/main/docs/cm-sms-component.adoc[CM SMS Gateway] (camel-cm-sms) +
 `cm-sms:host` | 2.18.0 | The influxdb component allows to integrate with CM SMS Gateway.
@@ -114,6 +128,9 @@ Components
 | link:camel-consul/src/main/docs/consul-component.adoc[Consul] (camel-consul) +
 `consul:apiEndpoint` | 2.18.0 | The camel consul component allows you to work with Consul a distributed highly available datacenter-aware service discovery and configuration system.
 
+| link:../camel-core/src/main/docs/controlbus-component.adoc[Control Bus] (camel-core) +
+`controlbus:command:language` | 2.11.0 | The controlbus component provides easy management of Camel applications based on the Control Bus EIP pattern.
+
 | link:camel-couchbase/src/main/docs/couchbase-component.adoc[Couchbase] (camel-couchbase) +
 `couchbase:url` | 2.19.0 | Represents a Couchbase endpoint that can query Views with a Poll strategy and/or produce various type of operations.
 
@@ -128,6 +145,18 @@ Components
 
 | link:camel-cxf/src/main/docs/cxfrs-component.adoc[CXF-RS] (camel-cxf) +
 `cxfrs:beanId:address` | 2.0.0 | The cxfrs component is used for JAX-RS REST services using Apache CXF.
+
+| link:../camel-core/src/main/docs/dataformat-component.adoc[Data Format] (camel-core) +
+`dataformat:name:operation` | 2.12.0 | The dataformat component is used for working with Data Formats as if it was a regular Component supporting Endpoints and URIs.
+
+| link:../camel-core/src/main/docs/dataset-component.adoc[Dataset] (camel-core) +
+`dataset:name` | 1.3.0 | The dataset component provides a mechanism to easily perform load & soak testing of your system.
+
+| link:../camel-core/src/main/docs/direct-component.adoc[Direct] (camel-core) +
+`direct:name` | 1.0.0 | The direct component provides direct synchronous call to another endpoint from the same CamelContext.
+
+| link:../camel-core/src/main/docs/direct-vm-component.adoc[Direct VM] (camel-core) +
+`direct-vm:name` | 2.10.0 | The direct-vm component provides direct synchronous call to another endpoint from any CamelContext in the same JVM.
 
 | link:camel-disruptor/src/main/docs/disruptor-component.adoc[Disruptor] (camel-disruptor) +
 `disruptor:name` | 2.12.0 | The disruptor component provides asynchronous SEDA behavior using LMAX Disruptor.
@@ -173,6 +202,9 @@ Components
 
 | link:camel-facebook/src/main/docs/facebook-component.adoc[Facebook] (camel-facebook) +
 `facebook:methodName` | 2.14.0 | The Facebook component provides access to all of the Facebook APIs accessible using Facebook4J.
+
+| link:../camel-core/src/main/docs/file-component.adoc[File] (camel-core) +
+`file:directoryName` | 1.0.0 | The file component is used for reading or writing files.
 
 | link:camel-flatpack/src/main/docs/flatpack-component.adoc[Flatpack] (camel-flatpack) +
 `flatpack:type:resourceUri` | 1.4.0 | The flatpack component supports fixed width and delimited file parsing via the FlatPack library.
@@ -321,11 +353,17 @@ Components
 | link:camel-kubernetes/src/main/docs/kubernetes-component.adoc[Kubernetes] (camel-kubernetes) +
 `kubernetes:masterUrl` | 2.17.0 | The kubernetes component allows to work with Kubernetes PaaS.
 
+| link:../camel-core/src/main/docs/language-component.adoc[Language] (camel-core) +
+`language:languageName:resourceUri` | 2.5.0 | The language component allows you to send a message to an endpoint which executes a script by any of the supported Languages in Camel.
+
 | link:camel-ldap/src/main/docs/ldap-component.adoc[LDAP] (camel-ldap) +
 `ldap:dirContextName` | 1.5.0 | The ldap component allows you to perform searches in LDAP servers using filters as the message payload.
 
 | link:camel-linkedin/src/main/docs/linkedin-component.adoc[Linkedin] (camel-linkedin) +
 `linkedin:apiName/methodName` | 2.14.0 | The linkedin component is uses for retrieving LinkedIn user profiles connections companies groups posts etc.
+
+| link:../camel-core/src/main/docs/log-component.adoc[Log] (camel-core) +
+`log:loggerName` | 1.1.0 | The log component logs message exchanges to the underlying logging mechanism.
 
 | link:camel-lucene/src/main/docs/lucene-component.adoc[Lucene] (camel-lucene) +
 `lucene:host:operation` | 2.2.0 | To insert or query from Apache Lucene databases.
@@ -344,6 +382,9 @@ Components
 
 | link:camel-mllp/src/main/docs/mllp-component.adoc[MLLP] (camel-mllp) +
 `mllp:hostname:port` | 2.17.0 | The MLLP component is designed to handle the MLLP protocol and provide the functionality required by Healthcare providers to communicate with other systems using the MLLP protocol.
+
+| link:../camel-core/src/main/docs/mock-component.adoc[Mock] (camel-core) +
+`mock:name` | 1.0.0 | The mock component is used for testing routes and mediation rules using mocks.
 
 | link:camel-mongodb/src/main/docs/mongodb-component.adoc[MongoDB] (camel-mongodb) +
 `mongodb:connectionBean` | 2.10.0 | Component for working with documents stored in MongoDB database.
@@ -429,6 +470,9 @@ Components
 | link:camel-printer/src/main/docs/lpr-component.adoc[Printer] (camel-printer) +
 `lpr:hostname:port/printername` | 2.1.0 | The printer component is used for sending messages to printers as print jobs.
 
+| link:../camel-core/src/main/docs/properties-component.adoc[Properties] (camel-core) +
+`properties:key` | 2.3.0 | The properties component is used for using property placeholders in endpoint uris.
+
 | link:camel-quartz/src/main/docs/quartz-component.adoc[Quartz] (camel-quartz) +
 `quartz:groupName/timerName` | 1.0.0 | *deprecated* Provides a scheduled delivery of messages using the Quartz 1.x scheduler.
 
@@ -443,6 +487,15 @@ Components
 
 | link:camel-reactive-streams/src/main/docs/reactive-streams-component.adoc[Reactive Streams] (camel-reactive-streams) +
 `reactive-streams:stream` | 2.19.0 | The Camel reactive-streams endpoint.
+
+| link:../camel-core/src/main/docs/ref-component.adoc[Ref] (camel-core) +
+`ref:name` | 1.2.0 | The ref component is used for lookup of existing endpoints bound in the Registry.
+
+| link:../camel-core/src/main/docs/rest-component.adoc[REST] (camel-core) +
+`rest:method:path:uriTemplate` | 2.14.0 | The rest component is used for either hosting REST services (consumer) or calling external REST services (producer).
+
+| link:../camel-core/src/main/docs/rest-api-component.adoc[REST API] (camel-core) +
+`rest-api:path/contextIdPattern` | 2.16.0 | The rest-api component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.
 
 | link:camel-restlet/src/main/docs/restlet-component.adoc[Restlet] (camel-restlet) +
 `restlet:protocol:host:port/uriPattern` | 2.0.0 | Component for consuming and producing Restful resources using Restlet.
@@ -462,11 +515,17 @@ Components
 | link:camel-sap-netweaver/src/main/docs/sap-netweaver-component.adoc[SAP NetWeaver] (camel-sap-netweaver) +
 `sap-netweaver:url` | 2.12.0 | The sap-netweaver component integrates with the SAP NetWeaver Gateway using HTTP transports.
 
+| link:../camel-core/src/main/docs/scheduler-component.adoc[Scheduler] (camel-core) +
+`scheduler:name` | 2.15.0 | The scheduler component is used for generating message exchanges when a scheduler fires.
+
 | link:camel-schematron/src/main/docs/schematron-component.adoc[Schematron] (camel-schematron) +
 `schematron:path` | 2.15.0 | Validates the payload of a message using the Schematron Library.
 
 | link:camel-jsch/src/main/docs/scp-component.adoc[SCP] (camel-jsch) +
 `scp:host:port/directoryName` | 2.10.0 | To copy files using the secure copy protocol (SCP).
+
+| link:../camel-core/src/main/docs/seda-component.adoc[SEDA] (camel-core) +
+`seda:name` | 1.1.0 | The seda component provides asynchronous call to another endpoint from any CamelContext in the same JVM.
 
 | link:camel-servicenow/src/main/docs/servicenow-component.adoc[ServiceNow] (camel-servicenow) +
 `servicenow:instanceName` | 2.18.0 | The servicenow component is used to integrate Camel with ServiceNow cloud services.
@@ -543,11 +602,20 @@ Components
 | link:camel-stringtemplate/src/main/docs/string-template-component.adoc[String Template] (camel-stringtemplate) +
 `string-template:resourceUri` | 1.2.0 | Transforms the message using a String template.
 
+| link:../camel-core/src/main/docs/stub-component.adoc[Stub] (camel-core) +
+`stub:name` | 2.10.0 | The stub component provides a simple way to stub out any physical endpoints while in development or testing.
+
 | link:camel-telegram/src/main/docs/telegram-component.adoc[Telegram] (camel-telegram) +
 `telegram:type/authorizationToken` | 2.18.0 | The telegram component provides access to the Telegram Bot API.
 
+| link:../camel-core/src/main/docs/test-component.adoc[Test] (camel-core) +
+`test:name` | 1.3.0 | The test component extends the mock component by on startup to pull messages from another endpoint to set the expected message bodies.
+
 | link:camel-tika/src/main/docs/tika-component.adoc[Tika] (camel-tika) +
 `tika:operation` | 2.19.0 | This component integrates with Apache Tika to extract content and metadata from thousands of file types.
+
+| link:../camel-core/src/main/docs/timer-component.adoc[Timer] (camel-core) +
+`timer:timerName` | 1.0.0 | The timer component is used for generating message exchanges when a timer fires.
 
 | link:camel-twitter/src/main/docs/twitter-component.adoc[Twitter] (camel-twitter) +
 `twitter:kind` | 2.10.0 | This component integrates with Twitter to send tweets or search for tweets and more.
@@ -555,11 +623,17 @@ Components
 | link:camel-undertow/src/main/docs/undertow-component.adoc[Undertow] (camel-undertow) +
 `undertow:httpURI` | 2.16.0 | The undertow component provides HTTP-based endpoints for consuming and producing HTTP requests.
 
+| link:../camel-core/src/main/docs/validator-component.adoc[Validator] (camel-core) +
+`validator:resourceUri` | 1.1.0 | Validates the payload of a message using XML Schema and JAXP Validation.
+
 | link:camel-velocity/src/main/docs/velocity-component.adoc[Velocity] (camel-velocity) +
 `velocity:resourceUri` | 1.2.0 | Transforms the message using a Velocity template.
 
 | link:camel-vertx/src/main/docs/vertx-component.adoc[Vert.x] (camel-vertx) +
 `vertx:address` | 2.12.0 | The vertx component is used for sending and receive messages from a vertx event bus.
+
+| link:../camel-core/src/main/docs/vm-component.adoc[VM] (camel-core) +
+`vm:name` | 1.1.0 | The vm component provides asynchronous call to another endpoint from the same CamelContext.
 
 | link:camel-weather/src/main/docs/weather-component.adoc[Weather] (camel-weather) +
 `weather:name` | 2.12.0 | Polls the weather information from Open Weather Map.
@@ -576,6 +650,9 @@ Components
 | link:camel-saxon/src/main/docs/xquery-component.adoc[XQuery] (camel-saxon) +
 `xquery:resourceUri` | 1.0.0 | Transforms the message using a XQuery template using Saxon.
 
+| link:../camel-core/src/main/docs/xslt-component.adoc[XSLT] (camel-core) +
+`xslt:resourceUri` | 1.3.0 | Transforms the message using a XSLT template.
+
 | link:camel-yammer/src/main/docs/yammer-component.adoc[Yammer] (camel-yammer) +
 `yammer:function` | 2.12.0 | The yammer component allows you to interact with the Yammer enterprise social network.
 
@@ -590,6 +667,8 @@ Other Components
 ^^^^^^^^^^^^^^^^
 
 // others: START
+Number of Other Components: 33
+
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
 | Component | Available From | Description
@@ -668,6 +747,8 @@ Data Formats
 ^^^^^^^^^^^^
 
 // dataformats: START
+Number of Data Formats: 41
+
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
 | Data Format | Available From | Description
@@ -761,6 +842,8 @@ Expression Languages
 ^^^^^^^^^^^^^^^^^^^^
 
 // languages: START
+Number of Data Formats: 14
+
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
 | Language | Available From | Description
