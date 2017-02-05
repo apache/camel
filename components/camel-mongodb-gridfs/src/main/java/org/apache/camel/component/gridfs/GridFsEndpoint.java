@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Component for working with MongoDB GridFS.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "gridfs", title = "MongoDBGridFS", syntax = "gridfs:connectionBean", label = "database,nosql")
+@UriEndpoint(firstVersion = "2.18.0", scheme = "gridfs", title = "MongoDB GridFS", syntax = "gridfs:connectionBean", label = "database,nosql")
 public class GridFsEndpoint extends DefaultEndpoint {
 
     public static final String GRIDFS_OPERATION = "gridfs.operation";
