@@ -392,7 +392,7 @@ Number of Components: 218
 | link:camel-mongodb3/src/main/docs/mongodb3-component.adoc[MongoDB] (camel-mongodb3) +
 `mongodb3:connectionBean` | 2.19.0 | Component for working with documents stored in MongoDB database.
 
-| link:camel-mongodb-gridfs/src/main/docs/gridfs-component.adoc[MongoDBGridFS] (camel-mongodb-gridfs) +
+| link:camel-mongodb-gridfs/src/main/docs/gridfs-component.adoc[MongoDB GridFS] (camel-mongodb-gridfs) +
 `gridfs:connectionBean` | 2.18.0 | Component for working with MongoDB GridFS.
 
 | link:camel-mqtt/src/main/docs/mqtt-component.adoc[MQTT] (camel-mqtt) +
