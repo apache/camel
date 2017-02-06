@@ -519,7 +519,7 @@
     <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
     <rhino-version>1.7R2</rhino-version>
     <ribbon-version>2.2.2</ribbon-version>
-    <roaster-version>2.19.4.Final</roaster-version>
+    <roaster-version>2.19.5.Final</roaster-version>
     <rome-bundle-version>1.0_3</rome-bundle-version>
     <rome-version>1.0</rome-version>
     <rxjava-version>1.2.6</rxjava-version>
@@ -561,8 +561,8 @@
     <spring-batch-version>3.0.7.RELEASE</spring-batch-version>
     <spring-batch-bundle-version>3.0.7.RELEASE_1</spring-batch-bundle-version>
     <spring-boot-version>1.5.1.RELEASE</spring-boot-version>
-    <spring-cloud-commons-version>1.1.6.RELEASE</spring-cloud-commons-version>
-    <spring-cloud-netflix-version>1.2.4.RELEASE</spring-cloud-netflix-version>
+    <spring-cloud-commons-version>1.1.7.RELEASE</spring-cloud-commons-version>
+    <spring-cloud-netflix-version>1.2.5.RELEASE</spring-cloud-netflix-version>
     <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
     <spring-data-commons-version>1.11.6.RELEASE</spring-data-commons-version>
     <spring-data-redis-version>1.7.5.RELEASE</spring-data-redis-version>
