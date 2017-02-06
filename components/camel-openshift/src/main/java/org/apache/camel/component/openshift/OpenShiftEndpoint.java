@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * To manage your Openshift 2.x applications.
  */
-@UriEndpoint(scheme = "openshift", title = "OpenShift", syntax = "openshift:clientId", consumerClass = OpenShiftConsumer.class, label = "cloud,paas")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "openshift", title = "OpenShift", syntax = "openshift:clientId", consumerClass = OpenShiftConsumer.class, label = "cloud,paas")
 public class OpenShiftEndpoint extends ScheduledPollEndpoint {
 
     @UriPath @Metadata(required = "true")

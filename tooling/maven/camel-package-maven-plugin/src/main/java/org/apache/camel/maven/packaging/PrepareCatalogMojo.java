@@ -105,6 +105,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File languagesOutDir;
 
     /**
+     * The output directory for others catalog
+     *
+     * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/others"
+     */
+    protected File othersOutDir;
+
+    /**
      * The output directory for documents catalog
      *
      * @parameter default-value="${project.build.directory}/classes/org/apache/camel/catalog/docs"
@@ -194,7 +201,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<String> components = executeComponents();
         Set<String> dataformats = executeDataFormats();
         Set<String> languages = executeLanguages();
-        executeDocuments(components, dataformats, languages);
+        Set<String> others = executeOthers();
+        executeDocuments(components, dataformats, languages, others);
         executeArchetypes();
         executeXmlSchemas();
     }
@@ -326,6 +334,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Map<String, Set<String>> usedComponentLabels = new TreeMap<String, Set<String>>();
         Set<String> usedOptionLabels = new TreeSet<String>();
         Set<String> unlabeledOptions = new TreeSet<String>();
+        Set<File> missingFirstVersions = new TreeSet<File>();
 
         // find all json files in components and camel-core
         if (componentsDir != null && componentsDir.isDirectory()) {
@@ -339,11 +348,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     if (dir.isDirectory() && !"target".equals(dir.getName())) {
                         File target = new File(dir, "target/classes");
 
-                        // special for camel-salesforce which is in a sub dir
+                        // special for these as they are in sub dir
                         if ("camel-salesforce".equals(dir.getName())) {
                             target = new File(dir, "camel-salesforce-component/target/classes");
                         } else if ("camel-linkedin".equals(dir.getName())) {
                             target = new File(dir, "camel-linkedin-component/target/classes");
+                        } else if ("camel-olingo2".equals(dir.getName())) {
+                            target = new File(dir, "camel-olingo2-component/target/classes");
                         }
 
                         int before = componentFiles.size();
@@ -461,6 +472,17 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     }
                 }
 
+                // detect missing first version
+                String firstVersion = null;
+                for (Map<String, String> row : rows) {
+                    if (row.get("firstVersion") != null) {
+                        firstVersion = row.get("firstVersion");
+                    }
+                }
+                if (firstVersion == null) {
+                    missingFirstVersions.add(file);
+                }
+
             } catch (IOException e) {
                 // ignore
             }
@@ -498,7 +520,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             throw new MojoFailureException("Error writing to file " + all);
         }
 
-        printComponentsReport(jsonFiles, duplicateJsonFiles, missingComponents, usedComponentLabels, usedOptionLabels, unlabeledOptions);
+        printComponentsReport(jsonFiles, duplicateJsonFiles, missingComponents, usedComponentLabels, usedOptionLabels, unlabeledOptions, missingFirstVersions);
 
         // filter out duplicate component names that are alternative scheme names
         Set<String> answer = new LinkedHashSet<>();
@@ -519,6 +541,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<File> duplicateJsonFiles = new TreeSet<File>();
         Set<File> dataFormatFiles = new TreeSet<File>();
         Map<String, Set<String>> usedLabels = new TreeMap<String, Set<String>>();
+        Set<File> missingFirstVersions = new TreeSet<File>();
 
         // find all data formats from the components directory
         if (componentsDir != null && componentsDir.isDirectory()) {
@@ -573,6 +596,19 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         dataFormats.add(name);
                     }
                 }
+
+                // detect missing first version
+                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("dataformat", text, false);
+                String firstVersion = null;
+                for (Map<String, String> row : rows) {
+                    if (row.get("firstVersion") != null) {
+                        firstVersion = row.get("firstVersion");
+                    }
+                }
+                if (firstVersion == null) {
+                    missingFirstVersions.add(file);
+                }
+
             } catch (IOException e) {
                 // ignore
             }
@@ -610,7 +646,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
             throw new MojoFailureException("Error writing to file " + all);
         }
 
-        printDataFormatsReport(jsonFiles, duplicateJsonFiles, usedLabels);
+        printDataFormatsReport(jsonFiles, duplicateJsonFiles, usedLabels, missingFirstVersions);
 
         return answer;
     }
@@ -623,6 +659,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Set<File> duplicateJsonFiles = new TreeSet<File>();
         Set<File> languageFiles = new TreeSet<File>();
         Map<String, Set<String>> usedLabels = new TreeMap<String, Set<String>>();
+        Set<File> missingFirstVersions = new TreeSet<File>();
 
         // find all languages from the components directory
         if (componentsDir != null && componentsDir.isDirectory()) {
@@ -681,6 +718,19 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         languages.add(name);
                     }
                 }
+
+                // detect missing first version
+                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", text, false);
+                String firstVersion = null;
+                for (Map<String, String> row : rows) {
+                    if (row.get("firstVersion") != null) {
+                        firstVersion = row.get("firstVersion");
+                    }
+                }
+                if (firstVersion == null) {
+                    missingFirstVersions.add(file);
+                }
+
             } catch (IOException e) {
                 // ignore
             }
@@ -718,7 +768,136 @@ public class PrepareCatalogMojo extends AbstractMojo {
             throw new MojoFailureException("Error writing to file " + all);
         }
 
-        printLanguagesReport(jsonFiles, duplicateJsonFiles, usedLabels);
+        printLanguagesReport(jsonFiles, duplicateJsonFiles, usedLabels, missingFirstVersions);
+
+        return answer;
+    }
+
+    private Set<String> executeOthers() throws MojoFailureException {
+        getLog().info("Copying all Camel other json descriptors");
+
+        // lets use sorted set/maps
+        Set<File> jsonFiles = new TreeSet<File>();
+        Set<File> duplicateJsonFiles = new TreeSet<File>();
+        Set<File> otherFiles = new TreeSet<File>();
+        Map<String, Set<String>> usedLabels = new TreeMap<String, Set<String>>();
+        Set<File> missingFirstVersions = new TreeSet<File>();
+
+        // find all others from the components directory
+        if (componentsDir != null && componentsDir.isDirectory()) {
+            File[] others = componentsDir.listFiles();
+            if (others != null) {
+                for (File dir : others) {
+
+                    // skip these special cases
+                    // (camel-jetty is a placeholder, as camel-jetty9 is the actual component)
+                    if ("camel-core-osgi".equals(dir.getName())
+                        || "camel-core-xml".equals(dir.getName())
+                        || "camel-http-common".equals(dir.getName())
+                        || "camel-jetty".equals(dir.getName())
+                        || "camel-jetty-common".equals(dir.getName())
+                        || "camel-linkedin".equals(dir.getName())
+                        || "camel-olingo2".equals(dir.getName())
+                        || "camel-salesforce".equals(dir.getName())) {
+                        continue;
+                    }
+
+                    if (dir.isDirectory() && !"target".equals(dir.getName())) {
+                        File target = new File(dir, "target/classes");
+                        findOtherFilesRecursive(target, jsonFiles, otherFiles, new CamelOthersFileFilter());
+                    }
+                }
+            }
+        }
+        // nothing in camel-core
+
+        getLog().info("Found " + otherFiles.size() + " other.properties files");
+        getLog().info("Found " + jsonFiles.size() + " other json files");
+
+        // make sure to create out dir
+        othersOutDir.mkdirs();
+
+        for (File file : jsonFiles) {
+            File to = new File(othersOutDir, file.getName());
+            if (to.exists()) {
+                duplicateJsonFiles.add(to);
+                getLog().warn("Duplicate other name detected: " + to);
+            }
+            try {
+                copyFile(file, to);
+            } catch (IOException e) {
+                throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
+            }
+
+            // check if we have a label as we want the other to include labels
+            try {
+                String text = loadText(new FileInputStream(file));
+                String name = asComponentName(file);
+                Matcher matcher = LABEL_PATTERN.matcher(text);
+                // grab the label, and remember it in the used labels
+                if (matcher.find()) {
+                    String label = matcher.group(1);
+                    String[] labels = label.split(",");
+                    for (String s : labels) {
+                        Set<String> others = usedLabels.get(s);
+                        if (others == null) {
+                            others = new TreeSet<String>();
+                            usedLabels.put(s, others);
+                        }
+                        others.add(name);
+                    }
+                }
+
+                // detect missing first version
+                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("other", text, false);
+                String firstVersion = null;
+                for (Map<String, String> row : rows) {
+                    if (row.get("firstVersion") != null) {
+                        firstVersion = row.get("firstVersion");
+                    }
+                }
+                if (firstVersion == null) {
+                    missingFirstVersions.add(file);
+                }
+
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+
+        Set<String> answer = new LinkedHashSet<>();
+
+        File all = new File(othersOutDir, "../others.properties");
+        try {
+            FileOutputStream fos = new FileOutputStream(all, false);
+
+            String[] names = othersOutDir.list();
+            List<String> others = new ArrayList<String>();
+            // sort the names
+            for (String name : names) {
+                if (name.endsWith(".json")) {
+                    // strip out .json from the name
+                    String otherName = name.substring(0, name.length() - 5);
+                    others.add(otherName);
+                }
+            }
+
+            Collections.sort(others);
+            for (String name : others) {
+                fos.write(name.getBytes());
+                fos.write("\n".getBytes());
+
+                // remember other name
+                answer.add(name);
+            }
+
+            fos.close();
+
+        } catch (IOException e) {
+            throw new MojoFailureException("Error writing to file " + all);
+        }
+
+        printOthersReport(jsonFiles, duplicateJsonFiles, usedLabels, missingFirstVersions);
 
         return answer;
     }
@@ -767,7 +946,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
     }
 
-    protected void executeDocuments(Set<String> components, Set<String> dataformats, Set<String> languages) throws MojoExecutionException, MojoFailureException {
+    protected void executeDocuments(Set<String> components, Set<String> dataformats, Set<String> languages, Set<String> others) throws MojoExecutionException, MojoFailureException {
         getLog().info("Copying all Camel documents (ascii docs)");
 
         // lets use sorted set/maps
@@ -888,11 +1067,11 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         printDocumentsReport(adocFiles, duplicateAdocFiles, missingAdocFiles);
 
-        // find out if we have documents for each component / dataformat / languages
-        printMissingDocumentsReport(docs, components, dataformats, languages);
+        // find out if we have documents for each component / dataformat / languages / others
+        printMissingDocumentsReport(docs, components, dataformats, languages, others);
     }
 
-    private void printMissingDocumentsReport(Set<String> docs, Set<String> components, Set<String> dataformats, Set<String> languages) {
+    private void printMissingDocumentsReport(Set<String> docs, Set<String> components, Set<String> dataformats, Set<String> languages, Set<String> others) {
         getLog().info("");
         getLog().info("Camel missing documents report");
         getLog().info("");
@@ -953,6 +1132,21 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
         missing.clear();
 
+        for (String other : others) {
+            String name = other;
+            if (!docs.contains(name)) {
+                missing.add(name);
+            }
+        }
+        if (!missing.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tMissing .adoc other documentation  : " + missing.size());
+            for (String name : missing) {
+                getLog().warn("\t\t" + name);
+            }
+        }
+        missing.clear();
+
         getLog().info("");
         getLog().info("================================================================================");
     }
@@ -1003,7 +1197,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
     }
 
     private void printComponentsReport(Set<File> json, Set<File> duplicate, Set<File> missing, Map<String,
-            Set<String>> usedComponentLabels, Set<String> usedOptionsLabels, Set<String> unusedLabels) {
+            Set<String>> usedComponentLabels, Set<String> usedOptionsLabels, Set<String> unusedLabels, Set<File> missingFirstVersions) {
         getLog().info("================================================================================");
         getLog().info("");
         getLog().info("Camel component catalog report");
@@ -1050,11 +1244,18 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 getLog().warn("\t\t" + name.getName());
             }
         }
+        if (!missingFirstVersions.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tComponents without firstVersion defined: " + missingFirstVersions.size());
+            for (File name : missingFirstVersions) {
+                getLog().warn("\t\t" + name.getName());
+            }
+        }
         getLog().info("");
         getLog().info("================================================================================");
     }
 
-    private void printDataFormatsReport(Set<File> json, Set<File> duplicate, Map<String, Set<String>> usedLabels) {
+    private void printDataFormatsReport(Set<File> json, Set<File> duplicate, Map<String, Set<String>> usedLabels, Set<File> missingFirstVersions) {
         getLog().info("================================================================================");
         getLog().info("");
         getLog().info("Camel data format catalog report");
@@ -1080,11 +1281,18 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 }
             }
         }
+        if (!missingFirstVersions.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tDataFormats without firstVersion defined: " + missingFirstVersions.size());
+            for (File name : missingFirstVersions) {
+                getLog().warn("\t\t" + name.getName());
+            }
+        }
         getLog().info("");
         getLog().info("================================================================================");
     }
 
-    private void printLanguagesReport(Set<File> json, Set<File> duplicate, Map<String, Set<String>> usedLabels) {
+    private void printLanguagesReport(Set<File> json, Set<File> duplicate, Map<String, Set<String>> usedLabels, Set<File> missingFirstVersions) {
         getLog().info("================================================================================");
         getLog().info("");
         getLog().info("Camel language catalog report");
@@ -1108,6 +1316,50 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 for (String name : entry.getValue()) {
                     getLog().info("\t\t\t" + name);
                 }
+            }
+        }
+        if (!missingFirstVersions.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tLanguages without firstVersion defined: " + missingFirstVersions.size());
+            for (File name : missingFirstVersions) {
+                getLog().warn("\t\t" + name.getName());
+            }
+        }
+        getLog().info("");
+        getLog().info("================================================================================");
+    }
+
+    private void printOthersReport(Set<File> json, Set<File> duplicate, Map<String, Set<String>> usedLabels, Set<File> missingFirstVersions) {
+        getLog().info("================================================================================");
+        getLog().info("");
+        getLog().info("Camel other catalog report");
+        getLog().info("");
+        getLog().info("\tOthers found: " + json.size());
+        for (File file : json) {
+            getLog().info("\t\t" + asComponentName(file));
+        }
+        if (!duplicate.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tDuplicate other detected: " + duplicate.size());
+            for (File file : duplicate) {
+                getLog().warn("\t\t" + asComponentName(file));
+            }
+        }
+        if (!usedLabels.isEmpty()) {
+            getLog().info("");
+            getLog().info("\tUsed labels: " + usedLabels.size());
+            for (Map.Entry<String, Set<String>> entry : usedLabels.entrySet()) {
+                getLog().info("\t\t" + entry.getKey() + ":");
+                for (String name : entry.getValue()) {
+                    getLog().info("\t\t\t" + name);
+                }
+            }
+        }
+        if (!missingFirstVersions.isEmpty()) {
+            getLog().info("");
+            getLog().warn("\tOthers without firstVersion defined: " + missingFirstVersions.size());
+            for (File name : missingFirstVersions) {
+                getLog().warn("\t\t" + name.getName());
             }
         }
         getLog().info("");
@@ -1207,6 +1459,25 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
     }
 
+    private void findOtherFilesRecursive(File dir, Set<File> found, Set<File> others, FileFilter filter) {
+        File[] files = dir.listFiles(filter);
+        if (files != null) {
+            for (File file : files) {
+                // skip files in root dirs as Camel does not store information there but others may do
+                boolean rootDir = "classes".equals(dir.getName()) || "META-INF".equals(dir.getName());
+                boolean jsonFile = rootDir && file.isFile() && file.getName().endsWith(".json");
+                boolean otherFile = !rootDir && file.isFile() && file.getName().equals("other.properties");
+                if (jsonFile) {
+                    found.add(file);
+                } else if (otherFile) {
+                    others.add(file);
+                } else if (file.isDirectory()) {
+                    findOtherFilesRecursive(file, found, others, filter);
+                }
+            }
+        }
+    }
+
     private void findAsciiDocFilesRecursive(File dir, Set<File> found, FileFilter filter) {
         File[] files = dir.listFiles(filter);
         if (files != null) {
@@ -1283,6 +1554,23 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 }
             }
             return pathname.isDirectory() || (pathname.isFile() && pathname.getName().equals("language.properties"));
+        }
+    }
+
+    private class CamelOthersFileFilter implements FileFilter {
+
+        @Override
+        public boolean accept(File pathname) {
+            if (pathname.isFile() && pathname.getName().endsWith(".json")) {
+                // must be a language json file
+                try {
+                    String json = loadText(new FileInputStream(pathname));
+                    return json != null && json.contains("\"kind\": \"other\"");
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            return pathname.isDirectory() || (pathname.isFile() && pathname.getName().equals("other.properties"));
         }
     }
 

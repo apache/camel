@@ -1,6 +1,6 @@
 ## Nats Component
 
-*Available since Camel 2.17.0*
+*Available as of Camel version 2.17.0*
 
 http://nats.io/[NATS] is a fast and reliable messaging platform.
 

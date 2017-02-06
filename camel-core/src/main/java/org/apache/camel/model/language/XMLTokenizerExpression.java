@@ -32,7 +32,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @see XMLTokenizeLanguage
  */
-@Metadata(label = "language,core,xml", title = "XML Tokenize")
+@Metadata(firstVersion = "2.14.0", label = "language,core,xml", title = "XML Tokenize")
 @XmlRootElement(name = "xtokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLTokenizerExpression extends NamespaceAwareExpression {

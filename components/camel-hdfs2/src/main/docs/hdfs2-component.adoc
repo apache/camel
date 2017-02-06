@@ -1,6 +1,6 @@
 ## HDFS2 Component
 
-*Available as of Camel 2.13*
+*Available as of Camel version 2.14.0*
 
 The *hdfs2* component enables you to read and write messages from/to an
 HDFS file system using Hadoop 2.x. HDFS is the distributed file system

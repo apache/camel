@@ -45,7 +45,7 @@ public class CamelSubscriberVerificationTest extends SubscriberBlackboxVerificat
             }
         };
 
-        Subscriber<Exchange> sub = CamelReactiveStreams.get(context).getSubscriber("sub");
+        Subscriber<Exchange> sub = CamelReactiveStreams.get(context).streamSubscriber("sub");
 
         try {
             builder.addRoutesToCamelContext(context);

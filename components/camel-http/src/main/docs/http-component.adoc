@@ -1,5 +1,7 @@
 ## HTTP Component
 
+*Available as of Camel version 1.0.0*
+
 The *http:* component provides HTTP based link:endpoint.html[endpoints]
 for consuming external HTTP resources (as a client to call external
 servers using HTTP).

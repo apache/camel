@@ -57,11 +57,15 @@ public class CamelSubscriber implements Subscriber<Exchange>, Closeable {
     public void attachConsumer(ReactiveStreamsConsumer consumer) {
         synchronized (this) {
             if (this.consumer != null) {
-                throw new IllegalStateException("A consumer is already attached on stream '" + name + "'");
+                throw new IllegalStateException("A consumer is already attached to the stream '" + name + "'");
             }
             this.consumer = consumer;
         }
         refill();
+    }
+
+    public synchronized ReactiveStreamsConsumer getConsumer() {
+        return consumer;
     }
 
     public void detachConsumer() {
@@ -86,6 +90,7 @@ public class CamelSubscriber implements Subscriber<Exchange>, Closeable {
         }
 
         if (!allowed) {
+            LOG.warn("There is another active subscription: cancelled");
             subscription.cancel();
         } else {
             refill();
@@ -149,16 +154,31 @@ public class CamelSubscriber implements Subscriber<Exchange>, Closeable {
         }
 
         LOG.error("Error in reactive stream '" + name + "'", throwable);
+
+        ReactiveStreamsConsumer consumer;
         synchronized (this) {
+            consumer = this.consumer;
             this.subscription = null;
         }
+
+        if (consumer != null) {
+            consumer.onError(throwable);
+        }
+
     }
 
     @Override
     public void onComplete() {
         LOG.info("Reactive stream '{}' completed", name);
+
+        ReactiveStreamsConsumer consumer;
         synchronized (this) {
+            consumer = this.consumer;
             this.subscription = null;
+        }
+
+        if (consumer != null) {
+            consumer.onComplete();
         }
     }
 

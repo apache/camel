@@ -188,6 +188,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
                                 if (row.containsKey("javaType")) {
                                     dataFormatModel.setModelJavaType(row.get("javaType"));
                                 }
+                                if (row.containsKey("firstVersion")) {
+                                    dataFormatModel.setFirstVersion(row.get("firstVersion"));
+                                }
                                 // override description for camel-core, as otherwise its too generic
                                 if ("camel-core".equals(project.getArtifactId())) {
                                     if (row.containsKey("description")) {
@@ -195,6 +198,13 @@ public class PackageDataFormatMojo extends AbstractMojo {
                                     }
                                 }
                             }
+
+                            // first version special for json
+                            String firstVersion = prepareJsonFirstVersion(name);
+                            if (firstVersion != null) {
+                                dataFormatModel.setFirstVersion(firstVersion);
+                            }
+
                             log.debug("Model " + dataFormatModel);
 
                             // build json schema for the data format
@@ -312,6 +322,20 @@ public class PackageDataFormatMojo extends AbstractMojo {
         return properties;
     }
 
+    private static String prepareJsonFirstVersion(String name) {
+        if ("json-gson".equals(name)) {
+            return "2.10.0";
+        } else if ("json-jackson".equals(name)) {
+            return "2.0.0";
+        } else if ("json-johnzon".equals(name)) {
+            return "2.18.0";
+        } else if ("json-xstream".equals(name)) {
+            return "2.0.0";
+        }
+
+        return null;
+    }
+
     private static String readClassFromCamelResource(File file, StringBuilder buffer, BuildContext buildContext) throws MojoExecutionException {
         // skip directories as there may be a sub .resolver directory
         if (file.isDirectory()) {
@@ -417,6 +441,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
         if (dataFormatModel.getDescription() != null) {
             buffer.append("\n    \"description\": \"").append(dataFormatModel.getDescription()).append("\",");
         }
+        if (dataFormatModel.getFirstVersion() != null) {
+            buffer.append("\n    \"firstVersion\": \"").append(dataFormatModel.getFirstVersion()).append("\",");
+        }
         buffer.append("\n    \"label\": \"").append(dataFormatModel.getLabel()).append("\",");
         buffer.append("\n    \"javaType\": \"").append(dataFormatModel.getJavaType()).append("\",");
         if (dataFormatModel.getModelJavaType() != null) {
@@ -437,6 +464,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
         private String title;
         private String modelName;
         private String description;
+        private String firstVersion;
         private String label;
         private String javaType;
         private String modelJavaType;
@@ -482,6 +510,14 @@ public class PackageDataFormatMojo extends AbstractMojo {
 
         public void setDescription(String description) {
             this.description = description;
+        }
+
+        public String getFirstVersion() {
+            return firstVersion;
+        }
+
+        public void setFirstVersion(String firstVersion) {
+            this.firstVersion = firstVersion;
         }
 
         public String getLabel() {

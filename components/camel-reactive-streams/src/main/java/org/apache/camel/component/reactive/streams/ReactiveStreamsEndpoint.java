@@ -27,12 +27,15 @@ import org.apache.camel.spi.UriPath;
 /**
  * The Camel reactive-streams endpoint.
  */
-@UriEndpoint(scheme = "reactive-streams", title = "Reactive Streams", syntax = "reactive-streams:stream",
-        consumerClass = ReactiveStreamsConsumer.class, label = "streams")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "reactive-streams", title = "Reactive Streams", syntax = "reactive-streams:stream",
+        consumerClass = ReactiveStreamsConsumer.class, label = "reactive,streams")
 public class ReactiveStreamsEndpoint extends DefaultEndpoint {
 
     @UriPath
     private String stream;
+
+    @UriParam
+    private String serviceName;
 
     @UriParam(label = "consumer", defaultValue = "128")
     private Integer maxInflightExchanges = 128;
@@ -40,8 +43,14 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
     @UriParam(label = "consumer", defaultValue = "1")
     private int concurrentConsumers = 1;
 
-    @UriParam
-    private String serviceName;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean forwardOnComplete;
+
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean forwardOnError;
+
+    @UriParam(label = "producer")
+    private ReactiveStreamsBackpressureStrategy backpressureStrategy;
 
     public ReactiveStreamsEndpoint(String endpointUri, ReactiveStreamsComponent component) {
         super(endpointUri, component);
@@ -107,4 +116,39 @@ public class ReactiveStreamsEndpoint extends DefaultEndpoint {
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
     }
+
+    public ReactiveStreamsBackpressureStrategy getBackpressureStrategy() {
+        return backpressureStrategy;
+    }
+
+    /**
+     * The backpressure strategy to use when pushing events to a slow subscriber.
+     */
+    public void setBackpressureStrategy(ReactiveStreamsBackpressureStrategy backpressureStrategy) {
+        this.backpressureStrategy = backpressureStrategy;
+    }
+
+    public boolean isForwardOnComplete() {
+        return forwardOnComplete;
+    }
+
+    /**
+     * Determines if onComplete events should be pushed to the Camel route.
+     */
+    public void setForwardOnComplete(boolean forwardOnComplete) {
+        this.forwardOnComplete = forwardOnComplete;
+    }
+
+    public boolean isForwardOnError() {
+        return forwardOnError;
+    }
+
+    /**
+     * Determines if onError events should be pushed to the Camel route.
+     * Exceptions will be set as message body.
+     */
+    public void setForwardOnError(boolean forwardOnError) {
+        this.forwardOnError = forwardOnError;
+    }
+
 }

@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The ironmq provides integration with <a href="https://www.iron.io/">IronMQ</a> an elastic and durable hosted message queue as a service.
  */
-@UriEndpoint(scheme = "ironmq", syntax = "ironmq:queueName", title = "ironmq", consumerClass = IronMQConsumer.class, label = "cloud,messaging")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "ironmq", syntax = "ironmq:queueName", title = "IronMQ", consumerClass = IronMQConsumer.class, label = "cloud,messaging")
 public class IronMQEndpoint extends ScheduledPollEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(IronMQEndpoint.class);
 

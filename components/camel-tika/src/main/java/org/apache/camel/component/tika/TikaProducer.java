@@ -110,7 +110,12 @@ public class TikaProducer extends DefaultProducer {
     private void convertMetadataToHeaders(Metadata metadata, Exchange exchange) {
         if (metadata != null) {
             for (String metaname : metadata.names()) {
-                exchange.getIn().setHeader(metaname, metadata.get(metaname));
+                String[] values = metadata.getValues(metaname);
+                if (values.length == 1) {
+                    exchange.getIn().setHeader(metaname, values[0]);
+                } else {
+                    exchange.getIn().setHeader(metaname, values);
+                }
             }
         }
     }

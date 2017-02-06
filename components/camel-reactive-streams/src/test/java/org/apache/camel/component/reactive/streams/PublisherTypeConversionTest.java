@@ -39,21 +39,21 @@ public class PublisherTypeConversionTest extends CamelTestSupport {
         CountDownLatch latch = new CountDownLatch(3);
         List<Integer> integers = new LinkedList<>();
 
-        Observable.fromPublisher(CamelReactiveStreams.get(context).getPublisher("pub", Exchange.class))
+        Observable.fromPublisher(CamelReactiveStreams.get(context).fromStream("pub", Exchange.class))
                 .map(x -> x.getIn().getBody(Integer.class))
                 .subscribe(n -> {
                     integers.add(n);
                     latch.countDown();
                 });
 
-        Observable.fromPublisher(CamelReactiveStreams.get(context).getPublisher("pub"))
+        Observable.fromPublisher(CamelReactiveStreams.get(context).fromStream("pub"))
                 .map(x -> x.getIn().getBody(Integer.class))
                 .subscribe(n -> {
                     integers.add(n);
                     latch.countDown();
                 });
 
-        Observable.fromPublisher(CamelReactiveStreams.get(context).getPublisher("pub", Integer.class))
+        Observable.fromPublisher(CamelReactiveStreams.get(context).fromStream("pub", Integer.class))
                 .subscribe(n -> {
                     integers.add(n);
                     latch.countDown();

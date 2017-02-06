@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
  * Using this component in combination with the dojo toolkit library it's possible to push Camel messages directly
  * into the browser using an AJAX based mechanism.
  */
-@UriEndpoint(scheme = "cometd,cometds", title = "CometD", syntax = "cometd:host:port/channelName", consumerClass = CometdConsumer.class, label = "websocket")
+@UriEndpoint(firstVersion = "2.0.0", scheme = "cometd,cometds", title = "CometD", syntax = "cometd:host:port/channelName", consumerClass = CometdConsumer.class, label = "websocket")
 public class CometdEndpoint extends DefaultEndpoint {
 
     private CometdComponent component;

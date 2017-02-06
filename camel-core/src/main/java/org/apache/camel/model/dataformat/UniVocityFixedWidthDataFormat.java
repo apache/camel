@@ -28,7 +28,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * UniVocity fixed-width data format
  */
-@Metadata(label = "dataformat,transformation,csv", title = "uniVocity Fixed Length")
+@Metadata(firstVersion = "2.15.0", label = "dataformat,transformation,csv", title = "uniVocity Fixed Length")
 @XmlRootElement(name = "univocity-fixed")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UniVocityFixedWidthDataFormat extends UniVocityAbstractDataFormat {

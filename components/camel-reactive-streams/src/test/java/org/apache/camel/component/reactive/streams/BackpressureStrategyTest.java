@@ -43,7 +43,7 @@ public class BackpressureStrategyTest extends CamelTestSupport {
             }
         }.addRoutesToCamelContext(context);
 
-        Flowable<Integer> integers = Flowable.fromPublisher(CamelReactiveStreams.get(context).getPublisher("integers", Integer.class));
+        Flowable<Integer> integers = Flowable.fromPublisher(CamelReactiveStreams.get(context).fromStream("integers", Integer.class));
 
         ConcurrentLinkedQueue<Integer> queue = new ConcurrentLinkedQueue<>();
         CountDownLatch latch = new CountDownLatch(1);
@@ -94,7 +94,7 @@ public class BackpressureStrategyTest extends CamelTestSupport {
             }
         };
         subscriber.setInitiallyRequested(1);
-        CamelReactiveStreams.get(context).getPublisher("integers", Integer.class).subscribe(subscriber);
+        CamelReactiveStreams.get(context).fromStream("integers", Integer.class).subscribe(subscriber);
 
         context().start();
 
@@ -140,7 +140,7 @@ public class BackpressureStrategyTest extends CamelTestSupport {
             }
         };
         subscriber.setInitiallyRequested(1);
-        CamelReactiveStreams.get(context).getPublisher("integers", Integer.class).subscribe(subscriber);
+        CamelReactiveStreams.get(context).fromStream("integers", Integer.class).subscribe(subscriber);
 
         context().start();
 
@@ -153,6 +153,48 @@ public class BackpressureStrategyTest extends CamelTestSupport {
         assertEquals(2, queue.size());
         int sum = queue.stream().reduce((i, j) -> i + j).get();
         assertEquals(21, sum); // 1 + 20 = 21
+
+        subscriber.cancel();
+    }
+
+    @Test
+    public void testBackpressureDropStrategyInEndpoint() throws Exception {
+        new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("timer:gen?period=20&repeatCount=20")
+                        .setBody().header(Exchange.TIMER_COUNTER)
+                        .to("reactive-streams:integers?backpressureStrategy=DROP");
+            }
+        }.addRoutesToCamelContext(context);
+
+
+        ConcurrentLinkedQueue<Integer> queue = new ConcurrentLinkedQueue<>();
+        final CountDownLatch latch = new CountDownLatch(1);
+        final CountDownLatch latch2 = new CountDownLatch(2);
+
+        TestSubscriber<Integer> subscriber = new TestSubscriber<Integer>() {
+            @Override
+            public void onNext(Integer o) {
+                queue.add(o);
+                latch.countDown();
+                latch2.countDown();
+            }
+        };
+        subscriber.setInitiallyRequested(1);
+        CamelReactiveStreams.get(context).fromStream("integers", Integer.class).subscribe(subscriber);
+
+        context().start();
+
+        assertTrue(latch.await(5, TimeUnit.SECONDS));
+        Thread.sleep(1000); // wait for all numbers to be generated
+
+        subscriber.request(19);
+        assertTrue(latch2.await(1, TimeUnit.SECONDS));
+        Thread.sleep(200); // add other time to ensure no other items arrive
+        assertEquals(2, queue.size());
+        int sum = queue.stream().reduce((i, j) -> i + j).get();
+        assertEquals(3, sum); // 1 + 2 = 3
 
         subscriber.cancel();
     }

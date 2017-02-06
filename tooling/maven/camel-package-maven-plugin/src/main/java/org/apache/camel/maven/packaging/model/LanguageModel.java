@@ -26,6 +26,7 @@ public class LanguageModel {
     private String modelName;
     private String title;
     private String description;
+    private String firstVersion;
     private String label;
     private String deprecated;
     private String javaType;
@@ -72,6 +73,14 @@ public class LanguageModel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getFirstVersion() {
+        return firstVersion;
+    }
+
+    public void setFirstVersion(String firstVersion) {
+        this.firstVersion = firstVersion;
     }
 
     public String getLabel() {

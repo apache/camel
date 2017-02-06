@@ -32,7 +32,7 @@ public class DumpModelAsXmlChoiceFilterRouteTest extends ContextTestSupport {
 
         assertTrue(xml.contains("<header>gold</header>"));
         assertTrue(xml.contains("<header>extra-gold</header>"));
-        assertTrue(xml.contains("<simple>${body} contains Camel</simple>"));
+        assertTrue(xml.contains("<simple>${body} contains 'Camel'</simple>"));
     }
 
     public void testDumpModelAsXmAl() throws Exception {
@@ -57,7 +57,7 @@ public class DumpModelAsXmlChoiceFilterRouteTest extends ContextTestSupport {
                             .filter().header("extra-gold")
                                 .to("mock:extra-gold")
                             .endChoice()
-                        .when().simple("${body} contains Camel")
+                        .when().simple("${body} contains 'Camel'")
                             .to("mock:camel")
                         .otherwise()
                             .to("mock:other")

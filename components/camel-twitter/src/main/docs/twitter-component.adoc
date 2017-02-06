@@ -1,16 +1,6 @@
 ## Twitter Component
-ifdef::env-github[]
-:caution-caption: :boom:
-:important-caption: :exclamation:
-:note-caption: :information_source:
-:tip-caption: :bulb:
-:warning-caption: :warning:
-endif::[]
 
-[[ConfluenceContent]]
-### Twitter
-
-*Available as of Camel 2.10*
+*Available as of Camel version 2.10.0*
 
 The Twitter component enables the most useful features of the Twitter
 API by encapsulating http://twitter4j.org/[Twitter4J]. It allows direct,

@@ -1,6 +1,6 @@
 ## Weather Component
 
-*Available as of Camel 2.12*
+*Available as of Camel version 2.12.0*
 
 The *weather:* component is used for polling weather information from
 http://openweathermap.org[Open Weather Map] - a site that provides free

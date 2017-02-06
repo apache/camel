@@ -1,5 +1,7 @@
 ## RMI Component
 
+*Available as of Camel version 1.0.0*
+
 The *rmi:* component binds link:exchange.html[Exchange]s to the RMI
 protocol (JRMP).
 

@@ -29,7 +29,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * The kestrel component allows messages to be sent to (or consumed from) Kestrel brokers.
  */
-@UriEndpoint(scheme = "kestrel", title = "Kestrel", syntax = "kestrel:addresses/queue", consumerClass = KestrelConsumer.class, label = "messaging")
+@UriEndpoint(firstVersion = "2.6.0", scheme = "kestrel", title = "Kestrel", syntax = "kestrel:addresses/queue", consumerClass = KestrelConsumer.class, label = "messaging")
 public class KestrelEndpoint extends DefaultEndpoint {
 
     /**

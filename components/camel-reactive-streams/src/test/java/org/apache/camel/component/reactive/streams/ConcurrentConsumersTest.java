@@ -41,7 +41,7 @@ public class ConcurrentConsumersTest extends CamelTestSupport {
 
         Observable.intervalRange(0, 1000, 0, 300, TimeUnit.MICROSECONDS)
                 .toFlowable(BackpressureStrategy.BUFFER)
-                .subscribe(CamelReactiveStreams.get(context()).getSubscriber("singleConsumer", Long.class));
+                .subscribe(CamelReactiveStreams.get(context()).streamSubscriber("singleConsumer", Long.class));
 
         MockEndpoint endpoint = getMockEndpoint("mock:singleBucket");
         endpoint.expectedMessageCount(1000);
@@ -69,7 +69,7 @@ public class ConcurrentConsumersTest extends CamelTestSupport {
 
         Observable.intervalRange(0, 1000, 0, 300, TimeUnit.MICROSECONDS)
                 .toFlowable(BackpressureStrategy.BUFFER)
-                .subscribe(CamelReactiveStreams.get(context()).getSubscriber("multipleConsumers", Long.class));
+                .subscribe(CamelReactiveStreams.get(context()).streamSubscriber("multipleConsumers", Long.class));
 
         MockEndpoint endpoint = getMockEndpoint("mock:multipleBucket");
         endpoint.expectedMessageCount(1000);

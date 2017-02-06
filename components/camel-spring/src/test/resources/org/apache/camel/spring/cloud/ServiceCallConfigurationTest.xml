@@ -32,14 +32,20 @@
     </serviceCallConfiguration>
 
     <serviceCallConfiguration id="conf2">
-      <multiServiceDiscovery>
+      <chainedServiceDiscovery>
         <staticServiceDiscovery>
           <servers>localhost:9092</servers>
         </staticServiceDiscovery>
         <staticServiceDiscovery>
-          <servers>localhost:9093,localhost:9094</servers>
+          <servers>localhost:9093,localhost:9094,localhost:9095,localhost:9096</servers>
         </staticServiceDiscovery>
-      </multiServiceDiscovery>
+      </chainedServiceDiscovery>
+      <chainedServiceFilter>
+        <healthyServiceFilter/>
+        <blacklistServiceFilter>
+          <servers>localhost:9095,localhost:9096</servers>
+        </blacklistServiceFilter>
+      </chainedServiceFilter>
     </serviceCallConfiguration>
 
     <route id="test1">

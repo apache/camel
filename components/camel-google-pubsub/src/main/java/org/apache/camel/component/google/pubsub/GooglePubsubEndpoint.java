@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  *
  * Built on top of the Service API libraries (v1).
  */
-@UriEndpoint(scheme = "google-pubsub", title = "Google Pubsub",
+@UriEndpoint(firstVersion = "2.19.0", scheme = "google-pubsub", title = "Google Pubsub",
         syntax = "google-pubsub:projectId:destinationName", label = "messaging")
 public class GooglePubsubEndpoint extends DefaultEndpoint {
 

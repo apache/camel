@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * For reading/writing from/to an HDFS filesystem using Hadoop 2.x.
  */
-@UriEndpoint(scheme = "hdfs2", title = "HDFS2", syntax = "hdfs2:hostName:port/path", consumerClass = HdfsConsumer.class, label = "hadoop,file")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "hdfs2", title = "HDFS2", syntax = "hdfs2:hostName:port/path", consumerClass = HdfsConsumer.class, label = "hadoop,file")
 public class HdfsEndpoint extends ScheduledPollEndpoint {
 
     @UriParam

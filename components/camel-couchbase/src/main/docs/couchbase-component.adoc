@@ -1,7 +1,6 @@
 ## Couchbase Component
-## Couchbase Component
 
-*Available as of Camel 2.19*
+*Available as of Camel version 2.19.0*
 
 The *couchbase:* component allows you to treat
 https://www.couchbase.com/[CouchBase] instances as a producer or consumer

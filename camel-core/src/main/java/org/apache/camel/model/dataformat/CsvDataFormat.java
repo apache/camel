@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * CSV data format
  */
-@Metadata(label = "dataformat,transformation,csv", title = "CSV")
+@Metadata(firstVersion = "1.3.0", label = "dataformat,transformation,csv", title = "CSV")
 @XmlRootElement(name = "csv")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CsvDataFormat extends DataFormatDefinition {

@@ -34,7 +34,7 @@ import org.stringtemplate.v4.STGroup;
 /**
  * Transforms the message using a String template.
  */
-@UriEndpoint(scheme = "string-template", title = "String Template", syntax = "string-template:resourceUri", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "1.2.0", scheme = "string-template", title = "String Template", syntax = "string-template:resourceUri", producerOnly = true, label = "transformation")
 public class StringTemplateEndpoint extends ResourceEndpoint {
 
     @UriParam(defaultValue = "<")

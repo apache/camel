@@ -76,7 +76,11 @@ public class ConvertingPublisher<R> implements Publisher<R> {
 
                 R r;
                 try {
-                    r = ex.getIn().getBody(type);
+                    if (ex.hasOut()) {
+                        r = ex.getOut().getBody(type);
+                    } else {
+                        r = ex.getIn().getBody(type);
+                    }
                 } catch (TypeConversionException e) {
                     LOG.warn("Unable to convert body to the specified type: " + type.getName(), e);
                     r = null;

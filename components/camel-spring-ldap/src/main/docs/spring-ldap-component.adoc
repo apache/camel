@@ -1,6 +1,6 @@
 ## Spring LDAP Component
 
-*Available since Camel 2.11*
+*Available as of Camel version 2.11.0*
 
 The *spring-ldap:* component provides a Camel wrapper for
 http://www.springsource.org/ldap[Spring LDAP].

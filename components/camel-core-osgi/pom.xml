@@ -27,7 +27,7 @@
   <artifactId>camel-core-osgi</artifactId>
   <name>Camel :: Core OSGi</name>
   <packaging>jar</packaging>
-  <description>Camel Core OSGi support</description>
+  <description>Using Camel with OSGi</description>
   
   <properties>
       <camel.osgi.export.pkg>

@@ -43,7 +43,7 @@ public class CamelSubscriberConversionVerificationTest extends SubscriberBlackbo
             }
         };
 
-        Subscriber<Integer> sub = CamelReactiveStreams.get(context).getSubscriber("sub", Integer.class);
+        Subscriber<Integer> sub = CamelReactiveStreams.get(context).streamSubscriber("sub", Integer.class);
 
         try {
             builder.addRoutesToCamelContext(context);

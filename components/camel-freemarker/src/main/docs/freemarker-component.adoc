@@ -1,5 +1,7 @@
 ## Freemarker Component
 
+*Available as of Camel version 2.10.0*
+
 The *freemarker:* component allows for processing a message using a
 http://freemarker.org/[FreeMarker] template. This can be ideal when
 using link:templating.html[Templating] to generate responses for

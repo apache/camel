@@ -2,6 +2,8 @@ Enterprise Integration Patterns
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 // eips: START
+Number of EIPs: 61
+
 [width="100%",cols="4,6",options="header"]
 |=======================================================================
 | EIP | Description

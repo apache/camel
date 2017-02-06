@@ -1,5 +1,7 @@
 ## EL Language
 [[EL-EL]]
+*Available as of Camel version 1.1.0*
+
 EL
 ~~
 

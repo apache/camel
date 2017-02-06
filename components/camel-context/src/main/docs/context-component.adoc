@@ -1,6 +1,6 @@
 ## Camel Context Component
 
-*Available as of Camel 2.7*
+*Available as of Camel version 2.7.0*
 
 The *context* component allows you to create new Camel Components from a
 CamelContext with a number of routes which is then treated as a black

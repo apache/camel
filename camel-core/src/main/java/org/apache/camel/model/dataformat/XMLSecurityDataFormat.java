@@ -34,7 +34,7 @@ import org.apache.camel.util.jsse.KeyStoreParameters;
 /**
  * XML-Security data format
  */
-@Metadata(label = "dataformat,transformation,xml,security", title = "XML Security")
+@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation,xml,security", title = "XML Security")
 @XmlRootElement(name = "secureXML")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLSecurityDataFormat extends DataFormatDefinition implements NamespaceAware {

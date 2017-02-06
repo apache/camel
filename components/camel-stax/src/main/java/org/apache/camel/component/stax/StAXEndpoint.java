@@ -29,7 +29,7 @@ import org.apache.camel.util.EndpointHelper;
 /**
  * The stax component allows messages to be process through a SAX ContentHandler.
  */
-@UriEndpoint(scheme = "stax", title = "StAX", syntax = "stax:contentHandlerClass", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "2.9.0", scheme = "stax", title = "StAX", syntax = "stax:contentHandlerClass", producerOnly = true, label = "transformation")
 public class StAXEndpoint extends ProcessorEndpoint {
 
     @UriPath @Metadata(required = "true")

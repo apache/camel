@@ -150,4 +150,22 @@ public final class PackageHelper {
         }
     }
 
+    public static class CamelOthersModelFilter implements FileFilter {
+
+        @Override
+        public boolean accept(File pathname) {
+            if ("camel-core-osgi".equals(pathname)
+                || "camel-core-xml".equals(pathname)
+                || "camel-http-common".equals(pathname)
+                || "camel-jetty".equals(pathname)
+                || "camel-jetty-common".equals(pathname)
+                || "camel-linkedin".equals(pathname)
+                || "camel-olingo2".equals(pathname)
+                || "camel-salesforce".equals(pathname)) {
+                return false;
+            }
+            return pathname.isDirectory() || pathname.getName().endsWith(".json");
+        }
+    }
+
 }

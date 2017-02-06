@@ -1,6 +1,6 @@
 ## Castor DataFormat
 
-*Available as of Camel 2.1*
+*Available as of Camel version 2.1.0*
 
 Castor is a link:data-format.html[Data Format] which uses the
 http://www.castor.org/[Castor XML library] to unmarshal an XML payload

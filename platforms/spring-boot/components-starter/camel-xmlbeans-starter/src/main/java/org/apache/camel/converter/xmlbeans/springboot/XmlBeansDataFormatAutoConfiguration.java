@@ -20,7 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.converter.xmlbeans.XmlBeansDataFormat;
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatFactory;
 import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionMessage;
@@ -35,7 +38,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
@@ -48,27 +50,36 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 @EnableConfigurationProperties(XmlBeansDataFormatConfiguration.class)
 public class XmlBeansDataFormatAutoConfiguration {
 
-    @Bean(name = "xmlBeans-dataformat")
-    @Scope("prototype")
+    @Bean(name = "xmlBeans-dataformat-factory")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(XmlBeansDataFormat.class)
-    public XmlBeansDataFormat configureXmlBeansDataFormat(
-            CamelContext camelContext,
-            XmlBeansDataFormatConfiguration configuration) throws Exception {
-        XmlBeansDataFormat dataformat = new XmlBeansDataFormat();
-        if (CamelContextAware.class.isAssignableFrom(XmlBeansDataFormat.class)) {
-            CamelContextAware contextAware = CamelContextAware.class
-                    .cast(dataformat);
-            if (contextAware != null) {
-                contextAware.setCamelContext(camelContext);
+    public DataFormatFactory configureXmlBeansDataFormatFactory(
+            final CamelContext camelContext,
+            final XmlBeansDataFormatConfiguration configuration) {
+        return new DataFormatFactory() {
+            public DataFormat newInstance() {
+                XmlBeansDataFormat dataformat = new XmlBeansDataFormat();
+                if (CamelContextAware.class
+                        .isAssignableFrom(XmlBeansDataFormat.class)) {
+                    CamelContextAware contextAware = CamelContextAware.class
+                            .cast(dataformat);
+                    if (contextAware != null) {
+                        contextAware.setCamelContext(camelContext);
+                    }
+                }
+                try {
+                    Map<String, Object> parameters = new HashMap<>();
+                    IntrospectionSupport.getProperties(configuration,
+                            parameters, null, false);
+                    IntrospectionSupport.setProperties(camelContext,
+                            camelContext.getTypeConverter(), dataformat,
+                            parameters);
+                } catch (Exception e) {
+                    throw new RuntimeCamelException(e);
+                }
+                return dataformat;
             }
-        }
-        Map<String, Object> parameters = new HashMap<>();
-        IntrospectionSupport.getProperties(configuration, parameters, null,
-                false);
-        IntrospectionSupport.setProperties(camelContext,
-                camelContext.getTypeConverter(), dataformat, parameters);
-        return dataformat;
+        };
     }
 
     public static class Condition extends SpringBootCondition {

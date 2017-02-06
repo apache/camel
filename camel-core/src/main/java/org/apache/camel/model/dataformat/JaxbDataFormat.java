@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Metadata(label = "dataformat,transformation,xml", title = "JAXB")
+@Metadata(firstVersion = "1.0.0", label = "dataformat,transformation,xml", title = "JAXB")
 @XmlRootElement(name = "jaxb")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JaxbDataFormat extends DataFormatDefinition {

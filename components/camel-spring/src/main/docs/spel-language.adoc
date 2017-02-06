@@ -1,6 +1,6 @@
 ## SpEL Language
 
-*Available as of Camel 2.7*
+*Available as of Camel version 2.7.0*
 
 Camel allows
 http://static.springsource.org/spring/docs/current/spring-framework-reference/htmlsingle/spring-framework-reference.html#expressions[SpEL]

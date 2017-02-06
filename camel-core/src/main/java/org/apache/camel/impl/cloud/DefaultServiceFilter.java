@@ -24,7 +24,7 @@ import org.apache.camel.cloud.ServiceFilter;
 
 public class DefaultServiceFilter implements ServiceFilter {
     @Override
-    public <T extends ServiceDefinition> List<T> apply(List<T> services) {
+    public List<ServiceDefinition> apply(List<ServiceDefinition> services) {
         return services;
     }
 }
