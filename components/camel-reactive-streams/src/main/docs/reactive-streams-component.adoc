@@ -15,7 +15,7 @@ outgoing streams within Camel routes, and a direct client API that allows using 
 
 Camel uses an internal implementation of the reactive streams
  _Publisher_ and _Subscriber_, so it's not tied to any specific framework.
-The following reactive frameworks have been used in the integration tests: https://github.com/ReactiveX/RxJava[RxJava2], https://github.com/reactor/reactor-core[reactor-core].
+The following reactive frameworks have been used in the integration tests: https://github.com/reactor/reactor-core[Reactor Core 3], https://github.com/ReactiveX/RxJava[RxJava 2].
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
