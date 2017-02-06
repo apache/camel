@@ -32,6 +32,7 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.reactive.streams.*</camel.osgi.export.pkg>
+        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=reactive-streams</camel.osgi.export.service>
     </properties>
 
     <dependencies>
@@ -44,14 +45,14 @@
         <dependency>
             <groupId>org.reactivestreams</groupId>
             <artifactId>reactive-streams</artifactId>
-            <version>1.0.0</version>
+            <version>${reactive-streams-version}</version>
         </dependency>
 
         <!-- test dependencies -->
         <dependency>
             <groupId>org.reactivestreams</groupId>
             <artifactId>reactive-streams-tck</artifactId>
-            <version>1.0.0</version>
+            <version>${reactive-streams-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
