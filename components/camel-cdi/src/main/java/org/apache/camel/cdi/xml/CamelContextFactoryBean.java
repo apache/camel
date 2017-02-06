@@ -169,10 +169,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     })
     private List<AbstractCamelFactoryBean<?>> beansFactory;
 
-    @XmlElements({
-        @XmlElement(name = "serviceCallConfiguration", type = ServiceCallConfigurationDefinition.class),
-        @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class)})
+    @XmlTransient
     private List<?> beans;
+
+    @XmlElement(name = "serviceCallConfiguration", type = ServiceCallConfigurationDefinition.class)
+    private List<ServiceCallConfigurationDefinition> serviceCallConfigurations;
+
+    @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class)
+    private List<HystrixConfigurationDefinition> hystrixConfigurations;
 
     @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class)
     private List<ErrorHandlerDefinition> errorHandlers;
@@ -314,6 +318,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
         return context;
     }
 
+    @Override
     public List<AbstractCamelFactoryBean<?>> getBeansFactory() {
         return beansFactory;
     }
@@ -329,6 +334,24 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setBeans(List<?> beans) {
         this.beans = beans;
+    }
+
+    @Override
+    public List<ServiceCallConfigurationDefinition> getServiceCallConfigurations() {
+        return serviceCallConfigurations;
+    }
+
+    public void setServiceCallConfigurations(List<ServiceCallConfigurationDefinition> serviceCallConfigurations) {
+        this.serviceCallConfigurations = serviceCallConfigurations;
+    }
+
+    @Override
+    public List<HystrixConfigurationDefinition> getHystrixConfigurations() {
+        return hystrixConfigurations;
+    }
+
+    public void setHystrixConfigurations(List<HystrixConfigurationDefinition> hystrixConfigurations) {
+        this.hystrixConfigurations = hystrixConfigurations;
     }
 
     public List<RouteDefinition> getRoutes() {

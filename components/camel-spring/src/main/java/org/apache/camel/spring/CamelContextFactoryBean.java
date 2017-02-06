@@ -164,10 +164,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlElements({
         @XmlElement(name = "proxy", type = CamelProxyFactoryDefinition.class),
         @XmlElement(name = "export", type = CamelServiceExporterDefinition.class),
-        @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class),
-        @XmlElement(name = "serviceCallConfiguration", type = ServiceCallConfigurationDefinition.class),
-        @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class)})
+        @XmlElement(name = "errorHandler", type = ErrorHandlerDefinition.class) })
     private List<?> beans;
+    @XmlElement(name = "serviceCallConfiguration", type = ServiceCallConfigurationDefinition.class)
+    private List<ServiceCallConfigurationDefinition> serviceCallConfigurations;
+    @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class)
+    private List<HystrixConfigurationDefinition> hystrixConfigurations;
     @XmlElement(name = "routeBuilder")
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<RouteBuilderDefinition>();
     @XmlElement(name = "routeContextRef")
@@ -912,6 +914,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         this.redeliveryPolicies = redeliveryPolicies;
     }
 
+    @Override
     public List<AbstractCamelFactoryBean<?>> getBeansFactory() {
         return beansFactory;
     }
@@ -933,6 +936,30 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      */
     public void setBeans(List<?> beans) {
         this.beans = beans;
+    }
+
+    @Override
+    public List<ServiceCallConfigurationDefinition> getServiceCallConfigurations() {
+        return serviceCallConfigurations;
+    }
+
+    /**
+     * ServiceCall configurations
+     */
+    public void setServiceCallConfigurations(List<ServiceCallConfigurationDefinition> serviceCallConfigurations) {
+        this.serviceCallConfigurations = serviceCallConfigurations;
+    }
+
+    @Override
+    public List<HystrixConfigurationDefinition> getHystrixConfigurations() {
+        return hystrixConfigurations;
+    }
+
+    /**
+     * hystrix configurations
+     */
+    public void setHystrixConfigurations(List<HystrixConfigurationDefinition> hystrixConfigurations) {
+        this.hystrixConfigurations = hystrixConfigurations;
     }
 
     /**

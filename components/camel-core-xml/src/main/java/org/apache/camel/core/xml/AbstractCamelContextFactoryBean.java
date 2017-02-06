@@ -52,6 +52,7 @@ import org.apache.camel.management.ManagedManagementStrategy;
 import org.apache.camel.model.ContextScanDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.GlobalOptionsDefinition;
+import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -791,6 +792,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract List<?> getBeans();
 
+    public abstract List<HystrixConfigurationDefinition> getHystrixConfigurations();
+
+    public abstract List<ServiceCallConfigurationDefinition> getServiceCallConfigurations();
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -867,13 +872,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getRestConfiguration() != null) {
             ctx.setRestConfiguration(getRestConfiguration().asRestConfiguration(ctx));
         }
-        if (getBeans() != null) {
-            for (Object bean : getBeans()) {
-                if (bean instanceof ServiceCallConfigurationDefinition) {
-                    @SuppressWarnings("unchecked")
-                    ServiceCallConfigurationDefinition configuration = (ServiceCallConfigurationDefinition)bean;
-                    ctx.addServiceCallConfiguration(configuration.getId(), configuration);
-                }
+        if (getServiceCallConfigurations() != null) {
+            for (ServiceCallConfigurationDefinition bean : getServiceCallConfigurations()) {
+                ctx.addServiceCallConfiguration(bean.getId(), bean);
             }
         }
     }
