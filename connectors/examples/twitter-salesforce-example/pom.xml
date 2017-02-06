@@ -74,6 +74,11 @@
       <artifactId>twitter-mention-connector</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.foo</groupId>
+      <artifactId>foo-connector</artifactId>
+      <version>${project.version}</version>
+    </dependency>
 
     <!-- logging -->
     <dependency>
