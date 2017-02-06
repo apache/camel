@@ -72,8 +72,13 @@ public class SalesforceSession implements Service {
         ObjectHelper.notNull(config.getLoginUrl(), "loginUrl");
         ObjectHelper.notNull(config.getClientId(), "clientId");
         ObjectHelper.notNull(config.getClientSecret(), "clientSecret");
-        ObjectHelper.notNull(config.getUserName(), "userName");
-        ObjectHelper.notNull(config.getPassword(), "password");
+
+        if (config.getRefreshToken() == null) {
+            ObjectHelper.notNull(config.getUserName(), "userName");
+            ObjectHelper.notNull(config.getPassword(), "password");
+        } else {
+            ObjectHelper.notNull(config.getRefreshToken(), "refreshToken");
+        }
 
         this.httpClient = httpClient;
         this.timeout = timeout;
@@ -132,12 +137,18 @@ public class SalesforceSession implements Service {
         LOG.info("Login user {} at Salesforce loginUrl: {}", config.getUserName(), loginUrl);
         final Fields fields = new Fields(true);
 
-        fields.put("grant_type", "password");
         fields.put("client_id", config.getClientId());
         fields.put("client_secret", config.getClientSecret());
-        fields.put("username", config.getUserName());
-        fields.put("password", config.getPassword());
         fields.put("format", "json");
+
+        if (config.getRefreshToken() == null) {
+            fields.put("grant_type", "password");
+            fields.put("username", config.getUserName());
+            fields.put("password", config.getPassword());
+        } else {
+            fields.put("grant_type", "refresh_token");
+            fields.put("refresh_token", config.getRefreshToken());
+        }
 
         final Request post;
         if (conversation == null) {
