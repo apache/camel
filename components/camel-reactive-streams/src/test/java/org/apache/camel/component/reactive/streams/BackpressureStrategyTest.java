@@ -43,7 +43,7 @@ public class BackpressureStrategyTest extends CamelTestSupport {
             }
         }.addRoutesToCamelContext(context);
 
-        Flowable<Integer> integers = Flowable.fromPublisher(CamelReactiveStreams.get(context).getPublisher("integers", Integer.class));
+        Flowable<Integer> integers = Flowable.fromPublisher(CamelReactiveStreams.get(context).fromStream("integers", Integer.class));
 
         ConcurrentLinkedQueue<Integer> queue = new ConcurrentLinkedQueue<>();
         CountDownLatch latch = new CountDownLatch(1);
@@ -94,7 +94,7 @@ public class BackpressureStrategyTest extends CamelTestSupport {
             }
         };
         subscriber.setInitiallyRequested(1);
-        CamelReactiveStreams.get(context).getPublisher("integers", Integer.class).subscribe(subscriber);
+        CamelReactiveStreams.get(context).fromStream("integers", Integer.class).subscribe(subscriber);
 
         context().start();
 
@@ -140,7 +140,7 @@ public class BackpressureStrategyTest extends CamelTestSupport {
             }
         };
         subscriber.setInitiallyRequested(1);
-        CamelReactiveStreams.get(context).getPublisher("integers", Integer.class).subscribe(subscriber);
+        CamelReactiveStreams.get(context).fromStream("integers", Integer.class).subscribe(subscriber);
 
         context().start();
 
@@ -182,7 +182,7 @@ public class BackpressureStrategyTest extends CamelTestSupport {
             }
         };
         subscriber.setInitiallyRequested(1);
-        CamelReactiveStreams.get(context).getPublisher("integers", Integer.class).subscribe(subscriber);
+        CamelReactiveStreams.get(context).fromStream("integers", Integer.class).subscribe(subscriber);
 
         context().start();
 

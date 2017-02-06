@@ -56,7 +56,7 @@ public class BasicReactorToCamelExample {
         public void setupStreams() {
 
             // Get a subscriber from camel
-            Subscriber<String> elements = camel.getSubscriber("elements", String.class);
+            Subscriber<String> elements = camel.streamSubscriber("elements", String.class);
 
             // Emit a string every 7 seconds and push it to the Camel "elements" stream
             Flux.interval(Duration.ofSeconds(7))

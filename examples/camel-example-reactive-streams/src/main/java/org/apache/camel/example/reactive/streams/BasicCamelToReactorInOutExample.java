@@ -84,7 +84,7 @@ public class BasicCamelToReactorInOutExample {
             from("timer:clock?period=9000&delay=1500")
                     .setBody().header(Exchange.TIMER_COUNTER).convertBodyTo(Long.class) // Sample ID
                     .bean("userBean", "getUserInfo") // Get the user info from reactor code
-                    .process(new UnwrapStreamProcessor()).split().body() // Unwrap the Publisher
+                    .process(new UnwrapStreamProcessor()) // Unwrap the Publisher
                     .log("BasicCamelToReactorInOut - Got ${body}");
 
         }

@@ -56,9 +56,9 @@ public class BasicSubscriberTest extends CamelTestSupport {
     @SuppressWarnings("unchecked")
     protected void doPostSetup() throws Exception {
 
-        Subscriber<Integer> sub = CamelReactiveStreams.get(context()).getSubscriber("sub", Integer.class);
-        Subscriber<Integer> sub2 = CamelReactiveStreams.get(context()).getSubscriber("sub2", Integer.class);
-        Publisher<Integer> pub = CamelReactiveStreams.get(context()).getPublisher("pub", Integer.class);
+        Subscriber<Integer> sub = CamelReactiveStreams.get(context()).streamSubscriber("sub", Integer.class);
+        Subscriber<Integer> sub2 = CamelReactiveStreams.get(context()).streamSubscriber("sub2", Integer.class);
+        Publisher<Integer> pub = CamelReactiveStreams.get(context()).fromStream("pub", Integer.class);
 
         pub.subscribe(sub);
         pub.subscribe(sub2);

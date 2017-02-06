@@ -59,8 +59,8 @@ public class BasicCamelToReactorExample {
         public void setupStreams() {
 
             // Use two streams from Camel
-            Publisher<Integer> numbers = camel.getPublisher("numbers", Integer.class);
-            Publisher<String> strings = camel.getPublisher("strings", String.class);
+            Publisher<Integer> numbers = camel.fromStream("numbers", Integer.class);
+            Publisher<String> strings = camel.fromStream("strings", String.class);
 
             Flux.from(numbers)
                     .zipWith(strings) // emit items in pairs

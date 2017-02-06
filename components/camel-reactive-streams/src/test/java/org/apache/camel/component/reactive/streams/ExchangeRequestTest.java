@@ -36,7 +36,7 @@ public class ExchangeRequestTest extends CamelTestSupport {
 
         CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
 
-        Publisher<Exchange> string = camel.request("data", new DefaultExchange(context));
+        Publisher<Exchange> string = camel.toStream("data", new DefaultExchange(context));
 
         Exchange res = Flowable.fromPublisher(string).blockingFirst();
 
@@ -52,7 +52,7 @@ public class ExchangeRequestTest extends CamelTestSupport {
 
         CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
 
-        Integer res = Flowable.fromPublisher(camel.request("plusOne", 1L, Integer.class))
+        Integer res = Flowable.fromPublisher(camel.toStream("plusOne", 1L, Integer.class))
                 .blockingFirst();
 
         assertNotNull(res);
@@ -64,7 +64,7 @@ public class ExchangeRequestTest extends CamelTestSupport {
         CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
 
         Integer sum = Flowable.just(1, 2, 3)
-                .flatMap(e -> camel.request("plusOne", e, Integer.class))
+                .flatMap(e -> camel.toStream("plusOne", e, Integer.class))
                 .reduce((i, j) -> i + j)
                 .blockingGet();
 

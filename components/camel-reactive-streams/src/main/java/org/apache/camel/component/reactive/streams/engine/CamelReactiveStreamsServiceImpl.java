@@ -74,32 +74,32 @@ public class CamelReactiveStreamsServiceImpl implements CamelReactiveStreamsServ
     }
 
     @Override
-    public Publisher<Exchange> getPublisher(String name) {
+    public Publisher<Exchange> fromStream(String name) {
         return new UnwrappingPublisher<>(getPayloadPublisher(name));
     }
 
     @SuppressWarnings("unchecked")
-    public <T> Publisher<T> getPublisher(String name, Class<T> cls) {
+    public <T> Publisher<T> fromStream(String name, Class<T> cls) {
         if (Exchange.class.equals(cls)) {
-            return (Publisher<T>) getPublisher(name);
+            return (Publisher<T>) fromStream(name);
         }
 
-        return new ConvertingPublisher<T>(getPublisher(name), cls);
+        return new ConvertingPublisher<T>(fromStream(name), cls);
     }
 
     @Override
-    public CamelSubscriber getSubscriber(String name) {
+    public CamelSubscriber streamSubscriber(String name) {
         subscribers.computeIfAbsent(name, n -> new CamelSubscriber(name));
         return subscribers.get(name);
     }
 
     @SuppressWarnings("unchecked")
-    public <T> Subscriber<T> getSubscriber(String name, Class<T> type) {
+    public <T> Subscriber<T> streamSubscriber(String name, Class<T> type) {
         if (Exchange.class.equals(type)) {
-            return (Subscriber<T>) getSubscriber(name);
+            return (Subscriber<T>) streamSubscriber(name);
         }
 
-        return new ConvertingSubscriber<T>(getSubscriber(name), getCamelContext());
+        return new ConvertingSubscriber<T>(streamSubscriber(name), getCamelContext());
     }
 
     @Override
@@ -109,23 +109,23 @@ public class CamelReactiveStreamsServiceImpl implements CamelReactiveStreamsServ
     }
 
     @Override
-    public Publisher<Exchange> request(String name, Object data) {
+    public Publisher<Exchange> toStream(String name, Object data) {
         Exchange exchange = convertToExchange(data);
         return doRequest(name, exchange);
     }
 
     @Override
-    public Function<?, ? extends Publisher<Exchange>> request(String name) {
-        return data -> request(name, data);
+    public Function<?, ? extends Publisher<Exchange>> toStream(String name) {
+        return data -> toStream(name, data);
     }
 
     @Override
-    public <T> Publisher<T> request(String name, Object data, Class<T> type) {
-        return new ConvertingPublisher<>(request(name, data), type);
+    public <T> Publisher<T> toStream(String name, Object data, Class<T> type) {
+        return new ConvertingPublisher<>(toStream(name, data), type);
     }
 
     protected Publisher<Exchange> doRequest(String name, Exchange data) {
-        ReactiveStreamsConsumer consumer = getSubscriber(name).getConsumer();
+        ReactiveStreamsConsumer consumer = streamSubscriber(name).getConsumer();
         if (consumer == null) {
             throw new IllegalStateException("No consumers attached to the stream " + name);
         }
@@ -155,8 +155,8 @@ public class CamelReactiveStreamsServiceImpl implements CamelReactiveStreamsServ
     }
 
     @Override
-    public <T> Function<Object, Publisher<T>> request(String name, Class<T> type) {
-        return data -> request(name, data, type);
+    public <T> Function<Object, Publisher<T>> toStream(String name, Class<T> type) {
+        return data -> toStream(name, data, type);
     }
 
     private CamelPublisher getPayloadPublisher(String name) {
@@ -165,7 +165,7 @@ public class CamelReactiveStreamsServiceImpl implements CamelReactiveStreamsServ
     }
 
     @Override
-    public Publisher<Exchange> publishURI(String uri) {
+    public Publisher<Exchange> from(String uri) {
         publishedUriToStream.computeIfAbsent(uri, u -> {
             try {
                 String uuid = context.getUuidGenerator().generateUuid();
@@ -182,16 +182,39 @@ public class CamelReactiveStreamsServiceImpl implements CamelReactiveStreamsServ
                 throw new IllegalStateException("Unable to create source reactive stream from direct URI: " + uri, e);
             }
         });
-        return getPublisher(publishedUriToStream.get(uri));
+        return fromStream(publishedUriToStream.get(uri));
     }
 
     @Override
-    public <T> Publisher<T> publishURI(String uri, Class<T> type) {
-        return new ConvertingPublisher<T>(publishURI(uri), type);
+    public <T> Publisher<T> from(String uri, Class<T> type) {
+        return new ConvertingPublisher<T>(from(uri), type);
     }
 
     @Override
-    public Publisher<Exchange> requestURI(String uri, Object data) {
+    public Subscriber<Exchange> subscriber(String uri) {
+        try {
+            String uuid = context.getUuidGenerator().generateUuid();
+            new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("reactive-streams:" + uuid)
+                            .to(uri);
+                }
+            }.addRoutesToCamelContext(context);
+
+            return streamSubscriber(uuid);
+        } catch (Exception e) {
+            throw new IllegalStateException("Unable to create source reactive stream towards direct URI: " + uri, e);
+        }
+    }
+
+    @Override
+    public <T> Subscriber<T> subscriber(String uri, Class<T> type) {
+        return new ConvertingSubscriber<T>(subscriber(uri), context);
+    }
+
+    @Override
+    public Publisher<Exchange> to(String uri, Object data) {
         requestedUriToStream.computeIfAbsent(uri, u -> {
             try {
                 String uuid = context.getUuidGenerator().generateUuid();
@@ -208,27 +231,27 @@ public class CamelReactiveStreamsServiceImpl implements CamelReactiveStreamsServ
                 throw new IllegalStateException("Unable to create requested reactive stream from direct URI: " + uri, e);
             }
         });
-        return request(requestedUriToStream.get(uri), data);
+        return toStream(requestedUriToStream.get(uri), data);
     }
 
     @Override
-    public Function<Object, Publisher<Exchange>> requestURI(String uri) {
-        return data -> requestURI(uri, data);
+    public Function<Object, Publisher<Exchange>> to(String uri) {
+        return data -> to(uri, data);
     }
 
     @Override
-    public <T> Publisher<T> requestURI(String uri, Object data, Class<T> type) {
-        return new ConvertingPublisher<T>(requestURI(uri, data), type);
+    public <T> Publisher<T> to(String uri, Object data, Class<T> type) {
+        return new ConvertingPublisher<T>(to(uri, data), type);
     }
 
     @Override
-    public <T> Function<Object, Publisher<T>> requestURI(String uri, Class<T> type) {
-        return data -> requestURI(uri, data, type);
+    public <T> Function<Object, Publisher<T>> to(String uri, Class<T> type) {
+        return data -> to(uri, data, type);
     }
 
 
     @Override
-    public void processFromURI(String uri, Function<? super Publisher<Exchange>, ?> processor) {
+    public void process(String uri, Function<? super Publisher<Exchange>, ?> processor) {
         try {
             new RouteBuilder() {
                 @Override
@@ -248,18 +271,18 @@ public class CamelReactiveStreamsServiceImpl implements CamelReactiveStreamsServ
     }
 
     @Override
-    public <T> void processFromURI(String uri, Class<T> type, Function<? super Publisher<T>, ?> processor) {
-        processFromURI(uri, exPub -> processor.apply(new ConvertingPublisher<T>(exPub, type)));
+    public <T> void process(String uri, Class<T> type, Function<? super Publisher<T>, ?> processor) {
+        process(uri, exPub -> processor.apply(new ConvertingPublisher<T>(exPub, type)));
     }
 
     @Override
     public void attachCamelConsumer(String name, ReactiveStreamsConsumer consumer) {
-        getSubscriber(name).attachConsumer(consumer);
+        streamSubscriber(name).attachConsumer(consumer);
     }
 
     @Override
     public void detachCamelConsumer(String name) {
-        getSubscriber(name).detachConsumer();
+        streamSubscriber(name).detachConsumer();
     }
 
     @Override

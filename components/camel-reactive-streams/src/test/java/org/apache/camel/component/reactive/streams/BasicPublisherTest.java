@@ -48,7 +48,7 @@ public class BasicPublisherTest extends CamelTestSupport {
         CountDownLatch latch = new CountDownLatch(num);
         List<Integer> recv = new LinkedList<>();
 
-        Observable.fromPublisher(CamelReactiveStreams.get(context).getPublisher("pub", Integer.class))
+        Observable.fromPublisher(CamelReactiveStreams.get(context).fromStream("pub", Integer.class))
                 .doOnNext(recv::add)
                 .doOnNext(n -> latch.countDown())
                 .subscribe();
@@ -75,14 +75,14 @@ public class BasicPublisherTest extends CamelTestSupport {
         }.addRoutesToCamelContext(context);
 
         CountDownLatch latch1 = new CountDownLatch(5);
-        Disposable disp1 = Observable.fromPublisher(CamelReactiveStreams.get(context).getPublisher("unbounded", Integer.class))
+        Disposable disp1 = Observable.fromPublisher(CamelReactiveStreams.get(context).fromStream("unbounded", Integer.class))
                 .subscribe(n -> latch1.countDown());
 
         context.start();
 
         // Add another subscription
         CountDownLatch latch2 = new CountDownLatch(5);
-        Disposable disp2 = Observable.fromPublisher(CamelReactiveStreams.get(context).getPublisher("unbounded", Integer.class))
+        Disposable disp2 = Observable.fromPublisher(CamelReactiveStreams.get(context).fromStream("unbounded", Integer.class))
                 .subscribe(n -> latch2.countDown());
 
         assertTrue(latch1.await(5, TimeUnit.SECONDS));
@@ -97,7 +97,7 @@ public class BasicPublisherTest extends CamelTestSupport {
 
         // Add another subscription
         CountDownLatch latch3 = new CountDownLatch(5);
-        Disposable disp3 = Observable.fromPublisher(CamelReactiveStreams.get(context).getPublisher("unbounded", Integer.class))
+        Disposable disp3 = Observable.fromPublisher(CamelReactiveStreams.get(context).fromStream("unbounded", Integer.class))
                 .subscribe(n -> latch3.countDown());
 
         assertTrue(latch3.await(5, TimeUnit.SECONDS));

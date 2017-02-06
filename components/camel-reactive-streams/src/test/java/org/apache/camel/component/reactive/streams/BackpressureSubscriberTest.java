@@ -38,7 +38,7 @@ public class BackpressureSubscriberTest extends CamelTestSupport {
         long start = System.currentTimeMillis();
         Observable.range(0, 10)
                 .toFlowable(BackpressureStrategy.BUFFER)
-                .subscribe(CamelReactiveStreams.get(context).getSubscriber("slowNumbers", Integer.class));
+                .subscribe(CamelReactiveStreams.get(context).streamSubscriber("slowNumbers", Integer.class));
 
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(10);
@@ -56,7 +56,7 @@ public class BackpressureSubscriberTest extends CamelTestSupport {
         long start = System.currentTimeMillis();
         Observable.range(0, 2)
                 .toFlowable(BackpressureStrategy.BUFFER)
-                .subscribe(CamelReactiveStreams.get(context).getSubscriber("slowerNumbers", Integer.class));
+                .subscribe(CamelReactiveStreams.get(context).streamSubscriber("slowerNumbers", Integer.class));
 
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(2);
@@ -73,7 +73,7 @@ public class BackpressureSubscriberTest extends CamelTestSupport {
 
         long start = System.currentTimeMillis();
         Flowable.range(0, 40)
-                .subscribe(CamelReactiveStreams.get(context).getSubscriber("parallelSlowNumbers", Integer.class));
+                .subscribe(CamelReactiveStreams.get(context).streamSubscriber("parallelSlowNumbers", Integer.class));
 
         MockEndpoint endpoint = getMockEndpoint("mock:endpoint");
         endpoint.expectedMessageCount(40);
