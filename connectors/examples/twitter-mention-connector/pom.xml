@@ -6,9 +6,9 @@
   The ASF licenses this file to You under the Apache License, Version 2.0
   (the "License"); you may not use this file except in compliance with
   the License.  You may obtain a copy of the License at
-  
+
   http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,9 +28,9 @@
   </parent>
 
   <groupId>org.foo</groupId>
-  <artifactId>foo-connector</artifactId>
-  <name>Camel :: Connectors :: Examples :: Foo Connector</name>
-  <description>Foo Connector</description>
+  <artifactId>twitter-mention-connector</artifactId>
+  <name>Camel :: Connectors :: Examples :: Twitter Mention Connector</name>
+  <description>Twitter Mention Connector</description>
   <packaging>jar</packaging>
 
   <dependencyManagement>
@@ -51,7 +51,7 @@
     <!-- base component to use for this connector -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
+      <artifactId>camel-twitter-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -68,7 +68,7 @@
       <artifactId>apt</artifactId>
       <version>${project.version}</version>
     </dependency>
-
+    
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -98,21 +98,21 @@
     <defaultGoal>install</defaultGoal>
 
     <plugins>
-
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>${maven-compiler-plugin-version}</version>
+        <version>3.6.0</version>
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
         </configuration>
       </plugin>
-
+      
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>${maven-resources-plugin-version}</version>
+        <version>3.0.1</version>
         <configuration>
           <encoding>UTF-8</encoding>
         </configuration>
@@ -164,8 +164,8 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Bundle-SymbolicName>org.foo.foo-connector</Bundle-SymbolicName>
-            <Export-Service>org.apache.camel.spi.ComponentResolver;component=foo</Export-Service>
+            <Bundle-SymbolicName>org.foo.twitter-mention-connector</Bundle-SymbolicName>
+            <Export-Service>org.apache.camel.spi.ComponentResolver;component=twitter-mention</Export-Service>
           </instructions>
         </configuration>
       </plugin>

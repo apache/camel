@@ -1,0 +1,20 @@
+{
+  "baseScheme": "twitter",
+  "baseGroupId": "org.apache.camel",
+  "baseArtifactId": "camel-twitter",
+  "baseVersion": "2.19.0-SNAPSHOT",
+  "name": "TwitterMention",
+  "scheme": "twitter-mention",
+  "javaType": "org.foo.mention.TwitterMentionComponent",
+  "groupId": "org.foo",
+  "artifactId": "twitter-mention-connector",
+  "version": "1.0",
+  "description": "Connection from twitter when anyone mention you",
+  "labels" : [ "twitter" ],
+  "pattern": "From",
+  "componentOptions" : [ "accessToken", "accessTokenSecret", "consumerKey", "consumerSecret" ],
+  "endpointValues" : {
+    "kind" : "timeline/mentions",
+    "delay" : "15000"
+  }
+}
