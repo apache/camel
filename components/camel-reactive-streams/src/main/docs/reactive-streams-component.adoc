@@ -6,13 +6,16 @@ The *reactive-streams:* component allows you to exchange messages with reactive
 stream processing libraries compatible with the
 http://www.reactive-streams.org/[reactive streams] standard.
 
-The component supports backpressure and has been tested using the reactive streams technology
-compatibility kit (TCK).
+The component supports backpressure and has been tested using the https://github.com/reactive-streams/reactive-streams-jvm/tree/master/tck[reactive streams technology
+compatibility kit (TCK)].
 
-The Camel module provides a *reactive-streams* component that provides a mechanism to define incoming and
+The Camel module provides a *reactive-streams* component that allows users to define incoming and
 outgoing streams within Camel routes, and a direct client API that allows using Camel endpoints
- directly into any external reactive framework (Camel uses an internal implementation of the reactive streams
- _Publisher_ and _Subscriber_, so it's not tied to any specific framework).
+ directly into any external reactive framework.
+
+Camel uses an internal implementation of the reactive streams
+ _Publisher_ and _Subscriber_, so it's not tied to any specific framework.
+The following reactive frameworks have been used in the integration tests: https://github.com/ReactiveX/RxJava[RxJava2], https://github.com/reactor/reactor-core[reactor-core].
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
