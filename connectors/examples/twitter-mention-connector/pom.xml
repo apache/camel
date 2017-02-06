@@ -51,6 +51,12 @@
     <!-- base component to use for this connector -->
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-twitter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <!-- add spring-boot support -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-twitter-starter</artifactId>
       <version>${project.version}</version>
     </dependency>

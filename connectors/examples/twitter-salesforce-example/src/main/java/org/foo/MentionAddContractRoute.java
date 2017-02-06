@@ -17,12 +17,17 @@
 package org.foo;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MentionAddContractRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("twitter-mention")
-            .log("I was mentioned by ${body}");
+        from("foo:blah?period=2000")
+            .log("Foo triggered");
+
+//        from("twitter-mention?count=10")
+//            .log("I was mentioned by ${body}");
     }
 }
