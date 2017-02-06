@@ -55,10 +55,10 @@ public class ClientAPIWorkflowExample {
              * and sends them to an external system (simulation)
              * only if they contain the word "camel".
              */
-            Flux.from(camel.publishURI("file:input", InputStream.class))
-                    .flatMap(camel.requestURI("direct:unmarshal", String.class))
+            Flux.from(camel.from("file:input", InputStream.class))
+                    .flatMap(camel.to("direct:unmarshal", String.class))
                     .filter(text -> text.contains("camel"))
-                    .flatMap(camel.requestURI("direct:send", String.class))
+                    .flatMap(camel.to("direct:send", String.class))
                     .subscribe();
 
         }

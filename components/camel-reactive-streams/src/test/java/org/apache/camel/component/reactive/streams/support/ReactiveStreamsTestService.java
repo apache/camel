@@ -62,22 +62,22 @@ public class ReactiveStreamsTestService implements CamelReactiveStreamsService {
     }
 
     @Override
-    public Publisher<Exchange> getPublisher(String name) {
+    public Publisher<Exchange> fromStream(String name) {
         return null;
     }
 
     @Override
-    public <T> Publisher<T> getPublisher(String name, Class<T> type) {
+    public <T> Publisher<T> fromStream(String name, Class<T> type) {
         return null;
     }
 
     @Override
-    public Subscriber<Exchange> getSubscriber(String name) {
+    public Subscriber<Exchange> streamSubscriber(String name) {
         return null;
     }
 
     @Override
-    public <T> Subscriber<T> getSubscriber(String name, Class<T> type) {
+    public <T> Subscriber<T> streamSubscriber(String name, Class<T> type) {
         return null;
     }
 
@@ -107,63 +107,73 @@ public class ReactiveStreamsTestService implements CamelReactiveStreamsService {
     }
 
     @Override
-    public Publisher<Exchange> request(String name, Object data) {
+    public Publisher<Exchange> toStream(String name, Object data) {
         return null;
     }
 
     @Override
-    public <T> Publisher<T> request(String name, Object data, Class<T> type) {
+    public <T> Publisher<T> toStream(String name, Object data, Class<T> type) {
         return null;
     }
 
     @Override
-    public Function<?, ? extends Publisher<Exchange>> request(String name) {
+    public Function<?, ? extends Publisher<Exchange>> toStream(String name) {
         return null;
     }
 
     @Override
-    public <T> Function<Object, Publisher<T>> request(String name, Class<T> type) {
+    public <T> Function<Object, Publisher<T>> toStream(String name, Class<T> type) {
         return null;
     }
 
     @Override
-    public Publisher<Exchange> publishURI(String uri) {
+    public Publisher<Exchange> from(String uri) {
         return null;
     }
 
     @Override
-    public <T> Publisher<T> publishURI(String uri, Class<T> type) {
+    public <T> Publisher<T> from(String uri, Class<T> type) {
         return null;
     }
 
     @Override
-    public Publisher<Exchange> requestURI(String uri, Object data) {
+    public Publisher<Exchange> to(String uri, Object data) {
         return null;
     }
 
     @Override
-    public Function<Object, Publisher<Exchange>> requestURI(String uri) {
+    public Function<Object, Publisher<Exchange>> to(String uri) {
         return null;
     }
 
     @Override
-    public <T> Publisher<T> requestURI(String uri, Object data, Class<T> type) {
+    public <T> Publisher<T> to(String uri, Object data, Class<T> type) {
         return null;
     }
 
     @Override
-    public <T> Function<Object, Publisher<T>> requestURI(String uri, Class<T> type) {
+    public <T> Function<Object, Publisher<T>> to(String uri, Class<T> type) {
         return null;
     }
 
     @Override
-    public void processFromURI(String uri, Function<? super Publisher<Exchange>, ?> processor) {
+    public void process(String uri, Function<? super Publisher<Exchange>, ?> processor) {
 
     }
 
     @Override
-    public <T> void processFromURI(String uri, Class<T> type, Function<? super Publisher<T>, ?> processor) {
+    public <T> void process(String uri, Class<T> type, Function<? super Publisher<T>, ?> processor) {
 
+    }
+
+    @Override
+    public Subscriber<Exchange> subscriber(String uri) {
+        return null;
+    }
+
+    @Override
+    public <T> Subscriber<T> subscriber(String uri, Class<T> type) {
+        return null;
     }
 
     public String getName() {

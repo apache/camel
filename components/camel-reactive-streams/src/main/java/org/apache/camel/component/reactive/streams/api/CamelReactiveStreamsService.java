@@ -42,7 +42,7 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      * @param name the stream name
      * @return the stream publisher
      */
-    Publisher<Exchange> getPublisher(String name);
+    Publisher<Exchange> fromStream(String name);
 
     /**
      * Returns the publisher associated to the given stream name.
@@ -55,7 +55,7 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      * @param <T> the type of items emitted by the publisher
      * @return the publisher associated to the stream
      */
-    <T> Publisher<T> getPublisher(String name, Class<T> type);
+    <T> Publisher<T> fromStream(String name, Class<T> type);
 
     /**
      * Returns the subscriber associated to the given stream name.
@@ -64,7 +64,7 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      * @param name the stream name
      * @return the subscriber associated with the stream
      */
-    Subscriber<Exchange> getSubscriber(String name);
+    Subscriber<Exchange> streamSubscriber(String name);
 
     /**
      * Returns the subscriber associated to the given stream name.
@@ -77,7 +77,7 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      * @param <T> the type of items accepted by the subscriber
      * @return the subscriber associated with the stream
      */
-    <T> Subscriber<T> getSubscriber(String name, Class<T> type);
+    <T> Subscriber<T> streamSubscriber(String name, Class<T> type);
 
     /**
      * Pushes the given data into the specified Camel stream and returns a Publisher (mono) holding
@@ -87,18 +87,18 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      * @param data the data to push
      * @return a publisher with the resulting exchange
      */
-    Publisher<Exchange> request(String name, Object data);
+    Publisher<Exchange> toStream(String name, Object data);
 
     /**
      * Returns a function that pushes data into the specified Camel stream and
      * returns a Publisher (mono) holding the resulting exchange or an error.
      *
-     * This is a curryied version of {@link CamelReactiveStreamsService#request(String, Object)}.
+     * This is a curryied version of {@link CamelReactiveStreamsService#toStream(String, Object)}.
      *
      * @param name the stream name
      * @return a function that returns a publisher with the resulting exchange
      */
-    Function<?, ? extends Publisher<Exchange>> request(String name);
+    Function<?, ? extends Publisher<Exchange>> toStream(String name);
 
     /**
      * Pushes the given data into the specified Camel stream and returns a Publisher (mono) holding
@@ -110,20 +110,20 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      * @param <T> the generic type of the resulting Publisher
      * @return a publisher with the resulting data
      */
-    <T> Publisher<T> request(String name, Object data, Class<T> type);
+    <T> Publisher<T> toStream(String name, Object data, Class<T> type);
 
     /**
      * Returns a function that pushes data into the specified Camel stream and
      * returns a Publisher (mono) holding the exchange output or an error.
      *
-     * This is a curryied version of {@link CamelReactiveStreamsService#request(String, Object, Class)}.
+     * This is a curryied version of {@link CamelReactiveStreamsService#toStream(String, Object, Class)}.
      *
      * @param name the stream name
      * @param type  the type to which the output should be converted
      * @param <T> the generic type of the resulting Publisher
      * @return a function that returns a publisher with the resulting data
      */
-    <T> Function<Object, Publisher<T>> request(String name, Class<T> type);
+    <T> Function<Object, Publisher<T>> toStream(String name, Class<T> type);
 
     /*
      * Direct client API methods
@@ -138,7 +138,7 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      * @param uri the consumer uri
      * @return the publisher associated to the uri
      */
-    Publisher<Exchange> publishURI(String uri);
+    Publisher<Exchange> from(String uri);
 
     /**
      * Creates a new stream of the given type from the endpoint URI (used as Camel Consumer) and returns
@@ -151,7 +151,31 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      * @param <T> the type to which Camel should convert exchanges to
      * @return the publisher associated to the uri
      */
-    <T> Publisher<T> publishURI(String uri, Class<T> type);
+    <T> Publisher<T> from(String uri, Class<T> type);
+
+    /**
+     * Creates a new route that pushes data to the endpoint URI and returns
+     * the associated {@code Subscriber}.
+     *
+     * This method always create a new stream.
+     *
+     * @param uri the target uri
+     * @return the subscriber associated to the uri
+     */
+    Subscriber<Exchange> subscriber(String uri);
+
+    /**
+     * Creates a new route that pushes data to the endpoint URI and returns
+     * the associated {@code Subscriber}.
+     *
+     * This method always create a new stream.
+     *
+     * @param uri the target uri
+     * @param type the type of items that the subscriber can receive
+     * @param <T> the type from which Camel should convert data to exchanges
+     * @return the subscriber associated to the uri
+     */
+    <T> Subscriber<T> subscriber(String uri, Class<T> type);
 
     /**
      * Creates a new route that uses the endpoint URI as producer, pushes the given data to the route
@@ -161,7 +185,7 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      * @param data the data to push
      * @return a publisher with the resulting exchange
      */
-    Publisher<Exchange> requestURI(String uri, Object data);
+    Publisher<Exchange> to(String uri, Object data);
 
     /**
      * Creates a new route that uses the endpoint URI as producer, and returns a
@@ -169,12 +193,12 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      * {@code Publisher} that holds the resulting exchange or the error.
      *
      *
-     * This is a curryied version of {@link CamelReactiveStreamsService#requestURI(String, Object)}.
+     * This is a curryied version of {@link CamelReactiveStreamsService#to(String, Object)}.
      *
      * @param uri the producer uri
      * @return a function that returns a publisher with the resulting exchange
      */
-    Function<Object, Publisher<Exchange>> requestURI(String uri);
+    Function<Object, Publisher<Exchange>> to(String uri);
 
     /**
      * Creates a new route that uses the endpoint URI as producer, pushes the given data to the route
@@ -186,21 +210,21 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      * @param <T> the generic type of the resulting Publisher
      * @return a publisher with the resulting data
      */
-    <T> Publisher<T> requestURI(String uri, Object data, Class<T> type);
+    <T> Publisher<T> to(String uri, Object data, Class<T> type);
 
     /**
      * Creates a new route that uses the endpoint URI as producer, and returns a
      * function that pushes the data into the route and returns the
      * {@code Publisher} that holds the exchange output or an error.
      *
-     * This is a curryied version of {@link CamelReactiveStreamsService#requestURI(String, Object, Class)}.
+     * This is a curryied version of {@link CamelReactiveStreamsService#to(String, Object, Class)}.
      *
      * @param uri the producer uri
      * @param type  the type to which the output should be converted
      * @param <T> the generic type of the resulting Publisher
      * @return a function that returns a publisher with the resulting data
      */
-    <T> Function<Object, Publisher<T>> requestURI(String uri, Class<T> type);
+    <T> Function<Object, Publisher<T>> to(String uri, Class<T> type);
 
     /**
      * Adds a processing step at the specified endpoint uri (usually a "direct:name") that delegates
@@ -213,7 +237,7 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      * @param uri the uri where the processor should be attached
      * @param processor the reactive processor
      */
-    void processFromURI(String uri, Function<? super Publisher<Exchange>, ?> processor);
+    void process(String uri, Function<? super Publisher<Exchange>, ?> processor);
 
     /**
      * Adds a processing step at the specified endpoint uri (usually a "direct:name") that delegates
@@ -228,7 +252,7 @@ public interface CamelReactiveStreamsService extends CamelContextAware, Service 
      * @param <T> the generic type of the Publisher that should be processed
      * @param processor the reactive processor
      */
-    <T> void processFromURI(String uri, Class<T> type, Function<? super Publisher<T>, ?> processor);
+    <T> void process(String uri, Class<T> type, Function<? super Publisher<T>, ?> processor);
 
     /*
      * Methods for Camel producers.

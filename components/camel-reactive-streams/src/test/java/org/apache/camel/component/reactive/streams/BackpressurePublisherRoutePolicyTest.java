@@ -58,7 +58,7 @@ public class BackpressurePublisherRoutePolicyTest extends CamelTestSupport {
 
         CountDownLatch receptionLatch = new CountDownLatch(35);
 
-        Publisher<Exchange> pub = CamelReactiveStreams.get(context()).getPublisher("pub", Exchange.class);
+        Publisher<Exchange> pub = CamelReactiveStreams.get(context()).fromStream("pub", Exchange.class);
         TestSubscriber<Exchange> subscriber = new TestSubscriber<Exchange>() {
             @Override
             public void onNext(Exchange o) {
@@ -117,7 +117,7 @@ public class BackpressurePublisherRoutePolicyTest extends CamelTestSupport {
 
         CountDownLatch receptionLatch = new CountDownLatch(35);
 
-        Publisher<Exchange> pub = CamelReactiveStreams.get(context()).getPublisher("pub", Exchange.class);
+        Publisher<Exchange> pub = CamelReactiveStreams.get(context()).fromStream("pub", Exchange.class);
         TestSubscriber<Exchange> subscriber = new TestSubscriber<Exchange>() {
             @Override
             public void onNext(Exchange o) {

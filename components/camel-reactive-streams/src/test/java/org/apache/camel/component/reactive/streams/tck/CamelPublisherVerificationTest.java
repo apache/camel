@@ -43,7 +43,7 @@ public class CamelPublisherVerificationTest extends PublisherVerification<Exchan
             }
         };
 
-        Publisher<Exchange> pub = CamelReactiveStreams.get(context).getPublisher("prod");
+        Publisher<Exchange> pub = CamelReactiveStreams.get(context).fromStream("prod");
 
         try {
             builder.addRoutesToCamelContext(context);

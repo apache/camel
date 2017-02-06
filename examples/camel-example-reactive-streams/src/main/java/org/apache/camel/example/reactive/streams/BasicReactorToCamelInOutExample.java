@@ -59,7 +59,7 @@ public class BasicReactorToCamelInOutExample {
 
             Flux.interval(Duration.ofSeconds(8))
                     .map(i -> i + 1) // to start from 1
-                    .flatMap(camel.request("sqrt", Double.class)) // call Camel and continue
+                    .flatMap(camel.toStream("sqrt", Double.class)) // call Camel and continue
                     .map(d -> "BasicReactorToCamelInOut - sqrt=" + d)
                     .doOnNext(LOG::info)
                     .subscribe();

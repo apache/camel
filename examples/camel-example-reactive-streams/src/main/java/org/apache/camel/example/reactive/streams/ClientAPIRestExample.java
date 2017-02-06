@@ -47,7 +47,7 @@ public class ClientAPIRestExample {
         public void setup() {
 
             // Rest endpoint to retrieve all orders: http://localhost:8080/camel/orders
-            camel.processFromURI("rest:get:orders", exchange ->
+            camel.process("rest:get:orders", exchange ->
                     Flux.from(exchange)
                             .flatMap(ex -> allOrders()));
 
@@ -55,7 +55,7 @@ public class ClientAPIRestExample {
             // Rest endpoint to retrieve an order.
             // Try: http://localhost:8080/camel/orders/1
             // Or: http://localhost:8080/camel/orders/xxx
-            camel.processFromURI("rest:get:orders/{orderId}", exchange ->
+            camel.process("rest:get:orders/{orderId}", exchange ->
                     Flux.from(exchange)
                             .map(ex -> ex.getIn().getHeader("orderId", String.class))
                             .flatMap(this::toOrderInfo)

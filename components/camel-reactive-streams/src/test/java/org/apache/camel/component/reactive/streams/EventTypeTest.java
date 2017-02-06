@@ -40,7 +40,7 @@ public class EventTypeTest extends CamelTestSupport {
             }
         }.addRoutesToCamelContext(context);
 
-        Subscriber<Integer> numbers = CamelReactiveStreams.get(context).getSubscriber("numbers", Integer.class);
+        Subscriber<Integer> numbers = CamelReactiveStreams.get(context).streamSubscriber("numbers", Integer.class);
 
         context.start();
 
@@ -66,7 +66,7 @@ public class EventTypeTest extends CamelTestSupport {
             }
         }.addRoutesToCamelContext(context);
 
-        Subscriber<Integer> numbers = CamelReactiveStreams.get(context).getSubscriber("numbers", Integer.class);
+        Subscriber<Integer> numbers = CamelReactiveStreams.get(context).streamSubscriber("numbers", Integer.class);
 
         context.start();
 
@@ -90,7 +90,7 @@ public class EventTypeTest extends CamelTestSupport {
             }
         }.addRoutesToCamelContext(context);
 
-        Subscriber<Integer> numbers = CamelReactiveStreams.get(context).getSubscriber("numbers", Integer.class);
+        Subscriber<Integer> numbers = CamelReactiveStreams.get(context).streamSubscriber("numbers", Integer.class);
 
         context.start();
 
@@ -117,7 +117,7 @@ public class EventTypeTest extends CamelTestSupport {
             }
         }.addRoutesToCamelContext(context);
 
-        Subscriber<Integer> numbers = CamelReactiveStreams.get(context).getSubscriber("numbers", Integer.class);
+        Subscriber<Integer> numbers = CamelReactiveStreams.get(context).streamSubscriber("numbers", Integer.class);
 
         context.start();
 
@@ -153,7 +153,7 @@ public class EventTypeTest extends CamelTestSupport {
             }
         }.addRoutesToCamelContext(context);
 
-        Subscriber<Integer> numbers = CamelReactiveStreams.get(context).getSubscriber("numbers", Integer.class);
+        Subscriber<Integer> numbers = CamelReactiveStreams.get(context).streamSubscriber("numbers", Integer.class);
 
         context.start();
 

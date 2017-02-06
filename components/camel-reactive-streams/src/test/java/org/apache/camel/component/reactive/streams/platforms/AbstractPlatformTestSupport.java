@@ -55,7 +55,7 @@ public abstract class AbstractPlatformTestSupport extends CamelTestSupport {
         List<Integer> elements = new LinkedList<>();
         CountDownLatch latch = new CountDownLatch(num);
 
-        this.changeSign(camel.getPublisher("integers", Integer.class), i -> {
+        this.changeSign(camel.fromStream("integers", Integer.class), i -> {
             elements.add(i);
             latch.countDown();
         });
@@ -95,7 +95,7 @@ public abstract class AbstractPlatformTestSupport extends CamelTestSupport {
             elements.add(i);
         }
 
-        changeSign(elements, camel.getSubscriber("integers", Integer.class));
+        changeSign(elements, camel.streamSubscriber("integers", Integer.class));
         context.start();
 
         MockEndpoint mock = getMockEndpoint("mock:endpoint");
