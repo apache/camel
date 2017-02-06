@@ -111,6 +111,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         return false;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         try {
             doProcess(exchange);
@@ -512,11 +513,8 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             this.messageReceived = false;
             this.cause = cause;
             if (ioSession != null) {
-                try {
-                    closeSessionIfNeededAndAwaitCloseInHandler(ioSession);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
+                CloseFuture closeFuture = ioSession.closeNow();
+                closeFuture.awaitUninterruptibly(timeout, TimeUnit.MILLISECONDS);
             }
         }
 
