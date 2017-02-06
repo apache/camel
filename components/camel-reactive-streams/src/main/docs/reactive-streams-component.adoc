@@ -210,7 +210,8 @@ CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
 
 // Process files starting from their names
 Flowable.just(new File("file1.txt"), new File("file2.txt"))
-    .flatMap(file -> camel.toStream("readAndMarshal", File.class))
+    .flatMap(file -> camel.toStream("readAndMarshal", String.class))
+    // Camel output will be converted to String
     // other steps
     .subscribe();
 ---------------------------------------------------------
@@ -233,7 +234,8 @@ CamelReactiveStreamsService camel = CamelReactiveStreams.get(context);
 
 // Process files starting from their names
 Flowable.just(new File("file1.txt"), new File("file2.txt"))
-    .flatMap(file -> camel.to("direct:process", File.class))
+    .flatMap(file -> camel.to("direct:process", String.class))
+    // Camel output will be converted to String
     // other steps
     .subscribe();
 ---------------------------------------------------------
