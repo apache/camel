@@ -410,7 +410,7 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
     }
 
     /**
-     * To use the shared SalesforceLoginConfig as configuration
+     * To use the shared SalesforceEndpointConfig as endpoint configuration
      */
     public void setConfig(SalesforceEndpointConfig config) {
         this.config = config;

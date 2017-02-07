@@ -432,7 +432,7 @@ The Salesforce component supports 16 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | loginConfig | security |  | SalesforceLoginConfig | To use the shared SalesforceLoginConfig as login configuration
-| config | advanced |  | SalesforceEndpointConfig | To use the shared SalesforceLoginConfig as configuration
+| config | advanced |  | SalesforceEndpointConfig | To use the shared SalesforceEndpointConfig as endpoint configuration
 | httpClientProperties | advanced |  | Map | Used for configuring HTTP client properties as key/value pairs
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
 | httpProxyHost | proxy |  | String | To configure HTTP proxy host
