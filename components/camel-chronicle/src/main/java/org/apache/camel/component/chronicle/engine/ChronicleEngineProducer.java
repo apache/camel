@@ -47,7 +47,7 @@ public class ChronicleEngineProducer extends HeaderSelectorProducer {
         this.topicPublisher = WeakRef.create(() -> client.acquireTopicPublisher(uri, Object.class, Object.class));
         this.publisher = WeakRef.create(() -> client.acquirePublisher(uri, Object.class));
         this.mapView = WeakRef.create(() -> client.acquireMap(uri, Object.class, Object.class));
-        this.queueView = WeakRef.create(() -> client.acquireQueue(uri, Object.class, Object.class));
+        this.queueView = WeakRef.create(() -> client.acquireQueue(uri, Object.class, Object.class, endpoint.getConfiguration().getClusterName()));
     }
 
     // ***************************
