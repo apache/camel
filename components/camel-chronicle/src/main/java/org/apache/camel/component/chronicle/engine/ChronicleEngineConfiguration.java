@@ -162,14 +162,14 @@ public class ChronicleEngineConfiguration {
         this.persistent = persistent;
     }
 
-	public String getClusterName() {
-		return clusterName;
-	}
+    public String getClusterName() {
+        return clusterName;
+    }
 
     /**
      * Cluster name for queue
      */
-	public void setClusterName(String clusterName) {
-		this.clusterName = clusterName;
-	}
+    public void setClusterName(String clusterName) {
+        this.clusterName = clusterName;
+    }
 }
