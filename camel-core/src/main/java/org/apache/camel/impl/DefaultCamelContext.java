@@ -628,6 +628,33 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     log.trace("No component to create endpoint from uri: {} fallback lookup in registry -> {}", uri, answer);
                 }
 
+                if (answer == null && splitURI[1] == null) {
+                    // the uri has no context-path which is rare and it was not referring to an endpoint in the registry
+                    // so try to see if it can be created by a component
+
+                    int pos = uri.indexOf('?');
+                    String componentName = pos > 0 ? uri.substring(0, pos) : uri;
+
+                    Component component = getComponent(componentName);
+
+                    // Ask the component to resolve the endpoint.
+                    if (component != null) {
+                        log.trace("Creating endpoint from uri: {} using component: {}", uri, component);
+
+                        // Have the component create the endpoint if it can.
+                        if (component.useRawUri()) {
+                            answer = component.createEndpoint(rawUri);
+                        } else {
+                            answer = component.createEndpoint(uri);
+                        }
+
+                        if (answer != null && log.isDebugEnabled()) {
+                            log.debug("{} converted to endpoint: {} by component: {}", new Object[]{URISupport.sanitizeUri(uri), answer, component});
+                        }
+                    }
+
+                }
+
                 if (answer != null) {
                     addService(answer);
                     answer = addEndpointToRegistry(uri, answer);
