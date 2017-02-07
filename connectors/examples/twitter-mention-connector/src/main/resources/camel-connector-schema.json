@@ -16,6 +16,10 @@
     "version": "2.19.0-SNAPSHOT"
   },
   "componentProperties": {
+    "accessToken": {"kind":"property","group":"security","label":"security","required":"false","type":"string","javaType":"java.lang.String","deprecated":"false","secret":"true","description":"The access token"},
+    "accessTokenSecret": {"kind":"property","group":"security","label":"security","required":"false","type":"string","javaType":"java.lang.String","deprecated":"false","secret":"true","description":"The access token secret"},
+    "consumerKey": {"kind":"property","group":"security","label":"security","required":"false","type":"string","javaType":"java.lang.String","deprecated":"false","secret":"true","description":"The consumer key"},
+    "consumerSecret": {"kind":"property","group":"security","label":"security","required":"false","type":"string","javaType":"java.lang.String","deprecated":"false","secret":"true","description":"The consumer secret"}
   },
   "properties": {
   }
