@@ -14,7 +14,6 @@
   "pattern": "From",
   "componentOptions" : [ "accessToken", "accessTokenSecret", "consumerKey", "consumerSecret" ],
   "endpointValues" : {
-    "kind" : "timeline/mentions",
-    "delay" : "15000"
+    "kind" : "timeline/mentions"
   }
 }
