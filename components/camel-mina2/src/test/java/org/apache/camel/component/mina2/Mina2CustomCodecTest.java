@@ -56,11 +56,11 @@ public class Mina2CustomCodecTest extends BaseMina2Test {
         try {
             template.requestBody(String.format("mina2:tcp://localhost:%1$s?sync=true&codec=#failingCodec", getPort()), "Hello World");
             fail("Expecting that decode of result fails");
-        } catch (Exception e){
+        } catch (Exception e) {
             assertTrue(e instanceof CamelExecutionException);
             assertNotNull(e.getCause());
             Throwable rootCause = e;
-            while(rootCause.getCause() != null){
+            while (rootCause.getCause() != null) {
                 rootCause = rootCause.getCause();
             }
             assertTrue(rootCause instanceof IllegalArgumentException);
@@ -124,12 +124,11 @@ public class Mina2CustomCodecTest extends BaseMina2Test {
 
         private final boolean failing;
 
-        public MyCodec(boolean failing) {
+        MyCodec(boolean failing) {
             this.failing = failing;
-
         }
 
-        public MyCodec() {
+        MyCodec() {
             this.failing = false;
         }
 
@@ -161,10 +160,9 @@ public class Mina2CustomCodecTest extends BaseMina2Test {
 
                 @Override
                 protected boolean doDecode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
-                    if (failing){
+                    if (failing) {
                         throw new IllegalArgumentException("Something went wrong in decode");
                     }
-
 
                     if (in.remaining() > 0) {
                         byte[] buf = new byte[in.remaining()];
