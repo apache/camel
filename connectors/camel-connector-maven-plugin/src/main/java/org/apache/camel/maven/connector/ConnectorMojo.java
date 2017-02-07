@@ -354,7 +354,8 @@ public class ConnectorMojo extends AbstractJarMojo {
                 for (Object obj : getProject().getDependencyArtifacts()) {
                     Artifact artifact = (Artifact) obj;
                     if ("jar".equals(artifact.getType())) {
-                        if (groupId.equals(artifact.getGroupId()) && artifactId.equals(artifact.getArtifactId()) && version.equals(artifact.getVersion())) {
+                        // use baseVersion so we can support SNAPSHOT versions that are based on a base version
+                        if (groupId.equals(artifact.getGroupId()) && artifactId.equals(artifact.getArtifactId()) && version.equals(artifact.getBaseVersion())) {
                             // load the component file inside the file
                             URL url = new URL("file:" + artifact.getFile());
                             URLClassLoader child = new URLClassLoader(new URL[]{url}, this.getClass().getClassLoader());
