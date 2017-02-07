@@ -327,6 +327,9 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         Object[] params = null;
         if (endpoint.getDataFormat() == DataFormat.POJO) {
             Object body = exchange.getIn().getBody();
+            if (body == null) {
+                return new Object[0];
+            }
             if (body instanceof Object[]) {
                 params = (Object[])body;
             } else if (body instanceof List) {
