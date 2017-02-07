@@ -111,7 +111,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     private ServiceCallServiceFilterConfiguration serviceFilterConfiguration;
 
     @XmlElements({
-        @XmlElement(name = "ribbonLoadBalancer", type = RibbonServiceCallLoadBalancerConfiguration.class)}
+        @XmlElement(name = "ribbonLoadBalancer", type = RibbonServiceCallLoadBalancerConfiguration.class),
+        @XmlElement(name = "defaultLoadBalancer", type = DefaultServiceCallLoadBalancerConfiguration.class) }
     )
     private ServiceCallLoadBalancerConfiguration loadBalancerConfiguration;
 
@@ -651,6 +652,13 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     // Shortcuts - LoadBalancer
     // *****************************
 
+    public ServiceCallDefinition defaultLoadBalancer() {
+        DefaultServiceCallLoadBalancerConfiguration conf = new DefaultServiceCallLoadBalancerConfiguration();
+        setLoadBalancerConfiguration(conf);
+
+        return this;
+    }
+
     public ServiceCallDefinition ribbonLoadBalancer() {
         RibbonServiceCallLoadBalancerConfiguration conf = new RibbonServiceCallLoadBalancerConfiguration(this);
         setLoadBalancerConfiguration(conf);
@@ -773,7 +781,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
 
         if (serviceFilterConfiguration != null) {
             answer = serviceFilterConfiguration.newInstance(camelContext);
-        } else if (config != null && config.getLoadBalancerConfiguration() != null) {
+        } else if (config != null && config.getServiceFilterConfiguration() != null) {
             answer = config.getServiceFilterConfiguration().newInstance(camelContext);
         } else {
             answer = retrieve(ServiceFilter.class, camelContext, this::getServiceFilter, this::getServiceFilterRef);

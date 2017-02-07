@@ -87,7 +87,8 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     private ServiceCallServiceFilterConfiguration serviceFilterConfiguration;
 
     @XmlElements({
-        @XmlElement(name = "ribbonLoadBalancer", type = RibbonServiceCallLoadBalancerConfiguration.class)}
+        @XmlElement(name = "ribbonLoadBalancer", type = RibbonServiceCallLoadBalancerConfiguration.class),
+        @XmlElement(name = "defaultLoadBalancer", type = DefaultServiceCallLoadBalancerConfiguration.class) }
     )
     private ServiceCallLoadBalancerConfiguration loadBalancerConfiguration;
 
@@ -582,6 +583,13 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     // *****************************
     // Shortcuts - LoadBalancer
     // *****************************
+
+    public ServiceCallConfigurationDefinition defaultLoadBalancer() {
+        DefaultServiceCallLoadBalancerConfiguration conf = new DefaultServiceCallLoadBalancerConfiguration();
+        setLoadBalancerConfiguration(conf);
+
+        return this;
+    }
 
     public ServiceCallConfigurationDefinition ribbonLoadBalancer() {
         RibbonServiceCallLoadBalancerConfiguration conf = new RibbonServiceCallLoadBalancerConfiguration();

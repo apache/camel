@@ -29,6 +29,7 @@
       <staticServiceDiscovery>
         <servers>localhost:9091</servers>
       </staticServiceDiscovery>
+      <defaultLoadBalancer/>
     </serviceCallConfiguration>
 
     <serviceCallConfiguration id="conf2">

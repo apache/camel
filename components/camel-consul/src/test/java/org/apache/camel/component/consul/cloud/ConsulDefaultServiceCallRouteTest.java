@@ -67,7 +67,6 @@ public class ConsulDefaultServiceCallRouteTest extends ConsulTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
 
-
         registrations.forEach(r -> client.deregister(r.getId()));
     }
 
@@ -97,9 +96,9 @@ public class ConsulDefaultServiceCallRouteTest extends ConsulTestSupport {
                 from("direct:start")
                     .serviceCall()
                         .name(SERVICE_NAME)
-                        .consulServiceDiscovery()
-                        .endParent()
-                    .to("log:org.apache.camel.component.consul.processor.service?level=INFO&showAll=true&multiline=true")
+                        .defaultLoadBalancer()
+                        .end()
+                    .to("log:org.apache.camel.component.consul.cloud?level=INFO&showAll=true&multiline=true")
                     .to("mock:result");
 
                 registrations.forEach(r ->
