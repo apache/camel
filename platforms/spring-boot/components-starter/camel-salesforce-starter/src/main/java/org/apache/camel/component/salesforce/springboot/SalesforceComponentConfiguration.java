@@ -832,7 +832,7 @@ public class SalesforceComponentConfiguration {
          */
         private String clientSecret;
         /**
-         * Salesforce connected application Consumer token
+         * Salesforce connected application OAuth refresh token
          */
         private String refreshToken;
         /**

@@ -73,7 +73,7 @@ public class SalesforceSession implements Service {
         ObjectHelper.notNull(config.getClientId(), "clientId");
         ObjectHelper.notNull(config.getClientSecret(), "clientSecret");
 
-        if (config.getRefreshToken() == null) {
+        if (ObjectHelper.isEmpty(config.getRefreshToken())) {
             ObjectHelper.notNull(config.getUserName(), "userName");
             ObjectHelper.notNull(config.getPassword(), "password");
         } else {
@@ -141,7 +141,7 @@ public class SalesforceSession implements Service {
         fields.put("client_secret", config.getClientSecret());
         fields.put("format", "json");
 
-        if (config.getRefreshToken() == null) {
+        if (ObjectHelper.isEmpty(config.getRefreshToken())) {
             fields.put("grant_type", "password");
             fields.put("username", config.getUserName());
             fields.put("password", config.getPassword());
