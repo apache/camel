@@ -130,8 +130,6 @@ public class ConnectorMojo extends AbstractJarMojo {
                     getLog().debug(header);
 
                     rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
-                    // we do not offer editing component properties (yet) so clear the rows
-                    rows.clear();
                     String componentOptions = buildComponentOptionsSchema(rows, dto);
                     getLog().debug(componentOptions);
 
@@ -208,24 +206,56 @@ public class ConnectorMojo extends AbstractJarMojo {
     }
 
     private String buildComponentOptionsSchema(List<Map<String, String>> rows, Map dto) throws JsonProcessingException {
+        // find the endpoint options
+        List options = (List) dto.get("componentOptions");
+        Map values = (Map) dto.get("componentValues");
+        Map overrides = (Map) dto.get("componentOverrides");
+
         ObjectMapper mapper = new ObjectMapper();
 
         StringBuilder sb = new StringBuilder();
         sb.append("  \"componentProperties\": {\n");
 
+        boolean first = true;
         for (int i = 0; i < rows.size(); i++) {
             Map<String, String> row = rows.get(i);
             String key = row.get("name");
             row.remove("name");
+
+            if (options == null || !options.contains(key)) {
+                continue;
+            }
+
+            // do we have a new default value for this row?
+            if (values != null && values.containsKey(key)) {
+                String newDefaultValue = (String) values.get(key);
+                if (newDefaultValue != null) {
+                    row.put("defaultValue", newDefaultValue);
+                }
+            }
+
+            // is there any overrides for this row?
+            if (overrides != null && overrides.containsKey(key)) {
+                Map over = (Map) overrides.get(key);
+                if (over != null) {
+                    row.putAll(over);
+                }
+            }
+
+            // we should build the json as one-line which is how Camel does it today
+            // which makes its internal json parser support loading our generated schema file
             String line = mapper.writeValueAsString(row);
 
+            if (!first) {
+                sb.append(",\n");
+            }
             sb.append("    \"" + key + "\": ");
             sb.append(line);
-            if (i < rows.size() - 1) {
-                sb.append(",\n");
-            } else {
-                sb.append("\n");
-            }
+
+            first = false;
+        }
+        if (!first) {
+            sb.append("\n");
         }
 
         sb.append("  },\n");
