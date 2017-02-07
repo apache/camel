@@ -24,10 +24,7 @@ public class MentionAddContractRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("foo:blah?period=2000")
-            .log("Foo triggered");
-
-//        from("twitter-mention?count=10")
-//            .log("I was mentioned by ${body}");
+        from("twitter-mention")
+            .log("I was mentioned by ${body}");
     }
 }

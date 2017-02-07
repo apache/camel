@@ -179,7 +179,7 @@ public abstract class DefaultConnectorComponent extends DefaultComponent {
         boolean found = false;
         for (String line : lines) {
             line = line.trim();
-            if (line.startsWith("\"componentValues\":")) {
+            if (line.startsWith("\"componentValues\"")) {
                 found = true;
             } else if (line.startsWith("}")) {
                 found = false;
@@ -206,7 +206,7 @@ public abstract class DefaultConnectorComponent extends DefaultComponent {
         boolean found = false;
         for (String line : lines) {
             line = line.trim();
-            if (line.startsWith("\"endpointValues\":")) {
+            if (line.startsWith("\"endpointValues\"")) {
                 found = true;
             } else if (line.startsWith("}")) {
                 found = false;
