@@ -1,0 +1,22 @@
+{
+  "component": {
+    "kind": "component",
+    "baseScheme": "twitter",
+    "scheme": "twitter-mention",
+    "syntax": "twitter-mention:kind",
+    "title": "TwitterMention",
+    "description": "Connection from twitter when anyone mention you",
+    "label": "twitter",
+    "deprecated": "false",
+    "async": "false",
+    "consumerOnly": "true",
+    "javaType": "org.foo.mention.TwitterMentionComponent",
+    "groupId": "org.foo",
+    "artifactId": "twitter-mention-connector",
+    "version": "2.19.0-SNAPSHOT"
+  },
+  "componentProperties": {
+  },
+  "properties": {
+  }
+}

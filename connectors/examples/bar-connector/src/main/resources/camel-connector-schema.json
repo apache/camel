@@ -1,0 +1,25 @@
+{
+  "component": {
+    "kind": "component",
+    "baseScheme": "beverage",
+    "scheme": "bar",
+    "syntax": "bar:drink",
+    "title": "Bar",
+    "description": "To order drinks from the bar",
+    "label": "bar",
+    "deprecated": "false",
+    "async": "false",
+    "producerOnly": "true",
+    "javaType": "org.foo.connector.BarComponent",
+    "groupId": "org.foo",
+    "artifactId": "bar-connector",
+    "version": "2.19.0-SNAPSHOT"
+  },
+  "componentProperties": {
+  },
+  "properties": {
+    "drink": {"kind":"path","group":"producer","required":"true","type":"object","javaType":"org.beverage.Beverages","enum":"Beer,GinTonic,Wine","deprecated":"false","secret":"false","description":"What drink to order"},
+    "amount": {"kind":"parameter","group":"producer","type":"integer","javaType":"int","deprecated":"false","secret":"false","defaultValue":"2","description":"Number of drinks in the order"},
+    "celebrity": {"kind":"parameter","group":"producer","type":"boolean","javaType":"boolean","deprecated":"false","secret":"false","defaultValue":"false","description":"Is this a famous person ordering"}
+  }
+}
