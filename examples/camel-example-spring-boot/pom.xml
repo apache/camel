@@ -74,16 +74,6 @@
       <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
 
-    <!-- remote shell -->
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-remote-shell</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-commands-spring-boot</artifactId>
-    </dependency>
-
     <!-- testing -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
