@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.apache.camel.util.ObjectHelper;
 import org.junit.Assert;
 
 public class LoginConfigHelper extends Assert {
@@ -38,7 +39,7 @@ public class LoginConfigHelper extends Assert {
             stream = new FileInputStream(TEST_LOGIN_PROPERTIES);
             properties.load(stream);
 
-            if (properties.getProperty("refreshToken")== null) {
+            if (ObjectHelper.isEmpty(properties.getProperty("refreshToken"))) {
                 config = new SalesforceLoginConfig(
                         properties.getProperty("loginUrl", SalesforceLoginConfig.DEFAULT_LOGIN_URL),
                         properties.getProperty("clientId"),
@@ -59,7 +60,7 @@ public class LoginConfigHelper extends Assert {
             assertNotNull("Null loginUrl", config.getLoginUrl());
             assertNotNull("Null clientId", config.getClientId());
             assertNotNull("Null clientSecret", config.getClientSecret());
-            if (properties.getProperty("refreshToken")== null) {
+            if (ObjectHelper.isEmpty(properties.getProperty("refreshToken"))) {
                 assertNotNull("Null userName", config.getUserName());
                 assertNotNull("Null password", config.getPassword());
             } else {
