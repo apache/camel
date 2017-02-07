@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.mina2;
 
-import java.util.Optional;
-import java.util.stream.Stream;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
@@ -61,11 +58,13 @@ public class Mina2CustomCodecTest extends BaseMina2Test {
             fail("Expecting that decode of result fails");
         } catch (Exception e){
             assertTrue(e instanceof CamelExecutionException);
-            Optional<Throwable> rootCause = Stream.iterate(e, Throwable::getCause)
-                    .filter(element -> element.getCause() == null).findFirst();
-            assertTrue(rootCause.isPresent());
-            assertTrue(rootCause.get() instanceof IllegalArgumentException);
-            assertTrue(rootCause.get().getMessage().contains("Something went wrong in decode"));
+            assertNotNull(e.getCause());
+            Throwable rootCause = e;
+            while(rootCause.getCause() != null){
+                rootCause = rootCause.getCause();
+            }
+            assertTrue(rootCause instanceof IllegalArgumentException);
+            assertTrue(rootCause.getMessage().contains("Something went wrong in decode"));
         }
 
     }
