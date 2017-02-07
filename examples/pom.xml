@@ -105,6 +105,7 @@
     <module>camel-example-transformer-blueprint</module>
     <module>camel-example-transformer-cdi</module>
     <module>camel-example-transformer-demo</module>
+    <module>camel-example-twitter-salesforce</module>
     <module>camel-example-twitter-websocket</module>
     <module>camel-example-twitter-websocket-blueprint</module>
     <module>camel-example-widget-gadget-cdi</module>
