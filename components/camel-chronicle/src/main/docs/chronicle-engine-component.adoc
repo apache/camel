@@ -9,7 +9,7 @@ The Chronicle Engine component has no options.
 
 
 // endpoint options: START
-The Chronicle Engine component supports 13 endpoint options which are listed below:
+The Chronicle Engine component supports 14 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -18,6 +18,7 @@ The Chronicle Engine component supports 13 endpoint options which are listed bel
 | addresses | common |  | String | *Required* Engine addresses. Multiple addresses can be separated by comman.
 | path | common |  | String | *Required* Engine path
 | action | common |  | String | The default action to perform valid values are: - PUBLISH - PPUBLISH_AND_INDEX - PPUT - PGET_AND_PUT - PPUT_ALL - PPUT_IF_ABSENT - PGET - PGET_AND_REMOVE - PREMOVE - PIS_EMPTY - PSIZE
+| clusterName | common |  | String | Cluster name for queue
 | filteredMapEvents | common |  | String | A comma separated list of Map event type to filer valid values are: INSERT UPDATE REMOVE.
 | persistent | common | true | boolean | Enable/disable data persistence
 | subscribeMapEvents | common | true | boolean | Set if consumer should subscribe to Map events default true.
