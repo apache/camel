@@ -48,6 +48,13 @@ public class ConnectorMojo extends AbstractJarMojo {
     private File classesDirectory;
 
     /**
+     * Whether to generate JSon schema files to the sources directory (<tt>src/main/resources</tt>) which allows the files to be stored together with the source code.
+     * If this options is <tt>false</tt> the JSon schema files are generated into <tt>target/classes</tt> and only included in the built JAR.
+     */
+    @Parameter(defaultValue = "true")
+    private boolean generateToSources;
+
+    /**
      * Whether to include the git url for the git repository of the source code for the Camel connector
      */
     @Parameter(defaultValue = "false")
@@ -71,6 +78,9 @@ public class ConnectorMojo extends AbstractJarMojo {
 
     @Override
     public File createArchive() throws MojoExecutionException {
+
+        // project root folder
+        File root = classesDirectory.getParentFile().getParentFile();
 
         String gitUrl = null;
 
@@ -103,7 +113,6 @@ public class ConnectorMojo extends AbstractJarMojo {
                         // update file
                         mapper.writerWithDefaultPrettyPrinter().writeValue(file, dto);
                         // update source file also
-                        File root = classesDirectory.getParentFile().getParentFile();
                         file = new File(root, "src/main/resources/camel-connector.json");
                         if (file.exists()) {
                             getLog().info("Updating gitUrl to " + file);
@@ -161,6 +170,13 @@ public class ConnectorMojo extends AbstractJarMojo {
                     fos = new FileOutputStream(out, false);
                     fos.write(newJson.getBytes());
                     fos.close();
+
+                    if (generateToSources) {
+                        // copy the file into the sources as well
+                        File from = new File(classesDirectory, "camel-connector-schema.json");
+                        File to = new File(root, "src/main/resources/camel-connector-schema.json");
+                        FileHelper.copyFile(from, to);
+                    }
                 }
 
                 // build json schema for component that only has the selectable options
