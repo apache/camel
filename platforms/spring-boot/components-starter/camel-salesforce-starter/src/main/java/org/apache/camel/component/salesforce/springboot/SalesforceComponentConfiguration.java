@@ -832,6 +832,10 @@ public class SalesforceComponentConfiguration {
          */
         private String clientSecret;
         /**
+         * Salesforce connected application OAuth refresh token
+         */
+        private String refreshToken;
+        /**
          * Salesforce account user name
          */
         private String userName;
@@ -868,6 +872,14 @@ public class SalesforceComponentConfiguration {
 
         public void setClientSecret(String clientSecret) {
             this.clientSecret = clientSecret;
+        }
+
+        public String getRefreshToken() {
+            return refreshToken;
+        }
+
+        public void setRefreshToken(String refreshToken) {
+            this.refreshToken = refreshToken;
         }
 
         public String getUserName() {
