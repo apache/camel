@@ -46,7 +46,7 @@ public class SalesforceComponentConfiguration {
      */
     private SalesforceLoginConfigNestedConfiguration loginConfig;
     /**
-     * To use the shared SalesforceLoginConfig as configuration
+     * To use the shared SalesforceEndpointConfig as endpoint configuration
      */
     private SalesforceEndpointConfigNestedConfiguration config;
     /**
