@@ -97,9 +97,7 @@ public class ConsulRibbonServiceCallRouteTest extends ConsulTestSupport {
                 from("direct:start")
                     .serviceCall()
                         .name(SERVICE_NAME)
-                        .ribbonLoadBalancer()
-                        .consulServiceDiscovery()
-                        .endParent()
+                        .end()
                     .to("log:org.apache.camel.component.consul.processor.service?level=INFO&showAll=true&multiline=true")
                     .to("mock:result");
 
