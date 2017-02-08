@@ -33,10 +33,11 @@ public class TwitterSalesforceRoute extends RouteBuilder {
                 User user = status.getUser();
                 String name = user.getName();
                 String screenName = user.getScreenName();
-                String json = String.format("{\"name\": \"%s\", \"screenName\": \"%s\"}", name, screenName);
-                exchange.getIn().setBody(json);
+                Contact contact = new Contact(name, screenName);
+                exchange.getIn().setBody(contact);
             })
-            .log("JSon: ${body}");
+            .to("salesforce:upsertSObject?sObjectIdName=TwitterScreenName__c")
+            .log("SObject ID: ${body?.id}");
     }
 
 }
