@@ -15,5 +15,4 @@
 # limitations under the License.
 #
 
-class=org.apache.camel.swagger.SwaggerRestProducerFactory
-configurer.class=org.apache.camel.swagger.SwaggerEndpointConfigurer
+configurer.class=org.apache.camel.component.rest.RestComponentTest$TestRestConfigurer

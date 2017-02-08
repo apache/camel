@@ -16,7 +16,13 @@
  */
 package org.apache.camel.spi;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.Optional;
+
+import org.apache.camel.component.rest.RestEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Configuration use by {@link org.apache.camel.spi.RestConsumerFactory} and {@link org.apache.camel.spi.RestApiConsumerFactory}
@@ -24,6 +30,7 @@ import java.util.Map;
  */
 public class RestConfiguration {
 
+    public static final String DEFAULT_SCHEME = "http";
     public static final String CORS_ACCESS_CONTROL_ALLOW_ORIGIN = "*";
     public static final String CORS_ACCESS_CONTROL_ALLOW_METHODS = "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH";
     public static final String CORS_ACCESS_CONTROL_MAX_AGE = "3600";
@@ -515,5 +522,34 @@ public class RestConfiguration {
      */
     public void setCorsHeaders(Map<String, String> corsHeaders) {
         this.corsHeaders = corsHeaders;
+    }
+
+    /**
+     * Applies the configuration to the {@link RestEndpoint}.
+     *
+     * @param endpoint an endpoint to apply configuration to
+     */
+    public void applyTo(final RestEndpoint endpoint) {
+        if (ObjectHelper.isNotEmpty(host)) {
+            final URI baseUri;
+            try {
+                final String schemeToUse = Optional.ofNullable(scheme).orElse(DEFAULT_SCHEME);
+                if ((port > 0) || ("http".equalsIgnoreCase(scheme) && port != 80)
+                    || ("https".equalsIgnoreCase(scheme) && port != 443)) {
+                    baseUri = new URI(schemeToUse, null, host, port, null, null, null);
+                } else {
+                    baseUri = new URI(schemeToUse, null, host, -1, null, null, null);
+                }
+            } catch (URISyntaxException e) {
+                throw new IllegalStateException(
+                        "Unable to create URI from schemme: `" + scheme + "`, host: `" + host + "` and port: " + port);
+            }
+
+            endpoint.setHost(baseUri.toString());
+        }
+
+        if (ObjectHelper.isNotEmpty(contextPath)) {
+            endpoint.setPath(contextPath);
+        }
     }
 }
