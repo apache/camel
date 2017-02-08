@@ -834,7 +834,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Other Components: 33
+Number of Miscellaneous Components: 33
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
