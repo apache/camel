@@ -33,6 +33,7 @@
     <!-- use by camel-catalog -->
     <firstVersion>2.10.0</firstVersion>
     <label>java</label>
+    <title>CDI</title>
 
     <camel.osgi.import>
       !org.apache.camel.cdi.*,

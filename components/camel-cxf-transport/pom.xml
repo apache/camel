@@ -33,6 +33,7 @@
     <!-- use by camel-catalog -->
     <firstVersion>2.8.0</firstVersion>
     <label>soap,webservice</label>
+    <title>CXF Transport</title>
 
     <camel.osgi.import>
       !org.apache.camel.component.cxf.*,
