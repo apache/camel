@@ -21,11 +21,21 @@
  */
 package org.apache.camel.example.mention;
 
+import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Contact Data Transfer Object (DTO) needed for Salesforce component.
+ *<p>
+ * This is a trivial, hand coded, example of DTO for Contact SObject,
+ * for production use you would most likely want to generate these
+ * using {@code camel-salesforce-maven-plugin} as it adds all fields
+ * and generates {@link AbstractDescribedSObjectBase} based classes,
+ * which are needed for some of the operations (like composite API).
+ */
 public class Contact extends AbstractSObjectBase {
 
     @JsonProperty("LastName")
