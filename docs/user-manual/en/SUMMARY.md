@@ -323,7 +323,7 @@
 
 
 <!-- others: START -->
-* Other Components
+* Miscellaneous Components
 	* [BAM](bam.adoc)
 	* [Blueprint](blueprint.adoc)
 	* [CDI](cdi.adoc)

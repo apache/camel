@@ -208,7 +208,7 @@ public class PrepareUserGuideMojo extends AbstractMojo {
 
             // update core components
             StringBuilder other = new StringBuilder();
-            other.append("* Other Components\n");
+            other.append("* Miscellaneous Components\n");
             for (OtherModel model : models) {
                 String line = "\t* " + link(model) + "\n";
                 other.append(line);
