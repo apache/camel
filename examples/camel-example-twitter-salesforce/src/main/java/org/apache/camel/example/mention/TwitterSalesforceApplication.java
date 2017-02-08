@@ -19,6 +19,7 @@ package org.apache.camel.example.mention;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+//CHECKSTYLE:OFF
 @SpringBootApplication
 public class TwitterSalesforceApplication {
 
@@ -30,3 +31,4 @@ public class TwitterSalesforceApplication {
     }
 
 }
+//CHECKSTYLE:ON

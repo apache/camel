@@ -19,8 +19,6 @@ package org.apache.camel.loanbroker;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import org.apache.camel.loanbroker.Client;
-import org.apache.camel.loanbroker.LoanBrokerWS;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.BeforeClass;
@@ -29,14 +27,14 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class LoanBrokerWSTest extends CamelSpringTestSupport {
-    
+
     private static String url;
-    
+
     @BeforeClass
     public static void setupFreePort() throws Exception {
         // find a free port number, and write that in the custom.properties file
         // which we will use for the unit tests, to avoid port number in use problems
-        int port = AvailablePortFinder.getNextAvailable(); 
+        int port = AvailablePortFinder.getNextAvailable();
         String bank1 = "bank1.port=" + port;
         port = AvailablePortFinder.getNextAvailable();
         String bank2 = "bank2.port=" + port;

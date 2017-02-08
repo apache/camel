@@ -24,11 +24,11 @@ import org.apache.camel.loanbroker.bank.BankQuote;
  * Processor to set the reply message for the loan broker web service
  */
 public class ReplyProcessor implements Processor {
-    
+
     @Override
     public void process(Exchange exchange) throws Exception {
         BankQuote quote = exchange.getIn().getBody(BankQuote.class);
-        
+
         String answer = "The best rate is " + quote.toString();
         exchange.getOut().setBody(answer);
     }

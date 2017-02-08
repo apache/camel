@@ -1,4 +1,4 @@
-# Loan Broker Example
+# Loan Broker Example with Apache CXF
 
 ### Introduction
 This example shows how to use Camel to implement the EIP's loan broker example,

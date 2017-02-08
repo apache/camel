@@ -58,7 +58,7 @@
       <artifactId>cxf-rt-transports-http-jetty</artifactId>
       <version>${cxf-version}</version>
     </dependency>
- 
+
     <dependency>
       <groupId>org.apache.xbean</groupId>
       <artifactId>xbean-spring</artifactId>
@@ -69,7 +69,7 @@
         </exclusion>
       </exclusions>
     </dependency>
-    
+
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
@@ -155,7 +155,7 @@
   </build>
 
   <profiles>
-     <profile>
+    <profile>
       <id>WS.LoanBroker</id>
       <properties>
         <target.main.class>org.apache.camel.loanbroker.LoanBroker</target.main.class>

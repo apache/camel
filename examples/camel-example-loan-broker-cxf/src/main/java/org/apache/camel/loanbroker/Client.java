@@ -26,9 +26,9 @@ import org.apache.cxf.frontend.ClientProxyFactoryBean;
  */
 //START SNIPPET: client
 public final class Client {
-    
-	//Change the port to the one on which Loan broker is listening.
-	
+
+    //Change the port to the one on which Loan broker is listening.
+
     private static String url = "http://localhost:9008/loanBroker";
 
     private Client() {
