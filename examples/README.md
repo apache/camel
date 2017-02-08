@@ -85,6 +85,7 @@ All examples have been sort by type/category
 
 * [camel-example-box-osgi](camel-example-box-osgi/README.md)
 * [camel-example-simplejirabot](camel-example-simplejirabot/README.md)
+* [camel-example-twitter-salesforce](camel-example-twitter-salesforce/README.md)
 * [camel-example-twitter-websocket](camel-example-twitter-websocket/README.md)
 * [camel-example-twitter-websocket-blueprint](camel-example-twitter-websocket-blueprint/README.md)
 
