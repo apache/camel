@@ -1,6 +1,6 @@
 @if{!others.isEmpty()}
 
-Number of Other Components: @{others.size}
+Number of Miscellaneous Components: @{others.size}
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================

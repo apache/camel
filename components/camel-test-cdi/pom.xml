@@ -34,6 +34,7 @@
     <!-- use by camel-catalog -->
     <firstVersion>2.17.0</firstVersion>
     <label>testing,java</label>
+    <title>Test CDI</title>
 
     <camel.osgi.export.pkg>org.apache.camel.test.cdi.*</camel.osgi.export.pkg>
   </properties>

@@ -33,6 +33,7 @@
     <!-- use by camel-catalog -->
     <firstVersion>2.15.0</firstVersion>
     <label>osgi</label>
+    <title>SCR</title>
 
     <camel.osgi.export.pkg>org.apache.camel.scr</camel.osgi.export.pkg>
   </properties>
