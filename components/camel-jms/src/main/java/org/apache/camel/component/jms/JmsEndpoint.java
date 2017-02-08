@@ -75,7 +75,7 @@ public class JmsEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     private final AtomicInteger runningMessageListeners = new AtomicInteger();
     private boolean pubSubDomain;
     private JmsBinding binding;
-    @UriPath(defaultValue = "queue", enums = "queue,topic,temp:queue,temp:topic", description = "The kind of destination to use")
+    @UriPath(defaultValue = "queue", enums = "queue,topic,temp-queue,temp-topic", description = "The kind of destination to use")
     private String destinationType;
     @UriPath(description = "Name of the queue or topic to use as destination")
     @Metadata(required = "true")
