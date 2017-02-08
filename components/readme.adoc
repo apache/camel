@@ -750,7 +750,7 @@ Data Formats
 ^^^^^^^^^^^^
 
 // dataformats: START
-Number of Data Formats: 41
+Number of Data Formats: 45
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -780,6 +780,8 @@ Number of Data Formats: 41
 
 | link:camel-flatpack/src/main/docs/flatpack-dataformat.adoc[Flatpack] (camel-flatpack) | 2.1.0 | Camel FlatPack support
 
+| link:src/main/docs/gzip-dataformat.adoc[GZip] (camel-core) | 2.0.0 | GZip compression data format
+
 | link:camel-hessian/src/main/docs/hessian-dataformat.adoc[Hessian] (camel-hessian) | 2.17.0 | Hessian serialization support
 
 | link:camel-hl7/src/main/docs/hl7-dataformat.adoc[HL7] (camel-hl7) | 2.0.0 | Camel HL7 support
@@ -787,6 +789,8 @@ Number of Data Formats: 41
 | link:camel-ical/src/main/docs/ical-dataformat.adoc[iCal] (camel-ical) | 2.12.0 | Camel iCal component
 
 | link:camel-jacksonxml/src/main/docs/jacksonxml-dataformat.adoc[JacksonXML] (camel-jacksonxml) | 2.16.0 | Camel Jackson XML support
+
+| link:src/main/docs/serialization-dataformat.adoc[Java Object Serialization] (camel-core) | 2.12.0 | Java Object Serialization data format
 
 | link:camel-jaxb/src/main/docs/jaxb-dataformat.adoc[JAXB] (camel-jaxb) | 1.0.0 | Camel JAXB support
 
@@ -812,6 +816,8 @@ Number of Data Formats: 41
 
 | link:camel-soap/src/main/docs/soapjaxb-dataformat.adoc[SOAP] (camel-soap) | 2.3.0 | Camel SOAP support
 
+| link:src/main/docs/string-dataformat.adoc[String Encoding] (camel-core) | 2.12.0 | String (text based) data format
+
 | link:camel-syslog/src/main/docs/syslog-dataformat.adoc[Syslog] (camel-syslog) | 2.6.0 | Camel Syslog support
 
 | link:camel-tarfile/src/main/docs/tarfile-dataformat.adoc[Tar File] (camel-tarfile) | 2.16.0 | Camel Tar file support
@@ -836,6 +842,8 @@ Number of Data Formats: 41
 
 | link:camel-snakeyaml/src/main/docs/yaml-snakeyaml-dataformat.adoc[YAML SnakeYAML] (camel-snakeyaml) | 2.17.0 | Camel SnakeYAML support
 
+| link:src/main/docs/zip-dataformat.adoc[Zip Deflate Compression] (camel-core) | 2.12.0 | Zip compression data format (not for zip files)
+
 | link:camel-zipfile/src/main/docs/zipfile-dataformat.adoc[Zip File] (camel-zipfile) | 2.11.0 | Camel Zip file support
 |=======================================================================
 // dataformats: END
@@ -845,15 +853,25 @@ Expression Languages
 ^^^^^^^^^^^^^^^^^^^^
 
 // languages: START
-Number of Languages: 14
+Number of Languages: 24
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
 | Language | Available From | Description
 
+| link:src/main/docs/bean-language.adoc[Bean method] (camel-core) | 1.3.0 | For expressions and predicates using a java bean (aka method call)
+
+| link:src/main/docs/constant-language.adoc[Constant] (camel-core) | 1.5.0 | For expressions and predicates using a constant
+
 | link:camel-juel/src/main/docs/el-language.adoc[EL] (camel-juel) | 1.1.0 | For EL expressions and predicates
 
+| link:src/main/docs/exchangeProperty-language.adoc[ExchangeProperty] (camel-core) | 2.0.0 | An expression which extracts the named exchange property
+
+| link:src/main/docs/file-language.adoc[File] (camel-core) | 1.1.0 | For expressions and predicates using the file/simple language
+
 | link:camel-groovy/src/main/docs/groovy-language.adoc[Groovy] (camel-groovy) | 1.3.0 | For Groovy expressions and predicates
+
+| link:src/main/docs/header-language.adoc[Header] (camel-core) | 1.5.0 | An expression which extracts the named exchange header
 
 | link:camel-hl7/src/main/docs/terser-language.adoc[HL7 Terser] (camel-hl7) | 2.11.0 | For HL7 terser expressions and predicates
 
@@ -871,11 +889,21 @@ Number of Languages: 14
 
 | link:camel-script/src/main/docs/python-language.adoc[Python] (camel-script) | 1.0.0 | For Python expressions and predicates
 
+| link:src/main/docs/ref-language.adoc[Ref] (camel-core) | 2.8.0 | For using a custom expression or predicate
+
 | link:camel-script/src/main/docs/ruby-language.adoc[Ruby] (camel-script) | 1.0.0 | For Ruby expressions and predicates
+
+| link:src/main/docs/simple-language.adoc[Simple] (camel-core) | 1.1.0 | For expressions and predicates using the simple language
 
 | link:camel-spring/src/main/docs/spel-language.adoc[SpEL] (camel-spring) | 2.7.0 | For Spring Expression Language (SpEL) expressions and predicates
 
 | link:camel-josql/src/main/docs/sql-language.adoc[SQL] (camel-josql) | 1.0.0 | For SQL expressions and predicates
+
+| link:src/main/docs/tokenize-language.adoc[Tokenize] (camel-core) | 2.0.0 | For expressions and predicates using a body or header tokenizer
+
+| link:src/main/docs/xtokenize-language.adoc[XML Tokenize] (camel-core) | 2.14.0 | For expressions and predicates using a body or header tokenizer
+
+| link:src/main/docs/xpath-language.adoc[XPath] (camel-core) | 1.1.0 | For XPath expressions and predicates
 
 | link:camel-saxon/src/main/docs/xquery-language.adoc[XQuery] (camel-saxon) | 1.0.0 | For XQuery expressions and predicates
 |=======================================================================

@@ -299,7 +299,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
-    protected void executeDataFormatsReadme(boolean core) throws MojoExecutionException, MojoFailureException {
+    protected void executeDataFormatsReadme(boolean coreOnly) throws MojoExecutionException, MojoFailureException {
         Set<File> dataFormatFiles = new TreeSet<>();
 
         if (dataFormatsDir != null && dataFormatsDir.isDirectory()) {
@@ -329,16 +329,20 @@ public class PrepareReadmeMojo extends AbstractMojo {
             // filter out camel-core
             List<DataFormatModel> dataFormats = new ArrayList<>();
             for (DataFormatModel model : models) {
-                if (core && "camel-core".equals(model.getArtifactId())) {
-                    dataFormats.add(model);
-                } else if (!core && !"camel-core".equals(model.getArtifactId())) {
+                if (coreOnly) {
+                    if ("camel-core".equals(model.getArtifactId())) {
+                        // only include core components
+                        dataFormats.add(model);
+                    }
+                } else {
+                    // we want to include everything in the big file (also from camel-core)
                     dataFormats.add(model);
                 }
             }
 
             // update the big readme file in the core/components dir
             File file;
-            if (core) {
+            if (coreOnly) {
                 file = new File(readmeCoreDir, "readme.adoc");
             } else {
                 file = new File(readmeComponentsDir, "readme.adoc");
@@ -362,7 +366,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
-    protected void executeLanguagesReadme(boolean core) throws MojoExecutionException, MojoFailureException {
+    protected void executeLanguagesReadme(boolean coreOnly) throws MojoExecutionException, MojoFailureException {
         Set<File> languageFiles = new TreeSet<>();
 
         if (languagesDir != null && languagesDir.isDirectory()) {
@@ -386,16 +390,20 @@ public class PrepareReadmeMojo extends AbstractMojo {
             // filter out camel-core
             List<LanguageModel> languages = new ArrayList<>();
             for (LanguageModel model : models) {
-                if (core && "camel-core".equals(model.getArtifactId())) {
-                    languages.add(model);
-                } else if (!core && !"camel-core".equals(model.getArtifactId())) {
+                if (coreOnly) {
+                    if ("camel-core".equals(model.getArtifactId())) {
+                        // only include core components
+                        languages.add(model);
+                    }
+                } else {
+                    // we want to include everything in the big file (also from camel-core)
                     languages.add(model);
                 }
             }
 
             // update the big readme file in the core/components dir
             File file;
-            if (core) {
+            if (coreOnly) {
                 file = new File(readmeCoreDir, "readme.adoc");
             } else {
                 file = new File(readmeComponentsDir, "readme.adoc");
