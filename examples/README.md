@@ -38,7 +38,8 @@ All examples have been sort by type/category
 
 ##### Tutorials
 
-* [camel-example-loan-broker](camel-example-loan-broker/README.md)
+* [camel-example-loan-broker-cxf](camel-example-loan-broker-cxf/README.md)
+* [camel-example-loan-broker-jms](camel-example-loan-broker-jms/README.md)
 * [camel-example-reportincident](camel-example-reportincident/README.md)
 * [camel-example-reportincident-wssecurity](camel-example-reportincident-wssecurity/README.md)
 * [camel-example-cafe](camel-example-cafe/README.md)
