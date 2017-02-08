@@ -20,12 +20,12 @@ package org.apache.camel.loanbroker.credit;
 public class CreditAgency implements CreditAgencyWS {
 
     public int getCreditHistoryLength(String ssn) {
-        int creditScore = (int)(Math.random() * 600 + 300);
+        int creditScore = (int) (Math.random() * 600 + 300);
         return creditScore;
     }
 
     public int getCreditScore(String ssn) {
-        int creditHistoryLength = (int)(Math.random() * 19 + 1);
+        int creditHistoryLength = (int) (Math.random() * 19 + 1);
         return creditHistoryLength;
     }
 

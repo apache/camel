@@ -23,24 +23,20 @@ import org.apache.camel.spring.Main;
  */
 public final class LoanBroker {
 
-	private LoanBroker() {
-	}
+    private LoanBroker() {
+    }
 
-	// START SNIPPET: starting
-	public static void main(String... args) throws Exception {
+    // START SNIPPET: starting
+    public static void main(String... args) throws Exception {
 
-		Main main = new Main();
-		// configure the location of the Spring XML file
-		
-		main.setApplicationContextUri("META-INF/spring/server.xml");
+        Main main = new Main();
+        // configure the location of the Spring XML file
 
-		main.addRouteBuilder(new LoanBrokerRoute());
+        main.setApplicationContextUri("META-INF/spring/server.xml");
+        main.addRouteBuilder(new LoanBrokerRoute());
 
-		main.run();
-		
-		//TODO Do we need to add timer to stop after 5 mins as in the previous example.
-
-	}
-	// END SNIPPET: starting
+        main.run();
+    }
+    // END SNIPPET: starting
 
 }

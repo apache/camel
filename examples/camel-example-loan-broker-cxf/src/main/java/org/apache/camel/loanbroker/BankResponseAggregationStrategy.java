@@ -21,7 +21,7 @@ import org.apache.camel.loanbroker.bank.BankQuote;
 //START SNIPPET: aggregating
 // This POJO aggregator is supported since Camel 2.12
 public class BankResponseAggregationStrategy {
-    
+
     public BankQuote aggregate(BankQuote oldQuote, BankQuote newQuote) {
         if (oldQuote != null && oldQuote.getRate() <= newQuote.getRate()) {
             return oldQuote;

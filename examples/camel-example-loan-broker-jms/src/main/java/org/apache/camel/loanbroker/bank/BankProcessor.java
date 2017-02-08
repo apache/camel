@@ -33,7 +33,7 @@ public class BankProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         String ssn = exchange.getIn().getHeader(Constants.PROPERTY_SSN, String.class);
         Integer historyLength = exchange.getIn().getHeader(Constants.PROPERTY_HISTORYLENGTH, Integer.class);
-        double rate = primeRate + (double)(historyLength / 12) / 10 + (Math.random() * 10) / 10;
+        double rate = primeRate + (double) (historyLength / 12) / 10 + (Math.random() * 10) / 10;
 
         // set reply details as headers
         exchange.getOut().setHeader(Constants.PROPERTY_BANK, bankName);

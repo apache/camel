@@ -68,8 +68,8 @@
   <jaxws:endpoint id="bankService3"
                   implementor="#bank3"
                   address="http://localhost:${bank3.port}/bank3"/>
-  
-  
+
+
   <!-- loan broker web service -->
   <cxf:cxfEndpoint id="loanBroker"
                    address="http://localhost:${loan_broker.port}/loanBroker"
@@ -79,9 +79,12 @@
   <camel:camelContext id="webService">
 
     <!-- define endpoints for the banks -->
-    <camel:endpoint id="bank1WS" uri="cxf://http://localhost:${bank1.port}/bank1?serviceClass=org.apache.camel.loanbroker.bank.BankWS"/>
-    <camel:endpoint id="bank2WS" uri="cxf://http://localhost:${bank2.port}/bank2?serviceClass=org.apache.camel.loanbroker.bank.BankWS"/>
-    <camel:endpoint id="bank3WS" uri="cxf://http://localhost:${bank3.port}/bank3?serviceClass=org.apache.camel.loanbroker.bank.BankWS"/>
+    <camel:endpoint id="bank1WS"
+                    uri="cxf://http://localhost:${bank1.port}/bank1?serviceClass=org.apache.camel.loanbroker.bank.BankWS"/>
+    <camel:endpoint id="bank2WS"
+                    uri="cxf://http://localhost:${bank2.port}/bank2?serviceClass=org.apache.camel.loanbroker.bank.BankWS"/>
+    <camel:endpoint id="bank3WS"
+                    uri="cxf://http://localhost:${bank3.port}/bank3?serviceClass=org.apache.camel.loanbroker.bank.BankWS"/>
 
     <camel:route id="loanBrokerRoute">
       <camel:from uri="cxf:bean:loanBroker"/>
@@ -99,9 +102,9 @@
   <bean id="creditScoreProcessor" class="org.apache.camel.loanbroker.CreditScoreProcessor">
     <constructor-arg index="0" value="http://localhost:${credit_agency.port}/creditAgency"/>
   </bean>
-  
+
   <bean id="replyProcessor" class="org.apache.camel.loanbroker.ReplyProcessor"/>
-  
+
   <!-- strategy to assemble the bank responses -->
   <bean id="bankResponse" class="org.apache.camel.loanbroker.BankResponseAggregationStrategy"/>
 

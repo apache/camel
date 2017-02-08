@@ -28,8 +28,8 @@ public final class Client {
     }
 
     public static void main(String args[]) throws Exception {
-    	
-    	AbstractApplicationContext applicationContext = new ClassPathXmlApplicationContext("META-INF/spring/client.xml"); 
+
+        AbstractApplicationContext applicationContext = new ClassPathXmlApplicationContext("META-INF/spring/client.xml");
         CamelContext context = applicationContext.getBean("camel", CamelContext.class);
         context.start();
 

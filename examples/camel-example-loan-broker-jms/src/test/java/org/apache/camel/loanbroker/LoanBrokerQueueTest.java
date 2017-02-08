@@ -18,8 +18,6 @@ package org.apache.camel.loanbroker;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.loanbroker.Constants;
-import org.apache.camel.loanbroker.LoanBrokerRoute;
 import org.apache.camel.test.junit4.TestSupport;
 import org.junit.After;
 import org.junit.Before;
@@ -28,38 +26,37 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class LoanBrokerQueueTest extends TestSupport {
-	private AbstractApplicationContext applicationContext;
-	protected CamelContext camelContext;
-	protected ProducerTemplate template;
+    private AbstractApplicationContext applicationContext;
+    private CamelContext camelContext;
+    private ProducerTemplate template;
 
-	@Before
-	public void startServices() throws Exception {
-		applicationContext = new ClassPathXmlApplicationContext("META-INF/spring/server.xml");
-		camelContext = getCamelContext();
-		camelContext.addRoutes(new LoanBrokerRoute());
-		template = camelContext.createProducerTemplate();
-		camelContext.start();
-	}
+    @Before
+    public void startServices() throws Exception {
+        applicationContext = new ClassPathXmlApplicationContext("META-INF/spring/server.xml");
+        camelContext = getCamelContext();
+        camelContext.addRoutes(new LoanBrokerRoute());
+        template = camelContext.createProducerTemplate();
+        camelContext.start();
+    }
 
-	@After
-	public void stopServices() throws Exception {
-		if (camelContext != null) {
-			camelContext.stop();
-		}
-	}
+    @After
+    public void stopServices() throws Exception {
+        if (camelContext != null) {
+            camelContext.stop();
+        }
+    }
 
-	@Test
-	public void testClientInvocation() throws Exception {
-		String out = template.requestBodyAndHeader("jms:queue:loan", null, Constants.PROPERTY_SSN, "Client-A",
-				String.class);
+    @Test
+    public void testClientInvocation() throws Exception {
+        String out = template.requestBodyAndHeader("jms:queue:loan", null, Constants.PROPERTY_SSN, "Client-A", String.class);
 
-		log.info("Result: {}", out);
-		assertNotNull(out);
-		assertTrue(out.startsWith("The best rate is [ssn:Client-A bank:bank"));
-	}
+        log.info("Result: {}", out);
+        assertNotNull(out);
+        assertTrue(out.startsWith("The best rate is [ssn:Client-A bank:bank"));
+    }
 
-	protected CamelContext getCamelContext() throws Exception {
-		return applicationContext.getBean("camel", CamelContext.class);
-	}
+    protected CamelContext getCamelContext() throws Exception {
+        return applicationContext.getBean("camel", CamelContext.class);
+    }
 
 }

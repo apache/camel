@@ -46,7 +46,7 @@ public class CreditScoreProcessor implements Processor {
         clientBean.setAddress(creditAgencyAddress);
         clientBean.setServiceClass(CreditAgencyWS.class);
         clientBean.setBus(BusFactory.getDefaultBus());
-        return (CreditAgencyWS)proxyFactory.create();
+        return (CreditAgencyWS) proxyFactory.create();
     }
 
     @SuppressWarnings("unchecked")
