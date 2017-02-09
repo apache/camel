@@ -14,17 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.gridfs;
+package org.apache.camel.component.mongodb.gridfs;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
 
 import com.mongodb.MongoClient;
-import de.flapdoodle.embed.mongo.MongodExecutable;
+import de.flapdoodle.embed.mongo.Command;
 import de.flapdoodle.embed.mongo.MongodStarter;
 import de.flapdoodle.embed.mongo.config.IMongodConfig;
 import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
 import de.flapdoodle.embed.mongo.config.Net;
+import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
+import de.flapdoodle.embed.process.config.IRuntimeConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -34,17 +38,21 @@ import static org.springframework.util.SocketUtils.findAvailableTcpPort;
 
 @Configuration
 public class EmbedMongoConfiguration {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmbedMongoConfiguration.class);
     private static final int PORT = findAvailableTcpPort();
 
     static {
         try {
+            IRuntimeConfig runtimeConfig = new RuntimeConfigBuilder()
+                .defaultsWithLogger(Command.MongoD, LOGGER)
+                .build();
+
             IMongodConfig mongodConfig = new MongodConfigBuilder()
-                    .version(PRODUCTION)
-                    .net(new Net(PORT, localhostIsIPv6()))
-                    .build();
-            MongodExecutable mongodExecutable = MongodStarter.getDefaultInstance().prepare(mongodConfig);
-            mongodExecutable.start();
+                .version(PRODUCTION)
+                .net(new Net(PORT, localhostIsIPv6()))
+                .build();
+
+            MongodStarter.getInstance(runtimeConfig).prepare(mongodConfig).start();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -54,5 +62,4 @@ public class EmbedMongoConfiguration {
     public MongoClient myDb() throws UnknownHostException {
         return new MongoClient("0.0.0.0", PORT);
     }
-
 }

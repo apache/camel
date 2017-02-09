@@ -239,7 +239,7 @@
 	* [MLLP](mllp-component.adoc)
 	* [MongoDB](mongodb-component.adoc)
 	* [MongoDB](mongodb3-component.adoc)
-	* [MongoDB GridFS](gridfs-component.adoc)
+	* [MongoDB GridFS](mongodb-gridfs-component.adoc)
 	* [MQTT](mqtt-component.adoc)
 	* [MSV](msv-component.adoc)
 	* [Mustache](mustache-component.adoc)

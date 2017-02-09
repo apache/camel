@@ -19,7 +19,7 @@ for this component:
 
 [source,java]
 ------------------------------------------------------------------------------
-gridfs:connectionBean?database=databaseName&bucket=bucketName[&moreOptions...]
+mongodb-gridfs:connectionBean?database=databaseName&bucket=bucketName[&moreOptions...]
 ------------------------------------------------------------------------------
 
 ### MongoDB GridFS options
@@ -92,7 +92,7 @@ link:mongodb-gridfs.html[*findOne*] on a collection.
 <route>
   <from uri="direct:start" />
   <!-- using bean 'mongoBean' defined above -->
-  <to uri="gridfs:mongoBean?database=${mongodb.database}&amp;operation=findOne" />
+  <to uri="mongodb-gridfs:mongoBean?database=${mongodb.database}&amp;operation=findOne" />
   <to uri="direct:result" />
 </route>
 ----------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ as the OUT message body. +
 
 [source,java]
 ---------------------------------------------------------------------------------
-// from("direct:count").to("gridfs?database=tickets&operation=count");
+// from("direct:count").to("mongodb-gridfs?database=tickets&operation=count");
 Integer result = template.requestBodyAndHeader("direct:count", "irrelevantBody");
 assertTrue("Result is not of type Long", result instanceof Integer);
 ---------------------------------------------------------------------------------
@@ -131,7 +131,7 @@ separated stream.
 
 [source,java]
 ----------------------------------------------------------------------------------
-// from("direct:listAll").to("gridfs?database=tickets&operation=listAll");
+// from("direct:listAll").to("mongodb-gridfs?database=tickets&operation=listAll");
 Reader result = template.requestBodyAndHeader("direct:listAll", "irrelevantBody");
 
 filename1.txt   1252314321
@@ -149,7 +149,7 @@ find.
 
 [source,java]
 -------------------------------------------------------------------------------------------------
-// from("direct:findOne").to("gridfs?database=tickets&operation=findOne");
+// from("direct:findOne").to("mongodb-gridfs?database=tickets&operation=findOne");
 Map<String, Object> headers = new HashMap<String, Object>();
 headers.put(Exchange.FILE_NAME, "filename.txt");
 InputStream result = template.requestBodyAndHeaders("direct:findOne", "irrelevantBody", headers);
@@ -165,7 +165,7 @@ contents (as an InputStream) as the content.
 
 [source,java]
 ------------------------------------------------------------------------
-// from("direct:create").to("gridfs?database=tickets&operation=create");
+// from("direct:create").to("mongodb-gridfs?database=tickets&operation=create");
 Map<String, Object> headers = new HashMap<String, Object>();
 headers.put(Exchange.FILE_NAME, "filename.txt");
 InputStream stream = ... the data for the file ...
@@ -178,7 +178,7 @@ Removes a file from the GridFS database.
 
 [source,java]
 ------------------------------------------------------------------------
-// from("direct:remove").to("gridfs?database=tickets&operation=remove");
+// from("direct:remove").to("mongodb-gridfs?database=tickets&operation=remove");
 Map<String, Object> headers = new HashMap<String, Object>();
 headers.put(Exchange.FILE_NAME, "filename.txt");
 template.requestBodyAndHeaders("direct:remove", "", headers);
