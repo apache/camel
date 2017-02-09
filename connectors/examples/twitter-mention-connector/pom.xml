@@ -155,9 +155,6 @@
         <executions>
           <execution>
             <id>connector</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
           </execution>
         </executions>
       </plugin>
