@@ -219,6 +219,8 @@ public class KafkaProducerTest {
         assertRecordMetadataExists();
     }
 
+
+
     @Test
     public void processSendMessageWithBridgeEndpoint() throws Exception {
         endpoint.getConfiguration().setTopic("someTopic");

@@ -62,6 +62,10 @@ public class KafkaConfiguration {
     @UriParam
     private String clientId;
 
+    //interceptor.classes
+    @UriParam
+    private String interceptorClasses;
+
     //key.deserializer
     @UriParam(label = "consumer", defaultValue = KafkaConstants.KAFKA_DEFAULT_DESERIALIZER)
     private String keyDeserializer = KafkaConstants.KAFKA_DEFAULT_DESERIALIZER;
@@ -274,6 +278,7 @@ public class KafkaConfiguration {
         addPropertyIfNotNull(props, ProducerConfig.BUFFER_MEMORY_CONFIG, getBufferMemorySize());
         addPropertyIfNotNull(props, ProducerConfig.COMPRESSION_TYPE_CONFIG, getCompressionCodec());
         addPropertyIfNotNull(props, ProducerConfig.RETRIES_CONFIG, getRetries());
+        addPropertyIfNotNull(props, ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, getInterceptorClasses());
         // SSL
         applySslConfiguration(props, getSslContextParameters());
         addPropertyIfNotNull(props, SslConfigs.SSL_KEY_PASSWORD_CONFIG, getSslKeyPassword());
@@ -333,6 +338,7 @@ public class KafkaConfiguration {
         addPropertyIfNotNull(props, ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, getMaxPartitionFetchBytes());
         addPropertyIfNotNull(props, ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, getSessionTimeoutMs());
         addPropertyIfNotNull(props, ConsumerConfig.MAX_POLL_RECORDS_CONFIG, getMaxPollRecords());
+        addPropertyIfNotNull(props, ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG, getInterceptorClasses());
         // SSL
         applySslConfiguration(props, getSslContextParameters());
         addPropertyIfNotNull(props, SslConfigs.SSL_KEY_PASSWORD_CONFIG, getSslKeyPassword());
@@ -1359,5 +1365,19 @@ public class KafkaConfiguration {
      */
     public void setRecordMetadata(boolean recordMetadata) {
         this.recordMetadata = recordMetadata;
+    }
+
+
+    public String getInterceptorClasses() {
+        return interceptorClasses;
+    }
+    /**
+     * Sets interceptors for producer or consumers.
+     * Producer interceptors have to be classes implementing {@link org.apache.kafka.clients.producer.ProducerInterceptor}
+     * Consumer interceptors have to be classes implementing {@link org.apache.kafka.clients.consumer.ConsumerInterceptor}
+     * @return
+     */
+    public void setInterceptorClasses(String interceptorClasses) {
+        this.interceptorClasses = interceptorClasses;
     }
 }

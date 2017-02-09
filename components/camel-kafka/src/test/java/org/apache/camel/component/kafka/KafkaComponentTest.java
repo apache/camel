@@ -36,7 +36,7 @@ public class KafkaComponentTest {
 
     @Test
     public void testPropertiesSet() throws Exception {
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         params.put("topic", "mytopic");
         params.put("partitioner", "com.class.Party");
 
@@ -51,7 +51,7 @@ public class KafkaComponentTest {
 
     @Test
     public void testAllProducerConfigProperty() throws Exception {
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         setProducerProperty(params);
 
         String uri = "kafka:dev1:12345,dev2:12566";
@@ -102,11 +102,13 @@ public class KafkaComponentTest {
         assertEquals("test", endpoint.getConfiguration().getSslEndpointAlgorithm());
         assertEquals("SunX509", endpoint.getConfiguration().getSslKeymanagerAlgorithm());
         assertEquals("PKIX", endpoint.getConfiguration().getSslTrustmanagerAlgorithm());
+        assertEquals("PKIX", endpoint.getConfiguration().getSslTrustmanagerAlgorithm());
+        assertEquals("org.apache.camel.component.kafka.MockProducerInterceptor", endpoint.getConfiguration().getInterceptorClasses());
     }
 
     @Test
     public void testAllProducerKeys() throws Exception {
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
 
         String uri = "kafka:dev1:12345,dev2:12566";
         String remaining = "dev1:12345,dev2:12566";
@@ -200,6 +202,7 @@ public class KafkaComponentTest {
         params.put("sslEndpointAlgorithm", "test");
         params.put("sslKeymanagerAlgorithm", "SunX509");
         params.put("sslTrustmanagerAlgorithm", "PKIX");
+        params.put("interceptorClasses", "org.apache.camel.component.kafka.MockProducerInterceptor");
     }
 
 }
