@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.gridfs;
+package org.apache.camel.component.mongodb.gridfs;
 
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Component for working with MongoDB GridFS.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "gridfs", title = "MongoDB GridFS", syntax = "gridfs:connectionBean", label = "database,nosql")
+@UriEndpoint(firstVersion = "2.18.0", scheme = "mongodb-gridfs", title = "MongoDB GridFS", syntax = "mongodb-gridfs:connectionBean", label = "database,nosql")
 public class GridFsEndpoint extends DefaultEndpoint {
 
     public static final String GRIDFS_OPERATION = "gridfs.operation";

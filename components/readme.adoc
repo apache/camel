@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 218
+Number of Components: 219
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -392,8 +392,8 @@ Number of Components: 218
 | link:camel-mongodb3/src/main/docs/mongodb3-component.adoc[MongoDB] (camel-mongodb3) +
 `mongodb3:connectionBean` | 2.19.0 | Component for working with documents stored in MongoDB database.
 
-| link:camel-mongodb-gridfs/src/main/docs/gridfs-component.adoc[MongoDB GridFS] (camel-mongodb-gridfs) +
-`gridfs:connectionBean` | 2.18.0 | Component for working with MongoDB GridFS.
+| link:camel-mongodb-gridfs/src/main/docs/mongodb-gridfs-component.adoc[MongoDB GridFS] (camel-mongodb-gridfs) +
+`mongodb-gridfs:connectionBean` | 2.18.0 | Component for working with MongoDB GridFS.
 
 | link:camel-mqtt/src/main/docs/mqtt-component.adoc[MQTT] (camel-mqtt) +
 `mqtt:name` | 2.10.0 | Component for communicating with MQTT M2M message brokers using FuseSource MQTT Client.

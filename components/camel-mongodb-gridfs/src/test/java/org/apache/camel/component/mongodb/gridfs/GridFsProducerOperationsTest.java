@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.gridfs;
+package org.apache.camel.component.mongodb.gridfs;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -30,12 +30,12 @@ public class GridFsProducerOperationsTest extends AbstractMongoDbTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:create").to("gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket());
-                from("direct:remove").to("gridfs:myDb?database={{mongodb.testDb}}&operation=remove&bucket=" + getBucket());
-                from("direct:findOne").to("gridfs:myDb?database={{mongodb.testDb}}&operation=findOne&bucket=" + getBucket());
-                from("direct:listAll").to("gridfs:myDb?database={{mongodb.testDb}}&operation=listAll&bucket=" + getBucket());
-                from("direct:count").to("gridfs:myDb?database={{mongodb.testDb}}&operation=count&bucket=" + getBucket());
-                from("direct:headerOp").to("gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket());
+                from("direct:create").to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket());
+                from("direct:remove").to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=remove&bucket=" + getBucket());
+                from("direct:findOne").to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=findOne&bucket=" + getBucket());
+                from("direct:listAll").to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=listAll&bucket=" + getBucket());
+                from("direct:count").to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=count&bucket=" + getBucket());
+                from("direct:headerOp").to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket());
             }
         };
     }

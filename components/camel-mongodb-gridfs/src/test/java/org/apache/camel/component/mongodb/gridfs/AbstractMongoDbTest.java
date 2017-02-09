@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.gridfs;
+package org.apache.camel.component.mongodb.gridfs;
 
 
 import com.mongodb.MongoClient;

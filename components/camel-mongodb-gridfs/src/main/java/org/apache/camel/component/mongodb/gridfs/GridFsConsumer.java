@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.gridfs;
+package org.apache.camel.component.mongodb.gridfs;
 
 import java.io.InputStream;
 import java.util.concurrent.ExecutorService;

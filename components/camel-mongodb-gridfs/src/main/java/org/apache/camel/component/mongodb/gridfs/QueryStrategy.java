@@ -14,32 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.gridfs;
+package org.apache.camel.component.mongodb.gridfs;
 
-import java.util.Map;
-
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
-
-
-public class GridFsComponent extends UriEndpointComponent {
-
-    public GridFsComponent() {
-        super(GridFsEndpoint.class);
-    }
-    
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-
-        GridFsEndpoint endpoint = new GridFsEndpoint(uri, this);
-        endpoint.setConnectionBean(remaining);
-        setProperties(endpoint, parameters);
-        
-        return endpoint;
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        super.doShutdown();
-    }
-
+public enum QueryStrategy {
+    TimeStamp,
+    PersistentTimestamp,
+    FileAttribute,
+    TimeStampAndFileAttribute,
+    PersistentTimestampAndFileAttribute
 }

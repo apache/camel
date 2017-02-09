@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.gridfs;
+package org.apache.camel.component.mongodb.gridfs;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,14 +36,14 @@ public class GridFsConsumerTest extends AbstractMongoDbTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:create").to("gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket());
-                from("direct:create-a").to("gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket() + "-a");
-                from("direct:create-pts").to("gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket() + "-pts");
+                from("direct:create").to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket());
+                from("direct:create-a").to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket() + "-a");
+                from("direct:create-pts").to("mongodb-gridfs:myDb?database={{mongodb.testDb}}&operation=create&bucket=" + getBucket() + "-pts");
                 
-                from("gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket()).convertBodyTo(String.class).to("mock:test");
-                from("gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket() + "-a&queryStrategy=FileAttribute")
+                from("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket()).convertBodyTo(String.class).to("mock:test");
+                from("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket() + "-a&queryStrategy=FileAttribute")
                     .convertBodyTo(String.class).to("mock:test");
-                from("gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket() + "-pts&queryStrategy=PersistentTimestamp")
+                from("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket() + "-pts&queryStrategy=PersistentTimestamp")
                     .convertBodyTo(String.class).to("mock:test");
             }
         };

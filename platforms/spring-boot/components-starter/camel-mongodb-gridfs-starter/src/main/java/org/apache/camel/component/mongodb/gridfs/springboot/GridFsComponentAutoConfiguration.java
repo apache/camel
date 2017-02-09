@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.gridfs.springboot;
+package org.apache.camel.component.mongodb.gridfs.springboot;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.gridfs.GridFsComponent;
+import org.apache.camel.component.mongodb.gridfs.GridFsComponent;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionMessage;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
@@ -43,7 +43,7 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 public class GridFsComponentAutoConfiguration {
 
     @Lazy
-    @Bean(name = "gridfs-component")
+    @Bean(name = "mongodb-gridfs-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(GridFsComponent.class)
     public GridFsComponent configureGridFsComponent(CamelContext camelContext)
@@ -61,8 +61,8 @@ public class GridFsComponentAutoConfiguration {
             boolean groupEnabled = isEnabled(conditionContext,
                     "camel.component.", true);
             ConditionMessage.Builder message = ConditionMessage
-                    .forCondition("camel.component.gridfs");
-            if (isEnabled(conditionContext, "camel.component.gridfs.",
+                    .forCondition("camel.component.mongodb-gridfs");
+            if (isEnabled(conditionContext, "camel.component.mongodb-gridfs.",
                     groupEnabled)) {
                 return ConditionOutcome.match(message.because("enabled"));
             }
