@@ -80,9 +80,6 @@
         <executions>
           <execution>
             <id>generate-connector</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
           </execution>
         </executions>
       </plugin>
