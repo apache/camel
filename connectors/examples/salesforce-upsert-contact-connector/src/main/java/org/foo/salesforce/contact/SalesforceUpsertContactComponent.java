@@ -14,19 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.foo;
+package org.foo.salesforce.contact;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.springframework.stereotype.Component;
+import org.apache.camel.component.connector.DefaultConnectorComponent;
 
-@Component
-public class MentionAddContractRoute extends RouteBuilder {
+/**
+ * Camel salesforce-upsert-contact connector
+ */
+public class SalesforceUpsertContactComponent extends DefaultConnectorComponent {
 
-    @Override
-    public void configure() throws Exception {
-        from("twitter-mention")
-            .log("I was mentioned by ${body}")
-            .process("tweetToContactMapper")
-            .to("salesforce-upsert-contact?sObjectIdName=TwitterScreenName__c");
+    public SalesforceUpsertContactComponent() {
+        super("salesforce-upsert-contact", SalesforceUpsertContactComponent.class.getName());
     }
+
 }

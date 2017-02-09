@@ -1,0 +1,25 @@
+{
+  "component": {
+    "kind": "component",
+    "baseScheme": "salesforce",
+    "scheme": "salesforce-upsert-contact",
+    "syntax": "salesforce-upsert-contact:operationName:topicName",
+    "title": "SalesforceUpsertContact",
+    "description": "Create or update Salesforce Contact SObject",
+    "label": "salesforce",
+    "deprecated": "false",
+    "async": "false",
+    "producerOnly": "true",
+    "javaType": "org.foo.salesforce.contact.SalesforceUpsertContactComponent",
+    "groupId": "org.foo",
+    "artifactId": "salesforce-upsert-contact-connector",
+    "version": "2.19.0-SNAPSHOT"
+  },
+  "componentProperties": {
+    "loginConfig": {"kind":"property","group":"security","label":"security","required":"false","type":"object","javaType":"org.apache.camel.component.salesforce.SalesforceLoginConfig","deprecated":"false","secret":"false","description":"To use the shared SalesforceLoginConfig as login configuration"}
+  },
+  "properties": {
+    "sObjectIdName": {"kind":"parameter","group":"common","type":"string","javaType":"java.lang.String","deprecated":"false","secret":"false","description":"SObject external ID field name"},
+    "sObjectIdValue": {"kind":"parameter","group":"common","type":"string","javaType":"java.lang.String","deprecated":"false","secret":"false","description":"SObject external ID field value"}
+  }
+}

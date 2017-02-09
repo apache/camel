@@ -16,17 +16,33 @@
  */
 package org.foo;
 
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.foo.salesforce.upsert.contact.Contact;
 import org.springframework.stereotype.Component;
 
+import twitter4j.Status;
+import twitter4j.User;
+
 @Component
-public class MentionAddContractRoute extends RouteBuilder {
+public class TweetToContactMapper implements Processor {
 
     @Override
-    public void configure() throws Exception {
-        from("twitter-mention")
-            .log("I was mentioned by ${body}")
-            .process("tweetToContactMapper")
-            .to("salesforce-upsert-contact?sObjectIdName=TwitterScreenName__c");
+    public void process(Exchange exchange) throws Exception {
+        Message in = exchange.getIn();
+
+        Status status = exchange.getIn().getBody(Status.class);
+
+        User user = status.getUser();
+        String name = user.getName();
+        String screenName = user.getScreenName();
+
+        Contact contact = new Contact();
+        contact.setLastName(name);
+        contact.setTwitterScreenName__c(screenName);
+
+        in.setBody(contact);
     }
+
 }
