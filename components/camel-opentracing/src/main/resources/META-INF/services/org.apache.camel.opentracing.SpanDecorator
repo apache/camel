@@ -1,0 +1,2 @@
+org.apache.camel.opentracing.decorators.HttpSpanDecorator
+org.apache.camel.opentracing.decorators.JettySpanDecorator

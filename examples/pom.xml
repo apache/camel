@@ -69,6 +69,7 @@
     <module>camel-example-management</module>
     <module>camel-example-mybatis</module>
     <module>camel-example-netty-http</module>
+    <module>camel-example-opentracing</module>
     <module>camel-example-osgi-rmi</module>
     <module>camel-example-pojo-messaging</module>
     <module>camel-example-reactive-streams</module>

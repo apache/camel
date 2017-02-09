@@ -207,6 +207,7 @@
     <module>camel-olingo2</module>
     <module>camel-openshift</module>
     <module>camel-openstack</module>
+    <module>camel-opentracing</module>
     <module>camel-optaplanner</module>
     <module>camel-paho</module>
     <module>camel-paxlogging</module>
