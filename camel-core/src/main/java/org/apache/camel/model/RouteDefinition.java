@@ -44,6 +44,7 @@ import org.apache.camel.builder.AdviceWithTask;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultRouteContext;
+import org.apache.camel.model.rest.RestBindingDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.spi.Contract;
@@ -88,6 +89,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     private boolean contextScopedErrorHandler = true;
     private Boolean rest;
     private RestDefinition restDefinition;
+    private RestBindingDefinition restBindingDefinition;
     private InputTypeDefinition inputType;
     private OutputTypeDefinition outputType;
 
@@ -966,6 +968,15 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         this.restDefinition = restDefinition;
     }
 
+    public RestBindingDefinition getRestBindingDefinition() {
+        return restBindingDefinition;
+    }
+
+    @XmlTransient
+    public void setRestBindingDefinition(RestBindingDefinition restBindingDefinition) {
+        this.restBindingDefinition = restBindingDefinition;
+    }
+
     @SuppressWarnings("deprecation")
     public boolean isContextScopedErrorHandler(CamelContext context) {
         if (!contextScopedErrorHandler) {
@@ -1125,18 +1136,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
             Exception cause = new IllegalArgumentException("Route " + route.getId() + " has no output processors."
                     + " You need to add outputs to the route such as to(\"log:foo\").");
             throw new FailedToCreateRouteException(route.getId(), route.toString(), at, cause);
-        }
-
-        // add data type contract
-        if (inputType != null || outputType != null) {
-            Contract contract = new Contract();
-            if (inputType != null) {
-                contract.setInputType(inputType.getUrn());
-            }
-            if (outputType != null) {
-                contract.setOutputType(outputType.getUrn());
-            }
-            routeContext.setContract(contract);
         }
 
         List<ProcessorDefinition<?>> list = new ArrayList<ProcessorDefinition<?>>(outputs);

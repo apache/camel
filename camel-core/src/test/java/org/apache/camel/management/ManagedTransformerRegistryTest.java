@@ -107,8 +107,8 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
                 assertEquals("xml:test", to);
             } else if (description.startsWith("MyTransformer")) {
                 assertEquals("custom", scheme);
-                assertEquals("null:null", from);
-                assertEquals("null:null", to);
+                assertEquals(null, from);
+                assertEquals(null, to);
             } else {
                 fail("Unexpected transformer:" + description);
             }
