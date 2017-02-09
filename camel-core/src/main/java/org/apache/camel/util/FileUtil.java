@@ -522,6 +522,13 @@ public final class FileUtil {
         return true;
     }
 
+    /**
+     * Copies the file
+     *
+     * @param from  the source file
+     * @param to    the destination file
+     * @throws IOException If an I/O error occurs during copy operation
+     */
     public static void copyFile(File from, File to) throws IOException {
         FileChannel in = null;
         FileChannel out = null;
@@ -543,6 +550,14 @@ public final class FileUtil {
         }
     }
 
+    /**
+     * Deletes the file.
+     * <p/>
+     * This implementation will attempt to delete the file up till three times with one second delay, which
+     * can mitigate problems on deleting files on some platforms such as Windows.
+     *
+     * @param file  the file to delete
+     */
     public static boolean deleteFile(File file) {
         // do not try to delete non existing files
         if (!file.exists()) {
