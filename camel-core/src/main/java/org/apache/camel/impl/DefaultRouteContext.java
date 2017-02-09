@@ -37,6 +37,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.ContractAdvice;
 import org.apache.camel.processor.Pipeline;
+import org.apache.camel.processor.RestBindingAdvice;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -70,7 +71,6 @@ public class DefaultRouteContext implements RouteContext {
     private List<RoutePolicy> routePolicyList = new ArrayList<RoutePolicy>();
     private ShutdownRoute shutdownRoute;
     private ShutdownRunningTask shutdownRunningTask;
-    private Contract contract;
 
     public DefaultRouteContext(CamelContext camelContext, RouteDefinition route, FromDefinition from, Collection<Route> routes) {
         this.camelContext = camelContext;
@@ -194,8 +194,24 @@ public class DefaultRouteContext implements RouteContext {
             // wrap in route lifecycle
             internal.addAdvice(new CamelInternalProcessor.RouteLifecycleAdvice());
 
+            // wrap in REST binding
+            if (route.getRestBindingDefinition() != null) {
+                try {
+                    internal.addAdvice(route.getRestBindingDefinition().createRestBindingAdvice(this));
+                } catch (Exception e) {
+                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                }
+            }
+
             // wrap in contract
-            if (contract != null) {
+            if (route.getInputType() != null || route.getOutputType() != null) {
+                Contract contract = new Contract();
+                if (route.getInputType() != null) {
+                    contract.setInputType(route.getInputType().getUrn());
+                }
+                if (route.getOutputType() != null) {
+                    contract.setOutputType(route.getOutputType().getUrn());
+                }
                 internal.addAdvice(new ContractAdvice(contract));
             }
 
@@ -409,7 +425,4 @@ public class DefaultRouteContext implements RouteContext {
         return routePolicyList;
     }
 
-    public void setContract(Contract contract) {
-        this.contract = contract;
-    }
 }

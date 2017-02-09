@@ -14,28 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.blueprint.component.rest;
+package org.apache.camel.component.netty4.http.rest;
 
-import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
-import org.junit.Test;
+public class UserPojoEx {
 
-public class FromRestGetInterceptTest extends CamelBlueprintTestSupport {
+    private int id;
+    private String name;
+    private boolean active;
 
-    @Override
-    protected String getBlueprintDescriptor() {
-        return "org/apache/camel/test/blueprint/component/rest/FromRestGetInterceptTest.xml";
+    public int getId() {
+        return id;
     }
 
-    @Test
-    public void testFromRestModel() throws Exception {
-        getMockEndpoint("mock:hello").expectedMessageCount(1);
-        getMockEndpoint("mock:bar").expectedMessageCount(1);
-        getMockEndpoint("mock:intercept").expectedMessageCount(3);
-
-        String out = template.requestBody("seda:get-say-hello", "I was here", String.class);
-        assertEquals("Bye World", out);
-
-        assertMockEndpointsSatisfied();
+    public void setId(int id) {
+        this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 }

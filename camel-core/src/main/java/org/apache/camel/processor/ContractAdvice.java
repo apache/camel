@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.processor;
 
 import org.apache.camel.CamelContext;
@@ -40,12 +56,15 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
     @Override
     public void after(Exchange exchange, Object data) throws Exception {
         Message target = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-        DataType from = getCurrentType(exchange, exchange.hasOut() ? Exchange.OUTPUT_TYPE : Exchange.INPUT_TYPE);
+        if (!exchange.hasOut() && exchange.getProperty(Exchange.OUTPUT_TYPE) == null) {
+            exchange.setProperty(Exchange.OUTPUT_TYPE, exchange.getProperty(Exchange.INPUT_TYPE));
+        }
+        DataType from = getCurrentType(exchange, Exchange.OUTPUT_TYPE);
         DataType to = contract.getOutputType();
         if (to != null && !to.equals(from)) {
             LOG.debug("Looking for transformer for OUTPUT: from='{}', to='{}'", from, to);
             doTransform(target, from, to);
-            exchange.setProperty(exchange.hasOut() ? Exchange.OUTPUT_TYPE : Exchange.INPUT_TYPE, to);
+            exchange.setProperty(Exchange.OUTPUT_TYPE, to);
         }
     }
     
@@ -61,7 +80,8 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
                 // Java->Java transformation just relies on TypeConverter if no explicit transformer
                 return;
             } else if (from == null) {
-                // {undefined}->Other transformation - assuming it's already in expected shape
+                // use body class as a from type, or do nothing with assuming it's already in expected shape
+                applyTransformerByClass(message, to);
                 return;
             } else if (applyTransformerByToModel(message, from, to)) {
                 // Java->Other transformation - found a transformer supports 'to' data model
@@ -85,8 +105,8 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
     private boolean convertIfRequired(Message message, DataType type) throws Exception {
         // TODO for better performance it may be better to add TypeConveterTransformer
         // into transformer registry automatically to avoid unnecessary scan in transformer registry
-        CamelContext context = message.getExchange().getContext();
         if (type != null && type.isJavaType() && type.getName() != null) {
+            CamelContext context = message.getExchange().getContext();
             Class<?> typeJava = getClazz(type.getName(), context);
             if (!typeJava.isAssignableFrom(message.getBody().getClass())) {
                 LOG.debug("Converting to '{}'", typeJava.getName());
@@ -106,6 +126,12 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
         return false;
     }
     private boolean applyExactlyMatchedTransformer(Message message, DataType from, DataType to) throws Exception {
+        Transformer transformer = message.getExchange().getContext().resolveTransformer(from, to);
+        return applyTransformer(transformer, message, from, to);
+    }
+    
+    private boolean applyTransformerByClass(Message message, DataType to) throws Exception {
+        DataType from = new DataType(message.getBody().getClass());
         Transformer transformer = message.getExchange().getContext().resolveTransformer(from, to);
         return applyTransformer(transformer, message, from, to);
     }
