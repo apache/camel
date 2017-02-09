@@ -19,8 +19,6 @@ package org.apache.camel.impl;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.NoFactoryAvailableException;
@@ -35,7 +33,6 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.core.IsCollectionContaining.hasItem;
-import static org.hamcrest.core.IsCollectionContaining.hasItems;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -158,7 +155,7 @@ public class DefaultFactoryFinderTest {
     @Test
     public void shouldFindSingleClassFromClassMap() throws ClassNotFoundException, IOException {
         final DefaultFactoryFinder factoryFinder = new DefaultFactoryFinder(null, null);
-        factoryFinder.classMap.putIfAbsent("prefixkey", TestImplA.class);
+        factoryFinder.addToClassMap("prefixkey", () -> TestImplA.class);
 
         final Class<?> clazz = factoryFinder.findClass("key", "prefix");
 
