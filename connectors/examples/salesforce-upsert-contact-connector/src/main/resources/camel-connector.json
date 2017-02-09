@@ -1,0 +1,20 @@
+{
+  "baseScheme": "salesforce",
+  "baseGroupId": "org.apache.camel",
+  "baseArtifactId": "camel-salesforce",
+  "baseVersion": "2.19.0-SNAPSHOT",
+  "name": "SalesforceUpsertContact",
+  "scheme": "salesforce-upsert-contact",
+  "javaType": "org.foo.salesforce.contact.SalesforceUpsertContactComponent",
+  "groupId": "org.foo",
+  "artifactId": "twitter-mention-connector",
+  "version": "1.0",
+  "description": "Create or update Salesforce Contact SObject",
+  "labels" : [ "salesforce" ],
+  "pattern": "To",
+  "componentOptions" : [ "loginConfig" ],
+  "endpointValues" : {
+    "operationName": "upsertSObject"
+  },
+  "endpointOptions": [ "sObjectIdName", "sObjectIdValue" ]
+}

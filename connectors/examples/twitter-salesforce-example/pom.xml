@@ -80,6 +80,11 @@
     </dependency>
     <dependency>
       <groupId>org.foo</groupId>
+      <artifactId>salesforce-upsert-contact-connector</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.foo</groupId>
       <artifactId>foo-connector</artifactId>
       <version>${project.version}</version>
     </dependency>
