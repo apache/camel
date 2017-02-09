@@ -38,6 +38,7 @@
     <module>foo-bar-wine-example</module>
     <module>twitter-mention-connector</module>
     <module>twitter-salesforce-example</module>
+    <module>salesforce-upsert-contact-connector</module>
   </modules>
 
 </project>
