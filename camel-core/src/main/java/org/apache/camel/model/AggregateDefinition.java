@@ -723,10 +723,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Sets the completion size, which is the number of aggregated exchanges which would
-     * cause the aggregate to consider the group as complete and send out the aggregated exchange.
+     * Number of messages aggregated before the aggregation is complete. This option can be set as either
+     * a fixed value or using an Expression which allows you to evaluate a size dynamically - will use Integer as result.
+     * If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
      *
-     * @param completionSize  the completion size
+     * @param completionSize  the completion size, must be a positive number
      * @return builder
      */
     public AggregateDefinition completionSize(int completionSize) {
@@ -735,8 +736,9 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Sets the completion size, which is the number of aggregated exchanges which would
-     * cause the aggregate to consider the group as complete and send out the aggregated exchange.
+     * Number of messages aggregated before the aggregation is complete. This option can be set as either
+     * a fixed value or using an Expression which allows you to evaluate a size dynamically - will use Integer as result.
+     * If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
      *
      * @param completionSize  the completion size as an {@link org.apache.camel.Expression} which is evaluated as a {@link Integer} type
      * @return builder
@@ -747,10 +749,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Sets the completion interval, which would cause the aggregate to consider the group as complete
-     * and send out the aggregated exchange.
+     * A repeating period in millis by which the aggregator will complete all current aggregated exchanges.
+     * Camel has a background task which is triggered every period. You cannot use this option together
+     * with completionTimeout, only one of them can be used.
      *
-     * @param completionInterval  the interval in millis
+     * @param completionInterval  the interval in millis, must be a positive value
      * @return the builder
      */
     public AggregateDefinition completionInterval(long completionInterval) {
@@ -759,10 +762,13 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Sets the completion timeout, which would cause the aggregate to consider the group as complete
-     * and send out the aggregated exchange.
+     * Time in millis that an aggregated exchange should be inactive before its complete (timeout).
+     * This option can be set as either a fixed value or using an Expression which allows you to evaluate
+     * a timeout dynamically - will use Long as result.
+     * If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
+     * You cannot use this option together with completionInterval, only one of the two can be used.
      *
-     * @param completionTimeout  the timeout in millis
+     * @param completionTimeout  the timeout in millis, must be a positive value
      * @return the builder
      */
     public AggregateDefinition completionTimeout(long completionTimeout) {
@@ -771,8 +777,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
-     * Sets the completion timeout, which would cause the aggregate to consider the group as complete
-     * and send out the aggregated exchange.
+     * Time in millis that an aggregated exchange should be inactive before its complete (timeout).
+     * This option can be set as either a fixed value or using an Expression which allows you to evaluate
+     * a timeout dynamically - will use Long as result.
+     * If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
+     * You cannot use this option together with completionInterval, only one of the two can be used.
      *
      * @param completionTimeout  the timeout as an {@link Expression} which is evaluated as a {@link Long} type
      * @return the builder
