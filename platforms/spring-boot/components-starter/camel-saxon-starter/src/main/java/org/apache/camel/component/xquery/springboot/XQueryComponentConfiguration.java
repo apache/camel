@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xquery.springboot;
 
+import java.util.Map;
+import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.ModuleURIResolver;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -33,6 +35,15 @@ public class XQueryComponentConfiguration {
      */
     @NestedConfigurationProperty
     private ModuleURIResolver moduleURIResolver;
+    /**
+     * To use a custom Saxon configuration
+     */
+    @NestedConfigurationProperty
+    private Configuration configuration;
+    /**
+     * To set custom Saxon configuration properties
+     */
+    private Map<String, Object> configurationProperties;
 
     public ModuleURIResolver getModuleURIResolver() {
         return moduleURIResolver;
@@ -40,5 +51,22 @@ public class XQueryComponentConfiguration {
 
     public void setModuleURIResolver(ModuleURIResolver moduleURIResolver) {
         this.moduleURIResolver = moduleURIResolver;
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
+    }
+
+    public Map<String, Object> getConfigurationProperties() {
+        return configurationProperties;
+    }
+
+    public void setConfigurationProperties(
+            Map<String, Object> configurationProperties) {
+        this.configurationProperties = configurationProperties;
     }
 }

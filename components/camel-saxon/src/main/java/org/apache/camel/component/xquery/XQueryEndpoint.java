@@ -50,6 +50,8 @@ public class XQueryEndpoint extends ProcessorEndpoint {
     @UriParam(label = "advanced")
     private Configuration configuration;
     @UriParam(label = "advanced")
+    private Map<String, Object> configurationProperties = new HashMap<>();
+    @UriParam(label = "advanced")
     private StaticQueryContext staticQueryContext;
     @UriParam(label = "advanced")
     private Map<String, Object> parameters = new HashMap<String, Object>();
@@ -94,6 +96,17 @@ public class XQueryEndpoint extends ProcessorEndpoint {
      */
     public void setConfiguration(Configuration configuration) {
         this.configuration = configuration;
+    }
+
+    public Map<String, Object> getConfigurationProperties() {
+        return configurationProperties;
+    }
+
+    /**
+     * To set custom Saxon configuration properties
+     */
+    public void setConfigurationProperties(Map<String, Object> configurationProperties) {
+        this.configurationProperties = configurationProperties;
     }
 
     public StaticQueryContext getStaticQueryContext() {
@@ -215,6 +228,7 @@ public class XQueryEndpoint extends ProcessorEndpoint {
 
         this.xquery = XQueryBuilder.xquery(url);
         this.xquery.setConfiguration(getConfiguration());
+        this.xquery.setConfigurationProperties(getConfigurationProperties());
         this.xquery.setStaticQueryContext(getStaticQueryContext());
         this.xquery.setParameters(getParameters());
         this.xquery.setNamespaces(namespacePrefixes);

@@ -18,6 +18,7 @@ package org.apache.camel.component.xslt;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 import javax.xml.XMLConstants;
 import javax.xml.transform.TransformerFactory;
 
@@ -32,6 +33,37 @@ final class XsltHelper {
     private static final String SAXON_EXTENDED_FUNCTION_DEFINITION_CLASS_NAME = "net.sf.saxon.lib.ExtensionFunctionDefinition";
 
     private XsltHelper() {
+    }
+
+    public static void registerSaxonConfiguration(
+            CamelContext camelContext, Class<?> factoryClass, TransformerFactory factory, Object saxonConfiguration) throws Exception {
+
+        if (saxonConfiguration != null) {
+            Class<?> configurationClass = camelContext.getClassResolver().resolveClass(SAXON_CONFIGURATION_CLASS_NAME);
+            if (configurationClass != null) {
+                Method method = factoryClass.getMethod("setConfiguration", configurationClass);
+                if (method != null) {
+                    method.invoke(factory, configurationClass.cast(saxonConfiguration));
+                }
+            }
+        }
+    }
+
+    public static void registerSaxonConfigurationProperties(
+            CamelContext camelContext, Class<?> factoryClass, TransformerFactory factory, Map<String, Object> saxonConfigurationProperties) throws Exception {
+
+        if (saxonConfigurationProperties != null && !saxonConfigurationProperties.isEmpty()) {
+            Method method = factoryClass.getMethod("getConfiguration");
+            if (method != null) {
+                Object configuration = method.invoke(factory, null);
+                if (configuration != null) {
+                    method = configuration.getClass().getMethod("setConfigurationProperty", String.class, Object.class);
+                    for (Map.Entry<String, Object> entry : saxonConfigurationProperties.entrySet()) {
+                        method.invoke(configuration, entry.getKey(), entry.getValue());
+                    }
+                }
+            }
+        }
     }
 
     public static void registerSaxonExtensionFunctions(
