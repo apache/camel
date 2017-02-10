@@ -63,7 +63,7 @@ public class KafkaConfiguration {
     private String clientId;
 
     //interceptor.classes
-    @UriParam
+    @UriParam(label = "common,monitoring")
     private String interceptorClasses;
 
     //key.deserializer
@@ -1375,7 +1375,7 @@ public class KafkaConfiguration {
      * Sets interceptors for producer or consumers.
      * Producer interceptors have to be classes implementing {@link org.apache.kafka.clients.producer.ProducerInterceptor}
      * Consumer interceptors have to be classes implementing {@link org.apache.kafka.clients.consumer.ConsumerInterceptor}
-     * @return
+     * Note that if you use Producer interceptor on a consumer it will throw a class cast exception in runtime
      */
     public void setInterceptorClasses(String interceptorClasses) {
         this.interceptorClasses = interceptorClasses;
