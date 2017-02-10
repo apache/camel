@@ -102,7 +102,6 @@ public class KafkaComponentTest {
         assertEquals("test", endpoint.getConfiguration().getSslEndpointAlgorithm());
         assertEquals("SunX509", endpoint.getConfiguration().getSslKeymanagerAlgorithm());
         assertEquals("PKIX", endpoint.getConfiguration().getSslTrustmanagerAlgorithm());
-        assertEquals("PKIX", endpoint.getConfiguration().getSslTrustmanagerAlgorithm());
         assertEquals("org.apache.camel.component.kafka.MockProducerInterceptor", endpoint.getConfiguration().getInterceptorClasses());
     }
 

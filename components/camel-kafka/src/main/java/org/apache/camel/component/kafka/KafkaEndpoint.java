@@ -95,7 +95,6 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return true;
     }
 
-
     private void loadParitionerClass(ClassResolver resolver, Properties props) {
         replaceWithClass(props, "partitioner.class", resolver, Partitioner.class);
     }

@@ -57,10 +57,6 @@ kafka:server:port[?options]
 [[Kafka-Options]]
 Options (Camel 2.16 or older)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-
-
-
 // component options: START
 The Kafka component supports 1 options which are listed below.
 
