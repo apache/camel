@@ -62,6 +62,7 @@
     <module>camel-example-jdbc</module>
     <module>camel-example-jmx</module>
     <module>camel-example-jms-file</module>
+	<module>camel-example-kafka</module>
     <module>camel-example-loadbalancing</module>
     <module>camel-example-loan-broker-cxf</module>
     <module>camel-example-loan-broker-jms</module>
