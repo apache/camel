@@ -24,32 +24,6 @@ single correlation key into a single message exchange.
 // endpoint options: START
 // endpoint options: END
 
-[[Aggregator2-ExchangeProperties]]
-Exchange Properties
-^^^^^^^^^^^^^^^^^^^
-
-The following properties are set on each aggregated Exchange:
-
-header
-
-type
-
-description
-
-`CamelAggregatedSize`
-
-int
-
-The total number of Exchanges aggregated into this combined Exchange.
-
-`CamelAggregatedCompletedBy`
-
-String
-
-Indicator how the aggregation was completed as a value of either:
-`predicate`, `size`, `strategy`, `consumer`, `timeout`,
-`forceCompletion` or `interval`.
-
 [[Aggregator2-AboutAggregationStrategy]]
 About AggregationStrategy
 ^^^^^^^^^^^^^^^^^^^^^^^^^
