@@ -67,7 +67,7 @@ directly in the camel-core.
 ### Options
 
 // component options: START
-The XSLT component supports 5 options which are listed below.
+The XSLT component supports 8 options which are listed below.
 
 
 
@@ -78,15 +78,18 @@ The XSLT component supports 5 options which are listed below.
 | xmlConverter | advanced |  | XmlConverter | To use a custom implementation of org.apache.camel.converter.jaxp.XmlConverter
 | uriResolverFactory | advanced |  | XsltUriResolverFactory | To use a custom javax.xml.transform.URIResolver which depends on a dynamic endpoint resource URI or which is a subclass of XsltUriResolver. Do not use in combination with uriResolver. See also link setUriResolver(URIResolver).
 | uriResolver | advanced |  | URIResolver | To use a custom javax.xml.transform.URIResolver. Do not use in combination with uriResolverFactory. See also link setUriResolverFactory(XsltUriResolverFactory).
-| contentCache | producer | true | boolean | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation.
+| contentCache | producer | false | boolean | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation.
 | saxon | producer | false | boolean | Whether to use Saxon as the transformerFactoryClass. If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath.
+| saxonExtensionFunctions | producer |  | List | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry where you can comma to separate multiple values to lookup.
+| saxonConfiguration | producer | true | Object | To use a custom Saxon configuration
+| saxonConfigurationProperties | advanced |  | Map | To set custom Saxon configuration properties
 |=======================================================================
 {% endraw %}
 // component options: END
 
 
 // endpoint options: START
-The XSLT component supports 17 endpoint options which are listed below:
+The XSLT component supports 18 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -104,6 +107,7 @@ The XSLT component supports 17 endpoint options which are listed below:
 | entityResolver | advanced |  | EntityResolver | To use a custom org.xml.sax.EntityResolver with javax.xml.transform.sax.SAXSource.
 | errorListener | advanced |  | ErrorListener | Allows to configure to use a custom javax.xml.transform.ErrorListener. Beware when doing this then the default error listener which captures any errors or fatal errors and store information on the Exchange as properties is not in use. So only use this option for special use-cases.
 | resultHandlerFactory | advanced |  | ResultHandlerFactory | Allows you to use a custom org.apache.camel.builder.xml.ResultHandlerFactory which is capable of using custom org.apache.camel.builder.xml.ResultHandler types.
+| saxonConfiguration | advanced |  | Object | To use a custom Saxon configuration
 | saxonExtensionFunctions | advanced |  | String | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry where you can comma to separate multiple values to lookup.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | transformerFactory | advanced |  | TransformerFactory | To use a custom XSLT transformer factory

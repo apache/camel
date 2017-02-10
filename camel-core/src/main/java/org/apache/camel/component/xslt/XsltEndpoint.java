@@ -25,8 +25,10 @@ import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
+
 import org.xml.sax.EntityResolver;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedAttribute;
@@ -36,6 +38,8 @@ import org.apache.camel.builder.xml.ResultHandlerFactory;
 import org.apache.camel.builder.xml.XsltBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -56,7 +60,6 @@ public class XsltEndpoint extends ProcessorEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltEndpoint.class);
 
-
     private volatile boolean cacheCleared;
     private volatile XsltBuilder xslt;
     private Map<String, Object> parameters;
@@ -73,6 +76,10 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private TransformerFactory transformerFactory;
     @UriParam
     private boolean saxon;
+    @UriParam(label = "advanced")
+    private Object saxonConfiguration;
+    @Metadata(label = "advanced")
+    private Map<String, Object> saxonConfigurationProperties = new HashMap<>();
     @UriParam(label = "advanced", javaType = "java.lang.String")
     private List<Object> saxonExtensionFunctions;
     @UriParam(label = "advanced")
@@ -229,6 +236,28 @@ public class XsltEndpoint extends ProcessorEndpoint {
             extensionFunctions,
             Object.class
         );
+    }
+
+    public Object getSaxonConfiguration() {
+        return saxonConfiguration;
+    }
+
+    /**
+     * To use a custom Saxon configuration
+     */
+    public void setSaxonConfiguration(Object saxonConfiguration) {
+        this.saxonConfiguration = saxonConfiguration;
+    }
+
+    public Map<String, Object> getSaxonConfigurationProperties() {
+        return saxonConfigurationProperties;
+    }
+
+    /**
+     * To set custom Saxon configuration properties
+     */
+    public void setSaxonConfigurationProperties(Map<String, Object> configurationProperties) {
+        this.saxonConfigurationProperties = configurationProperties;
     }
 
     public ResultHandlerFactory getResultHandlerFactory() {
@@ -389,9 +418,13 @@ public class XsltEndpoint extends ProcessorEndpoint {
     protected void doStart() throws Exception {
         super.doStart();
 
+        final CamelContext ctx = getCamelContext();
+        final ClassResolver resolver = ctx.getClassResolver();
+        final Injector injector = ctx.getInjector();
+
         LOG.debug("{} using schema resource: {}", this, resourceUri);
 
-        this.xslt = getCamelContext().getInjector().newInstance(XsltBuilder.class);
+        this.xslt = injector.newInstance(XsltBuilder.class);
         if (converter != null) {
             xslt.setConverter(converter);
         }
@@ -405,17 +438,14 @@ public class XsltEndpoint extends ProcessorEndpoint {
         TransformerFactory factory = transformerFactory;
         if (factory == null && transformerFactoryClass != null) {
             // provide the class loader of this component to work in OSGi environments
-            Class<?> factoryClass = getCamelContext().getClassResolver().resolveMandatoryClass(transformerFactoryClass, XsltComponent.class.getClassLoader());
+            Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(transformerFactoryClass, TransformerFactory.class, XsltComponent.class.getClassLoader());
             LOG.debug("Using TransformerFactoryClass {}", factoryClass);
-            factory = (TransformerFactory) getCamelContext().getInjector().newInstance(factoryClass);
+            factory = injector.newInstance(factoryClass);
 
             if (useSaxon) {
-                XsltHelper.registerSaxonExtensionFunctions(
-                    getCamelContext(),
-                    factoryClass,
-                    factory,
-                    saxonExtensionFunctions
-                );
+                XsltHelper.registerSaxonConfiguration(ctx, factoryClass, factory, saxonConfiguration);
+                XsltHelper.registerSaxonConfigurationProperties(ctx, factoryClass, factory, saxonConfigurationProperties);
+                XsltHelper.registerSaxonExtensionFunctions(ctx, factoryClass, factory, saxonExtensionFunctions);
             }
         }
 
