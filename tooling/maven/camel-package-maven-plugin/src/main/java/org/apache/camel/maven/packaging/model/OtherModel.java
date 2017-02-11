@@ -16,6 +16,8 @@
  */
 package org.apache.camel.maven.packaging.model;
 
+import static org.apache.camel.maven.packaging.StringHelper.cutLastZeroDigit;
+
 public class OtherModel {
 
     private String kind;
@@ -111,6 +113,10 @@ public class OtherModel {
 
     public String getDocLink() {
         return artifactId + "/src/main/docs";
+    }
+
+    public String getFirstVersionShort() {
+        return cutLastZeroDigit(firstVersion);
     }
 
 }
