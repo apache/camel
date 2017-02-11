@@ -357,6 +357,12 @@ public class ReadmeComponentMojo extends AbstractMojo {
             return false;
         }
 
+        // cut last digit so its not 2.18.0 but 2.18
+        String[] parts = firstVersion.split("\\.");
+        if (parts.length == 3 && parts[2].equals("0")) {
+            firstVersion = parts[0] + "." + parts[1];
+        }
+
         boolean updated = false;
 
         try {

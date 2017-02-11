@@ -19,6 +19,8 @@ package org.apache.camel.maven.packaging.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.camel.maven.packaging.StringHelper.cutLastZeroDigit;
+
 public class DataFormatModel {
 
     private String kind;
@@ -161,6 +163,10 @@ public class DataFormatModel {
         } else {
             return artifactId + "/src/main/docs";
         }
+    }
+
+    public String getFirstVersionShort() {
+        return cutLastZeroDigit(firstVersion);
     }
 
 }
