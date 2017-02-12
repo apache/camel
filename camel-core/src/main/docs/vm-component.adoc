@@ -1,6 +1,6 @@
 ## VM Component
 
-*Available as of Camel version 1.1.0*
+*Available as of Camel version 1.1*
 
 The *vm:* component provides asynchronous
 http://www.eecs.harvard.edu/~mdw/proj/seda/[SEDA] behavior, exchanging

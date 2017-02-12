@@ -1,6 +1,6 @@
 ## LDAP Component
 
-*Available as of Camel version 1.5.0*
+*Available as of Camel version 1.5*
 
 The *ldap* component allows you to perform searches in LDAP servers
 using filters as the message payload. +

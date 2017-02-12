@@ -1,6 +1,6 @@
 ## Flatpack DataFormat
 
-*Available as of Camel version 2.1.0*
+*Available as of Camel version 2.1*
 
 The link:flatpack.html[Flatpack] component ships with the Flatpack data
 format that can be used to format between fixed width or delimited text

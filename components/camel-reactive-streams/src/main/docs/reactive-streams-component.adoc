@@ -1,6 +1,6 @@
 ## Reactive Streams Component
 
-*Available as of Camel version 2.19.0*
+*Available as of Camel version 2.19*
 
 The *reactive-streams:* component allows you to exchange messages with reactive
 stream processing libraries compatible with the

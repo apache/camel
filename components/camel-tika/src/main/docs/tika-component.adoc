@@ -1,6 +1,6 @@
 ## Tika Component
 
-*Available as of Camel version 2.19.0*
+*Available as of Camel version 2.19*
 
 The *Tika*: components provides the ability to detect and parse documents with 
 Apache Tika. This component uses

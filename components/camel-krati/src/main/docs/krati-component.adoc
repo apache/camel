@@ -1,6 +1,6 @@
 ## Krati Component
 
-*Available as of Camel version 2.9.0*
+*Available as of Camel version 2.9*
 
 This component allows the use krati datastores and datasets inside
 Camel. Krati is a simple persistent data store with very low latency and

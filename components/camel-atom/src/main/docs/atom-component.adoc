@@ -1,6 +1,6 @@
 ## Atom Component
 
-*Available as of Camel version 1.2.0*
+*Available as of Camel version 1.2*
 
 The *atom:* component is used for polling Atom feeds.
 

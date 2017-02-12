@@ -1,6 +1,6 @@
 ## ElSQL Component
 
-*Available as of Camel version 2.16.0*
+*Available as of Camel version 2.16*
 
 The *elsql:* component is an extension to the existing
 link:sql-component.html[SQL Component] that uses

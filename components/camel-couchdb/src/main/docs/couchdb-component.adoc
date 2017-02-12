@@ -1,6 +1,6 @@
 ## CouchDB Component
 
-*Available as of Camel version 2.11.0*
+*Available as of Camel version 2.11*
 
 The *couchdb:* component allows you to treat
 http://couchdb.apache.org/[CouchDB] instances as a producer or consumer

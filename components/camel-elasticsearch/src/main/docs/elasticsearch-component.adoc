@@ -1,6 +1,6 @@
 ## Elasticsearch Component
 
-*Available as of Camel version 2.11.0*
+*Available as of Camel version 2.11*
 
 The ElasticSearch component allows you to interface with an
 http://elasticsearch.org[ElasticSearch] server.

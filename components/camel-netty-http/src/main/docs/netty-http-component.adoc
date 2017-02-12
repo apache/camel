@@ -1,6 +1,6 @@
 ## Netty HTTP Component
 
-*Available as of Camel version 2.12.0*
+*Available as of Camel version 2.12*
 
 The *netty-http* component is an extension to link:netty.html[Netty]
 component to facilitiate HTTP transport with link:netty.html[Netty].

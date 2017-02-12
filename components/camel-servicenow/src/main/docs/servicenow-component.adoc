@@ -1,6 +1,6 @@
 ## ServiceNow Component
 
-*Available as of Camel version 2.18.0*
+*Available as of Camel version 2.18*
 
 The ServiceNow component provides access to ServiceNow platform through their REST API.
 

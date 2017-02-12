@@ -1,6 +1,6 @@
 ## Guava EventBus Component
 
-*Available as of Camel version 2.10.0*
+*Available as of Camel version 2.10*
 
 *Available since Camel 2.10.0*
 
