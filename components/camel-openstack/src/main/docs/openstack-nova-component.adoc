@@ -1,6 +1,6 @@
 ## OpenStack Nova Component
 
-*Available as of Camel version 2.19.0*
+*Available as of Camel version 2.19*
 
 The openstack-nova component allows messages to be sent to an OpenStack compute services.
 

@@ -1,6 +1,6 @@
 ## Asterisk Component
 
-*Available as of Camel version 2.18.0*
+*Available as of Camel version 2.18*
 
 The *asterisk:* component allows you to work easily with an Asterisk PBX Server http://www.asterisk.org/ using https://asterisk-java.org/[asterisk-java]
 

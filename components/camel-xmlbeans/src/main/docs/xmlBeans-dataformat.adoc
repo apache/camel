@@ -1,6 +1,6 @@
 ## XML Beans DataFormat
 
-*Available as of Camel version 1.2.0*
+*Available as of Camel version 1.2*
 
 XmlBeans is a link:data-format.html[Data Format] which uses the
 http://xmlbeans.apache.org/[XmlBeans library] to unmarshal an XML

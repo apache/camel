@@ -1,6 +1,6 @@
 ## Lucene Component
 
-*Available as of Camel version 2.2.0*
+*Available as of Camel version 2.2*
 
 The *lucene* component is based on the Apache Lucene project. Apache
 Lucene is a powerful high-performance, full-featured text search engine

@@ -1,6 +1,6 @@
 ## Netty Component
 
-*Available as of Camel version 2.3.0*
+*Available as of Camel version 2.3*
 
 WARNING: This component is deprecated. You should use link:netty4.html[Netty4].
 

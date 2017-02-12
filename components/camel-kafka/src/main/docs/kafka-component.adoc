@@ -1,6 +1,6 @@
 ## Kafka Component
 
-*Available as of Camel version 2.13.0*
+*Available as of Camel version 2.13*
 
 The *kafka:* component is used for communicating with
 http://kafka.apache.org/[Apache Kafka] message broker.

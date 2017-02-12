@@ -1,6 +1,6 @@
 ## XML Security Component
 
-*Available as of Camel version 2.12.0*
+*Available as of Camel version 2.12*
 
 With this Apache Camel component, you can generate and validate XML
 signatures as described in the W3C standard

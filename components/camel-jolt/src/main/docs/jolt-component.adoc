@@ -1,6 +1,6 @@
 ## JOLT Component
 
-*Available as of Camel version 2.16.0*
+*Available as of Camel version 2.16*
 
 The *jolt:* component allows you to process a JSON messages using an
 http://bazaarvoice.github.io/jolt/[JOLT] specification. This can be

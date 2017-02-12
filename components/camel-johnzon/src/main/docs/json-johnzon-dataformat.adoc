@@ -1,6 +1,6 @@
 ## JSon Johnzon DataFormat
 
-*Available as of Camel version 2.18.0*
+*Available as of Camel version 2.18*
 
 Johnzon is a link:data-format.html[Data Format] which uses the
 http://johnzon.apache.org/[Johnzon Library]

@@ -1,6 +1,6 @@
 ## Bindy DataFormat
 
-*Available as of Camel version 2.0.0*
+*Available as of Camel version 2.0*
 
 The goal of this component is to allow the parsing/binding of
 non-structured data (or to be more precise non-XML data) +

@@ -1,6 +1,6 @@
 ## EHCache Component
 
-*Available as of Camel version 2.1.0*
+*Available as of Camel version 2.1*
 
 The *cache* component enables you to perform caching operations using
 EHCache as the Cache Implementation. The cache itself is created on

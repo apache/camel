@@ -1,6 +1,6 @@
 ## AWS EC2 Component
 
-*Available as of Camel version 2.16.0*
+*Available as of Camel version 2.16*
 
 The EC2 component supports create, run, start, stop and terminate
 https://aws.amazon.com/it/ec2/[AWS EC2] instances.

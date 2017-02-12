@@ -1,6 +1,6 @@
 ## Header Language
 
-*Available as of Camel version 1.5.0*
+*Available as of Camel version 1.5*
 
 The Header Expression Language allows you to extract values of named
 headers.

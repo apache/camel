@@ -1,6 +1,6 @@
 ## RSS Component
 
-*Available as of Camel version 2.0.0*
+*Available as of Camel version 2.0*
 
 The *rss:* component is used for polling RSS feeds. Camel will default
 poll the feed every 60th seconds.

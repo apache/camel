@@ -1,6 +1,6 @@
 ## Elasticsearch5 Component
 
-*Available as of Camel version 2.19.0*
+*Available as of Camel version 2.19*
 
 The ElasticSearch component allows you to interface with an
 https://www.elastic.co/products/elasticsearch[ElasticSearch] 5.x API.

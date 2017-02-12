@@ -1,6 +1,6 @@
 ## AHC Websocket Component
 
-*Available as of Camel version 2.14.0*
+*Available as of Camel version 2.14*
 
 The *ahc-ws* component provides Websocket
 based link:endpoint.html[endpoints] for a client communicating with

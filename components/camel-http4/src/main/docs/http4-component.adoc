@@ -1,6 +1,6 @@
 ## HTTP4 Component
 
-*Available as of Camel version 2.3.0*
+*Available as of Camel version 2.3*
 
 The *http4:* component provides HTTP based link:endpoint.html[endpoints]
 for calling external HTTP resources (as a client to call external

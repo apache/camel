@@ -1,6 +1,6 @@
 ## IronMQ Component
 
-*Available as of Camel version 2.17.0*
+*Available as of Camel version 2.17*
 
 The IronMQ component provides integration with http://www.iron.io/products/mq[IronMQ] an elastic and durable hosted message queue as a service.
 

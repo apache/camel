@@ -1,6 +1,6 @@
 ## Spring Redis Component
 
-*Available as of Camel version 2.11.0*
+*Available as of Camel version 2.11*
 
 This component allows sending and receiving messages from
 http://http//redis.io/[Redis]. Redis is advanced key-value store where

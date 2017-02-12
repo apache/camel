@@ -1,6 +1,6 @@
 ## Kubernetes Component
 
-*Available as of Camel version 2.17.0*
+*Available as of Camel version 2.17*
 
 The *Kubernetes* component is a component for integrating your
 application with Kubernetes standalone or on top of Openshift. 

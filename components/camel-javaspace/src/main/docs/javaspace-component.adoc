@@ -1,6 +1,6 @@
 ## JavaSpace Component
 
-*Available as of Camel version 2.1.0*
+*Available as of Camel version 2.1*
 
 The *javaspace* component is a transport for working with any JavaSpace
 compliant implementation and this component has been tested with both
