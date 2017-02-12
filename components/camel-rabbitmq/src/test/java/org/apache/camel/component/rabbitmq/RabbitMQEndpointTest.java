@@ -58,6 +58,13 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         args.put("foo", "bar");
         registry.bind("args", args);
 
+        HashMap<String, Object> moreArgs = new HashMap<>();
+        moreArgs.put("fizz", "buzz");
+        registry.bind("moreArgs", moreArgs);
+
+        HashMap<String, Object> evenMoreArgs = new HashMap<>();
+        evenMoreArgs.put("ping", "pong");
+        registry.bind("evenMoreArgs", evenMoreArgs);
 
         return registry;
     }
@@ -198,6 +205,47 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         assertTrue("We should not get the queue args here.", endpoint.getQueueArgs().isEmpty());
         assertNull("We should not get the exchangeArgsConfigurer here.", endpoint.getExchangeArgsConfigurer());
         assertNull("We should not get the queueArgsConfigurer here.", endpoint.getQueueArgsConfigurer());
+    }
+
+    @Test
+    public void testMultiArgsPopulateCorrectEndpointProperties() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?arg.exchange.e1=v1&arg.exchange.e2=v2&arg.queue.q1=v3&arg.binding.b1=v4", RabbitMQEndpoint.class);
+        assertEquals("Wrong number of args", 4, endpoint.getArgs().size());
+        assertEquals("Wrong number of args", 1, endpoint.getBindingArgs().size());
+        assertEquals("Wrong number of args", 2, endpoint.getExchangeArgs().size());
+        assertEquals("Wrong number of args", 1, endpoint.getQueueArgs().size());
+    }
+
+    @Test
+    public void testMultiArgsCombinedWithIndividuallySpecified() throws Exception {
+        // setup two arguments for each rabbit fundamental.
+        // Configured inline and via named map in the camel registry
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange"
+                + "?arg.exchange.e1=v1&exchangeArgs=#args"
+                + "&arg.queue.q1=v2&queueArgs=#moreArgs"
+                + "&arg.binding.b1=v3&bindingArgs=#evenMoreArgs", RabbitMQEndpoint.class);
+
+        // The multi-value inline has 3
+        Map<String, Object> inlineArgs = endpoint.getArgs();
+        assertEquals("Wrong number of args", 3, inlineArgs.size());
+        assertTrue(inlineArgs.containsKey("exchange.e1"));
+        assertTrue(inlineArgs.containsKey("queue.q1"));
+        assertTrue(inlineArgs.containsKey("binding.b1"));
+
+        Map<String, Object> exchangeArgs = endpoint.getExchangeArgs();
+        assertEquals("Wrong number of exchange args", 2, exchangeArgs.size());
+        assertTrue("Should contain the individually specified exchange args", exchangeArgs.containsKey("foo"));
+        assertTrue("Should contain the args in the multi-value map", exchangeArgs.containsKey("e1"));
+
+        Map<String, Object> queueArgs = endpoint.getQueueArgs();
+        assertEquals("Wrong number of queue args", 2, queueArgs.size());
+        assertTrue("Should contain the individually specified queue args", queueArgs.containsKey("fizz"));
+        assertTrue("Should contain the args in the multi-value map", queueArgs.containsKey("q1"));
+
+        Map<String, Object> bindingArgs = endpoint.getBindingArgs();
+        assertEquals("Wrong number of binding args", 2, bindingArgs.size());
+        assertTrue("Should contain the individually specified binding args", bindingArgs.containsKey("ping"));
+        assertTrue("Should contain the args in the multi-value map", bindingArgs.containsKey("b1"));
     }
 
     @Test
