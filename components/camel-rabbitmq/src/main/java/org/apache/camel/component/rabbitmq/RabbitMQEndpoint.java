@@ -49,7 +49,8 @@ import org.apache.camel.spi.UriPath;
 /**
  * The rabbitmq component allows you produce and consume messages from <a href="http://www.rabbitmq.com/">RabbitMQ</a> instances.
  */
-@UriEndpoint(firstVersion = "2.12.0", scheme = "rabbitmq", title = "RabbitMQ", syntax = "rabbitmq:hostname:portNumber/exchangeName", consumerClass = RabbitMQConsumer.class, label = "messaging")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "rabbitmq", title = "RabbitMQ", syntax = "rabbitmq:hostname:portNumber/exchangeName",
+        consumerClass = RabbitMQConsumer.class, label = "messaging", lenientProperties = true)
 public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     // header to indicate that the message body needs to be de-serialized
     public static final String SERIALIZE_HEADER = "CamelSerialize";
@@ -148,6 +149,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private Map<String, Object> queueArgs = new HashMap<>();
     @UriParam(label = "advanced")
     private Map<String, Object> bindingArgs = new HashMap<>();
+    @UriParam(label = "advanced", prefix = "arg.", multiValue = true)
+    private Map<String, Object> args;
     @UriParam(label = "advanced")
     private ArgsConfigurer queueArgsConfigurer;
     @UriParam(label = "advanced")
@@ -794,6 +797,27 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         return bindingArgs;
     }
 
+    /**
+     * Specify arguments for configuring the different RabbitMQ concepts, a different prefix is
+     * required for each:
+     * <ul>
+     *     <li>Queue: arg.queue.</li>
+     *     <li>Exchange: arg.exchange.</li>
+     *     <li>Binding: arg.binding.</li>
+     * </ul>
+     * For example to declare a queue with message ttl argument:
+     *
+     * http://localhost:5672/exchange/queue?args=arg.queue.x-message-ttl=60000
+     *
+     */
+    public void setArgs(Map<String, Object> args) {
+        this.args = args;
+    }
+
+    public Map<String, Object> getArgs() {
+        return args;
+    }
+
     public ArgsConfigurer getQueueArgsConfigurer() {
         return queueArgsConfigurer;
     }
@@ -917,6 +941,11 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
      */
     public void setExclusive(boolean exclusive) {
         this.exclusive = exclusive;
+    }
+
+    public boolean isLenientProperties() {
+        // true to allow dynamic URI options to be configured
+        return true;
     }
 
 }

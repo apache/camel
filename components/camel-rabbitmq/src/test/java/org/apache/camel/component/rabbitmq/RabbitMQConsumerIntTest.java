@@ -26,24 +26,18 @@ import java.util.concurrent.TimeoutException;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
 
     private static final String EXCHANGE = "ex1";
-    private static final String HEADERS_EXCHANGE = "ex2";
+    private static final String HEADERS_EXCHANGE = "ex8";
     private static final String QUEUE = "q1";
-    private static final String HEADER_KEY = "foo";
-    private static final String HEADER_VALUE = "bar";
     private static final String MSG = "hello world";
 
     @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE + "?username=cameltest&password=cameltest")
@@ -55,6 +49,9 @@ public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
     @EndpointInject(uri = "rabbitmq:localhost:5672/" + HEADERS_EXCHANGE + "?username=cameltest&password=cameltest&exchangeType=headers&queue=" + QUEUE + "&bindingArgs=#bindArgs")
     private Endpoint headersExchangeWithQueue;
 
+    @EndpointInject(uri = "rabbitmq:localhost:5672/" + "ex7" + "?username=cameltest&password=cameltest&exchangeType=headers&autoDelete=false&durable=true&queue=q7&arg.binding.fizz=buzz")
+    private Endpoint headersExchangeWithQueueDefiniedInline;
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -63,6 +60,7 @@ public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
             public void configure() throws Exception {
                 from(from).to(to);
                 from(headersExchangeWithQueue).to(to);
+                from(headersExchangeWithQueueDefiniedInline).to(to);
             }
         };
     }
@@ -119,18 +117,31 @@ public class RabbitMQConsumerIntTest extends AbstractRabbitMQIntTest {
         //one has the correct header set
         to.expectedMessageCount(1);
 
-        AMQP.BasicProperties.Builder properties = new AMQP.BasicProperties.Builder();
-        properties.headers(Collections.singletonMap(HEADER_KEY, HEADER_VALUE));
-
-        AMQP.BasicProperties.Builder nonMatchingProperties = new AMQP.BasicProperties.Builder();
-        nonMatchingProperties.headers(Collections.singletonMap(HEADER_KEY, "wrong-value"));
-
         Channel channel = connection().createChannel();
-        channel.basicPublish(HEADERS_EXCHANGE, "", properties.build(), MSG.getBytes());
+        channel.basicPublish(HEADERS_EXCHANGE, "", propertiesWithHeader("foo", "bar"), MSG.getBytes());
         channel.basicPublish(HEADERS_EXCHANGE, "", null, MSG.getBytes());
-        channel.basicPublish(HEADERS_EXCHANGE, "", nonMatchingProperties.build(), MSG.getBytes());
+        channel.basicPublish(HEADERS_EXCHANGE, "", propertiesWithHeader("foo", "bra"), MSG.getBytes());
 
         to.assertIsSatisfied();
+    }
+
+    @Test
+    public void sentMessageIsReceivedWithHeadersRoutingMultiValueMapBindings() throws Exception {
+        to.expectedMessageCount(3);
+
+        Channel channel = connection().createChannel();
+        channel.basicPublish("ex7", "", propertiesWithHeader("fizz", "buzz"), MSG.getBytes());
+        channel.basicPublish("ex7", "", propertiesWithHeader("fizz", "buzz"), MSG.getBytes());
+        channel.basicPublish("ex7", "", propertiesWithHeader("fizz", "buzz"), MSG.getBytes());
+        channel.basicPublish("ex7", "", propertiesWithHeader("fizz", "nope"), MSG.getBytes());
+
+        to.assertIsSatisfied();
+    }
+
+    private AMQP.BasicProperties propertiesWithHeader(String headerName, String headerValue) {
+        AMQP.BasicProperties.Builder properties = new AMQP.BasicProperties.Builder();
+        properties.headers(Collections.singletonMap(headerName, headerValue));
+        return properties.build();
     }
 
     private Date currentTimestampWithoutMillis() {
