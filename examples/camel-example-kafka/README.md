@@ -4,38 +4,48 @@
 
 An example which shows how to integrate Camel with Kakfa.
 
+This project consists of the following examples:
+
+  1. Send messages continuously by typing on the command line.
+  2. Example of partitioner for a given producer.
+  3. Topic is sent in the header as well as in the URL.
+
+
+### Preparing Kafka
+
 This example requires that Kafka Server is up and running.
 
 You will need to create following topics before you run the examples.
 
-bin\windows\kafka-topics.bat --create --zookeeper <zookeeper host ip>:<port> --replication-factor 1 --partitions 2 --topic TestLog
-bin\windows\kafka-topics.bat --create --zookeeper <zookeeper host ip>:<port> --replication-factor 1 --partitions 1 --topic AccessLog
+On windows run
 
-This project consists of the following examples:
+    kafka-topics.bat --create --zookeeper <zookeeper host ip>:<port> --replication-factor 1 --partitions 2 --topic TestLog
+    
+    kafka-topics.bat --create --zookeeper <zookeeper host ip>:<port> --replication-factor 1 --partitions 1 --topic AccessLog
 
-
-	1. Send messages continuously by typing on the command line.
-	2. Example of partitioner for a given producer.
-	3. Topic is sent in the header as well as in the URL.
-
+On linux run
+    
+    kafka-topics.sh --create --zookeeper <zookeeper host ip>:<port> --replication-factor 1 --partitions 2 --topic TestLog
+    
+    kafka-topics.sh --create --zookeeper <zookeeper host ip>:<port> --replication-factor 1 --partitions 1 --topic AccessLog
 
 
 ### Build
 
 You will need to compile this example first:
 
-	mvn compile
+    mvn compile
 
 ### Run
 
 1. Run the consumer first in separate shell 
 
-	mvn compile exec:java -Pkafka-consumer
+    mvn compile exec:java -Pkafka-consumer
 
 
 2. Run the message producer in the seperate shell
 
-	mvn compile exec:java -Pkafka-producer
+    mvn compile exec:java -Pkafka-producer
 
    Initially, some messages are sent programmatically. 
    

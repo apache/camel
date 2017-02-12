@@ -78,6 +78,7 @@ All examples have been sort by type/category
 
 * [camel-example-activemq-tomcat](camel-example-activemq-tomcat/README.md)
 * [camel-example-jms-file](camel-example-jms-file/README.md)
+* [camel-example-kafka](camel-example-kafka/README.md)
 * [camel-example-guice-jms](camel-example-guice-jms/README.md)
 * [camel-example-pojo-messaging](camel-example-pojo-messaging/README.md)
 
