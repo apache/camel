@@ -109,14 +109,14 @@ public class XMLTokenizeLanguageGroupingTest extends ContextTestSupport {
 
     public void testSendMoreParentsMessageToTokenize() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
-        if (isJavaVersion("1.8"))  {
+        if (getJavaMajorVersion() <= 7)  {
+            result.expectedBodiesReceived(
+                "<group><c:child some_attr='a' anotherAttr='a' xmlns:g=\"urn:g\" xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"></c:child>"
+                + "<c:child some_attr='b' anotherAttr='b' xmlns:g=\"urn:g\" xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"/></group>");   
+        } else {
             result.expectedBodiesReceived(
                 "<group><c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"></c:child>"
                 + "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"/></group>");
-        } else {
-            result.expectedBodiesReceived(
-                "<group><c:child some_attr='a' anotherAttr='a' xmlns:g=\"urn:g\" xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"></c:child>"
-                + "<c:child some_attr='b' anotherAttr='b' xmlns:g=\"urn:g\" xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"/></group>");
         }
 
         template.sendBody("direct:start",
