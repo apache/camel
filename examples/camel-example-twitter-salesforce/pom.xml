@@ -32,6 +32,8 @@
   <description>Twitter mentions is created as contacts in Salesforce</description>
 
   <properties>
+    <category>Social</category>
+
     <spring.boot-version>${spring-boot-version}</spring.boot-version>
   </properties>
 

@@ -31,6 +31,10 @@
   <name>Camel :: Example :: Hystrix</name>
   <description>An example showing how to use Hystrix EIP as circuit breaker in Camel routes</description>
 
+  <properties>
+    <category>EIP</category>
+  </properties>
+
   <modules>
     <module>client</module>
     <module>service1</module>

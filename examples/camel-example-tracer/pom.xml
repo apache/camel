@@ -32,6 +32,8 @@
   <description>An example showing how to persist Camel trace event messages using JPA</description>
 
   <properties>
+    <category>Management and Monitoring</category>
+
     <camel.osgi.export.pkg>org.apache.camel.example.tracer</camel.osgi.export.pkg>
   </properties>
 

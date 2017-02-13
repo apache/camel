@@ -28,10 +28,13 @@
 
   <artifactId>camel-example-bam</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Example :: BAM</name>
+  <name>Camel :: Example :: BAM (deprecated)</name>
   <description>An example showing how to use Camel as a Business Activity Monitoring tool</description>
 
   <properties>
+    <category>Management and Monitoring</category>
+    <title>BAM (deprecated)</title>
+
     <camel.osgi.export.pkg>
       org.apache.camel.example.bam.*
     </camel.osgi.export.pkg>

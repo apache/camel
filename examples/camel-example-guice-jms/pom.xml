@@ -27,8 +27,13 @@
   </parent>
 
   <artifactId>camel-example-guice-jms</artifactId>
-  <name>Camel :: Example :: Guice :: JMS</name>
+  <name>Camel :: Example :: Guice :: JMS (deprecated)</name>
   <description>An example showing how to work with Camel, Guice and JMS</description>
+
+  <properties>
+    <category>Messaging</category>
+    <title>Guice JMS</title>
+  </properties>
 
   <dependencies>
     <dependency>

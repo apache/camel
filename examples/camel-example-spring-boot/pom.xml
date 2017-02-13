@@ -31,6 +31,8 @@
   <description>An example showing how to work with Camel and Spring Boot</description>
 
   <properties>
+    <category>Beginner</category>
+
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <spring.boot-version>${spring-boot-version}</spring.boot-version>

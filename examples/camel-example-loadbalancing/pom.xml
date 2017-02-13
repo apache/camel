@@ -31,6 +31,11 @@
   <name>Camel :: Example :: Load Balancing</name>
   <description>An example that demonstrate load balancing messaging with mina servers (TCP/IP)</description>
 
+  <properties>
+    <category>EIP</category>
+    <title>Load Balancing</title>
+  </properties>
+
   <dependencies>
 
     <dependency>

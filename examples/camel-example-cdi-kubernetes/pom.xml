@@ -31,6 +31,11 @@
   <description>Kubernetes CDI example</description>
   <packaging>jar</packaging>
 
+  <properties>
+    <category>Cloud</category>
+    <title>CDI Kubernetes</title>
+  </properties>
+
   <dependencies>
 
     <!-- CDI API -->

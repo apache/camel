@@ -62,7 +62,7 @@
     <module>camel-example-jdbc</module>
     <module>camel-example-jmx</module>
     <module>camel-example-jms-file</module>
-	<module>camel-example-kafka</module>
+	  <module>camel-example-kafka</module>
     <module>camel-example-loadbalancing</module>
     <module>camel-example-loan-broker-cxf</module>
     <module>camel-example-loan-broker-jms</module>
@@ -140,6 +140,21 @@
             <goals>
               <goal>resources</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- update readme file -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-example</goal>
+            </goals>
+            <phase>process-resources</phase>
           </execution>
         </executions>
       </plugin>

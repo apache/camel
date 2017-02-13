@@ -31,6 +31,11 @@
   <name>Camel :: Example :: JMS-File</name>
   <description>An example that persists messages from JMS to files</description>
 
+  <properties>
+    <category>Messaging</category>
+    <title>JMS-File</title>
+  </properties>
+
   <dependencies>
 
     <!-- Camel dependencies -->

@@ -32,6 +32,8 @@
   <packaging>jar</packaging>
 
   <properties>
+    <category>Social</category>
+
     <camel.osgi.import.pkg>
       *
     </camel.osgi.import.pkg>

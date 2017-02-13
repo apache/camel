@@ -31,6 +31,11 @@
   <description>An example demonstrating declarative transformation along data type declaration using Java DSL and CDI
   </description>
 
+  <properties>
+    <category>Input/Output Type Contract</category>
+    <title>Transformer CDI</title>
+  </properties>
+
   <dependencies>
     <!-- START SNIPPET: e1 -->
     <dependency>

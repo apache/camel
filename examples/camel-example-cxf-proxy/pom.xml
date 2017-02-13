@@ -32,6 +32,9 @@
   <packaging>jar</packaging>
 
   <properties>
+    <category>WebService</category>
+    <title>CXF Proxy</title>
+
     <camel.osgi.export.pkg>
       org.apache.camel.example.*
     </camel.osgi.export.pkg>

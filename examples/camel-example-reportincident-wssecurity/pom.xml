@@ -27,13 +27,16 @@
   </parent>
 
   <artifactId>camel-example-reportincident-wssecurity</artifactId>
-  <name>Camel :: Example :: Report Incident :: WS-Security</name>
+  <name>Camel :: Example :: Report Incident :: WS-Security (deprecated)</name>
   <description>An example based on real life use case for reporting incidents using webservice that are transformed
     and send as emails to a backing system. Client calling the WebService is authentified through WS-Security
   </description>
   <packaging>jar</packaging>
 
   <properties>
+    <category>Tutorial</category>
+    <title>Report Incident WS-Security</title>
+
     <camel.osgi.import.pkg>
       META-INF.cxf,
       org.apache.cxf,

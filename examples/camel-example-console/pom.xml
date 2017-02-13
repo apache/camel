@@ -31,6 +31,10 @@
   <name>Camel :: Example :: Console</name>
   <description>An example that reads input from the console</description>
 
+  <properties>
+    <category>Beginner</category>
+  </properties>
+
   <dependencies>
 
     <dependency>

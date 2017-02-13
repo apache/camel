@@ -31,6 +31,11 @@
   <name>Camel :: Example :: Java8 :: RX</name>
   <description>An example for showing Camel RX for Java 8</description>
 
+  <properties>
+    <category>Reactive</category>
+    <title>Java8 RX</title>
+  </properties>
+
   <dependencies>
 
     <dependency>

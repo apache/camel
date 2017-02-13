@@ -32,6 +32,9 @@
   <packaging>jar</packaging>
 
   <properties>
+    <category>OSGi</category>
+    <title>CXF Blueprint</title>
+
     <camel.osgi.export.pkg>
       org.apache.camel.example.reportincident*
     </camel.osgi.export.pkg>

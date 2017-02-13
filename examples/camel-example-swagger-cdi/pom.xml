@@ -31,6 +31,11 @@
   <name>Camel :: Example :: Swagger :: CDI</name>
   <description>An example using REST DSL and Swagger Java with CDI</description>
 
+  <properties>
+    <category>Rest</category>
+    <title>Swagger CDI</title>
+  </properties>
+
   <dependencies>
 
     <!-- CDI API -->
