@@ -30,7 +30,7 @@
   <groupId>org.foo</groupId>
   <artifactId>twitter-salesforce-example</artifactId>
   <name>Camel :: Connectors :: Examples :: Twitter Salesforce Example</name>
-  <description>Twitter mentions addes as Salesforce contacts</description>
+  <description>Twitter mentions added as Salesforce contacts</description>
   <packaging>jar</packaging>
 
   <dependencyManagement>
@@ -81,11 +81,6 @@
     <dependency>
       <groupId>org.foo</groupId>
       <artifactId>salesforce-upsert-contact-connector</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.foo</groupId>
-      <artifactId>foo-connector</artifactId>
       <version>${project.version}</version>
     </dependency>
 

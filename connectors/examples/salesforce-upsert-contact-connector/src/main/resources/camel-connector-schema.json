@@ -19,7 +19,7 @@
     "loginConfig": {"kind":"property","group":"security","label":"security","required":"false","type":"object","javaType":"org.apache.camel.component.salesforce.SalesforceLoginConfig","deprecated":"false","secret":"false","description":"To use the shared SalesforceLoginConfig as login configuration"}
   },
   "properties": {
-    "sObjectIdName": {"kind":"parameter","group":"common","type":"string","javaType":"java.lang.String","deprecated":"false","secret":"false","description":"SObject external ID field name"},
+    "sObjectIdName": {"kind":"parameter","group":"common","type":"string","javaType":"java.lang.String","deprecated":"false","secret":"false","description":"SObject external ID field name","required":"true"},
     "sObjectIdValue": {"kind":"parameter","group":"common","type":"string","javaType":"java.lang.String","deprecated":"false","secret":"false","description":"SObject external ID field value"}
   }
 }
