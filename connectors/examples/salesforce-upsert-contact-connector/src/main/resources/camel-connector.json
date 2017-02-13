@@ -16,5 +16,8 @@
   "endpointValues" : {
     "operationName": "upsertSObject"
   },
+  "endpointOverrides": {
+    "sObjectIdName": {"required":"true"}
+  },
   "endpointOptions": [ "sObjectIdName", "sObjectIdValue" ]
 }

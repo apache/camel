@@ -25,6 +25,9 @@ import org.springframework.stereotype.Component;
 import twitter4j.Status;
 import twitter4j.User;
 
+/**
+ * To transform a tweet {@link Status} object into a salesforce {@link Contact} object.
+ */
 @Component
 public class TweetToContactMapper implements Processor {
 
