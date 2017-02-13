@@ -96,7 +96,8 @@ public final class ModelHelper {
         // Add additional namespaces to the document root element
         Element documentElement = dom.getDocumentElement();
         for (String nsPrefix : namespaces.keySet()) {
-            documentElement.setAttribute("xmlns:" + nsPrefix, namespaces.get(nsPrefix));
+            String prefix = nsPrefix.equals("xmlns") ? nsPrefix : "xmlns:" + nsPrefix;
+            documentElement.setAttribute(prefix, namespaces.get(nsPrefix));
         }
 
         // We invoke the type converter directly because we need to pass some custom XML output options
