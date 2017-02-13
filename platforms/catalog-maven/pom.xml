@@ -55,12 +55,18 @@
       <version>${ivy-version}</version>
     </dependency>
 
+    <!-- testing -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-    
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-catalog-provider-springboot</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <!-- logging -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
