@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.azure-blob.enabled",
+      "description": "Enable azure-blob component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}
