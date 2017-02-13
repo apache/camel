@@ -660,6 +660,12 @@
           <version>${spring-boot-version}</version>
           <scope>provided</scope>
         </dependency>
+        <!-- xmltokenizer using woodstox -->
+        <dependency>
+          <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>woodstox-core-asl</artifactId>
+          <scope>test</scope>
+        </dependency>
       </dependencies>
       <build>
         <plugins>
@@ -695,7 +701,7 @@
               <FOO_SERVICE_HOST>myserver</FOO_SERVICE_HOST>
               <FOO_SERVICE_PORT>8081</FOO_SERVICE_PORT>
               </environmentVariables>
-              <argLine>--add-modules java.xml.bind --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+              <argLine>--add-modules java.xml.bind,java.xml.ws --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED</argLine>
             </configuration>
             <dependencies>
               <dependency>
