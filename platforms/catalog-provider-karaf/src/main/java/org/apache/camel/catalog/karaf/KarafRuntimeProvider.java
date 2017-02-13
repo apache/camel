@@ -58,6 +58,16 @@ public class KarafRuntimeProvider implements RuntimeProvider {
     }
 
     @Override
+    public String getProviderGroupId() {
+        return "org.apache.camel";
+    }
+
+    @Override
+    public String getProviderArtifactId() {
+        return "camel-catalog-provider-karaf";
+    }
+
+    @Override
     public String getComponentJSonSchemaDirectory() {
         return COMPONENT_DIR;
     }

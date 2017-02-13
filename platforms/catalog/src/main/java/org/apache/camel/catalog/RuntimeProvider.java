@@ -41,6 +41,16 @@ public interface RuntimeProvider {
     String getProviderName();
 
     /**
+     * Maven group id of the runtime provider JAR dependency.
+     */
+    String getProviderGroupId();
+
+    /**
+     * Maven artifact id of the runtime provider JAR dependency.
+     */
+    String getProviderArtifactId();
+
+    /**
      * Gets the directory where the component json files are stored in the catalog JAR file
      */
     String getComponentJSonSchemaDirectory();

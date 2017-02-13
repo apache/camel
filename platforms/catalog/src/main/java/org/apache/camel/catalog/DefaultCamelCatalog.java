@@ -39,7 +39,6 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import javax.print.attribute.URISyntax;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -220,6 +219,16 @@ public class DefaultCamelCatalog implements CamelCatalog {
     @Override
     public String getLoadedVersion() {
         return versionManager.getLoadedVersion();
+    }
+
+    @Override
+    public String getRuntimeProviderLoadedVersion() {
+        return versionManager.getRuntimeProviderLoadedVersion();
+    }
+
+    @Override
+    public boolean loadRuntimeProviderVersion(String groupId, String artifactId, String version) {
+        return versionManager.loadRuntimeProviderVersion(groupId, artifactId, version);
     }
 
     @Override
