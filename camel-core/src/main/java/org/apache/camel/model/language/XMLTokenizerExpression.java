@@ -28,7 +28,7 @@ import org.apache.camel.language.tokenizer.XMLTokenizeLanguage;
 import org.apache.camel.spi.Metadata;
 
 /**
- * For expressions and predicates using a body or header tokenizer
+ * For expressions and predicates using a body or header XML tokenizer
  *
  * @see XMLTokenizeLanguage
  */
