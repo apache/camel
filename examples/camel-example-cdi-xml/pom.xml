@@ -31,6 +31,11 @@
   <description>CDI and Camel XML example</description>
   <packaging>jar</packaging>
 
+  <properties>
+    <category>Beginner</category>
+    <title>CDI Camel XML</title>
+  </properties>
+
   <dependencies>
 
     <!-- CDI API -->

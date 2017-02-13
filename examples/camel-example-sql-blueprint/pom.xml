@@ -32,6 +32,9 @@
   <description>An example for showing Camel using SQL component with blueprint</description>
 
   <properties>
+    <category>OSGi</category>
+    <title>SQL Blueprint</title>
+
     <camel.osgi.export.pkg>org.apache.camel.example.sql.*</camel.osgi.export.pkg>
     <!-- dynamic import for the Derby JDBC driver -->
     <camel.osgi.dynamic>*</camel.osgi.dynamic>

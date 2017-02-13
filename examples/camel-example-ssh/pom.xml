@@ -32,6 +32,9 @@
   <description>A simple SSH example which creates a bundle that can be dropped into any OSGi container</description>
 
   <properties>
+    <category>OSGi</category>
+    <title>SSH</title>
+
     <camel.osgi.export.pkg/>
   </properties>
 

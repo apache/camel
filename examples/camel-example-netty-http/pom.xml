@@ -32,6 +32,9 @@
   <description>An example showing how to use a shared Netty HTTP server with multiple Camel applications in OSGi container</description>
 
   <properties>
+    <category>OSGi</category>
+    <title>Netty HTTP</title>
+
     <camel.osgi.export.pkg>org.apache.camel.example.netty.*</camel.osgi.export.pkg>
   </properties>
 

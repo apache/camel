@@ -31,6 +31,11 @@
   <name>Camel :: Example :: Spring :: Web Services</name>
   <description>An example showing how to work with Camel and Spring Web Services</description>
 
+  <properties>
+    <category>WebService</category>
+    <title>Spring WebService</title>
+  </properties>
+
   <dependencies>
 
     <dependency>

@@ -34,6 +34,8 @@
   </description>
 
   <properties>
+    <category>EIP</category>
+
     <camel.osgi.export.pkg>org.apache.camel.example.client.*</camel.osgi.export.pkg>
     <camel.osgi.import.additional>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool
     </camel.osgi.import.additional>

@@ -32,6 +32,9 @@
   <packaging>war</packaging>
 
   <properties>
+    <category>Rest</category>
+    <title>Swagger XML</title>
+
     <swagger-ui.version>2.2.6</swagger-ui.version>
     <swagger.url>https://github.com/swagger-api/swagger-ui/archive</swagger.url>
     <destDir>target/swagger-ui</destDir>

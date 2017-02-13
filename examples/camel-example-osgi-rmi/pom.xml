@@ -32,6 +32,9 @@
   <description>A OSGi example which exposes a RMI service.</description>
 
   <properties>
+    <category>OSGi</category>
+    <title>OSGi RMI</title>
+
     <camel.osgi.export.pkg>org.apache.camel.example.osgi.*</camel.osgi.export.pkg>
   </properties>
 

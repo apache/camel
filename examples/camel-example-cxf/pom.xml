@@ -31,6 +31,9 @@
   <description>An example which demonstrates the use of the Camel CXF component</description>
 
   <properties>
+    <category>WebService</category>
+    <title>CXF</title>
+
     <jetty9-version>${jetty92-version}</jetty9-version>
   </properties>
 

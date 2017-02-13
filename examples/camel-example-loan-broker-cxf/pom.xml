@@ -32,6 +32,9 @@
   <description>An example that shows the EIP's loan broker demo</description>
 
   <properties>
+    <category>EIP</category>
+    <title>Loan Broker WebService</title>
+
     <camel.osgi.export.pkg>
       org.apache.camel.loanbroker.*
     </camel.osgi.export.pkg>

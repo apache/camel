@@ -31,7 +31,12 @@
   <name>Camel :: Example :: Loan-Broker :: JMS</name>
   <description>An example that shows the EIP's loan broker demo using JMS</description>
 
-   <dependencies>
+  <properties>
+    <category>EIP</category>
+    <title>Loan Broker JMS</title>
+  </properties>
+
+  <dependencies>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
