@@ -83,6 +83,7 @@
     <module>camel-atom-starter</module>
     <module>camel-avro-starter</module>
     <module>camel-aws-starter</module>
+    <module>camel-azure-starter</module>
     <module>camel-bam-starter</module>
     <module>camel-barcode-starter</module>
     <module>camel-base64-starter</module>
