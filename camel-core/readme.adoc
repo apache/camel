@@ -155,7 +155,7 @@ Number of Languages: 10
 
 | link:src/main/docs/tokenize-language.adoc[Tokenize] (camel-core) | 2.0 | For expressions and predicates using a body or header tokenizer
 
-| link:src/main/docs/xtokenize-language.adoc[XML Tokenize] (camel-core) | 2.14 | For expressions and predicates using a body or header tokenizer
+| link:src/main/docs/xtokenize-language.adoc[XML Tokenize] (camel-core) | 2.14 | For expressions and predicates using a body or header XML tokenizer
 
 | link:src/main/docs/xpath-language.adoc[XPath] (camel-core) | 1.1 | For XPath expressions and predicates
 |=======================================================================
