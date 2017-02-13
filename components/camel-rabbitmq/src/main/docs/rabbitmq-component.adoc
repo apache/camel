@@ -89,7 +89,7 @@ The RabbitMQ component supports 60 endpoint options which are listed below:
 | publisherAcknowledgements | producer | false | boolean | When true the message will be published with publisher acknowledgements turned on
 | publisherAcknowledgementsTimeout | producer |  | long | The amount of time in milliseconds to wait for a basic.ack response from RabbitMQ server
 | addresses | advanced |  | Address[] | If this option is set camel-rabbitmq will try to create connection based on the setting of option addresses. The addresses value is a string which looks like server1:12345 server2:12345
-| args | advanced |  | Map | Specify arguments for configuring the different RabbitMQ concepts a different prefix is required for each: Queue: arg.queue. Exchange: arg.exchange. Binding: arg.binding. For example to declare a queue with message ttl argument: http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000
+| args | advanced |  | Map | Specify arguments for configuring the different RabbitMQ concepts a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. For example to declare a queue with message ttl argument: http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000
 | automaticRecoveryEnabled | advanced |  | Boolean | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when connection shutdown is not initiated by the application)
 | bindingArgs | advanced |  | Map | Key/value args for configuring the queue binding parameters when declare=true
 | clientProperties | advanced |  | Map | Connection client properties (client info used in negotiating with the server)
