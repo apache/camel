@@ -93,9 +93,10 @@ All examples have been sort by type/category
 ##### Spring
 
 * [camel-example-spring](camel-example-spring/README.md)
-* [camel-example-spring-boot](camel-example-spring-boot/README.md)
+* [camel-example-spring-boot](camel-example-spring-boot/README.adoc)
+* [camel-example-spring-boot-live-reload](camel-example-spring-boot-live-reload/readme.adoc)
 * [camel-example-spring-boot-metrics](camel-example-spring-boot-metrics/README.md)
-* [camel-example-spring-boot-rest-sql](camel-example-spring-boot-rest-sql/README.md)
+* [camel-example-spring-boot-rest-jpa](camel-example-spring-boot-rest-jpa/README.md)
 * [camel-example-spring-javaconfig](camel-example-spring-javaconfig/README.md)
 * [camel-example-spring-jms](camel-example-spring-jms/README.md)
 * [camel-example-spring-security](camel-example-spring-security/README.md)

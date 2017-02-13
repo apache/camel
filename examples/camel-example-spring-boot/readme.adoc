@@ -1,4 +1,4 @@
-= Spring Boot Camel Sample
+= Camel Example Spring Boot
 
 This example shows how to work with a simple Apache Camel application using Spring Boot.
 
