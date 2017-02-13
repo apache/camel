@@ -143,17 +143,22 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private boolean mandatory;
     @UriParam(label = "producer")
     private boolean immediate;
-    @UriParam(label = "advanced")
-    private Map<String, Object> exchangeArgs = new HashMap<>();
-    @UriParam(label = "advanced")
-    private Map<String, Object> queueArgs = new HashMap<>();
-    @UriParam(label = "advanced")
-    private Map<String, Object> bindingArgs = new HashMap<>();
     @UriParam(label = "advanced", prefix = "arg.", multiValue = true)
     private Map<String, Object> args;
     @UriParam(label = "advanced")
+    @Deprecated
+    private Map<String, Object> exchangeArgs = new HashMap<>();
+    @UriParam(label = "advanced")
+    @Deprecated
+    private Map<String, Object> queueArgs = new HashMap<>();
+    @UriParam(label = "advanced")
+    @Deprecated
+    private Map<String, Object> bindingArgs = new HashMap<>();
+    @UriParam(label = "advanced")
+    @Deprecated
     private ArgsConfigurer queueArgsConfigurer;
     @UriParam(label = "advanced")
+    @Deprecated
     private ArgsConfigurer exchangeArgsConfigurer;
     @UriParam(label = "advanced")
     private long requestTimeout = 20000;
@@ -765,44 +770,11 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     /**
-     * Key/value args for configuring the exchange parameters when declare=true
-     */
-    public void setExchangeArgs(Map<String, Object> exchangeArgs) {
-        this.exchangeArgs = exchangeArgs;
-    }
-
-    public Map<String, Object> getExchangeArgs() {
-        return exchangeArgs;
-    }
-
-    /**
-     * Key/value args for configuring the queue parameters when declare=true
-     */
-    public void setQueueArgs(Map<String, Object> queueArgs) {
-        this.queueArgs = queueArgs;
-    }
-
-    public Map<String, Object> getQueueArgs() {
-        return queueArgs;
-    }
-
-    /**
-     * Key/value args for configuring the queue binding parameters when declare=true
-     */
-    public void setBindingArgs(Map<String, Object> bindingArgs) {
-        this.bindingArgs = bindingArgs;
-    }
-
-    public Map<String, Object> getBindingArgs() {
-        return bindingArgs;
-    }
-
-    /**
      * Specify arguments for configuring the different RabbitMQ concepts, a different prefix is
      * required for each:
      * <ul>
-     *     <li>Queue: arg.queue.</li>
      *     <li>Exchange: arg.exchange.</li>
+     *     <li>Queue: arg.queue.</li>
      *     <li>Binding: arg.binding.</li>
      * </ul>
      * For example to declare a queue with message ttl argument:
@@ -818,12 +790,54 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         return args;
     }
 
+    /**
+     * Key/value args for configuring the exchange parameters when declare=true
+     *
+     * @Deprecated Use args instead e.g arg.exchange.x-message-ttl=1000
+     */
+    @Deprecated
+    public void setExchangeArgs(Map<String, Object> exchangeArgs) {
+        this.exchangeArgs = exchangeArgs;
+    }
+
+    public Map<String, Object> getExchangeArgs() {
+        return exchangeArgs;
+    }
+
+    /**
+     * Key/value args for configuring the queue parameters when declare=true
+     *
+     * @Deprecated Use args instead e.g arg.queue.x-message-ttl=1000
+     */
+    public void setQueueArgs(Map<String, Object> queueArgs) {
+        this.queueArgs = queueArgs;
+    }
+
+    public Map<String, Object> getQueueArgs() {
+        return queueArgs;
+    }
+
+    /**
+     * Key/value args for configuring the queue binding parameters when declare=true
+     *
+     * @Deprecated Use args instead e.g arg.binding.foo=bar
+     */
+    public void setBindingArgs(Map<String, Object> bindingArgs) {
+        this.bindingArgs = bindingArgs;
+    }
+
+    public Map<String, Object> getBindingArgs() {
+        return bindingArgs;
+    }
+
     public ArgsConfigurer getQueueArgsConfigurer() {
         return queueArgsConfigurer;
     }
 
     /**
      * Set the configurer for setting the queue args in Channel.queueDeclare
+     *
+     * @Deprecated Use args instead e.g arg.queue.x-message-ttl=1000
      */
     public void setQueueArgsConfigurer(ArgsConfigurer queueArgsConfigurer) {
         this.queueArgsConfigurer = queueArgsConfigurer;
@@ -835,6 +849,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     /**
      * Set the configurer for setting the exchange args in Channel.exchangeDeclare
+     *
+     * @Deprecated Use args instead e.g arg.exchange.x-message-ttl=1000
      */
     public void setExchangeArgsConfigurer(ArgsConfigurer exchangeArgsConfigurer) {
         this.exchangeArgsConfigurer = exchangeArgsConfigurer;
