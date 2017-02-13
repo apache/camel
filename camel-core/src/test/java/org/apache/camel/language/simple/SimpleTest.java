@@ -40,10 +40,14 @@ import org.apache.camel.language.bean.RuntimeBeanExpressionException;
 import org.apache.camel.language.simple.types.SimpleIllegalSyntaxException;
 import org.apache.camel.spi.Language;
 
+import static org.apache.camel.TestSupport.getJavaMajorVersion;
 /**
  * @version
  */
 public class SimpleTest extends LanguageTestSupport {
+
+    private static final String JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG = "Index: 2, Size: 2";
+    private static final String INDEX_OUT_OF_BOUNDS_ERROR_MSG = "Index 2 out-of-bounds for length 2";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -354,7 +358,12 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            assertEquals("Index: 2, Size: 2", cause.getMessage());
+            if (getJavaMajorVersion() <= 8) {
+                assertEquals(JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());    
+            } else {
+                assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
+            }
+            
         }
         assertExpression("${exchangeProperty.unknown[cool]}", null);
     }
@@ -372,7 +381,11 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            assertEquals("Index: 2, Size: 2", cause.getMessage());
+            if (getJavaMajorVersion() <= 8) {
+                assertEquals(JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
+            } else {
+                assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
+            }
         }
         assertExpression("${property.unknown[cool]}", null);
     }
@@ -781,7 +794,11 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            assertEquals("Index: 2, Size: 2", cause.getMessage());
+            if (getJavaMajorVersion() <= 8) {
+                assertEquals(JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
+            } else {
+                assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
+            }
         }
         assertExpression("${header.unknown[cool]}", null);
     }
@@ -799,7 +816,11 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (Exception e) {
             IndexOutOfBoundsException cause = assertIsInstanceOf(IndexOutOfBoundsException.class, e.getCause());
-            assertEquals("Index: 2, Size: 2", cause.getMessage());
+            if (getJavaMajorVersion() <= 8) {
+                assertEquals(JAVA8_INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
+            } else {
+                assertEquals(INDEX_OUT_OF_BOUNDS_ERROR_MSG, cause.getMessage());
+            }
         }
         assertExpression("${header.unknown[cool]}", null);
     }

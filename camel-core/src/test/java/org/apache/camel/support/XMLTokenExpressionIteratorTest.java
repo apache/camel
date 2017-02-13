@@ -28,6 +28,8 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import static org.apache.camel.TestSupport.getJavaMajorVersion;
+
 
 /**
  *
@@ -284,9 +286,9 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
     }
 
     public void testExtractChildInjected() throws Exception {
-        String[] result = RESULTS_CHILD;
-        if (isJavaVersion("1.8")) {
-            result = RESULTS_CHILD_JAVA8;
+        String[] result = RESULTS_CHILD_JAVA8;
+        if (isJava7OrLower()) {
+            result = RESULTS_CHILD;
         }
         invokeAndVerify("//C:child", 'i', new ByteArrayInputStream(TEST_BODY), result);
     }
@@ -296,9 +298,9 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
     }
 
     public void testExtractChildNSMixedInjected() throws Exception {
-        String[] result =  RESULTS_CHILD_MIXED;
-        if (isJavaVersion("1.8")) {
-            result =  RESULTS_CHILD_MIXED_JAVA8;
+        String[] result = RESULTS_CHILD_MIXED_JAVA8;
+        if (isJava7OrLower()) {
+            result = RESULTS_CHILD_MIXED;
         }
         invokeAndVerify("//*:child", 'i', new ByteArrayInputStream(TEST_BODY_NS_MIXED), result);
     }
@@ -308,9 +310,9 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
     }
 
     public void testExtractCxxxd() throws Exception {
-        String[] result =  RESULTS_CHILD;
-        if (isJavaVersion("1.8")) {
-            result =  RESULTS_CHILD_JAVA8;
+        String[] result = RESULTS_CHILD_JAVA8;
+        if (isJava7OrLower()) {
+            result = RESULTS_CHILD;
         }
         invokeAndVerify("//C:c*d", 'i', new ByteArrayInputStream(TEST_BODY), result);
     }
@@ -324,9 +326,9 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
     }
 
     public void testExtractSomeUnqualifiedChildInjected() throws Exception {
-        String[] result = RESULTS_CHILD_NO_NS_MIXED;
-        if (isJavaVersion("1.8"))  {
-            result = RESULTS_CHILD_NO_NS_MIXED_JAVA8;
+        String[] result = RESULTS_CHILD_NO_NS_MIXED_JAVA8;
+        if (isJava7OrLower())  {
+            result = RESULTS_CHILD_NO_NS_MIXED;
         }
         invokeAndVerify("//child", 'i', new ByteArrayInputStream(TEST_BODY_NO_NS_MIXED), result);
     }
@@ -338,18 +340,18 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
 
     public void testExtractSomeQualifiedChildInjected() throws Exception {
         nsmap.put("", "urn:c");
-        String[] result = RESULTS_CHILD_NS_MIXED;
-        if (isJavaVersion("1.8")) {
-            result = RESULTS_CHILD_NS_MIXED_JAVA8;
+        String[] result = RESULTS_CHILD_NS_MIXED_JAVA8;
+        if (isJava7OrLower()) {
+            result = RESULTS_CHILD_NS_MIXED;
         }
         invokeAndVerify("//child", 'i', new ByteArrayInputStream(TEST_BODY_NO_NS_MIXED), result);
     }
 
     public void testExtractWithNullNamespaceMap() throws Exception {
         nsmap = null;
-        String[] result = RESULTS_CHILD_NO_NS_MIXED;
-        if (isJavaVersion("1.8")) {
-            result = RESULTS_CHILD_NO_NS_MIXED_JAVA8;
+        String[] result = RESULTS_CHILD_NO_NS_MIXED_JAVA8;
+        if (isJava7OrLower()) {
+            result = RESULTS_CHILD_NO_NS_MIXED;
         }
         invokeAndVerify("//child", 'i', new ByteArrayInputStream(TEST_BODY_NO_NS_MIXED), result);
     }
@@ -439,11 +441,9 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
         for (int i = 0; i < expected.length; i++) {
             assertEquals("mismatch [" + i + "]", expected[i], results.get(i));
         }
-
     }
-    
-    public static boolean isJavaVersion(String version) {
-        String javaVersion = System.getProperty("java.version");
-        return javaVersion.contains(version.toLowerCase(Locale.ENGLISH));
+
+    private boolean isJava7OrLower() {
+        return getJavaMajorVersion() <= 7;
     }
 }
