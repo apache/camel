@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 218
+Number of Components: 219
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -73,6 +73,9 @@ Number of Components: 218
 
 | link:camel-aws/src/main/docs/aws-sdb-component.adoc[AWS SimpleDB] (camel-aws) +
 `aws-sdb:domainName` | 2.9 | The aws-sdb component is for storing and retrieving data from/to Amazon's SDB service.
+
+| link:camel-azure/src/main/docs/azure-blob-component.adoc[Azure Storage Blob Service] (camel-azure) +
+`azure-blob:containerOrBlobUri` |  | The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.
 
 | link:../camel-core/src/main/docs/bean-component.adoc[Bean] (camel-core) +
 `bean:beanName` | 1.0 | The bean component is for invoking Java beans from Camel.
