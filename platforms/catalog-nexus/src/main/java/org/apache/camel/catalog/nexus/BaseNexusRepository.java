@@ -19,6 +19,7 @@ package org.apache.camel.catalog.nexus;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -49,7 +50,8 @@ public abstract class BaseNexusRepository {
     private AtomicBoolean started = new AtomicBoolean();
 
     private CamelCatalog camelCatalog;
-    private Long delay = 60L; // use 60 second delay between index runs
+    private int initialDelay = 10;
+    private int delay = 60;
     private String nexusUrl = "http://nexus/service/local/data_index";
     private String classifier;
 
@@ -77,14 +79,25 @@ public abstract class BaseNexusRepository {
         this.nexusUrl = nexusUrl;
     }
 
-    public Long getDelay() {
+    public int getInitialDelay() {
+        return initialDelay;
+    }
+
+    /**
+     * Delay in seconds before the initial (first) scan.
+     */
+    public void setInitialDelay(int initialDelay) {
+        this.initialDelay = initialDelay;
+    }
+
+    public int getDelay() {
         return delay;
     }
 
     /**
      * Delay in seconds between scanning.
      */
-    public void setDelay(Long delay) {
+    public void setDelay(int delay) {
         this.delay = delay;
     }
 
@@ -107,19 +120,18 @@ public abstract class BaseNexusRepository {
             throw new IllegalArgumentException("CamelCatalog must be configured");
         }
 
-        if (started.compareAndSet(false, true)) {
-            log.info("NexusRepository is already started");
-            return;
-        }
-
-        log.info("Starting NexusRepository");
-
         if (nexusUrl == null || nexusUrl.isEmpty()) {
             log.warn("Nexus service not found. Indexing Nexus is not enabled!");
             return;
         }
 
-        log.info("Indexing Nexus every {} seconds interval", delay);
+        if (!started.compareAndSet(false, true)) {
+            log.info("NexusRepository is already started");
+            return;
+        }
+
+        log.info("Starting NexusRepository to scan every {} seconds", delay);
+
         executorService = Executors.newScheduledThreadPool(1);
 
         executorService.scheduleWithFixedDelay(() -> {
@@ -136,7 +148,7 @@ public abstract class BaseNexusRepository {
             } finally {
                 log.debug("Indexing Nexus {} +++ end +++", nexusUrl);
             }
-        }, 10, delay, TimeUnit.SECONDS);
+        }, initialDelay, delay, TimeUnit.SECONDS);
     }
 
     /**
@@ -158,13 +170,16 @@ public abstract class BaseNexusRepository {
      */
     abstract void onNewArtifacts(Set<NexusArtifactDto> newArtifacts);
 
+    protected URL createNexusUrl() throws MalformedURLException {
+        String query = nexusUrl + "?q=" + getClassifier();
+        return new URL(query);
+    }
+
     /**
      * Runs the task to index nexus for new artifacts
      */
     protected void indexNexus() throws Exception {
         // must have q parameter so use component to find all component
-        String query = nexusUrl + "?q=" + getClassifier();
-        URL url = new URL(query);
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
@@ -173,24 +188,23 @@ public abstract class BaseNexusRepository {
 
         DocumentBuilder documentBuilder = factory.newDocumentBuilder();
 
+        URL url = createNexusUrl();
         InputStream is = url.openStream();
         try {
             Document dom = documentBuilder.parse(is);
 
             XPathFactory xpFactory = XPathFactory.newInstance();
             XPath exp = xpFactory.newXPath();
-            // TODO: we dont have classifier for components
-            NodeList list = (NodeList) exp.evaluate("//classifier[text() = '" + getClassifier() + "']", dom, XPathConstants.NODESET);
+            NodeList list = (NodeList) exp.evaluate("//data/artifact", dom, XPathConstants.NODESET);
 
             Set<NexusArtifactDto> newArtifacts = new LinkedHashSet<>();
             for (int i = 0; i < list.getLength(); i++) {
                 Node node = list.item(i);
-                Node parent = node.getParentNode();
 
-                String g = getNodeText(parent.getChildNodes(), "groupId");
-                String a = getNodeText(parent.getChildNodes(), "artifactId");
-                String v = getNodeText(parent.getChildNodes(), "version");
-                String l = getNodeText(parent.getChildNodes(), "artifactLink");
+                String g = getNodeText(node.getChildNodes(), "groupId");
+                String a = getNodeText(node.getChildNodes(), "artifactId");
+                String v = getNodeText(node.getChildNodes(), "version");
+                String l = getNodeText(node.getChildNodes(), "artifactLink");
 
                 if (g != null & a != null & v != null & l != null) {
                     NexusArtifactDto dto = new NexusArtifactDto();
