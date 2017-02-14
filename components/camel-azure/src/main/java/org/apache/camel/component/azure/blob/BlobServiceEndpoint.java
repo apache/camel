@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
              title = "Azure Storage Blob Service", 
              syntax = "azure-blob:containerOrBlobUri", 
              consumerClass = BlobServiceConsumer.class,
-             label = "cloud, blob")
+             label = "cloud,database,nosql")
 public class BlobServiceEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(BlobServiceEndpoint.class);
@@ -45,7 +45,6 @@ public class BlobServiceEndpoint extends DefaultEndpoint {
     private String containerOrBlobUri; // to support component docs
     @UriParam
     private BlobServiceConfiguration configuration;
-    
 
     public BlobServiceEndpoint(String uri, Component comp, BlobServiceConfiguration configuration) {
         super(uri, comp);
@@ -77,11 +76,6 @@ public class BlobServiceEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    @Override
-    public void doStart() throws Exception {
-        super.doStart();
-    }
-
     public BlobServiceConfiguration getConfiguration() {
         return configuration;
     }
@@ -89,7 +83,5 @@ public class BlobServiceEndpoint extends DefaultEndpoint {
     public void setConfiguration(BlobServiceConfiguration configuration) {
         this.configuration = configuration;
     }
-    
-
 
 }

@@ -54,7 +54,6 @@ public class BlobServiceProducerSpringTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
         
         assertResultExchange(result.getExchanges().get(0));
-        
     }
     
     @Test
@@ -71,8 +70,8 @@ public class BlobServiceProducerSpringTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
         
         assertResultExchange(result.getExchanges().get(0));
-        
     }
+
     @Test
     @Ignore
     public void testGetBlockBlob() throws Exception {
@@ -87,7 +86,6 @@ public class BlobServiceProducerSpringTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
         
         assertResultExchange(result.getExchanges().get(0));
-        
     }
     
     @Test
@@ -104,7 +102,6 @@ public class BlobServiceProducerSpringTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
         
         assertResultExchange(result.getExchanges().get(0));
-        
     }
     
     @Test
@@ -122,7 +119,6 @@ public class BlobServiceProducerSpringTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
         
         assertResultExchange(result.getExchanges().get(0));
-        
     }
     
     private void assertResultExchange(Exchange resultExchange) {

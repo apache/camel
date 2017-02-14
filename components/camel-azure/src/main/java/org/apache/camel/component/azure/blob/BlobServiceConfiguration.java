@@ -223,7 +223,6 @@ public class BlobServiceConfiguration extends AbstractConfiguration {
      * Blobs can be public for reading their content, if this property is enabled
      * then the credentials do not have to be set
      */
-    
     public void setPublicForRead(boolean publicForRead) {
         this.publicForRead = publicForRead;
     }

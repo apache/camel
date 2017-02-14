@@ -26,8 +26,8 @@ import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-
 public class BlobServiceUtilTest extends CamelTestSupport {
+
     @Test
     public void testPrepareUri() throws Exception {
         registerCredentials();
@@ -39,6 +39,7 @@ public class BlobServiceUtilTest extends CamelTestSupport {
             BlobServiceUtil.prepareStorageBlobUri(endpoint.getConfiguration());
         assertEquals("https://camelazure.blob.core.windows.net/container/blob", uri.toString());
     }
+
     private void registerCredentials() {
         StorageCredentials creds = new StorageCredentialsAccountAndKey("camelazure", 
                                                                        Base64.encode("key".getBytes()));

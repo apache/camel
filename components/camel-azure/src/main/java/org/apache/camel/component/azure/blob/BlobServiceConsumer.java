@@ -60,10 +60,10 @@ public class BlobServiceConsumer extends ScheduledPollConsumer {
     protected BlobServiceConfiguration getConfiguration() {
         return getEndpoint().getConfiguration();
     }
+
     @Override
     public BlobServiceEndpoint getEndpoint() {
         return (BlobServiceEndpoint) super.getEndpoint();
     }
 
-    
 }
