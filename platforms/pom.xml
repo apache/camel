@@ -35,6 +35,8 @@
     <module>commands</module>
     <module>karaf</module>
     <module>spring-boot</module>
+    <!-- dummy used for testing catalog -->
+    <module>dummy-component</module>
     <!-- run catalog last -->
     <module>catalog</module>
     <module>catalog-provider-karaf</module>
