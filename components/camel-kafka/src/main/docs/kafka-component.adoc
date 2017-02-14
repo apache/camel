@@ -26,6 +26,17 @@ From Camel 2.17 onwards Scala is no longer used, as we use the kafka java client
 [source,java]
 ---------------------------
 kafka:server:port[?options]
+
+OR
+
+kafka:server:port/topicName[?options]
+
+OR
+
+kafka:server/topicName[?options] 
+
+For the option above default port 9092 is used in the URI
+
 ---------------------------
 
 
