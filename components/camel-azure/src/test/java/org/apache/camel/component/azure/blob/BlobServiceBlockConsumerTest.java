@@ -34,7 +34,6 @@ import org.apache.camel.util.IOHelper;
 import org.junit.Ignore;
 import org.junit.Test;
 
-
 public class BlobServiceBlockConsumerTest extends CamelTestSupport {
     @EndpointInject(uri = "direct:start")
     ProducerTemplate templateStart;

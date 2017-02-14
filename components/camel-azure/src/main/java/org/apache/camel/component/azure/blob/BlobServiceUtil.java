@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,11 +37,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class BlobServiceUtil {
+
     private static final Logger LOG = LoggerFactory.getLogger(BlobServiceUtil.class);
-    
+
     private BlobServiceUtil() {
     }
-    public static void getBlob(Exchange exchange, BlobServiceConfiguration cfg) 
+
+    public static void getBlob(Exchange exchange, BlobServiceConfiguration cfg)
         throws Exception {
         switch (cfg.getBlobType()) {
         case blockblob:
@@ -52,27 +54,29 @@ public final class BlobServiceUtil {
             break;
         case pageblob:
             getPageBlob(exchange, cfg);
-            break;    
+            break;
         default:
             throw new IllegalArgumentException("Unsupported blob type");
         }
     }
-    
-    private static void getBlockBlob(Exchange exchange, BlobServiceConfiguration cfg) 
+
+    private static void getBlockBlob(Exchange exchange, BlobServiceConfiguration cfg)
         throws Exception {
         CloudBlockBlob client = createBlockBlobClient(cfg, false);
         doGetBlob(client, exchange, cfg);
     }
+
     private static void getAppendBlob(Exchange exchange, BlobServiceConfiguration cfg) throws Exception {
         CloudAppendBlob client = createAppendBlobClient(cfg, false);
         doGetBlob(client, exchange, cfg);
     }
+
     private static void getPageBlob(Exchange exchange, BlobServiceConfiguration cfg) throws Exception {
         CloudPageBlob client = createPageBlobClient(cfg, false);
         doGetBlob(client, exchange, cfg);
     }
-    
-    private static void doGetBlob(CloudBlob client, Exchange exchange, BlobServiceConfiguration cfg) 
+
+    private static void doGetBlob(CloudBlob client, Exchange exchange, BlobServiceConfiguration cfg)
         throws Exception {
         BlobServiceUtil.configureCloudBlobForRead(client, cfg);
         BlobServiceRequestOptions opts = getRequestOptions(exchange);
@@ -94,7 +98,7 @@ public final class BlobServiceUtil {
                 String name = cfg.getBlobName();
                 File file = new File(fileDir, name + ".blob");
                 ExchangeUtil.getMessageForResponse(exchange).setBody(file);
-                os = new FileOutputStream(file);  
+                os = new FileOutputStream(file);
             }
         }
         if (os == null) {
@@ -102,22 +106,24 @@ public final class BlobServiceUtil {
         }
         try {
             client.downloadRange(blobOffset, blobDataLength, os,
-                                 opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
+                opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
         } finally {
             if (cfg.isCloseStreamAfterRead()) {
                 os.close();
             }
         }
     }
-    public static CloudBlobContainer createBlobContainerClient(BlobServiceConfiguration cfg) 
+
+    public static CloudBlobContainer createBlobContainerClient(BlobServiceConfiguration cfg)
         throws Exception {
         URI uri = prepareStorageBlobUri(cfg, false);
         StorageCredentials creds = getAccountCredentials(cfg, false);
         return new CloudBlobContainer(uri, creds);
     }
-    public static CloudBlockBlob createBlockBlobClient(BlobServiceConfiguration cfg, boolean isWrite) 
+
+    public static CloudBlockBlob createBlockBlobClient(BlobServiceConfiguration cfg, boolean isWrite)
         throws Exception {
-        CloudBlockBlob client = (CloudBlockBlob)getConfiguredClient(cfg, BlobType.blockblob, isWrite);
+        CloudBlockBlob client = (CloudBlockBlob) getConfiguredClient(cfg, BlobType.blockblob, isWrite);
         if (client == null) {
             URI uri = prepareStorageBlobUri(cfg);
             StorageCredentials creds = getAccountCredentials(cfg, isWrite);
@@ -125,9 +131,10 @@ public final class BlobServiceUtil {
         }
         return client;
     }
+
     public static CloudAppendBlob createAppendBlobClient(BlobServiceConfiguration cfg, boolean isWrite)
         throws Exception {
-        CloudAppendBlob client = (CloudAppendBlob)getConfiguredClient(cfg, BlobType.appendblob, isWrite);
+        CloudAppendBlob client = (CloudAppendBlob) getConfiguredClient(cfg, BlobType.appendblob, isWrite);
         if (client == null) {
             URI uri = prepareStorageBlobUri(cfg);
             StorageCredentials creds = getAccountCredentials(cfg, isWrite);
@@ -135,10 +142,10 @@ public final class BlobServiceUtil {
         }
         return client;
     }
-    
+
     public static CloudPageBlob createPageBlobClient(BlobServiceConfiguration cfg, boolean isWrite)
         throws Exception {
-        CloudPageBlob client = (CloudPageBlob)getConfiguredClient(cfg, BlobType.pageblob, isWrite);
+        CloudPageBlob client = (CloudPageBlob) getConfiguredClient(cfg, BlobType.pageblob, isWrite);
         if (client == null) {
             URI uri = prepareStorageBlobUri(cfg);
             StorageCredentials creds = getAccountCredentials(cfg, isWrite);
@@ -146,7 +153,7 @@ public final class BlobServiceUtil {
         }
         return client;
     }
-    
+
     public static CloudBlob getConfiguredClient(BlobServiceConfiguration cfg,
                                                 BlobType blobType,
                                                 boolean isWrite) {
@@ -154,11 +161,11 @@ public final class BlobServiceUtil {
         if (client != null) {
             Class<?> expectedCls = null;
             if (blobType == BlobType.blockblob) {
-                expectedCls = CloudBlockBlob.class; 
+                expectedCls = CloudBlockBlob.class;
             } else if (blobType == BlobType.appendblob) {
-                expectedCls = CloudAppendBlob.class; 
+                expectedCls = CloudAppendBlob.class;
             } else if (blobType == BlobType.pageblob) {
-                expectedCls = CloudPageBlob.class; 
+                expectedCls = CloudPageBlob.class;
             }
             if (client.getClass() != expectedCls) {
                 throw new IllegalArgumentException("Invalid Blob Client Type");
@@ -172,9 +179,9 @@ public final class BlobServiceUtil {
         }
         return client;
     }
-    
+
     public static StorageCredentials getAccountCredentials(BlobServiceConfiguration cfg,
-                                                             boolean isWrite) {
+                                                           boolean isWrite) {
         if (cfg.getCredentials() == null && (isWrite || !cfg.isPublicForRead())) {
             throw new IllegalArgumentException("Storage credentials must be specified");
         }
@@ -186,42 +193,42 @@ public final class BlobServiceUtil {
             client.setStreamMinimumReadSizeInBytes(cfg.getStreamReadSize());
         }
     }
-    
+
     public static URI prepareStorageBlobUri(BlobServiceConfiguration cfg) {
         return prepareStorageBlobUri(cfg, true);
     }
-    
+
     public static URI prepareStorageBlobUri(BlobServiceConfiguration cfg, boolean blobNameRequired) {
         if (blobNameRequired && cfg.getBlobName() == null) {
             throw new IllegalArgumentException("Blob name must be specified");
         }
-        
+
         StringBuilder uriBuilder = new StringBuilder();
         uriBuilder.append("https://")
-                  .append(cfg.getAccountName())
-                  .append(BlobServiceConstants.SERVICE_URI_SEGMENT)
-                  .append("/")
-                  .append(cfg.getContainerName());
+            .append(cfg.getAccountName())
+            .append(BlobServiceConstants.SERVICE_URI_SEGMENT)
+            .append("/")
+            .append(cfg.getContainerName());
         if (cfg.getBlobName() != null) {
             uriBuilder.append("/")
-                      .append(cfg.getBlobName());
+                .append(cfg.getBlobName());
         }
         return URI.create(uriBuilder.toString());
     }
 
-    
+
     public static BlobServiceRequestOptions getRequestOptions(Exchange exchange) {
         BlobServiceRequestOptions opts = exchange.getIn().getBody(BlobServiceRequestOptions.class);
         if (opts != null) {
-            return opts;    
+            return opts;
         } else {
             opts = new BlobServiceRequestOptions();
         }
-        AccessCondition accessCond = 
+        AccessCondition accessCond =
             exchange.getIn().getHeader(BlobServiceConstants.ACCESS_CONDITION, AccessCondition.class);
-        BlobRequestOptions requestOpts = 
+        BlobRequestOptions requestOpts =
             exchange.getIn().getHeader(BlobServiceConstants.BLOB_REQUEST_OPTIONS, BlobRequestOptions.class);
-        OperationContext opContext = 
+        OperationContext opContext =
             exchange.getIn().getHeader(BlobServiceConstants.OPERATION_CONTEXT, OperationContext.class);
         opts.setAccessCond(accessCond);
         opts.setOpContext(opContext);

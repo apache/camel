@@ -185,11 +185,9 @@ public class BlobServiceComponentConfigurationTest extends CamelTestSupport {
     
     private static void createConsumer(Endpoint endpoint) throws Exception {
         endpoint.createConsumer(new Processor() {
-
             @Override
             public void process(Exchange exchange) throws Exception {
-                // TODO Auto-generated method stub
-                    
+                // noop
             }
         });
     }

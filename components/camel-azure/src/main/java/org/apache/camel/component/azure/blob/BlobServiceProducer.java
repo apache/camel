@@ -48,7 +48,6 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * A Producer which sends messages to the Azure Storage Blob Service
  */
@@ -59,7 +58,6 @@ public class BlobServiceProducer extends DefaultProducer {
     public BlobServiceProducer(final Endpoint endpoint) {
         super(endpoint);
     }
-
 
     @Override
     public void process(final Exchange exchange) throws Exception {
@@ -434,7 +432,6 @@ public class BlobServiceProducer extends DefaultProducer {
         }
     }
 
-
     private BlobServiceOperations determineOperation(Exchange exchange) {
         BlobServiceOperations operation = exchange.getIn().getHeader(BlobServiceConstants.OPERATION, BlobServiceOperations.class);
         if (operation == null) {
@@ -478,4 +475,5 @@ public class BlobServiceProducer extends DefaultProducer {
             inputStream.close();
         }
     }
+
 }
