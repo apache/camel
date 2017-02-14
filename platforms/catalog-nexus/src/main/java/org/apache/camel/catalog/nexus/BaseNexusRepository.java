@@ -176,6 +176,16 @@ public abstract class BaseNexusRepository {
     }
 
     /**
+     * Creates the url to download the artifact.
+     *
+     * @param dto  the artifact
+     * @return the url to download
+     */
+    protected String createArtifactURL(NexusArtifactDto dto) {
+        return dto.getArtifactLink();
+    }
+
+    /**
      * Runs the task to index nexus for new artifacts
      */
     protected void indexNexus() throws Exception {

@@ -23,6 +23,8 @@ import java.net.URLClassLoader;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.camel.catalog.CamelCatalog;
+
 import static org.apache.camel.catalog.CatalogHelper.loadText;
 
 /**
@@ -39,8 +41,8 @@ public class ComponentNexusRepository extends BaseNexusRepository {
         // now download the new artifact JARs and look inside to find more details
         for (NexusArtifactDto dto : newArtifacts) {
             try {
-                // download using url classloader reader
-                URL jarUrl = new URL(dto.getArtifactLink());
+                String url = createArtifactURL(dto);
+                URL jarUrl = new URL(url);
                 addCustomCamelComponentsFromArtifact(dto, jarUrl);
             } catch (Exception e) {
                 log.warn("Error downloading component JAR " + dto.getArtifactLink() + ". This exception is ignored. " + e.getMessage());
@@ -48,6 +50,19 @@ public class ComponentNexusRepository extends BaseNexusRepository {
         }
     }
 
+    /**
+     * Adds the component to the {@link CamelCatalog}
+     *
+     * @param dto           the artifact
+     * @param camelCatalog  the Camel Catalog
+     * @param scheme        component name
+     * @param javaType      component java class
+     * @param json          component json schema
+     */
+    protected void addComponent(NexusArtifactDto dto, CamelCatalog camelCatalog, String scheme, String javaType, String json) {
+        log.info("Added component: {}:{}:{} to Camel Catalog", dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
+        camelCatalog.addComponent(scheme, javaType, json);
+    }
 
     /**
      * Adds any discovered third party Camel components from the artifact.
@@ -67,8 +82,7 @@ public class ComponentNexusRepository extends BaseNexusRepository {
                             if (javaType != null) {
                                 String json = loadComponentJSonSchema(classLoader, scheme);
                                 if (json != null) {
-                                    log.info("Added component: {}:{}:{} to Camel Catalog", dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
-                                    getCamelCatalog().addComponent(scheme, javaType, json);
+                                    addComponent(dto, getCamelCatalog(), scheme, javaType, json);
                                 }
                             }
                         }

@@ -28,4 +28,9 @@ public class LocalFileNexusRepository extends ComponentNexusRepository {
         return new URL("file:" + file.getAbsolutePath());
     }
 
+    @Override
+    protected String createArtifactURL(NexusArtifactDto dto) {
+        // load from file instead
+        return "file:target/" + dto.getArtifactId() + "-" + dto.getVersion() + ".jar";
+    }
 }
