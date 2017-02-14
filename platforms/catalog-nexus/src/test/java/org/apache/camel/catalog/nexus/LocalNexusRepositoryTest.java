@@ -19,7 +19,6 @@ package org.apache.camel.catalog.nexus;
 import junit.framework.TestCase;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class LocalNexusRepositoryTest extends TestCase {
@@ -37,14 +36,12 @@ public class LocalNexusRepositoryTest extends TestCase {
     }
 
     @Test
-    @Ignore("Work in progress")
     public void testLocalNexus() throws Exception {
         int before = catalog.findComponentNames().size();
 
         repo.start();
 
-        // TODO: create custom component we can use for testing here
-        // and only wait as long until a new component is added
+        // TODO only wait as long until a new component is added
         Thread.sleep(5000);
 
         repo.stop();

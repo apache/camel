@@ -30,7 +30,7 @@ public class LocalFileNexusRepository extends ComponentNexusRepository {
 
     @Override
     protected String createArtifactURL(NexusArtifactDto dto) {
-        // load from file instead
-        return "file:target/" + dto.getArtifactId() + "-" + dto.getVersion() + ".jar";
+        // load from local file instead
+        return "file:target/localrepo/" + dto.getArtifactId() + "-" + dto.getVersion() + ".jar";
     }
 }
