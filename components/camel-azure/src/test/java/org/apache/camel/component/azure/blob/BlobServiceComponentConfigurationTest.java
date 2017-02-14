@@ -21,6 +21,8 @@ import java.util.Collections;
 
 import com.microsoft.azure.storage.StorageCredentials;
 import com.microsoft.azure.storage.StorageCredentialsAccountAndKey;
+import com.microsoft.azure.storage.StorageCredentialsAnonymous;
+import com.microsoft.azure.storage.blob.CloudBlob;
 import com.microsoft.azure.storage.blob.CloudBlockBlob;
 import com.microsoft.azure.storage.core.Base64;
 import org.apache.camel.Endpoint;
@@ -36,7 +38,8 @@ public class BlobServiceComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void testCreateEndpointWithMinConfigForClientOnly() throws Exception {
         CloudBlockBlob client = 
-            new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"));
+            new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"),
+                               newAccountKeyCredentials());
         
         JndiRegistry registry = (JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
         registry.bind("azureBlobClient", client);
@@ -142,6 +145,46 @@ public class BlobServiceComponentConfigurationTest extends CamelTestSupport {
         assertTrue(endpoint.getConfiguration().isPublicForRead());
     }
     
+    @Test
+    public void testClientWithoutCredentials() throws Exception {
+        CloudBlockBlob client = 
+            new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"));
+        
+        doTestClientWithoutCredentials(client);
+    }
+    @Test
+    public void testClientWithoutAnonymousCredentials() throws Exception {
+        CloudBlockBlob client = 
+            new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"),
+                               StorageCredentialsAnonymous.ANONYMOUS);
+        
+        doTestClientWithoutCredentials(client);
+    }
+    @Test
+    public void testClientWithoutCredentialsPublicRead() throws Exception {
+        CloudBlockBlob client = 
+            new CloudBlockBlob(URI.create("https://camelazure.blob.core.windows.net/container/blob"));
+        
+        JndiRegistry registry = (JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
+        registry.bind("azureBlobClient", client);
+        
+        BlobServiceComponent component = new BlobServiceComponent(context);
+        BlobServiceEndpoint endpoint = 
+            (BlobServiceEndpoint) component.createEndpoint("azure-blob://camelazure/container/blob?azureBlobClient=#azureBlobClient&publicForRead=true");
+        assertTrue(endpoint.getConfiguration().isPublicForRead());
+    }
+    private void doTestClientWithoutCredentials(CloudBlob client) throws Exception {
+        JndiRegistry registry = (JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
+        registry.bind("azureBlobClient", client);
+        
+        BlobServiceComponent component = new BlobServiceComponent(context);
+        try {
+            component.createEndpoint("azure-blob://camelazure/container/blob?azureBlobClient=#azureBlobClient");
+            fail();
+        } catch (IllegalArgumentException ex) {
+            assertEquals("Credentials must be specified.", ex.getMessage());
+        }
+    }
     
     @Test
     public void testNoBlobNameProducerWithOp() throws Exception {
@@ -193,9 +236,12 @@ public class BlobServiceComponentConfigurationTest extends CamelTestSupport {
     }
     
     private void registerCredentials() {
-        StorageCredentials creds = new StorageCredentialsAccountAndKey("camelazure", 
-                                                                       Base64.encode("key".getBytes()));
         JndiRegistry registry = (JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry();
-        registry.bind("creds", creds);
+        registry.bind("creds", newAccountKeyCredentials());
     }
+    private StorageCredentials newAccountKeyCredentials() {
+        return new StorageCredentialsAccountAndKey("camelazure", 
+                                                   Base64.encode("key".getBytes()));
+    }
+    
 }

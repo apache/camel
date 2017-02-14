@@ -18,6 +18,9 @@ package org.apache.camel.component.azure.blob;
 
 import java.util.Map;
 
+import com.microsoft.azure.storage.StorageCredentials;
+import com.microsoft.azure.storage.StorageCredentialsAnonymous;
+import com.microsoft.azure.storage.blob.CloudBlob;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
@@ -66,10 +69,12 @@ public class BlobServiceComponent extends UriEndpointComponent {
         return endpoint;
     }
     
-    private void checkCredentials(BlobServiceConfiguration configuration) {
-        if (configuration.getAzureBlobClient() == null
-            && configuration.getCredentials() == null
-            && !configuration.isPublicForRead()) {
+    private void checkCredentials(BlobServiceConfiguration cfg) {
+        CloudBlob client = cfg.getAzureBlobClient();
+        StorageCredentials creds = client == null ? cfg.getCredentials() 
+            : client.getServiceClient().getCredentials(); 
+        if ((creds == null || creds instanceof StorageCredentialsAnonymous)
+            && !cfg.isPublicForRead()) {
             throw new IllegalArgumentException("Credentials must be specified.");
         }
     }
