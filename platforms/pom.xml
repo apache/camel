@@ -41,6 +41,7 @@
     <module>catalog-provider-springboot</module>
     <module>catalog-lucene</module>
     <module>catalog-maven</module>
+    <module>catalog-nexus</module>
     <module>catalog-rest</module>
     <module>catalog-rest-app</module>
   </modules>
