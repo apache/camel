@@ -284,6 +284,7 @@
         <include>org.apache.camel:camel-catalog</include>
         <include>org.apache.camel:camel-catalog-lucene</include>
         <include>org.apache.camel:camel-catalog-maven</include>
+        <include>org.apache.camel:camel-catalog-nexus</include>
         <include>org.apache.camel:camel-catalog-provider-karaf</include>
         <include>org.apache.camel:camel-catalog-provider-springboot</include>
         <include>org.apache.camel:camel-catalog-rest</include>
