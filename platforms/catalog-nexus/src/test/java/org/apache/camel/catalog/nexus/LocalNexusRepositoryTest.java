@@ -16,6 +16,9 @@
  */
 package org.apache.camel.catalog.nexus;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import junit.framework.TestCase;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -23,26 +26,24 @@ import org.junit.Test;
 
 public class LocalNexusRepositoryTest extends TestCase {
 
-    private LocalFileNexusRepository repo = new LocalFileNexusRepository();
-    private CamelCatalog catalog = new DefaultCamelCatalog();
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        repo.setCamelCatalog(catalog);
-        repo.setInitialDelay(1);
-        repo.setNexusUrl("dummy");
-    }
+    private final CamelCatalog catalog = new DefaultCamelCatalog();
 
     @Test
     public void testLocalNexus() throws Exception {
         int before = catalog.findComponentNames().size();
 
+        LocalFileNexusRepository repo = new LocalFileNexusRepository();
+        repo.setCamelCatalog(catalog);
+        repo.setInitialDelay(2);
+        repo.setDelay(3);
+        repo.setNexusUrl("dummy");
+
+        final CountDownLatch latch = new CountDownLatch(1);
+        repo.setOnAddComponent(latch::countDown);
+
         repo.start();
 
-        // TODO only wait as long until a new component is added
-        Thread.sleep(5000);
+        assertTrue("Should have found component", latch.await(10, TimeUnit.SECONDS));
 
         repo.stop();
 
