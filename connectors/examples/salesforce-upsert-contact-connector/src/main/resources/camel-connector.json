@@ -7,7 +7,7 @@
   "scheme": "salesforce-upsert-contact",
   "javaType": "org.foo.salesforce.contact.SalesforceUpsertContactComponent",
   "groupId": "org.foo",
-  "artifactId": "twitter-mention-connector",
+  "artifactId": "salesforce-upsert-contact-connector",
   "version": "1.0",
   "description": "Create or update Salesforce Contact SObject",
   "labels" : [ "salesforce" ],
