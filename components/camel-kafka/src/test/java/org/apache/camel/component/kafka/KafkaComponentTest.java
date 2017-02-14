@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.kafka;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -28,7 +30,6 @@ import org.apache.kafka.common.config.SslConfigs;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.assertEquals;
 
 public class KafkaComponentTest {
 
@@ -36,7 +37,7 @@ public class KafkaComponentTest {
 
     @Test
     public void testPropertiesSet() throws Exception {
-        Map<String, Object> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<String, Object>();
         params.put("topic", "mytopic");
         params.put("partitioner", "com.class.Party");
 
@@ -51,7 +52,7 @@ public class KafkaComponentTest {
 
     @Test
     public void testAllProducerConfigProperty() throws Exception {
-        Map<String, Object> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<String, Object>();
         setProducerProperty(params);
 
         String uri = "kafka:dev1:12345,dev2:12566";
@@ -102,12 +103,11 @@ public class KafkaComponentTest {
         assertEquals("test", endpoint.getConfiguration().getSslEndpointAlgorithm());
         assertEquals("SunX509", endpoint.getConfiguration().getSslKeymanagerAlgorithm());
         assertEquals("PKIX", endpoint.getConfiguration().getSslTrustmanagerAlgorithm());
-        assertEquals("org.apache.camel.component.kafka.MockProducerInterceptor", endpoint.getConfiguration().getInterceptorClasses());
     }
 
     @Test
     public void testAllProducerKeys() throws Exception {
-        Map<String, Object> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<String, Object>();
 
         String uri = "kafka:dev1:12345,dev2:12566";
         String remaining = "dev1:12345,dev2:12566";
@@ -201,7 +201,50 @@ public class KafkaComponentTest {
         params.put("sslEndpointAlgorithm", "test");
         params.put("sslKeymanagerAlgorithm", "SunX509");
         params.put("sslTrustmanagerAlgorithm", "PKIX");
-        params.put("interceptorClasses", "org.apache.camel.component.kafka.MockProducerInterceptor");
     }
+    
+    // the URL format should include the topic name like the ActiiveMQ & AMQP endpoints
+    // kafka:serverName:port/topicName
+    // kafka:serverName/topicName
+    
+    @Test
+    public void testSimpleKakfaUriEndpoint() throws Exception {
+        
+        Map<String, Object> params = new HashMap<String, Object>();
+ 
+        String uri = "kafka:broker1:9999/topic2One.33";
+        String remaining = "broker1:9999/topic2One.33";
+        
+
+        KafkaEndpoint endpoint = new KafkaComponent(context).createEndpoint(uri, remaining, params);
+        
+        assertEquals("topic2One.33", endpoint.getConfiguration().getTopic());
+        assertEquals("broker1:9999", endpoint.getConfiguration().getBrokers());
+        
+        // port not provided in the URI
+        
+        uri = "kafka:broker1/click-Topic";
+        remaining = "broker1/click-Topic";
+        
+        endpoint = new KafkaComponent(context).createEndpoint(uri, remaining, params);
+        
+        assertEquals("click-Topic", endpoint.getConfiguration().getTopic());
+        assertEquals("broker1:9092", endpoint.getConfiguration().getBrokers());
+        
+        // IP Address provided instead of hostname
+        
+        uri = "kafka:10.10.10.3/click-Topic";
+        remaining = "10.10.10.3/click-Topic";
+        
+        endpoint = new KafkaComponent(context).createEndpoint(uri, remaining, params);
+        
+        assertEquals("click-Topic", endpoint.getConfiguration().getTopic());
+        assertEquals("10.10.10.3:9092", endpoint.getConfiguration().getBrokers());
+        
+       
+        
+        
+        
+    }   
 
 }
