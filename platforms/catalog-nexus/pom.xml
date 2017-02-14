@@ -77,8 +77,20 @@
   </dependencies>
 
   <build>
-    <plugins>
+    <defaultGoal>install</defaultGoal>
 
+    <resources>
+      <resource>
+        <targetPath>${project.build.directory}/test-classes</targetPath>
+        <directory>src/test/resources</directory>
+        <includes>
+          <include>*.xml</include>
+        </includes>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+
+    <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>

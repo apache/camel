@@ -20,11 +20,23 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.camel.catalog.CamelCatalog;
+
 public class LocalFileNexusRepository extends ComponentNexusRepository {
+
+    private Runnable onAddComponent;
+
+    public Runnable getOnAddComponent() {
+        return onAddComponent;
+    }
+
+    public void setOnAddComponent(Runnable onAddComponent) {
+        this.onAddComponent = onAddComponent;
+    }
 
     @Override
     protected URL createNexusUrl() throws MalformedURLException {
-        File file = new File("src/test/resources/nexus-sample-result.xml");
+        File file = new File("target/test-classes/nexus-sample-result.xml");
         return new URL("file:" + file.getAbsolutePath());
     }
 
@@ -32,5 +44,14 @@ public class LocalFileNexusRepository extends ComponentNexusRepository {
     protected String createArtifactURL(NexusArtifactDto dto) {
         // load from local file instead
         return "file:target/localrepo/" + dto.getArtifactId() + "-" + dto.getVersion() + ".jar";
+    }
+
+    @Override
+    protected void addComponent(NexusArtifactDto dto, CamelCatalog camelCatalog, String scheme, String javaType, String json) {
+        super.addComponent(dto, camelCatalog, scheme, javaType, json);
+
+        if (onAddComponent != null) {
+            onAddComponent.run();
+        }
     }
 }

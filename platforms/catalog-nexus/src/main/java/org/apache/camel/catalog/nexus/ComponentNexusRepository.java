@@ -41,10 +41,11 @@ public class ComponentNexusRepository extends BaseNexusRepository {
         // now download the new artifact JARs and look inside to find more details
         for (NexusArtifactDto dto : newArtifacts) {
             try {
+                log.debug("Processing new artifact: {}:{}:{}", dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
                 String url = createArtifactURL(dto);
                 URL jarUrl = new URL(url);
                 addCustomCamelComponentsFromArtifact(dto, jarUrl);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 log.warn("Error downloading component JAR " + dto.getArtifactLink() + ". This exception is ignored. " + e.getMessage());
             }
         }
