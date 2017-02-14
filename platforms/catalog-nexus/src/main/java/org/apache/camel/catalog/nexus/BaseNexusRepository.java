@@ -32,6 +32,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.camel.catalog.CamelCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -40,16 +41,29 @@ import org.w3c.dom.NodeList;
 
 public abstract class BaseNexusRepository {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    final Logger log = LoggerFactory.getLogger(getClass());
 
     private final Set<NexusArtifactDto> indexedArtifacts = new LinkedHashSet<>();
 
     private volatile ScheduledExecutorService executorService;
     private AtomicBoolean started = new AtomicBoolean();
 
+    private CamelCatalog camelCatalog;
     private Long delay = 60L; // use 60 second delay between index runs
     private String nexusUrl = "http://nexus/service/local/data_index";
-    private String classifier = "component";
+    private String classifier;
+
+    public BaseNexusRepository(String classifier) {
+        this.classifier = classifier;
+    }
+
+    public CamelCatalog getCamelCatalog() {
+        return camelCatalog;
+    }
+
+    public void setCamelCatalog(CamelCatalog camelCatalog) {
+        this.camelCatalog = camelCatalog;
+    }
 
     public String getNexusUrl() {
         return nexusUrl;
@@ -89,6 +103,10 @@ public abstract class BaseNexusRepository {
      * Starts the Nexus indexer.
      */
     public void start() {
+        if (camelCatalog == null) {
+            throw new IllegalArgumentException("CamelCatalog must be configured");
+        }
+
         if (started.compareAndSet(false, true)) {
             log.info("NexusRepository is already started");
             return;
