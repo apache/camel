@@ -32,6 +32,7 @@
         <include>org.apache.camel:camel-atmosphere-websocket</include>
         <include>org.apache.camel:camel-atom</include>
         <include>org.apache.camel:camel-aws</include>
+        <include>org.apache.camel:camel-azure</include>
         <include>org.apache.camel:camel-avro</include>
         <include>org.apache.camel:camel-bam</include>
         <include>org.apache.camel:camel-barcode</include>
