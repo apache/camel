@@ -2205,6 +2205,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-catalog-nexus</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-catalog-provider-karaf</artifactId>
     </dependency>
     <dependency>
