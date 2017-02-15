@@ -173,7 +173,7 @@ public class TransformerBuilder {
             transformer = dtd;
         } else if (clazz != null) {
             CustomTransformerDefinition ctd = new CustomTransformerDefinition();
-            ctd.setType(clazz.getName());
+            ctd.setClassName(clazz.getName());
             transformer = ctd;
         } else if (beanRef != null) {
             CustomTransformerDefinition ctd = new CustomTransformerDefinition();

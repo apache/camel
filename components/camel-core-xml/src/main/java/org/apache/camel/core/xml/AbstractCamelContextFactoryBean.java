@@ -75,6 +75,7 @@ import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestContainer;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformersDefinition;
+import org.apache.camel.model.validator.ValidatorsDefinition;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.TraceFormatter;
@@ -776,6 +777,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract TransformersDefinition getTransformers();
 
+    public abstract ValidatorsDefinition getValidators();
+
     public abstract List<OnExceptionDefinition> getOnExceptions();
 
     public abstract List<OnCompletionDefinition> getOnCompletions();
@@ -858,7 +861,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             ctx.setDataFormats(getDataFormats().asMap());
         }
         if (getTransformers() != null) {
-            ctx.setTransformers(getTransformers().getTransforms());
+            ctx.setTransformers(getTransformers().getTransformers());
+        }
+        if (getValidators() != null) {
+            ctx.setValidators(getValidators().getValidators());
         }
         if (getTypeConverterStatisticsEnabled() != null) {
             ctx.setTypeConverterStatisticsEnabled(getTypeConverterStatisticsEnabled());

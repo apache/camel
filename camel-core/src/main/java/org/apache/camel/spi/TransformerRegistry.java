@@ -16,10 +16,12 @@
  */
 package org.apache.camel.spi;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.StaticService;
+import org.apache.camel.model.transformer.TransformerDefinition;
 
 /**
  * Registry to cache transformers in memory.
@@ -38,6 +40,14 @@ import org.apache.camel.StaticService;
  * @param <K> transformer key
  */
 public interface TransformerRegistry<K> extends Map<K, Transformer>, StaticService {
+
+    /**
+     * Lookup a {@link Transformer} in the registry which supports the transformation for
+     * the data types represented by the key.
+     * @param key a key represents the from/to data types to transform
+     * @return {@link Transformer} if matched, otherwise null
+     */
+    Transformer resolveTransformer(K key);
 
     /**
      * Number of transformers in the static registry.
@@ -85,7 +95,7 @@ public interface TransformerRegistry<K> extends Map<K, Transformer>, StaticServi
     boolean isDynamic(String scheme);
 
     /**
-     * Whether the given transformer is stored in the dynamic cache
+     * Whether the given {@link Transformer} is stored in the dynamic cache
      *
      * @param from 'from' data type
      * @param to 'to' data type

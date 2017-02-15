@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="order" type="order"/>
+
+  <xs:element name="orderResponse" type="orderResponse"/>
+
+  <xs:complexType name="order">
+    <xs:sequence/>
+    <xs:attribute name="orderId" type="xs:string"/>
+    <xs:attribute name="itemId" type="xs:string"/>
+    <xs:attribute name="quantity" type="xs:int" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="orderResponse">
+    <xs:sequence/>
+    <xs:attribute name="orderId" type="xs:string"/>
+    <xs:attribute name="accepted" type="xs:boolean" use="required"/>
+    <xs:attribute name="description" type="xs:string"/>
+  </xs:complexType>
+</xs:schema>
+

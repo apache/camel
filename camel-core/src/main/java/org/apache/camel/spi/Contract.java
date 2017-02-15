@@ -23,6 +23,8 @@ public class Contract {
 
     private DataType inputType;
     private DataType outputType;
+    private boolean validateInput;
+    private boolean validateOutput;
     private String contractString;
     
     public DataType getInputType() {
@@ -67,6 +69,38 @@ public class Contract {
     public void setOutputType(Class<?> clazz) {
         this.outputType = new DataType(clazz);
         this.contractString = null;
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public boolean isValidateInput() {
+        return validateInput;
+    }
+    
+    /**
+     * 
+     * @param validate
+     */
+    public void setValidateInput(boolean validate) {
+        this.validateInput = validate;
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public boolean isValidateOutput() {
+        return validateOutput;
+    }
+    
+    /**
+     * 
+     * @param validate
+     */
+    public void setValidateOutput(boolean validate) {
+        this.validateOutput = validate;
     }
     
     @Override
