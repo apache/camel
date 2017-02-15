@@ -31,10 +31,6 @@ The example should run if you type:
 
 To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
-### Documentation
-
-This example is documented at <http://camel.apache.org/tutorial-jmsremoting.html>
-
 ### Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums
