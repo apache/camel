@@ -95,11 +95,11 @@ public class KafkaConsumerOffsetRepositoryEmptyTest extends BaseEmbeddedKafkaTes
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("kafka:" + TOPIC +
-                             "?groupId=A" +
-                             "&autoOffsetReset=earliest" +             // Ask to start from the beginning if we have unknown offset
-                             "&consumersCount=2" +                     // We have 2 partitions, we want 1 consumer per partition
-                             "&offsetRepository=#offset")              // Keep the offset in our repository
+                from("kafka:" + TOPIC
+                             + "?groupId=A"
+                             + "&autoOffsetReset=earliest"             // Ask to start from the beginning if we have unknown offset
+                             + "&consumersCount=2"                     // We have 2 partitions, we want 1 consumer per partition
+                             + "&offsetRepository=#offset")            // Keep the offset in our repository
                         .to("mock:result");
             }
         };

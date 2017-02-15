@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 public class BaseEmbeddedKafkaTest extends CamelTestSupport {
 
-    private static final Logger  LOG = LoggerFactory.getLogger(BaseEmbeddedKafkaTest.class);
+    static final Logger LOG = LoggerFactory.getLogger(BaseEmbeddedKafkaTest.class);
 
     static EmbeddedZookeeper embeddedZookeeper;
     static EmbeddedKafkaCluster embeddedKafkaCluster;

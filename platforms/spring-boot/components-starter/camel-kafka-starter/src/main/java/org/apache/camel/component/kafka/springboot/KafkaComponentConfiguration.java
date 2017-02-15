@@ -31,7 +31,7 @@ public class KafkaComponentConfiguration {
     /**
      * URL of the Kafka brokers to use. The format is host1:port1host2:port2 and
      * the list can be a subset of brokers or a VIP pointing to a subset of
-     * brokers. This option is known as metadata.broker.list in the Kafka
+     * brokers. This option is known as bootstrap.servers in the Kafka
      * documentation.
      */
     private String brokers;

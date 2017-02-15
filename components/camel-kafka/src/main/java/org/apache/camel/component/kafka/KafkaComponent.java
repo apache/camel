@@ -49,9 +49,10 @@ public class KafkaComponent extends UriEndpointComponent {
             throw new IllegalArgumentException("Topic must be configured on endpoint using syntax kafka:topic");
         }
         endpoint.getConfiguration().setTopic(remaining);
-
-        endpoint.getConfiguration().setBrokers(getBrokers());
         endpoint.getConfiguration().setWorkerPool(getWorkerPool());
+
+        // brokers can be configured on either component or endpoint level
+        // and the consumer and produce is aware of this and act accordingly
 
         setProperties(endpoint.getConfiguration(), params);
         setProperties(endpoint, params);
@@ -66,7 +67,7 @@ public class KafkaComponent extends UriEndpointComponent {
      * URL of the Kafka brokers to use.
      * The format is host1:port1,host2:port2, and the list can be a subset of brokers or a VIP pointing to a subset of brokers.
      * <p/>
-     * This option is known as <tt>metadata.broker.list</tt> in the Kafka documentation.
+     * This option is known as <tt>bootstrap.servers</tt> in the Kafka documentation.
      */
     public void setBrokers(String brokers) {
         this.brokers = brokers;
