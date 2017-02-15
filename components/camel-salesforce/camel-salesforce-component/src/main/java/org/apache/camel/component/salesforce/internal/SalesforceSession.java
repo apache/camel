@@ -134,7 +134,7 @@ public class SalesforceSession implements Service {
      */
     public Request getLoginRequest(HttpConversation conversation) {
         final String loginUrl = (instanceUrl == null ? config.getLoginUrl() : instanceUrl) + OAUTH2_TOKEN_PATH;
-        LOG.info("Login user {} at Salesforce loginUrl: {}", config.getUserName(), loginUrl);
+        LOG.info("Login at Salesforce loginUrl: {}", loginUrl);
         final Fields fields = new Fields(true);
 
         fields.put("client_id", config.getClientId());
@@ -164,9 +164,6 @@ public class SalesforceSession implements Service {
 
     /**
      * Parses login response, allows SalesforceSecurityHandler to parse a login request for a failed authentication conversation.
-     * @param loginResponse
-     * @param responseContent
-     * @throws SalesforceException
      */
     public synchronized void parseLoginResponse(ContentResponse loginResponse, String responseContent) throws SalesforceException {
         final int responseStatus = loginResponse.getStatus();
