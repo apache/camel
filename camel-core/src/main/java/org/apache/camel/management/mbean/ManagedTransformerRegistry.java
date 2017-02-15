@@ -40,9 +40,9 @@ import org.apache.camel.util.ObjectHelper;
 public class ManagedTransformerRegistry extends ManagedService implements ManagedTransformerRegistryMBean {
     private final TransformerRegistry transformerRegistry;
 
-    public ManagedTransformerRegistry(CamelContext context, TransformerRegistry endpointRegistry) {
-        super(context, endpointRegistry);
-        this.transformerRegistry = endpointRegistry;
+    public ManagedTransformerRegistry(CamelContext context, TransformerRegistry transformerRegistry) {
+        super(context, transformerRegistry);
+        this.transformerRegistry = transformerRegistry;
     }
 
     public void init(ManagementStrategy strategy) {

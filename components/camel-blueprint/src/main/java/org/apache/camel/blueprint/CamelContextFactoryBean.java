@@ -64,6 +64,7 @@ import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformersDefinition;
+import org.apache.camel.model.validator.ValidatorsDefinition;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.Registry;
 import org.osgi.framework.BundleContext;
@@ -177,6 +178,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private DataFormatsDefinition dataFormats;
     @XmlElement(name = "transformers")
     private TransformersDefinition transformers;
+    @XmlElement(name = "validators")
+    private ValidatorsDefinition validators;
     @XmlElement(name = "redeliveryPolicyProfile")
     private List<CamelRedeliveryPolicyFactoryBean> redeliveryPolicies;
     @XmlElement(name = "onException")
@@ -694,6 +697,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     public TransformersDefinition getTransformers() {
         return transformers;
+    }
+
+    public void setValidators(ValidatorsDefinition validators) {
+        this.validators = validators;
+    }
+
+    public ValidatorsDefinition getValidators() {
+        return validators;
     }
 
     public List<OnExceptionDefinition> getOnExceptions() {

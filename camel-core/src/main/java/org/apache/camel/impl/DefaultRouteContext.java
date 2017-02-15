@@ -208,9 +208,11 @@ public class DefaultRouteContext implements RouteContext {
                 Contract contract = new Contract();
                 if (route.getInputType() != null) {
                     contract.setInputType(route.getInputType().getUrn());
+                    contract.setValidateInput(route.getInputType().isValidate());
                 }
                 if (route.getOutputType() != null) {
                     contract.setOutputType(route.getOutputType().getUrn());
+                    contract.setValidateOutput(route.getOutputType().isValidate());
                 }
                 internal.addAdvice(new ContractAdvice(contract));
             }

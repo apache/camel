@@ -27,12 +27,12 @@
 
   <artifactId>camel-example-transformer-demo</artifactId>
   <name>Camel :: Example :: Transformer :: Demo</name>
-  <description>An example demonstrating declarative transformation along data type declaration using Spring DSL</description>
+  <description>An example demonstrating declarative transformation and validation along data type declaration using Spring DSL</description>
   <packaging>jar</packaging>
 
   <properties>
     <category>Input/Output Type Contract</category>
-    <title>Transformer Spring XML</title>
+    <title>Transformer and Validator Spring XML</title>
   </properties>
 
   <dependencies>
