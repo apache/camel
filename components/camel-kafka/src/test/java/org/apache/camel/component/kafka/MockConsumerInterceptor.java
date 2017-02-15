@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.kafka;
 
 import java.util.ArrayList;
@@ -29,7 +28,6 @@ public class MockConsumerInterceptor implements ConsumerInterceptor<String, Stri
 
     public static ArrayList<ConsumerRecords<String, String>> recordsCaptured = new ArrayList<>();
 
-
     @Override
     public ConsumerRecords<String, String> onConsume(ConsumerRecords<String, String> consumerRecords) {
         recordsCaptured.add(consumerRecords);
@@ -38,16 +36,16 @@ public class MockConsumerInterceptor implements ConsumerInterceptor<String, Stri
 
     @Override
     public void onCommit(Map<TopicPartition, OffsetAndMetadata> map) {
-
+        // noop
     }
 
     @Override
     public void close() {
-
+        // noop
     }
 
     @Override
     public void configure(Map<String, ?> map) {
-
+        // noop
     }
 }

@@ -18,22 +18,17 @@ package org.apache.camel.component.kafka;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.ObjectHelper;
 
 public class KafkaComponent extends UriEndpointComponent {
     
-    // Topic name validation as per Kafka documentation [a-zA-Z0-9\\._\\-] as of 0.10
-    // hostname and port are extracted as per pattern. IP and hostname syntax is not validated using regex.
-    
-    static final Pattern SIMPLE_KAFKA_URI_PATTERN = Pattern.compile("([a-z0-9\\.]*)(:?)([0-9]*)/([a-zA-Z0-9\\._\\-]*)", Pattern.CASE_INSENSITIVE);
-    
-    static final String DEFAULT_PORT = "9092";
+    @Metadata(label = "common")
+    private String brokers;
 
     @Metadata(label = "advanced")
     private ExecutorService workerPool;
@@ -48,34 +43,34 @@ public class KafkaComponent extends UriEndpointComponent {
 
     @Override
     protected KafkaEndpoint createEndpoint(String uri, String remaining, Map<String, Object> params) throws Exception {
-        
         KafkaEndpoint endpoint = new KafkaEndpoint(uri, this);
-        
-        Matcher matcher = SIMPLE_KAFKA_URI_PATTERN.matcher(remaining);
-               
-        if (matcher.matches()) {
-            String hostName = matcher.group(1);          
-            String port = matcher.group(3);
-            String topic = matcher.group(4);
-            
-            if (port != null && port.length() == 0) {
-                port = DEFAULT_PORT;
-            }            
-            endpoint.getConfiguration().setBrokers(hostName + ":" + port);
-            endpoint.getConfiguration().setTopic(topic);
-        } else {
-            String brokers = remaining.split("\\?")[0];
-            if (brokers != null) {
-                endpoint.getConfiguration().setBrokers(brokers);
-            }            
-        }
 
-        // configure component options before endpoint properties which can override from params
-        endpoint.getConfiguration().setWorkerPool(workerPool);
+        if (ObjectHelper.isEmpty(remaining)) {
+            throw new IllegalArgumentException("Topic must be configured on endpoint using syntax kafka:topic");
+        }
+        endpoint.getConfiguration().setTopic(remaining);
+
+        endpoint.getConfiguration().setBrokers(getBrokers());
+        endpoint.getConfiguration().setWorkerPool(getWorkerPool());
 
         setProperties(endpoint.getConfiguration(), params);
         setProperties(endpoint, params);
         return endpoint;
+    }
+
+    public String getBrokers() {
+        return brokers;
+    }
+
+    /**
+     * This is for bootstrapping and the producer will only use it for getting metadata (topics, partitions and replicas).
+     * The socket connections for sending the actual data will be established based on the broker information returned in the metadata.
+     * The format is host1:port1,host2:port2, and the list can be a subset of brokers or a VIP pointing to a subset of brokers.
+     * <p/>
+     * This option is known as <tt>metadata.broker.list</tt> in the Kafka documentation.
+     */
+    public void setBrokers(String brokers) {
+        this.brokers = brokers;
     }
 
     public ExecutorService getWorkerPool() {
