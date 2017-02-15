@@ -34,8 +34,8 @@ public class TwitterConfiguration {
     @UriPath(description = "The kind of endpoint", enums = "directmessage,search,streaming/filter,streaming/sample,streaming/user"
             + ",timeline/home,timeline/mentions,timeline/retweetsofme,timeline/user") @Metadata(required = "true")
     private String kind;
-    @UriParam(label = "consumer", defaultValue = "direct", enums = "polling,direct,event")
-    private EndpointType type = EndpointType.DIRECT;
+    @UriParam(label = "consumer", defaultValue = "polling", enums = "polling,direct,event")
+    private EndpointType type = EndpointType.POLLING;
     @UriParam(label = "security", secret = true)
     private String accessToken;
     @UriParam(label = "security", secret = true)
