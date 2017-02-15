@@ -61,9 +61,6 @@ Then make SOAP requests of this format:
 
 You can change `${proxy.port}` and `${real.port}` via configuration file `src/main/resources/incident.properties`
 
-### Documentation
-
-This example is documented at <http://camel.apache.org/cxf-proxy-example.html>
 
 ### Forum, Help, etc 
 

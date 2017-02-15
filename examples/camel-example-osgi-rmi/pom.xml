@@ -28,7 +28,7 @@
 
   <artifactId>camel-example-osgi-rmi</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Example :: OSGi RMI</name>
+  <name>Camel :: Example :: OSGi RMI (deprecated)</name>
   <description>A OSGi example which exposes a RMI service.</description>
 
   <properties>
