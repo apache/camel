@@ -137,4 +137,15 @@ public class SalesforceLoginConfig {
         this.lazyLogin = lazyLogin;
     }
 
+    @Override
+    public String toString() {
+        return "SalesforceLoginConfig["
+            + "loginUrl='" + loginUrl + '\''
+            + ", clientId='" + clientId + '\''
+            + ", clientSecret='********'"
+            + ", refreshToken='" + refreshToken + '\''
+            + ", userName='" + userName + '\''
+            + ", password=********'" + password + '\''
+            + ", lazyLogin=" + lazyLogin + ']';
+    }
 }

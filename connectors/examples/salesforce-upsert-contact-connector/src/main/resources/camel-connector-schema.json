@@ -16,7 +16,10 @@
     "version": "2.19.0-SNAPSHOT"
   },
   "componentProperties": {
-    "loginConfig": {"kind":"property","group":"security","label":"security","required":"false","type":"object","javaType":"org.apache.camel.component.salesforce.SalesforceLoginConfig","deprecated":"false","secret":"false","description":"To use the shared SalesforceLoginConfig as login configuration"}
+    "loginUrl": { "kind": "property", "group": "security", "label": "security", "required": "false", "type": "string", "javaType": "java.lang.String", "deprecated": "false", "secret": "false", "defaultValue": "https://login.salesforce.com", "description": "Salesforce login URL defaults to https://login.salesforce.com" },
+    "clientId": { "kind": "property", "group": "security", "label": "security", "required": "false", "type": "string", "javaType": "java.lang.String", "deprecated": "false", "secret": "true", "description": "Salesforce connected application Consumer Key" },
+    "clientSecret": { "kind": "property", "group": "security", "label": "security", "required": "false", "type": "string", "javaType": "java.lang.String", "deprecated": "false", "secret": "true", "description": "Salesforce connected application Consumer Secret" },
+    "refreshToken": { "kind": "property", "group": "security", "label": "security", "required": "false", "type": "string", "javaType": "java.lang.String", "deprecated": "false", "secret": "true", "description": "Salesforce connected application Consumer token" }
   },
   "properties": {
     "sObjectIdName": {"kind":"parameter","group":"common","type":"string","javaType":"java.lang.String","deprecated":"false","secret":"false","description":"SObject external ID field name","required":"true"},

@@ -423,7 +423,7 @@ link:salesforce.html[Salesforce].
 
 
 // component options: START
-The Salesforce component supports 16 options which are listed below.
+The Salesforce component supports 23 options which are listed below.
 
 
 
@@ -432,6 +432,13 @@ The Salesforce component supports 16 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | loginConfig | security |  | SalesforceLoginConfig | To use the shared SalesforceLoginConfig as login configuration
+| loginUrl | security | https://login.salesforce.com | String | Salesforce login URL defaults to https://login.salesforce.com
+| clientId | security |  | String | Salesforce connected application Consumer Key
+| clientSecret | security |  | String | Salesforce connected application Consumer Secret
+| refreshToken | security |  | String | Salesforce connected application Consumer token
+| userName | security |  | String | Salesforce account user name
+| password | security |  | String | Salesforce account password
+| lazyLogin | security | false | boolean | Flag to enable/disable lazy OAuth default is false. When enabled OAuth token retrieval or generation is not done until the first API call
 | config | advanced |  | SalesforceEndpointConfig | To use the shared SalesforceEndpointConfig as endpoint configuration
 | httpClientProperties | advanced |  | Map | Used for configuring HTTP client properties as key/value pairs
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
