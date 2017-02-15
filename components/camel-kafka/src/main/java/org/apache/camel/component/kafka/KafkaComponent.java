@@ -18,6 +18,8 @@ package org.apache.camel.component.kafka;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -25,6 +27,13 @@ import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
 
 public class KafkaComponent extends UriEndpointComponent {
+    
+    // Topic name validation as per Kafka documentation [a-zA-Z0-9\\._\\-] as of 0.10
+    // hostname and port are extracted as per pattern. IP and hostname syntax is not validated using regex.
+    
+    static final Pattern SIMPLE_KAFKA_URI_PATTERN = Pattern.compile("([a-z0-9\\.]*)(:?)([0-9]*)/([a-zA-Z0-9\\._\\-]*)", Pattern.CASE_INSENSITIVE);
+    
+    static final String DEFAULT_PORT = "9092";
 
     @Metadata(label = "advanced")
     private ExecutorService workerPool;
@@ -39,10 +48,26 @@ public class KafkaComponent extends UriEndpointComponent {
 
     @Override
     protected KafkaEndpoint createEndpoint(String uri, String remaining, Map<String, Object> params) throws Exception {
+        
         KafkaEndpoint endpoint = new KafkaEndpoint(uri, this);
-        String brokers = remaining.split("\\?")[0];
-        if (brokers != null) {
-            endpoint.getConfiguration().setBrokers(brokers);
+        
+        Matcher matcher = SIMPLE_KAFKA_URI_PATTERN.matcher(remaining);
+               
+        if (matcher.matches()) {
+            String hostName = matcher.group(1);          
+            String port = matcher.group(3);
+            String topic = matcher.group(4);
+            
+            if (port != null && port.length() == 0) {
+                port = DEFAULT_PORT;
+            }            
+            endpoint.getConfiguration().setBrokers(hostName + ":" + port);
+            endpoint.getConfiguration().setTopic(topic);
+        } else {
+            String brokers = remaining.split("\\?")[0];
+            if (brokers != null) {
+                endpoint.getConfiguration().setBrokers(brokers);
+            }            
         }
 
         // configure component options before endpoint properties which can override from params
