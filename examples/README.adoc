@@ -105,7 +105,7 @@ Number of Examples: 83
 
 | link:camel-example-spring-boot-metrics/README.md[Spring Boot Metrics] (camel-example-spring-boot-metrics) | Management and Monitoring | An example showing how to work with Camel and Spring Boot and report metrics to Graphite
 
-| link:camel-example-tracer/README.md[Tracer] (camel-example-tracer) | Management and Monitoring | An example showing how to persist Camel trace event messages using JPA
+| link:camel-example-tracer/README.md[Tracer] (camel-example-tracer) | Management and Monitoring | *deprecated* An example showing how to persist Camel trace event messages using JPA
 
 | link:camel-example-zipkin/README.md[Zipkin] (camel-example-zipkin) | Management and Monitoring | An example showing how to trace incoming and outgoing messages from Camel with Zipkin
 
@@ -115,7 +115,7 @@ Number of Examples: 83
 
 | link:camel-example-jms-file/README.md[JMS-File] (camel-example-jms-file) | Messaging | An example that persists messages from JMS to files
 
-| link:camel-example-kafka/README.md[Kafka] (camel-example-kafka) | Messaging | An example for Kafka
+| link:camel-example-kafka/README.adoc[Kafka] (camel-example-kafka) | Messaging | An example for Kafka
 
 | link:camel-example-spring-jms/README.md[Spring JMS] (camel-example-spring-jms) | Messaging | An example using Spring XML to talk to the JMS server from different kind of client techniques
 
@@ -129,7 +129,7 @@ Number of Examples: 83
 
 | link:camel-example-netty-http/README.md[Netty HTTP] (camel-example-netty-http) | OSGi | An example showing how to use a shared Netty HTTP server with multiple Camel applications in OSGi container
 
-| link:camel-example-osgi-rmi/README.md[OSGi RMI] (camel-example-osgi-rmi) | OSGi | A OSGi example which exposes a RMI service.
+| link:camel-example-osgi-rmi/README.md[OSGi RMI] (camel-example-osgi-rmi) | OSGi | *deprecated* A OSGi example which exposes a RMI service.
 
 | link:camel-example-servlet-rest-blueprint/README.md[Servlet REST Blueprint] (camel-example-servlet-rest-blueprint) | OSGi | An example using Servlet REST with OSGi Blueprint
 

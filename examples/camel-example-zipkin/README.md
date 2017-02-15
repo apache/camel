@@ -66,6 +66,21 @@ You can then click on each span and get annotated data from the Camel exchange a
 ![Zipkin Web Console Span Details](images/zipkin-web-console-2.png "Detail of the span")
 
 
+### Installing Zipkin Server 
+
+If you want to try Zipkin locally then you quickly download an uber JAR (standalone-hystrix-dashboard) 
+
+  <http://search.maven.org/remotecontent?filepath=com/github/kennedyoliveira/standalone-hystrix-dashboard/1.5.3/standalone-hystrix-dashboard-1.5.3-all.jar>
+    
+.. and then run it
+    
+    java -jar standalone-hystrix-dashboard-1.5.3-all.jar
+     
+And the console is available at:
+     
+    http://localhost:7979/hystrix-dashboard/
+
+
 ### Installing Zipkin Server using Docker
 
 If you want to try Zipkin locally then you quickly try that using Docker.
