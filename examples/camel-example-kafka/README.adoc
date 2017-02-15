@@ -38,21 +38,20 @@ You will need to compile this example first:
 
 ### Run
 
-1. Run the consumer first in separate shell 
+Run the consumer first in separate shell 
 
+    
     mvn compile exec:java -Pkafka-consumer
 
 
-2. Run the message producer in the seperate shell
+Run the message producer in the seperate shell
 
+    
     mvn compile exec:java -Pkafka-producer
 
-   Initially, some messages are sent programmatically. 
-   
-   On the command prompt, type the messages. Each line is sent as one message to kafka
-   
-   Type Ctrl-C to exit.
-
+Initially, some messages are sent programmatically. 
+On the command prompt, type the messages. Each line is sent as one message to kafka
+Press `Ctrl-C` to exit.
 
 
 ### Configuration
@@ -60,7 +59,7 @@ You will need to compile this example first:
 You can configure the details in the file:
   `src/main/resources/application.properties`
 
-You can enable verbose logging by adjusting the `src/main/resources/log4j.properties`
+You can enable verbose logging by adjusting the `src/main/resources/log4j2.properties`
   file as documented in the file.
 
 
@@ -71,7 +70,6 @@ If you hit an problems please let us know on the Camel Forums
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!
-
 
 
 The Camel riders!

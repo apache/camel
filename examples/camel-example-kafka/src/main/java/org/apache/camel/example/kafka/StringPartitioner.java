@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,55 +23,29 @@ import org.apache.kafka.common.Cluster;
 
 public class StringPartitioner implements Partitioner {
 
-    /**
-     * 
-     */
     public StringPartitioner() {
-        // TODO Auto-generated constructor stub
+        // noop
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kafka.common.Configurable#configure(java.util.Map)
-     */
     @Override
     public void configure(Map<String, ?> configs) {
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.kafka.clients.producer.Partitioner#partition(java.lang.String,
-     * java.lang.Object, byte[], java.lang.Object, byte[],
-     * org.apache.kafka.common.Cluster)
-     */
     @Override
     public int partition(String topic, Object key, byte[] keyBytes, Object value, byte[] valueBytes, Cluster cluster) {
-
         int partId = 0;
 
         if (key != null && key instanceof String) {
-
             String sKey = (String) key;
-
             int len = sKey.length();
 
             // This will return either 1 or zero
-
             partId = len % 2;
-
         }
 
         return partId;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.kafka.clients.producer.Partitioner#close()
-     */
     @Override
     public void close() {
     }
