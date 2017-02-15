@@ -259,8 +259,14 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     }
 
     protected Server createServer(RestletEndpoint endpoint) {
-        return new Server(component.getContext().createChildContext(), Protocol.valueOf(endpoint.getProtocol()), endpoint.getPort());
+        // Consider hostname if provided. This is useful when loopback interface is required for security reasons.
+        if (endpoint.getHost() != null) {
+            return new Server(component.getContext().createChildContext(), Protocol.valueOf(endpoint.getProtocol()), endpoint.getHost(), endpoint.getPort(), null);
+        } else {
+            return new Server(component.getContext().createChildContext(), Protocol.valueOf(endpoint.getProtocol()), endpoint.getPort());
+        }
     }
+
 
     protected String stringArrayToString(String[] strings) {
         StringBuffer result = new StringBuffer();
