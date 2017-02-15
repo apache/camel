@@ -51,27 +51,20 @@ public final class MessagePublisherClient {
                 pc.setLocation("classpath:application.properties");
 
                 from("direct:kafkaStart").routeId("DirectToKafka")
-                        .to("kafka:{{kafka.host}}:{{kafka.port}}?topic={{producer.topic}}").log("${headers}"); // Topic
-                                                                                                                // and
-                                                                                                                // offset
-                                                                                                                // of
-                                                                                                                // the
-                                                                                                                // record
-                                                                                                                // is
-                                                                                                                // returned.
+                    .to("kafka:{{producer.topic}}?brokers={{kafka.host}}:{{kafka.port}}").log("${headers}");
 
                 // Topic can be set in header as well.
 
-                from("direct:kafkaStartNoTopic").routeId("kafkaStartNoTopic").to("kafka:{{kafka.host}}:{{kafka.port}}")
-                        .log("${headers}"); // Topic and offset of the record is
-                                            // returned.
+                from("direct:kafkaStartNoTopic").routeId("kafkaStartNoTopic")
+                    .to("kafka:dummy?brokers={{kafka.host}}:{{kafka.port}}")
+                    .log("${headers}");
 
                 // Use custom partitioner based on the key.
 
                 from("direct:kafkaStartWithPartitioner").routeId("kafkaStartWithPartitioner")
-                        .to("kafka:{{kafka.host}}:{{kafka.port}}?topic={{producer.topic}}&partitioner={{producer.partitioner}}")
-                        .log("${headers}"); // Use custom partitioner based on
-                                            // the key.
+                        .to("kafka:{{producer.topic}}?brokers={{kafka.host}}:{{kafka.port}}&partitioner={{producer.partitioner}}")
+                        .log("${headers}");
+
 
                 // Takes input from the command line.
 
@@ -101,14 +94,12 @@ public final class MessagePublisherClient {
 
         testKafkaMessage = "PART 0 :  " + testKafkaMessage;
         Map<String, Object> newHeader = new HashMap<String, Object>();
-        newHeader.put(KafkaConstants.KEY, "AB"); // This should go to partition
-                                                    // 0
+        newHeader.put(KafkaConstants.KEY, "AB"); // This should go to partition 0
 
         producerTemplate.sendBodyAndHeaders("direct:kafkaStartWithPartitioner", testKafkaMessage, newHeader);
 
         testKafkaMessage = "PART 1 :  " + testKafkaMessage;
-        newHeader.put(KafkaConstants.KEY, "ABC"); // This should go to partition
-                                                    // 1
+        newHeader.put(KafkaConstants.KEY, "ABC"); // This should go to partition 1
 
         producerTemplate.sendBodyAndHeaders("direct:kafkaStartWithPartitioner", testKafkaMessage, newHeader);
 

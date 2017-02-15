@@ -23,6 +23,7 @@ import java.net.ServerSocket;
 import java.util.Random;
 
 final class TestUtils {
+
     private static final Random RANDOM = new Random();
 
     private TestUtils() {

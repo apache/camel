@@ -45,10 +45,8 @@ import org.apache.kafka.common.config.SslConfigs;
 public class KafkaConfiguration {
 
     @UriPath @Metadata(required = "true")
-    private String brokers;
-
-    @UriParam @Metadata(required = "true")
     private String topic;
+
     @UriParam
     private String groupId;
     @UriParam(defaultValue = KafkaConstants.KAFKA_DEFAULT_PARTITIONER)
@@ -59,6 +57,8 @@ public class KafkaConfiguration {
     private int consumersCount = 1;
 
     //Common configuration properties
+    @UriParam(label = "common")
+    private String brokers;
     @UriParam
     private String clientId;
 
@@ -613,11 +613,10 @@ public class KafkaConfiguration {
     }
 
     /**
-     * This is for bootstrapping and the producer will only use it for getting metadata (topics, partitions and replicas).
-     * The socket connections for sending the actual data will be established based on the broker information returned in the metadata.
+     * URL of the Kafka brokers to use.
      * The format is host1:port1,host2:port2, and the list can be a subset of brokers or a VIP pointing to a subset of brokers.
      * <p/>
-     * This option is known as <tt>metadata.broker.list</tt> in the Kafka documentation.
+     * This option is known as <tt>bootstrap.servers</tt> in the Kafka documentation.
      */
     public void setBrokers(String brokers) {
         this.brokers = brokers;

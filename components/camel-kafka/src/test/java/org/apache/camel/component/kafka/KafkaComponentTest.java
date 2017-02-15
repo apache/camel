@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.kafka;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -30,6 +28,7 @@ import org.apache.kafka.common.config.SslConfigs;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import static org.junit.Assert.assertEquals;
 
 public class KafkaComponentTest {
 
@@ -37,15 +36,24 @@ public class KafkaComponentTest {
 
     @Test
     public void testPropertiesSet() throws Exception {
-        Map<String, Object> params = new HashMap<String, Object>();
-        params.put("topic", "mytopic");
-        params.put("partitioner", "com.class.Party");
+        String uri = "kafka:mytopic?brokers=broker1:12345,broker2:12566&partitioner=com.class.Party";
 
-        String uri = "kafka:broker1:12345,broker2:12566";
-        String remaining = "broker1:12345,broker2:12566";
-
-        KafkaEndpoint endpoint = new KafkaComponent(context).createEndpoint(uri, remaining, params);
+        KafkaEndpoint endpoint = (KafkaEndpoint) new KafkaComponent(context).createEndpoint(uri);
         assertEquals("broker1:12345,broker2:12566", endpoint.getConfiguration().getBrokers());
+        assertEquals("mytopic", endpoint.getConfiguration().getTopic());
+        assertEquals("com.class.Party", endpoint.getConfiguration().getPartitioner());
+    }
+
+    @Test
+    public void testBrokersOnComponent() throws Exception {
+        KafkaComponent kafka = new KafkaComponent(context);
+        kafka.setBrokers("broker1:12345,broker2:12566");
+
+        String uri = "kafka:mytopic?partitioner=com.class.Party";
+
+        KafkaEndpoint endpoint = (KafkaEndpoint) kafka.createEndpoint(uri);
+        assertEquals(null, endpoint.getConfiguration().getBrokers());
+        assertEquals("broker1:12345,broker2:12566", endpoint.getComponent().getBrokers());
         assertEquals("mytopic", endpoint.getConfiguration().getTopic());
         assertEquals("com.class.Party", endpoint.getConfiguration().getPartitioner());
     }
@@ -55,11 +63,12 @@ public class KafkaComponentTest {
         Map<String, Object> params = new HashMap<String, Object>();
         setProducerProperty(params);
 
-        String uri = "kafka:dev1:12345,dev2:12566";
-        String remaining = "dev1:12345,dev2:12566";
+        String uri = "kafka:mytopic?brokers=dev1:12345,dev2:12566";
+        String remaining = "mytopic";
 
         KafkaEndpoint endpoint = new KafkaComponent(context).createEndpoint(uri, remaining, params);
 
+        assertEquals("mytopic", endpoint.getConfiguration().getTopic());
         assertEquals("1", endpoint.getConfiguration().getRequestRequiredAcks());
         assertEquals(new Integer(1), endpoint.getConfiguration().getBufferMemorySize());
         assertEquals(new Integer(10), endpoint.getConfiguration().getProducerBatchSize());
@@ -109,8 +118,8 @@ public class KafkaComponentTest {
     public void testAllProducerKeys() throws Exception {
         Map<String, Object> params = new HashMap<String, Object>();
 
-        String uri = "kafka:dev1:12345,dev2:12566";
-        String remaining = "dev1:12345,dev2:12566";
+        String uri = "kafka:mytopic?brokers=dev1:12345,dev2:12566";
+        String remaining = "mytopic";
 
         KafkaEndpoint endpoint = new KafkaComponent(context).createEndpoint(uri, remaining, params);
         assertEquals(endpoint.getConfiguration().createProducerProperties().keySet(), getProducerKeys().keySet());
@@ -203,48 +212,4 @@ public class KafkaComponentTest {
         params.put("sslTrustmanagerAlgorithm", "PKIX");
     }
     
-    // the URL format should include the topic name like the ActiiveMQ & AMQP endpoints
-    // kafka:serverName:port/topicName
-    // kafka:serverName/topicName
-    
-    @Test
-    public void testSimpleKakfaUriEndpoint() throws Exception {
-        
-        Map<String, Object> params = new HashMap<String, Object>();
- 
-        String uri = "kafka:broker1:9999/topic2One.33";
-        String remaining = "broker1:9999/topic2One.33";
-        
-
-        KafkaEndpoint endpoint = new KafkaComponent(context).createEndpoint(uri, remaining, params);
-        
-        assertEquals("topic2One.33", endpoint.getConfiguration().getTopic());
-        assertEquals("broker1:9999", endpoint.getConfiguration().getBrokers());
-        
-        // port not provided in the URI
-        
-        uri = "kafka:broker1/click-Topic";
-        remaining = "broker1/click-Topic";
-        
-        endpoint = new KafkaComponent(context).createEndpoint(uri, remaining, params);
-        
-        assertEquals("click-Topic", endpoint.getConfiguration().getTopic());
-        assertEquals("broker1:9092", endpoint.getConfiguration().getBrokers());
-        
-        // IP Address provided instead of hostname
-        
-        uri = "kafka:10.10.10.3/click-Topic";
-        remaining = "10.10.10.3/click-Topic";
-        
-        endpoint = new KafkaComponent(context).createEndpoint(uri, remaining, params);
-        
-        assertEquals("click-Topic", endpoint.getConfiguration().getTopic());
-        assertEquals("10.10.10.3:9092", endpoint.getConfiguration().getBrokers());
-        
-       
-        
-        
-        
-    }   
-
 }
