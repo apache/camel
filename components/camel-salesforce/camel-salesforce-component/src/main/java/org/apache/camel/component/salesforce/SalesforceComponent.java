@@ -56,6 +56,8 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.salesforce.SalesforceLoginConfig.DEFAULT_LOGIN_URL;
+
 /**
  * Represents the component that manages {@link SalesforceEndpoint}.
  */
@@ -69,6 +71,23 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
 
     @Metadata(label = "security")
     private SalesforceLoginConfig loginConfig;
+
+    // allow fine grained login as well
+    @Metadata(label = "security", defaultValue = DEFAULT_LOGIN_URL)
+    private String loginUrl;
+    @Metadata(label = "security", secret = true)
+    private String clientId;
+    @Metadata(label = "security", secret = true)
+    private String clientSecret;
+    @Metadata(label = "security", secret = true)
+    private String refreshToken;
+    @Metadata(label = "security", secret = true)
+    private String userName;
+    @Metadata(label = "security", secret = true)
+    private String password;
+    @Metadata(label = "security")
+    private boolean lazyLogin;
+
     @Metadata(label = "advanced")
     private SalesforceEndpointConfig config;
 
@@ -197,8 +216,31 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
 
     @Override
     protected void doStart() throws Exception {
-        // validate properties
-        ObjectHelper.notNull(loginConfig, "loginConfig");
+        if (loginConfig == null) {
+            loginConfig = new SalesforceLoginConfig();
+            if (loginUrl != null) {
+                loginConfig.setLoginUrl(loginUrl);
+            }
+            if (refreshToken != null) {
+                loginConfig.setRefreshToken(refreshToken);
+            }
+            if (clientId != null) {
+                loginConfig.setClientId(clientId);
+            }
+            if (clientSecret != null) {
+                loginConfig.setClientSecret(clientSecret);
+            }
+            if (userName != null) {
+                loginConfig.setUserName(userName);
+            }
+            if (password != null) {
+                loginConfig.setPassword(password);
+            }
+            loginConfig.setLazyLogin(lazyLogin);
+            LOG.debug("Created login configuration: {}", loginConfig);
+        } else {
+            LOG.debug("Using shared login configuration: {}", loginConfig);
+        }
 
         // create a Jetty HttpClient if not already set
         if (null == httpClient) {
@@ -257,7 +299,7 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         }
 
         // support restarts
-        if (null == this.session) {
+        if (this.session == null) {
             this.session = new SalesforceSession(httpClient, httpClient.getTimeout(), loginConfig);
         }
         // set session before calling start()
@@ -403,6 +445,79 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
      */
     public void setLoginConfig(SalesforceLoginConfig loginConfig) {
         this.loginConfig = loginConfig;
+    }
+
+    /**
+     * Salesforce login URL, defaults to https://login.salesforce.com
+     */
+    public void setLoginUrl(String loginUrl) {
+        this.loginUrl = loginUrl;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    /**
+     * Salesforce connected application Consumer Key
+     */
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    /**
+     * Salesforce connected application Consumer Secret
+     */
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    /**
+     * Salesforce connected application Consumer token
+     */
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
+     * Salesforce account user name
+     */
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Salesforce account password
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public boolean isLazyLogin() {
+        return lazyLogin;
+    }
+
+    /**
+     * Flag to enable/disable lazy OAuth, default is false. When enabled, OAuth token retrieval or generation is not done until the first API call
+     */
+    public void setLazyLogin(boolean lazyLogin) {
+        this.lazyLogin = lazyLogin;
     }
 
     public SalesforceEndpointConfig getConfig() {

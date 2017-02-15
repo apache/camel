@@ -12,7 +12,7 @@
   "description": "Create or update Salesforce Contact SObject",
   "labels" : [ "salesforce" ],
   "pattern": "To",
-  "componentOptions" : [ "loginConfig" ],
+  "componentOptions" : [ "loginUrl", "clientId", "clientSecret", "refreshToken" ],
   "endpointValues" : {
     "operationName": "upsertSObject"
   },
