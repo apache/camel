@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.kafka;
 
 import java.util.ArrayList;
@@ -36,16 +35,16 @@ public class MockProducerInterceptor implements ProducerInterceptor<String, Stri
 
     @Override
     public void onAcknowledgement(RecordMetadata recordMetadata, Exception e) {
-
+        // noop
     }
 
     @Override
     public void close() {
-
+        // noop
     }
 
     @Override
     public void configure(Map<String, ?> map) {
-
+        // noop
     }
 }

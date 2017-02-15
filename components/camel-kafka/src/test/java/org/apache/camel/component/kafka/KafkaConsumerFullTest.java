@@ -18,14 +18,12 @@ package org.apache.camel.component.kafka;
 
 import java.io.IOException;
 import java.util.Properties;
-import java.util.function.Consumer;
 import java.util.stream.StreamSupport;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.After;
@@ -37,8 +35,8 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
 
     public static final String TOPIC = "test";
 
-    @EndpointInject(uri = "kafka:localhost:{{kafkaPort}}?topic=" + TOPIC
-            + "&groupId=group1&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
+    @EndpointInject(uri = "kafka:" + TOPIC
+            + "?groupId=group1&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
             + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
             + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
     private Endpoint from;

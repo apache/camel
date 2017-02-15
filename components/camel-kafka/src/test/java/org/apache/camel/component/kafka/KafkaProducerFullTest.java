@@ -52,16 +52,14 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     private static KafkaConsumer<String, String> stringsConsumerConn;
     private static KafkaConsumer<byte[], byte[]> bytesConsumerConn;
 
-    @EndpointInject(uri = "kafka:localhost:{{kafkaPort}}?topic=" + TOPIC_STRINGS
-            + "&requestRequiredAcks=-1")
+    @EndpointInject(uri = "kafka:" + TOPIC_STRINGS + "?requestRequiredAcks=-1")
     private Endpoint toStrings;
-    @EndpointInject(uri = "kafka:localhost:{{kafkaPort}}?topic=" + TOPIC_INTERCEPTED
-            + "&requestRequiredAcks=-1"
+    @EndpointInject(uri = "kafka:" + TOPIC_INTERCEPTED + "?requestRequiredAcks=-1"
             + "&interceptorClasses=org.apache.camel.component.kafka.MockProducerInterceptor")
     private Endpoint toStringsWithInterceptor;
     @EndpointInject(uri = "mock:kafkaAck")
     private MockEndpoint mockEndpoint;
-    @EndpointInject(uri = "kafka:localhost:{{kafkaPort}}?topic=" + TOPIC_BYTES + "&requestRequiredAcks=-1"
+    @EndpointInject(uri = "kafka:" + TOPIC_BYTES + "?requestRequiredAcks=-1"
             + "&serializerClass=org.apache.kafka.common.serialization.ByteArraySerializer&"
             + "keySerializerClass=org.apache.kafka.common.serialization.ByteArraySerializer")
     private Endpoint toBytes;

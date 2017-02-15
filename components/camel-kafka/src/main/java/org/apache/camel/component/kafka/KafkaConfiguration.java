@@ -45,10 +45,8 @@ import org.apache.kafka.common.config.SslConfigs;
 public class KafkaConfiguration {
 
     @UriPath @Metadata(required = "true")
-    private String brokers;
-
-    @UriParam @Metadata(required = "true")
     private String topic;
+
     @UriParam
     private String groupId;
     @UriParam(defaultValue = KafkaConstants.KAFKA_DEFAULT_PARTITIONER)
@@ -59,6 +57,8 @@ public class KafkaConfiguration {
     private int consumersCount = 1;
 
     //Common configuration properties
+    @UriParam(label = "common")
+    private String brokers;
     @UriParam
     private String clientId;
 
