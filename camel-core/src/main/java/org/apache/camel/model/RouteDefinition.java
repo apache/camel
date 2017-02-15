@@ -637,11 +637,35 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * Declare an input type.
      * @param urn input type URN
+     * @param validate if it's true, content validation is performed for this input type
+     * @return the builder
+     */
+    public RouteDefinition inputType(String urn, boolean validate) {
+        inputType = new InputTypeDefinition();
+        inputType.setUrn(urn);
+        inputType.setValidate(validate);
+        return this;
+    }
+
+    /**
+     * Declare an input type.
+     * @param urn input type URN
      * @return the builder
      */
     public RouteDefinition inputType(String urn) {
+        return inputType(urn, false);
+    }
+
+    /**
+     * Declare an input type with Java class.
+     * @param clazz Class object of the input type
+     * @param validate if it's true, content validation is performed for this input type
+     * @return the builder
+     */
+    public RouteDefinition inputType(Class clazz, boolean validate) {
         inputType = new InputTypeDefinition();
-        inputType.setUrn(urn);
+        inputType.setJavaClass(clazz);
+        inputType.setValidate(validate);
         return this;
     }
 
@@ -651,8 +675,19 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @return the builder
      */
     public RouteDefinition inputType(Class clazz) {
-        inputType = new InputTypeDefinition();
-        inputType.setJavaClass(clazz);
+        return inputType(clazz, false);
+    }
+
+    /**
+     * Declare an output type.
+     * @param urn output type URN
+     * @param validate if it's true, content validation is performed for this output type
+     * @return the builder
+     */
+    public RouteDefinition outputType(String urn, boolean validate) {
+        outputType = new OutputTypeDefinition();
+        outputType.setUrn(urn);
+        outputType.setValidate(validate);
         return this;
     }
 
@@ -662,8 +697,19 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @return the builder
      */
     public RouteDefinition outputType(String urn) {
+        return outputType(urn, false);
+    }
+
+    /**
+     * Declare an output type with Java class.
+     * @param clazz Class object of the output type
+     * @param validate if it's true, content validation is performed for this output type
+     * @return the builder
+     */
+    public RouteDefinition outputType(Class clazz, boolean validate) {
         outputType = new OutputTypeDefinition();
-        outputType.setUrn(urn);
+        outputType.setJavaClass(clazz);
+        outputType.setValidate(validate);
         return this;
     }
 
@@ -673,9 +719,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @return the builder
      */
     public RouteDefinition outputType(Class clazz) {
-        outputType = new OutputTypeDefinition();
-        outputType.setJavaClass(clazz);
-        return this;
+        return outputType(clazz, false);
     }
 
     // Properties

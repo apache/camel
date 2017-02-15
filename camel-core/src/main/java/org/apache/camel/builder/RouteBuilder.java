@@ -54,6 +54,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     private RestsDefinition restCollection = new RestsDefinition();
     private Map<String, RestConfigurationDefinition> restConfigurations;
     private List<TransformerBuilder> transformerBuilders = new ArrayList<>();
+    private List<ValidatorBuilder> validatorBuilders = new ArrayList<>();
     private RoutesDefinition routeCollection = new RoutesDefinition();
 
     public RouteBuilder() {
@@ -141,6 +142,17 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         TransformerBuilder tdb = new TransformerBuilder();
         transformerBuilders.add(tdb);
         return tdb;
+    }
+
+    /**
+     * Create a new {@code ValidatorBuilder}.
+     * 
+     * @return the builder
+     */
+    public ValidatorBuilder validator() {
+        ValidatorBuilder vb = new ValidatorBuilder();
+        validatorBuilders.add(vb);
+        return vb;
     }
 
     /**
@@ -341,6 +353,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         // but populate rests before routes, as we want to turn rests into routes
         populateRests();
         populateTransformers();
+        populateValidators();
         populateRoutes();
     }
 
@@ -491,6 +504,16 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         }
         for (TransformerBuilder tdb : transformerBuilders) {
             tdb.configure(camelContext);
+        }
+    }
+
+    protected void populateValidators() {
+        ModelCamelContext camelContext = getContext();
+        if (camelContext == null) {
+            throw new IllegalArgumentException("CamelContext has not been injected!");
+        }
+        for (ValidatorBuilder vb : validatorBuilders) {
+            vb.configure(camelContext);
         }
     }
 
