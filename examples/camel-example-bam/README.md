@@ -28,12 +28,6 @@ You can see the BAM activies defined in
 
 To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
-### Documentation
-
-For a background in BAM see <http://camel.apache.org/bam.html>
-
-This example is documented at <http://camel.apache.org/bam-example.html>
-
 ### Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums

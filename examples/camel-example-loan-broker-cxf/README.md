@@ -20,10 +20,6 @@ You will need to compile this example first:
 
 To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
-### Documentation
-
-This example is documented at
-  <http://camel.apache.org/loan-broker-example.html>
 
 ### Forum, Help, etc
 
