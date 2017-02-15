@@ -29,7 +29,6 @@ public final class MessageConsumerClient {
 
     private MessageConsumerClient() {
     }
-        
 
     public static void main(String[] args) throws Exception {
 
@@ -46,13 +45,13 @@ public final class MessageConsumerClient {
 
                 log.info("About to start route: Kafka Server -> Log ");
 
-                from("kafka:{{kafka.host}}:{{kafka.port}}?" 
-                        + "topic={{consumer.topic}}&" 
-                        + "maxPollRecords={{consumer.maxPollRecords}}&" 
-                        + "consumersCount={{consumer.consumersCount}}&" 
-                        + "seekToBeginning={{consumer.seekToBeginning}}&" 
-                        + "groupId={{consumer.group}}")
-                        .routeId("FromKafka").log("${body}");
+                from("kafka:{{consumer.topic}}?brokers={{kafka.host}}:{{kafka.port}}"
+                        + "&maxPollRecords={{consumer.maxPollRecords}}"
+                        + "&consumersCount={{consumer.consumersCount}}"
+                        + "&seekToBeginning={{consumer.seekToBeginning}}"
+                        + "&groupId={{consumer.group}}")
+                        .routeId("FromKafka")
+                    .log("${body}");
             }
         });
         camelContext.start();
