@@ -29,6 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.spi.StateRepository;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -55,9 +56,15 @@ public class KafkaConsumer extends DefaultConsumer {
         this.processor = processor;
         this.pollTimeoutMs = endpoint.getConfiguration().getPollTimeoutMs();
 
-        if (endpoint.getConfiguration().getBrokers() == null) {
-            throw new IllegalArgumentException("BootStrap servers must be specified");
+        // brokers can be configured on endpoint or component level
+        String brokers = endpoint.getConfiguration().getBrokers();
+        if (brokers == null) {
+            brokers = endpoint.getComponent().getBrokers();
         }
+        if (ObjectHelper.isEmpty(brokers)) {
+            throw new IllegalArgumentException("Brokers must be configured");
+        }
+
         if (endpoint.getConfiguration().getGroupId() == null) {
             throw new IllegalArgumentException("groupId must not be null");
         }
@@ -66,7 +73,14 @@ public class KafkaConsumer extends DefaultConsumer {
     Properties getProps() {
         Properties props = endpoint.getConfiguration().createConsumerProperties();
         endpoint.updateClassProperties(props);
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, endpoint.getConfiguration().getBrokers());
+
+        // brokers can be configured on endpoint or component level
+        String brokers = endpoint.getConfiguration().getBrokers();
+        if (brokers == null) {
+            brokers = endpoint.getComponent().getBrokers();
+        }
+
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, endpoint.getConfiguration().getGroupId());
         return props;
     }

@@ -616,7 +616,7 @@ public class KafkaConfiguration {
      * URL of the Kafka brokers to use.
      * The format is host1:port1,host2:port2, and the list can be a subset of brokers or a VIP pointing to a subset of brokers.
      * <p/>
-     * This option is known as <tt>metadata.broker.list</tt> in the Kafka documentation.
+     * This option is known as <tt>bootstrap.servers</tt> in the Kafka documentation.
      */
     public void setBrokers(String brokers) {
         this.brokers = brokers;
