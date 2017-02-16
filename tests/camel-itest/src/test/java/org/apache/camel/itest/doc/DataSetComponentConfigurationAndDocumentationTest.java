@@ -45,9 +45,8 @@ public class DataSetComponentConfigurationAndDocumentationTest extends CamelTest
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"group\": \"common\", \"required\": true, \"type\""));
-        assertTrue(json.contains("\"kind\": \"parameter\", \"group\": \"consumer\", \"label\": \"consumer\", \"type\": \"integer\""));
-        assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\", \"type\": \"integer"));
+        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"displayName\": \"Name\", \"group\": \"common\", \"required\": true, \"type\""));
+        assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"displayName\": \"Retain First\", \"group\": \"producer\", \"label\": \"producer\", \"type\": \"integer"));
     }
 
 }

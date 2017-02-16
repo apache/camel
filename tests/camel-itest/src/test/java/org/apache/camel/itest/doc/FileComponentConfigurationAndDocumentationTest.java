@@ -40,9 +40,9 @@ public class FileComponentConfigurationAndDocumentationTest extends CamelTestSup
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"directoryName\": { \"kind\": \"path\", \"group\": \"common\", \"required\": true"));
-        assertTrue(json.contains("\"autoCreate\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\", \"type\": \"boolean\""));
-        assertTrue(json.contains("\"readLockMinAge\": { \"kind\": \"parameter\", \"group\": \"lock\", \"label\": \"consumer,lock\""));
+        assertTrue(json.contains("\"directoryName\": { \"kind\": \"path\", \"displayName\": \"Directory Name\", \"group\": \"common\", \"required\": true"));
+        assertTrue(json.contains("\"autoCreate\": { \"kind\": \"parameter\", \"displayName\": \"Auto Create\", \"group\": \"advanced\", \"label\": \"advanced\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"readLockMinAge\": { \"kind\": \"parameter\", \"displayName\": \"Read Lock Min Age\", \"group\": \"lock\", \"label\": \"consumer,lock\""));
     }
 
 }

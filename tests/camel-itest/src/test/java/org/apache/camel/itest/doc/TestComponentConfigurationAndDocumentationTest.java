@@ -40,8 +40,8 @@ public class TestComponentConfigurationAndDocumentationTest extends CamelTestSup
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": true"));
-        assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\""));
+        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"displayName\": \"Name\", \"group\": \"producer\", \"required\": true"));
+        assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"displayName\": \"Retain First\", \"group\": \"producer\", \"label\": \"producer\""));
     }
 
 }

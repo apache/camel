@@ -633,6 +633,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
         for (Map<String, String> row : rows) {
             ComponentOptionModel option = new ComponentOptionModel();
             option.setName(getSafeValue("name", row));
+            option.setDisplayName(getSafeValue("displayName", row));
             option.setKind(getSafeValue("kind", row));
             option.setGroup(getSafeValue("group", row));
             option.setRequired(getSafeValue("required", row));
@@ -655,6 +656,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
         for (Map<String, String> row : rows) {
             EndpointOptionModel option = new EndpointOptionModel();
             option.setName(getSafeValue("name", row));
+            option.setDisplayName(getSafeValue("displayName", row));
             option.setKind(getSafeValue("kind", row));
             option.setGroup(getSafeValue("group", row));
             option.setRequired(getSafeValue("required", row));
@@ -698,6 +700,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
         for (Map<String, String> row : rows) {
             DataFormatOptionModel option = new DataFormatOptionModel();
             option.setName(getSafeValue("name", row));
+            option.setDisplayName(getSafeValue("displayName", row));
             option.setKind(getSafeValue("kind", row));
             option.setType(getSafeValue("type", row));
             option.setJavaType(getSafeValue("javaType", row));
@@ -744,6 +747,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
         for (Map<String, String> row : rows) {
             LanguageOptionModel option = new LanguageOptionModel();
             option.setName(getSafeValue("name", row));
+            option.setDisplayName(getSafeValue("displayName", row));
             option.setKind(getSafeValue("kind", row));
             option.setType(getSafeValue("type", row));
             option.setJavaType(getSafeValue("javaType", row));

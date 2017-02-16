@@ -46,10 +46,10 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": true, \"type\": \"string\", \"javaType\": \"java.lang.String\","
+        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"displayName\": \"Name\", \"group\": \"producer\", \"required\": true, \"type\": \"string\", \"javaType\": \"java.lang.String\","
             + " \"deprecated\": false, \"secret\": false, \"description\": \"Name of data format\" }"));
-        assertTrue(json.contains("\"operation\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": true, \"type\": \"string\""));
-        assertTrue(json.contains("\"synchronous\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"operation\": { \"kind\": \"path\", \"displayName\": \"Operation\", \"group\": \"producer\", \"required\": true, \"type\": \"string\""));
+        assertTrue(json.contains("\"synchronous\": { \"kind\": \"parameter\", \"displayName\": \"Synchronous\", \"group\": \"advanced\", \"label\": \"advanced\", \"type\": \"boolean\""));
     }
 
     @Test
@@ -61,7 +61,7 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
         assertTrue(json.contains("\"name\": \"flatpack"));
 
         // the default value is a bit tricky as its ", which is written escaped as \"
-        assertTrue(json.contains("\"textQualifier\": { \"kind\": \"attribute\", \"required\": false, \"type\": \"string\""
+        assertTrue(json.contains("\"textQualifier\": { \"kind\": \"attribute\", \"displayName\": \"Text Qualifier\", \"required\": false, \"type\": \"string\""
             + ", \"javaType\": \"java.lang.String\", \"deprecated\": false, \"secret\": false, \"defaultValue\": \"\\\"\""));
 
         List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);
@@ -95,7 +95,7 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
         assertTrue(json.contains("\"name\": \"univocity-tsv"));
 
         // the default value is a bit tricky as its \, which is written escaped as \\
-        assertTrue(json.contains("\"escapeChar\": { \"kind\": \"attribute\", \"required\": false, \"type\": \"string\", \"javaType\": \"java.lang.String\","
+        assertTrue(json.contains("\"escapeChar\": { \"kind\": \"attribute\", \"displayName\": \"Escape Char\", \"required\": false, \"type\": \"string\", \"javaType\": \"java.lang.String\","
             + " \"deprecated\": false, \"secret\": false, \"defaultValue\": \"\\\\\", \"description\": \"The escape character.\""));
 
         List<Map<String, String>> rows = JsonSchemaHelper.parseJsonSchema("properties", json, true);

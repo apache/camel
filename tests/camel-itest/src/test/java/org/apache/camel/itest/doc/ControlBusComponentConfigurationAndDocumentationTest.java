@@ -41,8 +41,8 @@ public class ControlBusComponentConfigurationAndDocumentationTest extends CamelT
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"action\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"string\""));
-        assertTrue(json.contains("\"async\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"action\": { \"kind\": \"parameter\", \"displayName\": \"Action\", \"group\": \"producer\", \"type\": \"string\""));
+        assertTrue(json.contains("\"async\": { \"kind\": \"parameter\", \"displayName\": \"Async\", \"group\": \"producer\", \"type\": \"boolean\""));
     }
 
 }

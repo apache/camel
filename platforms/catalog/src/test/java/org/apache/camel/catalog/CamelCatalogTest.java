@@ -1086,6 +1086,7 @@ public class CamelCatalogTest {
         Map<String, String> row = JSonSchemaHelper.getRow(rows, "exchangeFormatter");
         assertNotNull(row);
         assertEquals("org.apache.camel.spi.ExchangeFormatter", row.get("javaType"));
+        assertEquals("Exchange Formatter", row.get("displayName"));
 
         // properties
         rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
@@ -1095,31 +1096,37 @@ public class CamelCatalogTest {
         assertEquals("INFO", row.get("defaultValue"));
         String enums = JSonSchemaHelper.getPropertyEnum(rows, "level");
         assertEquals("ERROR,WARN,INFO,DEBUG,TRACE,OFF", enums);
+        assertEquals("Level", row.get("displayName"));
 
         row = JSonSchemaHelper.getRow(rows, "amount");
         assertNotNull(row);
         assertEquals("1", row.get("defaultValue"));
         assertEquals("Number of drinks in the order", row.get("description"));
+        assertEquals("Amount", row.get("displayName"));
 
         row = JSonSchemaHelper.getRow(rows, "maxChars");
         assertNotNull(row);
         assertEquals("false", row.get("deprecated"));
         assertEquals("10000", row.get("defaultValue"));
+        assertEquals("Max Chars", row.get("displayName"));
 
         row = JSonSchemaHelper.getRow(rows, "repeatCount");
         assertNotNull(row);
         assertEquals("long", row.get("javaType"));
         assertEquals("0", row.get("defaultValue"));
+        assertEquals("Repeat Count", row.get("displayName"));
 
         row = JSonSchemaHelper.getRow(rows, "fontSize");
         assertNotNull(row);
         assertEquals("false", row.get("deprecated"));
         assertEquals("14", row.get("defaultValue"));
+        assertEquals("Font Size", row.get("displayName"));
 
         row = JSonSchemaHelper.getRow(rows, "kerberosRenewJitter");
         assertNotNull(row);
         assertEquals("java.lang.Double", row.get("javaType"));
         assertEquals("0.05", row.get("defaultValue"));
+        assertEquals("Kerberos Renew Jitter", row.get("displayName"));
     }
 
 }

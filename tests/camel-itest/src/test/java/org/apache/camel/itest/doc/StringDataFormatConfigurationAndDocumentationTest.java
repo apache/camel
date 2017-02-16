@@ -37,7 +37,7 @@ public class StringDataFormatConfigurationAndDocumentationTest extends CamelTest
 
         assertTrue(json.contains("\"name\": \"string\""));
         assertTrue(json.contains("\"modelName\": \"string\""));
-        assertTrue(json.contains("\"charset\": { \"kind\": \"attribute\", \"required\": false, \"type\": \"string\", \"javaType\": \"java.lang.String\", \"deprecated\": false"));
+        assertTrue(json.contains("\"charset\": { \"kind\": \"attribute\", \"displayName\": \"Charset\", \"required\": false, \"type\": \"string\""));
     }
 
 }

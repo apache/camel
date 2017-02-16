@@ -94,7 +94,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private ErrorListener errorListener;
     @UriParam(label = "advanced")
     private URIResolver uriResolver;
-    @UriParam(defaultValue = "true")
+    @UriParam(defaultValue = "true", displayName = "Allow StAX")
     private boolean allowStAX = true;
     @UriParam
     private boolean deleteOutputFile;
