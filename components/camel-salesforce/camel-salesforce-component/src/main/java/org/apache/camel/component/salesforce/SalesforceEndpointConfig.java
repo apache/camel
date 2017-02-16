@@ -97,23 +97,23 @@ public class SalesforceEndpointConfig implements Cloneable {
     // Rest API properties
     @UriParam
     private PayloadFormat format = PayloadFormat.JSON;
-    @UriParam
+    @UriParam(displayName = "SObject Name")
     private String sObjectName;
-    @UriParam
+    @UriParam(displayName = "SObject Id")
     private String sObjectId;
-    @UriParam
+    @UriParam(displayName = "SObject Fields")
     private String sObjectFields;
-    @UriParam
+    @UriParam(displayName = "SObject Id Name")
     private String sObjectIdName;
-    @UriParam
+    @UriParam(displayName = "SObject Id Value")
     private String sObjectIdValue;
-    @UriParam
+    @UriParam(displayName = "SObject Blob Field Name")
     private String sObjectBlobFieldName;
-    @UriParam
+    @UriParam(displayName = "SObject Class")
     private String sObjectClass;
-    @UriParam
+    @UriParam(displayName = "SObject Query")
     private String sObjectQuery;
-    @UriParam
+    @UriParam(displayName = "SObject Search")
     private String sObjectSearch;
     @UriParam
     private String apexMethod;

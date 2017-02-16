@@ -454,6 +454,7 @@ public class ConnectorMojo extends AbstractJarMojo {
      */
     private static String buildJSonLineFromRow(Map<String, String> row) {
         String name = row.get("name");
+        String displayName = row.get("displayName");
         String kind = row.get("kind");
         boolean required = false;
         Object value = row.getOrDefault("required", "false");
@@ -502,7 +503,7 @@ public class ConnectorMojo extends AbstractJarMojo {
             multiValue = Boolean.valueOf(value.toString());
         }
 
-        return JSonSchemaHelper.toJson(name, kind, required, javaType, defaultValue, description, deprecated, secret, group, label,
+        return JSonSchemaHelper.toJson(name, displayName, kind, required, javaType, defaultValue, description, deprecated, secret, group, label,
             enumType, enums, false, null, false, optionalPrefix, prefix, multiValue);
     }
 

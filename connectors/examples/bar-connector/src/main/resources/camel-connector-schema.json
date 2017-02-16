@@ -19,8 +19,8 @@
   "componentProperties": {
   },
   "properties": {
-    "drink": { "kind": "path", "group": "producer", "required": true, "type": "object", "javaType": "org.beverage.Beverages", "enum": [ "Wine", "GinTonic", "Beer" ], "deprecated": false, "secret": false, "description": "What drink to order" },
-    "amount": { "kind": "parameter", "group": "producer", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "secret": false, "defaultValue": 2, "description": "Number of drinks in the order" },
-    "celebrity": { "kind": "parameter", "group": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Is this a famous person ordering" }
+    "drink": { "kind": "path", "displayName": "Drink", "group": "producer", "required": true, "type": "object", "javaType": "org.beverage.Beverages", "enum": [ "Wine", "GinTonic", "Beer" ], "deprecated": false, "secret": false, "description": "What drink to order" },
+    "amount": { "kind": "parameter", "displayName": "Amount", "group": "producer", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "secret": false, "defaultValue": 2, "description": "Number of drinks in the order" },
+    "celebrity": { "kind": "parameter", "displayName": "Celebrity", "group": "producer", "required": false, "type": "boolean", "javaType": "boolean", "deprecated": false, "secret": false, "defaultValue": false, "description": "Is this a famous person ordering" }
   }
 }

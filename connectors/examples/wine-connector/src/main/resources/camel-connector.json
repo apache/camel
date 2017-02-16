@@ -18,6 +18,6 @@
     "drink": "Wine"
   },
   "endpointOverrides": {
-    "drink": { "enum": [ "Wine" ], "description": "You can only order wine" }
+    "drink": { "displayName": "Wine Bottle", "enum": [ "Wine" ], "description": "You can only order wine" }
   }
 }
