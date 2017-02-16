@@ -33,6 +33,13 @@ import java.lang.annotation.Target;
 public @interface Metadata {
 
     /**
+     * A human display name of the parameter.
+     * <p/>
+     * This is used for documentation and tooling only.
+     */
+    String displayName() default "";
+
+    /**
      * To define one or more labels.
      * <p/>
      * Multiple labels can be defined as a comma separated value.

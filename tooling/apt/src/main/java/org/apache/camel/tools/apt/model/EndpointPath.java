@@ -23,6 +23,7 @@ import org.apache.camel.tools.apt.helper.CollectionStringBuffer;
 public final class EndpointPath {
 
     private String name;
+    private String displayName;
     private String type;
     private String required;
     private String defaultValue;
@@ -34,10 +35,11 @@ public final class EndpointPath {
     private boolean enumType;
     private Set<String> enums;
 
-    public EndpointPath(String name, String type, String required, String defaultValue, String documentation,
+    public EndpointPath(String name, String displayName, String type, String required, String defaultValue, String documentation,
                         boolean deprecated, boolean secret, String group, String label,
                         boolean enumType, Set<String> enums) {
         this.name = name;
+        this.displayName = displayName;
         this.type = type;
         this.required = required;
         this.defaultValue = defaultValue;
@@ -52,6 +54,10 @@ public final class EndpointPath {
 
     public String getName() {
         return name;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public String getType() {
