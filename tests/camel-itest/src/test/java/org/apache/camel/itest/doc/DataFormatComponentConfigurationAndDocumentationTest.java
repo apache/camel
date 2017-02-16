@@ -53,13 +53,6 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
     }
 
     @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("dataformat");
-        assertNotNull("Should have found some auto-generated HTML", html);
-    }
-
-    @Test
     public void testFlatpackDefaultValue() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String json = context.getEipParameterJsonSchema("flatpack");

@@ -16,11 +16,9 @@
  */
 package org.apache.camel.itest.doc;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.component.controlbus.ControlBusComponent;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -45,13 +43,6 @@ public class ControlBusComponentConfigurationAndDocumentationTest extends CamelT
 
         assertTrue(json.contains("\"action\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"string\""));
         assertTrue(json.contains("\"async\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"boolean\""));
-    }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("controlbus");
-        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

@@ -78,16 +78,6 @@ public final class EndpointPath {
         return secret;
     }
 
-    public String getEnumValuesAsHtml() {
-        CollectionStringBuffer csb = new CollectionStringBuffer("<br/>");
-        if (enums != null && enums.size() > 0) {
-            for (String e : enums) {
-                csb.append(e);
-            }
-        }
-        return csb.toString();
-    }
-
     public boolean isEnumType() {
         return enumType;
     }

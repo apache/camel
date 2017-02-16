@@ -16,11 +16,9 @@
  */
 package org.apache.camel.itest.doc;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.component.xslt.XsltComponent;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -45,13 +43,6 @@ public class XsltComponentConfigurationAndDocumentationTest extends CamelTestSup
         assertTrue(json.contains("\"resourceUri\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
         assertTrue(json.contains("\"allowStAX\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"boolean\""));
         assertTrue(json.contains("\"transformerFactoryClass\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\""));
-    }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("xslt");
-        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

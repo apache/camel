@@ -34,7 +34,6 @@ import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
@@ -61,15 +60,13 @@ import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findTypeEleme
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.implementsInterface;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.loadResource;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.processFile;
-import static org.apache.camel.tools.apt.AnnotationProcessorHelper.warning;
 import static org.apache.camel.tools.apt.helper.JsonSchemaHelper.sanitizeDescription;
 import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
 import static org.apache.camel.tools.apt.helper.Strings.getOrElse;
 import static org.apache.camel.tools.apt.helper.Strings.isNullOrEmpty;
-import static org.apache.camel.tools.apt.helper.Strings.safeNull;
 
 /**
- * Processes all Camel {@link UriEndpoint}s and generate json schema and html documentation for the endpoint/component.
+ * Processes all Camel {@link UriEndpoint}s and generate json schema documentation for the endpoint/component.
  */
 @SupportedAnnotationTypes({"org.apache.camel.spi.*"})
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
@@ -120,22 +117,11 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     }
                     final String aliasTitle = aTitle;
 
-                    // write html documentation
+                    // write json schema
                     String name = canonicalClassName(classElement.getQualifiedName().toString());
                     String packageName = name.substring(0, name.lastIndexOf("."));
-                    String fileName = alias + ".html";
+                    String fileName = alias + ".json";
                     Func1<PrintWriter, Void> handler = new Func1<PrintWriter, Void>() {
-                        @Override
-                        public Void call(PrintWriter writer) {
-                            writeHtmlDocumentation(writer, roundEnv, classElement, uriEndpoint, aliasTitle, alias, extendsAlias, label, schemes);
-                            return null;
-                        }
-                    };
-                    processFile(processingEnv, packageName, fileName, handler);
-
-                    // write json schema
-                    fileName = alias + ".json";
-                    handler = new Func1<PrintWriter, Void>() {
                         @Override
                         public Void call(PrintWriter writer) {
                             writeJSonSchemeDocumentation(writer, roundEnv, classElement, uriEndpoint, aliasTitle, alias, extendsAlias, label, schemes);
@@ -146,82 +132,6 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                 }
             }
         }
-    }
-
-    protected void writeHtmlDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint,
-                                          String title, String scheme, String extendsScheme, String label, String[] schemes) {
-        // gather component information
-        ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, classElement, title, scheme, extendsScheme, label);
-
-        String syntax = componentModel.getSyntax();
-        String alternativeSyntax = componentModel.getAlternativeSyntax();
-        String description = componentModel.getDescription();
-        String firstVersion = componentModel.getFirstVersion();
-
-        writer.println("<html>");
-        writer.println("<header>");
-        writer.println("<title>" + title  + "</title>");
-        writer.println("</header>");
-        writer.println("<body>");
-        writer.println("<h1>" + title + "</h1>");
-        if (!Strings.isNullOrEmpty(firstVersion)) {
-            writer.println("<b>Available from version:</b> " + firstVersion + "<br/>");
-        }
-        writer.println("<b>Scheme:</b> " + scheme + "<br/>");
-        writer.println("<b>Syntax:</b> " + syntax + "<br/>");
-        if (alternativeSyntax != null) {
-            writer.println("<b>Alternative Syntax:</b> " + alternativeSyntax + "<br/>");
-        }
-        // the first scheme is the regular so only output if there is alternatives
-        if (schemes != null && schemes.length > 1) {
-            CollectionStringBuffer csb = new CollectionStringBuffer(",");
-            for (String altScheme : schemes) {
-                csb.append(altScheme);
-            }
-            writer.println("<b>Alternative Schemes:</b> " + csb.toString() + "<br/>");
-        }
-        writer.println("<b>Description:</b> " + description + "<br/>");
-        writer.println("<b>Deprecated:</b>" + componentModel.isDeprecated() + "<br/>");
-        if (componentModel.isConsumerOnly()) {
-            writer.println("<b>ConsumerOnly:</b>" + "true" + "<br/>");
-        }
-        if (componentModel.isProducerOnly()) {
-            writer.println("<b>ProducerOnly:</b>" + "true" + "<br/>");
-        }
-        writer.println("<b>Async:</b>" + componentModel.isAsync() + "<br/>");
-        writer.println("<b>Maven:</b> " + componentModel.getGroupId() + "/" + componentModel.getArtifactId() + "/" + componentModel.getVersionId() + "<br/>");
-
-        writeHtmlDocumentationAndFieldInjections(writer, roundEnv, componentModel, classElement, "", uriEndpoint.excludeProperties());
-
-        // only if its a consumer capable component
-        if (uriEndpoint.consumerOnly() || !uriEndpoint.producerOnly()) {
-            // This code is not my fault, it seems to honestly be the hacky way to find a class name in APT :)
-            TypeMirror consumerType = null;
-            try {
-                uriEndpoint.consumerClass();
-            } catch (MirroredTypeException mte) {
-                consumerType = mte.getTypeMirror();
-            }
-
-            boolean found = false;
-            String consumerClassName = null;
-            String consumerPrefix = getOrElse(uriEndpoint.consumerPrefix(), "");
-            if (consumerType != null) {
-                consumerClassName = consumerType.toString();
-                TypeElement consumerElement = findTypeElement(processingEnv, roundEnv, consumerClassName);
-                if (consumerElement != null) {
-                    writer.println("<h2>" + scheme + " consumer" + "</h2>");
-                    writeHtmlDocumentationAndFieldInjections(writer, roundEnv, componentModel, consumerElement, consumerPrefix, uriEndpoint.excludeProperties());
-                    found = true;
-                }
-            }
-            if (!found && consumerClassName != null) {
-                warning(processingEnv, "APT cannot find consumer class " + consumerClassName);
-            }
-        }
-
-        writer.println("</body>");
-        writer.println("</html>");
     }
 
     protected void writeJSonSchemeDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint,
@@ -425,72 +335,6 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
 
         buffer.append("\n}\n");
         return buffer.toString();
-    }
-
-    protected void writeHtmlDocumentationAndFieldInjections(PrintWriter writer, RoundEnvironment roundEnv, ComponentModel componentModel,
-                                                            TypeElement classElement, String prefix, String excludeProperties) {
-        String classDoc = processingEnv.getElementUtils().getDocComment(classElement);
-        if (!isNullOrEmpty(classDoc)) {
-            // remove dodgy @version that we may have in class javadoc
-            classDoc = classDoc.replaceFirst("\\@version", "");
-            classDoc = classDoc.trim();
-            writer.println("<p>" + classDoc + "</p>");
-        }
-
-        Set<EndpointPath> endpointPaths = new LinkedHashSet<EndpointPath>();
-        Set<EndpointOption> endpointOptions = new LinkedHashSet<EndpointOption>();
-        findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, classElement, prefix, excludeProperties);
-
-        // sort the endpoint options in the standard order we prefer
-        List<EndpointPath> paths = new ArrayList<EndpointPath>();
-        paths.addAll(endpointPaths);
-        Collections.sort(paths, EndpointHelper.createPathComparator(componentModel.getSyntax()));
-
-        // sort the endpoint options in the standard order we prefer
-        List<EndpointOption> options = new ArrayList<EndpointOption>();
-        options.addAll(endpointOptions);
-        Collections.sort(options, EndpointHelper.createGroupAndLabelComparator());
-
-        if (!options.isEmpty() || !paths.isEmpty()) {
-            writer.println("<table class='table'>");
-            writer.println("  <tr>");
-            writer.println("    <th align=\"left\">Name</th>");
-            writer.println("    <th align=\"left\">Kind</th>");
-            writer.println("    <th align=\"left\">Group</th>");
-            writer.println("    <th align=\"left\">Required</th>");
-            writer.println("    <th align=\"left\">Default</th>");
-            writer.println("    <th align=\"left\">Type</th>");
-            writer.println("    <th align=\"left\">Enum</th>");
-            writer.println("    <th align=\"left\">Description</th>");
-            writer.println("  </tr>");
-            // include paths in the top
-            for (EndpointPath path : paths) {
-                writer.println("  <tr>");
-                writer.println("    <td>" + path.getName() + "</td>");
-                writer.println("    <td>" + "path" + "</td>");
-                writer.println("    <td>" + path.getGroup() + "</td>");
-                writer.println("    <td>" + safeNull(path.getRequired()) + "</td>");
-                writer.println("    <td>" + path.getDefaultValue() + "</td>");
-                writer.println("    <td>" + path.getType() + "</td>");
-                writer.println("    <td>" + path.getEnumValuesAsHtml() + "</td>");
-                writer.println("    <td>" + path.getDocumentation() + "</td>");
-                writer.println("  </tr>");
-            }
-            // and then regular parameter options
-            for (EndpointOption option : options) {
-                writer.println("  <tr>");
-                writer.println("    <td>" + option.getName() + "</td>");
-                writer.println("    <td>" + "parameter" + "</td>");
-                writer.println("    <td>" + option.getGroup() + "</td>");
-                writer.println("    <td>" + safeNull(option.getRequired()) + "</td>");
-                writer.println("    <td>" + option.getDefaultValue() + "</td>");
-                writer.println("    <td>" + option.getType() + "</td>");
-                writer.println("    <td>" + option.getEnumValuesAsHtml() + "</td>");
-                writer.println("    <td>" + option.getDocumentationWithNotes() + "</td>");
-                writer.println("  </tr>");
-            }
-            writer.println("</table>");
-        }
     }
 
     protected ComponentModel findComponentProperties(RoundEnvironment roundEnv, UriEndpoint uriEndpoint, TypeElement endpointClassElement,

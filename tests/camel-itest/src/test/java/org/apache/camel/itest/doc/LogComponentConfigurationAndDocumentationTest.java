@@ -16,11 +16,9 @@
  */
 package org.apache.camel.itest.doc;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.component.log.LogComponent;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -45,13 +43,6 @@ public class LogComponentConfigurationAndDocumentationTest extends CamelTestSupp
         assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
         assertTrue(json.contains("\"level\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"string\""));
         assertTrue(json.contains("\"showBody\": { \"kind\": \"parameter\", \"group\": \"formatting\", \"label\": \"formatting\""));
-    }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("log");
-        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

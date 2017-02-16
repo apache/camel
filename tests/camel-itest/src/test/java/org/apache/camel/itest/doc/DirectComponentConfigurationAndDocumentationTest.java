@@ -47,13 +47,6 @@ public class DirectComponentConfigurationAndDocumentationTest extends CamelTestS
     }
 
     @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("direct");
-        assertNotNull("Should have found some auto-generated HTML", html);
-    }
-
-    @Test
     public void testComponentJsonSchema() throws Exception {
         CamelContext context = new DefaultCamelContext();
         String json = context.getComponentParameterJsonSchema("direct");

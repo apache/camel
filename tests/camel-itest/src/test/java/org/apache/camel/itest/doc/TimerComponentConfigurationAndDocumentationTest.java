@@ -16,11 +16,9 @@
  */
 package org.apache.camel.itest.doc;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.component.timer.TimerComponent;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -45,13 +43,6 @@ public class TimerComponentConfigurationAndDocumentationTest extends CamelTestSu
         assertTrue(json.contains("\"timerName\": { \"kind\": \"path\", \"group\": \"consumer\", \"required\": \"true\""));
         assertTrue(json.contains("\"delay\": { \"kind\": \"parameter\", \"group\": \"consumer\", \"type\": \"integer\""));
         assertTrue(json.contains("\"timer\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\""));
-    }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("timer");
-        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }
