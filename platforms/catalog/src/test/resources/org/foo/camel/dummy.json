@@ -18,6 +18,7 @@
   },
   "properties": {
     "loggerName": { "kind": "path", "group": "producer", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "description": "The logger name to use" },
+    "amount": { "kind": "parameter", "group": "producer", "type": "integer", "javaType": "int", "deprecated": false, "secret": false, "defaultValue": 1, "description": "Number of drinks in the order" },
     "groupActiveOnly": { "kind": "parameter", "group": "producer", "type": "boolean", "javaType": "java.lang.Boolean", "deprecated": false, "defaultValue": true, "description": "If true will hide stats when no new messages have been received for a time interval if false show stats regardless of message traffic." },
     "groupDelay": { "kind": "parameter", "group": "producer", "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "description": "Set the initial delay for stats (in millis)" },
     "groupInterval": { "kind": "parameter", "group": "producer", "type": "integer", "javaType": "java.lang.Long", "deprecated": false, "description": "If specified will group message stats by this time interval (in millis)" },
