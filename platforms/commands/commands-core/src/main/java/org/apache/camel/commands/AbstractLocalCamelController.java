@@ -50,7 +50,7 @@ import org.apache.camel.spi.Transformer;
 import org.apache.camel.util.JsonSchemaHelper;
 
 /**
- * Abstract {@link org.apache.camel.commands.LocalCamelController} that implementators should extend when implemeting
+ * Abstract {@link org.apache.camel.commands.LocalCamelController} that implementators should extend when implementing
  * a controller that runs locally in the same JVM as Camel.
  */
 public abstract class AbstractLocalCamelController extends AbstractCamelController implements LocalCamelController {
