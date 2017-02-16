@@ -345,7 +345,7 @@ Number of Components: 219
 `jt400:userID:password/systemName/objectPath.type` | 1.5 | The jt400 component allows you to exchanges messages with an AS/400 system using data queues or program call.
 
 | link:camel-kafka/src/main/docs/kafka-component.adoc[Kafka] (camel-kafka) +
-`kafka:brokers` | 2.13 | The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.
+`kafka:topic` | 2.13 | The kafka component allows messages to be sent to (or consumed from) Apache Kafka brokers.
 
 | link:camel-kestrel/src/main/docs/kestrel-component.adoc[Kestrel] (camel-kestrel) +
 `kestrel:addresses/queue` | 2.6 | *deprecated* The kestrel component allows messages to be sent to (or consumed from) Kestrel brokers.
