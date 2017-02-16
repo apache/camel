@@ -15,7 +15,7 @@
   "pattern" : "From",
   "endpointOptions" : [ "timerName", "period", "repeatCount" ],
   "endpointValues" : {
-    "fixedRate" : "true",
-    "period" : "5000"
+    "fixedRate" : true,
+    "period" : 5000
   }
 }
