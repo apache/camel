@@ -1061,4 +1061,44 @@ public class CamelCatalogTest {
         assertEquals("delete", result.getNotProducerOnly().iterator().next());
     }
 
+    @Test
+    public void testJSonSchemaHelper() throws Exception {
+        String json = loadText(new FileInputStream("src/test/resources/org/foo/camel/dummy.json"));
+        assertNotNull(json);
+
+        // component
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
+        assertEquals(12, rows.size());
+        assertTrue(JSonSchemaHelper.isComponentProducerOnly(rows));
+        assertFalse(JSonSchemaHelper.isComponentConsumerOnly(rows));
+        String desc = null;
+        for (Map<String, String> row : rows) {
+            if (row.containsKey("description")) {
+                desc = row.get("description");
+                break;
+            }
+        }
+
+        // componentProperties
+        rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
+        assertEquals(1, rows.size());
+        Map<String, String> row = JSonSchemaHelper.getRow(rows, "exchangeFormatter");
+        assertNotNull(row);
+        assertEquals("org.apache.camel.spi.ExchangeFormatter", row.get("javaType"));
+
+        // properties
+        rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+        assertEquals(27, rows.size());
+        row = JSonSchemaHelper.getRow(rows, "level");
+        assertNotNull(row);
+        assertEquals("INFO", row.get("defaultValue"));
+        String enums = JSonSchemaHelper.getPropertyEnum(rows, "level");
+        assertEquals("ERROR,WARN,INFO,DEBUG,TRACE,OFF", enums);
+
+        row = JSonSchemaHelper.getRow(rows, "maxChars");
+        assertNotNull(row);
+        assertEquals("false", row.get("deprecated"));
+        assertEquals("10000", row.get("defaultValue"));
+    }
+
 }

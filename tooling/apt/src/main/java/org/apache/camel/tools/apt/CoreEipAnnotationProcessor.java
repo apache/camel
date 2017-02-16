@@ -173,9 +173,9 @@ public class CoreEipAnnotationProcessor {
         }
         buffer.append("\n    \"javaType\": \"").append(eipModel.getJavaType()).append("\",");
         buffer.append("\n    \"label\": \"").append(safeNull(eipModel.getLabel())).append("\",");
-        buffer.append("\n    \"deprecated\": \"").append(eipModel.isDeprecated()).append("\",");
-        buffer.append("\n    \"input\": \"").append(eipModel.getInput()).append("\",");
-        buffer.append("\n    \"output\": \"").append(eipModel.getOutput()).append("\"");
+        buffer.append("\n    \"deprecated\": ").append(eipModel.isDeprecated()).append(",");
+        buffer.append("\n    \"input\": ").append(eipModel.getInput()).append(",");
+        buffer.append("\n    \"output\": ").append(eipModel.getOutput());
         buffer.append("\n  },");
 
         buffer.append("\n  \"properties\": {");
