@@ -40,8 +40,8 @@ public class BeanComponentConfigurationAndDocumentationTest extends CamelTestSup
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"method\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"string\""));
-        assertTrue(json.contains("\"cache\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"method\": { \"kind\": \"parameter\", \"displayName\": \"Method\", \"group\": \"producer\", \"type\": \"string\""));
+        assertTrue(json.contains("\"cache\": { \"kind\": \"parameter\", \"displayName\": \"Cache\", \"group\": \"advanced\", \"label\": \"advanced\", \"type\": \"boolean\""));
     }
 
 }

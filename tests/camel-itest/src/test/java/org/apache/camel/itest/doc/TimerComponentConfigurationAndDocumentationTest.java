@@ -40,9 +40,9 @@ public class TimerComponentConfigurationAndDocumentationTest extends CamelTestSu
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"timerName\": { \"kind\": \"path\", \"group\": \"consumer\", \"required\": true"));
-        assertTrue(json.contains("\"delay\": { \"kind\": \"parameter\", \"group\": \"consumer\", \"type\": \"integer\""));
-        assertTrue(json.contains("\"timer\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\""));
+        assertTrue(json.contains("\"timerName\": { \"kind\": \"path\", \"displayName\": \"Timer Name\", \"group\": \"consumer\", \"required\": true"));
+        assertTrue(json.contains("\"delay\": { \"kind\": \"parameter\", \"displayName\": \"Delay\", \"group\": \"consumer\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"timer\": { \"kind\": \"parameter\", \"displayName\": \"Timer\", \"group\": \"advanced\", \"label\": \"advanced\""));
     }
 
 }

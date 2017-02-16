@@ -40,8 +40,8 @@ public class SedaComponentConfigurationAndDocumentationTest extends CamelTestSup
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"concurrentConsumers\": { \"kind\": \"parameter\", \"group\": \"consumer\", \"label\": \"consumer\""));
-        assertTrue(json.contains("\"timeout\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\""));
+        assertTrue(json.contains("\"concurrentConsumers\": { \"kind\": \"parameter\", \"displayName\": \"Concurrent Consumers\", \"group\": \"consumer\", \"label\": \"consumer\""));
+        assertTrue(json.contains("\"timeout\": { \"kind\": \"parameter\", \"displayName\": \"Timeout\", \"group\": \"producer\", \"label\": \"producer\""));
     }
 
 }

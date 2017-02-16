@@ -19,6 +19,7 @@ package org.apache.camel.maven.packaging.model;
 public class DataFormatOptionModel {
 
     private String name;
+    private String displayName;
     private String kind;
     private String type;
     private String javaType;
@@ -33,6 +34,14 @@ public class DataFormatOptionModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public String getKind() {

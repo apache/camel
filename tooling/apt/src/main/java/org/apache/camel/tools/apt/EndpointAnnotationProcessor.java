@@ -570,7 +570,10 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     if (Strings.isNullOrEmpty(label) && metadata != null) {
                         label = metadata.label();
                     }
-                    String displayName = metadata != null ? metadata.displayName() : null;
+                    String displayName = path.displayName();
+                    if (Strings.isNullOrEmpty(displayName)) {
+                        displayName = metadata != null ? metadata.displayName() : null;
+                    }
 
                     TypeMirror fieldType = fieldElement.asType();
                     String fieldTypeName = fieldType.toString();
@@ -646,7 +649,10 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                     if (Strings.isNullOrEmpty(label) && metadata != null) {
                         label = metadata.label();
                     }
-                    String displayName = metadata != null ? metadata.displayName() : null;
+                    String displayName = param.displayName();
+                    if (Strings.isNullOrEmpty(displayName)) {
+                        displayName = metadata != null ? metadata.displayName() : null;
+                    }
 
                     // if the field type is a nested parameter then iterate through its fields
                     TypeMirror fieldType = fieldElement.asType();

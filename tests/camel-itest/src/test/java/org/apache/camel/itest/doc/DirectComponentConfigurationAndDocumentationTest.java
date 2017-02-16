@@ -42,8 +42,8 @@ public class DirectComponentConfigurationAndDocumentationTest extends CamelTestS
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"group\": \"common\", \"required\": true, \"type\": \"string\""));
-        assertTrue(json.contains("\"timeout\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\", \"type\": \"integer\""));
+        assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"displayName\": \"Name\", \"group\": \"common\", \"required\": true, \"type\": \"string\""));
+        assertTrue(json.contains("\"timeout\": { \"kind\": \"parameter\", \"displayName\": \"Timeout\", \"group\": \"producer\", \"label\": \"producer\", \"type\": \"integer\""));
     }
 
     @Test

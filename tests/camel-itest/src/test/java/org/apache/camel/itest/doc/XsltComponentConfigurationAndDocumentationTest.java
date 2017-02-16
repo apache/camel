@@ -40,9 +40,9 @@ public class XsltComponentConfigurationAndDocumentationTest extends CamelTestSup
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"resourceUri\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": true"));
-        assertTrue(json.contains("\"allowStAX\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"boolean\""));
-        assertTrue(json.contains("\"transformerFactoryClass\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\""));
+        assertTrue(json.contains("\"resourceUri\": { \"kind\": \"path\", \"displayName\": \"Resource Uri\", \"group\": \"producer\", \"required\": true"));
+        assertTrue(json.contains("\"allowStAX\": { \"kind\": \"parameter\", \"displayName\": \"Allow StAX\", \"group\": \"producer\", \"type\": \"boolean\""));
+        assertTrue(json.contains("\"transformerFactoryClass\": { \"kind\": \"parameter\", \"displayName\": \"Transformer Factory Class\", \"group\": \"advanced\", \"label\": \"advanced\""));
     }
 
 }

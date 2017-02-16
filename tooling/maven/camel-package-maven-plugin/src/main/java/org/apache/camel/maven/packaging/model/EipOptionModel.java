@@ -19,6 +19,7 @@ package org.apache.camel.maven.packaging.model;
 public class EipOptionModel {
 
     private String name;
+    private String displayName;
     private String title;
     private String javaType;
     private String label;
@@ -33,6 +34,14 @@ public class EipOptionModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public String getTitle() {

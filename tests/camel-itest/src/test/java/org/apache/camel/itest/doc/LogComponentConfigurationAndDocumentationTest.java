@@ -40,9 +40,9 @@ public class LogComponentConfigurationAndDocumentationTest extends CamelTestSupp
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": true"));
-        assertTrue(json.contains("\"level\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"string\""));
-        assertTrue(json.contains("\"showBody\": { \"kind\": \"parameter\", \"group\": \"formatting\", \"label\": \"formatting\""));
+        assertTrue(json.contains("\"loggerName\": { \"kind\": \"path\", \"displayName\": \"Logger Name\", \"group\": \"producer\", \"required\": true"));
+        assertTrue(json.contains("\"level\": { \"kind\": \"parameter\", \"displayName\": \"Level\", \"group\": \"producer\", \"type\": \"string\""));
+        assertTrue(json.contains("\"showBody\": { \"kind\": \"parameter\", \"displayName\": \"Show Body\", \"group\": \"formatting\", \"label\": \"formatting\""));
     }
 
 }
