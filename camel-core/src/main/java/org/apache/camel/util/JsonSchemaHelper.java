@@ -30,8 +30,8 @@ import java.util.regex.Pattern;
  */
 public final class JsonSchemaHelper {
 
-    // 0 = text, 1 = enum, 2 = boolean, 3 = integer
-    private static final Pattern PATTERN = Pattern.compile("\"(.+?)\"|\\[(.+)\\]|(true|false)|(\\d+)");
+    // 0 = text, 1 = enum, 2 = boolean, 3 = integer or number
+    private static final Pattern PATTERN = Pattern.compile("\"(.+?)\"|\\[(.+)\\]|(true|false)|(\\d+\\.?\\d+)");
     private static final String QUOT = "&quot;";
 
     private JsonSchemaHelper() {

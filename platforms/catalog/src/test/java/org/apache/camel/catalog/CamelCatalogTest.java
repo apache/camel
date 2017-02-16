@@ -1078,6 +1078,7 @@ public class CamelCatalogTest {
                 break;
             }
         }
+        assertEquals("The dummy component logs message exchanges to the underlying logging mechanism.", desc);
 
         // componentProperties
         rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
@@ -1088,7 +1089,7 @@ public class CamelCatalogTest {
 
         // properties
         rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
-        assertEquals(27, rows.size());
+        assertEquals(29, rows.size());
         row = JSonSchemaHelper.getRow(rows, "level");
         assertNotNull(row);
         assertEquals("INFO", row.get("defaultValue"));
@@ -1099,6 +1100,16 @@ public class CamelCatalogTest {
         assertNotNull(row);
         assertEquals("false", row.get("deprecated"));
         assertEquals("10000", row.get("defaultValue"));
+
+        row = JSonSchemaHelper.getRow(rows, "fontSize");
+        assertNotNull(row);
+        assertEquals("false", row.get("deprecated"));
+        assertEquals("14", row.get("defaultValue"));
+
+        row = JSonSchemaHelper.getRow(rows, "kerberosRenewJitter");
+        assertNotNull(row);
+        assertEquals("java.lang.Double", row.get("javaType"));
+        assertEquals("0.05", row.get("defaultValue"));
     }
 
 }
