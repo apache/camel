@@ -180,16 +180,11 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         buffer.append("\n    \"title\": \"").append(componentModel.getTitle()).append("\",");
         buffer.append("\n    \"description\": \"").append(componentModel.getDescription()).append("\",");
         buffer.append("\n    \"label\": \"").append(getOrElse(componentModel.getLabel(), "")).append("\",");
-        buffer.append("\n    \"deprecated\": \"").append(componentModel.isDeprecated()).append("\",");
-        buffer.append("\n    \"async\": \"").append(componentModel.isAsync()).append("\",");
-        if (componentModel.isConsumerOnly()) {
-            buffer.append("\n    \"consumerOnly\": \"").append("true").append("\",");
-        } else if (componentModel.isProducerOnly()) {
-            buffer.append("\n    \"producerOnly\": \"").append("true").append("\",");
-        }
-        if (componentModel.isLenientProperties()) {
-            buffer.append("\n    \"lenientProperties\": \"").append("true").append("\",");
-        }
+        buffer.append("\n    \"deprecated\": ").append(componentModel.isDeprecated()).append(",");
+        buffer.append("\n    \"async\": ").append(componentModel.isAsync()).append(",");
+        buffer.append("\n    \"consumerOnly\": ").append(componentModel.isConsumerOnly()).append(",");
+        buffer.append("\n    \"producerOnly\": ").append(componentModel.isProducerOnly()).append(",");
+        buffer.append("\n    \"lenientProperties\": ").append(componentModel.isLenientProperties()).append(",");
         buffer.append("\n    \"javaType\": \"").append(componentModel.getJavaType()).append("\",");
         if (componentModel.getFirstVersion() != null) {
             buffer.append("\n    \"firstVersion\": \"").append(componentModel.getFirstVersion()).append("\",");

@@ -112,7 +112,7 @@ The Mina2 component supports 29 endpoint options which are listed below:
 | allowDefaultCodec | codec | true | boolean | The mina component installs a default codec if both codec is null and textline is false. Setting allowDefaultCodec to false prevents the mina component from installing a default codec as the first element in the filter chain. This is useful in scenarios where another filter must be the first in the filter chain like the SSL filter.
 | codec | codec |  | ProtocolCodecFactory | To use a custom minda codec implementation.
 | decoderMaxLineLength | codec | 1024 | int | To set the textline protocol decoder max line length. By default the default value of Mina itself is used which are 1024.
-| encoderMaxLineLength | codec | -1 | int | To set the textline protocol encoder max line length. By default the default value of Mina itself is used which are Integer.MAX_VALUE.
+| encoderMaxLineLength | codec | 1 | int | To set the textline protocol encoder max line length. By default the default value of Mina itself is used which are Integer.MAX_VALUE.
 | encoding | codec |  | String | You can configure the encoding (a charset name) to use for the TCP textline codec and the UDP protocol. If not provided Camel will use the JVM default Charset
 | filters | codec |  | List | You can set a list of Mina IoFilters to use.
 | textline | codec | false | boolean | Only used for TCP. If no codec is specified you can use this flag to indicate a text line based codec; if not specified or the value is false then Object Serialization is assumed over TCP.

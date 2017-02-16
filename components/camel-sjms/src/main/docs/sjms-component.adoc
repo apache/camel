@@ -131,7 +131,7 @@ The Simple JMS component supports 36 endpoint options which are listed below:
 | namedReplyTo | producer |  | String | Sets the reply to destination name used for InOut producer endpoints.
 | persistent | producer | true | boolean | Flag used to enable/disable message persistence.
 | producerCount | producer | 1 | int | Sets the number of producers used for this endpoint.
-| ttl | producer | -1 | long | Flag used to adjust the Time To Live value of produced messages.
+| ttl | producer | 1 | long | Flag used to adjust the Time To Live value of produced messages.
 | allowNullBody | producer (advanced) | true | boolean | Whether to allow sending messages with no body. If this option is false and the message body is null then an JMSException is thrown.
 | prefillPool | producer (advanced) | true | boolean | Whether to prefill the producer connection pool on startup or create connections lazy when needed.
 | responseTimeOut | producer (advanced) | 5000 | long | Sets the amount of time we should wait before timing out a InOut response.
@@ -150,7 +150,7 @@ The Simple JMS component supports 36 endpoint options which are listed below:
 | errorHandlerLoggingLevel | logging | WARN | LoggingLevel | Allows to configure the default errorHandler logging level for logging uncaught exceptions.
 | errorHandlerLogStackTrace | logging | true | boolean | Allows to control whether stacktraces should be logged or not by the default errorHandler.
 | transacted | transaction | false | boolean | Specifies whether to use transacted mode
-| transactionBatchCount | transaction | -1 | int | If transacted sets the number of messages to process before committing a transaction.
+| transactionBatchCount | transaction | 1 | int | If transacted sets the number of messages to process before committing a transaction.
 | transactionBatchTimeout | transaction | 5000 | long | Sets timeout (in millis) for batch transactions the value should be 1000 or higher.
 | transactionCommitStrategy | transaction |  | TransactionCommitStrategy | Sets the commit strategy.
 | sharedJMSSession | transaction (advanced) | true | boolean | Specifies whether to share JMS session with other SJMS endpoints. Turn this off if your route is accessing to multiple JMS providers. If you need transaction against multiple JMS providers use jms component to leverage XA transaction.

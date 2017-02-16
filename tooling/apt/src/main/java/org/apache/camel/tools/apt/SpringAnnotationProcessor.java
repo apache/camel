@@ -129,9 +129,9 @@ public class SpringAnnotationProcessor {
         buffer.append("\n    \"description\": \"").append(safeNull(eipModel.getDescription())).append("\",");
         buffer.append("\n    \"javaType\": \"").append(eipModel.getJavaType()).append("\",");
         buffer.append("\n    \"label\": \"").append(safeNull(eipModel.getLabel())).append("\",");
-        buffer.append("\n    \"deprecated\": \"").append("false").append("\",");
-        buffer.append("\n    \"input\": \"").append("false").append("\",");
-        buffer.append("\n    \"output\": \"").append("false").append("\"");
+        buffer.append("\n    \"deprecated\": false,");
+        buffer.append("\n    \"input\": false,");
+        buffer.append("\n    \"output\": false");
         buffer.append("\n  },");
 
         buffer.append("\n  \"properties\": {");

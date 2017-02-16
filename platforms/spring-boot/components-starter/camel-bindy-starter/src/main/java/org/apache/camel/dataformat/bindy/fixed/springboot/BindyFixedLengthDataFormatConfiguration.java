@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dataformat.bindy.fixed.springboot;
 
-import org.apache.camel.dataformat.bindy.fixed.BindyFixedLengthDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -31,7 +30,7 @@ public class BindyFixedLengthDataFormatConfiguration {
     /**
      * Whether to use csv fixed or key value pairs mode.
      */
-    private BindyType type = BindyType.Fixed;
+    private BindyType type;
     /**
      * Name of model class to use.
      */

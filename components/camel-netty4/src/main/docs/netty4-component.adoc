@@ -117,7 +117,7 @@ The Netty4 component supports 74 endpoint options which are listed below:
 | clientInitializerFactory | producer (advanced) |  | ClientInitializerFactory | To use a custom ClientInitializerFactory
 | lazyChannelCreation | producer (advanced) | true | boolean | Channels can be lazily created to avoid exceptions if the remote server is not up and running when the Camel producer is started.
 | producerPoolEnabled | producer (advanced) | true | boolean | Whether producer pool is enabled or not. Important: Do not turn this off as the pooling is needed for handling concurrency and reliable request/reply.
-| producerPoolMaxActive | producer (advanced) | -1 | int | Sets the cap on the number of objects that can be allocated by the pool (checked out to clients or idle awaiting checkout) at a given time. Use a negative value for no limit.
+| producerPoolMaxActive | producer (advanced) | 1 | int | Sets the cap on the number of objects that can be allocated by the pool (checked out to clients or idle awaiting checkout) at a given time. Use a negative value for no limit.
 | producerPoolMaxIdle | producer (advanced) | 100 | int | Sets the cap on the number of idle instances in the pool.
 | producerPoolMinEvictableIdle | producer (advanced) | 300000 | long | Sets the minimum amount of time (value in millis) an object may sit idle in the pool before it is eligible for eviction by the idle object evictor.
 | producerPoolMinIdle | producer (advanced) |  | int | Sets the minimum number of instances allowed in the producer pool before the evictor thread (if active) spawns new objects.

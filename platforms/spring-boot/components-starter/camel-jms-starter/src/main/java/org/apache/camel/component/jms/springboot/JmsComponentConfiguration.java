@@ -250,7 +250,7 @@ public class JmsComponentConfiguration {
      * value to eg 100 to control how fast the consumers will shrink when less
      * work is required.
      */
-    private Integer maxMessagesPerTask = -1;
+    private Integer maxMessagesPerTask = 1;
     /**
      * To use a custom Spring
      * org.springframework.jms.support.converter.MessageConverter so you can be
@@ -325,7 +325,7 @@ public class JmsComponentConfiguration {
      * When sending messages specifies the time-to-live of the message (in
      * milliseconds).
      */
-    private Long timeToLive = -1L;
+    private Long timeToLive = 1L;
     /**
      * Specifies whether to use transacted mode
      */
@@ -348,7 +348,7 @@ public class JmsComponentConfiguration {
      * The timeout value of the transaction (in seconds) if using transacted
      * mode.
      */
-    private Integer transactionTimeout = -1;
+    private Integer transactionTimeout = 1;
     /**
      * Specifies whether to test the connection on startup. This ensures that
      * when Camel starts that all the JMS consumers have a valid connection to
