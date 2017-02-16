@@ -83,7 +83,7 @@ The MQTT component supports 40 endpoint options which are listed below:
 | qualityOfService | common | AtLeastOnce | String | Quality of service level to use for topics.
 | receiveBufferSize | common | 65536 | int | Sets the size of the internal socket receive buffer. Defaults to 65536 (64k)
 | reconnectAttemptsMax | common | 1 | long | The maximum number of reconnect attempts before an error is reported back to the client after a server connection had previously been established. Set to -1 to use unlimited attempts. Defaults to -1.
-| reconnectBackOffMultiplier | common | 2 | double | The Exponential backoff be used between reconnect attempts. Set to 1 to disable exponential backoff. Defaults to 2.
+| reconnectBackOffMultiplier | common | 2.0 | double | The Exponential backoff be used between reconnect attempts. Set to 1 to disable exponential backoff. Defaults to 2.
 | reconnectDelay | common | 10 | long | How long to wait in ms before the first reconnect attempt. Defaults to 10.
 | reconnectDelayMax | common | 30000 | long | The maximum amount of time in ms to wait between reconnect attempts. Defaults to 30000.
 | sendBufferSize | common | 65536 | int | Sets the size of the internal socket send buffer. Defaults to 65536 (64k)

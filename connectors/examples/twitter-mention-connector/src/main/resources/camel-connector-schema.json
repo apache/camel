@@ -7,20 +7,20 @@
     "title": "TwitterMention",
     "description": "Connection from twitter when anyone mention you",
     "label": "twitter",
-    "deprecated": false,
-    "async": false,
-    "consumerOnly": true,
-    "lenientProperties": false,
+    "deprecated": "false",
+    "async": "false",
+    "consumerOnly": "true",
+    "lenientProperties": "false",
     "javaType": "org.foo.mention.TwitterMentionComponent",
     "groupId": "org.foo",
     "artifactId": "twitter-mention-connector",
     "version": "2.19.0-SNAPSHOT"
   },
   "componentProperties": {
-    "accessToken": { "kind": "property", "group": "security", "label": "security", "required": false, "type": "object", "javaType": "string", "deprecated": false, "secret": true, "description": "The access token" },
-    "accessTokenSecret": { "kind": "property", "group": "security", "label": "security", "required": false, "type": "object", "javaType": "string", "deprecated": false, "secret": true, "description": "The access token secret" },
-    "consumerKey": { "kind": "property", "group": "security", "label": "security", "required": false, "type": "object", "javaType": "string", "deprecated": false, "secret": true, "description": "The consumer key" },
-    "consumerSecret": { "kind": "property", "group": "security", "label": "security", "required": false, "type": "object", "javaType": "string", "deprecated": false, "secret": true, "description": "The consumer secret" }
+    "accessToken": { "kind": "property", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The access token" },
+    "accessTokenSecret": { "kind": "property", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The access token secret" },
+    "consumerKey": { "kind": "property", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The consumer key" },
+    "consumerSecret": { "kind": "property", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The consumer secret" }
   },
   "properties": {
   }

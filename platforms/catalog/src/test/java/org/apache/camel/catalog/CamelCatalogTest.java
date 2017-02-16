@@ -1089,7 +1089,7 @@ public class CamelCatalogTest {
 
         // properties
         rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
-        assertEquals(29, rows.size());
+        assertEquals(30, rows.size());
         row = JSonSchemaHelper.getRow(rows, "level");
         assertNotNull(row);
         assertEquals("INFO", row.get("defaultValue"));
@@ -1100,6 +1100,11 @@ public class CamelCatalogTest {
         assertNotNull(row);
         assertEquals("false", row.get("deprecated"));
         assertEquals("10000", row.get("defaultValue"));
+
+        row = JSonSchemaHelper.getRow(rows, "repeatCount");
+        assertNotNull(row);
+        assertEquals("long", row.get("javaType"));
+        assertEquals("0", row.get("defaultValue"));
 
         row = JSonSchemaHelper.getRow(rows, "fontSize");
         assertNotNull(row);
