@@ -25,6 +25,7 @@ import static org.apache.camel.tools.apt.helper.Strings.isNullOrEmpty;
 public final class ComponentOption {
 
     private String name;
+    private String displayName;
     private String type;
     private String required;
     private String defaultValue;
@@ -37,10 +38,11 @@ public final class ComponentOption {
     private boolean enumType;
     private Set<String> enums;
 
-    public ComponentOption(String name, String type, String required, String defaultValue, String defaultValueNote,
+    public ComponentOption(String name, String displayName, String type, String required, String defaultValue, String defaultValueNote,
                            String documentation, boolean deprecated, boolean secret, String group, String label,
                            boolean enumType, Set<String> enums) {
         this.name = name;
+        this.displayName = displayName;
         this.type = type;
         this.required = required;
         this.defaultValue = defaultValue;
@@ -56,6 +58,10 @@ public final class ComponentOption {
 
     public String getName() {
         return name;
+    }
+
+    public String getDisplayName() {
+        return displayName;
     }
 
     public String getType() {

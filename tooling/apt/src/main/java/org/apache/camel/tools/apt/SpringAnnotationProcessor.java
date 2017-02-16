@@ -148,7 +148,7 @@ public class SpringAnnotationProcessor {
             String doc = entry.getDocumentation();
             doc = sanitizeDescription(doc, false);
 
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getKind(), entry.isRequired(), entry.getType(), entry.getDefaultValue(), doc,
+            buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), entry.getKind(), entry.isRequired(), entry.getType(), entry.getDefaultValue(), doc,
                     entry.isDeprecated(), false, null, null, entry.isEnumType(), entry.getEnums(), entry.isOneOf(), entry.getOneOfTypes(), entry.isAsPredicate(),
                 null, null, false));
         }
@@ -287,6 +287,11 @@ public class SpringAnnotationProcessor {
         }
 
         boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
+        String displayName = null;
+        Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+        if (metadata != null) {
+            displayName = metadata.displayName();
+        }
 
         // special for id as its inherited from camel-core
         if ("id".equals(name) && isNullOrEmpty(docComment)) {
@@ -297,7 +302,7 @@ public class SpringAnnotationProcessor {
             }
         }
 
-        EipOption ep = new EipOption(name, "attribute", fieldTypeName, required, defaultValue, docComment, deprecated, isEnum, enums, false, null, false);
+        EipOption ep = new EipOption(name, displayName, "attribute", fieldTypeName, required, defaultValue, docComment, deprecated, isEnum, enums, false, null, false);
         eipOptions.add(ep);
 
         return false;
@@ -315,7 +320,7 @@ public class SpringAnnotationProcessor {
         Set<String> oneOfTypes = new TreeSet<String>();
         oneOfTypes.add("route");
 
-        EipOption ep = new EipOption("route", "element", fieldTypeName, false, "", "Contains the Camel routes", false, false, null, true, oneOfTypes, false);
+        EipOption ep = new EipOption("route", "Route","element", fieldTypeName, false, "", "Contains the Camel routes", false, false, null, true, oneOfTypes, false);
         eipOptions.add(ep);
     }
 
@@ -331,7 +336,7 @@ public class SpringAnnotationProcessor {
         Set<String> oneOfTypes = new TreeSet<String>();
         oneOfTypes.add("rest");
 
-        EipOption ep = new EipOption("rest", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl", false, false, null, true, oneOfTypes, false);
+        EipOption ep = new EipOption("rest", "Rest","element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl", false, false, null, true, oneOfTypes, false);
         eipOptions.add(ep);
     }
 
@@ -410,8 +415,13 @@ public class SpringAnnotationProcessor {
 
             boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
             boolean asPredicate = false;
+            String displayName = null;
+            Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+            if (metadata != null) {
+                displayName = metadata.displayName();
+            }
 
-            EipOption ep = new EipOption(name, kind, fieldTypeName, required, defaultValue, docComment, deprecated, isEnum, enums, oneOf, oneOfTypes, asPredicate);
+            EipOption ep = new EipOption(name, displayName, kind, fieldTypeName, required, defaultValue, docComment, deprecated, isEnum, enums, oneOf, oneOfTypes, asPredicate);
             eipOptions.add(ep);
         }
     }
@@ -446,7 +456,13 @@ public class SpringAnnotationProcessor {
                 String child = element.name();
                 oneOfTypes.add(child);
             }
-            EipOption ep = new EipOption(name, kind, fieldTypeName, required, defaultValue, docComment, false, false, null, true, oneOfTypes, false);
+            String displayName = null;
+            Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+            if (metadata != null) {
+                displayName = metadata.displayName();
+            }
+
+            EipOption ep = new EipOption(name, kind, displayName, fieldTypeName, required, defaultValue, docComment, false, false, null, true, oneOfTypes, false);
             eipOptions.add(ep);
         }
     }
@@ -555,6 +571,7 @@ public class SpringAnnotationProcessor {
     private static final class EipOption {
 
         private String name;
+        private String displayName;
         private String kind;
         private String type;
         private boolean required;
@@ -567,9 +584,10 @@ public class SpringAnnotationProcessor {
         private Set<String> oneOfTypes;
         private boolean asPredicate;
 
-        private EipOption(String name, String kind, String type, boolean required, String defaultValue, String documentation, boolean deprecated,
+        private EipOption(String name, String displayName, String kind, String type, boolean required, String defaultValue, String documentation, boolean deprecated,
                           boolean enumType, Set<String> enums, boolean oneOf, Set<String> oneOfTypes, boolean asPredicate) {
             this.name = name;
+            this.displayName = displayName;
             this.kind = kind;
             this.type = type;
             this.required = required;
@@ -585,6 +603,10 @@ public class SpringAnnotationProcessor {
 
         public String getName() {
             return name;
+        }
+
+        public String getDisplayName() {
+            return displayName;
         }
 
         public String getKind() {
