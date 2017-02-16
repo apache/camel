@@ -40,7 +40,7 @@ public class LanguageComponentConfigurationAndDocumentationTest extends CamelTes
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"languageName\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
+        assertTrue(json.contains("\"languageName\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": true"));
         assertTrue(json.contains("\"script\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"string\""));
     }
 

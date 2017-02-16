@@ -40,7 +40,7 @@ public class FileComponentConfigurationAndDocumentationTest extends CamelTestSup
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"directoryName\": { \"kind\": \"path\", \"group\": \"common\", \"required\": \"true\""));
+        assertTrue(json.contains("\"directoryName\": { \"kind\": \"path\", \"group\": \"common\", \"required\": true"));
         assertTrue(json.contains("\"autoCreate\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\", \"type\": \"boolean\""));
         assertTrue(json.contains("\"readLockMinAge\": { \"kind\": \"parameter\", \"group\": \"lock\", \"label\": \"consumer,lock\""));
     }
