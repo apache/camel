@@ -41,7 +41,7 @@ public final class JSonSchemaHelper {
     private JSonSchemaHelper() {
     }
 
-    public static String toJson(String name, String kind, Boolean required, String type, String defaultValue, String description,
+    public static String toJson(String name, String displayName, String kind, Boolean required, String type, String defaultValue, String description,
                                 Boolean deprecated, Boolean secret, String group, String label, boolean enumType, Set<String> enums,
                                 boolean oneOfType, Set<String> oneOffTypes, boolean asPredicate, String optionalPrefix, String prefix, boolean multiValue) {
         String typeName = getType(type, enumType);
@@ -50,6 +50,14 @@ public final class JSonSchemaHelper {
         sb.append(StringHelper.doubleQuote(name));
         sb.append(": { \"kind\": ");
         sb.append(StringHelper.doubleQuote(kind));
+
+        // compute a display name if we don't have anything
+        if (StringHelper.isNullOrEmpty(displayName)) {
+            displayName = StringHelper.asTitle(name);
+        }
+        // we want display name early so its easier to spot
+        sb.append(", \"displayName\": ");
+        sb.append(StringHelper.doubleQuote(displayName));
 
         // we want group early so its easier to spot
         if (!StringHelper.isNullOrEmpty(group)) {
