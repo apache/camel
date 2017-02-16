@@ -51,7 +51,7 @@ public class EipDocumentationTest extends CamelTestSupport {
         // there should be javadoc included
         assertTrue(json.contains("If enabled then processing each splitted messages occurs concurrently."));
         // and it support outputs
-        assertTrue(json.contains("\"outputs\": { \"kind\": \"element\", \"required\": \"true\", \"type\": \"array\", \"javaType\""));
+        assertTrue(json.contains("\"outputs\": { \"kind\": \"element\", \"required\": true, \"type\": \"array\", \"javaType\""));
     }
 
     @Test
@@ -73,8 +73,8 @@ public class EipDocumentationTest extends CamelTestSupport {
         assertNotNull("Should have found json for failover", json);
 
         assertTrue(json.contains("\"name\": \"failover\""));
-        assertTrue(json.contains("\"exception\": { \"kind\": \"element\", \"required\": \"false\", \"type\": \"array\""
-            + ", \"javaType\": \"java.util.List<java.lang.String>\", \"deprecated\": \"false\""));
+        assertTrue(json.contains("\"exception\": { \"kind\": \"element\", \"required\": false, \"type\": \"array\""
+            + ", \"javaType\": \"java.util.List<java.lang.String>\", \"deprecated\": false"));
     }
 
     @Test
