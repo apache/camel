@@ -20,6 +20,6 @@
   },
   "properties": {
     "drink": { "kind": "path", "group": "producer", "required": true, "type": "object", "javaType": "org.beverage.Beverages", "enum": [ "Wine" ], "deprecated": false, "secret": false, "defaultValue": "Wine", "description": "You can only order wine" },
-    "amount": { "kind": "parameter", "group": "producer", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "secret": false, "defaultValue": description }
+    "amount": { "kind": "parameter", "group": "producer", "required": false, "type": "integer", "javaType": "int", "deprecated": false, "secret": false, "defaultValue": 1, "description": "Number of drinks in the order" }
   }
 }

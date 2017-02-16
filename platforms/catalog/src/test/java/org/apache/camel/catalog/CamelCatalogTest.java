@@ -1089,12 +1089,17 @@ public class CamelCatalogTest {
 
         // properties
         rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
-        assertEquals(30, rows.size());
+        assertEquals(31, rows.size());
         row = JSonSchemaHelper.getRow(rows, "level");
         assertNotNull(row);
         assertEquals("INFO", row.get("defaultValue"));
         String enums = JSonSchemaHelper.getPropertyEnum(rows, "level");
         assertEquals("ERROR,WARN,INFO,DEBUG,TRACE,OFF", enums);
+
+        row = JSonSchemaHelper.getRow(rows, "amount");
+        assertNotNull(row);
+        assertEquals("1", row.get("defaultValue"));
+        assertEquals("Number of drinks in the order", row.get("description"));
 
         row = JSonSchemaHelper.getRow(rows, "maxChars");
         assertNotNull(row);
