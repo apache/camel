@@ -337,6 +337,7 @@ public class ConnectorMojo extends AbstractJarMojo {
         String producerOnly = "To".equalsIgnoreCase(pattern) ? "true" : null;
         String consumerOnly = "From".equalsIgnoreCase(pattern) ? "true" : null;
         String lenientProperties = getOption(rows, "lenientProperties");
+        String deprecated = getOption(rows, "deprecated");
         String javaType = extractJavaType(scheme);
         String groupId = getProject().getGroupId();
         String artifactId = getProject().getArtifactId();
@@ -358,17 +359,19 @@ public class ConnectorMojo extends AbstractJarMojo {
         if (label != null) {
             sb.append("    \"label\": \"" + label + "\",\n");
         }
-        sb.append("    \"deprecated\": \"false\",\n");
+        if (deprecated != null) {
+            sb.append("    \"deprecated\": " + deprecated + ",\n");
+        }
         if (async != null) {
-            sb.append("    \"async\": \"" + async + "\",\n");
+            sb.append("    \"async\": " + async + ",\n");
         }
         if (producerOnly != null) {
-            sb.append("    \"producerOnly\": \"" + producerOnly + "\",\n");
+            sb.append("    \"producerOnly\": " + producerOnly + ",\n");
         } else if (consumerOnly != null) {
-            sb.append("    \"consumerOnly\": \"" + consumerOnly + "\",\n");
+            sb.append("    \"consumerOnly\": " + consumerOnly + ",\n");
         }
         if (lenientProperties != null) {
-            sb.append("    \"lenientProperties\": \"" + lenientProperties + "\",\n");
+            sb.append("    \"lenientProperties\": " + lenientProperties + ",\n");
         }
         sb.append("    \"javaType\": \"" + javaType + "\",\n");
         sb.append("    \"groupId\": \"" + groupId + "\",\n");
