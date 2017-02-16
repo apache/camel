@@ -1,27 +1,27 @@
 {
-  "component": {
-    "kind": "component",
-    "baseScheme": "twitter",
-    "scheme": "twitter-mention",
-    "syntax": "twitter-mention:kind",
-    "title": "TwitterMention",
-    "description": "Connection from twitter when anyone mention you",
-    "label": "twitter",
-    "deprecated": false,
-    "async": false,
-    "consumerOnly": true,
-    "lenientProperties": false,
-    "javaType": "org.foo.mention.TwitterMentionComponent",
-    "groupId": "org.foo",
-    "artifactId": "twitter-mention-connector",
-    "version": "2.19.0-SNAPSHOT"
+  "component" : {
+    "kind" : "component",
+    "baseScheme" : "twitter",
+    "scheme" : "twitter-mention",
+    "syntax" : "twitter-mention:kind",
+    "title" : "TwitterMention",
+    "description" : "Connection from twitter when anyone mention you",
+    "label" : "twitter",
+    "deprecated" : false,
+    "async" : false,
+    "producerOnly" : false,
+    "consumerOnly" : true,
+    "lenientProperties" : false,
+    "javaType" : "org.foo.mention.TwitterMentionComponent",
+    "groupId" : "org.foo",
+    "artifactId" : "twitter-mention-connector",
+    "version" : "2.19.0-SNAPSHOT"
   },
-  "componentProperties": {
-    "accessToken": { "kind": "property", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The access token" },
-    "accessTokenSecret": { "kind": "property", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The access token secret" },
-    "consumerKey": { "kind": "property", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The consumer key" },
-    "consumerSecret": { "kind": "property", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "The consumer secret" }
+  "componentProperties" : {
+    "accessToken" : {"kind":"property","deprecated":"false","description":"The access token","label":"security","secret":"true","type":"string","required":"false","group":"security","javaType":"java.lang.String"},
+    "accessTokenSecret" : {"kind":"property","deprecated":"false","description":"The access token secret","label":"security","secret":"true","type":"string","required":"false","group":"security","javaType":"java.lang.String"},
+    "consumerKey" : {"kind":"property","deprecated":"false","description":"The consumer key","label":"security","secret":"true","type":"string","required":"false","group":"security","javaType":"java.lang.String"},
+    "consumerSecret" : {"kind":"property","deprecated":"false","description":"The consumer secret","label":"security","secret":"true","type":"string","required":"false","group":"security","javaType":"java.lang.String"}
   },
-  "properties": {
-  }
+  "properties" : { }
 }

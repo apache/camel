@@ -1,29 +1,30 @@
 {
-  "component": {
-    "kind": "component",
-    "baseScheme": "salesforce",
-    "scheme": "salesforce-upsert-contact",
-    "syntax": "salesforce-upsert-contact:operationName:topicName",
-    "title": "SalesforceUpsertContact",
-    "description": "Create or update Salesforce Contact SObject",
-    "label": "salesforce",
-    "deprecated": false,
-    "async": false,
-    "producerOnly": true,
-    "lenientProperties": false,
-    "javaType": "org.foo.salesforce.contact.SalesforceUpsertContactComponent",
-    "groupId": "org.foo",
-    "artifactId": "salesforce-upsert-contact-connector",
-    "version": "2.19.0-SNAPSHOT"
+  "component" : {
+    "kind" : "component",
+    "baseScheme" : "salesforce",
+    "scheme" : "salesforce-upsert-contact",
+    "syntax" : "salesforce-upsert-contact:operationName:topicName",
+    "title" : "SalesforceUpsertContact",
+    "description" : "Create or update Salesforce Contact SObject",
+    "label" : "salesforce",
+    "deprecated" : false,
+    "async" : false,
+    "producerOnly" : true,
+    "consumerOnly" : false,
+    "lenientProperties" : false,
+    "javaType" : "org.foo.salesforce.contact.SalesforceUpsertContactComponent",
+    "groupId" : "org.foo",
+    "artifactId" : "salesforce-upsert-contact-connector",
+    "version" : "2.19.0-SNAPSHOT"
   },
-  "componentProperties": {
-    "loginUrl": { "kind": "property", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "defaultValue": "https://login.salesforce.com", "description": "Salesforce login URL defaults to https://login.salesforce.com" },
-    "clientId": { "kind": "property", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "Salesforce connected application Consumer Key" },
-    "clientSecret": { "kind": "property", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "Salesforce connected application Consumer Secret" },
-    "refreshToken": { "kind": "property", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "Salesforce connected application Consumer token" }
+  "componentProperties" : {
+    "loginUrl" : {"kind":"property","defaultValue":"https://login.salesforce.com","deprecated":"false","description":"Salesforce login URL defaults to https://login.salesforce.com","label":"security","secret":"false","type":"string","required":"false","group":"security","javaType":"java.lang.String"},
+    "clientId" : {"kind":"property","deprecated":"false","description":"Salesforce connected application Consumer Key","label":"security","secret":"true","type":"string","required":"false","group":"security","javaType":"java.lang.String"},
+    "clientSecret" : {"kind":"property","deprecated":"false","description":"Salesforce connected application Consumer Secret","label":"security","secret":"true","type":"string","required":"false","group":"security","javaType":"java.lang.String"},
+    "refreshToken" : {"kind":"property","deprecated":"false","description":"Salesforce connected application Consumer token","label":"security","secret":"true","type":"string","required":"false","group":"security","javaType":"java.lang.String"}
   },
-  "properties": {
-    "sObjectIdName": { "kind": "parameter", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "SObject external ID field name" },
-    "sObjectIdValue": { "kind": "parameter", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "SObject external ID field value" }
+  "properties" : {
+    "sObjectIdName" : {"kind":"parameter","deprecated":"false","description":"SObject external ID field name","secret":"false","type":"string","required":true,"group":"common","javaType":"java.lang.String"},
+    "sObjectIdValue" : {"kind":"parameter","deprecated":"false","description":"SObject external ID field value","secret":"false","type":"string","group":"common","javaType":"java.lang.String"}
   }
 }
