@@ -10,6 +10,7 @@
     "deprecated": false,
     "async": false,
     "producerOnly": true,
+    "lenientProperties": false,
     "javaType": "org.foo.salesforce.contact.SalesforceUpsertContactComponent",
     "groupId": "org.foo",
     "artifactId": "salesforce-upsert-contact-connector",
@@ -22,7 +23,7 @@
     "refreshToken": { "kind": "property", "group": "security", "label": "security", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": true, "description": "Salesforce connected application Consumer token" }
   },
   "properties": {
-    "sObjectIdName": {"kind":"parameter","group":"common","type":"string","javaType":"java.lang.String","deprecated":false,"secret":false,"description":"SObject external ID field name","required":true},
-    "sObjectIdValue": {"kind":"parameter","group":"common","type":"string","javaType":"java.lang.String","deprecated":false,"secret":false,"description":"SObject external ID field value"}
+    "sObjectIdName": { "kind": "parameter", "group": "common", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "SObject external ID field name" },
+    "sObjectIdValue": { "kind": "parameter", "group": "common", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "secret": false, "description": "SObject external ID field value" }
   }
 }

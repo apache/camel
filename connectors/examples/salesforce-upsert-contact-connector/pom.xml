@@ -72,14 +72,30 @@
         </executions>
       </plugin>
 
-      <!-- generate connector -->
+      <!-- turn off jar plugin as we use connector plugin to jar instead -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${maven-jar-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>default-jar</id>
+            <phase/>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- connector plugin will build the jar -->
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-connector-maven-plugin</artifactId>
-        <version>${camel.version}</version>
+        <version>${project.version}</version>
         <executions>
           <execution>
-            <id>generate-connector</id>
+            <id>connector</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
