@@ -453,7 +453,7 @@ public class ConnectorMojo extends AbstractJarMojo {
         String name = row.get("name");
         String kind = row.get("kind");
         boolean required = Boolean.valueOf(row.getOrDefault("required", "false"));
-        String type = row.get("type");
+        String javaType = row.get("javaType");
         String defaultValue = row.get("defaultValue");
         String description = row.get("description");
         boolean deprecated = Boolean.valueOf(row.getOrDefault("deprecated", "false"));
@@ -475,7 +475,7 @@ public class ConnectorMojo extends AbstractJarMojo {
         String prefix = row.get("prefix");
         boolean multiValue = Boolean.valueOf(row.getOrDefault("multiValue", "false"));
 
-        return JSonSchemaHelper.toJson(name, kind, required, type, defaultValue, description, deprecated, secret, group, label,
+        return JSonSchemaHelper.toJson(name, kind, required, javaType, defaultValue, description, deprecated, secret, group, label,
             enumType, enums, false, null, false, optionalPrefix, prefix, multiValue);
     }
 
