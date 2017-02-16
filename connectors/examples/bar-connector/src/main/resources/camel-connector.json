@@ -15,6 +15,6 @@
   "pattern" : "To",
   "endpointOptions" : [ "drink", "amount", "celebrity" ],
   "endpointValues" : {
-    "amount" : "2"
+    "amount" : 2
   }
 }

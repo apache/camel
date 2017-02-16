@@ -10,6 +10,7 @@
     "deprecated": "false",
     "async": "false",
     "producerOnly": "true",
+    "lenientProperties": "false",
     "javaType": "org.foo.connector.WineComponent",
     "groupId": "org.foo",
     "artifactId": "wine-connector",
@@ -18,7 +19,7 @@
   "componentProperties": {
   },
   "properties": {
-    "drink": {"kind":"path","group":"producer","required":"true","type":"object","javaType":"org.beverage.Beverages","enum":["Wine"],"deprecated":"false","secret":"false","description":"You can only order wine","defaultValue":"Wine"},
-    "amount": {"kind":"parameter","group":"producer","type":"integer","javaType":"int","deprecated":"false","secret":"false","defaultValue":"1","description":"Number of drinks in the order"}
+    "drink": { "kind": "path", "group": "producer", "required": true, "type": "object", "javaType": "object", "enum": [ "Wine" ], "deprecated": false, "secret": false, "defaultValue": "Wine", "description": "You can only order wine" },
+    "amount": { "kind": "parameter", "group": "producer", "required": false, "type": "object", "javaType": "integer", "deprecated": false, "secret": false, "defaultValue": "description" }
   }
 }

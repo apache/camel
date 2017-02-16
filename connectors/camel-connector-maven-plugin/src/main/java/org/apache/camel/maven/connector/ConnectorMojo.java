@@ -23,8 +23,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -211,8 +214,6 @@ public class ConnectorMojo extends AbstractJarMojo {
         Map values = (Map) dto.get("componentValues");
         Map overrides = (Map) dto.get("componentOverrides");
 
-        ObjectMapper mapper = new ObjectMapper();
-
         StringBuilder sb = new StringBuilder();
         sb.append("  \"componentProperties\": {\n");
 
@@ -220,7 +221,6 @@ public class ConnectorMojo extends AbstractJarMojo {
         for (int i = 0; i < rows.size(); i++) {
             Map<String, String> row = rows.get(i);
             String key = row.get("name");
-            row.remove("name");
 
             if (options == null || !options.contains(key)) {
                 continue;
@@ -228,9 +228,10 @@ public class ConnectorMojo extends AbstractJarMojo {
 
             // do we have a new default value for this row?
             if (values != null && values.containsKey(key)) {
-                String newDefaultValue = (String) values.get(key);
+                // the value may be an integer so we need to use Object and toString when putting back in row
+                Object newDefaultValue = values.get(key);
                 if (newDefaultValue != null) {
-                    row.put("defaultValue", newDefaultValue);
+                    row.put("defaultValue", newDefaultValue.toString());
                 }
             }
 
@@ -244,13 +245,12 @@ public class ConnectorMojo extends AbstractJarMojo {
 
             // we should build the json as one-line which is how Camel does it today
             // which makes its internal json parser support loading our generated schema file
-            String line = mapper.writeValueAsString(row);
+            String line = buildJSonLineFromRow(row);
 
             if (!first) {
                 sb.append(",\n");
             }
-            sb.append("    \"" + key + "\": ");
-            sb.append(line);
+            sb.append("    ").append(line);
 
             first = false;
         }
@@ -277,7 +277,6 @@ public class ConnectorMojo extends AbstractJarMojo {
         for (int i = 0; i < rows.size(); i++) {
             Map<String, String> row = rows.get(i);
             String key = row.get("name");
-            row.remove("name");
 
             if (options == null || !options.contains(key)) {
                 continue;
@@ -285,9 +284,10 @@ public class ConnectorMojo extends AbstractJarMojo {
 
             // do we have a new default value for this row?
             if (values != null && values.containsKey(key)) {
-                String newDefaultValue = (String) values.get(key);
+                // the value may be an integer so we need to use Object and toString when putting back in row
+                Object newDefaultValue = values.get(key);
                 if (newDefaultValue != null) {
-                    row.put("defaultValue", newDefaultValue);
+                    row.put("defaultValue", newDefaultValue.toString());
                 }
             }
 
@@ -301,13 +301,12 @@ public class ConnectorMojo extends AbstractJarMojo {
 
             // we should build the json as one-line which is how Camel does it today
             // which makes its internal json parser support loading our generated schema file
-            String line = mapper.writeValueAsString(row);
+            String line = buildJSonLineFromRow(row);
 
             if (!first) {
                 sb.append(",\n");
             }
-            sb.append("    \"" + key + "\": ");
-            sb.append(line);
+            sb.append("    ").append(line);
 
             first = false;
         }
@@ -447,7 +446,40 @@ public class ConnectorMojo extends AbstractJarMojo {
         return null;
     }
 
-    private String extractClass(List<String> lines) {
+    /**
+     * Builds a JSon line of the given row
+     */
+    private static String buildJSonLineFromRow(Map<String, String> row) {
+        String name = row.get("name");
+        String kind = row.get("kind");
+        boolean required = Boolean.valueOf(row.getOrDefault("required", "false"));
+        String type = row.get("type");
+        String defaultValue = row.get("defaultValue");
+        String description = row.get("description");
+        boolean deprecated = Boolean.valueOf(row.getOrDefault("deprecated", "false"));
+        boolean secret = Boolean.valueOf(row.getOrDefault("secret", "false"));
+        String group = row.get("group");
+        String label = row.get("label");
+        // for enum we need to build it back as a set
+        Set<String> enums = null;
+        // the enum can either be a List or String
+        Object value = row.get("enum");
+        if (value != null && value instanceof List) {
+            enums = new LinkedHashSet<String>((List)value);
+        } else if (value != null && value instanceof String) {
+            String[] array = value.toString().split(",");
+            enums = Arrays.stream(array).collect(Collectors.toSet());
+        }
+        boolean enumType = enums != null;
+        String optionalPrefix = row.get("optionalPrefix");
+        String prefix = row.get("prefix");
+        boolean multiValue = Boolean.valueOf(row.getOrDefault("multiValue", "false"));
+
+        return JSonSchemaHelper.toJson(name, kind, required, type, defaultValue, description, deprecated, secret, group, label,
+            enumType, enums, false, null, false, optionalPrefix, prefix, multiValue);
+    }
+
+    private static String extractClass(List<String> lines) {
         for (String line : lines) {
             line = line.trim();
             if (line.startsWith("class=")) {
@@ -457,19 +489,19 @@ public class ConnectorMojo extends AbstractJarMojo {
         return null;
     }
 
-    private String extractScheme(Map map) {
+    private static String extractScheme(Map map) {
         return (String) map.get("baseScheme");
     }
 
-    private String extractGroupId(Map map) {
+    private static String extractGroupId(Map map) {
         return (String) map.get("baseGroupId");
     }
 
-    private String extractArtifactId(Map map) {
+    private static String extractArtifactId(Map map) {
         return (String) map.get("baseArtifactId");
     }
 
-    private String extractVersion(Map map) {
+    private static String extractVersion(Map map) {
         return (String) map.get("baseVersion");
     }
 
