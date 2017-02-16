@@ -124,7 +124,7 @@ public class SpringAnnotationProcessor {
             buffer.append("\n    \"title\": \"").append(eipModel.getTitle()).append("\",");
         } else {
             // fallback and use name as title
-            buffer.append("\n    \"title\": \"").append(asTitle(eipModel.getName())).append("\",");
+            buffer.append("\n    \"title\": \"").append(Strings.asTitle(eipModel.getName())).append("\",");
         }
         buffer.append("\n    \"description\": \"").append(safeNull(eipModel.getDescription())).append("\",");
         buffer.append("\n    \"javaType\": \"").append(eipModel.getJavaType()).append("\",");
@@ -493,29 +493,6 @@ public class SpringAnnotationProcessor {
             }
         }
         return defaultValue;
-    }
-
-    /**
-     * Capitializes the name as a title
-     *
-     * @param name  the name
-     * @return as a title
-     */
-    private static String asTitle(String name) {
-        StringBuilder sb = new StringBuilder();
-        for (char c : name.toCharArray()) {
-            boolean upper = Character.isUpperCase(c);
-            boolean first = sb.length() == 0;
-            if (first) {
-                sb.append(Character.toUpperCase(c));
-            } else if (upper) {
-                sb.append(' ');
-                sb.append(c);
-            } else {
-                sb.append(Character.toLowerCase(c));
-            }
-        }
-        return sb.toString().trim();
     }
 
     private static final class EipModel {

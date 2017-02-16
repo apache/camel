@@ -51,11 +51,13 @@ public final class JsonSchemaHelper {
         sb.append(": { \"kind\": ");
         sb.append(Strings.doubleQuote(kind));
 
-        // we want display name early so its easier to spot
-        if (!Strings.isNullOrEmpty(displayName)) {
-            sb.append(", \"displayName\": ");
-            sb.append(Strings.doubleQuote(label));
+        // compute a display name if we don't have anything
+        if (Strings.isNullOrEmpty(displayName)) {
+            displayName = Strings.asTitle(name);
         }
+        // we want display name early so its easier to spot
+        sb.append(", \"displayName\": ");
+        sb.append(Strings.doubleQuote(displayName));
 
         // we want group early so its easier to spot
         if (!Strings.isNullOrEmpty(group)) {
