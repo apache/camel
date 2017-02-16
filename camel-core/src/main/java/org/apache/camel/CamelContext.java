@@ -1730,7 +1730,9 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Returns the HTML documentation for the given Camel component
      *
      * @return the HTML or <tt>null</tt> if the component is <b>not</b> built with HTML document included.
+     * @deprecated use camel-catalog instead
      */
+    @Deprecated
     String getComponentDocumentation(String componentName) throws IOException;
 
     /**

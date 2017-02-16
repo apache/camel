@@ -16,11 +16,9 @@
  */
 package org.apache.camel.itest.doc;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.component.file.FileComponent;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -45,13 +43,6 @@ public class FileComponentConfigurationAndDocumentationTest extends CamelTestSup
         assertTrue(json.contains("\"directoryName\": { \"kind\": \"path\", \"group\": \"common\", \"required\": \"true\""));
         assertTrue(json.contains("\"autoCreate\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\", \"type\": \"boolean\""));
         assertTrue(json.contains("\"readLockMinAge\": { \"kind\": \"parameter\", \"group\": \"lock\", \"label\": \"consumer,lock\""));
-    }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("file");
-        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

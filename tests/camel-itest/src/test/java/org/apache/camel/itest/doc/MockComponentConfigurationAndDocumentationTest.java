@@ -16,11 +16,9 @@
  */
 package org.apache.camel.itest.doc;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.component.mock.MockComponent;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -54,13 +52,6 @@ public class MockComponentConfigurationAndDocumentationTest extends CamelTestSup
 
         assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\", \"type\": \"integer\","
             + " \"javaType\": \"int\", \"deprecated\": \"false\", \"secret\": \"false\", \"value\": \"10\""));
-    }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("mock");
-        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

@@ -1414,51 +1414,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public String getComponentDocumentation(String componentName) throws IOException {
-        // use the component factory finder to find the package name of the component class, which is the location
-        // where the documentation exists as well
-        FactoryFinder finder = getFactoryFinder(DefaultComponentResolver.RESOURCE_PATH);
-        try {
-            Class<?> clazz = null;
-            try {
-                clazz = finder.findClass(componentName);
-            } catch (NoFactoryAvailableException e) {
-                // ignore, i.e. if a component is an auto-configured spring-boot
-                // components
-            }
-
-            if (clazz == null) {
-                // fallback and find existing component
-                Component existing = hasComponent(componentName);
-                if (existing != null) {
-                    clazz = existing.getClass();
-                } else {
-                    return null;
-                }
-            }
-
-            String packageName = clazz.getPackage().getName();
-            packageName = packageName.replace('.', '/');
-            String path = packageName + "/" + componentName + ".html";
-
-            ClassResolver resolver = getClassResolver();
-            InputStream inputStream = resolver.loadResourceAsStream(path);
-            log.debug("Loading component documentation for: {} using class resolver: {} -> {}", new Object[]{componentName, resolver, inputStream});
-            if (inputStream != null) {
-                try {
-                    return IOHelper.loadText(inputStream);
-                } finally {
-                    IOHelper.close(inputStream);
-                }
-            }
-            // special for ActiveMQ as it is really just JMS
-            if ("ActiveMQComponent".equals(clazz.getSimpleName())) {
-                return getComponentDocumentation("jms");
-            } else {
-                return null;
-            }
-        } catch (ClassNotFoundException e) {
-            return null;
-        }
+        return null;
     }
 
     public String getComponentParameterJsonSchema(String componentName) throws IOException {

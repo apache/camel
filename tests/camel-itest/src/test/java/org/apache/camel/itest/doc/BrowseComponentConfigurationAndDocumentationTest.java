@@ -16,11 +16,9 @@
  */
 package org.apache.camel.itest.doc;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.component.browse.BrowseComponent;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -44,13 +42,6 @@ public class BrowseComponentConfigurationAndDocumentationTest extends CamelTestS
 
         assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"group\": \"common\", \"required\": \"true\", \"type\": \"string\""));
         assertTrue(json.contains("\"synchronous\": { \"kind\": \"parameter\", \"group\": \"advanced\", \"label\": \"advanced\", \"type\": \"boolean\""));
-    }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("browse");
-        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

@@ -16,11 +16,9 @@
  */
 package org.apache.camel.itest.doc;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.component.language.LanguageComponent;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -44,13 +42,6 @@ public class LanguageComponentConfigurationAndDocumentationTest extends CamelTes
 
         assertTrue(json.contains("\"languageName\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
         assertTrue(json.contains("\"script\": { \"kind\": \"parameter\", \"group\": \"producer\", \"type\": \"string\""));
-    }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("language");
-        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

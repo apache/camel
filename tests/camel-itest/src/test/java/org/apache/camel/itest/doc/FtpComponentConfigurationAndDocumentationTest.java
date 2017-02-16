@@ -16,11 +16,9 @@
  */
 package org.apache.camel.itest.doc;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.component.file.remote.FtpComponent;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -46,13 +44,6 @@ public class FtpComponentConfigurationAndDocumentationTest extends CamelTestSupp
 
         assertTrue(json.contains("\"minDepth\": { \"kind\": \"parameter\", \"group\": \"filter\", \"label\": \"consumer,filter\", \"type\": \"integer\", \"javaType\": \"int\""));
         assertTrue(json.contains("\"username\": { \"kind\": \"parameter\", \"group\": \"security\", \"label\": \"security\", \"type\": \"string\""));
-    }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("ftp");
-        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

@@ -17,21 +17,19 @@
 package org.apache.camel.component.twitter;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class UriConfigurationTest extends Assert {
-    private CamelContext context = new DefaultCamelContext();
 
+    private CamelContext context = new DefaultCamelContext();
     private CamelTwitterTestSupport support = new CamelTwitterTestSupport();
 
     @Test
     public void testBasicAuthentication() throws Exception {
-        Endpoint endpoint = context.getEndpoint("twitter:todo/todo?" + support.getUriTokens());
+        Endpoint endpoint = context.getEndpoint("twitter:search?" + support.getUriTokens());
         assertTrue("Endpoint not a TwitterEndpoint: " + endpoint, endpoint instanceof TwitterEndpoint);
         TwitterEndpoint twitterEndpoint = (TwitterEndpoint) endpoint;
 
@@ -43,7 +41,7 @@ public class UriConfigurationTest extends Assert {
     
     @Test
     public void testPageSetting() throws Exception {
-        Endpoint endpoint = context.getEndpoint("twitter:todo/page?count=50&numberOfPages=2");
+        Endpoint endpoint = context.getEndpoint("twitter:search?count=50&numberOfPages=2");
         assertTrue("Endpoint not a TwitterEndpoint: " + endpoint, endpoint instanceof TwitterEndpoint);
         TwitterEndpoint twitterEndpoint = (TwitterEndpoint) endpoint;
 
@@ -53,7 +51,7 @@ public class UriConfigurationTest extends Assert {
     
     @Test
     public void testHttpProxySetting() throws Exception {
-        Endpoint endpoint = context.getEndpoint("twitter:todo/todo?httpProxyHost=example.com&httpProxyPort=3338&httpProxyUser=test&httpProxyPassword=pwd");
+        Endpoint endpoint = context.getEndpoint("twitter:search?httpProxyHost=example.com&httpProxyPort=3338&httpProxyUser=test&httpProxyPassword=pwd");
         assertTrue("Endpoint not a TwitterEndpoint: " + endpoint, endpoint instanceof TwitterEndpoint);
         TwitterEndpoint twitterEndpoint = (TwitterEndpoint) endpoint;
         
@@ -61,25 +59,6 @@ public class UriConfigurationTest extends Assert {
         assertEquals(Integer.valueOf(3338), twitterEndpoint.getProperties().getHttpProxyPort());
         assertEquals("test", twitterEndpoint.getProperties().getHttpProxyUser());
         assertEquals("pwd", twitterEndpoint.getProperties().getHttpProxyPassword());
-    }
-    
-    @Test
-    public void testComponentConfiguration() throws Exception {
-        TwitterComponent comp = context.getComponent("twitter", TwitterComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("twitter:search?keywords=camel");
-
-        assertEquals("camel", conf.getParameter("keywords"));
-
-        ComponentConfiguration compConf = comp.createComponentConfiguration();
-        String json = compConf.createParameterJsonSchema();
-        assertNotNull(json);
-    }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("twitter");
-        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

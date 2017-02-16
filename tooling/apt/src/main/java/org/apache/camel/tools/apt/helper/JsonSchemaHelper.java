@@ -253,7 +253,7 @@ public final class JsonSchemaHelper {
                 continue;
             }
 
-            // remove all HTML tags
+            // remove all XML tags
             line = line.replaceAll("<.*?>", "");
 
             // remove all inlined javadoc links, eg such as {@link org.apache.camel.spi.Registry}

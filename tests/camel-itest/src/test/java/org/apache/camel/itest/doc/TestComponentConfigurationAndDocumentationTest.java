@@ -16,11 +16,9 @@
  */
 package org.apache.camel.itest.doc;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.component.test.TestComponent;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -44,13 +42,6 @@ public class TestComponentConfigurationAndDocumentationTest extends CamelTestSup
 
         assertTrue(json.contains("\"name\": { \"kind\": \"path\", \"group\": \"producer\", \"required\": \"true\""));
         assertTrue(json.contains("\"retainFirst\": { \"kind\": \"parameter\", \"group\": \"producer\", \"label\": \"producer\""));
-    }
-
-    @Test
-    public void testComponentDocumentation() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("test");
-        assertNotNull("Should have found some auto-generated HTML", html);
     }
 
 }

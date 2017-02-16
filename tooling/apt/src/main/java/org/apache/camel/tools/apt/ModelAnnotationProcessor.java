@@ -36,8 +36,8 @@ import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class ModelAnnotationProcessor extends AbstractProcessor {
 
-    CoreEipAnnotationProcessor coreProcessor = new CoreEipAnnotationProcessor();
-    SpringAnnotationProcessor springProcessor = new SpringAnnotationProcessor();
+    private CoreEipAnnotationProcessor coreProcessor = new CoreEipAnnotationProcessor();
+    private SpringAnnotationProcessor springProcessor = new SpringAnnotationProcessor();
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
