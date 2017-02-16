@@ -455,18 +455,36 @@ public class ConnectorMojo extends AbstractJarMojo {
     private static String buildJSonLineFromRow(Map<String, String> row) {
         String name = row.get("name");
         String kind = row.get("kind");
-        boolean required = Boolean.valueOf(row.getOrDefault("required", "false"));
+        boolean required = false;
+        Object value = row.getOrDefault("required", "false");
+        if (value instanceof Boolean) {
+            required = (Boolean) value;
+        } else if (value != null) {
+            required = Boolean.valueOf(value.toString());
+        }
         String javaType = row.get("javaType");
         String defaultValue = row.get("defaultValue");
         String description = row.get("description");
-        boolean deprecated = Boolean.valueOf(row.getOrDefault("deprecated", "false"));
-        boolean secret = Boolean.valueOf(row.getOrDefault("secret", "false"));
+        boolean deprecated = false;
+        value = row.getOrDefault("deprecated", "false");
+        if (value instanceof Boolean) {
+            deprecated = (Boolean) value;
+        } else if (value != null) {
+            deprecated = Boolean.valueOf(value.toString());
+        }
+        boolean secret = false;
+        value = row.getOrDefault("secret", "false");
+        if (value instanceof Boolean) {
+            secret = (Boolean) value;
+        } else if (value != null) {
+            secret = Boolean.valueOf(value.toString());
+        }
         String group = row.get("group");
         String label = row.get("label");
         // for enum we need to build it back as a set
         Set<String> enums = null;
         // the enum can either be a List or String
-        Object value = row.get("enum");
+        value = row.get("enum");
         if (value != null && value instanceof List) {
             enums = new LinkedHashSet<String>((List)value);
         } else if (value != null && value instanceof String) {
@@ -476,7 +494,13 @@ public class ConnectorMojo extends AbstractJarMojo {
         boolean enumType = enums != null;
         String optionalPrefix = row.get("optionalPrefix");
         String prefix = row.get("prefix");
-        boolean multiValue = Boolean.valueOf(row.getOrDefault("multiValue", "false"));
+        boolean multiValue = false;
+        value = row.getOrDefault("multiValue", "false");
+        if (value instanceof Boolean) {
+            multiValue = (Boolean) value;
+        } else if (value != null) {
+            multiValue = Boolean.valueOf(value.toString());
+        }
 
         return JSonSchemaHelper.toJson(name, kind, required, javaType, defaultValue, description, deprecated, secret, group, label,
             enumType, enums, false, null, false, optionalPrefix, prefix, multiValue);
