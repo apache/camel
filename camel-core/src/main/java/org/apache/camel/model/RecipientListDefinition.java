@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ProcessClause;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.EvaluateExpressionProcessor;
 import org.apache.camel.processor.Pipeline;
@@ -397,6 +398,18 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     public RecipientListDefinition<Type> onPrepare(Processor onPrepare) {
         setOnPrepare(onPrepare);
         return this;
+    }
+
+    /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     * @return the builder
+     */
+    public ProcessClause<RecipientListDefinition<Type>> onPrepare() {
+        ProcessClause<RecipientListDefinition<Type>> clause = new ProcessClause<>(this);
+        setOnPrepare(clause);
+        return clause;
     }
 
     /**
