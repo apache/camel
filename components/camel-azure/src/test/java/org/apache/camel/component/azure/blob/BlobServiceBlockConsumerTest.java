@@ -84,6 +84,9 @@ public class BlobServiceBlockConsumerTest extends CamelTestSupport {
                 
                 from("azure-blob://camelazure/container1/blobBlock?credentials=#creds&fileDir="
                     + System.getProperty("java.io.tmpdir")).to("mock:result");
+                
+                //from("azure-blob://camelazure/container1/blobBlock?credentials=#creds")
+                //    .to("file://" + System.getProperty("java.io.tmpdir"));  
             }
         };
     }
