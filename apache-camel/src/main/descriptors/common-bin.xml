@@ -452,6 +452,7 @@
         <include>org.apache.camel:camel-olingo2-starter</include>
         <include>org.apache.camel:camel-openshift-starter</include>
         <include>org.apache.camel:camel-openstack-starter</include>
+        <include>org.apache.camel:camel-opentracing-starter</include>
         <include>org.apache.camel:camel-optaplanner-starter</include>
         <include>org.apache.camel:camel-paho-starter</include>
         <include>org.apache.camel:camel-pdf-starter</include>

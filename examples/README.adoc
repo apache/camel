@@ -11,11 +11,13 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 83
+Number of Examples: 84
 
 [width="100%",cols="4,2,4",options="header"]
 |=======================================================================
 | Example | Category | Description
+
+| link:camel-example-opentracing/README.md[Opentracing] (camel-example-opentracing) |  | An example showing how to trace incoming and outgoing messages from Camel with OpenTracing
 
 | link:camel-example-cdi/README.md[CDI] (camel-example-cdi) | Beginner | An example showing how to work with Camel and CDI for dependency injection
 

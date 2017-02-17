@@ -1805,6 +1805,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-opentracing-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-optaplanner-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -1881,6 +1886,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-ruby-starter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-reactive-streams-starter</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
