@@ -27,6 +27,8 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+import org.apache.camel.StaticService;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.model.RouteDefinition;
@@ -34,6 +36,8 @@ import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
+import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +58,8 @@ import io.opentracing.tag.Tags;
  * to trap when Camel starts/ends an {@link Exchange} being routed using the {@link RoutePolicy} and during the routing
  * if the {@link Exchange} sends messages, then we track them using the {@link org.apache.camel.spi.EventNotifier}.
  */
-public class OpenTracingTracer implements RoutePolicyFactory, CamelContextAware {
+@ManagedResource(description = "OpenTracingTracer")
+public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFactory, StaticService, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenTracingTracer.class);
 
@@ -79,6 +84,20 @@ public class OpenTracingTracer implements RoutePolicyFactory, CamelContextAware 
         return new OpenTracingRoutePolicy(routeId);
     }
 
+    /**
+     * Registers this {@link OpenTracingTracer} on the {@link CamelContext}.
+     */
+    public void init(CamelContext camelContext) {
+        if (!camelContext.hasService(this)) {
+            try {
+                // start this service eager so we init before Camel is starting up
+                camelContext.addService(this, true, true);
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+    }
+
     @Override
     public CamelContext getCamelContext() {
         return camelContext;
@@ -86,32 +105,7 @@ public class OpenTracingTracer implements RoutePolicyFactory, CamelContextAware 
 
     @Override
     public void setCamelContext(CamelContext camelContext) {
-        if (this.camelContext != null) {
-            // stop event notifier
-            camelContext.getManagementStrategy().removeEventNotifier(eventNotifier);
-
-             // remove route policy
-            camelContext.getRoutePolicyFactories().remove(this);
-        }
-
         this.camelContext = camelContext;
-
-        if (this.camelContext != null) {
-            camelContext.getManagementStrategy().addEventNotifier(eventNotifier);
-            if (!camelContext.getRoutePolicyFactories().contains(this)) {
-                camelContext.addRoutePolicyFactory(this);
-            }
-            
-            // TODO: In example client, this was required otherwise outbound invocations
-            // were not instrumented - may be better to reinstate StaticService approach, but
-            // then need to resolve issue with xml dsl correctly starting service to init
-            // event notifier.
-            try {
-                ServiceHelper.startServices(eventNotifier);
-            } catch (Exception e) {
-                LOG.error("Failed to start event notifier", e);
-            }
-        }
     }
 
     public Tracer getTracer() {
@@ -120,6 +114,32 @@ public class OpenTracingTracer implements RoutePolicyFactory, CamelContextAware 
 
     public void setTracer(Tracer tracer) {
     	this.tracer = tracer;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        ObjectHelper.notNull(camelContext, "CamelContext", this);
+
+        camelContext.getManagementStrategy().addEventNotifier(eventNotifier);
+        if (!camelContext.getRoutePolicyFactories().contains(this)) {
+            camelContext.addRoutePolicyFactory(this);
+        }
+
+        if (tracer == null) {
+            tracer = GlobalTracer.get();
+        }
+
+        ServiceHelper.startServices(eventNotifier);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // stop event notifier
+        camelContext.getManagementStrategy().removeEventNotifier(eventNotifier);
+        ServiceHelper.stopService(eventNotifier);
+
+         // remove route policy
+        camelContext.getRoutePolicyFactories().remove(this);
     }
 
     protected SpanDecorator getSpanDecorator(Endpoint endpoint) {

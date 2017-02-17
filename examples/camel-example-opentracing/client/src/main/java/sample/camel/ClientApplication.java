@@ -27,7 +27,7 @@ public class ClientApplication {
 
     public void setupCamel(@Observes CamelContextStartingEvent event) {
         OpenTracingTracer ottracer = new OpenTracingTracer();
-        ottracer.setCamelContext(event.getContext());
+        ottracer.init(event.getContext());
     }
 
 }
