@@ -65,9 +65,10 @@ public class SubscriptionHelper extends ServiceSupport {
     private static final String EXCEPTION_FIELD = "exception";
     private static final int DISCONNECT_INTERVAL = 5000;
 
+    final BayeuxClient client;
+
     private final SalesforceComponent component;
     private final SalesforceSession session;
-    private final BayeuxClient client;
     private final long timeout = 60 * 1000L;
 
     private final Map<SalesforceConsumer, ClientSessionChannel.MessageListener> listenerMap;
@@ -93,7 +94,7 @@ public class SubscriptionHelper extends ServiceSupport {
         this.listenerMap = new ConcurrentHashMap<SalesforceConsumer, ClientSessionChannel.MessageListener>();
 
         // create CometD client
-        this.client = createClient(topicName);
+        this.client = createClient(component, topicName);
 
         restartBackoff = new AtomicLong(0);
         backoffIncrement = component.getConfig().getBackoffIncrement();
@@ -312,17 +313,18 @@ public class SubscriptionHelper extends ServiceSupport {
 
         boolean disconnected = client.disconnect(timeout);
         if (!disconnected) {
-            LOG.warn("Could not disconnect client connected to: {} after: {} msec.", getEndpointUrl(), timeout);
+            LOG.warn("Could not disconnect client connected to: {} after: {} msec.", getEndpointUrl(component), timeout);
         }
     }
 
-    private BayeuxClient createClient(String topicName) throws Exception {
+    static BayeuxClient createClient(final SalesforceComponent component, final String topicName) throws Exception {
         // use default Jetty client from SalesforceComponent, its shared by all consumers
         final SalesforceHttpClient httpClient = component.getConfig().getHttpClient();
 
         Map<String, Object> options = new HashMap<String, Object>();
         options.put(ClientTransport.MAX_NETWORK_DELAY_OPTION, httpClient.getTimeout());
 
+        final SalesforceSession session = component.getSession();
         // check login access token
         if (session.getAccessToken() == null) {
             // lazy login here!
@@ -340,12 +342,12 @@ public class SubscriptionHelper extends ServiceSupport {
             }
         };
 
-        BayeuxClient client = new BayeuxClient(getEndpointUrl(), transport);
+        BayeuxClient client = new BayeuxClient(getEndpointUrl(component), transport);
         Integer replayId = null;
         String channelName = getChannelName(topicName);
         Map<String, Integer> replayIdMap = component.getConfig().getInitialReplayIdMap();
         if (replayIdMap != null) {
-            replayId = replayIdMap.get(channelName);
+            replayId = replayIdMap.getOrDefault(topicName, replayIdMap.get(channelName));
         }
         if (replayId == null) {
             replayId = component.getConfig().getDefaultReplayId();
@@ -419,7 +421,7 @@ public class SubscriptionHelper extends ServiceSupport {
         clientChannel.subscribe(listener);
     }
 
-    private String getChannelName(String topicName) {
+    static String getChannelName(String topicName) {
         return "/topic/" + topicName;
     }
 
@@ -491,7 +493,7 @@ public class SubscriptionHelper extends ServiceSupport {
         }
     }
 
-    public String getEndpointUrl() {
+    static String getEndpointUrl(final SalesforceComponent component) {
         // In version 36.0 replay is only enabled on a separate endpoint
         if (Double.valueOf(component.getConfig().getApiVersion()) == 36.0) {
             boolean replayOptionsPresent = component.getConfig().getDefaultReplayId() != null
