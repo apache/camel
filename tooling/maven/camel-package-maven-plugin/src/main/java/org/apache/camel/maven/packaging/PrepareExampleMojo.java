@@ -80,6 +80,12 @@ public class PrepareExampleMojo extends AbstractMojo {
         Set<File> examples = new TreeSet<>();
 
         File dir = new File(".");
+
+        // only run in examples directory where the main readme.adoc file is located
+        if (!dir.getName().equals("examples")) {
+            return;
+        }
+
         File[] files = dir.listFiles();
         if (files != null) {
             examples.addAll(Arrays.asList(files));
