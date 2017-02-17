@@ -162,7 +162,7 @@ public class PrepareExampleMojo extends AbstractMojo {
 
     private String templateExamples(List<ExampleModel> models) throws MojoExecutionException {
         try {
-            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("readme-examples.mvel"));
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-examples.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("examples", models);
             String out = (String) TemplateRuntime.eval(template, map);

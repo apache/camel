@@ -31,6 +31,8 @@ import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.ComponentOptionModel;
 import org.apache.camel.maven.packaging.model.DataFormatModel;
 import org.apache.camel.maven.packaging.model.DataFormatOptionModel;
+import org.apache.camel.maven.packaging.model.EipModel;
+import org.apache.camel.maven.packaging.model.EipOptionModel;
 import org.apache.camel.maven.packaging.model.EndpointOptionModel;
 import org.apache.camel.maven.packaging.model.LanguageModel;
 import org.apache.camel.maven.packaging.model.LanguageOptionModel;
@@ -48,11 +50,11 @@ import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 import static org.apache.camel.maven.packaging.StringHelper.isEmpty;
 
 /**
- * Generate or updates the component/dataformat/language readme.md and .adoc files in the project root directory.
+ * Generate or updates the component/dataformat/language/eip readme.md and .adoc files in the project root directory.
  *
  * @goal update-readme
  */
-public class ReadmeComponentMojo extends AbstractMojo {
+public class UpdateReadmeMojo extends AbstractMojo {
 
     /**
      * The maven project.
@@ -78,6 +80,13 @@ public class ReadmeComponentMojo extends AbstractMojo {
     protected File docDir;
 
     /**
+     * The documentation directory
+     *
+     * @parameter default-value="${basedir}/src/main/docs/eips"
+     */
+    protected File eipDocDir;
+
+    /**
      * Whether to fail the build fast if any Warnings was detected.
      *
      * @parameter
@@ -98,6 +107,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
         executeComponent();
         executeDataFormat();
         executeLanguage();
+        executeEips();
     }
 
     private void executeComponent() throws MojoExecutionException, MojoFailureException {
@@ -260,6 +270,54 @@ public class ReadmeComponentMojo extends AbstractMojo {
         }
     }
 
+    private void executeEips() throws MojoExecutionException, MojoFailureException {
+        // find the eips names
+        List<String> eipNames = findEipNames();
+
+        // TODO: how to find model json files
+        final Set<File> jsonFiles = new TreeSet<File>();
+        PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
+
+        // only if there is dataformat we should update the documentation files
+        if (!eipNames.isEmpty()) {
+            getLog().debug("Found " + eipNames.size() + " eips");
+            for (String eipName : eipNames) {
+                String json = loadEipJson(jsonFiles, eipName);
+                if (json != null) {
+                    // special for some data formats
+                    eipName = asEipName(eipName);
+
+                    File file = new File(docDir, eipName + "-eip.adoc");
+
+                    EipModel model = generateEipModel(json);
+                    String title = asEipTitle(model.getName(), model.getTitle());
+                    model.setTitle(title);
+
+                    boolean exists = file.exists();
+                    boolean updated;
+
+                    updated = updateTitles(file, model.getTitle() + " EIP");
+
+                    if (model.getEipOptions() != null) {
+                        String options = templateEipOptions(model);
+                        updated |= updateEipOptions(file, options);
+                    }
+
+                    if (updated) {
+                        getLog().info("Updated doc file: " + file);
+                    } else if (exists) {
+                        getLog().debug("No changes to doc file: " + file);
+                    } else {
+                        getLog().warn("No dataformat doc file: " + file);
+                        if (isFailFast()) {
+                            throw new MojoExecutionException("Failed build due failFast=true");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private static String asComponentTitle(String name, String title) {
         // special for some components which share the same readme file
         if (name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp") || name.equals("smtps")) {
@@ -278,6 +336,10 @@ public class ReadmeComponentMojo extends AbstractMojo {
         }
     }
 
+    private static String asEipName(String name) {
+        return name;
+    }
+
     private static String asDataFormatTitle(String name, String title) {
         // special for some dataformats which share the same readme file
         if (name.startsWith("bindy")) {
@@ -285,6 +347,10 @@ public class ReadmeComponentMojo extends AbstractMojo {
         } else {
             return title;
         }
+    }
+
+    private static String asEipTitle(String name, String title) {
+        return title;
     }
 
     private boolean updateTitles(File file, String title) throws MojoExecutionException {
@@ -558,6 +624,43 @@ public class ReadmeComponentMojo extends AbstractMojo {
         }
     }
 
+    private boolean updateEipOptions(File file, String changed) throws MojoExecutionException {
+        if (!file.exists()) {
+            return false;
+        }
+
+        try {
+            String text = loadText(new FileInputStream(file));
+
+            String existing = StringHelper.between(text, "// eip options: START", "// eip options: END");
+            if (existing != null) {
+                // remove leading line breaks etc
+                existing = existing.trim();
+                changed = changed.trim();
+                if (existing.equals(changed)) {
+                    return false;
+                } else {
+                    String before = StringHelper.before(text, "// eip options: START");
+                    String after = StringHelper.after(text, "// eip options: END");
+                    text = before + "// eip options: START\n" + changed + "\n// eip options: END" + after;
+                    writeText(file, text);
+                    return true;
+                }
+            } else {
+                getLog().warn("Cannot find markers in file " + file);
+                getLog().warn("Add the following markers");
+                getLog().warn("\t// eip options: START");
+                getLog().warn("\t// eip options: END");
+                if (isFailFast()) {
+                    throw new MojoExecutionException("Failed build due failFast=true");
+                }
+                return false;
+            }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
+        }
+    }
+
     private String loadComponentJson(Set<File> jsonFiles, String componentName) {
         try {
             for (File file : jsonFiles) {
@@ -599,6 +702,23 @@ public class ReadmeComponentMojo extends AbstractMojo {
                     String json = loadText(new FileInputStream(file));
                     boolean isLanguage = json.contains("\"kind\": \"language\"");
                     if (isLanguage) {
+                        return json;
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return null;
+    }
+
+    private String loadEipJson(Set<File> jsonFiles, String eipName) {
+        try {
+            for (File file : jsonFiles) {
+                if (file.getName().equals(eipName + ".json")) {
+                    String json = loadText(new FileInputStream(file));
+                    boolean isEip = json.contains("\"kind\": \"model\"");
+                    if (isEip) {
                         return json;
                     }
                 }
@@ -767,9 +887,25 @@ public class ReadmeComponentMojo extends AbstractMojo {
         return language;
     }
 
+    private EipModel generateEipModel(String json) {
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
+
+        EipModel eip = new EipModel();
+        eip.setName(JSonSchemaHelper.getSafeValue("name", rows));
+        eip.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
+        eip.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
+        eip.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
+        eip.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
+        eip.setDeprecated("true".equals(JSonSchemaHelper.getSafeValue("deprecated", rows)));
+        eip.setInput("true".equals(JSonSchemaHelper.getSafeValue("input", rows)));
+        eip.setOutput("true".equals(JSonSchemaHelper.getSafeValue("output", rows)));
+
+        return eip;
+    }
+
     private String templateComponentHeader(ComponentModel model) throws MojoExecutionException {
         try {
-            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("component-header.mvel"));
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("component-header.mvel"));
             String out = (String) TemplateRuntime.eval(template, model);
             return out;
         } catch (Exception e) {
@@ -779,7 +915,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
 
     private String templateComponentOptions(ComponentModel model) throws MojoExecutionException {
         try {
-            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("component-options.mvel"));
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("component-options.mvel"));
             String out = (String) TemplateRuntime.eval(template, model);
             return out;
         } catch (Exception e) {
@@ -789,7 +925,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
 
     private String templateEndpointOptions(ComponentModel model) throws MojoExecutionException {
         try {
-            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("endpoint-options.mvel"));
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("endpoint-options.mvel"));
             String out = (String) TemplateRuntime.eval(template, model);
             return out;
         } catch (Exception e) {
@@ -799,7 +935,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
 
     private String templateDataFormatOptions(DataFormatModel model) throws MojoExecutionException {
         try {
-            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("dataformat-options.mvel"));
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("dataformat-options.mvel"));
             String out = (String) TemplateRuntime.eval(template, model);
             return out;
         } catch (Exception e) {
@@ -809,7 +945,17 @@ public class ReadmeComponentMojo extends AbstractMojo {
 
     private String templateLanguageOptions(LanguageModel model) throws MojoExecutionException {
         try {
-            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("language-options.mvel"));
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("language-options.mvel"));
+            String out = (String) TemplateRuntime.eval(template, model);
+            return out;
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
+        }
+    }
+
+    private String templateEipOptions(EipModel model) throws MojoExecutionException {
+        try {
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("eip-options.mvel"));
             String out = (String) TemplateRuntime.eval(template, model);
             return out;
         } catch (Exception e) {
@@ -872,7 +1018,6 @@ public class ReadmeComponentMojo extends AbstractMojo {
         }
         return dataFormatNames;
     }
-
     private List<String> findLanguageNames() {
         List<String> languageNames = new ArrayList<String>();
         for (Resource r : project.getBuild().getResources()) {
@@ -899,6 +1044,12 @@ public class ReadmeComponentMojo extends AbstractMojo {
             }
         }
         return languageNames;
+    }
+
+    private List<String> findEipNames() {
+        List<String> eipNames = new ArrayList<String>();
+        // TODO: find by scanning model (prepare catalog does something)
+        return eipNames;
     }
 
     private boolean isFailFast() {

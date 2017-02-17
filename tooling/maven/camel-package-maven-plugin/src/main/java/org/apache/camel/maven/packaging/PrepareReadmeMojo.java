@@ -429,7 +429,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
 
     private String templateEips(List<EipModel> models) throws MojoExecutionException {
         try {
-            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("readme-eips.mvel"));
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-eips.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("eips", models);
             String out = (String) TemplateRuntime.eval(template, map);
@@ -441,7 +441,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
 
     private String templateComponents(List<ComponentModel> models) throws MojoExecutionException {
         try {
-            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("readme-components.mvel"));
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-components.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("components", models);
             String out = (String) TemplateRuntime.eval(template, map);
@@ -453,7 +453,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
 
     private String templateOthers(List<OtherModel> models) throws MojoExecutionException {
         try {
-            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("readme-others.mvel"));
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-others.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("others", models);
             String out = (String) TemplateRuntime.eval(template, map);
@@ -465,7 +465,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
 
     private String templateDataFormats(List<DataFormatModel> models) throws MojoExecutionException {
         try {
-            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("readme-dataformats.mvel"));
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-dataformats.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("dataformats", models);
             String out = (String) TemplateRuntime.eval(template, map);
@@ -477,7 +477,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
 
     private String templateLanguages(List<LanguageModel> models) throws MojoExecutionException {
         try {
-            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("readme-languages.mvel"));
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-languages.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("languages", models);
             String out = (String) TemplateRuntime.eval(template, map);
