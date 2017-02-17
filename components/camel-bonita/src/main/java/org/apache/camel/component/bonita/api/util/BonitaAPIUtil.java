@@ -72,31 +72,25 @@ public class BonitaAPIUtil {
     }
 
     public UploadFileResponse uploadFile(ProcessDefinitionResponse processDefinition,
-            FileInput file) {
+            FileInput file) throws Exception {
         WebTarget resource = webTarget
-                .path("portal/resource/process/{processName}/{processVersion}/API/formFileUpload")
-                .resolveTemplate("processName", processDefinition.getName())
-                .resolveTemplate("processVersion", processDefinition.getVersion());
-        try {
-            File tempFile = File.createTempFile("tempFile", ".tmp");
-            FileOutputStream fos = new FileOutputStream(tempFile);
-            fos.write(file.getContent());
-            fos.close();
-            final FileDataBodyPart filePart =
-                    new FileDataBodyPart("file", tempFile, MediaType.APPLICATION_OCTET_STREAM_TYPE);
-            final MultiPart multipart = new FormDataMultiPart().bodyPart(filePart);
-            // resource.request().header("ContentType", "application/json");
-            return resource.request().accept(MediaType.APPLICATION_JSON).post(
-                    entity(multipart, MediaType.MULTIPART_FORM_DATA), UploadFileResponse.class);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-
+            .path("portal/resource/process/{processName}/{processVersion}/API/formFileUpload")
+            .resolveTemplate("processName", processDefinition.getName())
+            .resolveTemplate("processVersion", processDefinition.getVersion());
+        File tempFile = File.createTempFile("tempFile", ".tmp");
+        FileOutputStream fos = new FileOutputStream(tempFile);
+        fos.write(file.getContent());
+        fos.close();
+        final FileDataBodyPart filePart =
+                new FileDataBodyPart("file", tempFile, MediaType.APPLICATION_OCTET_STREAM_TYPE);
+        final MultiPart multipart = new FormDataMultiPart().bodyPart(filePart);
+        return resource.request().accept(MediaType.APPLICATION_JSON).post(
+                entity(multipart, MediaType.MULTIPART_FORM_DATA), UploadFileResponse.class);
+       
     }
 
     public Map<String, Serializable> prepareInputs(ProcessDefinitionResponse processDefinition,
-            Map<String, Serializable> inputs) {
+            Map<String, Serializable> inputs) throws Exception {
         for (Entry<String, Serializable> entry : inputs.entrySet()) {
             if (entry.getValue() instanceof FileInput) {
                 FileInput file = (FileInput) entry.getValue();
