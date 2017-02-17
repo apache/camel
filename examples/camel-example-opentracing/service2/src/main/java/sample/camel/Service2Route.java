@@ -24,7 +24,7 @@ public class Service2Route extends RouteBuilder {
     @Override
     public void configure() throws Exception {
         OpenTracingTracer ottracer = new OpenTracingTracer();
-        ottracer.setCamelContext(getContext());
+        ottracer.init(getContext());
 
         from("undertow:http://0.0.0.0:7070/service2").routeId("service2").streamCaching()
                 .log(" Service2 request: ${body}")
