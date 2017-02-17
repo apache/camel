@@ -212,6 +212,17 @@ public class CMISSessionFacade {
         return false;
     }
 
+	public boolean supportsSecondaries() {
+		if (session.getRepositoryInfo().getCmisVersion() == CmisVersion.CMIS_1_0)
+			return false;
+		for (ObjectType type : session.getTypeChildren(null, false)) {
+			if (BaseTypeId.CMIS_SECONDARY.value().equals(type.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
     public ContentStream createContentStream(String fileName, byte[] buf, String mimeType) throws Exception {
         return buf != null ? session.getObjectFactory()
                 .createContentStream(fileName, buf.length, mimeType, new ByteArrayInputStream(buf)) : null;
