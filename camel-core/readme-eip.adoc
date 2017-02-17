@@ -27,11 +27,20 @@ The EIP icons library is available as a Visio stencil file adapted to render the
 | link:src/main/docs/eips/circuitBreaker-eip.adoc[Circuit Breaker] +
 `<circuitBreaker>` | Circuit break load balancer
 
+| link:src/main/docs/eips/content-based-router.adoc[Content Based Router] +
+`<contentBasedRouter>` | How do we handle a situation where the implementation of a single logical function (e.g., inventory check) is spread across multiple physical systems?
+
 | link:src/main/docs/eips/convertBodyTo-eip.adoc[Convert Body To] +
 `<convertBodyTo>` | Converts the message body to another type
 
+| link:src/main/docs/eips/correlation-identifier.adoc[Correlation Identifier] +
+`<correlationIdentifier>` | How does a requestor that has received a reply know which request this is the reply for?
+
 | link:src/main/docs/eips/customLoadBalancer-eip.adoc[Custom Load Balancer] +
 `<customLoadBalancer>` | Custom load balancer
+
+| link:src/main/docs/eips/dead-letter-channel.adoc[Dead Letter Channel] +
+`<deadLetterChannel>` | What will the messaging system do with a message it cannot deliver?
 
 | link:src/main/docs/eips/delay-eip.adoc[Delay] +
 `<delay>` | Delays processing for a specified length of time
@@ -42,11 +51,17 @@ The EIP icons library is available as a Visio stencil file adapted to render the
 | link:src/main/docs/eips/enrich-eip.adoc[Enrich] +
 `<enrich>` | Enriches a message with data from a secondary resource
 
+| link:src/main/docs/eips/event-message.adoc[Event Message] +
+`<eventMessage>` | How can messaging be used to transmit events from one application to another?
+
 | link:src/main/docs/eips/failover-eip.adoc[Failover] +
 `<failover>` | Failover load balancer
 
 | link:src/main/docs/eips/filter-eip.adoc[Filter] +
 `<filter>` | Filter out messages based using a predicate
+
+| link:src/main/docs/eips/guaranteed-delivery.adoc[Guaranteed Delivery] +
+`<guaranteedDelivery>` | How can the sender make sure that a message will be delivered, even if the messaging system fails?
 
 | link:src/main/docs/eips/from-eip.adoc[From] +
 `<from>` | Act as a message source as input to a route
@@ -75,6 +90,27 @@ The EIP icons library is available as a Visio stencil file adapted to render the
 | link:src/main/docs/eips/marshal-eip.adoc[Marshal] +
 `<marshal>` | Marshals data into a specified format for transmission over a transport or component
 
+| link:src/main/docs/eips/message.adoc[Message] +
+`<message>` | How can two applications connected by a message channel exchange a piece of information?
+
+| link:src/main/docs/eips/message-bus.adoc[Message Bus] +
+`<messageBus>` | What is an architecture that enables separate applications to work together, but in a de-coupled fashion such that applications can be easily added or removed without affecting the others?
+
+| link:src/main/docs/eips/message-channel.adoc[Message Channel] +
+`<messageChannel>` | How does one application communicate with another using messaging?
+
+| link:src/main/docs/eips/message-endpoint.adoc[Message Endpoint] +
+`<messageEndpoint>` | How does an application connect to a messaging channel to send and receive messages?
+
+| link:src/main/docs/eips/message-filter.adoc[Message Filter] +
+`<messageFilter>` | How can a component avoid receiving uninteresting messages?
+
+| link:src/main/docs/eips/message-router.adoc[Message Router] +
+`<messageRouter>` | How can you decouple individual processing steps so that messages can be passed to different filters depending on a set of conditions?
+
+| link:src/main/docs/eips/message-translator.adoc[Message Translator] +
+`<messageTranslator>` | How can systems using different data formats communicate with each other using messaging?
+
 | link:src/main/docs/eips/multicast-eip.adoc[Multicast] +
 `<multicast>` | Routes the same message to multiple paths either sequentially or in parallel.
 
@@ -87,11 +123,20 @@ The EIP icons library is available as a Visio stencil file adapted to render the
 | link:src/main/docs/eips/pipeline-eip.adoc[Pipeline] +
 `<pipeline>` | Routes the message to a sequence of processors.
 
+| link:src/main/docs/eips/pipes-and-filters.adoc[Pipes and Filters] +
+`<pipesAndFilters>` | How can we perform complex processing on a message while maintaining independence and flexibility?
+
+| link:src/main/docs/eips/point-to-point-channel.adoc[Point to Point Channel] +
+`<pointToPointChannel>` | How can the caller be sure that exactly one receiver will receive the document or perform the call?
+
 | link:src/main/docs/eips/pollEnrich-eip.adoc[Poll Enrich] +
 `<pollEnrich>` | Enriches messages with data polled from a secondary resource
 
 | link:src/main/docs/eips/process-eip.adoc[Process] +
 `<process>` | Calls a Camel processor.
+
+| link:src/main/docs/eips/publish-subscribe-channel.adoc[Publish Subscribe Channel] +
+`<publishSubscribeChannel>` | How can the sender broadcast an event to all interested receivers?
 
 | link:src/main/docs/eips/random-eip.adoc[Random] +
 `<random>` | Random load balancer
