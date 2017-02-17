@@ -44,7 +44,7 @@ import org.apache.maven.project.MavenProject;
 import org.mvel2.templates.TemplateRuntime;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import static org.apache.camel.maven.packaging.JSonSchemaHelper.getSafeValue;
+import static org.apache.camel.maven.packaging.JSonSchemaHelper.*;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 import static org.apache.camel.maven.packaging.StringHelper.isEmpty;
@@ -271,27 +271,33 @@ public class UpdateReadmeMojo extends AbstractMojo {
     }
 
     private void executeEips() throws MojoExecutionException, MojoFailureException {
-        // find the eips names
-        List<String> eipNames = findEipNames();
+        // only run if in camel-core
+        File coreDir = new File(".");
+        if (!coreDir.getName().equals("camel-core")) {
+            return;
+        }
 
-        // TODO: how to find model json files
         final Set<File> jsonFiles = new TreeSet<File>();
-        PackageHelper.findJsonFiles(buildDir, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
+
+        // find all json files in camel-core
+        if (coreDir.isDirectory()) {
+            File target = new File(coreDir, "target/classes/org/apache/camel/model");
+            PackageHelper.findJsonFiles(target, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
+        }
 
         // only if there is dataformat we should update the documentation files
-        if (!eipNames.isEmpty()) {
-            getLog().debug("Found " + eipNames.size() + " eips");
-            for (String eipName : eipNames) {
-                String json = loadEipJson(jsonFiles, eipName);
+        if (!jsonFiles.isEmpty()) {
+            getLog().debug("Found " + jsonFiles.size() + " eips");
+            for (File jsonFile : jsonFiles) {
+                String json = loadEipJson(jsonFile);
                 if (json != null) {
-                    // special for some data formats
-                    eipName = asEipName(eipName);
-
-                    File file = new File(docDir, eipName + "-eip.adoc");
 
                     EipModel model = generateEipModel(json);
                     String title = asEipTitle(model.getName(), model.getTitle());
                     model.setTitle(title);
+
+                    String eipName = model.getName();
+                    File file = new File(docDir, eipName + "-eip.adoc");
 
                     boolean exists = file.exists();
                     boolean updated;
@@ -308,7 +314,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     } else if (exists) {
                         getLog().debug("No changes to doc file: " + file);
                     } else {
-                        getLog().warn("No dataformat doc file: " + file);
+                        getLog().warn("No eip doc file: " + file);
                         if (isFailFast()) {
                             throw new MojoExecutionException("Failed build due failFast=true");
                         }
@@ -712,16 +718,12 @@ public class UpdateReadmeMojo extends AbstractMojo {
         return null;
     }
 
-    private String loadEipJson(Set<File> jsonFiles, String eipName) {
+    private String loadEipJson(File file) {
         try {
-            for (File file : jsonFiles) {
-                if (file.getName().equals(eipName + ".json")) {
-                    String json = loadText(new FileInputStream(file));
-                    boolean isEip = json.contains("\"kind\": \"model\"");
-                    if (isEip) {
-                        return json;
-                    }
-                }
+            String json = loadText(new FileInputStream(file));
+            boolean isEip = json.contains("\"kind\": \"model\"");
+            if (isEip) {
+                return json;
             }
         } catch (IOException e) {
             // ignore
@@ -730,26 +732,26 @@ public class UpdateReadmeMojo extends AbstractMojo {
     }
 
     private ComponentModel generateComponentModel(String componentName, String json) {
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
+        List<Map<String, String>> rows = parseJsonSchema("component", json, false);
 
         ComponentModel component = new ComponentModel(true);
-        component.setScheme(JSonSchemaHelper.getSafeValue("scheme", rows));
-        component.setSyntax(JSonSchemaHelper.getSafeValue("syntax", rows));
-        component.setAlternativeSyntax(JSonSchemaHelper.getSafeValue("alternativeSyntax", rows));
-        component.setAlternativeSchemes(JSonSchemaHelper.getSafeValue("alternativeSchemes", rows));
-        component.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
-        component.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
-        component.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
-        component.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
-        component.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
-        component.setConsumerOnly(JSonSchemaHelper.getSafeValue("consumerOnly", rows));
-        component.setProducerOnly(JSonSchemaHelper.getSafeValue("producerOnly", rows));
-        component.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
-        component.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
-        component.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
-        component.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
+        component.setScheme(getSafeValue("scheme", rows));
+        component.setSyntax(getSafeValue("syntax", rows));
+        component.setAlternativeSyntax(getSafeValue("alternativeSyntax", rows));
+        component.setAlternativeSchemes(getSafeValue("alternativeSchemes", rows));
+        component.setTitle(getSafeValue("title", rows));
+        component.setDescription(getSafeValue("description", rows));
+        component.setFirstVersion(getSafeValue("firstVersion", rows));
+        component.setLabel(getSafeValue("label", rows));
+        component.setDeprecated(getSafeValue("deprecated", rows));
+        component.setConsumerOnly(getSafeValue("consumerOnly", rows));
+        component.setProducerOnly(getSafeValue("producerOnly", rows));
+        component.setJavaType(getSafeValue("javaType", rows));
+        component.setGroupId(getSafeValue("groupId", rows));
+        component.setArtifactId(getSafeValue("artifactId", rows));
+        component.setVersion(getSafeValue("version", rows));
 
-        rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
+        rows = parseJsonSchema("componentProperties", json, true);
         for (Map<String, String> row : rows) {
             ComponentOptionModel option = new ComponentOptionModel();
             option.setName(getSafeValue("name", row));
@@ -772,7 +774,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
             component.addComponentOption(option);
         }
 
-        rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+        rows = parseJsonSchema("properties", json, true);
         for (Map<String, String> row : rows) {
             EndpointOptionModel option = new EndpointOptionModel();
             option.setName(getSafeValue("name", row));
@@ -801,22 +803,22 @@ public class UpdateReadmeMojo extends AbstractMojo {
     }
 
     private DataFormatModel generateDataFormatModel(String dataFormatName, String json) {
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("dataformat", json, false);
+        List<Map<String, String>> rows = parseJsonSchema("dataformat", json, false);
 
         DataFormatModel dataFormat = new DataFormatModel();
-        dataFormat.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
-        dataFormat.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
-        dataFormat.setName(JSonSchemaHelper.getSafeValue("name", rows));
-        dataFormat.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
-        dataFormat.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
-        dataFormat.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
-        dataFormat.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
-        dataFormat.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
-        dataFormat.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
-        dataFormat.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
-        dataFormat.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
+        dataFormat.setTitle(getSafeValue("title", rows));
+        dataFormat.setModelName(getSafeValue("modelName", rows));
+        dataFormat.setName(getSafeValue("name", rows));
+        dataFormat.setDescription(getSafeValue("description", rows));
+        dataFormat.setFirstVersion(getSafeValue("firstVersion", rows));
+        dataFormat.setLabel(getSafeValue("label", rows));
+        dataFormat.setDeprecated(getSafeValue("deprecated", rows));
+        dataFormat.setJavaType(getSafeValue("javaType", rows));
+        dataFormat.setGroupId(getSafeValue("groupId", rows));
+        dataFormat.setArtifactId(getSafeValue("artifactId", rows));
+        dataFormat.setVersion(getSafeValue("version", rows));
 
-        rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+        rows = parseJsonSchema("properties", json, true);
         for (Map<String, String> row : rows) {
             DataFormatOptionModel option = new DataFormatOptionModel();
             option.setName(getSafeValue("name", row));
@@ -848,22 +850,22 @@ public class UpdateReadmeMojo extends AbstractMojo {
     }
 
     private LanguageModel generateLanguageModel(String languageName, String json) {
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
+        List<Map<String, String>> rows = parseJsonSchema("language", json, false);
 
         LanguageModel language = new LanguageModel();
-        language.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
-        language.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
-        language.setName(JSonSchemaHelper.getSafeValue("name", rows));
-        language.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
-        language.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
-        language.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
-        language.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
-        language.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
-        language.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
-        language.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
-        language.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
+        language.setTitle(getSafeValue("title", rows));
+        language.setModelName(getSafeValue("modelName", rows));
+        language.setName(getSafeValue("name", rows));
+        language.setDescription(getSafeValue("description", rows));
+        language.setFirstVersion(getSafeValue("firstVersion", rows));
+        language.setLabel(getSafeValue("label", rows));
+        language.setDeprecated(getSafeValue("deprecated", rows));
+        language.setJavaType(getSafeValue("javaType", rows));
+        language.setGroupId(getSafeValue("groupId", rows));
+        language.setArtifactId(getSafeValue("artifactId", rows));
+        language.setVersion(getSafeValue("version", rows));
 
-        rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+        rows = parseJsonSchema("properties", json, true);
         for (Map<String, String> row : rows) {
             LanguageOptionModel option = new LanguageOptionModel();
             option.setName(getSafeValue("name", row));
@@ -888,17 +890,31 @@ public class UpdateReadmeMojo extends AbstractMojo {
     }
 
     private EipModel generateEipModel(String json) {
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("model", json, false);
+        List<Map<String, String>> rows = parseJsonSchema("model", json, false);
 
         EipModel eip = new EipModel();
-        eip.setName(JSonSchemaHelper.getSafeValue("name", rows));
-        eip.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
-        eip.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
-        eip.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
-        eip.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
-        eip.setDeprecated("true".equals(JSonSchemaHelper.getSafeValue("deprecated", rows)));
-        eip.setInput("true".equals(JSonSchemaHelper.getSafeValue("input", rows)));
-        eip.setOutput("true".equals(JSonSchemaHelper.getSafeValue("output", rows)));
+        eip.setName(getSafeValue("name", rows));
+        eip.setTitle(getSafeValue("title", rows));
+        eip.setDescription(getSafeValue("description", rows));
+        eip.setJavaType(getSafeValue("javaType", rows));
+        eip.setLabel(getSafeValue("label", rows));
+        eip.setDeprecated("true".equals(getSafeValue("deprecated", rows)));
+        eip.setInput("true".equals(getSafeValue("input", rows)));
+        eip.setOutput("true".equals(getSafeValue("output", rows)));
+
+        rows = parseJsonSchema("properties", json, true);
+        for (Map<String, String> row : rows) {
+            EipOptionModel option = new EipOptionModel();
+            option.setName(getSafeValue("name", row));
+            option.setDisplayName(getSafeValue("displayName", row));
+            option.setJavaType(getSafeValue("javaType", row));
+            option.setDeprecated("true".equals(getSafeValue("deprecated", row)));
+            option.setDescription(getSafeValue("description", row));
+            option.setInput("true".equals(getSafeValue("input", row)));
+            option.setOutput("true".equals(getSafeValue("output", row)));
+
+            eip.addEipOptionModel(option);
+        }
 
         return eip;
     }
@@ -1044,12 +1060,6 @@ public class UpdateReadmeMojo extends AbstractMojo {
             }
         }
         return languageNames;
-    }
-
-    private List<String> findEipNames() {
-        List<String> eipNames = new ArrayList<String>();
-        // TODO: find by scanning model (prepare catalog does something)
-        return eipNames;
     }
 
     private boolean isFailFast() {
