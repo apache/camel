@@ -19,6 +19,7 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -272,14 +273,15 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
     private void executeEips() throws MojoExecutionException, MojoFailureException {
         // only run if in camel-core
-        File coreDir = new File(".");
-        if (!coreDir.getName().equals("camel-core")) {
+        String currentDir = Paths.get(".").normalize().toAbsolutePath().toString();
+        if (!currentDir.endsWith("camel-core")) {
             return;
         }
 
         final Set<File> jsonFiles = new TreeSet<File>();
 
         // find all json files in camel-core
+        File coreDir = new File(".");
         if (coreDir.isDirectory()) {
             File target = new File(coreDir, "target/classes/org/apache/camel/model");
             PackageHelper.findJsonFiles(target, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
@@ -297,7 +299,13 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     model.setTitle(title);
 
                     String eipName = model.getName();
-                    File file = new File(docDir, eipName + "-eip.adoc");
+
+                    // we only want actual EIPs from the models
+                    if (!model.getLabel().startsWith("eip")) {
+                        continue;
+                    }
+
+                    File file = new File(eipDocDir, eipName + "-eip.adoc");
 
                     boolean exists = file.exists();
                     boolean updated;

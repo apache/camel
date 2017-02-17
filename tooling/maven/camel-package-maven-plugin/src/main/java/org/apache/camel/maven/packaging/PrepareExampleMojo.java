@@ -19,6 +19,7 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -79,13 +80,13 @@ public class PrepareExampleMojo extends AbstractMojo {
     protected void executeExamplesReadme() throws MojoExecutionException, MojoFailureException {
         Set<File> examples = new TreeSet<>();
 
-        File dir = new File(".");
-
         // only run in examples directory where the main readme.adoc file is located
-        if (!dir.getName().equals("examples")) {
+        String currentDir = Paths.get(".").normalize().toAbsolutePath().toString();
+        if (!currentDir.endsWith("examples")) {
             return;
         }
 
+        File dir = new File(".");
         File[] files = dir.listFiles();
         if (files != null) {
             examples.addAll(Arrays.asList(files));

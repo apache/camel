@@ -108,5 +108,20 @@ public class EipOptionModel {
         return output ? "true" : "false";
     }
 
+    public String getShortJavaType() {
+        if (javaType.startsWith("java.util.Map")) {
+            return "Map";
+        } else if (javaType.startsWith("java.util.Set")) {
+            return "Set";
+        } else if (javaType.startsWith("java.util.List")) {
+            return "List";
+        }
+        int pos = javaType.lastIndexOf(".");
+        if (pos != -1) {
+            return javaType.substring(pos + 1);
+        } else {
+            return javaType;
+        }
+    }
 }
 
