@@ -915,13 +915,27 @@ public class UpdateReadmeMojo extends AbstractMojo {
             EipOptionModel option = new EipOptionModel();
             option.setName(getSafeValue("name", row));
             option.setDisplayName(getSafeValue("displayName", row));
+            option.setType(getSafeValue("type", row));
             option.setJavaType(getSafeValue("javaType", row));
+            option.setRequired(getSafeValue("required", row));
             option.setDeprecated("true".equals(getSafeValue("deprecated", row)));
             option.setDescription(getSafeValue("description", row));
             option.setInput("true".equals(getSafeValue("input", row)));
             option.setOutput("true".equals(getSafeValue("output", row)));
 
-            eip.addEipOptionModel(option);
+            // lets put required in the description
+            if ("true".equals(option.getRequired())) {
+                String desc = "*Required* " + option.getDescription();
+                option.setDescription(desc);
+            }
+
+            // skip option named id/description/expression/outputs
+            if ("id".equals(option.getName()) || "description".equals(option.getName())
+                || "expression".equals(option.getName()) || "outputs".equals(option.getName())) {
+                getLog().debug("Skipping option: " + option.getName());
+            } else {
+                eip.addEipOptionModel(option);
+            }
         }
 
         return eip;
