@@ -435,4 +435,87 @@ public class CsvDataFormatTest {
         // Properly used (it doesn't modify the format)
         assertEquals(CSVFormat.DEFAULT, dataFormat.getActiveFormat());
     }
+
+    @Test
+    public void testTrim() {
+        // Set to TRUE
+        CsvDataFormat dataFormat = new CsvDataFormat().setTrim(true);
+        // Properly saved
+        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertEquals(Boolean.TRUE, dataFormat.getTrim());
+        // Properly used
+        assertTrue(dataFormat.getActiveFormat().getTrim());
+        
+        // NOT set
+        dataFormat = new CsvDataFormat();
+        // Properly saved
+        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertEquals(null, dataFormat.getTrim());
+        // Properly used
+        assertFalse(dataFormat.getActiveFormat().getTrim());
+
+        // Set to false
+        dataFormat = new CsvDataFormat().setTrim(false);
+        // Properly saved
+        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertEquals(Boolean.FALSE, dataFormat.getTrim());
+        // Properly used
+        assertFalse(dataFormat.getActiveFormat().getTrim());
+
+    }
+
+    @Test
+    public void testIgnoreHeaderCase() {
+        // Set to TRUE
+        CsvDataFormat dataFormat = new CsvDataFormat().setIgnoreHeaderCase(true);
+        // Properly saved
+        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertEquals(Boolean.TRUE, dataFormat.getIgnoreHeaderCase());
+        // Properly used
+        assertTrue(dataFormat.getActiveFormat().getIgnoreHeaderCase());
+        
+        // NOT set
+        dataFormat = new CsvDataFormat();
+        // Properly saved
+        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertEquals(null, dataFormat.getIgnoreHeaderCase());
+        // Properly used
+        assertFalse(dataFormat.getActiveFormat().getIgnoreHeaderCase());
+
+        // Set to false
+        dataFormat = new CsvDataFormat().setIgnoreHeaderCase(false);
+        // Properly saved
+        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertEquals(Boolean.FALSE, dataFormat.getIgnoreHeaderCase());
+        // Properly used
+        assertFalse(dataFormat.getActiveFormat().getIgnoreHeaderCase());
+    }
+
+    @Test
+    public void testTrailingDelimiter() {
+        // Set to TRUE
+        CsvDataFormat dataFormat = new CsvDataFormat().setTrailingDelimiter(true);
+        // Properly saved
+        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertEquals(Boolean.TRUE, dataFormat.getTrailingDelimiter());
+        // Properly used
+        assertTrue(dataFormat.getActiveFormat().getTrailingDelimiter());
+        
+        // NOT set
+        dataFormat = new CsvDataFormat();
+        // Properly saved
+        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertEquals(null, dataFormat.getTrailingDelimiter());
+        // Properly used
+        assertFalse(dataFormat.getActiveFormat().getTrailingDelimiter());
+
+        // Set to false
+        dataFormat = new CsvDataFormat().setTrailingDelimiter(false);
+        // Properly saved
+        assertSame(CSVFormat.DEFAULT, dataFormat.getFormat());
+        assertEquals(Boolean.FALSE, dataFormat.getTrailingDelimiter());
+        // Properly used
+        assertFalse(dataFormat.getActiveFormat().getTrailingDelimiter());
+    }
+    
 }
