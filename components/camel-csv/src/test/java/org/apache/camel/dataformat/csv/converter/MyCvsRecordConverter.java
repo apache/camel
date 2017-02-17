@@ -14,25 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.csv;
+package org.apache.camel.dataformat.csv.converter;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.camel.dataformat.csv.CsvRecordConverter;
 import org.apache.commons.csv.CSVRecord;
 
 /**
- * This interface is used to define a converter that transform a {@link org.apache.commons.csv.CSVRecord} into another
- * type.
- * <p/>
- * The {@link org.apache.camel.dataformat.csv.CsvRecordConverters} class defines common converters.
- *
- * @param <T> Conversion type
- * @see org.apache.camel.dataformat.csv.CsvRecordConverters
+ * Test {@link CsvRecordConverter} implementation.
+ * <p>
+ * This implementation is explicitely created in a subpackage to check the
+ * visibility of {@link CsvRecordConverter}.
+ * </p>
  */
-public interface CsvRecordConverter<T> {
-    /**
-     * Converts the CSV record into another type.
-     *
-     * @param record CSV record to convert
-     * @return converted CSV record
-     */
-    T convertRecord(CSVRecord record);
+public class MyCvsRecordConverter implements CsvRecordConverter<List<String>> {
+
+    private final String[] record;
+
+    public MyCvsRecordConverter(String... record) {
+        assert record != null : "Unspecified record";
+        this.record = record;
+    }
+
+    @Override
+    public List<String> convertRecord(CSVRecord record) {
+        assert record != null : "Unspecified record";
+        return Arrays.asList(this.record);
+    }
 }
