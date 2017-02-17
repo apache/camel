@@ -35,7 +35,7 @@ public class OpenTracingAutoConfiguration {
     OpenTracingTracer openTracingEventNotifier(CamelContext camelContext,
                         OpenTracingConfigurationProperties config) {
         OpenTracingTracer ottracer = new OpenTracingTracer();
-        ottracer.setCamelContext(camelContext);
+        ottracer.init(camelContext);
 
         return ottracer;
     }

@@ -54,7 +54,7 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
         OpenTracingTracer ottracer = new OpenTracingTracer();
         ottracer.setTracer(tracer);
         
-        ottracer.setCamelContext(context);
+        ottracer.init(context);
 
         return context;
     }
