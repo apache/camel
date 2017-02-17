@@ -336,6 +336,7 @@
 	* [Jasypt](jasypt.adoc)
 	* [Kura](kura.adoc)
 	* [LevelDB](leveldb.adoc)
+	* [OpenTracing](opentracing.adoc)
 	* [Ribbon](ribbon.adoc)
 	* [Ruby](ruby.adoc)
 	* [RX](rx.adoc)
