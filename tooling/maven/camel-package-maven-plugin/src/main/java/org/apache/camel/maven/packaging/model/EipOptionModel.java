@@ -21,7 +21,9 @@ public class EipOptionModel {
     private String name;
     private String displayName;
     private String title;
+    private String required;
     private String javaType;
+    private String type;
     private String label;
     private String description;
     private boolean deprecated;
@@ -58,6 +60,22 @@ public class EipOptionModel {
 
     public void setJavaType(String javaType) {
         this.javaType = javaType;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getRequired() {
+        return required;
+    }
+
+    public void setRequired(String required) {
+        this.required = required;
     }
 
     public String getLabel() {

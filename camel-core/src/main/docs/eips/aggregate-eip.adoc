@@ -1,4 +1,4 @@
-## Aggregator
+## Aggregate EIP
 
 *This applies for Camel version 2.3 or newer. If you use an older
 version then use this link:aggregator.html[Aggregator] link instead.*
@@ -18,15 +18,43 @@ single correlation key into a single message exchange.
 
 ### Aggregator options
 
-// component options: START
-// component options: END
+// eip options: START
+The Aggregate EIP supports 25 options which are listed below:
 
-// endpoint options: START
-// endpoint options: END
+{% raw %}
+[width="100%",cols="3,1m,6",options="header"]
+|=======================================================================
+| Name | Java Type | Description
+| correlationExpression | NamespaceAwareExpression | *Required* The expression used to calculate the correlation key to use for aggregation. The Exchange which has the same correlation key is aggregated together. If the correlation key could not be evaluated an Exception is thrown. You can disable this by using the ignoreBadCorrelationKeys option.
+| completionPredicate | NamespaceAwareExpression | TODO: document Note: this is experimental and subject to changes in future releases.
+| completionTimeout | NamespaceAwareExpression | Time in millis that an aggregated exchange should be inactive before its complete (timeout). This option can be set as either a fixed value or using an Expression which allows you to evaluate a timeout dynamically - will use Long as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or 0. You cannot use this option together with completionInterval only one of the two can be used.
+| completionSize | NamespaceAwareExpression | Number of messages aggregated before the aggregation is complete. This option can be set as either a fixed value or using an Expression which allows you to evaluate a size dynamically - will use Integer as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
+| optimisticLockRetryPolicy | OptimisticLockRetryPolicyDefinition | Allows to configure retry settings when using optimistic locking.
+| parallelProcessing | Boolean | When aggregated are completed they are being send out of the aggregator. This option indicates whether or not Camel should use a thread pool with multiple threads for concurrency. If no custom thread pool has been specified then Camel creates a default pool with 10 concurrent threads.
+| optimisticLocking | Boolean | Turns on using optimistic locking which requires the aggregationRepository being used is supporting this by implementing org.apache.camel.spi.OptimisticLockingAggregationRepository.
+| executorServiceRef | String | If using parallelProcessing you can specify a custom thread pool to be used. In fact also if you are not using parallelProcessing this custom thread pool is used to send out aggregated exchanges as well.
+| timeoutCheckerExecutorServiceRef | String | If using either of the completionTimeout completionTimeoutExpression or completionInterval options a background thread is created to check for the completion for every aggregator. Set this option to provide a custom thread pool to be used rather than creating a new thread for every aggregator.
+| aggregationRepositoryRef | String | Sets the custom aggregate repository to use Will by default use org.apache.camel.processor.aggregate.MemoryAggregationRepository
+| strategyRef | String | A reference to lookup the AggregationStrategy in the Registry. Configuring an AggregationStrategy is required and is used to merge the incoming Exchange with the existing already merged exchanges. At first call the oldExchange parameter is null. On subsequent invocations the oldExchange contains the merged exchanges and newExchange is of course the new incoming Exchange.
+| strategyMethodName | String | This option can be used to explicit declare the method name to use when using POJOs as the AggregationStrategy.
+| strategyMethodAllowNull | Boolean | If this option is false then the aggregate method is not used for the very first aggregation. If this option is true then null values is used as the oldExchange (at the very first aggregation) when using POJOs as the AggregationStrategy.
+| completionSize | Integer | Number of messages aggregated before the aggregation is complete. This option can be set as either a fixed value or using an Expression which allows you to evaluate a size dynamically - will use Integer as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or 0.
+| completionInterval | Long | A repeating period in millis by which the aggregator will complete all current aggregated exchanges. Camel has a background task which is triggered every period. You cannot use this option together with completionTimeout only one of them can be used.
+| completionTimeout | Long | Time in millis that an aggregated exchange should be inactive before its complete (timeout). This option can be set as either a fixed value or using an Expression which allows you to evaluate a timeout dynamically - will use Long as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or 0. You cannot use this option together with completionInterval only one of the two can be used.
+| completionFromBatchConsumer | Boolean | Enables the batch completion mode where we aggregate from a org.apache.camel.BatchConsumer and aggregate the total number of exchanges the org.apache.camel.BatchConsumer has reported as total by checking the exchange property link org.apache.camel.ExchangeBATCH_COMPLETE when its complete.
+| groupExchanges | Boolean | Enables grouped exchanges so the aggregator will group all aggregated exchanges into a single combined Exchange holding all the aggregated exchanges in a java.util.List.
+| eagerCheckCompletion | Boolean | Use eager completion checking which means that the completionPredicate will use the incoming Exchange. As opposed to without eager completion checking the completionPredicate will use the aggregated Exchange.
+| ignoreInvalidCorrelationKeys | Boolean | If a correlation key cannot be successfully evaluated it will be ignored by logging a DEBUG and then just ignore the incoming Exchange.
+| closeCorrelationKeyOnCompletion | Integer | Closes a correlation key when its complete. Any late received exchanges which has a correlation key that has been closed it will be defined and a ClosedCorrelationKeyException is thrown.
+| discardOnCompletionTimeout | Boolean | Discards the aggregated message on completion timeout. This means on timeout the aggregated message is dropped and not sent out of the aggregator.
+| forceCompletionOnStop | Boolean | Indicates to complete all current aggregated exchanges when the context is stopped
+| completeAllOnStop | Boolean | Indicates to wait to complete all current and partial (pending) aggregated exchanges when the context is stopped. This also means that we will wait for all pending exchanges which are stored in the aggregation repository to complete so the repository is empty before we can stop. You may want to enable this when using the memory based aggregation repository that is memory based only and do not store data on disk. When this option is enabled then the aggregator is waiting to complete all those exchanges before its stopped when stopping CamelContext or the route using it.
+| aggregateControllerRef | String | To use a org.apache.camel.processor.aggregate.AggregateController to allow external sources to control this aggregator.
+|=======================================================================
+{% endraw %}
+// eip options: END
 
-[[Aggregator2-AboutAggregationStrategy]]
-About AggregationStrategy
-^^^^^^^^^^^^^^^^^^^^^^^^^
+### About AggregationStrategy
 
 The `AggregationStrategy` is used for aggregating the old (lookup by its
 correlation id) and the new exchanges together into a single exchange.
@@ -633,9 +661,7 @@ Notice that the return type is a List which we want to contain the user
 names. The 1st parameter is the list of names, and then notice the 2nd
 parameter is the incoming `com.foo.User` type.
 
-[[Aggregator2-Seealso]]
-See also
-^^^^^^^^
+### See also
 
 * The link:loan-broker-example.html[Loan Broker Example] which uses an
 aggregator
@@ -647,4 +673,3 @@ post by Torsten Mielke] about using the aggregator correctly.
 link:sql-component.html[SQL Component] for persistence support
 * link:aggregate-example.html[Aggregate Example] for an example
 application
-
