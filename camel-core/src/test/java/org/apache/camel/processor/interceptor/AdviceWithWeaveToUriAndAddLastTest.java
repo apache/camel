@@ -23,25 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * Advice with tests
  */
-public class AdviceWithWeaveLastCBRTest extends ContextTestSupport {
-
-    public void testWeaveAddLast() throws Exception {
-        context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                // insert at the end of the existing route, the given piece of route
-                weaveAddLast().to("mock:last");
-            }
-        });
-
-        getMockEndpoint("mock:foo").expectedMessageCount(1);
-        getMockEndpoint("mock:bar").expectedMessageCount(0);
-        getMockEndpoint("mock:last").expectedMessageCount(1);
-
-        template.sendBodyAndHeader("direct:start", "Hello World", "foo", "yeah");
-
-        assertMockEndpointsSatisfied();
-    }
+public class AdviceWithWeaveToUriAndAddLastTest extends ContextTestSupport {
 
     public void testWeaveByToUriAndAddLast() throws Exception {
         context.getRouteDefinitions().get(0).adviceWith(context, new AdviceWithRouteBuilder() {
@@ -55,7 +37,6 @@ public class AdviceWithWeaveLastCBRTest extends ContextTestSupport {
 
         getMockEndpoint("mock:foo").expectedMessageCount(0);
         getMockEndpoint("mock:foo2").expectedMessageCount(1);
-        getMockEndpoint("mock:bar").expectedMessageCount(0);
         getMockEndpoint("mock:last").expectedMessageCount(1);
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "yeah");
@@ -69,9 +50,7 @@ public class AdviceWithWeaveLastCBRTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .choice()
-                        .when().header("foo").to("mock:foo")
-                        .otherwise().to("mock:bar");
+                    .to("mock:foo");
             }
         };
     }
