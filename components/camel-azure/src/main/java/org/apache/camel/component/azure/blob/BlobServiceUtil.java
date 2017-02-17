@@ -18,6 +18,7 @@ package org.apache.camel.component.azure.blob;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 
@@ -81,37 +82,43 @@ public final class BlobServiceUtil {
         BlobServiceUtil.configureCloudBlobForRead(client, cfg);
         BlobServiceRequestOptions opts = getRequestOptions(exchange);
         LOG.trace("Getting a blob [{}] from exchange [{}]...", cfg.getBlobName(), exchange);
-        Long blobOffset = cfg.getBlobOffset();
-        Long blobDataLength = cfg.getDataLength();
-        if (client instanceof CloudPageBlob) {
-            PageRange range = exchange.getIn().getHeader(BlobServiceConstants.PAGE_BLOB_RANGE, PageRange.class);
-            if (range != null) {
-                blobOffset = range.getStartOffset();
-                blobDataLength = range.getEndOffset() - range.getStartOffset();
-            }
-        }
         OutputStream os = exchange.getIn().getBody(OutputStream.class);
         if (os == null) {
             String fileDir = cfg.getFileDir();
             if (fileDir != null) {
-                // Should the range if it is set be reflected in the file name ?
-                String name = cfg.getBlobName();
-                File file = new File(fileDir, name + ".blob");
+                File file = new File(fileDir, getBlobFileName(cfg));
                 ExchangeUtil.getMessageForResponse(exchange).setBody(file);
-                os = new FileOutputStream(file);
+                os = new FileOutputStream(file);  
             }
         }
-        if (os == null) {
-            throw new IllegalArgumentException("OutputStream is not available");
-        }
         try {
-            client.downloadRange(blobOffset, blobDataLength, os,
-                opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
+            if (os == null) {
+                // Let the producers like file: deal with it
+                InputStream blobStream = client.openInputStream(
+                    opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
+                exchange.getIn().setBody(blobStream);
+                exchange.getIn().setHeader(Exchange.FILE_NAME, getBlobFileName(cfg));
+            } else {
+                Long blobOffset = cfg.getBlobOffset();
+                Long blobDataLength = cfg.getDataLength();
+                if (client instanceof CloudPageBlob) {
+                    PageRange range = exchange.getIn().getHeader(BlobServiceConstants.PAGE_BLOB_RANGE, PageRange.class);
+                    if (range != null) {
+                        blobOffset = range.getStartOffset();
+                        blobDataLength = range.getEndOffset() - range.getStartOffset();
+                    }
+                }
+                client.downloadRange(blobOffset, blobDataLength, os,
+                                     opts.getAccessCond(), opts.getRequestOpts(), opts.getOpContext());
+            }
         } finally {
-            if (cfg.isCloseStreamAfterRead()) {
+            if (os != null && cfg.isCloseStreamAfterRead()) {
                 os.close();
             }
         }
+    }
+    private static String getBlobFileName(BlobServiceConfiguration cfg) {
+        return cfg.getBlobName()  + ".blob";
     }
 
     public static CloudBlobContainer createBlobContainerClient(BlobServiceConfiguration cfg)
