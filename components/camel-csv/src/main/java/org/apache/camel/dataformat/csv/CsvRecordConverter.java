@@ -27,7 +27,7 @@ import org.apache.commons.csv.CSVRecord;
  * @param <T> Conversion type
  * @see org.apache.camel.dataformat.csv.CsvRecordConverters
  */
-interface CsvRecordConverter<T> {
+public interface CsvRecordConverter<T> {
     /**
      * Converts the CSV record into another type.
      *
