@@ -19,6 +19,7 @@ package org.apache.camel.maven.packaging;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,6 +32,8 @@ import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.ComponentOptionModel;
 import org.apache.camel.maven.packaging.model.DataFormatModel;
 import org.apache.camel.maven.packaging.model.DataFormatOptionModel;
+import org.apache.camel.maven.packaging.model.EipModel;
+import org.apache.camel.maven.packaging.model.EipOptionModel;
 import org.apache.camel.maven.packaging.model.EndpointOptionModel;
 import org.apache.camel.maven.packaging.model.LanguageModel;
 import org.apache.camel.maven.packaging.model.LanguageOptionModel;
@@ -42,17 +45,17 @@ import org.apache.maven.project.MavenProject;
 import org.mvel2.templates.TemplateRuntime;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import static org.apache.camel.maven.packaging.JSonSchemaHelper.getSafeValue;
+import static org.apache.camel.maven.packaging.JSonSchemaHelper.*;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 import static org.apache.camel.maven.packaging.StringHelper.isEmpty;
 
 /**
- * Generate or updates the component/dataformat/language readme.md and .adoc files in the project root directory.
+ * Generate or updates the component/dataformat/language/eip readme.md and .adoc files in the project root directory.
  *
  * @goal update-readme
  */
-public class ReadmeComponentMojo extends AbstractMojo {
+public class UpdateReadmeMojo extends AbstractMojo {
 
     /**
      * The maven project.
@@ -78,6 +81,13 @@ public class ReadmeComponentMojo extends AbstractMojo {
     protected File docDir;
 
     /**
+     * The documentation directory
+     *
+     * @parameter default-value="${basedir}/src/main/docs/eips"
+     */
+    protected File eipDocDir;
+
+    /**
      * Whether to fail the build fast if any Warnings was detected.
      *
      * @parameter
@@ -98,6 +108,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
         executeComponent();
         executeDataFormat();
         executeLanguage();
+        executeEips();
     }
 
     private void executeComponent() throws MojoExecutionException, MojoFailureException {
@@ -260,6 +271,67 @@ public class ReadmeComponentMojo extends AbstractMojo {
         }
     }
 
+    private void executeEips() throws MojoExecutionException, MojoFailureException {
+        // only run if in camel-core
+        String currentDir = Paths.get(".").normalize().toAbsolutePath().toString();
+        if (!currentDir.endsWith("camel-core")) {
+            return;
+        }
+
+        final Set<File> jsonFiles = new TreeSet<File>();
+
+        // find all json files in camel-core
+        File coreDir = new File(".");
+        if (coreDir.isDirectory()) {
+            File target = new File(coreDir, "target/classes/org/apache/camel/model");
+            PackageHelper.findJsonFiles(target, jsonFiles, new PackageHelper.CamelComponentsModelFilter());
+        }
+
+        // only if there is dataformat we should update the documentation files
+        if (!jsonFiles.isEmpty()) {
+            getLog().debug("Found " + jsonFiles.size() + " eips");
+            for (File jsonFile : jsonFiles) {
+                String json = loadEipJson(jsonFile);
+                if (json != null) {
+
+                    EipModel model = generateEipModel(json);
+                    String title = asEipTitle(model.getName(), model.getTitle());
+                    model.setTitle(title);
+
+                    String eipName = model.getName();
+
+                    // we only want actual EIPs from the models
+                    if (!model.getLabel().startsWith("eip")) {
+                        continue;
+                    }
+
+                    File file = new File(eipDocDir, eipName + "-eip.adoc");
+
+                    boolean exists = file.exists();
+                    boolean updated;
+
+                    updated = updateTitles(file, model.getTitle() + " EIP");
+
+                    if (model.getEipOptions() != null) {
+                        String options = templateEipOptions(model);
+                        updated |= updateEipOptions(file, options);
+                    }
+
+                    if (updated) {
+                        getLog().info("Updated doc file: " + file);
+                    } else if (exists) {
+                        getLog().debug("No changes to doc file: " + file);
+                    } else {
+                        getLog().warn("No eip doc file: " + file);
+                        if (isFailFast()) {
+                            throw new MojoExecutionException("Failed build due failFast=true");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private static String asComponentTitle(String name, String title) {
         // special for some components which share the same readme file
         if (name.equals("imap") || name.equals("imaps") || name.equals("pop3") || name.equals("pop3s") || name.equals("smtp") || name.equals("smtps")) {
@@ -278,6 +350,10 @@ public class ReadmeComponentMojo extends AbstractMojo {
         }
     }
 
+    private static String asEipName(String name) {
+        return name;
+    }
+
     private static String asDataFormatTitle(String name, String title) {
         // special for some dataformats which share the same readme file
         if (name.startsWith("bindy")) {
@@ -285,6 +361,10 @@ public class ReadmeComponentMojo extends AbstractMojo {
         } else {
             return title;
         }
+    }
+
+    private static String asEipTitle(String name, String title) {
+        return title;
     }
 
     private boolean updateTitles(File file, String title) throws MojoExecutionException {
@@ -558,6 +638,43 @@ public class ReadmeComponentMojo extends AbstractMojo {
         }
     }
 
+    private boolean updateEipOptions(File file, String changed) throws MojoExecutionException {
+        if (!file.exists()) {
+            return false;
+        }
+
+        try {
+            String text = loadText(new FileInputStream(file));
+
+            String existing = StringHelper.between(text, "// eip options: START", "// eip options: END");
+            if (existing != null) {
+                // remove leading line breaks etc
+                existing = existing.trim();
+                changed = changed.trim();
+                if (existing.equals(changed)) {
+                    return false;
+                } else {
+                    String before = StringHelper.before(text, "// eip options: START");
+                    String after = StringHelper.after(text, "// eip options: END");
+                    text = before + "// eip options: START\n" + changed + "\n// eip options: END" + after;
+                    writeText(file, text);
+                    return true;
+                }
+            } else {
+                getLog().warn("Cannot find markers in file " + file);
+                getLog().warn("Add the following markers");
+                getLog().warn("\t// eip options: START");
+                getLog().warn("\t// eip options: END");
+                if (isFailFast()) {
+                    throw new MojoExecutionException("Failed build due failFast=true");
+                }
+                return false;
+            }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
+        }
+    }
+
     private String loadComponentJson(Set<File> jsonFiles, String componentName) {
         try {
             for (File file : jsonFiles) {
@@ -609,27 +726,40 @@ public class ReadmeComponentMojo extends AbstractMojo {
         return null;
     }
 
+    private String loadEipJson(File file) {
+        try {
+            String json = loadText(new FileInputStream(file));
+            boolean isEip = json.contains("\"kind\": \"model\"");
+            if (isEip) {
+                return json;
+            }
+        } catch (IOException e) {
+            // ignore
+        }
+        return null;
+    }
+
     private ComponentModel generateComponentModel(String componentName, String json) {
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
+        List<Map<String, String>> rows = parseJsonSchema("component", json, false);
 
         ComponentModel component = new ComponentModel(true);
-        component.setScheme(JSonSchemaHelper.getSafeValue("scheme", rows));
-        component.setSyntax(JSonSchemaHelper.getSafeValue("syntax", rows));
-        component.setAlternativeSyntax(JSonSchemaHelper.getSafeValue("alternativeSyntax", rows));
-        component.setAlternativeSchemes(JSonSchemaHelper.getSafeValue("alternativeSchemes", rows));
-        component.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
-        component.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
-        component.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
-        component.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
-        component.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
-        component.setConsumerOnly(JSonSchemaHelper.getSafeValue("consumerOnly", rows));
-        component.setProducerOnly(JSonSchemaHelper.getSafeValue("producerOnly", rows));
-        component.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
-        component.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
-        component.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
-        component.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
+        component.setScheme(getSafeValue("scheme", rows));
+        component.setSyntax(getSafeValue("syntax", rows));
+        component.setAlternativeSyntax(getSafeValue("alternativeSyntax", rows));
+        component.setAlternativeSchemes(getSafeValue("alternativeSchemes", rows));
+        component.setTitle(getSafeValue("title", rows));
+        component.setDescription(getSafeValue("description", rows));
+        component.setFirstVersion(getSafeValue("firstVersion", rows));
+        component.setLabel(getSafeValue("label", rows));
+        component.setDeprecated(getSafeValue("deprecated", rows));
+        component.setConsumerOnly(getSafeValue("consumerOnly", rows));
+        component.setProducerOnly(getSafeValue("producerOnly", rows));
+        component.setJavaType(getSafeValue("javaType", rows));
+        component.setGroupId(getSafeValue("groupId", rows));
+        component.setArtifactId(getSafeValue("artifactId", rows));
+        component.setVersion(getSafeValue("version", rows));
 
-        rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
+        rows = parseJsonSchema("componentProperties", json, true);
         for (Map<String, String> row : rows) {
             ComponentOptionModel option = new ComponentOptionModel();
             option.setName(getSafeValue("name", row));
@@ -652,7 +782,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
             component.addComponentOption(option);
         }
 
-        rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+        rows = parseJsonSchema("properties", json, true);
         for (Map<String, String> row : rows) {
             EndpointOptionModel option = new EndpointOptionModel();
             option.setName(getSafeValue("name", row));
@@ -681,22 +811,22 @@ public class ReadmeComponentMojo extends AbstractMojo {
     }
 
     private DataFormatModel generateDataFormatModel(String dataFormatName, String json) {
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("dataformat", json, false);
+        List<Map<String, String>> rows = parseJsonSchema("dataformat", json, false);
 
         DataFormatModel dataFormat = new DataFormatModel();
-        dataFormat.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
-        dataFormat.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
-        dataFormat.setName(JSonSchemaHelper.getSafeValue("name", rows));
-        dataFormat.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
-        dataFormat.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
-        dataFormat.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
-        dataFormat.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
-        dataFormat.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
-        dataFormat.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
-        dataFormat.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
-        dataFormat.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
+        dataFormat.setTitle(getSafeValue("title", rows));
+        dataFormat.setModelName(getSafeValue("modelName", rows));
+        dataFormat.setName(getSafeValue("name", rows));
+        dataFormat.setDescription(getSafeValue("description", rows));
+        dataFormat.setFirstVersion(getSafeValue("firstVersion", rows));
+        dataFormat.setLabel(getSafeValue("label", rows));
+        dataFormat.setDeprecated(getSafeValue("deprecated", rows));
+        dataFormat.setJavaType(getSafeValue("javaType", rows));
+        dataFormat.setGroupId(getSafeValue("groupId", rows));
+        dataFormat.setArtifactId(getSafeValue("artifactId", rows));
+        dataFormat.setVersion(getSafeValue("version", rows));
 
-        rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+        rows = parseJsonSchema("properties", json, true);
         for (Map<String, String> row : rows) {
             DataFormatOptionModel option = new DataFormatOptionModel();
             option.setName(getSafeValue("name", row));
@@ -728,22 +858,22 @@ public class ReadmeComponentMojo extends AbstractMojo {
     }
 
     private LanguageModel generateLanguageModel(String languageName, String json) {
-        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
+        List<Map<String, String>> rows = parseJsonSchema("language", json, false);
 
         LanguageModel language = new LanguageModel();
-        language.setTitle(JSonSchemaHelper.getSafeValue("title", rows));
-        language.setModelName(JSonSchemaHelper.getSafeValue("modelName", rows));
-        language.setName(JSonSchemaHelper.getSafeValue("name", rows));
-        language.setDescription(JSonSchemaHelper.getSafeValue("description", rows));
-        language.setFirstVersion(JSonSchemaHelper.getSafeValue("firstVersion", rows));
-        language.setLabel(JSonSchemaHelper.getSafeValue("label", rows));
-        language.setDeprecated(JSonSchemaHelper.getSafeValue("deprecated", rows));
-        language.setJavaType(JSonSchemaHelper.getSafeValue("javaType", rows));
-        language.setGroupId(JSonSchemaHelper.getSafeValue("groupId", rows));
-        language.setArtifactId(JSonSchemaHelper.getSafeValue("artifactId", rows));
-        language.setVersion(JSonSchemaHelper.getSafeValue("version", rows));
+        language.setTitle(getSafeValue("title", rows));
+        language.setModelName(getSafeValue("modelName", rows));
+        language.setName(getSafeValue("name", rows));
+        language.setDescription(getSafeValue("description", rows));
+        language.setFirstVersion(getSafeValue("firstVersion", rows));
+        language.setLabel(getSafeValue("label", rows));
+        language.setDeprecated(getSafeValue("deprecated", rows));
+        language.setJavaType(getSafeValue("javaType", rows));
+        language.setGroupId(getSafeValue("groupId", rows));
+        language.setArtifactId(getSafeValue("artifactId", rows));
+        language.setVersion(getSafeValue("version", rows));
 
-        rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+        rows = parseJsonSchema("properties", json, true);
         for (Map<String, String> row : rows) {
             LanguageOptionModel option = new LanguageOptionModel();
             option.setName(getSafeValue("name", row));
@@ -767,9 +897,53 @@ public class ReadmeComponentMojo extends AbstractMojo {
         return language;
     }
 
+    private EipModel generateEipModel(String json) {
+        List<Map<String, String>> rows = parseJsonSchema("model", json, false);
+
+        EipModel eip = new EipModel();
+        eip.setName(getSafeValue("name", rows));
+        eip.setTitle(getSafeValue("title", rows));
+        eip.setDescription(getSafeValue("description", rows));
+        eip.setJavaType(getSafeValue("javaType", rows));
+        eip.setLabel(getSafeValue("label", rows));
+        eip.setDeprecated("true".equals(getSafeValue("deprecated", rows)));
+        eip.setInput("true".equals(getSafeValue("input", rows)));
+        eip.setOutput("true".equals(getSafeValue("output", rows)));
+
+        rows = parseJsonSchema("properties", json, true);
+        for (Map<String, String> row : rows) {
+            EipOptionModel option = new EipOptionModel();
+            option.setName(getSafeValue("name", row));
+            option.setDisplayName(getSafeValue("displayName", row));
+            option.setType(getSafeValue("type", row));
+            option.setJavaType(getSafeValue("javaType", row));
+            option.setRequired(getSafeValue("required", row));
+            option.setDeprecated("true".equals(getSafeValue("deprecated", row)));
+            option.setDescription(getSafeValue("description", row));
+            option.setInput("true".equals(getSafeValue("input", row)));
+            option.setOutput("true".equals(getSafeValue("output", row)));
+
+            // lets put required in the description
+            if ("true".equals(option.getRequired())) {
+                String desc = "*Required* " + option.getDescription();
+                option.setDescription(desc);
+            }
+
+            // skip option named id/description/expression/outputs
+            if ("id".equals(option.getName()) || "description".equals(option.getName())
+                || "expression".equals(option.getName()) || "outputs".equals(option.getName())) {
+                getLog().debug("Skipping option: " + option.getName());
+            } else {
+                eip.addEipOptionModel(option);
+            }
+        }
+
+        return eip;
+    }
+
     private String templateComponentHeader(ComponentModel model) throws MojoExecutionException {
         try {
-            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("component-header.mvel"));
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("component-header.mvel"));
             String out = (String) TemplateRuntime.eval(template, model);
             return out;
         } catch (Exception e) {
@@ -779,7 +953,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
 
     private String templateComponentOptions(ComponentModel model) throws MojoExecutionException {
         try {
-            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("component-options.mvel"));
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("component-options.mvel"));
             String out = (String) TemplateRuntime.eval(template, model);
             return out;
         } catch (Exception e) {
@@ -789,7 +963,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
 
     private String templateEndpointOptions(ComponentModel model) throws MojoExecutionException {
         try {
-            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("endpoint-options.mvel"));
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("endpoint-options.mvel"));
             String out = (String) TemplateRuntime.eval(template, model);
             return out;
         } catch (Exception e) {
@@ -799,7 +973,7 @@ public class ReadmeComponentMojo extends AbstractMojo {
 
     private String templateDataFormatOptions(DataFormatModel model) throws MojoExecutionException {
         try {
-            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("dataformat-options.mvel"));
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("dataformat-options.mvel"));
             String out = (String) TemplateRuntime.eval(template, model);
             return out;
         } catch (Exception e) {
@@ -809,7 +983,17 @@ public class ReadmeComponentMojo extends AbstractMojo {
 
     private String templateLanguageOptions(LanguageModel model) throws MojoExecutionException {
         try {
-            String template = loadText(ReadmeComponentMojo.class.getClassLoader().getResourceAsStream("language-options.mvel"));
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("language-options.mvel"));
+            String out = (String) TemplateRuntime.eval(template, model);
+            return out;
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error processing mvel template. Reason: " + e, e);
+        }
+    }
+
+    private String templateEipOptions(EipModel model) throws MojoExecutionException {
+        try {
+            String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("eip-options.mvel"));
             String out = (String) TemplateRuntime.eval(template, model);
             return out;
         } catch (Exception e) {
@@ -872,7 +1056,6 @@ public class ReadmeComponentMojo extends AbstractMojo {
         }
         return dataFormatNames;
     }
-
     private List<String> findLanguageNames() {
         List<String> languageNames = new ArrayList<String>();
         for (Resource r : project.getBuild().getResources()) {
