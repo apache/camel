@@ -25,11 +25,11 @@ import io.opentracing.propagation.TextMap;
 public final class CamelHeadersExtractAdapter implements TextMap {
     private final Map<String, String> map = new HashMap<String, String>();
 
-    public CamelHeadersExtractAdapter(final Map<String,Object> map) {
+    public CamelHeadersExtractAdapter(final Map<String, Object> map) {
         // Extract string valued map entries
         map.entrySet().stream().filter(e -> e.getValue() instanceof String).forEach(e ->
-                this.map.put(e.getKey(),(String)e.getValue()));
-     }
+            this.map.put(e.getKey(), (String) e.getValue()));
+    }
 
     @Override
     public Iterator<Map.Entry<String, String>> iterator() {

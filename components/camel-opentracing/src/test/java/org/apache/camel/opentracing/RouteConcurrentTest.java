@@ -18,24 +18,23 @@ package org.apache.camel.opentracing;
 
 import java.util.concurrent.TimeUnit;
 
+import io.opentracing.tag.Tags;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-import io.opentracing.tag.Tags;
-
 public class RouteConcurrentTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
-            new SpanTestData().setLabel("seda:foo client").setUri("seda://foo")
-                    .setKind(Tags.SPAN_KIND_CLIENT),
-            new SpanTestData().setLabel("seda:bar client").setUri("seda://bar")
-                    .setKind(Tags.SPAN_KIND_CLIENT).setParentId(2),
-            new SpanTestData().setLabel("seda:foo server").setUri("seda://foo?concurrentConsumers=5")
-                    .setKind(Tags.SPAN_KIND_SERVER).setParentId(0),
-            new SpanTestData().setLabel("seda:bar server").setUri("seda://bar?concurrentConsumers=5")
-                    .setKind(Tags.SPAN_KIND_SERVER).setParentId(1)
+        new SpanTestData().setLabel("seda:foo client").setUri("seda://foo")
+            .setKind(Tags.SPAN_KIND_CLIENT),
+        new SpanTestData().setLabel("seda:bar client").setUri("seda://bar")
+            .setKind(Tags.SPAN_KIND_CLIENT).setParentId(2),
+        new SpanTestData().setLabel("seda:foo server").setUri("seda://foo?concurrentConsumers=5")
+            .setKind(Tags.SPAN_KIND_SERVER).setParentId(0),
+        new SpanTestData().setLabel("seda:bar server").setUri("seda://bar?concurrentConsumers=5")
+            .setKind(Tags.SPAN_KIND_SERVER).setParentId(1)
     };
 
     public RouteConcurrentTest() {
@@ -63,7 +62,7 @@ public class RouteConcurrentTest extends CamelOpenTracingTestSupport {
 
         assertTrue(notify.matches(30, TimeUnit.SECONDS));
 
-        verifyTraceSpanNumbers(5,  testdata.length);
+        verifyTraceSpanNumbers(5, testdata.length);
     }
 
     @Override
@@ -79,7 +78,7 @@ public class RouteConcurrentTest extends CamelOpenTracingTestSupport {
                 from("seda:bar?concurrentConsumers=5").routeId("bar")
                     .log("routing at ${routeId}")
                     .delay(simple("${random(0,500)}"));
-           }
+            }
         };
     }
 }

@@ -30,7 +30,7 @@ public class JettySpanDecorator extends AbstractHttpSpanDecorator {
 
     @Override
     public String getOperationName(Exchange exchange, Endpoint endpoint) {
-        return URI.create(endpoint.getEndpointUri().substring(getComponent().length()+1)).getPath();
+        return URI.create(endpoint.getEndpointUri().substring(getComponent().length() + 1)).getPath();
     }
 
 }

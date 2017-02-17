@@ -16,31 +16,30 @@
  */
 package org.apache.camel.opentracing;
 
+import io.opentracing.tag.Tags;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-import io.opentracing.tag.Tags;
-
 public class ABCRouteTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
-            new SpanTestData().setLabel("seda:b server").setUri("seda://b")
-                    .setKind(Tags.SPAN_KIND_SERVER).setParentId(1),
-            new SpanTestData().setLabel("seda:b client").setUri("seda://b")
-                    .setKind(Tags.SPAN_KIND_CLIENT).setParentId(4),
-            new SpanTestData().setLabel("seda:c server").setUri("seda://c")
-                    .setKind(Tags.SPAN_KIND_SERVER).setParentId(3),
-            new SpanTestData().setLabel("seda:c client").setUri("seda://c")
-                    .setKind(Tags.SPAN_KIND_CLIENT).setParentId(4),
-            new SpanTestData().setLabel("seda:a server").setUri("seda://a")
-                    .setKind(Tags.SPAN_KIND_SERVER).setParentId(5),
-            new SpanTestData().setLabel("seda:a client").setUri("seda://a")
-                    .setKind(Tags.SPAN_KIND_CLIENT).setParentId(6),
-            new SpanTestData().setLabel("direct:start server").setUri("direct://start")
-                    .setKind(Tags.SPAN_KIND_SERVER).setParentId(7),
-            new SpanTestData().setLabel("direct:start client").setUri("direct://start")
-                    .setKind(Tags.SPAN_KIND_CLIENT)
+        new SpanTestData().setLabel("seda:b server").setUri("seda://b")
+            .setKind(Tags.SPAN_KIND_SERVER).setParentId(1),
+        new SpanTestData().setLabel("seda:b client").setUri("seda://b")
+            .setKind(Tags.SPAN_KIND_CLIENT).setParentId(4),
+        new SpanTestData().setLabel("seda:c server").setUri("seda://c")
+            .setKind(Tags.SPAN_KIND_SERVER).setParentId(3),
+        new SpanTestData().setLabel("seda:c client").setUri("seda://c")
+            .setKind(Tags.SPAN_KIND_CLIENT).setParentId(4),
+        new SpanTestData().setLabel("seda:a server").setUri("seda://a")
+            .setKind(Tags.SPAN_KIND_SERVER).setParentId(5),
+        new SpanTestData().setLabel("seda:a client").setUri("seda://a")
+            .setKind(Tags.SPAN_KIND_CLIENT).setParentId(6),
+        new SpanTestData().setLabel("direct:start server").setUri("direct://start")
+            .setKind(Tags.SPAN_KIND_SERVER).setParentId(7),
+        new SpanTestData().setLabel("direct:start client").setUri("direct://start")
+            .setKind(Tags.SPAN_KIND_CLIENT)
     };
 
     public ABCRouteTest() {
@@ -69,12 +68,12 @@ public class ABCRouteTest extends CamelOpenTracingTestSupport {
                     .log("End of routing");
 
                 from("seda:b").routeId("b")
-                        .log("routing at ${routeId}")
-                        .delay(simple("${random(1000,2000)}"));
+                    .log("routing at ${routeId}")
+                    .delay(simple("${random(1000,2000)}"));
 
                 from("seda:c").routeId("c")
-                        .log("routing at ${routeId}")
-                        .delay(simple("${random(0,100)}"));
+                    .log("routing at ${routeId}")
+                    .delay(simple("${random(0,100)}"));
             }
         };
     }

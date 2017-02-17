@@ -16,21 +16,28 @@
  */
 package org.apache.camel.opentracing;
 
+import io.opentracing.Span;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.opentracing.decorators.AbstractSpanDecorator;
 
-import io.opentracing.Span;
-
 /**
  * This interface represents a decorator specific to the component/endpoint
  * being instrumented.
- *
  */
 public interface SpanDecorator {
 
     /* Prefix for camel component tag */
-    public static final String CAMEL_COMPONENT = "camel-";
+    String CAMEL_COMPONENT = "camel-";
+
+    SpanDecorator DEFAULT = new AbstractSpanDecorator() {
+
+        @Override
+        public String getComponent() {
+            return null;
+        }
+
+    };
 
     /**
      * The camel component associated with the decorator.
@@ -68,14 +75,5 @@ public interface SpanDecorator {
      * @param endpoint The endpoint
      */
     void post(Span span, Exchange exchange, Endpoint endpoint);
-
-    SpanDecorator DEFAULT = new AbstractSpanDecorator() {
-
-        @Override
-        public String getComponent() {
-            return null;
-        }
-        
-    };
 
 }

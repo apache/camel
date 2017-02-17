@@ -22,6 +22,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
+import io.opentracing.Span;
+import io.opentracing.Tracer;
+import io.opentracing.Tracer.SpanBuilder;
+import io.opentracing.contrib.global.GlobalTracer;
+import io.opentracing.contrib.spanmanager.DefaultSpanManager;
+import io.opentracing.contrib.spanmanager.SpanManager;
+import io.opentracing.propagation.Format;
+import io.opentracing.tag.Tags;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
@@ -42,15 +50,6 @@ import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.opentracing.Span;
-import io.opentracing.Tracer;
-import io.opentracing.Tracer.SpanBuilder;
-import io.opentracing.contrib.global.GlobalTracer;
-import io.opentracing.contrib.spanmanager.DefaultSpanManager;
-import io.opentracing.contrib.spanmanager.SpanManager;
-import io.opentracing.propagation.Format;
-import io.opentracing.tag.Tags;
-
 /**
  * To use OpenTracing with Camel then setup this {@link OpenTracingTracer} in your Camel application.
  * <p/>
@@ -63,14 +62,12 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenTracingTracer.class);
 
-    private final OpenTracingEventNotifier eventNotifier = new OpenTracingEventNotifier();
-
-    private CamelContext camelContext;
-
-    private Tracer tracer = GlobalTracer.get();
-    private SpanManager spanManager = DefaultSpanManager.getInstance();
-
     private static Map<String, SpanDecorator> decorators = new HashMap<>();
+
+    private final OpenTracingEventNotifier eventNotifier = new OpenTracingEventNotifier();
+    private final SpanManager spanManager = DefaultSpanManager.getInstance();
+    private Tracer tracer = GlobalTracer.get();
+    private CamelContext camelContext;
 
     static {
         ServiceLoader.load(SpanDecorator.class).forEach(d -> decorators.put(d.getComponent(), d));
@@ -109,11 +106,11 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
     }
 
     public Tracer getTracer() {
-    	return tracer;
+        return tracer;
     }
 
     public void setTracer(Tracer tracer) {
-    	this.tracer = tracer;
+        this.tracer = tracer;
     }
 
     @Override
@@ -138,7 +135,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
         camelContext.getManagementStrategy().removeEventNotifier(eventNotifier);
         ServiceHelper.stopService(eventNotifier);
 
-         // remove route policy
+        // remove route policy
         camelContext.getRoutePolicyFactories().remove(this);
     }
 
@@ -159,7 +156,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 SpanManager.ManagedSpan parent = spanManager.current();
                 SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
                 SpanBuilder spanBuilder = tracer.buildSpan(sd.getOperationName(ese.getExchange(), ese.getEndpoint()))
-                		.withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_CLIENT);
+                    .withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_CLIENT);
                 // Temporary workaround to avoid adding 'null' span as a parent
                 if (parent != null && parent.getSpan() != null) {
                     spanBuilder.asChildOf(parent.getSpan());
@@ -167,7 +164,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 Span span = spanBuilder.start();
                 sd.pre(span, ese.getExchange(), ese.getEndpoint());
                 tracer.inject(span.context(), Format.Builtin.TEXT_MAP,
-                        new CamelHeadersInjectAdapter(ese.getExchange().getIn().getHeaders()));
+                    new CamelHeadersInjectAdapter(ese.getExchange().getIn().getHeaders()));
                 spanManager.manage(span);
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("OpenTracing: start client span=" + span);
@@ -177,9 +174,9 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("OpenTracing: start client span=" + managedSpan.getSpan());
                 }
-                SpanDecorator sd = getSpanDecorator(((ExchangeSentEvent)event).getEndpoint());
-                sd.post(managedSpan.getSpan(), ((ExchangeSentEvent)event).getExchange(),
-                        ((ExchangeSentEvent)event).getEndpoint());
+                SpanDecorator sd = getSpanDecorator(((ExchangeSentEvent) event).getEndpoint());
+                sd.post(managedSpan.getSpan(), ((ExchangeSentEvent) event).getExchange(),
+                    ((ExchangeSentEvent) event).getEndpoint());
                 managedSpan.getSpan().finish();
                 managedSpan.release();
             }
@@ -188,7 +185,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
         @Override
         public boolean isEnabled(EventObject event) {
             return event instanceof ExchangeSendingEvent
-                    || event instanceof ExchangeSentEvent;
+                || event instanceof ExchangeSentEvent;
         }
 
         @Override
@@ -206,10 +203,10 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
         public void onExchangeBegin(Route route, Exchange exchange) {
             SpanDecorator sd = getSpanDecorator(route.getEndpoint());
             Span span = tracer.buildSpan(sd.getOperationName(exchange, route.getEndpoint()))
-                    .asChildOf(tracer.extract(Format.Builtin.TEXT_MAP,
-                            new CamelHeadersExtractAdapter(exchange.getIn().getHeaders())))
-            		.withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_SERVER)
-            		.start();
+                .asChildOf(tracer.extract(Format.Builtin.TEXT_MAP,
+                    new CamelHeadersExtractAdapter(exchange.getIn().getHeaders())))
+                .withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_SERVER)
+                .start();
             sd.pre(span, exchange, route.getEndpoint());
             spanManager.manage(span);
             if (LOG.isTraceEnabled()) {

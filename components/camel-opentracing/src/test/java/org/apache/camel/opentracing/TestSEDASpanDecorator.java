@@ -16,11 +16,10 @@
  */
 package org.apache.camel.opentracing;
 
+import io.opentracing.Span;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.opentracing.decorators.AbstractSpanDecorator;
-
-import io.opentracing.Span;
 
 public class TestSEDASpanDecorator extends AbstractSpanDecorator {
 
