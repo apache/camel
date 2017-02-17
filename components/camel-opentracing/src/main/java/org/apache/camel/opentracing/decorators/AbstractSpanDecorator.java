@@ -20,16 +20,14 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.opentracing.Span;
+import io.opentracing.tag.Tags;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.opentracing.SpanDecorator;
 
-import io.opentracing.Span;
-import io.opentracing.tag.Tags;
-
 /**
  * An abstract base implementation of the {@link SpanDecorator} interface.
- *
  */
 public abstract class AbstractSpanDecorator implements SpanDecorator {
 
@@ -39,7 +37,7 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
     }
 
     @Override
-    public void pre(Span span, Exchange exchange, Endpoint endpoint) {     
+    public void pre(Span span, Exchange exchange, Endpoint endpoint) {
         span.setTag(Tags.COMPONENT.getKey(), CAMEL_COMPONENT + URI.create(endpoint.getEndpointUri()).getScheme());
     }
 
@@ -48,7 +46,7 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
         if (exchange.isFailed()) {
             span.setTag(Tags.ERROR.getKey(), true);
             if (exchange.getException() != null) {
-                Map<String,String> logEvent = new HashMap<>();
+                Map<String, String> logEvent = new HashMap<>();
                 logEvent.put("event", "error");
                 logEvent.put("error.kind", "Exception");
                 logEvent.put("message", exchange.getException().getMessage());

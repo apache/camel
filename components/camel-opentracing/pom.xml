@@ -34,7 +34,7 @@
   <properties>
     <!-- use by camel-catalog -->
     <firstVersion>2.19.0</firstVersion>
-    <label>monitoring,microservice,opentracing</label>
+    <label>monitoring,microservice</label>
 
     <camel.osgi.export.pkg>org.apache.camel.opentracing.*</camel.osgi.export.pkg>
   </properties>

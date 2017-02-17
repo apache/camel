@@ -16,23 +16,22 @@
  */
 package org.apache.camel.opentracing;
 
+import io.opentracing.tag.Tags;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-import io.opentracing.tag.Tags;
-
 public class TwoServiceTest extends CamelOpenTracingTestSupport {
 
     private static SpanTestData[] testdata = {
-            new SpanTestData().setLabel("ServiceB server").setUri("direct://ServiceB")
-                    .setKind(Tags.SPAN_KIND_SERVER).setParentId(1),
-            new SpanTestData().setLabel("ServiceB client").setUri("direct://ServiceB")
-                    .setKind(Tags.SPAN_KIND_CLIENT).setParentId(2),
-            new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA")
-                    .setKind(Tags.SPAN_KIND_SERVER).setParentId(3),
-            new SpanTestData().setLabel("ServiceA client").setUri("direct://ServiceA")
-                    .setKind(Tags.SPAN_KIND_CLIENT)
+        new SpanTestData().setLabel("ServiceB server").setUri("direct://ServiceB")
+            .setKind(Tags.SPAN_KIND_SERVER).setParentId(1),
+        new SpanTestData().setLabel("ServiceB client").setUri("direct://ServiceB")
+            .setKind(Tags.SPAN_KIND_CLIENT).setParentId(2),
+        new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA")
+            .setKind(Tags.SPAN_KIND_SERVER).setParentId(3),
+        new SpanTestData().setLabel("ServiceA client").setUri("direct://ServiceA")
+            .setKind(Tags.SPAN_KIND_CLIENT)
     };
 
     public TwoServiceTest() {
@@ -52,13 +51,13 @@ public class TwoServiceTest extends CamelOpenTracingTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:ServiceA")
-		            .log("ServiceA has been called")
+                    .log("ServiceA has been called")
                     .delay(simple("${random(1000,2000)}"))
-		            .to("direct:ServiceB");
+                    .to("direct:ServiceB");
 
                 from("direct:ServiceB")
-		            .log("ServiceB has been called")
-		            .delay(simple("${random(0,500)}"));
+                    .log("ServiceB has been called")
+                    .delay(simple("${random(0,500)}"));
             }
         };
     }
