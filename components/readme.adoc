@@ -837,7 +837,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 33
+Number of Miscellaneous Components: 34
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -864,6 +864,8 @@ Number of Miscellaneous Components: 33
 | link:camel-kura/src/main/docs/kura.adoc[Kura] (camel-kura) | 2.15 | Using Camel with Eclipse Kura (OSGi)
 
 | link:camel-leveldb/src/main/docs/leveldb.adoc[LevelDB] (camel-leveldb) | 2.10 | Using LevelDB as persistent EIP store
+
+| link:camel-opentracing/src/main/docs/opentracing.adoc[Opentracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
 
 | link:camel-ribbon/src/main/docs/ribbon.adoc[Ribbon] (camel-ribbon) | 2.18 | Camel Components
 
