@@ -36,7 +36,7 @@ public class CamelRootHandler implements HttpHandler {
     }
 
     public synchronized void add(String path, String[] methods, boolean prefixMatch, HttpHandler handler) {
-        String basePath = URLUtils.normalizeSlashes(getBasePath(path));
+        String basePath = getBasePath(path);
         HttpHandler basePathHandler = pathHandler.getHandler(basePath);
 
         CamelMethodHandler targetHandler;
@@ -166,8 +166,8 @@ public class CamelRootHandler implements HttpHandler {
 
     private String getBasePath(String path) {
         if (path.contains("{")) {
-            return PathTemplate.create(path).getBase();
+            path = PathTemplate.create(path).getBase();
         }
-        return path;
+        return URLUtils.normalizeSlashes(path);
     }
 }
