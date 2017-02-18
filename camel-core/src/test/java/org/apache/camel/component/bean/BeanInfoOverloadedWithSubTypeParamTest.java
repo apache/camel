@@ -26,21 +26,16 @@ public class BeanInfoOverloadedWithSubTypeParamTest extends ContextTestSupport {
 
     public void testBeanInfoOverloadedWithSubTypedParam() {
         BeanInfo beanInfo = new BeanInfo(context, Bean.class);
-        Assert.assertEquals(3, beanInfo.getMethods().size());
+        Assert.assertEquals(2, beanInfo.getMethods().size());
     }
 
     class Bean {
-        public void doSomething(RequestA request) {
-        }
 
         public void doSomething(RequestB request) {
         }
 
         public void doSomething(RequestC request) {
         }
-    }
-
-    class RequestA {
     }
 
     class RequestB {
