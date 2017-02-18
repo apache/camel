@@ -17,7 +17,6 @@
 package org.apache.camel.core.osgi.utils;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Enumeration;
@@ -28,7 +27,6 @@ import java.util.TreeMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.LoadPropertiesException;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -92,20 +90,4 @@ public final class BundleContextUtils {
         return answer;
     }
 
-    public static String getComponentDocumentation(BundleContext bundleContext,
-                                                   CamelContext camelContext,
-                                                   String componentName) throws IOException {
-        String path = CamelContextHelper.COMPONENT_DOCUMENTATION_PREFIX + componentName + ".html";
-        Bundle[] bundles = bundleContext.getBundles();
-        for (Bundle bundle : bundles) {
-            URL resource = bundle.getResource(path);
-            if (resource != null) {
-                InputStream inputStream = resource.openStream();
-                if (inputStream != null) {
-                    return IOHelper.loadText(inputStream);
-                }
-            }
-        }
-        return null;
-    }
 }

@@ -27,11 +27,14 @@
   </parent>
 
   <artifactId>camel-example-box-osgi</artifactId>
-  <name>Camel :: Example :: Box :: OSGI</name>
+  <name>Camel :: Example :: Box :: OSGi</name>
   <description>An example which use a Box Endpoint in OSGi</description>
   <packaging>jar</packaging>
 
   <properties>
+    <category>OSGi</category>
+    <title>Box OSGi</title>
+
     <camel.osgi.export.pkg>
       org.apache.camel.example*
     </camel.osgi.export.pkg>

@@ -66,11 +66,6 @@ The Camel application can be stopped pressing <kbd>ctrl</kbd>+<kbd>c</kbd> in th
 
 The Camel application is configured in the `src/main/resources/META-INF/spring/widget.xml` file.
 
-### Documentation
-
-This example is documented at
-	[http://camel.apache.org/widget-gadget.html](http://camel.apache.org/widget-gadget.html)
-
 ### Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums

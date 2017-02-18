@@ -38,7 +38,7 @@ import org.slf4j.Logger;
  *
  * Camel uses sfl4j which allows you to configure logging to the actual logging system.
  */
-@UriEndpoint(scheme = "log", title = "Log", syntax = "log:loggerName", producerOnly = true, label = "core,monitoring")
+@UriEndpoint(firstVersion = "1.1.0", scheme = "log", title = "Log", syntax = "log:loggerName", producerOnly = true, label = "core,monitoring")
 public class LogEndpoint extends ProcessorEndpoint {
 
     private volatile Processor logger;
@@ -78,28 +78,7 @@ public class LogEndpoint extends ProcessorEndpoint {
     @Override
     protected void doStart() throws Exception {
         if (logger == null) {
-            // setup a new logger here
-            CamelLogger camelLogger;
-            LoggingLevel loggingLevel = LoggingLevel.INFO;
-            if (level != null) {
-                loggingLevel = LoggingLevel.valueOf(level);
-            }
-            if (providedLogger == null) {
-                camelLogger = new CamelLogger(loggerName, loggingLevel, getMarker());
-            } else {
-                camelLogger = new CamelLogger(providedLogger, loggingLevel, getMarker());
-            }
-            if (getGroupSize() != null) {
-                logger = new ThroughputLogger(camelLogger, getGroupSize());
-            } else if (getGroupInterval() != null) {
-                Boolean groupActiveOnly = getGroupActiveOnly() != null ? getGroupActiveOnly() : Boolean.TRUE;
-                Long groupDelay = getGroupDelay();
-                logger = new ThroughputLogger(camelLogger, this.getCamelContext(), getGroupInterval(), groupDelay, groupActiveOnly);
-            } else {
-                logger = new CamelLogProcessor(camelLogger, localFormatter);
-            }
-            // the logger is the processor
-            setProcessor(this.logger);
+            logger = createLogger();
         }
         ServiceHelper.startService(logger);
     }
@@ -121,12 +100,47 @@ public class LogEndpoint extends ProcessorEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new LogProducer(this, this.logger);
+        // ensure logger is created and started first
+        if (logger == null) {
+            logger = createLogger();
+        }
+        ServiceHelper.startService(logger);
+        return new LogProducer(this, logger);
     }
 
     @Override
     protected String createEndpointUri() {
         return "log:" + logger.toString();
+    }
+
+    /**
+     * Creates the logger {@link Processor} to be used.
+     */
+    protected Processor createLogger() throws Exception {
+        Processor answer;
+        // setup a new logger here
+        CamelLogger camelLogger;
+        LoggingLevel loggingLevel = LoggingLevel.INFO;
+        if (level != null) {
+            loggingLevel = LoggingLevel.valueOf(level);
+        }
+        if (providedLogger == null) {
+            camelLogger = new CamelLogger(loggerName, loggingLevel, getMarker());
+        } else {
+            camelLogger = new CamelLogger(providedLogger, loggingLevel, getMarker());
+        }
+        if (getGroupSize() != null) {
+            answer = new ThroughputLogger(camelLogger, getGroupSize());
+        } else if (getGroupInterval() != null) {
+            Boolean groupActiveOnly = getGroupActiveOnly() != null ? getGroupActiveOnly() : Boolean.TRUE;
+            Long groupDelay = getGroupDelay();
+            answer = new ThroughputLogger(camelLogger, this.getCamelContext(), getGroupInterval(), groupDelay, groupActiveOnly);
+        } else {
+            answer = new CamelLogProcessor(camelLogger, localFormatter);
+        }
+        // the logger is the processor
+        setProcessor(answer);
+        return answer;
     }
 
     /**

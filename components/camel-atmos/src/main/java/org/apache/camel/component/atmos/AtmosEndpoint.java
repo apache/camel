@@ -38,7 +38,7 @@ import static org.apache.camel.component.atmos.util.AtmosConstants.POLL_CONSUMER
 /**
  * The atmos component is used for integrating with EMC's Atomos Storage.
  */
-@UriEndpoint(scheme = "atmos", title = "Atmos", syntax = "atmos:name/operation", consumerClass = AtmosScheduledPollConsumer.class, label = "file,cloud")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "atmos", title = "Atmos", syntax = "atmos:name/operation", consumerClass = AtmosScheduledPollConsumer.class, label = "file,cloud")
 public class AtmosEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(AtmosEndpoint.class);

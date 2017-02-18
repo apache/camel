@@ -30,6 +30,10 @@
     <description>Camel Scala DSL</description>
 
     <properties>
+        <!-- use by camel-catalog -->
+        <firstVersion>1.4.0</firstVersion>
+        <label>dsl</label>
+
         <camel.osgi.import.before.defaults>
             scala.xml.*;version="[1.0,2)",
             scala.*;version="[2.11,2.12)"

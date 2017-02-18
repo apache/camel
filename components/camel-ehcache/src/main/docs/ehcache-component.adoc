@@ -1,6 +1,6 @@
 ## Ehcache Component
 
-*Available as of Camel 2.18.x*
+*Available as of Camel version 2.18*
 
 The *ehcache* component enables you to perform caching operations using
 Ehcache 3 as the Cache Implementation.

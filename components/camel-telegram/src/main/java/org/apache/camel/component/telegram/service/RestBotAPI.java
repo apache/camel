@@ -80,4 +80,9 @@ public interface RestBotAPI {
     @Produces(MediaType.APPLICATION_JSON)
     void sendVideo(@PathParam("authorizationToken") String authorizationToken, List<Attachment> attachments);
 
+    @POST
+    @Path("/bot{authorizationToken}/sendDocument")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    void sendDocument(@PathParam("authorizationToken") String authorizationToken, List<Attachment> attachments);
 }

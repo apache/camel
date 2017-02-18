@@ -1,6 +1,6 @@
 ## Google Mail Component
 
-*Available as of Camel 2.15*
+*Available as of Camel version 2.15*
 
 ### Component Description
 

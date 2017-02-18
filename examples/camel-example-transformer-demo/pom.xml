@@ -30,6 +30,11 @@
   <description>An example demonstrating declarative transformation along data type declaration using Spring DSL</description>
   <packaging>jar</packaging>
 
+  <properties>
+    <category>Input/Output Type Contract</category>
+    <title>Transformer Spring XML</title>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>

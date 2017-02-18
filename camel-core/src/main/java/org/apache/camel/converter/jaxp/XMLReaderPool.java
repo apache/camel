@@ -85,13 +85,14 @@ public class XMLReaderPool {
      * Wraps another XMLReader for single use only.
      */
     private final class OneTimeXMLReader implements XMLReader {
-        private XMLReader xmlReader;
+        private final XMLReader xmlReader;
         private final Map<String, Boolean> initFeatures = new HashMap<String, Boolean>();
         private final Map<String, Object> initProperties = new HashMap<String, Object>();
         private final ContentHandler initContentHandler;
         private final DTDHandler initDtdHandler;
         private final EntityResolver initEntityResolver;
         private final ErrorHandler initErrorHandler;
+        private boolean readerInvalid;
 
         private OneTimeXMLReader(XMLReader xmlReader) {
             this.xmlReader = xmlReader;
@@ -102,121 +103,114 @@ public class XMLReaderPool {
         }
 
         private void release() {
-            // reset XMLReader to its initial state
-            for (Map.Entry<String, Boolean> feature : initFeatures.entrySet()) {
-                try {
-                    xmlReader.setFeature(feature.getKey(), feature.getValue().booleanValue());
-                } catch (Exception e) {
-                    // ignore
+            try {
+                // reset XMLReader to its initial state
+                for (Map.Entry<String, Boolean> feature : initFeatures.entrySet()) {
+                    try {
+                        xmlReader.setFeature(feature.getKey(), feature.getValue().booleanValue());
+                    } catch (Exception e) {
+                        // ignore
+                    }
                 }
-            }
-            for (Map.Entry<String, Object> property : initProperties.entrySet()) {
-                try {
-                    xmlReader.setProperty(property.getKey(), property.getValue());
-                } catch (Exception e) {
-                    // ignore
+                for (Map.Entry<String, Object> property : initProperties.entrySet()) {
+                    try {
+                        xmlReader.setProperty(property.getKey(), property.getValue());
+                    } catch (Exception e) {
+                        // ignore
+                    }
                 }
-            }
-            xmlReader.setContentHandler(initContentHandler);
-            xmlReader.setDTDHandler(initDtdHandler);
-            xmlReader.setEntityResolver(initEntityResolver);
-            xmlReader.setErrorHandler(initErrorHandler);
+                xmlReader.setContentHandler(initContentHandler);
+                xmlReader.setDTDHandler(initDtdHandler);
+                xmlReader.setEntityResolver(initEntityResolver);
+                xmlReader.setErrorHandler(initErrorHandler);
 
-            // return the wrapped instance to the pool
-            pool.offer(new WeakReference<XMLReader>(xmlReader));
-            xmlReader = null;
-        }
-
-        private void checkValid() {
-            if (xmlReader == null) {
-                throw new IllegalStateException("OneTimeXMLReader.parse() can only be used once!");
+                // return the wrapped instance to the pool
+                pool.offer(new WeakReference<XMLReader>(xmlReader));
+            } finally {
+                readerInvalid = true;
             }
         }
 
         @Override
-        public boolean getFeature(String name)
-                throws SAXNotRecognizedException, SAXNotSupportedException {
-            checkValid();
+        public boolean getFeature(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
             return xmlReader.getFeature(name);
         }
 
         @Override
-        public void setFeature(String name, boolean value)
-                throws SAXNotRecognizedException, SAXNotSupportedException {
-            checkValid();
-            if (!initFeatures.containsKey(name)) {
-                initFeatures.put(name, Boolean.valueOf(xmlReader.getFeature(name)));
+        public void setFeature(String name, boolean value) throws SAXNotRecognizedException, SAXNotSupportedException {
+            if (!readerInvalid) {
+                if (!initFeatures.containsKey(name)) {
+                    initFeatures.put(name, Boolean.valueOf(xmlReader.getFeature(name)));
+                }
+                xmlReader.setFeature(name, value);
             }
-            xmlReader.setFeature(name, value);
         }
 
         @Override
-        public Object getProperty(String name)
-                throws SAXNotRecognizedException, SAXNotSupportedException {
-            checkValid();
+        public Object getProperty(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
             return xmlReader.getProperty(name);
         }
 
         @Override
-        public void setProperty(String name, Object value)
-                throws SAXNotRecognizedException, SAXNotSupportedException {
-            checkValid();
-            if (!initProperties.containsKey(name)) {
-                initProperties.put(name, xmlReader.getProperty(name));
+        public void setProperty(String name, Object value) throws SAXNotRecognizedException, SAXNotSupportedException {
+            if (!readerInvalid) {
+                if (!initProperties.containsKey(name)) {
+                    initProperties.put(name, xmlReader.getProperty(name));
+                }
+                xmlReader.setProperty(name, value);
             }
-            xmlReader.setProperty(name, value);
         }
 
         @Override
         public ContentHandler getContentHandler() {
-            checkValid();
             return xmlReader.getContentHandler();
         }
 
         @Override
         public void setContentHandler(ContentHandler handler) {
-            checkValid();
-            xmlReader.setContentHandler(handler);
+            if (!readerInvalid) {
+                xmlReader.setContentHandler(handler);
+            }
         }
 
         @Override
         public DTDHandler getDTDHandler() {
-            checkValid();
             return xmlReader.getDTDHandler();
         }
 
         @Override
         public void setDTDHandler(DTDHandler handler) {
-            checkValid();
-            xmlReader.setDTDHandler(handler);
+            if (!readerInvalid) {
+                xmlReader.setDTDHandler(handler);
+            }
         }
 
         @Override
         public EntityResolver getEntityResolver() {
-            checkValid();
             return xmlReader.getEntityResolver();
         }
 
         @Override
         public void setEntityResolver(EntityResolver resolver) {
-            checkValid();
-            xmlReader.setEntityResolver(resolver);
+            if (!readerInvalid) {
+                xmlReader.setEntityResolver(resolver);
+            }
         }
 
         @Override
         public ErrorHandler getErrorHandler() {
-            checkValid();
             return xmlReader.getErrorHandler();
         }
 
         @Override
         public void setErrorHandler(ErrorHandler handler) {
-            checkValid();
-            xmlReader.setErrorHandler(handler);
+            if (!readerInvalid) {
+                xmlReader.setErrorHandler(handler);
+            }
         }
 
         @Override
-        public void parse(InputSource input) throws IOException, SAXException {
+        public synchronized void parse(InputSource input) throws IOException, SAXException {
             checkValid();
             try {
                 xmlReader.parse(input);
@@ -226,12 +220,18 @@ public class XMLReaderPool {
         }
 
         @Override
-        public void parse(String systemId) throws IOException, SAXException {
+        public synchronized void parse(String systemId) throws IOException, SAXException {
             checkValid();
             try {
                 xmlReader.parse(systemId);
             } finally {
                 release();
+            }
+        }
+        
+        private void checkValid() {
+            if (readerInvalid) {
+                throw new IllegalStateException("OneTimeXMLReader can only be used once!");
             }
         }
     }

@@ -10,6 +10,8 @@ The EIP icons library is available as a Visio stencil file adapted to render the
 Number of EIPs: 76
 
 // eips: START
+Number of EIPs: 61
+
 [width="100%",cols="4,6",options="header"]
 |=======================================================================
 | EIP | Description
@@ -18,31 +20,22 @@ Number of EIPs: 76
 `<aggregate>` | Aggregates many messages into a single message
 
 | link:src/main/docs/eips/batch-config-eip.adoc[Batch-config] +
-`<batch-config>` | TODO Configures batch-processing resequence eip.
+`<batch-config>` | Configures batch-processing resequence eip.
 
 | link:src/main/docs/eips/bean-eip.adoc[Bean] +
-`<bean>` | TODO Calls a java bean
+`<bean>` | Calls a java bean
 
 | link:src/main/docs/eips/choice-eip.adoc[Choice] +
-`<choice>` | TODO Routes messages based on a series of predicates
+`<choice>` | Routes messages based on a series of predicates
 
 | link:src/main/docs/eips/circuitBreaker-eip.adoc[Circuit Breaker] +
 `<circuitBreaker>` | Circuit break load balancer
 
-| link:src/main/docs/eips/content-based-router.adoc[Content Based Router] +
-`<contentBasedRouter>` | How do we handle a situation where the implementation of a single logical function (e.g., inventory check) is spread across multiple physical systems?
-
 | link:src/main/docs/eips/convertBodyTo-eip.adoc[Convert Body To] +
-`<convertBodyTo>` | TODO Converts the message body to another type
-
-| link:src/main/docs/eips/correlation-identifier.adoc[Correlation Identifier] +
-`<correlationIdentifier>` | How does a requestor that has received a reply know which request this is the reply for?
+`<convertBodyTo>` | Converts the message body to another type
 
 | link:src/main/docs/eips/customLoadBalancer-eip.adoc[Custom Load Balancer] +
 `<customLoadBalancer>` | Custom load balancer
-
-| link:src/main/docs/eips/dead-letter-channel.adoc[Dead Letter Channel] +
-`<deadLetterChannel>` | What will the messaging system do with a message it cannot deliver?
 
 | link:src/main/docs/eips/delay-eip.adoc[Delay] +
 `<delay>` | Delays processing for a specified length of time
@@ -53,194 +46,158 @@ Number of EIPs: 76
 | link:src/main/docs/eips/enrich-eip.adoc[Enrich] +
 `<enrich>` | Enriches a message with data from a secondary resource
 
-| link:src/main/docs/eips/event-message.adoc[Event Message] +
-`<eventMessage>` | How can messaging be used to transmit events from one application to another?
-
 | link:src/main/docs/eips/failover-eip.adoc[Failover] +
-`<failover>` | TODO Failover load balancer
+`<failover>` | Failover load balancer
 
 | link:src/main/docs/eips/filter-eip.adoc[Filter] +
-`<filter>` | TODO Filter out messages based using a predicate
-
-| link:src/main/docs/eips/guaranteed-delivery.adoc[Guaranteed Delivery] +
-`<guaranteedDelivery>` | How can the sender make sure that a message will be delivered, even if the messaging system fails?
+`<filter>` | Filter out messages based using a predicate
 
 | link:src/main/docs/eips/from-eip.adoc[From] +
-`<from>` | TODO Act as a message source as input to a route
+`<from>` | Act as a message source as input to a route
 
 | link:src/main/docs/eips/hystrix-eip.adoc[Hystrix] +
 `<hystrix>` | Hystrix Circuit Breaker EIP
 
 | link:src/main/docs/eips/hystrixConfiguration-eip.adoc[Hystrix Configuration] +
-`<hystrixConfiguration>` | TODO Hystrix Circuit Breaker EIP configuration
+`<hystrixConfiguration>` | Hystrix Circuit Breaker EIP configuration
 
 | link:src/main/docs/eips/idempotentConsumer-eip.adoc[Idempotent Consumer] +
-`<idempotentConsumer>` | TODO Filters out duplicate messages
+`<idempotentConsumer>` | Filters out duplicate messages
 
 | link:src/main/docs/eips/inOnly-eip.adoc[In Only] +
-`<inOnly>` | TODO Marks the exchange pattern for the route to one way
+`<inOnly>` | Marks the exchange pattern for the route to one way
 
 | link:src/main/docs/eips/inOut-eip.adoc[In Out] +
-`<inOut>` | TODO Marks the exchange pattern for the route to request/reply
+`<inOut>` | Marks the exchange pattern for the route to request/reply
 
 | link:src/main/docs/eips/loadBalance-eip.adoc[Load Balance] +
 `<loadBalance>` | Balances message processing among a number of nodes
 
 | link:src/main/docs/eips/loop-eip.adoc[Loop] +
-`<loop>` | TODO Processes a message multiple times
+`<loop>` | Processes a message multiple times
 
 | link:src/main/docs/eips/marshal-eip.adoc[Marshal] +
-`<marshal>` | TODO Marshals data into a specified format for transmission over a transport or component
-
-| link:src/main/docs/eips/message.adoc[Message] +
-`<message>` | How can two applications connected by a message channel exchange a piece of information?
-
-| link:src/main/docs/eips/message-bus.adoc[Message Bus] +
-`<messageBus>` | What is an architecture that enables separate applications to work together, but in a de-coupled fashion such that applications can be easily added or removed without affecting the others?
-
-| link:src/main/docs/eips/message-channel.adoc[Message Channel] +
-`<messageChannel>` | How does one application communicate with another using messaging?
-
-| link:src/main/docs/eips/message-endpoint.adoc[Message Endpoint] +
-`<messageEndpoint>` | How does an application connect to a messaging channel to send and receive messages?
-
-| link:src/main/docs/eips/message-filter.adoc[Message Filter] +
-`<messageFilter>` | How can a component avoid receiving uninteresting messages?
-
-| link:src/main/docs/eips/message-router.adoc[Message Router] +
-`<messageRouter>` | How can you decouple individual processing steps so that messages can be passed to different filters depending on a set of conditions?
-
-| link:src/main/docs/eips/message-translator.adoc[Message Translator] +
-`<messageTranslator>` | How can systems using different data formats communicate with each other using messaging?
+`<marshal>` | Marshals data into a specified format for transmission over a transport or component
 
 | link:src/main/docs/eips/multicast-eip.adoc[Multicast] +
-`<multicast>` | TODO Routes the same message to multiple paths either sequentially or in parallel.
+`<multicast>` | Routes the same message to multiple paths either sequentially or in parallel.
 
 | link:src/main/docs/eips/onFallback-eip.adoc[On Fallback] +
-`<onFallback>` | TODO Route to be executed when Hystrix EIP executes fallback
+`<onFallback>` | Route to be executed when Hystrix EIP executes fallback
 
 | link:src/main/docs/eips/otherwise-eip.adoc[Otherwise] +
-`<otherwise>` | TODO Route to be executed when all other choices evaluate to false
+`<otherwise>` | Route to be executed when all other choices evaluate to false
 
 | link:src/main/docs/eips/pipeline-eip.adoc[Pipeline] +
-`<pipeline>` | TODO Routes the message to a sequence of processors.
-
-| link:src/main/docs/eips/pipes-and-filters.adoc[Pipes and Filters] +
-`<pipesAndFilters>` | How can we perform complex processing on a message while maintaining independence and flexibility?
-
-| link:src/main/docs/eips/point-to-point-channel.adoc[Point to Point Channel] +
-`<pointToPointChannel>` | How can the caller be sure that exactly one receiver will receive the document or perform the call?
+`<pipeline>` | Routes the message to a sequence of processors.
 
 | link:src/main/docs/eips/pollEnrich-eip.adoc[Poll Enrich] +
-`<pollEnrich>` | TODO Enriches messages with data polled from a secondary resource
+`<pollEnrich>` | Enriches messages with data polled from a secondary resource
 
 | link:src/main/docs/eips/process-eip.adoc[Process] +
-`<process>` | TODO Calls a Camel processor.
-
-| link:src/main/docs/eips/publish-subscribe-channel.adoc[Publish Subscribe Channel] +
-`<publishSubscribeChannel>` | How can the sender broadcast an event to all interested receivers?
+`<process>` | Calls a Camel processor.
 
 | link:src/main/docs/eips/random-eip.adoc[Random] +
-`<random>` | TODO Random load balancer
+`<random>` | Random load balancer
 
 | link:src/main/docs/eips/recipientList-eip.adoc[Recipient List] +
-`<recipientList>` | TODO Routes messages to a number of dynamically specified recipients (dynamic to)
+`<recipientList>` | Routes messages to a number of dynamically specified recipients (dynamic to)
 
 | link:src/main/docs/eips/removeHeader-eip.adoc[Remove Header] +
-`<removeHeader>` | TODO Removes a named header from the message
+`<removeHeader>` | Removes a named header from the message
 
 | link:src/main/docs/eips/removeHeaders-eip.adoc[Remove Headers] +
-`<removeHeaders>` | TODO Removes message headers whose name matches a specified pattern
+`<removeHeaders>` | Removes message headers whose name matches a specified pattern
 
 | link:src/main/docs/eips/removeProperties-eip.adoc[Remove Properties] +
-`<removeProperties>` | TODO Removes message exchange properties whose name matches a specified pattern
+`<removeProperties>` | Removes message exchange properties whose name matches a specified pattern
 
 | link:src/main/docs/eips/removeProperty-eip.adoc[Remove Property] +
-`<removeProperty>` | TODO Removes a named property from the message exchange
+`<removeProperty>` | Removes a named property from the message exchange
 
 | link:src/main/docs/eips/resequence-eip.adoc[Resequence] +
-`<resequence>` | TODO Resequences (re-order) messages based on an expression
+`<resequence>` | Resequences (re-order) messages based on an expression
 
 | link:src/main/docs/eips/rollback-eip.adoc[Rollback] +
-`<rollback>` | TODO Forces a rollback by stopping routing the message
+`<rollback>` | Forces a rollback by stopping routing the message
 
 | link:src/main/docs/eips/roundRobin-eip.adoc[Round Robin] +
-`<roundRobin>` | TODO Round robin load balancer
+`<roundRobin>` | Round robin load balancer
 
 | link:src/main/docs/eips/routingSlip-eip.adoc[Routing Slip] +
-`<routingSlip>` | TODO Routes a message through a series of steps that are pre-determined (the slip)
+`<routingSlip>` | Routes a message through a series of steps that are pre-determined (the slip)
 
 | link:src/main/docs/eips/sample-eip.adoc[Sample] +
-`<sample>` | TODO Extract a sample of the messages passing through a route
+`<sample>` | Extract a sample of the messages passing through a route
 
 | link:src/main/docs/eips/script-eip.adoc[Script] +
-`<script>` | TODO Executes a script from a language which does not change the message body.
+`<script>` | Executes a script from a language which does not change the message body.
 
 | link:src/main/docs/eips/serviceCall-eip.adoc[Service Call] +
-`<serviceCall>` | TODO Remote service call definition
+`<serviceCall>` | Remote service call definition
 
 | link:src/main/docs/eips/setBody-eip.adoc[Set Body] +
-`<setBody>` | TODO Sets the contents of the message body
+`<setBody>` | Sets the contents of the message body
 
 | link:src/main/docs/eips/setFaultBody-eip.adoc[Set Fault Body] +
-`<setFaultBody>` | TODO Sets the contents of a fault message's body
+`<setFaultBody>` | Sets the contents of a fault message's body
 
 | link:src/main/docs/eips/setHeader-eip.adoc[Set Header] +
-`<setHeader>` | TODO Sets the value of a message header
+`<setHeader>` | Sets the value of a message header
 
 | link:src/main/docs/eips/setOutHeader-eip.adoc[Set Out Header] +
-`<setOutHeader>` | TODO *deprecated* Sets the value of a header on the outbound message
+`<setOutHeader>` | *deprecated* Sets the value of a header on the outbound message
 
 | link:src/main/docs/eips/setProperty-eip.adoc[Set Property] +
-`<setProperty>` | TODO Sets a named property on the message exchange
+`<setProperty>` | Sets a named property on the message exchange
 
 | link:src/main/docs/eips/sort-eip.adoc[Sort] +
-`<sort>` | TODO Sorts the contents of the message
+`<sort>` | Sorts the contents of the message
 
 | link:src/main/docs/eips/split-eip.adoc[Split] +
-`<split>` | TODO Splits a single message into many sub-messages.
+`<split>` | Splits a single message into many sub-messages.
 
 | link:src/main/docs/eips/sticky-eip.adoc[Sticky] +
-`<sticky>` | TODO Sticky load balancer
+`<sticky>` | Sticky load balancer
 
 | link:src/main/docs/eips/stop-eip.adoc[Stop] +
-`<stop>` | TODO Stops the processing of the current message
+`<stop>` | Stops the processing of the current message
 
 | link:src/main/docs/eips/stream-config-eip.adoc[Stream-config] +
-`<stream-config>` | TODO Configures stream-processing resequence eip.
+`<stream-config>` | Configures stream-processing resequence eip.
 
 | link:src/main/docs/eips/threads-eip.adoc[Threads] +
-`<threads>` | TODO Specifies that all steps after this node are processed asynchronously
+`<threads>` | Specifies that all steps after this node are processed asynchronously
 
 | link:src/main/docs/eips/throttle-eip.adoc[Throttle] +
-`<throttle>` | TODO Controls the rate at which messages are passed to the next node in the route
+`<throttle>` | Controls the rate at which messages are passed to the next node in the route
 
 | link:src/main/docs/eips/to-eip.adoc[To] +
-`<to>` | TODO Sends the message to a static endpoint
+`<to>` | Sends the message to a static endpoint
 
 | link:src/main/docs/eips/toD-eip.adoc[To D] +
-`<toD>` | TODO Sends the message to a dynamic endpoint
+`<toD>` | Sends the message to a dynamic endpoint
 
 | link:src/main/docs/eips/topic-eip.adoc[Topic] +
-`<topic>` | TODO Topic load balancer
+`<topic>` | Topic load balancer
 
 | link:src/main/docs/eips/transform-eip.adoc[Transform] +
-`<transform>` | TODO Transforms the message body based on an expression
+`<transform>` | Transforms the message body based on an expression
 
 | link:src/main/docs/eips/unmarshal-eip.adoc[Unmarshal] +
-`<unmarshal>` | TODO Converts the message data received from the wire into a format that Apache Camel processors can consume
+`<unmarshal>` | Converts the message data received from the wire into a format that Apache Camel processors can consume
 
 | link:src/main/docs/eips/validate-eip.adoc[Validate] +
-`<validate>` | TODO Validates a message based on an expression
+`<validate>` | Validates a message based on an expression
 
 | link:src/main/docs/eips/weighted-eip.adoc[Weighted] +
-`<weighted>` | TODO Weighted load balancer
+`<weighted>` | Weighted load balancer
 
 | link:src/main/docs/eips/when-eip.adoc[When] +
-`<when>` | TODO Triggers a route when an expression evaluates to true
+`<when>` | Triggers a route when an expression evaluates to true
 
 | link:src/main/docs/eips/wireTap-eip.adoc[Wire Tap] +
-`<wireTap>` | TODO Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message.
+`<wireTap>` | Routes a copy of a message (or creates a new message) to a secondary destination while continue routing the original message.
 
 |=======================================================================
 // eips: END

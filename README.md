@@ -2,6 +2,7 @@
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.apache.camel/apache-camel/badge.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/org.apache.camel/apache-camel)
 [![Javadocs](http://www.javadoc.io/badge/org.apache.camel/apache-camel.svg?color=brightgreen)](http://www.javadoc.io/doc/org.apache.camel/camel-core)
+[![Stack Overflow](https://img.shields.io/:stack%20overflow-apache--camel-brightgreen.svg)](http://stackoverflow.com/questions/tagged/apache-camel)
 
 [Apache Camel](http://camel.apache.org/) is a powerful open source integration framework based on known
 Enterprise Integration Patterns with powerful Bean Integration.
@@ -23,20 +24,17 @@ which kind of transport used, so learn the API once and you will be able to
 interact with all the Components that is provided out-of-the-box.
 
 Apache Camel has powerful Bean Binding and integrated seamless with
-popular frameworks such as Spring, Blueprint and Guice.
+popular frameworks such as Spring, CDI, Blueprint and Guice.
 
 Apache Camel has extensive testing support allowing you to easily
 unit test your routes.
 
-Apache Camel can be used as a routing and mediation engine for the
-following projects:
+## Components
 
-* Apache ServiceMix which is the most popular and powerful distributed open source ESB, JBI and OSGi container
-* Apache ActiveMQ which is the most popular and powerful open source message broker
-* Apache CXF which is a smart web services suite (JAX-WS and JAX-RS)
-* Apache Karaf which is a small OSGi based runtime which applications can be deployed
-* Apache MINA a networking framework
+Apache Camel comes with a lot of components.
+The up to date list is available online at:
 
+<https://github.com/apache/camel/tree/master/components#components>
 
 ## Getting Started
 
@@ -64,6 +62,8 @@ Wiki: <http://camel.apache.org/>
 IRC: <http://camel.apache.org/irc-room.html>
 
 Mailing list: <http://camel.apache.org/mailing-lists.html>
+
+Github: <https://github.com/apache/camel>
 
 **Support**
 

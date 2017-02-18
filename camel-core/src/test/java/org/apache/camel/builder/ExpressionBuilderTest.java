@@ -96,7 +96,7 @@ public class ExpressionBuilderTest extends TestSupport {
     }
     
     public void testCamelContextPropertiesExpression() throws Exception {
-        camelContext.getProperties().put("CamelTestKey", "CamelTestValue");        
+        camelContext.getGlobalOptions().put("CamelTestKey", "CamelTestValue");
         Expression expression = camelContextPropertyExpression("CamelTestKey");
         assertExpression(expression, exchange, "CamelTestValue");        
         expression = camelContextPropertiesExpression();

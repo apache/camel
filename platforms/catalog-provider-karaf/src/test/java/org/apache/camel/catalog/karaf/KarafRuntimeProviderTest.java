@@ -90,4 +90,19 @@ public class KarafRuntimeProviderTest {
         assertTrue(names.contains("xpath"));
     }
 
+    @Test
+    public void testFindOtherNames() throws Exception {
+        List<String> names = catalog.findOtherNames();
+
+        assertNotNull(names);
+        assertFalse(names.isEmpty());
+
+        assertTrue(names.contains("blueprint"));
+        assertTrue(names.contains("hystrix"));
+        assertTrue(names.contains("swagger-java"));
+        assertTrue(names.contains("zipkin"));
+
+        assertFalse(names.contains("spring-boot"));
+    }
+
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.core.xml;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -50,6 +51,8 @@ import org.apache.camel.management.DefaultManagementStrategy;
 import org.apache.camel.management.ManagedManagementStrategy;
 import org.apache.camel.model.ContextScanDefinition;
 import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.GlobalOptionsDefinition;
+import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -166,9 +169,16 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
 
         // then set custom properties
+        Map<String, String> mergedOptions = new HashMap<>();
         if (getProperties() != null) {
-            getContext().setProperties(getProperties().asMap());
+            mergedOptions.putAll(getProperties().asMap());
         }
+        if (getGlobalOptions() != null) {
+            mergedOptions.putAll(getGlobalOptions().asMap());
+        }
+
+        getContext().setGlobalOptions(mergedOptions);
+
         // and enable lazy loading of type converters if applicable
         initLazyLoadTypeConverters();
 
@@ -696,7 +706,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract List<InterceptSendToEndpointDefinition> getInterceptSendToEndpoints();
 
+    @Deprecated
     public abstract PropertiesDefinition getProperties();
+    public abstract GlobalOptionsDefinition getGlobalOptions();
 
     public abstract String[] getPackages();
 
@@ -780,6 +792,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract List<?> getBeans();
 
+    public abstract List<HystrixConfigurationDefinition> getHystrixConfigurations();
+
+    public abstract List<ServiceCallConfigurationDefinition> getServiceCallConfigurations();
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -856,13 +872,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (getRestConfiguration() != null) {
             ctx.setRestConfiguration(getRestConfiguration().asRestConfiguration(ctx));
         }
-        if (getBeans() != null) {
-            for (Object bean : getBeans()) {
-                if (bean instanceof ServiceCallConfigurationDefinition) {
-                    @SuppressWarnings("unchecked")
-                    ServiceCallConfigurationDefinition configuration = (ServiceCallConfigurationDefinition)bean;
-                    ctx.addServiceCallConfiguration(configuration.getId(), configuration);
-                }
+        if (getServiceCallConfigurations() != null) {
+            for (ServiceCallConfigurationDefinition bean : getServiceCallConfigurations()) {
+                ctx.addServiceCallConfiguration(bean.getId(), bean);
             }
         }
     }

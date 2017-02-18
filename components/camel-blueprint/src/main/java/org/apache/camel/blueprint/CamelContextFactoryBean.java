@@ -45,6 +45,7 @@ import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelServiceExporterDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
 import org.apache.camel.model.ContextScanDefinition;
+import org.apache.camel.model.GlobalOptionsDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -129,8 +130,11 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private TypeConverterExists typeConverterExists;
     @XmlAttribute
     private LoggingLevel typeConverterExistsLoggingLevel;
+    @Deprecated
     @XmlElement(name = "properties")
     private PropertiesDefinition properties;
+    @XmlElement(name = "globalOptions")
+    private GlobalOptionsDefinition globalOptions;
     @XmlElement(name = "propertyPlaceholder", type = CamelPropertyPlaceholderDefinition.class)
     private CamelPropertyPlaceholderDefinition camelPropertyPlaceholder;
     @XmlElement(name = "package")
@@ -151,10 +155,12 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         @XmlElement(name = "errorHandler", type = CamelErrorHandlerFactoryBean.class)})
     private List<AbstractCamelFactoryBean<?>> beansFactory;
     @XmlElements({
-        @XmlElement(name = "export", type = CamelServiceExporterDefinition.class),
-        @XmlElement(name = "serviceCallConfiguration", type = ServiceCallConfigurationDefinition.class),
-        @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class)})
+        @XmlElement(name = "export", type = CamelServiceExporterDefinition.class) })
     private List<?> beans;
+    @XmlElement(name = "serviceCallConfiguration", type = ServiceCallConfigurationDefinition.class)
+    private List<ServiceCallConfigurationDefinition> serviceCallConfigurations;
+    @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class)
+    private List<HystrixConfigurationDefinition> hystrixConfigurations;
     @XmlElement(name = "routeBuilder")
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<RouteBuilderDefinition>();
     @XmlElement(name = "routeContextRef")
@@ -563,12 +569,23 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         this.errorHandlerRef = errorHandlerRef;
     }
 
+    @Deprecated
     public PropertiesDefinition getProperties() {
         return properties;
     }
 
+    @Override
+    public GlobalOptionsDefinition getGlobalOptions() {
+        return globalOptions;
+    }
+
+    @Deprecated
     public void setProperties(PropertiesDefinition properties) {
         this.properties = properties;
+    }
+
+    public void setGlobalOptions(GlobalOptionsDefinition globalOptions) {
+        this.globalOptions = globalOptions;
     }
 
     public String[] getPackages() {
@@ -611,6 +628,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
         this.camelStreamCachingStrategy = camelStreamCachingStrategy;
     }
 
+    @Override
     public List<AbstractCamelFactoryBean<?>> getBeansFactory() {
         return beansFactory;
     }
@@ -626,6 +644,24 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     public void setBeans(List<?> beans) {
         this.beans = beans;
+    }
+
+    @Override
+    public List<ServiceCallConfigurationDefinition> getServiceCallConfigurations() {
+        return serviceCallConfigurations;
+    }
+
+    public void setServiceCallConfigurations(List<ServiceCallConfigurationDefinition> serviceCallConfigurations) {
+        this.serviceCallConfigurations = serviceCallConfigurations;
+    }
+
+    @Override
+    public List<HystrixConfigurationDefinition> getHystrixConfigurations() {
+        return hystrixConfigurations;
+    }
+
+    public void setHystrixConfigurations(List<HystrixConfigurationDefinition> hystrixConfigurations) {
+        this.hystrixConfigurations = hystrixConfigurations;
     }
 
     public List<RouteBuilderDefinition> getBuilderRefs() {

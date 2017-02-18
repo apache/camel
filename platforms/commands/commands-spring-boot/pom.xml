@@ -26,7 +26,7 @@
 
     <artifactId>camel-commands-spring-boot</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Platforms :: Commands :: Spring Boot</name>
+    <name>Camel :: Platforms :: Commands :: Spring Boot (deprecated)</name>
     <description>Camel Commands using Spring Boot Shell</description>
     <modelVersion>4.0.0</modelVersion>
 

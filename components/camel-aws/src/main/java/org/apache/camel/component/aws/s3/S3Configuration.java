@@ -64,6 +64,8 @@ public class S3Configuration implements Cloneable {
     private boolean pathStyleAccess;
     @UriParam(label = "producer", enums = "copyObject,deleteBucket,listBuckets")
     private S3Operations operation;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean autocloseBody = true;
 
     public long getPartSize() {
         return partSize;
@@ -178,8 +180,10 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * *Camel 2.17*: If it is true, the exchange body will be set to a stream to the contents of the file.
-     * If false, the headers will be set with the S3 object metadata, but the body will be null.
+     * If it is true, the exchange body will be set to a stream to the contents of the file.
+     * If false, the headers will be set with the S3 object metadata, but the body will be null. 
+     * This option is strongly related to autocloseBody option. In case of setting includeBody to true and autocloseBody to false, it 
+     * will be up to the caller to close the S3Object stream. Setting autocloseBody to true, will close the S3Object stream automatically.
      */
     public void setIncludeBody(boolean includeBody) {
         this.includeBody = includeBody;
@@ -294,7 +298,22 @@ public class S3Configuration implements Cloneable {
         this.operation = operation;
     }
 
+    public boolean isAutocloseBody() {
+        return autocloseBody;
+    }
+
+    /**
+     * If this option is true and includeBody is true, then the S3Object.close() method will be called on exchange completion
+     * This option is strongly related to includeBody option. In case of setting includeBody to true and autocloseBody to false, it 
+     * will be up to the caller to close the S3Object stream. Setting autocloseBody to true, will close the S3Object stream automatically.
+     */
+    public void setAutocloseBody(boolean autocloseBody) {
+        this.autocloseBody = autocloseBody;
+    }
+
     boolean hasProxyConfiguration() {
         return ObjectHelper.isNotEmpty(getProxyHost()) && ObjectHelper.isNotEmpty(getProxyPort());
     }
+    
+    
 }

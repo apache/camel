@@ -1,6 +1,6 @@
 ## JiBX DataFormat
 
-*Available as of Camel 2.6*
+*Available as of Camel version 2.6*
 
 JiBX is a link:data-format.html[Data Format] which uses the
 http://jibx.sourceforge.net[JiBX library] to marshal and unmarshal Java

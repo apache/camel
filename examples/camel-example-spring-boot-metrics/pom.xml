@@ -31,6 +31,8 @@
   <description>An example showing how to work with Camel and Spring Boot and report metrics to Graphite</description>
 
   <properties>
+    <category>Management and Monitoring</category>
+
     <spring.boot-version>${spring-boot-version}</spring.boot-version>
   </properties>
 

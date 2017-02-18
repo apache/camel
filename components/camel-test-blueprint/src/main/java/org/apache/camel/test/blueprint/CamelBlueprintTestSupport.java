@@ -84,7 +84,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
      * <p>Karaf and Fuse OSGi containers use synchronous startup.</p>
      * <p>Asynchronous startup is more in the <em>spirit</em> of OSGi and usually means that if everything works fine
      * asynchronously, it'll work synchronously as well. This isn't always true otherwise.</p>
-     * @return
+     * @return <code>true</code> when blueprint containers are to be started asynchronously, otherwise <code>false</code>.
      */
     protected boolean useAsynchronousBlueprintStartup() {
         return true;

@@ -19,8 +19,11 @@ package org.apache.camel.maven.packaging.model;
 public class EipOptionModel {
 
     private String name;
+    private String displayName;
     private String title;
+    private String required;
     private String javaType;
+    private String type;
     private String label;
     private String description;
     private boolean deprecated;
@@ -33,6 +36,14 @@ public class EipOptionModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public String getTitle() {
@@ -49,6 +60,22 @@ public class EipOptionModel {
 
     public void setJavaType(String javaType) {
         this.javaType = javaType;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getRequired() {
+        return required;
+    }
+
+    public void setRequired(String required) {
+        this.required = required;
     }
 
     public String getLabel() {
@@ -99,5 +126,20 @@ public class EipOptionModel {
         return output ? "true" : "false";
     }
 
+    public String getShortJavaType() {
+        if (javaType.startsWith("java.util.Map")) {
+            return "Map";
+        } else if (javaType.startsWith("java.util.Set")) {
+            return "Set";
+        } else if (javaType.startsWith("java.util.List")) {
+            return "List";
+        }
+        int pos = javaType.lastIndexOf(".");
+        if (pos != -1) {
+            return javaType.substring(pos + 1);
+        } else {
+            return javaType;
+        }
+    }
 }
 

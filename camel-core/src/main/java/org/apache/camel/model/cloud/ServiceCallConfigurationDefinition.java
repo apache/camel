@@ -68,17 +68,27 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     private Expression expression;
     @XmlElements({
         @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "chainedServiceDiscovery", type = ChainedServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "multiServiceDiscovery", type = MultiServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class)}
     )
     private ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration;
 
     @XmlElements({
-        @XmlElement(name = "ribbonLoadBalancer", type = RibbonServiceCallLoadBalancerConfiguration.class)}
+        @XmlElement(name = "blacklistServiceFilter", type = BlacklistServiceCallServiceFilterConfiguration.class),
+        @XmlElement(name = "chainedServiceFilter", type = ChainedServiceCallServiceFilterConfiguration.class),
+        @XmlElement(name = "customServiceFilter", type = CustomServiceCallServiceFilterConfiguration.class),
+        @XmlElement(name = "healthyServiceFilter", type = HealthyServiceCallServiceFilterConfiguration.class),
+        @XmlElement(name = "passThroughServiceFilter", type = PassThroughServiceCallServiceFilterConfiguration.class)}
+    )
+    private ServiceCallServiceFilterConfiguration serviceFilterConfiguration;
+
+    @XmlElements({
+        @XmlElement(name = "ribbonLoadBalancer", type = RibbonServiceCallLoadBalancerConfiguration.class),
+        @XmlElement(name = "defaultLoadBalancer", type = DefaultServiceCallLoadBalancerConfiguration.class) }
     )
     private ServiceCallLoadBalancerConfiguration loadBalancerConfiguration;
 
@@ -246,6 +256,17 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         this.serviceDiscoveryConfiguration = serviceDiscoveryConfiguration;
     }
 
+    public ServiceCallServiceFilterConfiguration getServiceFilterConfiguration() {
+        return serviceFilterConfiguration;
+    }
+
+    /**
+     * Configures the ServiceFilter using the given configuration.
+     */
+    public void setServiceFilterConfiguration(ServiceCallServiceFilterConfiguration serviceFilterConfiguration) {
+        this.serviceFilterConfiguration = serviceFilterConfiguration;
+    }
+
     public ServiceCallLoadBalancerConfiguration getLoadBalancerConfiguration() {
         return loadBalancerConfiguration;
     }
@@ -392,6 +413,14 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     }
 
     /**
+     * Configures the ServiceFilter using the given configuration.
+     */
+    public ServiceCallConfigurationDefinition serviceFilterConfiguration(ServiceCallServiceFilterConfiguration serviceFilterConfiguration) {
+        setServiceFilterConfiguration(serviceFilterConfiguration);
+        return this;
+    }
+
+    /**
      * Configures the LoadBalancer using the given configuration.
      */
     public ServiceCallConfigurationDefinition loadBalancerConfiguration(ServiceCallLoadBalancerConfiguration loadBalancerConfiguration) {
@@ -432,6 +461,25 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         return conf;
     }
 
+    public ServiceCallConfigurationDefinition dnsServiceDiscovery(String domain) {
+        DnsServiceCallServiceDiscoveryConfiguration conf = new DnsServiceCallServiceDiscoveryConfiguration();
+        conf.setDomain(domain);
+
+        setServiceDiscoveryConfiguration(conf);
+
+        return this;
+    }
+
+    public ServiceCallConfigurationDefinition dnsServiceDiscovery(String domain, String protocol) {
+        DnsServiceCallServiceDiscoveryConfiguration conf = new DnsServiceCallServiceDiscoveryConfiguration();
+        conf.setDomain(domain);
+        conf.setProto(protocol);
+
+        setServiceDiscoveryConfiguration(conf);
+
+        return this;
+    }
+
     public EtcdServiceCallServiceDiscoveryConfiguration etcdServiceDiscovery() {
         EtcdServiceCallServiceDiscoveryConfiguration conf = new EtcdServiceCallServiceDiscoveryConfiguration();
         setServiceDiscoveryConfiguration(conf);
@@ -446,8 +494,37 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         return conf;
     }
 
-    public MultiServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
-        MultiServiceCallServiceDiscoveryConfiguration conf = new MultiServiceCallServiceDiscoveryConfiguration();
+    public KubernetesServiceCallServiceDiscoveryConfiguration kubernetesClientServiceDiscovery() {
+        KubernetesServiceCallServiceDiscoveryConfiguration conf = new KubernetesServiceCallServiceDiscoveryConfiguration();
+        conf.setLookup("client");
+
+        setServiceDiscoveryConfiguration(conf);
+
+        return conf;
+    }
+
+    public ServiceCallConfigurationDefinition kubernetesEnvServiceDiscovery() {
+        KubernetesServiceCallServiceDiscoveryConfiguration conf = new KubernetesServiceCallServiceDiscoveryConfiguration();
+        conf.setLookup("environment");
+
+        setServiceDiscoveryConfiguration(conf);
+
+        return this;
+    }
+
+    public ServiceCallConfigurationDefinition kubernetesDnsServiceDiscovery(String namespace, String domain) {
+        KubernetesServiceCallServiceDiscoveryConfiguration conf = new KubernetesServiceCallServiceDiscoveryConfiguration();
+
+        conf.setNamespace(namespace);
+        conf.setDnsDomain(domain);
+
+        setServiceDiscoveryConfiguration(conf);
+
+        return this;
+    }
+
+    public ChainedServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
+        ChainedServiceCallServiceDiscoveryConfiguration conf = new ChainedServiceCallServiceDiscoveryConfiguration();
         setServiceDiscoveryConfiguration(conf);
 
         return conf;
@@ -461,13 +538,72 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
     }
 
     // *****************************
+    // Shortcuts - ServiceFilter
+    // *****************************
+
+    public ServiceCallConfigurationDefinition healthyFilter() {
+        HealthyServiceCallServiceFilterConfiguration conf = new HealthyServiceCallServiceFilterConfiguration();
+        setServiceFilterConfiguration(conf);
+
+        return this;
+    }
+
+    public ServiceCallConfigurationDefinition passThroughFilter() {
+        PassThroughServiceCallServiceFilterConfiguration conf = new PassThroughServiceCallServiceFilterConfiguration();
+        setServiceFilterConfiguration(conf);
+
+        return this;
+    }
+
+    public ChainedServiceCallServiceFilterConfiguration multiFilter() {
+        ChainedServiceCallServiceFilterConfiguration conf = new ChainedServiceCallServiceFilterConfiguration();
+        setServiceFilterConfiguration(conf);
+
+        return conf;
+    }
+
+    public ServiceCallConfigurationDefinition customFilter(String serviceFilter) {
+        CustomServiceCallServiceFilterConfiguration conf = new CustomServiceCallServiceFilterConfiguration();
+        conf.setServiceFilterRef(serviceFilter);
+
+        setServiceFilterConfiguration(conf);
+
+        return this;
+    }
+
+    public ServiceCallConfigurationDefinition customFilter(ServiceFilter serviceFilter) {
+        CustomServiceCallServiceFilterConfiguration conf = new CustomServiceCallServiceFilterConfiguration();
+        conf.setServiceFilter(serviceFilter);
+
+        setServiceFilterConfiguration(conf);
+
+        return this;
+    }
+
+    // *****************************
     // Shortcuts - LoadBalancer
     // *****************************
 
-    public RibbonServiceCallLoadBalancerConfiguration ribbonLoadBalancer() {
+    public ServiceCallConfigurationDefinition defaultLoadBalancer() {
+        DefaultServiceCallLoadBalancerConfiguration conf = new DefaultServiceCallLoadBalancerConfiguration();
+        setLoadBalancerConfiguration(conf);
+
+        return this;
+    }
+
+    public ServiceCallConfigurationDefinition ribbonLoadBalancer() {
         RibbonServiceCallLoadBalancerConfiguration conf = new RibbonServiceCallLoadBalancerConfiguration();
         setLoadBalancerConfiguration(conf);
 
-        return conf;
+        return this;
+    }
+
+    public ServiceCallConfigurationDefinition ribbonLoadBalancer(String clientName) {
+        RibbonServiceCallLoadBalancerConfiguration conf = new RibbonServiceCallLoadBalancerConfiguration();
+        conf.setClientName(clientName);
+
+        setLoadBalancerConfiguration(conf);
+
+        return this;
     }
 }

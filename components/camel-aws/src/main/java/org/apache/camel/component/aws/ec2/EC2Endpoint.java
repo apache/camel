@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The aws-ec2 is used for managing Amazon EC2 instances.
  */
-@UriEndpoint(scheme = "aws-ec2", title = "AWS EC2", syntax = "aws-ec2:label", producerOnly = true, label = "cloud,management")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "aws-ec2", title = "AWS EC2", syntax = "aws-ec2:label", producerOnly = true, label = "cloud,management")
 public class EC2Endpoint extends ScheduledPollEndpoint {
     
     private AmazonEC2Client ec2Client;
@@ -78,14 +78,27 @@ public class EC2Endpoint extends ScheduledPollEndpoint {
 
     AmazonEC2Client createEc2Client() {
         AmazonEC2Client client = null;
-        AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+        ClientConfiguration clientConfiguration = null;
+        boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-            ClientConfiguration clientConfiguration = new ClientConfiguration();
+            clientConfiguration = new ClientConfiguration();
             clientConfiguration.setProxyHost(configuration.getProxyHost());
             clientConfiguration.setProxyPort(configuration.getProxyPort());
-            client = new AmazonEC2Client(credentials, clientConfiguration);
+            isClientConfigFound = true;
+        }
+        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+            AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+            if (isClientConfigFound) {
+                client = new AmazonEC2Client(credentials, clientConfiguration);
+            } else {
+                client = new AmazonEC2Client(credentials);
+            }
         } else {
-            client = new AmazonEC2Client(credentials);
+            if (isClientConfigFound) {
+                client = new AmazonEC2Client();
+            } else {
+                client = new AmazonEC2Client(clientConfiguration);
+            }
         }
         return client;
     }

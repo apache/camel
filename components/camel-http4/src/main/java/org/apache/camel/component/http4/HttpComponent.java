@@ -21,7 +21,10 @@ import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.HostnameVerifier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -50,13 +53,12 @@ import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.BrowserCompatHostnameVerifier;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLContexts;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.ssl.SSLContexts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +81,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     @Metadata(label = "security")
     protected SSLContextParameters sslContextParameters;
     @Metadata(label = "security")
-    protected X509HostnameVerifier x509HostnameVerifier = new BrowserCompatHostnameVerifier();
+    protected HostnameVerifier x509HostnameVerifier = new DefaultHostnameVerifier();
     @Metadata(label = "producer")
     protected CookieStore cookieStore;
 
@@ -165,26 +167,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Map<String, Object> httpClientParameters = new HashMap<String, Object>(parameters);
-        // http client can be configured from URI options
-        HttpClientBuilder clientBuilder = HttpClientBuilder.create();
-        // allow the builder pattern
-        Map<String, Object> httpClientOptions = IntrospectionSupport.extractProperties(parameters, "httpClient.");
-        IntrospectionSupport.setProperties(clientBuilder, httpClientOptions);
-        // set the Request configure this way and allow the builder pattern
-        RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
-        IntrospectionSupport.setProperties(requestConfigBuilder, httpClientOptions);
-        clientBuilder.setDefaultRequestConfig(requestConfigBuilder.build());
-        
-        // validate that we could resolve all httpClient. parameters as this component is lenient
-        validateParameters(uri, httpClientOptions, null);
+        final Map<String, Object> httpClientOptions = new HashMap<>();
+        final HttpClientBuilder clientBuilder = createHttpClientBuilder(uri, parameters, httpClientOptions);
         
         HttpBinding httpBinding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         HttpContext httpContext = resolveAndRemoveReferenceParameter(parameters, "httpContext", HttpContext.class);
-
-        X509HostnameVerifier x509HostnameVerifier = resolveAndRemoveReferenceParameter(parameters, "x509HostnameVerifier", X509HostnameVerifier.class);
-        if (x509HostnameVerifier == null) {
-            x509HostnameVerifier = getX509HostnameVerifier();
-        }
 
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParameters", SSLContextParameters.class);
         if (sslContextParameters == null) {
@@ -235,13 +222,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         String endpointUriString = endpointUri.toString();
 
         LOG.debug("Creating endpoint uri {}", endpointUriString);
-        HttpClientConnectionManager localConnectionManager = clientConnectionManager;
-        if (localConnectionManager == null) {
-            // need to check the parameters of maxTotalConnections and connectionsPerRoute
-            int maxTotalConnections = getAndRemoveParameter(parameters, "maxTotalConnections", int.class, 0);
-            int connectionsPerRoute = getAndRemoveParameter(parameters, "connectionsPerRoute", int.class, 0);
-            localConnectionManager = createConnectionManager(createConnectionRegistry(x509HostnameVerifier, sslContextParameters), maxTotalConnections, connectionsPerRoute);
-        }
+        final HttpClientConnectionManager localConnectionManager = createConnectionManager(parameters, sslContextParameters);
         HttpEndpoint endpoint = new HttpEndpoint(endpointUriString, this, clientBuilder, localConnectionManager, configurer);
         if (urlRewrite != null) {
             // let CamelContext deal with the lifecycle of the url rewrite
@@ -290,8 +271,44 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         
         return endpoint;
     }
-    
-    protected Registry<ConnectionSocketFactory> createConnectionRegistry(X509HostnameVerifier x509HostnameVerifier, SSLContextParameters sslContextParams)
+
+    protected HttpClientConnectionManager createConnectionManager(final Map<String, Object> parameters,
+            final SSLContextParameters sslContextParameters) throws GeneralSecurityException, IOException {
+        if (clientConnectionManager != null) {
+            return clientConnectionManager;
+        }
+
+        final HostnameVerifier resolvedHostnameVerifier = resolveAndRemoveReferenceParameter(parameters, "x509HostnameVerifier", HostnameVerifier.class);
+        final HostnameVerifier hostnameVerifier = Optional.ofNullable(resolvedHostnameVerifier).orElse(x509HostnameVerifier);
+
+        // need to check the parameters of maxTotalConnections and connectionsPerRoute
+        final int maxTotalConnections = getAndRemoveParameter(parameters, "maxTotalConnections", int.class, 0);
+        final int connectionsPerRoute = getAndRemoveParameter(parameters, "connectionsPerRoute", int.class, 0);
+
+        final Registry<ConnectionSocketFactory> connectionRegistry = createConnectionRegistry(hostnameVerifier, sslContextParameters);
+
+        return createConnectionManager(connectionRegistry, maxTotalConnections, connectionsPerRoute);
+    }
+
+    protected HttpClientBuilder createHttpClientBuilder(final String uri, final Map<String, Object> parameters,
+            final Map<String, Object> httpClientOptions) throws Exception {
+        // http client can be configured from URI options
+        HttpClientBuilder clientBuilder = HttpClientBuilder.create();
+        // allow the builder pattern
+        httpClientOptions.putAll(IntrospectionSupport.extractProperties(parameters, "httpClient."));
+        IntrospectionSupport.setProperties(clientBuilder, httpClientOptions);
+        // set the Request configure this way and allow the builder pattern
+        RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
+        IntrospectionSupport.setProperties(requestConfigBuilder, httpClientOptions);
+        clientBuilder.setDefaultRequestConfig(requestConfigBuilder.build());
+
+        // validate that we could resolve all httpClient. parameters as this component is lenient
+        validateParameters(uri, httpClientOptions, null);
+
+        return clientBuilder;
+    }
+
+    protected Registry<ConnectionSocketFactory> createConnectionRegistry(HostnameVerifier x509HostnameVerifier, SSLContextParameters sslContextParams)
         throws GeneralSecurityException, IOException {
         // create the default connection registry to use
         RegistryBuilder<ConnectionSocketFactory> builder = RegistryBuilder.<ConnectionSocketFactory>create();
@@ -449,15 +466,15 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         this.sslContextParameters = sslContextParameters;
     }
 
-    public X509HostnameVerifier getX509HostnameVerifier() {
+    public HostnameVerifier getX509HostnameVerifier() {
         return x509HostnameVerifier;
     }
 
     /**
-     * To use a custom X509HostnameVerifier such as org.apache.http.conn.ssl.StrictHostnameVerifier
-     * or org.apache.http.conn.ssl.AllowAllHostnameVerifier.
+     * To use a custom X509HostnameVerifier such as {@link DefaultHostnameVerifier}
+     * or {@link org.apache.http.conn.ssl.NoopHostnameVerifier}.
      */
-    public void setX509HostnameVerifier(X509HostnameVerifier x509HostnameVerifier) {
+    public void setX509HostnameVerifier(HostnameVerifier x509HostnameVerifier) {
         this.x509HostnameVerifier = x509HostnameVerifier;
     }
 

@@ -1,5 +1,7 @@
 ## String Encoding DataFormat
 
+*Available as of Camel version 2.12*
+
 The String link:data-format.html[Data Format] is a textual based format
 that supports encoding.
 

@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * PGP data format
  */
-@Metadata(label = "dataformat,transformation,security", title = "PGP")
+@Metadata(firstVersion = "2.9.0", label = "dataformat,transformation,security", title = "PGP")
 @XmlRootElement(name = "pgp")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PGPDataFormat extends DataFormatDefinition {

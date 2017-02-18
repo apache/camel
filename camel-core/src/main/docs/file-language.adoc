@@ -1,5 +1,7 @@
 ## File Language
 
+*Available as of Camel version 1.1*
+
 INFO:*File language is now merged with Simple language*
 From Camel 2.2 onwards, the file language is now merged with
 link:simple.html[Simple] language which means you can use all the file

@@ -37,6 +37,8 @@ public abstract class AbstractDirectVmTestSupport extends ContextTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
 
+        doPostSetup();
+
         context2 = new DefaultCamelContext();
         template2 = context2.createProducerTemplate();
 
@@ -47,6 +49,10 @@ public abstract class AbstractDirectVmTestSupport extends ContextTestSupport {
         if (routeBuilder != null) {
             context2.addRoutes(routeBuilder);
         }
+    }
+
+    protected void doPostSetup() throws Exception {
+        // noop
     }
 
     @Override

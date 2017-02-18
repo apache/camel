@@ -59,6 +59,12 @@ public interface ReplyManager extends SessionAwareMessageListener {
     void setOnTimeoutExecutorService(ExecutorService executorService);
 
     /**
+     * Sets the JMS message property used for message correlation. If set message correlation will be performed on the
+     * value of this JMS property, JMSCorrelationID will be ignored.
+     */
+    void setCorrelationProperty(String correlationProperty);
+
+    /**
      * Gets the reply to queue being used
      */
     Destination getReplyTo();

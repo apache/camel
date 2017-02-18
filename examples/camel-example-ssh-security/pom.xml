@@ -33,6 +33,9 @@
   </description>
 
   <properties>
+    <category>OSGi</category>
+    <title>SSH Security</title>
+
     <camel.osgi.export.pkg/>
   </properties>
 

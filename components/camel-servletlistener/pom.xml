@@ -27,9 +27,14 @@
   <artifactId>camel-servletlistener</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: Servlet Listener</name>
-  <description>Camel servlet listener for bootstrapping Camel in Web Applications</description>
+  <description>Bootstrapping Camel using Servet Listener</description>
   
   <properties>
+      <!-- use by camel-catalog -->
+      <firstVersion>2.11.0</firstVersion>
+      <label>java</label>
+      <title>Servlet Listener</title>
+
       <camel.osgi.import.before.defaults>
           javax.servlet.*;version="${servlet-version-range}"
       </camel.osgi.import.before.defaults>

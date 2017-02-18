@@ -40,9 +40,6 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.transformer.CustomTransformerDefinition;
-import org.apache.camel.model.transformer.DataFormatTransformerDefinition;
-import org.apache.camel.model.transformer.EndpointTransformerDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.RouteContext;
@@ -181,41 +178,36 @@ public class TransformerRouteTest extends ContextTestSupport {
                         }
                     }).to("mock:xyzresult");
                 
-                DataFormatTransformerDefinition dfdef = new DataFormatTransformerDefinition();
-                dfdef.setDataFormatType(new MyJsonDataFormatDefinition());
-                dfdef.setScheme("json");
-                context.getTransformers().add(dfdef);
+                transformer()
+                    .scheme("json")
+                    .withDataFormat(new MyJsonDataFormatDefinition());
                 from("direct:dataFormat")
                     .inputType("json:JsonXOrder")
                     .outputType("json:JsonXOrderResponse")
                     .inOut("direct:xyz");
                 
                 context.addComponent("myxml", new MyXmlComponent());
-                EndpointTransformerDefinition edef1 = new EndpointTransformerDefinition();
-                edef1.setUri("myxml:endpoint");
-                edef1.setFrom("xml:XmlXOrder");
-                edef1.setTo(XOrder.class);
-                EndpointTransformerDefinition edef2 = new EndpointTransformerDefinition();
-                edef2.setUri("myxml:endpoint");
-                edef2.setFrom(XOrderResponse.class);
-                edef2.setTo("xml:XmlXOrderResponse");
-                context.getTransformers().add(edef1);
-                context.getTransformers().add(edef2);
+                transformer()
+                    .fromType("xml:XmlXOrder")
+                    .toType(XOrder.class)
+                    .withUri("myxml:endpoint");
+                transformer()
+                    .fromType(XOrderResponse.class)
+                    .toType("xml:XmlXOrderResponse")
+                    .withUri("myxml:endpoint");
                 from("direct:endpoint")
                     .inputType("xml:XmlXOrder")
                     .outputType("xml:XmlXOrderResponse")
                     .inOut("direct:xyz");
                 
-                CustomTransformerDefinition bdef1 = new CustomTransformerDefinition();
-                bdef1.setType(OtherToXOrderTransformer.class.getName());
-                bdef1.setFrom("other:OtherXOrder");
-                bdef1.setTo(XOrder.class);
-                CustomTransformerDefinition bdef2 = new CustomTransformerDefinition();
-                bdef2.setType(XOrderResponseToOtherTransformer.class.getName());
-                bdef2.setFrom(XOrderResponse.class);
-                bdef2.setTo("other:OtherXOrderResponse");
-                context.getTransformers().add(bdef1);
-                context.getTransformers().add(bdef2);
+                transformer()
+                    .fromType("other:OtherXOrder")
+                    .toType(XOrder.class)
+                    .withJava(OtherToXOrderTransformer.class);
+                transformer()
+                    .fromType(XOrderResponse.class)
+                    .toType("other:OtherXOrderResponse")
+                    .withJava(XOrderResponseToOtherTransformer.class);
                 from("direct:custom")
                     .inputType("other:OtherXOrder")
                     .outputType("other:OtherXOrderResponse")

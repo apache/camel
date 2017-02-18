@@ -1,6 +1,6 @@
 ## MongoDB Component
 
-*Available as of Camel 2.10*
+*Available as of Camel version 2.10*
 
 According to Wikipedia: "NoSQL is a movement promoting a loosely defined
 class of non-relational data stores that break with a long history of
@@ -84,7 +84,7 @@ The MongoDB component supports 24 endpoint options which are listed below:
 | writeResultAsHeader | advanced | false | boolean | In write operations it determines whether instead of returning WriteResult as the body of the OUT message we transfer the IN message to the OUT and attach the WriteResult as a header.
 | persistentId | tail |  | String | One tail tracking collection can host many trackers for several tailable consumers. To keep them separate each tracker should have its own unique persistentId.
 | persistentTailTracking | tail | false | boolean | Enable persistent tail tracking which is a mechanism to keep track of the last consumed message across system restarts. The next time the system is up the endpoint will recover the cursor from the point where it last stopped slurping records.
-| persistRecords | tail | -1 | int | Sets the number of tailed records after which the tail tracking data is persisted to MongoDB.
+| persistRecords | tail | 1 | int | Sets the number of tailed records after which the tail tracking data is persisted to MongoDB.
 | tailTrackCollection | tail |  | String | Collection where tail tracking information will be persisted. If not specified link MongoDbTailTrackingConfigDEFAULT_COLLECTION will be used by default.
 | tailTrackDb | tail |  | String | Indicates what database the tail tracking mechanism will persist to. If not specified the current database will be picked by default. Dynamicity will not be taken into account even if enabled i.e. the tail tracking database will not vary past endpoint initialisation.
 | tailTrackField | tail |  | String | Field where the last tracked value will be placed. If not specified link MongoDbTailTrackingConfigDEFAULT_FIELD will be used by default.

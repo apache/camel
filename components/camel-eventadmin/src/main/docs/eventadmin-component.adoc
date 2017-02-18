@@ -1,6 +1,6 @@
 ## OSGi EventAdmin Component
 
-*Available in Camel 2.6*
+*Available as of Camel version 2.6*
 
 The `eventadmin` component can be used in an OSGi environment to receive
 OSGi EventAdmin events and process them.

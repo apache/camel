@@ -88,7 +88,7 @@ Install the Warehouse package, tested with _Spring 2013_ (version 1.2) that can 
 
 You'll need to access a Merchandise record and run a `Test Report` in order for them to appear in _Recent Items_ and _Recent Reports_. Do this by accessing _Warehouse_ application from the menu in the top right, and selecting _Merchandise_ click _Go!_ (preselected is View: _All_) and click on the single Merchandise item available. Next go to Reports and select and run _Test Report_ from _Test Reports_. This is needed by the integration tests as they access recent items and recently run reports.
 
-Create `Camel` connected application by selecting under _Apps_ in _Build_ and _Create_ sections by clicking _New_ in _Connected Apps_ section. Fill in the required fields and in the _API (Enable OAuth Settings)_ section thick _Enable OAuth Settings_ and move all scopes from _Available OAuth Scopes_ to _Selected OAuth Scopes_. For _Callback URL_ you can use any URL it's not needed by the REST API used by the Camel Salesforce component. Make note of _Consumer Key_ and _Consumer Secret_ you'll need to specify them in `test-salesforce-login.properties`, more on that below.
+Create `Camel` connected application by selecting under _Apps_ in _Build_ and _Create_ sections by clicking _New_ in _Connected Apps_ section. Fill in the required fields and in the _API (Enable OAuth Settings)_ section thick _Enable OAuth Settings_ and move all scopes from _Available OAuth Scopes_ to _Selected OAuth Scopes_. For _Callback URL_ you can use any URL it's not needed by the REST API used by the Camel Salesforce component. Make note of _Consumer Key_ and _Consumer Secret_, or if your partner provide just _Consumer Refresh Token_ you'll need to specify them in `test-salesforce-login.properties`,  more on that below.
 
 Next enable relaxed IP restrictions, by editing the policy of the _Camel_ connected application in _Connected Apps_ under _Administer_ and _Manage Apps_ pick _Relax IP restrictions_ for _IP Relaxation_.  
 
@@ -96,6 +96,7 @@ Create `test-salesforce-login.properties` in `camel-salesforce` directory (one u
 
     clientId=<Consumer Key of the `Camel` connected App>
     clientSecret=<Consumer Secret of the `Camel` connected app>
+    refreshToken=<Consumer Refresh Token of the `Camel` connected app>
     userName=<Username of the user with the `System Administrator With Hard Delete` profile>
     password=<Password of the above user>
     loginUrl=https://login.salesforce.com/

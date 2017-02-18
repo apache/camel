@@ -1,6 +1,6 @@
 ## Stomp Component
 
-*Available as of Camel 2.12*
+*Available as of Camel version 2.12*
 
 The *stomp:* component is used for communicating with
 http://stomp.github.io/[Stomp] compliant message brokers, like

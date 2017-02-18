@@ -32,6 +32,9 @@
   <description>An example using Spring XML to transform a message using XQuery</description>
 
   <properties>
+    <category>Beginner</category>
+    <title>Spring XQuery</title>
+
     <camel.osgi.import.additional>org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool
     </camel.osgi.import.additional>
     <camel.osgi.export.pkg/>

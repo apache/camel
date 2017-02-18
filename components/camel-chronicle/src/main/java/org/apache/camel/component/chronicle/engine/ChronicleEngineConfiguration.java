@@ -37,6 +37,8 @@ public class ChronicleEngineConfiguration {
     private String action;
     @UriParam(defaultValue = "true")
     private boolean persistent = true;
+    @UriParam
+    private String clusterName;
 
     // ****************************
     // CLIENT OPTIONS
@@ -158,5 +160,16 @@ public class ChronicleEngineConfiguration {
      */
     public void setPersistent(boolean persistent) {
         this.persistent = persistent;
+    }
+
+    public String getClusterName() {
+        return clusterName;
+    }
+
+    /**
+     * Cluster name for queue
+     */
+    public void setClusterName(String clusterName) {
+        this.clusterName = clusterName;
     }
 }

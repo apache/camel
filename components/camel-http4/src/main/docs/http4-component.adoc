@@ -1,6 +1,6 @@
 ## HTTP4 Component
 
-*Available as of Camel 2.3*
+*Available as of Camel version 2.3*
 
 The *http4:* component provides HTTP based link:endpoint.html[endpoints]
 for calling external HTTP resources (as a client to call external
@@ -66,7 +66,7 @@ The HTTP4 component supports 13 options which are listed below.
 | allowJavaSerializedObject | producer | false | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
 | httpContext | advanced |  | HttpContext | To use a custom org.apache.http.protocol.HttpContext when executing requests.
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances you need to define a new HttpComponent per instance you need.
-| x509HostnameVerifier | security |  | X509HostnameVerifier | To use a custom X509HostnameVerifier such as org.apache.http.conn.ssl.StrictHostnameVerifier or org.apache.http.conn.ssl.AllowAllHostnameVerifier.
+| x509HostnameVerifier | security |  | HostnameVerifier | To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or org.apache.http.conn.ssl.NoopHostnameVerifier.
 | maxTotalConnections | advanced | 200 | int | The maximum number of connections.
 | connectionsPerRoute | advanced | 20 | int | The maximum number of connections per route.
 | connectionTimeToLive | advanced |  | long | The time for connection to live the time unit is millisecond the default value is always keep alive.

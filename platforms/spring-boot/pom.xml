@@ -32,6 +32,7 @@
 
     <modules>
         <module>spring-boot-dm</module>
+        <module>components-starter</module>
     </modules>
 
 </project>

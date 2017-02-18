@@ -389,6 +389,9 @@ public class GenericFileProducer<T> extends DefaultProducer {
             answer = normalizePath(answer);
         }
 
+        // stack path in case the temporary file uses .. paths
+        answer = FileUtil.compactPath(answer, getFileSeparator());
+
         return answer;
     }
 

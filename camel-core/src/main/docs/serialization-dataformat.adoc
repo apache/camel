@@ -1,5 +1,7 @@
 ## Java Object Serialization DataFormat
 
+*Available as of Camel version 2.12*
+
 Serialization is a link:data-format.html[Data Format] which uses the
 standard Java Serialization mechanism to unmarshal a binary payload into
 Java objects or to marshal Java objects into a binary blob. +

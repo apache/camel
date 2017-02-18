@@ -1,6 +1,6 @@
 ## MQTT Component
 
-*Available as of Camel 2.10*
+*Available as of Camel version 2.10*
 
 The *mqtt:* component is used for communicating with
 http://mqtt.org[MQTT] compliant message brokers, like
@@ -67,7 +67,7 @@ The MQTT component supports 40 endpoint options which are listed below:
 | byDefaultRetain | common | false | boolean | The default retain policy to be used on messages sent to the MQTT broker
 | cleanSession | common | false | boolean | Set to false if you want the MQTT server to persist topic subscriptions and ack positions across client sessions. Defaults to true.
 | clientId | common |  | String | Use to set the client Id of the session. This is what an MQTT server uses to identify a session where setCleanSession(false); is being used. The id must be 23 characters or less. Defaults to auto generated id (based on your socket address port and timestamp).
-| connectAttemptsMax | common | -1 | long | The maximum number of reconnect attempts before an error is reported back to the client on the first attempt by the client to connect to a server. Set to -1 to use unlimited attempts. Defaults to -1.
+| connectAttemptsMax | common | 1 | long | The maximum number of reconnect attempts before an error is reported back to the client on the first attempt by the client to connect to a server. Set to -1 to use unlimited attempts. Defaults to -1.
 | connectWaitInSeconds | common | 10 | int | Delay in seconds the Component will wait for a connection to be established to the MQTT broker
 | disconnectWaitInSeconds | common | 5 | int | The number of seconds the Component will wait for a valid disconnect on stop() from the MQTT broker
 | dispatchQueue | common |  | DispatchQueue | A HawtDispatch dispatch queue is used to synchronize access to the connection. If an explicit queue is not configured via the setDispatchQueue method then a new queue will be created for the connection. Setting an explicit queue might be handy if you want multiple connection to share the same queue for synchronization.
@@ -82,7 +82,7 @@ The MQTT component supports 40 endpoint options which are listed below:
 | publishTopicName | common | camel/mqtt/test | String | The default Topic to publish messages on
 | qualityOfService | common | AtLeastOnce | String | Quality of service level to use for topics.
 | receiveBufferSize | common | 65536 | int | Sets the size of the internal socket receive buffer. Defaults to 65536 (64k)
-| reconnectAttemptsMax | common | -1 | long | The maximum number of reconnect attempts before an error is reported back to the client after a server connection had previously been established. Set to -1 to use unlimited attempts. Defaults to -1.
+| reconnectAttemptsMax | common | 1 | long | The maximum number of reconnect attempts before an error is reported back to the client after a server connection had previously been established. Set to -1 to use unlimited attempts. Defaults to -1.
 | reconnectBackOffMultiplier | common | 2.0 | double | The Exponential backoff be used between reconnect attempts. Set to 1 to disable exponential backoff. Defaults to 2.
 | reconnectDelay | common | 10 | long | How long to wait in ms before the first reconnect attempt. Defaults to 10.
 | reconnectDelayMax | common | 30000 | long | The maximum amount of time in ms to wait between reconnect attempts. Defaults to 30000.

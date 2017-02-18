@@ -21,6 +21,7 @@ import java.io.IOException;
 import org.apache.camel.component.telegram.TelegramService;
 import org.apache.camel.component.telegram.TelegramServiceProvider;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
+import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
 import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
@@ -173,6 +174,35 @@ public class TelegramServiceTest {
         msg.setCaption("A Video");
         msg.setWidth(90);
         msg.setHeight(50);
+
+        service.sendMessage(authorizationToken, msg);
+    }
+
+    @Test
+    public void testSendDocument() throws IOException {
+        TelegramService service = TelegramServiceProvider.get().getService();
+
+        byte[] document = TelegramTestUtil.createSampleDocument();
+
+        OutgoingDocumentMessage msg = new OutgoingDocumentMessage();
+        msg.setDocument(document);
+        msg.setChatId(chatId);
+        msg.setFilenameWithExtension("file.txt");
+
+        service.sendMessage(authorizationToken, msg);
+    }
+
+    @Test
+    public void testSendDocumentFull() throws IOException {
+        TelegramService service = TelegramServiceProvider.get().getService();
+
+        byte[] document = TelegramTestUtil.createSampleDocument();
+
+        OutgoingDocumentMessage msg = new OutgoingDocumentMessage();
+        msg.setDocument(document);
+        msg.setChatId(chatId);
+        msg.setFilenameWithExtension("file.png");
+        msg.setCaption("A document");
 
         service.sendMessage(authorizationToken, msg);
     }

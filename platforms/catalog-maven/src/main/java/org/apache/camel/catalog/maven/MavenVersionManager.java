@@ -37,6 +37,7 @@ public class MavenVersionManager implements VersionManager {
 
     private final ClassLoader classLoader = new GroovyClassLoader();
     private String version;
+    private String runtimeProviderVersion;
 
     /**
      * To add a 3rd party Maven repository.
@@ -77,7 +78,45 @@ public class MavenVersionManager implements VersionManager {
     }
 
     @Override
+    public String getRuntimeProviderLoadedVersion() {
+        return runtimeProviderVersion;
+    }
+
+    @Override
+    public boolean loadRuntimeProviderVersion(String groupId, String artifactId, String version) {
+        try {
+            Grape.setEnableAutoDownload(true);
+
+            Map<String, Object> param = new HashMap<>();
+            param.put("classLoader", classLoader);
+            param.put("group", groupId);
+            param.put("module", artifactId);
+            param.put("version", version);
+
+            Grape.grab(param);
+
+            this.runtimeProviderVersion = version;
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
     public InputStream getResourceAsStream(String name) {
+        InputStream is = null;
+
+        if (runtimeProviderVersion != null) {
+            is = doGetResourceAsStream(name, runtimeProviderVersion);
+        }
+        if (is == null && version != null) {
+            is = doGetResourceAsStream(name, version);
+        }
+
+        return is;
+    }
+
+    private InputStream doGetResourceAsStream(String name, String version) {
         if (version == null) {
             return null;
         }

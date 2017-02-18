@@ -1,5 +1,7 @@
 ## QuickFix Component
 [[ConfluenceContent]]
+*Available as of Camel version 2.1.0*
+
 ### QuickFIX/J Component
 
 The *quickfix* component adapts the

@@ -1,6 +1,6 @@
 ## Nagios Component
 
-*Available as of Camel 2.3*
+*Available as of Camel version 2.3*
 
 The link:nagios.html[Nagios] component allows you to send passive checks
 to http://nagios.org[Nagios].

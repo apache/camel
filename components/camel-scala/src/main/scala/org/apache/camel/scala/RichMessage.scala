@@ -20,6 +20,7 @@ import org.apache.camel.Attachment
 import org.apache.camel.Message
 import javax.activation.DataHandler
 import java.util
+import java.util.function.Supplier
 
 class RichMessage(val message: Message) extends Message {
 
@@ -61,7 +62,11 @@ class RichMessage(val message: Message) extends Message {
 
   def getHeader(name: String, defaultValue: Any) = message.getHeader(name, defaultValue)
 
+  def getHeader(name: String, defaultValueSupplier: Supplier[Object]) = message.getHeader(name, defaultValueSupplier)
+
   def getHeader[T](name: String, defaultValue: Any, headerType: Class[T]) = message.getHeader(name, defaultValue, headerType)
+
+  def getHeader[T](name: String, defaultValueSupplier: Supplier[Object], headerType: Class[T]) = message.getHeader(name, defaultValueSupplier, headerType)
 
   def getHeader[T](name: String, headerType: Class[T]) = message.getHeader(name, headerType)
 

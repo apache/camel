@@ -6,7 +6,8 @@ without using the Spring Framework.
 
 ### Build
 You will need to package this example first:
-  mvn package
+
+    mvn package
 
 ### Run
 To run the example deploy it in Apache Tomcat by copying the `.war` to the
@@ -21,11 +22,6 @@ instructions
 The servlet is located at
 	http://localhost:8080/camel-example-servlet-tomcat-no-spring/camel
 <http://localhost:8080/camel-example-servlet-tomcat-no-spring/camel>
-
-### Documentation
-
-This example is documented at
-  <http://camel.apache.org/servlet-tomcat-example-no-spring.html>
 
 ### Forum, Help, etc
 

@@ -31,7 +31,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "dataformat,transformation,xml", title = "Castor")
+@Metadata(firstVersion = "2.1.0", label = "dataformat,transformation,xml", title = "Castor")
 @XmlRootElement(name = "castor")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CastorDataFormat extends DataFormatDefinition {

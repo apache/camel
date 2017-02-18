@@ -35,7 +35,7 @@ import org.apache.solr.client.solrj.impl.HttpSolrClient;
 /**
  * The solr component allows you to interface with an Apache Lucene Solr server.
  */
-@UriEndpoint(scheme = "solr,solrs,solrCloud", title = "Solr", syntax = "solr:url", producerOnly = true, label = "monitoring,search")
+@UriEndpoint(firstVersion = "2.9.0", scheme = "solr,solrs,solrCloud", title = "Solr", syntax = "solr:url", producerOnly = true, label = "monitoring,search")
 public class SolrEndpoint extends DefaultEndpoint {
 
     private String scheme = "http://";

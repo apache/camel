@@ -39,7 +39,7 @@ import org.apache.camel.util.ResourceHelper;
 /**
  * Validates the payload of a message using RelaxNG Syntax using Jing library.
  */
-@UriEndpoint(scheme = "jing", title = "Jing", syntax = "jing:resourceUri", producerOnly = true, label = "validation")
+@UriEndpoint(firstVersion = "1.1.0", scheme = "jing", title = "Jing", syntax = "jing:resourceUri", producerOnly = true, label = "validation")
 public class JingEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")

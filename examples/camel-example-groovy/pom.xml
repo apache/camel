@@ -31,6 +31,10 @@
   <name>Camel :: Example :: Groovy</name>
   <description>A Camel route using Groovy</description>
 
+  <properties>
+    <category>Other Languages</category>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>

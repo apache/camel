@@ -39,7 +39,6 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import javax.print.attribute.URISyntax;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
@@ -54,7 +53,9 @@ import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyKind;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyNameFromNameWithPrefix;
 import static org.apache.camel.catalog.JSonSchemaHelper.getPropertyPrefix;
 import static org.apache.camel.catalog.JSonSchemaHelper.getRow;
+import static org.apache.camel.catalog.JSonSchemaHelper.isComponentConsumerOnly;
 import static org.apache.camel.catalog.JSonSchemaHelper.isComponentLenientProperties;
+import static org.apache.camel.catalog.JSonSchemaHelper.isComponentProducerOnly;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyBoolean;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyConsumerOnly;
 import static org.apache.camel.catalog.JSonSchemaHelper.isPropertyInteger;
@@ -221,6 +222,16 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     @Override
+    public String getRuntimeProviderLoadedVersion() {
+        return versionManager.getRuntimeProviderLoadedVersion();
+    }
+
+    @Override
+    public boolean loadRuntimeProviderVersion(String groupId, String artifactId, String version) {
+        return versionManager.loadRuntimeProviderVersion(groupId, artifactId, version);
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public List<String> findComponentNames() {
         List<String> names = null;
@@ -308,6 +319,24 @@ public class DefaultCamelCatalog implements CamelCatalog {
             }
             if (caching) {
                 cache.put("findModelNames", names);
+            }
+        }
+        return names;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<String> findOtherNames() {
+        List<String> names = null;
+        if (caching) {
+            names = (List<String>) cache.get("findOtherNames");
+        }
+
+        if (names == null) {
+            names = runtimeProvider.findOtherNames();
+
+            if (caching) {
+                cache.put("findOtherNames", names);
             }
         }
         return names;
@@ -416,6 +445,37 @@ public class DefaultCamelCatalog implements CamelCatalog {
             String json = languageJSonSchema(name);
             if (json != null) {
                 List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("language", json, false);
+                for (Map<String, String> row : rows) {
+                    if (row.containsKey("label")) {
+                        String label = row.get("label");
+                        String[] parts = label.split(",");
+                        for (String part : parts) {
+                            try {
+                                if (part.equalsIgnoreCase(filter) || CatalogHelper.matchWildcard(part, filter) || part.matches(filter)) {
+                                    answer.add(name);
+                                }
+                            } catch (PatternSyntaxException e) {
+                                // ignore as filter is maybe not a pattern
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
+    public List<String> findOtherNames(String filter) {
+        // should not cache when filter parameter can by any kind of value
+        List<String> answer = new ArrayList<String>();
+
+        List<String> names = findOtherNames();
+        for (String name : names) {
+            String json = otherJSonSchema(name);
+            if (json != null) {
+                List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("other", json, false);
                 for (Map<String, String> row : rows) {
                     if (row.containsKey("label")) {
                         String label = row.get("label");
@@ -580,6 +640,32 @@ public class DefaultCamelCatalog implements CamelCatalog {
             }
             if (caching) {
                 cache.put("language-" + file, answer);
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
+    public String otherJSonSchema(String name) {
+        String file = runtimeProvider.getOtherJSonSchemaDirectory() + "/" + name + ".json";
+
+        String answer = null;
+        if (caching) {
+            answer = (String) cache.get("other-" + file);
+        }
+
+        if (answer == null) {
+            InputStream is = versionManager.getResourceAsStream(file);
+            if (is != null) {
+                try {
+                    answer = CatalogHelper.loadText(is);
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            if (caching) {
+                cache.put("other-" + file, answer);
             }
         }
 
@@ -888,6 +974,58 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     @Override
+    public String otherAsciiDoc(String name) {
+        String file = DOC_DIR + "/" + name + ".adoc";
+
+        String answer = null;
+        if (caching) {
+            answer = (String) cache.get("other-" + file);
+        }
+
+        if (answer == null) {
+            InputStream is = versionManager.getResourceAsStream(file);
+            if (is != null) {
+                try {
+                    answer = CatalogHelper.loadText(is);
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            if (caching) {
+                cache.put("other-" + file, answer);
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
+    public String otherHtmlDoc(String name) {
+        String file = DOC_DIR + "/" + name + "-other.html";
+
+        String answer = null;
+        if (caching) {
+            answer = (String) cache.get("language-" + file);
+        }
+
+        if (answer == null) {
+            InputStream is = versionManager.getResourceAsStream(file);
+            if (is != null) {
+                try {
+                    answer = CatalogHelper.loadText(is);
+                } catch (IOException e) {
+                    // ignore
+                }
+            }
+            if (caching) {
+                cache.put("language-" + file, answer);
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public Set<String> findModelLabels() {
         SortedSet<String> answer = null;
@@ -1024,6 +1162,40 @@ public class DefaultCamelCatalog implements CamelCatalog {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    public Set<String> findOtherLabels() {
+        SortedSet<String> answer = null;
+        if (caching) {
+            answer = (TreeSet<String>) cache.get("findOtherLabels");
+        }
+
+        if (answer == null) {
+            answer = new TreeSet<String>();
+            List<String> names = findOtherNames();
+            for (String name : names) {
+                String json = otherJSonSchema(name);
+                if (json != null) {
+                    List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("other", json, false);
+                    for (Map<String, String> row : rows) {
+                        if (row.containsKey("label")) {
+                            String label = row.get("label");
+                            String[] parts = label.split(",");
+                            for (String part : parts) {
+                                answer.add(part);
+                            }
+                        }
+                    }
+                }
+            }
+            if (caching) {
+                cache.put("findOtherLabels", answer);
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
     public String archetypeCatalogAsXml() {
         String file = ARCHETYPES_CATALOG;
 
@@ -1143,8 +1315,15 @@ public class DefaultCamelCatalog implements CamelCatalog {
             }
 
             rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
-            if (consumerOnly) {
-                // lenient properties is not support in consumer only mode
+
+            // is the component capable of both consumer and producer?
+            boolean canConsumeAndProduce = false;
+            if (!isComponentConsumerOnly(rows) && !isComponentProducerOnly(rows)) {
+                canConsumeAndProduce = true;
+            }
+
+            if (canConsumeAndProduce && consumerOnly) {
+                // lenient properties is not support in consumer only mode if the component can do both of them
                 lenientProperties = false;
             } else {
                 // only enable lenient properties if we should not ignore
@@ -1464,7 +1643,7 @@ public class DefaultCamelCatalog implements CamelCatalog {
 
         // special for activemq/jms where the enum for destinationType causes a token issue as it includes a colon
         // for 'temp:queue' and 'temp:topic' values
-        if ("activemq".equals(scheme) || "jms".equals("scheme")) {
+        if ("activemq".equals(scheme) || "jms".equals(scheme)) {
             if (uriPath.startsWith("temp:")) {
                 prevPath = 5;
             }
@@ -2187,6 +2366,43 @@ public class DefaultCamelCatalog implements CamelCatalog {
             answer = sb.toString();
             if (caching) {
                 cache.put("listModelsAsJson", answer);
+            }
+        }
+
+        return answer;
+    }
+
+    @Override
+    public String listOthersAsJson() {
+        String answer = null;
+        if (caching) {
+            answer = (String) cache.get("listOthersAsJson");
+        }
+
+        if (answer == null) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("[");
+            List<String> names = findOtherNames();
+            for (int i = 0; i < names.size(); i++) {
+                String scheme = names.get(i);
+                String json = otherJSonSchema(scheme);
+                // skip first line
+                json = CatalogHelper.between(json, "\"other\": {", "  }");
+                json = json != null ? json.trim() : "";
+                json = json + "\n  },";
+                // skip last comma if not the last
+                if (i == names.size() - 1) {
+                    json = json.substring(0, json.length() - 1);
+                }
+                sb.append("\n");
+                sb.append("  {\n");
+                sb.append("    ");
+                sb.append(json);
+            }
+            sb.append("\n]");
+            answer = sb.toString();
+            if (caching) {
+                cache.put("listOthersAsJson", answer);
             }
         }
 

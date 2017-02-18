@@ -1,7 +1,7 @@
-Camel Example Spring Boot Reload
-================================
+Camel Example Reload
+====================
 
-This example runs a Camel Spring Boot application where the routes are defined in
+This example runs a Camel Standalone application where the routes are defined in
 Camel XML files located in `src/main/resources/camel/myroutes.xml`.
 
 At runtime you can modify this file in the source code and then Camel will automatic reload
@@ -20,7 +20,7 @@ You need to build the example first with
     
 Then you can run it from Maven
     
-    mvn spring-boot:run
+    mvn camel:run
         
 ### Reload changes
     
@@ -34,6 +34,14 @@ You modify the source file directory in the `src/main/resources/camel/` director
 
 ### Enabling live reload
 
-Live reload can be enabled in the `application.properties` file as shown below:
+Live reload is enabled in the `camel-maven-plugin` as shown below:
 
-    TODO:
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <!-- turn on reload when the XML file is updated in the source code -->
+          <fileWatcherDirectory>src/main/resources/META-INF/spring</fileWatcherDirectory>
+        </configuration>
+      </plugin>

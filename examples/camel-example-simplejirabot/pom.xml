@@ -32,6 +32,9 @@
   <description>An example showing how to work with RSS and IRC endpoints</description>
 
   <properties>
+    <category>Social</category>
+    <title>JIRA Bot</title>
+
     <camel.osgi.export.pkg>org.apache.camel.example.rss.*</camel.osgi.export.pkg>
   </properties>
 

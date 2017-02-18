@@ -65,8 +65,8 @@ public class CustomTransformerDefinition extends TransformerDefinition {
         }
         transformer.setCamelContext(context);
         return transformer.setModel(getScheme())
-                          .setFrom(getFrom())
-                          .setTo(getTo());
+                          .setFrom(getFromType())
+                          .setTo(getToType());
     }
 
     public String getRef() {

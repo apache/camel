@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * The slack component allows you to send messages to Slack.
  */
-@UriEndpoint(scheme = "slack", title = "Slack", syntax = "slack:channel", producerOnly = true, label = "social")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "slack", title = "Slack", syntax = "slack:channel", producerOnly = true, label = "social")
 public class SlackEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")

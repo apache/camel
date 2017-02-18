@@ -45,12 +45,10 @@ public class RibbonServiceCallRouteDslTest extends CamelTestSupport {
                     .serviceCall()
                     .name("myService")
                     .ribbonLoadBalancer()
-                        .end()
                     .staticServiceDiscovery()
                         .server("localhost:9090")
                         .server("localhost:9091")
-                        .end()
-                    .end()
+                    .endParent()
                     .to("mock:result");
                 from("jetty:http://localhost:9090")
                     .to("mock:9090")

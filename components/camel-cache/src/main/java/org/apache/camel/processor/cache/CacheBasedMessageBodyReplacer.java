@@ -20,20 +20,26 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Service;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.component.cache.CacheConstants;
 import org.apache.camel.component.cache.DefaultCacheManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CacheBasedMessageBodyReplacer extends CacheValidate implements Processor {
+public class CacheBasedMessageBodyReplacer extends CacheValidate implements Processor, Service {
     private static final Logger LOG = LoggerFactory.getLogger(CacheBasedMessageBodyReplacer.class);
-    CacheManager cacheManager;
-    Ehcache cache;
+    private CacheManager cacheManager;
     private String cacheName;
-    private String key;
+    private Expression key;
 
     public CacheBasedMessageBodyReplacer(String cacheName, String key) {
+        this(cacheName, ExpressionBuilder.constantExpression(key));
+    }
+
+    public CacheBasedMessageBodyReplacer(String cacheName, Expression key) {
         if (cacheName.contains("cache://")) {
             this.setCacheName(cacheName.replace("cache://", ""));
         } else {
@@ -43,16 +49,14 @@ public class CacheBasedMessageBodyReplacer extends CacheValidate implements Proc
     }
 
     public void process(Exchange exchange) throws Exception {
-        // Cache the buffer to the specified Cache against the specified key
-        cacheManager = new DefaultCacheManagerFactory().getInstance();
+        String cacheKey = key.evaluate(exchange, String.class);
 
-        if (isValid(cacheManager, cacheName, key)) {
-            cache = cacheManager.getCache(cacheName);
-            LOG.debug("Replacing Message Body from CacheName {} for key {}", cacheName, key);
-            exchange.getIn().setHeader(CacheConstants.CACHE_KEY, key);
-            exchange.getIn().setBody(cache.get(key).getObjectValue());
+        if (isValid(cacheManager, cacheName, cacheKey)) {
+            Ehcache cache = cacheManager.getCache(cacheName);
+            LOG.debug("Replacing Message Body from CacheName {} for key {}", cacheName, cacheKey);
+            exchange.getIn().setHeader(CacheConstants.CACHE_KEY, cacheKey);
+            exchange.getIn().setBody(cache.get(cacheKey).getObjectValue());
         }
-
     }
 
     public String getCacheName() {
@@ -63,12 +67,28 @@ public class CacheBasedMessageBodyReplacer extends CacheValidate implements Proc
         this.cacheName = cacheName;
     }
 
-    public String getKey() {
+    public Expression getKey() {
         return key;
     }
 
     public void setKey(String key) {
+        this.key = ExpressionBuilder.constantExpression(key);
+    }
+
+    public void setKey(Expression key) {
         this.key = key;
     }
 
+    @Override
+    public void start() throws Exception {
+        // Cache the buffer to the specified Cache against the specified key
+        if (cacheManager == null) {
+            cacheManager = new DefaultCacheManagerFactory().getInstance();
+        }
+    }
+
+    @Override
+    public void stop() throws Exception {
+        // noop
+    }
 }

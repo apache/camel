@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The aws-cw component is used for sending metrics to an Amazon CloudWatch.
  */
-@UriEndpoint(scheme = "aws-cw", title = "AWS CloudWatch", syntax = "aws-cw:namespace", producerOnly = true, label = "cloud,monitoring")
+@UriEndpoint(firstVersion = "2.11.0", scheme = "aws-cw", title = "AWS CloudWatch", syntax = "aws-cw:namespace", producerOnly = true, label = "cloud,monitoring")
 public class CwEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -95,14 +95,27 @@ public class CwEndpoint extends DefaultEndpoint {
 
     AmazonCloudWatch createCloudWatchClient() {
         AmazonCloudWatch client = null;
-        AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+        ClientConfiguration clientConfiguration = null;
+        boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-            ClientConfiguration clientConfiguration = new ClientConfiguration();
+            clientConfiguration = new ClientConfiguration();
             clientConfiguration.setProxyHost(configuration.getProxyHost());
             clientConfiguration.setProxyPort(configuration.getProxyPort());
-            client = new AmazonCloudWatchClient(credentials, clientConfiguration);
+            isClientConfigFound = true;
+        }
+        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+            AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+            if (isClientConfigFound) {
+                client = new AmazonCloudWatchClient(credentials, clientConfiguration);
+            } else {
+                client = new AmazonCloudWatchClient(credentials);
+            }
         } else {
-            client = new AmazonCloudWatchClient(credentials);
+            if (isClientConfigFound) {
+                client = new AmazonCloudWatchClient();
+            } else {
+                client = new AmazonCloudWatchClient(clientConfiguration);
+            }
         }
         return client;
     }

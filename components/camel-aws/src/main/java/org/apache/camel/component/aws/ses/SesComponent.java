@@ -41,8 +41,8 @@ public class SesComponent extends UriEndpointComponent {
         }
         configuration.setFrom(remaining);
 
-        if (configuration.getAmazonSESClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("AmazonSESClient or accessKey and secretKey must be specified");
+        if (configuration.getAmazonSESClient() == null) {
+            throw new IllegalArgumentException("AmazonSESClient must be specified");
         }
 
         return new SesEndpoint(uri, this, configuration);

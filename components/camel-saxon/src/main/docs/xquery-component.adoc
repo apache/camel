@@ -1,5 +1,7 @@
 ## XQuery Component
 
+*Available as of Camel version 1.0*
+
 Camel supports http://www.w3.org/TR/xquery/[XQuery] to allow an
 link:expression.html[Expression] or link:predicate.html[Predicate] to be
 used in the link:dsl.html[DSL] or link:xml-configuration.html[Xml
@@ -13,7 +15,7 @@ link:recipient-list.html[Recipient List].
 
 
 // component options: START
-The XQuery component supports 1 options which are listed below.
+The XQuery component supports 3 options which are listed below.
 
 
 
@@ -22,6 +24,8 @@ The XQuery component supports 1 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | moduleURIResolver | advanced |  | ModuleURIResolver | To use the custom ModuleURIResolver
+| configuration | advanced |  | Configuration | To use a custom Saxon configuration
+| configurationProperties | advanced |  | Map | To set custom Saxon configuration properties
 |=======================================================================
 {% endraw %}
 // component options: END
@@ -30,7 +34,7 @@ The XQuery component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The XQuery component supports 31 endpoint options which are listed below:
+The XQuery component supports 32 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -49,6 +53,7 @@ The XQuery component supports 31 endpoint options which are listed below:
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | configuration | advanced |  | Configuration | To use a custom Saxon configuration
+| configurationProperties | advanced |  | Map | To set custom Saxon configuration properties
 | moduleURIResolver | advanced |  | ModuleURIResolver | To use the custom ModuleURIResolver
 | parameters | advanced |  | Map | Additional parameters
 | properties | advanced |  | Properties | Properties to configure the serialization parameters

@@ -66,6 +66,22 @@ You can then click on each span and get annotated data from the Camel exchange a
 ![Zipkin Web Console Span Details](images/zipkin-web-console-2.png "Detail of the span")
 
 
+### Installing Zipkin Server 
+
+The quickest way to get Zipkin started is to fetch the [latest released server](https://search.maven.org/remote_content?g=io.zipkin.java&a=zipkin-server&v=LATEST&c=exec) as a self-contained executable jar.
+
+```bash
+wget -O zipkin.jar 'https://search.maven.org/remote_content?g=io.zipkin.java&a=zipkin-server&v=LATEST&c=exec'
+```
+
+.. and then run it
+
+```bash
+java -jar zipkin.jar
+```
+
+Finally, browse to http://localhost:9411 to find traces!
+
 ### Installing Zipkin Server using Docker
 
 If you want to try Zipkin locally then you quickly try that using Docker.

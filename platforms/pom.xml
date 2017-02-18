@@ -35,14 +35,17 @@
     <module>commands</module>
     <module>karaf</module>
     <module>spring-boot</module>
+    <!-- dummy used for testing catalog -->
+    <module>dummy-component</module>
     <!-- run catalog last -->
     <module>catalog</module>
-    <module>catalog-lucene</module>
-    <module>catalog-maven</module>
-    <module>catalog-rest</module>
-    <module>catalog-rest-app</module>
     <module>catalog-provider-karaf</module>
     <module>catalog-provider-springboot</module>
+    <module>catalog-lucene</module>
+    <module>catalog-maven</module>
+    <module>catalog-nexus</module>
+    <module>catalog-rest</module>
+    <module>catalog-rest-app</module>
   </modules>
 
 </project>

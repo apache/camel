@@ -30,6 +30,10 @@
   <name>Camel :: Example :: Splunk</name>
   <description>An example using Splunk</description>
 
+  <properties>
+    <category>Management and Monitoring</category>
+  </properties>
+
   <dependencies>
 
     <dependency>

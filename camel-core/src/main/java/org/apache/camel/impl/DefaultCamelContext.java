@@ -247,7 +247,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ScheduledExecutorService errorHandlerExecutorService;
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<String, DataFormatDefinition>();
     private DataFormatResolver dataFormatResolver = new DefaultDataFormatResolver();
-    private Map<String, String> properties = new HashMap<String, String>();
+    private Map<String, String> globalOptions = new HashMap<String, String>();
     private FactoryFinderResolver factoryFinderResolver = new DefaultFactoryFinderResolver();
     private FactoryFinder defaultFactoryFinder;
     private PropertiesComponent propertiesComponent;
@@ -626,6 +626,33 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     // no component then try in registry and elsewhere
                     answer = createEndpoint(uri);
                     log.trace("No component to create endpoint from uri: {} fallback lookup in registry -> {}", uri, answer);
+                }
+
+                if (answer == null && splitURI[1] == null) {
+                    // the uri has no context-path which is rare and it was not referring to an endpoint in the registry
+                    // so try to see if it can be created by a component
+
+                    int pos = uri.indexOf('?');
+                    String componentName = pos > 0 ? uri.substring(0, pos) : uri;
+
+                    Component component = getComponent(componentName);
+
+                    // Ask the component to resolve the endpoint.
+                    if (component != null) {
+                        log.trace("Creating endpoint from uri: {} using component: {}", uri, component);
+
+                        // Have the component create the endpoint if it can.
+                        if (component.useRawUri()) {
+                            answer = component.createEndpoint(rawUri);
+                        } else {
+                            answer = component.createEndpoint(uri);
+                        }
+
+                        if (answer != null && log.isDebugEnabled()) {
+                            log.debug("{} converted to endpoint: {} by component: {}", new Object[]{URISupport.sanitizeUri(uri), answer, component});
+                        }
+                    }
+
                 }
 
                 if (answer != null) {
@@ -1387,51 +1414,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public String getComponentDocumentation(String componentName) throws IOException {
-        // use the component factory finder to find the package name of the component class, which is the location
-        // where the documentation exists as well
-        FactoryFinder finder = getFactoryFinder(DefaultComponentResolver.RESOURCE_PATH);
-        try {
-            Class<?> clazz = null;
-            try {
-                clazz = finder.findClass(componentName);
-            } catch (NoFactoryAvailableException e) {
-                // ignore, i.e. if a component is an auto-configured spring-boot
-                // components
-            }
-
-            if (clazz == null) {
-                // fallback and find existing component
-                Component existing = hasComponent(componentName);
-                if (existing != null) {
-                    clazz = existing.getClass();
-                } else {
-                    return null;
-                }
-            }
-
-            String packageName = clazz.getPackage().getName();
-            packageName = packageName.replace('.', '/');
-            String path = packageName + "/" + componentName + ".html";
-
-            ClassResolver resolver = getClassResolver();
-            InputStream inputStream = resolver.loadResourceAsStream(path);
-            log.debug("Loading component documentation for: {} using class resolver: {} -> {}", new Object[]{componentName, resolver, inputStream});
-            if (inputStream != null) {
-                try {
-                    return IOHelper.loadText(inputStream);
-                } finally {
-                    IOHelper.close(inputStream);
-                }
-            }
-            // special for ActiveMQ as it is really just JMS
-            if ("ActiveMQComponent".equals(clazz.getSimpleName())) {
-                return getComponentDocumentation("jms");
-            } else {
-                return null;
-            }
-        } catch (ClassNotFoundException e) {
-            return null;
-        }
+        return null;
     }
 
     public String getComponentParameterJsonSchema(String componentName) throws IOException {
@@ -3029,8 +3012,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private void doStartCamel() throws Exception {
 
         // custom properties may use property placeholders so resolve those early on
-        if (properties != null && !properties.isEmpty()) {
-            for (Map.Entry<String, String> entry : properties.entrySet()) {
+        if (globalOptions != null && !globalOptions.isEmpty()) {
+            for (Map.Entry<String, String> entry : globalOptions.entrySet()) {
                 String key = entry.getKey();
                 String value = entry.getValue();
                 if (value != null) {
@@ -3926,12 +3909,24 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return dataFormats;
     }
 
+    @Deprecated
     public Map<String, String> getProperties() {
-        return properties;
+        return getGlobalOptions();
     }
 
+    @Override
+    public Map<String, String> getGlobalOptions() {
+        return globalOptions;
+    }
+
+    @Deprecated
     public void setProperties(Map<String, String> properties) {
-        this.properties = properties;
+        this.setGlobalOptions(properties);
+    }
+
+    @Override
+    public void setGlobalOptions(Map<String, String> globalOptions) {
+        this.globalOptions = globalOptions;
     }
 
     public FactoryFinder getDefaultFactoryFinder() {
@@ -4144,6 +4139,17 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return answer;
     }
 
+    public DataFormat createDataFormat(String name) {
+        DataFormat answer = dataFormatResolver.createDataFormat(name, this);
+
+        // inject CamelContext if aware
+        if (answer != null && answer instanceof CamelContextAware) {
+            ((CamelContextAware) answer).setCamelContext(this);
+        }
+
+        return answer;
+    }
+
     public DataFormatDefinition resolveDataFormatDefinition(String name) {
         // lookup type and create the data format from it
         DataFormatDefinition type = lookup(this, name, DataFormatDefinition.class);
@@ -4268,14 +4274,20 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         this.restRegistry = restRegistry;
     }
 
+    @Deprecated
     @Override
-    public String getProperty(String name) {
-        String value = getProperties().get(name);
+    public String getProperty(String key) {
+        return getGlobalOption(key);
+    }
+
+    @Override
+    public String getGlobalOption(String key) {
+        String value = getGlobalOptions().get(key);
         if (ObjectHelper.isNotEmpty(value)) {
             try {
                 value = resolvePropertyPlaceholders(value);
             } catch (Exception e) {
-                throw new RuntimeCamelException("Error getting property: " + name, e);
+                throw new RuntimeCamelException("Error getting global option: " + key, e);
             }
         }
         return value;

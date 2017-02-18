@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xslt;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.xml.transform.URIResolver;
 
@@ -24,6 +26,8 @@ import org.apache.camel.builder.xml.XsltUriResolver;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +46,12 @@ public class XsltComponent extends UriEndpointComponent {
     @Metadata(label = "advanced", description = "To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'.")
     private XsltUriResolverFactory uriResolverFactory;
     @Metadata(defaultValue = "true")
+    @UriParam(label = "advanced")
+    private Object saxonConfiguration;
+    @Metadata(label = "advanced")
+    private Map<String, Object> saxonConfigurationProperties = new HashMap<>();
+    @UriParam(label = "advanced", javaType = "java.lang.String")
+    private List<Object> saxonExtensionFunctions;
     private boolean contentCache = true;
     private boolean saxon;
 
@@ -112,11 +122,63 @@ public class XsltComponent extends UriEndpointComponent {
         this.saxon = saxon;
     }
 
+    public List<Object> getSaxonExtensionFunctions() {
+        return saxonExtensionFunctions;
+    }
+
+    /**
+     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition.
+     * You would need to add camel-saxon to the classpath.
+     * The function is looked up in the registry, where you can comma to separate multiple values to lookup.
+     */
+    public void setSaxonExtensionFunctions(List<Object> extensionFunctions) {
+        this.saxonExtensionFunctions = extensionFunctions;
+    }
+
+    /**
+     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition.
+     * You would need to add camel-saxon to the classpath.
+     * The function is looked up in the registry, where you can comma to separate multiple values to lookup.
+     */
+    public void setSaxonExtensionFunctions(String extensionFunctions) {
+        this.saxonExtensionFunctions = EndpointHelper.resolveReferenceListParameter(
+            getCamelContext(),
+            extensionFunctions,
+            Object.class
+        );
+    }
+
+    public Object getSaxonConfiguration() {
+        return saxonConfiguration;
+    }
+
+    /**
+     * To use a custom Saxon configuration
+     */
+    public void setSaxonConfiguration(Object saxonConfiguration) {
+        this.saxonConfiguration = saxonConfiguration;
+    }
+
+    public Map<String, Object> getSaxonConfigurationProperties() {
+        return saxonConfigurationProperties;
+    }
+
+    /**
+     * To set custom Saxon configuration properties
+     */
+    public void setSaxonConfigurationProperties(Map<String, Object> configurationProperties) {
+        this.saxonConfigurationProperties = configurationProperties;
+    }
+
+    @Override
     protected Endpoint createEndpoint(String uri, final String remaining, Map<String, Object> parameters) throws Exception {
         XsltEndpoint endpoint = new XsltEndpoint(uri, this);
         endpoint.setConverter(getXmlConverter());
         endpoint.setContentCache(isContentCache());
         endpoint.setSaxon(isSaxon());
+        endpoint.setSaxonConfiguration(saxonConfiguration);
+        endpoint.setSaxonConfigurationProperties(saxonConfigurationProperties);
+        endpoint.setSaxonExtensionFunctions(saxonExtensionFunctions);
 
         String resourceUri = remaining;
 

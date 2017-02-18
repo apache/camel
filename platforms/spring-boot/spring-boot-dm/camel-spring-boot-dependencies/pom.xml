@@ -162,7 +162,7 @@
       <dependency>
         <groupId>net.sf.saxon</groupId>
         <artifactId>Saxon-HE</artifactId>
-        <version>9.7.0-10</version>
+        <version>9.7.0-14</version>
       </dependency>
       <dependency>
         <groupId>ognl</groupId>
@@ -308,6 +308,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-aws-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-azure</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -472,6 +477,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-catalog-nexus</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-catalog-provider-karaf</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -568,6 +578,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-commands-spring-boot</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-connector</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -780,6 +795,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-elasticsearch-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-elasticsearch5</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1824,6 +1844,16 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-opentracing</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-opentracing-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-optaplanner</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1920,6 +1950,16 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-rabbitmq-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-reactive-streams</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-reactive-streams-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2469,6 +2509,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-tika</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-twitter</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -2795,7 +2840,7 @@
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpcore-nio</artifactId>
-        <version>4.4.4</version>
+        <version>4.4.6</version>
       </dependency>
       <dependency>
         <groupId>org.apache.kafka</groupId>

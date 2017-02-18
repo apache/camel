@@ -1,5 +1,7 @@
 ## Atom Component
 
+*Available as of Camel version 1.2*
+
 The *atom:* component is used for polling Atom feeds.
 
 Camel will poll the feed every 60 seconds by default. +

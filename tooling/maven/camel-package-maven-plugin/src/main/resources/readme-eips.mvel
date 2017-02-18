@@ -1,5 +1,7 @@
 @if{!eips.isEmpty()}
 
+Number of EIPs: @{eips.size}
+
 [width="100%",cols="4,6",options="header"]
 |=======================================================================
 | EIP | Description

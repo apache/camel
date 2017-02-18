@@ -29,7 +29,6 @@ import org.apache.camel.TypeConverters;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.DataFormatDefinition;
-import org.apache.camel.model.transformer.DataFormatTransformerDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
 import org.junit.Test;
@@ -87,13 +86,12 @@ public class TransformerContractTest extends ContextTestSupport {
 
     @Test
     public void testScheme() throws Exception {
-        DataFormatTransformerDefinition transformerDef = new DataFormatTransformerDefinition();
-        transformerDef.setScheme("xml");
-        transformerDef.setDataFormatType(new MyDataFormatDefinition());
-        context.getTransformers().add(transformerDef);
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                transformer()
+                    .scheme("xml")
+                    .withDataFormat(new MyDataFormatDefinition());
                 from("direct:a")
                     .inputType("xml")
                     .outputType("xml")
