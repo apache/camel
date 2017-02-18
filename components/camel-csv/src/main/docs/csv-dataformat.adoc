@@ -11,7 +11,7 @@ exported/imported by Excel.
 ### Options
 
 // dataformat options: START
-The CSV dataformat supports 24 options which are listed below.
+The CSV dataformat supports 27 options which are listed below.
 
 
 
@@ -39,6 +39,9 @@ The CSV dataformat supports 24 options which are listed below.
 | recordSeparator |  | String | Sets the record separator (aka new line) which by default is \r\n (CRLF)
 | skipHeaderRecord | false | Boolean | Whether to skip the header record in the output
 | quoteMode |  | String | Sets the quote mode
+| ignoreHeaderCase | false | Boolean | Sets whether or not to ignore case when accessing header names.
+| trim | false | Boolean | Sets whether or not to trim leading and trailing blanks.
+| trailingDelimiter | false | Boolean | Sets whether or not to add a trailing delimiter.
 | lazyLoad | false | Boolean | Whether the unmarshalling should produce an iterator that reads the lines on the fly or if all the lines must be read at one.
 | useMaps | false | Boolean | Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected).
 | recordConverterRef |  | String | Refers to a custom CsvRecordConverter to lookup from the registry to use.
