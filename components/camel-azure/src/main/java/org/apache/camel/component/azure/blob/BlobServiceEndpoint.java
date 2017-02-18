@@ -31,7 +31,8 @@ import org.slf4j.LoggerFactory;
 /**
  * The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.
  */
-@UriEndpoint(scheme = "azure-blob", 
+@UriEndpoint(firstVersion = "2.19.0",
+             scheme = "azure-blob",
              title = "Azure Storage Blob Service", 
              syntax = "azure-blob:containerOrBlobUri", 
              consumerClass = BlobServiceConsumer.class,
