@@ -17,7 +17,6 @@
 package org.apache.camel.model.dataformat;
 
 import java.util.List;
-import java.util.stream.Stream;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -171,17 +170,16 @@ public class CsvDataFormat extends DataFormatDefinition {
         if (quoteMode != null) {
             setProperty(camelContext, dataFormat, "quoteMode", quoteMode);
         }
-        Stream.of("trim", "ignoreHeaderCase", "trailingDelimiter")
-            .forEach(item -> {
-                try {
-                    setProperty(camelContext, dataFormat, item,
-                    CsvDataFormat.class.getDeclaredField(item).get(this));
-                } catch (Exception e) {
-                    // Not expected to happen
-                    throw new AssertionError(e);
-                }
-            });
-        
+        if (trim != null) {
+            setProperty(camelContext, dataFormat, "trim", trim);
+        }
+        if (ignoreHeaderCase != null) {
+            setProperty(camelContext, dataFormat, "ignoreHeaderCase", ignoreHeaderCase);
+        }
+        if (trailingDelimiter != null) {
+            setProperty(camelContext, dataFormat, "trailingDelimiter", trailingDelimiter);
+        }
+
         // Unmarshall options
         if (lazyLoad != null) {
             setProperty(camelContext, dataFormat, "lazyLoad", lazyLoad);
@@ -459,12 +457,6 @@ public class CsvDataFormat extends DataFormatDefinition {
 
     /**
      * Sets whether or not to trim leading and trailing blanks.
-     * <p>
-     * If {@code null} then the default value of the format used.
-     * </p>
-     * 
-     * @param trim whether or not to trim leading and trailing blanks.
-     *            <code>null</code> value allowed.
      */
     public void setTrim(Boolean trim) {
         this.trim = trim;
@@ -476,12 +468,6 @@ public class CsvDataFormat extends DataFormatDefinition {
     
     /**
      * Sets whether or not to ignore case when accessing header names.
-     * <p>
-     * If {@code null} then the default value of the format used.
-     * </p>
-     * 
-     * @param ignoreHeaderCase whether or not to ignore case when accessing header names.
-     *            <code>null</code> value allowed.
      */
     public void setIgnoreHeaderCase(Boolean ignoreHeaderCase) {
         this.ignoreHeaderCase = ignoreHeaderCase;
@@ -493,11 +479,6 @@ public class CsvDataFormat extends DataFormatDefinition {
     
     /**
      * Sets whether or not to add a trailing delimiter.
-     * <p>
-     * If {@code null} then the default value of the format used.
-     * </p>
-     * 
-     * @param trailingDelimiter whether or not to add a trailing delimiter.
      */
     public void setTrailingDelimiter(Boolean trailingDelimiter) {
         this.trailingDelimiter = trailingDelimiter;

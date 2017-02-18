@@ -109,6 +109,18 @@ public class CsvDataFormatConfiguration {
      */
     private String quoteMode;
     /**
+     * Sets whether or not to ignore case when accessing header names.
+     */
+    private Boolean ignoreHeaderCase = false;
+    /**
+     * Sets whether or not to trim leading and trailing blanks.
+     */
+    private Boolean trim = false;
+    /**
+     * Sets whether or not to add a trailing delimiter.
+     */
+    private Boolean trailingDelimiter = false;
+    /**
      * Whether the unmarshalling should produce an iterator that reads the lines
      * on the fly or if all the lines must be read at one.
      */
@@ -282,6 +294,30 @@ public class CsvDataFormatConfiguration {
 
     public void setQuoteMode(String quoteMode) {
         this.quoteMode = quoteMode;
+    }
+
+    public Boolean getIgnoreHeaderCase() {
+        return ignoreHeaderCase;
+    }
+
+    public void setIgnoreHeaderCase(Boolean ignoreHeaderCase) {
+        this.ignoreHeaderCase = ignoreHeaderCase;
+    }
+
+    public Boolean getTrim() {
+        return trim;
+    }
+
+    public void setTrim(Boolean trim) {
+        this.trim = trim;
+    }
+
+    public Boolean getTrailingDelimiter() {
+        return trailingDelimiter;
+    }
+
+    public void setTrailingDelimiter(Boolean trailingDelimiter) {
+        this.trailingDelimiter = trailingDelimiter;
     }
 
     public Boolean getLazyLoad() {
