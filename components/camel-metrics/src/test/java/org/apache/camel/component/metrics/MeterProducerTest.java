@@ -104,25 +104,15 @@ public class MeterProducerTest {
 
     @Test
     public void testProcessMarkNotSet() throws Exception {
+        Object action = null;
         when(endpoint.getMark()).thenReturn(null);
         when(in.getHeader(HEADER_METER_MARK, null, Long.class)).thenReturn(null);
         producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(registry, times(1)).meter(METRICS_NAME);
         inOrder.verify(endpoint, times(1)).getMark();
-        inOrder.verify(in, times(1)).getHeader(HEADER_METER_MARK, null, Long.class);
+        inOrder.verify(in, times(1)).getHeader(HEADER_METER_MARK, action, Long.class);
         inOrder.verify(meter, times(1)).mark();
         inOrder.verifyNoMoreInteractions();
     }
 
-    @Test
-    public void testProcessMarkNotSetOverrideByHeaderValue() throws Exception {
-        when(endpoint.getMark()).thenReturn(null);
-        when(in.getHeader(HEADER_METER_MARK, null, Long.class)).thenReturn(MARK);
-        producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
-        inOrder.verify(registry, times(1)).meter(METRICS_NAME);
-        inOrder.verify(endpoint, times(1)).getMark();
-        inOrder.verify(in, times(1)).getHeader(HEADER_METER_MARK, null, Long.class);
-        inOrder.verify(meter, times(1)).mark(MARK);
-        inOrder.verifyNoMoreInteractions();
-    }
 }
