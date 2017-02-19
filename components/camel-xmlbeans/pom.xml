@@ -28,7 +28,7 @@
 
   <artifactId>camel-xmlbeans</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: XMLBeans</name>
+  <name>Camel :: XMLBeans (deprecated)</name>
   <description>Camel XMLBeans support</description>
 
   <properties>
