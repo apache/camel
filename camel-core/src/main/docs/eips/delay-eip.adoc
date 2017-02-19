@@ -1,4 +1,4 @@
-## Delayer
+## Delay EIP
 The Delayer Pattern allows you to delay the delivery of messages to some destination.
 
 [NOTE]
@@ -19,15 +19,15 @@ See this ticket: link:https://issues.apache.org/jira/browse/CAMEL-2654[https://i
 ## Options
 
 // eip options: START
-The Delayer EIP supports 3 options which are listed below:
+The Delay EIP supports 3 options which are listed below:
 
 {% raw %}
-[width="100%",cols="3,1,6",options="header"]
+[width="100%",cols="3,1m,6",options="header"]
 |=======================================================================
-| Name | Default value | Description
-| `asyncDelayed` | false | *Camel 2.4*: If enabled then delayed messages happens asynchronously using a scheduled thread pool.
-| `executorServiceRef` |  | *Camel 2.4*: Refers to a custom Thread Pool to be used if asyncDelay has been enabled.
-| `callerRunsWhenRejected` | true | *Camel 2.4*: Is used if asyncDelayed was enabled. This controls if the caller thread should execute the task if the thread pool rejected the task.
+| Name | Java Type | Description
+| executorServiceRef | String | Refers to a custom Thread Pool if asyncDelay has been enabled.
+| asyncDelayed | Boolean | Enables asynchronous delay which means the thread will noy block while delaying.
+| callerRunsWhenRejected | Boolean | Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true
 |=======================================================================
 {% endraw %}
 // eip options: END

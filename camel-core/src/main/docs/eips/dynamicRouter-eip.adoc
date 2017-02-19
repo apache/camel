@@ -1,4 +1,4 @@
-## Dynamic Router
+## Dynamic Router EIP
 The link:http://www.enterpriseintegrationpatterns.com/DynamicRouter.html[Dynamic Router] from the link:../../../../readme-eip.adoc[EIP patterns] allows you to route messages while avoiding the dependency of the router on all possible destinations while maintaining its efficiency.
 
 image:http://www.enterpriseintegrationpatterns.com/img/DynamicRouter.gif[image]
@@ -17,12 +17,12 @@ You must ensure the expression used for the `dynamicRouter` such as a bean, will
 The Dynamic Router EIP supports 3 options which are listed below:
 
 {% raw %}
-[width="100%",cols="3,1,6",options="header"]
+[width="100%",cols="3,1m,6",options="header"]
 |=======================================================================
-| Name | Default value | Description
-| `uriDelimiter` | , | Delimiter used if the link:../../../../../docs/user-manual/en/expression.adoc[Expression] returned multiple endpoints.
-| `ignoreInvalidEndpoints` | false | If an endpoint uri could not be resolved, should it be ignored. Otherwise Camel will thrown an exception stating the endpoint uri is not valid.
-| `cacheSize` | 1000 | *Camel 2.13.1/2.12.4*: Allows to configure the cache size for the `ProducerCache` which caches producers for reuse in the routing slip. Will by default use the default cache size which is 1000. Setting the value to -1 allows to turn off the cache all together.
+| Name | Java Type | Description
+| uriDelimiter | String | Sets the uri delimiter to use
+| ignoreInvalidEndpoints | Boolean | Ignore the invalidate endpoint exception when try to create a producer with that endpoint
+| cacheSize | Integer | Sets the maximum size used by the org.apache.camel.impl.ProducerCache which is used to cache and reuse producers when using this recipient list when uris are reused.
 |=======================================================================
 {% endraw %}
 // eip options: END

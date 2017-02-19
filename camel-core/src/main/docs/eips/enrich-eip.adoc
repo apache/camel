@@ -1,4 +1,4 @@
-### Content Enricher
+## Enrich EIP
 Camel supports the Content Enricher from the EIP patterns using a Message Translator, an arbitrary Processor in the routing logic, or using the enrich DSL element to enrich the message.
 
 image:http://www.enterpriseintegrationpatterns.com/img/DataEnricher.gif[image]
@@ -248,22 +248,19 @@ The `pollEnrich` works just as the `enrich` however as it uses a Polling Consume
 ### PollEnrich Options
 
 // eip options: START
-The Content Enricher EIP supports 10 options which are listed below:
+The Enrich EIP supports 7 options which are listed below:
 
 {% raw %}
-[width="100%",cols="3,2,6",options="header"]
+[width="100%",cols="3,1m,6",options="header"]
 |=======================================================================
-| Option | Default Value | Description
-| `uri` |  | The endpoint uri for the external service to enrich from. You must use either `uri` or `ref`. *Important:* From Camel 2.16 onwards, this option is removed, and you use an Expression to configure the uri, such as Simple or Constant or any other dynamic language that can compute the uri dynamically using values from the current  Exchange.
-| `ref` |  | Refers to the endpoint for the external service to enrich from. You must use either `uri` or `ref`. *Important:* From Camel 2.16 onwards, this option is removed, and you use an Expression to configure the uri, such as Simple or Constant or any other dynamic language that can compute the uri dynamically using values from the current  Exchange.
-| `expression` |  | *Camel 2.16*: Mandatory. The Expression to configure the uri, such as Simple or Constant or any other dynamic language that can compute the uri dynamically using values from the current  Exchange.
-| `strategyRef` |  | Refers to an AggregationStrategy to be used to merge the reply from the external service, into a single outgoing message. By default Camel will use the reply from the external service as outgoing message. From Camel 2.12 onwards you can also use a POJO as the `AggregationStrategy`, see the Aggregate page for more details.
-| `strategyMethodName` |  | *Camel 2.12*: This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy. See the Aggregate page for more details.
-| `strategyMethodAllowNull` | `false` | *Camel 2.12*: If this option is `false` then the aggregate method is *not* used if there was no data to enrich. If this option is true then null values is used as the oldExchange (when no data to enrich), when using POJOs as the `AggregationStrategy`. See the Aggregate page for more details.
-| `timeout` | -1 | Timeout in millis when polling from the external service. See below for important details about the timeout.
-| `aggregateOnException` | `false` | *Camel 2.14*: If this option is `false` then the aggregate method is *not* used if there was an exception thrown while trying to retrieve the data to enrich from the resource. Setting this option to `true` allows end users to control what to do if there was an exception in the `aggregate` method. For example to suppress the exception or set a custom message body etc.
-| `cacheSize` |  | *Camel 2.16*: Allows to configure the cache size for the ConsumerCache which caches consumers for reuse in the `pollEnrich`. Will by default use the default cache size which is 1000. Setting the value to -1 allows to turn off the cache all together.
-| `ignoreInvalidEndpoint` | `false` | *Camel 2.16*: Whether to ignore an endpoint URI that could not be resolved. If disabled, Camel will throw an exception identifying the invalid endpoint URI.
+| Name | Java Type | Description
+| strategyRef | String | Refers to an AggregationStrategy to be used to merge the reply from the external service into a single outgoing message. By default Camel will use the reply from the external service as outgoing message.
+| strategyMethodName | String | This option can be used to explicit declare the method name to use when using POJOs as the AggregationStrategy.
+| strategyMethodAllowNull | Boolean | If this option is false then the aggregate method is not used if there was no data to enrich. If this option is true then null values is used as the oldExchange (when no data to enrich) when using POJOs as the AggregationStrategy.
+| aggregateOnException | Boolean | If this option is false then the aggregate method is not used if there was an exception thrown while trying to retrieve the data to enrich from the resource. Setting this option to true allows end users to control what to do if there was an exception in the aggregate method. For example to suppress the exception or set a custom message body etc.
+| shareUnitOfWork | Boolean | Shares the org.apache.camel.spi.UnitOfWork with the parent and the resource exchange. Enrich will by default not share unit of work between the parent exchange and the resource exchange. This means the resource exchange has its own individual unit of work.
+| cacheSize | Integer | Sets the maximum size used by the org.apache.camel.impl.ProducerCache which is used to cache and reuse producer when uris are reused.
+| ignoreInvalidEndpoint | Boolean | Ignore the invalidate endpoint exception when try to create a producer with that endpoint
 |=======================================================================
 {% endraw %}
 // eip options: END

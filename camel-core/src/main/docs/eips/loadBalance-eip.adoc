@@ -1,4 +1,4 @@
-## Load Balancer
+## Load Balance EIP
 The Load Balancer Pattern allows you to delegate to one of a number of endpoints using a variety of different load balancing policies.
 
 ## Built-in load balancing policies
@@ -66,16 +66,18 @@ You can constrain the failover to activate only when one exception of a list you
 If you use streaming then you should enable Stream caching when using the failover load balancer. This is needed so the stream can be re-read after failing over to the next processor.
 ====
 
-Failover offers the following options:
+// eip options: START
+The Load Balance EIP supports 2 options which are listed below:
 
-[width="100%",cols="3,1,2,6",options="header"]
+{% raw %}
+[width="100%",cols="3,1m,6",options="header"]
 |=======================================================================
-| Option | Type | Default | Description
-| inheritErrorHandler | boolean | true | *Camel 2.3*: Whether or not the Error Handler configured on the route should be used. Disable this if you want failover to transfer immediately to the next endpoint. On the other hand, if you have this option enabled, then Camel will first let the Error Handler try to process the message. The Error Handler may have been configured to redeliver and use delays between attempts. If you have enabled a number of redeliveries then Camel will try to redeliver to the *same* endpoint, and only fail over to the next endpoint, when the Error Handler is exhausted.
-| maximumFailoverAttempts | int | -1 | *Camel 2.3*: A value to indicate after X failover attempts we should exhaust (give up). Use -1 to indicate never give up and continuously try to failover. Use 0 to never failover. And use e.g. 3 to failover at most 3 times before giving up. This option can be used whether or not roundRobin is enabled or not.
-| roundRobin | boolean | false | *Camel 2.3*: Whether or not the failover load balancer should operate in round robin mode or not. If not, then it will *always* start from the first endpoint when a new message is to be processed. In other words it restart from the top for every message. If round robin is enabled, then it keeps state and will continue with the next endpoint in a round robin fashion. When using round robin it will not stick to last known good endpoint, it will always pick the next endpoint to use. You can also enable sticky mode together with round robin, if so then it will pick the last known good endpoint to use when starting the load balancing (instead of using the next when starting).
-| sticky | boolean | fals | *Camel 2.16*: Whether or not the failover load balancer should operate in sticky mode or not. If not, then it will always start from the first endpoint when a new message is to be processed. In other words it restart from the top for every message. If sticky is enabled, then it keeps state and will continue with the last known good endpoint. You can also enable sticky mode together with round robin, if so then it will pick the last known good endpoint to use when starting the load balancing (instead of using the next when starting).
+| Name | Java Type | Description
+| loadBalancerType | LoadBalancerDefinition | *Required* The load balancer to be used
+| inheritErrorHandler | Boolean | Sets whether or not to inherit the configured error handler. The default value is true. You can use this to disable using the inherited error handler for a given DSL such as a load balancer where you want to use a custom error handler strategy.
 |=======================================================================
+{% endraw %}
+// eip options: END
 
 *Camel 2.2 or older behavior*
 The current implementation of failover load balancer uses simple logic which *always* tries the first endpoint, and in case of an exception being thrown it tries the next in the list, and so forth. It has no state, and the next message will thus *always* start with the first endpoint.
@@ -262,5 +264,3 @@ And the same example using Spring XML:
   </loadBalance>
 </route>
 --------------------------------------------------------
-
-
