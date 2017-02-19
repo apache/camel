@@ -16,15 +16,20 @@
  */
 package org.apache.camel.component.servlet.rest;
 
-import com.meterware.httpunit.*;
+import java.io.ByteArrayInputStream;
+
+import com.meterware.httpunit.GetMethodWebRequest;
+import com.meterware.httpunit.HeaderOnlyWebRequest;
+import com.meterware.httpunit.PostMethodWebRequest;
+import com.meterware.httpunit.PutMethodWebRequest;
+import com.meterware.httpunit.WebRequest;
+import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.servlet.ServletCamelRouterTestSupport;
 import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
 
 public class RestServletVerbTest extends ServletCamelRouterTestSupport {
 
