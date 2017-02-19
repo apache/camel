@@ -34,14 +34,16 @@ import com.orbitz.consul.model.session.ImmutableSession;
 import com.orbitz.consul.option.QueryOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedService, CamelContextAware {
+@ManagedResource(description = "Route policy using Consul as clustered lock")
+public class ConsulRoutePolicy extends RoutePolicySupport implements CamelContextAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsulRoutePolicy.class);
 
     private final Object lock;
@@ -52,6 +54,7 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedS
     private final Set<Route> suspendedRoutes;
     private final AtomicReference<BigInteger> index;
 
+    private Route route;
     private CamelContext camelContext;
     private String serviceName;
     private String servicePath;
@@ -91,6 +94,12 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedS
     @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    @Override
+    public void onInit(Route route) {
+        super.onInit(route);
+        this.route = route;
     }
 
     @Override
@@ -213,10 +222,27 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedS
     // Getter/Setters
     // *************************************************************************
 
+    @ManagedAttribute(description = "The route id")
+    public String getRouteId() {
+        if (route != null) {
+            return route.getId();
+        }
+        return null;
+    }
+
+    @ManagedAttribute(description = "The consumer endpoint", mask = true)
+    public String getEndpointUrl() {
+        if (route != null && route.getConsumer() != null && route.getConsumer().getEndpoint() != null) {
+            return route.getConsumer().getEndpoint().toString();
+        }
+        return null;
+    }
+
     public Consul getConsul() {
         return consul;
     }
 
+    @ManagedAttribute(description = "The consul service name")
     public String getServiceName() {
         return serviceName;
     }
@@ -226,6 +252,7 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedS
         this.servicePath = String.format("/service/%s/leader", serviceName);
     }
 
+    @ManagedAttribute(description = "The time to live")
     public int getTtl() {
         return ttl;
     }
@@ -234,6 +261,7 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedS
         this.ttl = ttl > 10 ? ttl : 10;
     }
 
+    @ManagedAttribute(description = "The lock delay")
     public int getLockDelay() {
         return lockDelay;
     }
@@ -242,12 +270,18 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedS
         this.lockDelay = lockDelay > 10 ? lockDelay : 10;
     }
 
+    @ManagedAttribute(description = "Whether to stop consumer when starting up and failed to become master")
     public boolean isShouldStopConsumer() {
         return shouldStopConsumer;
     }
 
     public void setShouldStopConsumer(boolean shouldStopConsumer) {
         this.shouldStopConsumer = shouldStopConsumer;
+    }
+
+    @ManagedAttribute(description = "Is this route the master or a slave")
+    public boolean isLeader() {
+        return leader.get();
     }
 
     // *************************************************************************
