@@ -19,30 +19,31 @@ package org.apache.camel.component.hazelcast.policy;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.component.hazelcast.HazelcastUtil;
 import org.apache.camel.support.RoutePolicySupport;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HazelcastRoutePolicy extends RoutePolicySupport implements NonManagedService {
+public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelContextAware, NonManagedService {
     private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastRoutePolicy.class);
 
     private final boolean managedInstance;
     private final AtomicBoolean leader;
     private final Set<Route> suspendedRoutes;
-    private final ExecutorService executorService;
 
+    private CamelContext camelContext;
+    private ExecutorService executorService;
     private HazelcastInstance instance;
     private String lockMapName;
     private String lockKey;
@@ -74,12 +75,16 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements NonManag
         this.locks = null;
         this.future = null;
         this.shouldStopConsumer = true;
+    }
 
-        this.executorService =  Executors.newSingleThreadExecutor(r -> {
-            Thread thread = new Thread(r, "Camel RoutePolicy");
-            thread.setDaemon(true);
-            return thread;
-        });
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     @Override
@@ -106,6 +111,8 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements NonManag
         StringHelper.notEmpty(lockKey, "lockKey", this);
         StringHelper.notEmpty(lockValue, "lockValue", this);
 
+        executorService = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "HazelcastRoutePolicy");
+
         locks = instance.getMap(lockMapName);
         future = executorService.submit(this::acquireLeadership);
 
@@ -122,6 +129,8 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements NonManag
         if (managedInstance) {
             instance.shutdown();
         }
+
+        getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
 
         super.doStop();
     }
@@ -269,13 +278,9 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements NonManag
                     );
                 }
             } catch (InterruptedException e) {
-                if (isRunAllowed()) {
-                    LOGGER.warn("Interrupted Exception caught", e);
-                } else {
-                    LOGGER.debug("Interrupted Exception caught", e);
-                }
+                // ignore
             } catch (Exception e) {
-                LOGGER.warn("Exception caught", e);
+                getExceptionHandler().handleException(e);
             } finally {
                 if (locked) {
                     locks.remove(lockKey);
