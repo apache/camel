@@ -18,6 +18,10 @@ See this ticket: link:https://issues.apache.org/jira/browse/CAMEL-2654[https://i
 
 ## Options
 
+// eip options: START
+The Delayer EIP supports 3 options which are listed below:
+
+{% raw %}
 [width="100%",cols="3,1,6",options="header"]
 |=======================================================================
 | Name | Default value | Description
@@ -25,6 +29,8 @@ See this ticket: link:https://issues.apache.org/jira/browse/CAMEL-2654[https://i
 | `executorServiceRef` |  | *Camel 2.4*: Refers to a custom Thread Pool to be used if asyncDelay has been enabled.
 | `callerRunsWhenRejected` | true | *Camel 2.4*: Is used if asyncDelayed was enabled. This controls if the caller thread should execute the task if the thread pool rejected the task.
 |=======================================================================
+{% endraw %}
+// eip options: END
 
 *Using the Fluent Builders*
 The example below will delay all messages received on *seda:b* 1 second before sending them to *mock:result*.

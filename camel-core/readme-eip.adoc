@@ -7,8 +7,6 @@ If you are new to Camel you might want to try the Getting Started in the User Gu
 
 The EIP icons library is available as a Visio stencil file adapted to render the icons with the Camel color : sand. Download it here for your presentation, functional and technical analysis documents. The original EIP stencil is also available in OpenOffice 3.x Draw (thanks to Marco Garbelini) , Microsoft Visio, or Omnigraffle.
 
-Number of EIPs: 76
-
 // eips: START
 Number of EIPs: 61
 

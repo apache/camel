@@ -13,6 +13,10 @@ You must ensure the expression used for the `dynamicRouter` such as a bean, will
 
 ## Options
 
+// eip options: START
+The Dynamic Router EIP supports 3 options which are listed below:
+
+{% raw %}
 [width="100%",cols="3,1,6",options="header"]
 |=======================================================================
 | Name | Default value | Description
@@ -20,6 +24,8 @@ You must ensure the expression used for the `dynamicRouter` such as a bean, will
 | `ignoreInvalidEndpoints` | false | If an endpoint uri could not be resolved, should it be ignored. Otherwise Camel will thrown an exception stating the endpoint uri is not valid.
 | `cacheSize` | 1000 | *Camel 2.13.1/2.12.4*: Allows to configure the cache size for the `ProducerCache` which caches producers for reuse in the routing slip. Will by default use the default cache size which is 1000. Setting the value to -1 allows to turn off the cache all together.
 |=======================================================================
+{% endraw %}
+// eip options: END
 
 ## Dynamic Router in Camel 2.5 onwards
 From Camel 2.5 the Dynamic Router will set a property (Exchange.SLIP_ENDPOINT) on the Exchange which contains the current endpoint as it advanced though the slip. This allows you to know how far we have processed in the slip. (It's a slip because the Dynamic Router implementation is based on top of Routing Slip).
