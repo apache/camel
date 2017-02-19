@@ -20,8 +20,6 @@ import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -34,6 +32,8 @@ import com.orbitz.consul.model.ConsulResponse;
 import com.orbitz.consul.model.kv.Value;
 import com.orbitz.consul.model.session.ImmutableSession;
 import com.orbitz.consul.option.QueryOptions;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.support.RoutePolicySupport;
@@ -41,7 +41,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedService {
+public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedService, CamelContextAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsulRoutePolicy.class);
 
     private final Object lock;
@@ -52,6 +52,7 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedS
     private final Set<Route> suspendedRoutes;
     private final AtomicReference<BigInteger> index;
 
+    private CamelContext camelContext;
     private String serviceName;
     private String servicePath;
     private int ttl;
@@ -80,6 +81,16 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedS
         this.executorService = null;
         this.shouldStopConsumer = true;
         this.sessionId = null;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     @Override
@@ -116,7 +127,7 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedS
 
             LOGGER.debug("SessionID = {}", sessionId);
             if (executorService == null) {
-                executorService = Executors.newSingleThreadExecutor();
+                executorService = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "HazelcastRoutePolicy");
             }
 
             setLeader(keyValueClient.acquireLock(servicePath, sessionId));
@@ -136,8 +147,7 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedS
             sessionId = null;
 
             if (executorService != null) {
-                executorService.shutdown();
-                executorService.awaitTermination(ttl / 3, TimeUnit.SECONDS);
+                getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
             }
         }
     }
@@ -230,14 +240,6 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedS
 
     public void setLockDelay(int lockDelay) {
         this.lockDelay = lockDelay > 10 ? lockDelay : 10;
-    }
-
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
     }
 
     public boolean isShouldStopConsumer() {
