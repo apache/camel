@@ -30,6 +30,8 @@ import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.component.hazelcast.HazelcastUtil;
 import org.apache.camel.support.RoutePolicySupport;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,6 +101,11 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements NonManag
 
     @Override
     protected void doStart() throws Exception {
+        // validate
+        StringHelper.notEmpty(lockMapName, "lockMapName", this);
+        StringHelper.notEmpty(lockKey, "lockKey", this);
+        StringHelper.notEmpty(lockValue, "lockValue", this);
+
         locks = instance.getMap(lockMapName);
         future = executorService.submit(this::acquireLeadership);
 
