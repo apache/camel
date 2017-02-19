@@ -70,7 +70,7 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelCon
         this.lockMapName = null;
         this.lockKey = null;
         this.lockValue = null;
-        this.tryLockTimeout = Long.MAX_VALUE;
+        this.tryLockTimeout = 10 * 1000;
         this.tryLockTimeoutUnit = TimeUnit.MILLISECONDS;
         this.locks = null;
         this.future = null;
