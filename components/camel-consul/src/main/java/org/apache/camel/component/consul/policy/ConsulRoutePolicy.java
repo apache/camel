@@ -252,7 +252,7 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements CamelContex
         this.servicePath = String.format("/service/%s/leader", serviceName);
     }
 
-    @ManagedAttribute(description = "The time to live")
+    @ManagedAttribute(description = "The time to live (seconds)")
     public int getTtl() {
         return ttl;
     }
@@ -261,7 +261,7 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements CamelContex
         this.ttl = ttl > 10 ? ttl : 10;
     }
 
-    @ManagedAttribute(description = "The lock delay")
+    @ManagedAttribute(description = "The lock delay (seconds)")
     public int getLockDelay() {
         return lockDelay;
     }
