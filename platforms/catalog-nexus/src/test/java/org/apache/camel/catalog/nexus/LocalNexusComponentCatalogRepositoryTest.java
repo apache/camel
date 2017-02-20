@@ -24,7 +24,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.junit.Test;
 
-public class LocalNexusRepositoryTest extends TestCase {
+public class LocalNexusComponentCatalogRepositoryTest extends TestCase {
 
     private final CamelCatalog catalog = new DefaultCamelCatalog();
 
@@ -32,7 +32,7 @@ public class LocalNexusRepositoryTest extends TestCase {
     public void testLocalNexus() throws Exception {
         int before = catalog.findComponentNames().size();
 
-        LocalFileNexusRepository repo = new LocalFileNexusRepository();
+        LocalFileComponentCatalogNexusRepository repo = new LocalFileComponentCatalogNexusRepository();
         repo.setCamelCatalog(catalog);
         repo.setInitialDelay(2);
         repo.setDelay(3);

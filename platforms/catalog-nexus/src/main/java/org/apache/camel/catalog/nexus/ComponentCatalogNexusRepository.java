@@ -30,9 +30,9 @@ import static org.apache.camel.catalog.CatalogHelper.loadText;
 /**
  * Nexus repository that can scan for custom Camel components and add to the {@link org.apache.camel.catalog.CamelCatalog}.
  */
-public class ComponentNexusRepository extends BaseNexusRepository {
+public class ComponentCatalogNexusRepository extends BaseNexusRepository {
 
-    public ComponentNexusRepository() {
+    public ComponentCatalogNexusRepository() {
         super("component");
     }
 
