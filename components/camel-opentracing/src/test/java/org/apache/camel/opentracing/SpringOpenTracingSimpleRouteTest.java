@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class OpenTracingSimpleRouteTest extends CamelSpringTestSupport {
+public class SpringOpenTracingSimpleRouteTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
@@ -33,7 +33,6 @@ public class OpenTracingSimpleRouteTest extends CamelSpringTestSupport {
     }
 
     @Test
-    @org.junit.Ignore
     public void testRoute() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(5).create();
 
