@@ -21,8 +21,8 @@ import java.util.Map;
 import io.fabric8.kubernetes.api.model.DoneableNode;
 import io.fabric8.kubernetes.api.model.Node;
 import io.fabric8.kubernetes.api.model.NodeList;
-import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
-import io.fabric8.kubernetes.client.dsl.ClientResource;
+import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
+import io.fabric8.kubernetes.client.dsl.Resource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -85,7 +85,7 @@ public class KubernetesNodesProducer extends DefaultProducer {
     protected void doListNodesByLabels(Exchange exchange, String operation) throws Exception {
         NodeList nodeList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NODES_LABELS, Map.class);
-        ClientNonNamespaceOperation<Node, NodeList, DoneableNode, ClientResource<Node, DoneableNode>> nodes = getEndpoint().getKubernetesClient().nodes();
+        NonNamespaceOperation<Node, NodeList, DoneableNode, Resource<Node, DoneableNode>> nodes = getEndpoint().getKubernetesClient().nodes();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             nodes.withLabel(entry.getKey(), entry.getValue());
         }

@@ -23,8 +23,8 @@ import io.fabric8.kubernetes.api.model.ReplicationController;
 import io.fabric8.kubernetes.api.model.ReplicationControllerList;
 import io.fabric8.kubernetes.client.KubernetesClientException;
 import io.fabric8.kubernetes.client.Watcher;
-import io.fabric8.kubernetes.client.dsl.ClientMixedOperation;
-import io.fabric8.kubernetes.client.dsl.ClientRollableScallableResource;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.RollableScallableResource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -81,8 +81,8 @@ public class KubernetesReplicationControllersConsumer extends DefaultConsumer {
          
         @Override
         public void run() {
-            ClientMixedOperation<ReplicationController, ReplicationControllerList, DoneableReplicationController, 
-                ClientRollableScallableResource<ReplicationController, DoneableReplicationController>> w = getEndpoint().getKubernetesClient().replicationControllers();
+            MixedOperation<ReplicationController, ReplicationControllerList, DoneableReplicationController, 
+                RollableScallableResource<ReplicationController, DoneableReplicationController>> w = getEndpoint().getKubernetesClient().replicationControllers();
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
                 w.inNamespace(getEndpoint().getKubernetesConfiguration().getNamespace());
             }

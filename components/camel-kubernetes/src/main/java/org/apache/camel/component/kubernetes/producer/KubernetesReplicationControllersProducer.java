@@ -23,9 +23,9 @@ import io.fabric8.kubernetes.api.model.ReplicationController;
 import io.fabric8.kubernetes.api.model.ReplicationControllerBuilder;
 import io.fabric8.kubernetes.api.model.ReplicationControllerList;
 import io.fabric8.kubernetes.api.model.ReplicationControllerSpec;
-import io.fabric8.kubernetes.client.dsl.ClientMixedOperation;
-import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
-import io.fabric8.kubernetes.client.dsl.ClientRollableScallableResource;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
+import io.fabric8.kubernetes.client.dsl.RollableScallableResource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -121,8 +121,8 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
                 KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
 
-            ClientNonNamespaceOperation<ReplicationController, ReplicationControllerList, DoneableReplicationController, 
-            ClientRollableScallableResource<ReplicationController, DoneableReplicationController>> replicationControllers; 
+            NonNamespaceOperation<ReplicationController, ReplicationControllerList, DoneableReplicationController, 
+            RollableScallableResource<ReplicationController, DoneableReplicationController>> replicationControllers; 
             replicationControllers = getEndpoint().getKubernetesClient()
                     .replicationControllers().inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
@@ -131,8 +131,8 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
             }
             rcList = replicationControllers.list();
         } else {
-            ClientMixedOperation<ReplicationController, ReplicationControllerList, DoneableReplicationController, 
-            ClientRollableScallableResource<ReplicationController, DoneableReplicationController>> replicationControllers;
+            MixedOperation<ReplicationController, ReplicationControllerList, DoneableReplicationController, 
+            RollableScallableResource<ReplicationController, DoneableReplicationController>> replicationControllers;
             replicationControllers = getEndpoint().getKubernetesClient()
                     .replicationControllers();
             for (Map.Entry<String, String> entry : labels.entrySet()) {

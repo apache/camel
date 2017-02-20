@@ -18,14 +18,14 @@ package org.apache.camel.component.kubernetes.producer;
 
 import java.util.Map;
 
-import io.fabric8.kubernetes.client.dsl.ClientMixedOperation;
-import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
 import io.fabric8.openshift.api.model.Build;
 import io.fabric8.openshift.api.model.BuildConfig;
 import io.fabric8.openshift.api.model.BuildConfigList;
 import io.fabric8.openshift.api.model.DoneableBuildConfig;
 import io.fabric8.openshift.client.OpenShiftClient;
-import io.fabric8.openshift.client.dsl.ClientBuildConfigResource;
+import io.fabric8.openshift.client.dsl.BuildConfigResource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -90,8 +90,8 @@ public class KubernetesBuildConfigsProducer extends DefaultProducer {
                 Map.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            ClientNonNamespaceOperation<BuildConfig, BuildConfigList, DoneableBuildConfig, 
-                ClientBuildConfigResource<BuildConfig, DoneableBuildConfig, Void, Build>> buildConfigs; 
+            NonNamespaceOperation<BuildConfig, BuildConfigList, DoneableBuildConfig, 
+                BuildConfigResource<BuildConfig, DoneableBuildConfig, Void, Build>> buildConfigs; 
             buildConfigs = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs()
                     .inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
@@ -99,8 +99,8 @@ public class KubernetesBuildConfigsProducer extends DefaultProducer {
             }
             buildConfigsList = buildConfigs.list();
         } else {
-            ClientMixedOperation<BuildConfig, BuildConfigList, DoneableBuildConfig, 
-                ClientBuildConfigResource<BuildConfig, DoneableBuildConfig, Void, Build>> buildConfigs; 
+            MixedOperation<BuildConfig, BuildConfigList, DoneableBuildConfig, 
+                BuildConfigResource<BuildConfig, DoneableBuildConfig, Void, Build>> buildConfigs; 
             buildConfigs = getEndpoint().getKubernetesClient().adapt(OpenShiftClient.class).buildConfigs();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 buildConfigs.withLabel(entry.getKey(), entry.getValue());
