@@ -378,7 +378,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         return body;
     }
 
-    private byte[] readFromChannel(StreamSourceChannel source) throws IOException {
+    byte[] readFromChannel(StreamSourceChannel source) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[1024]);
 
