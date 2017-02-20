@@ -32,6 +32,12 @@
   </bean>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
+
+    <route id="start">
+      <from uri="direct:start"/>
+      <to uri="seda:dude"/>
+    </route>
+
     <route id="dude">
       <from uri="seda:dude"/>
       <log message="Routing at ${routeId}"/>
