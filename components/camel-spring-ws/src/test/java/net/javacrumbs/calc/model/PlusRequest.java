@@ -59,39 +59,39 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "plusRequest")
 public class PlusRequest {
 
-  protected int a;
-  protected int b;
+    protected int a;
+    protected int b;
 
-  /**
-   * Gets the value of the a property.
-   * 
-   */
-  public int getA() {
-    return a;
-  }
-
-  /**
-   * Sets the value of the a property.
-   * 
-   */
-  public void setA(int value) {
-    this.a = value;
-  }
-
-  /**
-   * Gets the value of the b property.
-   * 
-   */
-  public int getB() {
-    return b;
-  }
-
-  /**
-   * Sets the value of the b property.
-   * 
-   */
-  public void setB(int value) {
-    this.b = value;
-  }
+    /**
+     * Gets the value of the a property.
+     * 
+     */
+    public int getA() {
+        return a;
+    }
+    
+    /**
+     * Sets the value of the a property.
+     * 
+     */
+    public void setA(int value) {
+        this.a = value;
+    }
+    
+    /**
+     * Gets the value of the b property.
+     * 
+     */
+    public int getB() {
+        return b;
+    }
+    
+    /**
+     * Sets the value of the b property.
+     * 
+     */
+    public void setB(int value) {
+        this.b = value;
+    }
 
 }

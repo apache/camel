@@ -46,20 +46,20 @@ import javax.xml.bind.annotation.XmlRegistry;
 public class ObjectFactory {
 
 
-  /**
-   * Create a new ObjectFactory that can be used to create new instances of 
-   * schema derived classes for package: net.javacrumbs.calc.model
-   * 
-   */
-  public ObjectFactory() {
-  }
+    /**
+     * Create a new ObjectFactory that can be used to create new instances of 
+     * schema derived classes for package: net.javacrumbs.calc.model
+     * 
+     */
+    public ObjectFactory() {
+    }
 
-  public PlusResponse createPlusResponse() {
-    return new PlusResponse();
-  }
+    public PlusResponse createPlusResponse() {
+        return new PlusResponse();
+    }
 
-  public PlusRequest createPlusRequest() {
-    return new PlusRequest();
-  }
+    public PlusRequest createPlusRequest() {
+        return new PlusRequest();
+    }
 
 }

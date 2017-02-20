@@ -24,21 +24,21 @@ import org.springframework.ws.context.MessageContext;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.security.wss4j.Wss4jSecurityInterceptor;
 
-public class ProducerWss4JSecurityHeaderTestInterceptor extends Wss4jSecurityInterceptor{
+public class ProducerWss4JSecurityHeaderTestInterceptor extends Wss4jSecurityInterceptor {
 
-  public static boolean isX509DataPresent = false;
-  
-  protected void validateMessage(SoapMessage soapMessage, MessageContext messageContext) {
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    try {
-      soapMessage.writeTo(out);
-    } catch (IOException exception) {
-      // do nothing - because this is a sample class
+    public static boolean isX509DataPresent;
+    
+    protected void validateMessage(SoapMessage soapMessage, MessageContext messageContext) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            soapMessage.writeTo(out);
+        } catch (IOException exception) {
+          // do nothing - because this is a sample class
+        }
+        String strMsg = new String(out.toByteArray());
+          
+        isX509DataPresent = strMsg.contains("X509Data");
+        super.validateMessage(soapMessage, messageContext);
     }
-    String strMsg = new String(out.toByteArray());
-      
-    isX509DataPresent = strMsg.contains("X509Data");
-    super.validateMessage(soapMessage, messageContext);
-  }
 
 }
