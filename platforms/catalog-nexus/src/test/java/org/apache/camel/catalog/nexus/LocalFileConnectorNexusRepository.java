@@ -20,23 +20,21 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.apache.camel.catalog.CamelCatalog;
+public class LocalFileConnectorNexusRepository extends ConnectorDataStoreNexusRepository {
 
-public class LocalFileComponentCatalogNexusRepository extends ComponentCatalogNexusRepository {
+    private Runnable onAddConnector;
 
-    private Runnable onAddComponent;
-
-    public Runnable getOnAddComponent() {
-        return onAddComponent;
+    public Runnable getOnAddConnector() {
+        return onAddConnector;
     }
 
-    public void setOnAddComponent(Runnable onAddComponent) {
-        this.onAddComponent = onAddComponent;
+    public void setOnAddConnector(Runnable onAddConnector) {
+        this.onAddConnector = onAddConnector;
     }
 
     @Override
     protected URL createNexusUrl() throws MalformedURLException {
-        File file = new File("target/test-classes/nexus-sample-component-result.xml");
+        File file = new File("target/test-classes/nexus-sample-connector-result.xml");
         return new URL("file:" + file.getAbsolutePath());
     }
 
@@ -47,11 +45,11 @@ public class LocalFileComponentCatalogNexusRepository extends ComponentCatalogNe
     }
 
     @Override
-    protected void addComponent(NexusArtifactDto dto, CamelCatalog camelCatalog, String scheme, String javaType, String json) {
-        super.addComponent(dto, camelCatalog, scheme, javaType, json);
+    protected void addConnector(NexusArtifactDto dto, String name, String connectorJson, String connectorSchemaJson) {
+        super.addConnector(dto, name, connectorJson, connectorSchemaJson);
 
-        if (onAddComponent != null) {
-            onAddComponent.run();
+        if (onAddConnector != null) {
+            onAddConnector.run();
         }
     }
 }

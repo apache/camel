@@ -34,7 +34,11 @@ public class MemoryConnectorDataStore implements ConnectorDataStore {
 
     @Override
     public List<ConnectorDto> searchArtifacts(String filter, boolean latestVersionOnly) {
-
         return null;
+    }
+
+    @Override
+    public int size() {
+        return connectors.size();
     }
 }

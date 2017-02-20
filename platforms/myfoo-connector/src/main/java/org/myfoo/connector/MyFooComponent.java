@@ -14,29 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.catalog.nexus;
+package org.myfoo.connector;
 
-import java.util.List;
+import org.apache.camel.component.connector.DefaultConnectorComponent;
 
-public interface ConnectorDataStore {
+public class MyFooComponent extends DefaultConnectorComponent {
 
-    /**
-     * Adds a connector to the data store.
-     */
-    void addConnector(ConnectorDto connector);
-
-    /**
-     * Search for connectors in the data store.
-     *
-     * @param filter            the filter connectors based on their names, description or labels.
-     * @param latestVersionOnly to only include the latest version of a given Maven <tt>groupId:artifactId</tt>
-     * @return the found connectors, or an empty list if none found
-     */
-    List<ConnectorDto> searchArtifacts(String filter, boolean latestVersionOnly);
-
-    /**
-     * Number of connectors in the data store.
-     */
-    int size();
+    public MyFooComponent() {
+        super("myfoo", "org.myfoo.connector.MyFooComponent");
+    }
 
 }

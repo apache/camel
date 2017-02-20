@@ -111,6 +111,12 @@
                     <include>*.jar</include>
                   </includes>
                 </resource>
+                <resource>
+                  <directory>../myfoo-connector/target</directory>
+                  <includes>
+                    <include>*.jar</include>
+                  </includes>
+                </resource>
               </resources>
             </configuration>
           </execution>

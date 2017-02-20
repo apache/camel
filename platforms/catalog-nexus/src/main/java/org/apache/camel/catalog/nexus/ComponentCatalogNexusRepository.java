@@ -32,8 +32,27 @@ import static org.apache.camel.catalog.CatalogHelper.loadText;
  */
 public class ComponentCatalogNexusRepository extends BaseNexusRepository {
 
+    private CamelCatalog camelCatalog;
+
     public ComponentCatalogNexusRepository() {
         super("component");
+    }
+
+    public CamelCatalog getCamelCatalog() {
+        return camelCatalog;
+    }
+
+    public void setCamelCatalog(CamelCatalog camelCatalog) {
+        this.camelCatalog = camelCatalog;
+    }
+
+    @Override
+    public void start() {
+        if (camelCatalog == null) {
+            throw new IllegalArgumentException("CamelCatalog must be configured");
+        }
+
+        super.start();
     }
 
     @Override

@@ -46,6 +46,15 @@ public class ConnectorDataStoreNexusRepository extends BaseNexusRepository {
     }
 
     @Override
+    public void start() {
+        if (connectorDataStore == null) {
+            throw new IllegalArgumentException("ConnectorDataStore must be configured");
+        }
+
+        super.start();
+    }
+
+    @Override
     public void onNewArtifacts(Set<NexusArtifactDto> newArtifacts) {
         // now download the new artifact JARs and look inside to find more details
         for (NexusArtifactDto dto : newArtifacts) {
@@ -130,6 +139,10 @@ public class ConnectorDataStoreNexusRepository extends BaseNexusRepository {
                 String name = CatalogHelper.after(line, ":");
                 if (name != null) {
                     name = name.trim();
+                    if (name.endsWith(",")) {
+                        // skip last comma
+                        name = name.substring(0, name.length() - 1);
+                    }
                     return CatalogHelper.removeLeadingAndEndingQuotes(name);
                 }
             }

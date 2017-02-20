@@ -49,7 +49,6 @@ public abstract class BaseNexusRepository {
     private volatile ScheduledExecutorService executorService;
     private AtomicBoolean started = new AtomicBoolean();
 
-    private CamelCatalog camelCatalog;
     private int initialDelay = 10;
     private int delay = 60;
     private String nexusUrl = "http://nexus/service/local/data_index";
@@ -57,14 +56,6 @@ public abstract class BaseNexusRepository {
 
     public BaseNexusRepository(String classifier) {
         this.classifier = classifier;
-    }
-
-    public CamelCatalog getCamelCatalog() {
-        return camelCatalog;
-    }
-
-    public void setCamelCatalog(CamelCatalog camelCatalog) {
-        this.camelCatalog = camelCatalog;
     }
 
     public String getNexusUrl() {
@@ -116,10 +107,6 @@ public abstract class BaseNexusRepository {
      * Starts the Nexus indexer.
      */
     public void start() {
-        if (camelCatalog == null) {
-            throw new IllegalArgumentException("CamelCatalog must be configured");
-        }
-
         if (nexusUrl == null || nexusUrl.isEmpty()) {
             log.warn("Nexus service not found. Indexing Nexus is not enabled!");
             return;
