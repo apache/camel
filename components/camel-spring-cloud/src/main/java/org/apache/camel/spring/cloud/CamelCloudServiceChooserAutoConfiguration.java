@@ -17,37 +17,27 @@
 
 package org.apache.camel.spring.cloud;
 
-import org.apache.camel.cloud.LoadBalancer;
 import org.apache.camel.spring.boot.util.GroupCondition;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Scope;
 
 @Configuration
-@ConditionalOnBean({ CamelCloudAutoConfiguration.class, LoadBalancerClient.class })
-@AutoConfigureAfter(LoadBalancerAutoConfiguration.class)
-@EnableConfigurationProperties(ServiceCallConfigurationProperties.class)
-public class ServiceCallLoadBalancerAutoConfiguration {
-    @Lazy
-    @Scope("prototype")
-    @Bean(name = "cloud-load-balancer")
-    @Conditional(ServiceCallLoadBalancerAutoConfiguration.LoadBalancerCondition.class)
-    public LoadBalancer cloudLoadBalancer(LoadBalancerClient loadBalancerClient) {
-        return new CamelCloudLoadBalancer(loadBalancerClient);
-    }
+@ConditionalOnBean(CamelCloudAutoConfiguration.class)
+@EnableConfigurationProperties(CamelCloudConfigurationProperties.class)
+@Conditional(CamelCloudServiceChooserAutoConfiguration.ServiceChooserCondition.class)
+public class CamelCloudServiceChooserAutoConfiguration {
 
-    public static class LoadBalancerCondition extends GroupCondition {
-        public LoadBalancerCondition() {
+    // *******************************
+    // Condition
+    // *******************************
+
+    public static class ServiceChooserCondition extends GroupCondition {
+        public ServiceChooserCondition() {
             super(
-                "camel.cloud.servicecall",
-                "camel.cloud.servicecall.load-balancer"
+                "camel.cloud",
+                "camel.cloud.service-chooser"
             );
         }
     }

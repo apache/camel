@@ -20,56 +20,59 @@ package org.apache.camel.spring.cloud;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.cloud.ServiceDiscovery;
+import org.apache.camel.impl.cloud.StaticServiceDiscovery;
 import org.apache.camel.spring.boot.util.GroupCondition;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Scope;
 
 @Configuration
-@EnableConfigurationProperties(ServiceCallConfigurationProperties.class)
-public class ServiceCallServiceDiscoveryAutoConfiguration {
+@EnableConfigurationProperties(CamelCloudConfigurationProperties.class)
+@Conditional(CamelCloudServiceDiscoveryAutoConfiguration.ServiceDiscoveryCondition.class)
+public class CamelCloudServiceDiscoveryAutoConfiguration {
+
     @Lazy
-    @Scope("prototype")
-    @Bean(name = "service-discovery-client")
-    @Conditional(ServiceCallServiceDiscoveryAutoConfiguration.ServiceDiscoveryCondition.class)
-    public DiscoveryClient serviceDiscoveryClient(ServiceCallConfigurationProperties properties) {
-        CamelCloudDiscoveryClient client = new CamelCloudDiscoveryClient("service-discovery-client");
+    @Bean(name = "static-service-discovery")
+    public ServiceDiscovery staticServiceDiscovery(CamelCloudConfigurationProperties properties) {
+        StaticServiceDiscovery staticServiceDiscovery = new StaticServiceDiscovery();
 
         Map<String, List<String>> services = properties.getServiceDiscovery().getServices();
         for (Map.Entry<String, List<String>> entry : services.entrySet()) {
-            for (String part : entry.getValue()) {
-                String host = StringHelper.before(part, ":");
-                String port = StringHelper.after(part, ":");
-
-                if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
-                    client.addServiceInstance(entry.getKey(), host, Integer.parseInt(port));
-                }
-            }
+            staticServiceDiscovery.addServers(entry.getKey(), entry.getValue());
         }
 
-        return client;
+        return staticServiceDiscovery;
     }
 
     @Lazy
-    @Scope("prototype")
     @Bean(name = "service-discovery")
-    @Conditional(ServiceCallServiceDiscoveryAutoConfiguration.ServiceDiscoveryCondition.class)
-    public ServiceDiscovery serviceDiscovery(List<DiscoveryClient> clients) {
-        return new CamelCloudServiceDiscovery(clients);
+    public CamelCloudServiceDiscovery serviceDiscovery(
+            CamelContext camelContext, CamelCloudConfigurationProperties properties, List<ServiceDiscovery> serviceDiscoveryList) throws NoTypeConversionAvailableException{
+
+        String cacheTimeout = properties.getServiceDiscovery().getCacheTimeout();
+        Long timeout = null;
+
+        if (cacheTimeout != null) {
+            timeout = camelContext.getTypeConverter().mandatoryConvertTo(Long.class, timeout);
+        }
+
+        return new CamelCloudServiceDiscovery(timeout, serviceDiscoveryList);
     }
+
+    // *******************************
+    // Condition
+    // *******************************
 
     public static class ServiceDiscoveryCondition extends GroupCondition {
         public ServiceDiscoveryCondition() {
             super(
-                "camel.cloud.servicecall",
-                "camel.cloud.servicecall.service-discovery"
+                "camel.cloud",
+                "camel.cloud.service-discovery"
             );
         }
     }

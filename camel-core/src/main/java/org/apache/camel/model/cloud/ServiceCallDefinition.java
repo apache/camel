@@ -753,6 +753,10 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             if (answer == null && config != null) {
                 answer = retrieve(ServiceDiscovery.class, camelContext, config::getServiceDiscovery, config::getServiceDiscoveryRef);
             }
+
+            if (answer == null) {
+                answer = camelContext.getRegistry().lookupByNameAndType("service-discovery", ServiceDiscovery.class);
+            }
             if (answer == null) {
                 answer = findByType(camelContext, ServiceDiscovery.class);
             }
@@ -804,6 +808,9 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         }
 
         if (answer == null) {
+            answer = camelContext.getRegistry().lookupByNameAndType("service-filter", ServiceFilter.class);
+        }
+        if (answer == null) {
             answer = findByType(camelContext, ServiceFilter.class);
         }
 
@@ -833,6 +840,10 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
                 }
             }
         }
+
+        if (answer == null) {
+            answer = camelContext.getRegistry().lookupByNameAndType("service-chooser", ServiceChooser.class);
+        }
         if (answer == null) {
             answer = findByType(camelContext, ServiceChooser.class);
         }
@@ -855,6 +866,10 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             answer = retrieve(LoadBalancer.class, camelContext, this::getLoadBalancer, this::getLoadBalancerRef);
             if (answer == null && config != null) {
                 answer = retrieve(LoadBalancer.class, camelContext, config::getLoadBalancer, config::getLoadBalancerRef);
+            }
+
+            if (answer == null) {
+                answer = camelContext.getRegistry().lookupByNameAndType("load-balancer", LoadBalancer.class);
             }
             if (answer == null) {
                 answer = findByType(camelContext, LoadBalancer.class);

@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.camel.cloud.ServiceDefinition;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -50,6 +51,17 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
     public void setServers(List<String> servers) {
         this.services.clear();
         servers.forEach(this::addServer);
+    }
+
+    public void addServers(String serviceName, List<String> servers) {
+        for (String server : servers) {
+            String host = StringHelper.before(server, ":");
+            String port = StringHelper.after(server, ":");
+
+            if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
+                addServer(serviceName, host, Integer.valueOf(port));
+            }
+        }
     }
 
     /**
@@ -83,7 +95,9 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
             String host = StringHelper.before(part, ":");
             String port = StringHelper.after(part, ":");
 
-            addServer(service, host, Integer.valueOf(port));
+            if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
+                addServer(service, host, Integer.valueOf(port));
+            }
         }
     }
 

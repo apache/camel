@@ -32,16 +32,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Scope;
 
 @Configuration
-@EnableConfigurationProperties(ServiceCallConfigurationProperties.class)
-public class ServiceCallServiceFilterAutoConfiguration {
+@EnableConfigurationProperties(CamelCloudConfigurationProperties.class)
+@Conditional(CamelCloudServiceFilterAutoConfiguration.ServiceFilterCondition.class)
+public class CamelCloudServiceFilterAutoConfiguration {
     @Lazy
-    @Scope("prototype")
-    @Bean(name = "service-filter-chained")
-    @Conditional(ServiceCallServiceFilterAutoConfiguration.ServiceFilterCondition.class)
-    public ServiceFilter chainedServiceFilter(ServiceCallConfigurationProperties properties) {
+    @Bean(name = "service-filter")
+    public ServiceFilter serviceFilter(CamelCloudConfigurationProperties properties) {
         BlacklistServiceFilter blacklist = new BlacklistServiceFilter();
 
         Map<String, List<String>> services = properties.getServiceFilter().getBlacklist();
@@ -59,11 +57,15 @@ public class ServiceCallServiceFilterAutoConfiguration {
         return ChainedServiceFilter.wrap(new HealthyServiceFilter(), blacklist);
     }
 
+    // *******************************
+    // Condition
+    // *******************************
+
     public static class ServiceFilterCondition extends GroupCondition {
         public ServiceFilterCondition() {
             super(
-                "camel.cloud.servicecall",
-                "camel.cloud.servicecall.service-filter"
+                "camel.cloud",
+                "camel.cloud.service-filter"
             );
         }
     }
