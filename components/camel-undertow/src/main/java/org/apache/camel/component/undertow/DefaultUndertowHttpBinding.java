@@ -408,7 +408,6 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
                     }
                 });
                 source.resumeReads();
-                return out.toByteArray();
             } else {
                 buffer.flip();
                 out.write(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.arrayOffset() + buffer.limit());
