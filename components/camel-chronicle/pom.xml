@@ -87,5 +87,29 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
+  <profiles>
+    <profile>
+      <id>jdk9-build</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>net.openhft</groupId>
+            <artifactId>chronicle-engine</artifactId>
+            <version>${chronicle-engine-version}</version>
+            <exclusions>
+              <exclusion>
+                <groupId>com.sun.java</groupId>
+                <artifactId>tools</artifactId>
+              </exclusion>
+            </exclusions>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+    </profile>
+  </profiles>
 
 </project>
