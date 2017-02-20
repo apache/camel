@@ -22,7 +22,7 @@ import java.net.URL;
 
 import org.apache.camel.catalog.CamelCatalog;
 
-public class LocalFileNexusRepository extends ComponentNexusRepository {
+public class LocalFileComponentCatalogNexusRepository extends ComponentCatalogNexusRepository {
 
     private Runnable onAddComponent;
 

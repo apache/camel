@@ -13,7 +13,7 @@ The Camel Catalog can then be used by tooling to present the list of components 
 
 The Nexus repository must provide a REST API which allows this module to query it.
 
-The url is configured on `ComponentNexusRepository` in the `nexusUrl` setter.
+The url is configured on `ComponentCatalogNexusRepository` in the `nexusUrl` setter.
 
 For example if you have a nexus repository at: `http://company-nexus` then the url can be set as
 
