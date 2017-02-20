@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://javacrumbs.net/calc"
+	xmlns:tns="http://javacrumbs.net/calc" elementFormDefault="qualified">
+
+	<element name="plusRequest">
+		<complexType>
+			<sequence>
+				<element name="a" type="int" />
+				<element name="b" type="int" />
+			</sequence>
+		</complexType>
+	</element>
+
+	<element name="plusResponse">
+		<complexType>
+			<sequence>
+				<element name="result" type="int" />
+			</sequence>
+		</complexType>
+	</element>
+</schema>
