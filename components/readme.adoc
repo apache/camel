@@ -867,7 +867,7 @@ Number of Miscellaneous Components: 34
 
 | link:camel-opentracing/src/main/docs/opentracing.adoc[Opentracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
 
-| link:camel-ribbon/src/main/docs/ribbon.adoc[Ribbon] (camel-ribbon) | 2.18 | Camel Components
+| link:camel-ribbon/src/main/docs/ribbon.adoc[Ribbon] (camel-ribbon) | 2.18 | Using Netflix Ribbon for client side load balancing
 
 | link:camel-ruby/src/main/docs/ruby.adoc[Ruby] (camel-ruby) | 1.0 | *deprecated* Camel Ruby DSL
 
