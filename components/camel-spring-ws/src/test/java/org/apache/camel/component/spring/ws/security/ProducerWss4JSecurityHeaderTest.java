@@ -37,71 +37,71 @@ import org.springframework.ws.soap.security.wss4j2.Wss4jSecurityInterceptor;
         + " secured ws on j2ee-compliant application server")
 public class ProducerWss4JSecurityHeaderTest extends CamelSpringTestSupport {
 
-  @Produce
-  private ProducerTemplate template;
-
-  private WebServiceTemplate webServiceTemplate;
-  
-  @Override
-  public void setUp() throws Exception {
-    super.setUp();
-    webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);
-  }
-
-  @Test
-  public void testResponseUsingWss4jSampleInterceptorWithoutHeadersRemoved() throws Exception {
-
-    setRemoveHeaders(false);
-
-    PlusResponse result = createSampleRequestResponsePair();
+    @Produce
+    private ProducerTemplate template;
     
-    assertNotNull(result);
-    assertEquals(3, result.getResult());
+    private WebServiceTemplate webServiceTemplate;
     
-    assertTrue(ProducerWss4JSecurityHeaderTestInterceptor.isX509DataPresent);
-
-  }
-
-  @Test
-  public void testResponseUsingWss4jSampleInterceptorWithHeadersRemoved() throws Exception {
-
-    setRemoveHeaders(true);
-
-    PlusResponse result = createSampleRequestResponsePair();
-
-    assertNotNull(result);
-    assertEquals(3, result.getResult());
-
-    assertTrue(ProducerWss4JSecurityHeaderTestInterceptor.isX509DataPresent);
-
-  }
-
-  private PlusResponse createSampleRequestResponsePair() {
-    PlusRequest request = new PlusRequest();
-    request.setA(new Integer(1));
-    request.setB(new Integer(2));
-
-    PlusResponse result = (PlusResponse) template.requestBody("direct:testHeader", request);
-
-    return result;
-  }
-
-  private void setRemoveHeaders(boolean isRemoved) {
-    ClientInterceptor[] clientInterceptors = webServiceTemplate.getInterceptors();
-
-    for (int i = 0; i < clientInterceptors.length; i++) {
-      if (clientInterceptors[i] instanceof Wss4jSecurityInterceptor) {
-        Wss4jSecurityInterceptor wss4jSampleInterceptor 
-                                     = (Wss4jSecurityInterceptor) clientInterceptors[i];
-        wss4jSampleInterceptor.setRemoveSecurityHeader(isRemoved);
-      }
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        webServiceTemplate = applicationContext.getBean("webServiceTemplate", WebServiceTemplate.class);
     }
-  }
-
-  @Override
-  protected AbstractXmlApplicationContext createApplicationContext() {
-    return new ClassPathXmlApplicationContext(
-      "org/apache/camel/component/spring/ws/security/ProducerWss4JSecurityHeaderTest-context.xml");
-  }
+    
+    @Test
+    public void testResponseUsingWss4jSampleInterceptorWithoutHeadersRemoved() throws Exception {
+    
+        setRemoveHeaders(false);
+         
+        PlusResponse result = createSampleRequestResponsePair();
+         
+        assertNotNull(result);
+        assertEquals(3, result.getResult());
+         
+        assertTrue(ProducerWss4JSecurityHeaderTestInterceptor.isX509DataPresent);
+    
+    }
+    
+    @Test
+    public void testResponseUsingWss4jSampleInterceptorWithHeadersRemoved() throws Exception {
+        
+        setRemoveHeaders(true);
+        
+        PlusResponse result = createSampleRequestResponsePair();
+        
+        assertNotNull(result);
+        assertEquals(3, result.getResult());
+        
+        assertTrue(ProducerWss4JSecurityHeaderTestInterceptor.isX509DataPresent);
+    
+    }
+    
+    private PlusResponse createSampleRequestResponsePair() {
+        PlusRequest request = new PlusRequest();
+        request.setA(new Integer(1));
+        request.setB(new Integer(2));
+        
+        PlusResponse result = (PlusResponse) template.requestBody("direct:testHeader", request);
+        
+        return result;
+    }
+    
+    private void setRemoveHeaders(boolean isRemoved) {
+        ClientInterceptor[] clientInterceptors = webServiceTemplate.getInterceptors();
+        
+        for (int i = 0; i < clientInterceptors.length; i++) {
+            if (clientInterceptors[i] instanceof Wss4jSecurityInterceptor) {
+                Wss4jSecurityInterceptor wss4jSampleInterceptor 
+                                           = (Wss4jSecurityInterceptor) clientInterceptors[i];
+                wss4jSampleInterceptor.setRemoveSecurityHeader(isRemoved);
+            }
+        }
+    }
+    
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext(
+          "org/apache/camel/component/spring/ws/security/ProducerWss4JSecurityHeaderTest-context.xml");
+    }
 
 }
