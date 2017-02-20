@@ -87,8 +87,8 @@ public class ComponentCatalogNexusRepository extends BaseNexusRepository {
     /**
      * Adds any discovered third party Camel components from the artifact.
      */
-    private void addCustomCamelComponentsFromArtifact(NexusArtifactDto dto, URL jarUrl ) {
-        try (URLClassLoader classLoader = new URLClassLoader(new URL[]{jarUrl});) {
+    private void addCustomCamelComponentsFromArtifact(NexusArtifactDto dto, URL jarUrl) {
+        try (URLClassLoader classLoader = new URLClassLoader(new URL[]{jarUrl})) {
             // is there any custom Camel components in this library?
             Properties properties = loadComponentProperties(classLoader);
             if (properties != null) {

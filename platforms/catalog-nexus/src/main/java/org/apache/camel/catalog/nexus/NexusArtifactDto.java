@@ -101,11 +101,11 @@ public class NexusArtifactDto implements Serializable {
 
     @Override
     public String toString() {
-        return "NexusArtifactDto[" +
-            "groupId='" + groupId + '\'' +
-            ", artifactId='" + artifactId + '\'' +
-            ", version='" + version + '\'' +
-            ", artifactLink='" + artifactLink + '\'' +
-            ']';
+        return "NexusArtifactDto["
+            + "groupId='" + groupId + '\''
+            + ", artifactId='" + artifactId + '\''
+            + ", version='" + version + '\''
+            + ", artifactLink='" + artifactLink + '\''
+            + ']';
     }
 }

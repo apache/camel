@@ -74,12 +74,12 @@ public class ConnectorDto implements Serializable {
 
     @Override
     public String toString() {
-        return "ConnectorDto[" +
-            "groupId='" + nexusArtifactDto.getGroupId() + '\'' +
-            ", artifactId='" + nexusArtifactDto.getArtifactId() + '\'' +
-            ", version='" + nexusArtifactDto.getVersion() + '\'' +
-            ", name='" + name + '\'' +
-            ']';
+        return "ConnectorDto["
+            + "groupId='" + nexusArtifactDto.getGroupId() + '\''
+            + ", artifactId='" + nexusArtifactDto.getArtifactId() + '\''
+            + ", version='" + nexusArtifactDto.getVersion() + '\''
+            + ", name='" + name + '\''
+            + ']';
     }
 
 }
