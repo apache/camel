@@ -1,4 +1,3 @@
-//
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
@@ -57,22 +56,22 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(name = "plusResponse")
 public class PlusResponse {
 
-  protected int result;
-
-  /**
-   * Gets the value of the result property.
-   * 
-   */
-  public int getResult() {
-    return result;
-  }
-
-  /**
-   * Sets the value of the result property.
-   * 
-   */
-  public void setResult(int value) {
-    this.result = value;
-  }
+    protected int result;
+    
+    /**
+     * Gets the value of the result property.
+     * 
+     */
+    public int getResult() {
+        return result;
+    }
+    
+    /**
+     * Sets the value of the result property.
+     * 
+     */
+    public void setResult(int value) {
+        this.result = value;
+    }
 
 }

@@ -67,6 +67,17 @@
       <artifactId>spring-ws-support</artifactId>
       <version>${spring-ws-version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.ws</groupId>
+      <artifactId>spring-ws-security</artifactId>
+      <version>${spring-ws-version}</version>
+      <exclusions>
+            <exclusion>
+                <groupId>xalan</groupId>
+                <artifactId>xalan</artifactId>
+            </exclusion>
+      </exclusions>
+    </dependency>
 
     <!-- test dependencies -->
     <dependency>
