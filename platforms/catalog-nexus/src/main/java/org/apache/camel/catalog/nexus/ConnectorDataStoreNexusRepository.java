@@ -20,9 +20,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.catalog.CatalogHelper;
+import org.apache.camel.catalog.CollectionStringBuffer;
 
 import static org.apache.camel.catalog.CatalogHelper.loadText;
 
@@ -73,13 +80,16 @@ public class ConnectorDataStoreNexusRepository extends BaseNexusRepository {
      * Adds the connector to the data store
      *
      * @param dto                 the artifact
-     * @param name                name of connector
+     * @param name                the name of connector
+     * @param description         the description of connector
+     * @param labels              the labels of connector
      * @param connectorJson       camel-connector JSon
      * @param connectorSchemaJson camel-connector-schema JSon
      */
-    protected void addConnector(NexusArtifactDto dto, String name, String connectorJson, String connectorSchemaJson) {
+    protected void addConnector(NexusArtifactDto dto, String name, String description, String labels,
+                                String connectorJson, String connectorSchemaJson) {
         if (connectorDataStore != null) {
-            ConnectorDto connector = new ConnectorDto(dto, name, connectorJson, connectorSchemaJson);
+            ConnectorDto connector = new ConnectorDto(dto, name, description, labels, connectorJson, connectorSchemaJson);
             log.info("Added connector: {}:{}:{}", dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
             connectorDataStore.addConnector(connector);
         }
@@ -92,7 +102,20 @@ public class ConnectorDataStoreNexusRepository extends BaseNexusRepository {
         try (URLClassLoader classLoader = new URLClassLoader(new URL[] {jarUrl});) {
             String[] json = loadConnectorJSonSchema(classLoader);
             if (json != null) {
-                addConnector(dto, json[0], json[1], json[2]);
+
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode tree = mapper.readTree(json[0]);
+                String name = tree.get("name").textValue();
+                String description = tree.get("description").textValue();
+                Iterator<JsonNode> it = tree.withArray("labels").iterator();
+
+                CollectionStringBuffer csb = new CollectionStringBuffer(",");
+                while (it.hasNext()) {
+                    String text = it.next().textValue();
+                    csb.append(text);
+                }
+
+                addConnector(dto, name, description, csb.toString(), json[0], json[1]);
             }
         } catch (IOException e) {
             log.warn("Error scanning JAR for custom Camel components", e);
@@ -100,13 +123,13 @@ public class ConnectorDataStoreNexusRepository extends BaseNexusRepository {
     }
 
     private String[] loadConnectorJSonSchema(URLClassLoader classLoader) {
-        String[] answer = new String[3];
+        String[] answer = new String[2];
 
         String path = "camel-connector.json";
         try {
             InputStream is = classLoader.getResourceAsStream(path);
             if (is != null) {
-                answer[1] = loadText(is);
+                answer[0] = loadText(is);
             }
         } catch (Throwable e) {
             log.warn("Error loading " + path + " file", e);
@@ -116,38 +139,13 @@ public class ConnectorDataStoreNexusRepository extends BaseNexusRepository {
         try {
             InputStream is = classLoader.getResourceAsStream(path);
             if (is != null) {
-                answer[2] = loadText(is);
+                answer[1] = loadText(is);
             }
         } catch (Throwable e) {
             log.warn("Error loading " + path + " file", e);
         }
 
-        String name = extractConnectorName(answer[1]);
-        answer[0] = name;
-
         return answer;
-    }
-
-    /**
-     * Extracts the name of the connector from the json blob
-     */
-    private static String extractConnectorName(String json) {
-        String[] lines = json.split("\n");
-        for (String line : lines) {
-            line = line.trim();
-            if (line.startsWith("\"name\":")) {
-                String name = CatalogHelper.after(line, ":");
-                if (name != null) {
-                    name = name.trim();
-                    if (name.endsWith(",")) {
-                        // skip last comma
-                        name = name.substring(0, name.length() - 1);
-                    }
-                    return CatalogHelper.removeLeadingAndEndingQuotes(name);
-                }
-            }
-        }
-        return null;
     }
 
 }

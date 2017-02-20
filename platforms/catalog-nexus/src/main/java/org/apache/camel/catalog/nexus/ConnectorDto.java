@@ -22,12 +22,17 @@ public class ConnectorDto implements Serializable {
 
     private NexusArtifactDto nexusArtifactDto;
     private String name;
+    private String description;
+    private String labels;
     private String connectorJson;
     private String connectorSchemaJson;
 
-    public ConnectorDto(NexusArtifactDto nexusArtifactDto, String name, String connectorJson, String connectorSchemaJson) {
+    public ConnectorDto(NexusArtifactDto nexusArtifactDto, String name, String description, String labels,
+                        String connectorJson, String connectorSchemaJson) {
         this.nexusArtifactDto = nexusArtifactDto;
         this.name = name;
+        this.description = description;
+        this.labels = labels;
         this.connectorJson = connectorJson;
         this.connectorSchemaJson = connectorSchemaJson;
     }
@@ -40,12 +45,24 @@ public class ConnectorDto implements Serializable {
         return name;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public String getLabels() {
+        return labels;
+    }
+
     public String getConnectorJson() {
         return connectorJson;
     }
 
     public String getConnectorSchemaJson() {
         return connectorSchemaJson;
+    }
+
+    public String getMavenGav() {
+        return nexusArtifactDto.getGroupId() + ":" + nexusArtifactDto.getArtifactId() + ":" + nexusArtifactDto.getVersion();
     }
 
     @Override

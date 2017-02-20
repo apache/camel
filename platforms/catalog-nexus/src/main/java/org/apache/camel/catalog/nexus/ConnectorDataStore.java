@@ -21,6 +21,11 @@ import java.util.List;
 public interface ConnectorDataStore {
 
     /**
+     * Number of connectors in the data store.
+     */
+    int size();
+
+    /**
      * Adds a connector to the data store.
      */
     void addConnector(ConnectorDto connector);
@@ -32,11 +37,6 @@ public interface ConnectorDataStore {
      * @param latestVersionOnly to only include the latest version of a given Maven <tt>groupId:artifactId</tt>
      * @return the found connectors, or an empty list if none found
      */
-    List<ConnectorDto> searchArtifacts(String filter, boolean latestVersionOnly);
-
-    /**
-     * Number of connectors in the data store.
-     */
-    int size();
+    List<ConnectorDto> searchConnectors(String filter, boolean latestVersionOnly);
 
 }
