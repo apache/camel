@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.consul;
 
+import com.orbitz.consul.Consul;
+
 public interface ConsulConstants {
+    String CONSUL_DEFAULT_URL = String.format("http://%s:%d", Consul.DEFAULT_HTTP_HOST, Consul.DEFAULT_HTTP_PORT);
+
     // Service Call EIP
     String CONSUL_SERVER_IP = "CamelConsulServerIp";
     String CONSUL_SERVER_PORT = "CamelConsulServerPort";
