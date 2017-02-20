@@ -115,14 +115,15 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
     public ZipkinTracer() {
     }
 
-
     @Override
     public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition route) {
+        // ensure this zipkin tracer gets initialized when Camel starts
+        init(camelContext);
         return new ZipkinRoutePolicy(routeId);
     }
 
     /**
-     * Registers this {@link ZipkinTracer} on the {@link CamelContext}.
+     * Registers this {@link ZipkinTracer} on the {@link CamelContext} if not already registered.
      */
     public void init(CamelContext camelContext) {
         if (!camelContext.hasService(this)) {
