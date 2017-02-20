@@ -42,14 +42,14 @@ import static org.junit.Assert.assertTrue;
     classes = {
         CamelAutoConfiguration.class,
         CamelCloudAutoConfiguration.class,
-        ServiceCallServiceChooserAutoConfiguration.class
+        CamelCloudServiceChooserAutoConfiguration.class
     },
     properties = {
-        "camel.cloud.servicecall.enabled=false",
-        "camel.cloud.servicecall.service-discovery.enabled=false",
-        "camel.cloud.servicecall.service-filter.enabled=false",
-        "camel.cloud.servicecall.service-chooser.enabled=true",
-        "camel.cloud.servicecall.load-balancer.enabled=false",
+        "camel.cloud.enabled=false",
+        "camel.cloud.service-discovery.enabled=false",
+        "camel.cloud.service-filter.enabled=false",
+        "camel.cloud.service-chooser.enabled=true",
+        "camel.cloud.load-balancer.enabled=false",
         "debug=false"
     }
 )
@@ -61,15 +61,15 @@ public class CamelCloudServiceCallConfigurationTest {
     public void doTest() throws Exception {
         Environment env = ctx.getEnvironment();
 
-        assertFalse(env.getProperty("camel.cloud.servicecall.enabled", Boolean.class));
-        assertFalse(env.getProperty("camel.cloud.servicecall.service-discovery.enabled", Boolean.class));
-        assertFalse(env.getProperty("camel.cloud.servicecall.service-filter.enabled", Boolean.class));
-        assertTrue(env.getProperty("camel.cloud.servicecall.service-chooser.enabled", Boolean.class));
-        assertFalse(env.getProperty("camel.cloud.servicecall.load-balancer.enabled", Boolean.class));
+        assertFalse(env.getProperty("camel.cloud.enabled", Boolean.class));
+        assertFalse(env.getProperty("camel.cloud.service-discovery.enabled", Boolean.class));
+        assertFalse(env.getProperty("camel.cloud.service-filter.enabled", Boolean.class));
+        assertTrue(env.getProperty("camel.cloud.service-chooser.enabled", Boolean.class));
+        assertFalse(env.getProperty("camel.cloud.load-balancer.enabled", Boolean.class));
 
         assertTrue(ctx.getBeansOfType(ServiceDiscovery.class).isEmpty());
         assertTrue(ctx.getBeansOfType(ServiceFilter.class).isEmpty());
-        assertFalse(ctx.getBeansOfType(ServiceChooser.class).isEmpty());
+        assertTrue(ctx.getBeansOfType(ServiceChooser.class).isEmpty());
         assertTrue(ctx.getBeansOfType(LoadBalancer.class).isEmpty());
     }
 }

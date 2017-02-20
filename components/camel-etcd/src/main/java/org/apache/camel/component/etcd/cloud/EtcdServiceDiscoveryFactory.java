@@ -28,7 +28,11 @@ public class EtcdServiceDiscoveryFactory implements ServiceDiscoveryFactory {
     private String type;
 
     public EtcdServiceDiscoveryFactory() {
-        this.configuration = new EtcdConfiguration();
+        this(new EtcdConfiguration());
+    }
+
+    public EtcdServiceDiscoveryFactory(EtcdConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     // *************************************************************************

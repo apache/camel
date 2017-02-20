@@ -1,6 +1,5 @@
-[[MessageFilter-MessageFilter]]
-Message Filter
-^^^^^^^^^^^^^^
+## Filter EIP
+### Message Filter
 
 The http://www.enterpriseintegrationpatterns.com/Filter.html[Message
 Filter] from the link:enterprise-integration-patterns.html[EIP patterns]
@@ -84,9 +83,7 @@ For further examples of this pattern in use you could look at the
 http://svn.apache.org/viewvc/camel/trunk/camel-core/src/test/java/org/apache/camel/processor/FilterTest.java?view=markup[junit
 test case]
 
-[[MessageFilter-Usingstop]]
-*Using stop*
-++++++++++++
+#### *Using stop*
 
 Stop is a bit different than a message filter as it will filter out all
 messages and end the route entirely (filter only applies to its child
@@ -98,9 +95,7 @@ In the example below we do not want to route messages any further that
 has the word `Bye` in the message body. Notice how we prevent this in
 the when predicate by using the `.stop()`.
 
-[[MessageFilter-Knowingifwasfilteredornot]]
-Knowing if link:exchange.html[Exchange] was filtered or not
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#### Knowing if link:exchange.html[Exchange] was filtered or not
 
 *Available as of Camel 2.5*
 
@@ -118,9 +113,7 @@ with the value set based on the results of the last
 link:message-filter.html[Message Filter] link:predicate.html[Predicate]
 evaluated.
 
-[[MessageFilter-UsingThisPattern]]
-Using This Pattern
-++++++++++++++++++
+#### Using This Pattern
 
 If you would like to use this EIP Pattern then please read the
 link:getting-started.html[Getting Started], you may also find the
