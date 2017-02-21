@@ -340,6 +340,16 @@
                       <artifactId>jaxb-xjc</artifactId>
                       <version>${jaxb-version}</version>
                     </dependency>
+                    <dependency>
+                      <groupId>javax.xml.bind</groupId>
+                      <artifactId>jaxb-api</artifactId>
+                      <version>${jaxb-version}</version>
+                    </dependency>
+                    <dependency>
+                      <groupId>javax.activation</groupId>
+                      <artifactId>activation</artifactId>
+                      <version>1.1.1</version>
+                    </dependency>
                   </dependencies>
                   <executions>
                       <execution>
@@ -375,6 +385,8 @@
                                   <echo>Generating XSD schema</echo>
                                   <schemagen srcdir="${project.build.directory}/schema-src" destdir="${project.build.directory}/schema">
                                       <schema namespace="http://camel.apache.org/schema/spring" file="camel-blueprint.xsd" />
+                                      <compilerarg line="-target ${jdk.version}"/>
+                                      <compilerarg line="-source ${jdk.version}"/>
                                       <classpath refid="maven.compile.classpath" />
                                   </schemagen>
 
