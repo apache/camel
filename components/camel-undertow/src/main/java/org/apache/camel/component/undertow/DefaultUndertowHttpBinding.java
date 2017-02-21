@@ -27,6 +27,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 import javax.activation.FileDataSource;
 
@@ -387,27 +389,41 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             if (res == -1) {
                 return out.toByteArray();
             } else if (res == 0) {
+                BlockingQueue<Integer> ping = new ArrayBlockingQueue<Integer>(1);
                 source.getReadSetter().set(new ChannelListener<StreamSourceChannel>() {
                     @Override
                     public void handleEvent(StreamSourceChannel channel) {
                         for (;;) {
                             try {
                                 int res = channel.read(buffer);
-                                if (res == -1 || res == 0) {
-                                    out.toByteArray();
-                                    return;
-                                } else {
-                                    buffer.flip();
-                                    out.write(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.arrayOffset() + buffer.limit());
-                                    buffer.clear();
+                                switch (res) {
+                                    case -1:
+                                        ping.put(res);
+                                        return;
+                                    case 0:
+                                        // await next chunk
+                                        source.getReadSetter().set(this);
+                                        source.resumeReads();
+                                        return;
+                                    default:
+                                        buffer.flip();
+                                        out.write(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.arrayOffset() + buffer.limit());
+                                        buffer.clear();
                                 }
-                            } catch (IOException e) {
+                            } catch (IOException | InterruptedException e) {
                                 LOG.error("Exception reading from channel {}", e);
                             }
                         }
                     }
                 });
                 source.resumeReads();
+                try {
+                    // wait for the listener to complete
+                    ping.take();
+                } catch (InterruptedException e) {
+                    LOG.error("Exception reading from channel {}", e);
+                }
+                return out.toByteArray();
             } else {
                 buffer.flip();
                 out.write(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.arrayOffset() + buffer.limit());
