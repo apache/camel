@@ -87,6 +87,16 @@ public class DefaultUndertowHttpBindingTest {
                 }
                 return 0;
             }
+
+            @Override
+            public void resumeReads() {
+                /**
+                 * {@link io.undertow.server.HttpServerExchange.ReadDispatchChannel} delays resumes in the main thread
+                 */
+                if (sourceThread != Thread.currentThread()) {
+                    super.resumeReads();
+                }
+            }
         };
     }
 
