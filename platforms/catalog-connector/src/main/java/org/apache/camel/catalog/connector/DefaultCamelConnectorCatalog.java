@@ -54,13 +54,13 @@ public class DefaultCamelConnectorCatalog implements CamelConnectorCatalog {
     }
 
     @Override
-    public List<ConnectorDto> findConnector() {
-        return dataStore.findConnector();
+    public List<ConnectorDto> findConnector(boolean latestVersionOnly) {
+        return findConnector(null, latestVersionOnly);
     }
 
     @Override
-    public List<ConnectorDto> findConnector(String filter) {
-        return dataStore.findConnector(filter);
+    public List<ConnectorDto> findConnector(String filter, boolean latestVersionOnly) {
+        return dataStore.findConnector(filter, latestVersionOnly);
     }
 
     @Override

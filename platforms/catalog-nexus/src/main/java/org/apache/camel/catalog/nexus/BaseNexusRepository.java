@@ -40,6 +40,9 @@ import org.w3c.dom.NodeList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A base class for scanning and index Maven Nexus repositories for artifacts which can be added to catalogs.
+ */
 public abstract class BaseNexusRepository {
 
     final Logger log = LoggerFactory.getLogger(getClass());

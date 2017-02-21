@@ -20,11 +20,13 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
+import org.apache.camel.catalog.connector.CamelConnectorCatalog;
+import org.apache.camel.catalog.connector.DefaultCamelConnectorCatalog;
 import org.junit.Test;
 
 public class LocalNexusConnectorRepositoryTest extends TestCase {
 
-    private MemoryConnectorDataStore dataStore = new MemoryConnectorDataStore();
+    private CamelConnectorCatalog catalog = new DefaultCamelConnectorCatalog();
 
     @Test
     public void testLocalNexus() throws Exception {
@@ -32,12 +34,12 @@ public class LocalNexusConnectorRepositoryTest extends TestCase {
         repo.setInitialDelay(2);
         repo.setDelay(3);
         repo.setNexusUrl("dummy");
-        repo.setConnectorDataStore(dataStore);
+        repo.setCamelConnectorCatalog(catalog);
 
         final CountDownLatch latch = new CountDownLatch(1);
         repo.setOnAddConnector(latch::countDown);
 
-        int before = dataStore.size();
+        int before = catalog.findConnector(false).size();
 
         repo.start();
 
@@ -45,7 +47,7 @@ public class LocalNexusConnectorRepositoryTest extends TestCase {
 
         repo.stop();
 
-        int after = dataStore.size();
+        int after = catalog.findConnector(false).size();
 
         assertTrue("There should be 1 connector found", after - before == 1);
     }

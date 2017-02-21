@@ -20,7 +20,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class LocalFileConnectorNexusRepository extends ConnectorDataStoreNexusRepository {
+public class LocalFileConnectorNexusRepository extends ConnectorCatalogNexusRepository {
 
     private Runnable onAddConnector;
 

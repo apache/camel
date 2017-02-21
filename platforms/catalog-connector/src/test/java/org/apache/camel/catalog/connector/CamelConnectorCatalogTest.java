@@ -27,41 +27,81 @@ public class CamelConnectorCatalogTest {
     public void testAddConnector() throws Exception {
         CamelConnectorCatalog catalog = new DefaultCamelConnectorCatalog();
 
-        assertEquals(0, catalog.findConnector().size());
+        assertEquals(0, catalog.findConnector(false).size());
 
         catalog.addConnector("org.apache.camel", "myfoo-connector", "2.19.0",
             "MyFoo", "Something cool", "foo,timer", null, null);
 
-        assertEquals(1, catalog.findConnector().size());
+        assertEquals(1, catalog.findConnector(false).size());
     }
 
     @Test
     public void testRemoveConnector() throws Exception {
         CamelConnectorCatalog catalog = new DefaultCamelConnectorCatalog();
 
-        assertEquals(0, catalog.findConnector().size());
+        assertEquals(0, catalog.findConnector(false).size());
 
         catalog.addConnector("org.apache.camel", "myfoo-connector", "2.19.0",
             "MyFoo", "Something cool", "foo,timer", null, null);
 
-        assertEquals(1, catalog.findConnector().size());
+        assertEquals(1, catalog.findConnector(false).size());
 
         catalog.removeConnector("org.apache.camel", "myfoo-connector", "2.19.0");
 
-        assertEquals(0, catalog.findConnector().size());
+        assertEquals(0, catalog.findConnector(false).size());
     }
 
-    @Ignore("Not implemented yet")
-    public void testFindConnector() throws Exception {
+    @Test
+    public void testFindConnectorFilter() throws Exception {
         CamelConnectorCatalog catalog = new DefaultCamelConnectorCatalog();
 
-        assertEquals(0, catalog.findConnector().size());
+        assertEquals(0, catalog.findConnector(false).size());
 
         catalog.addConnector("org.apache.camel", "myfoo-connector", "2.19.0",
             "MyFoo", "Something cool", "foo,timer", null, null);
 
-        assertEquals(1, catalog.findConnector("foo").size());
-        assertEquals(0, catalog.findConnector("bar").size());
+        assertEquals(1, catalog.findConnector("foo", false).size());
+        assertEquals(0, catalog.findConnector("bar", false).size());
+    }
+
+    @Test
+    public void testFindConnectorLatestVersionOnly() throws Exception {
+        CamelConnectorCatalog catalog = new DefaultCamelConnectorCatalog();
+
+        assertEquals(0, catalog.findConnector(false).size());
+
+        catalog.addConnector("org.apache.camel", "myfoo-connector", "2.19.0",
+            "MyFoo", "Something cool", "foo,timer", null, null);
+
+        catalog.addConnector("org.apache.camel", "myfoo-connector", "2.19.1",
+            "MyFoo", "Something more cool", "foo,timer", null, null);
+
+        assertEquals(1, catalog.findConnector("foo", true).size());
+        assertEquals(0, catalog.findConnector("bar", true).size());
+
+        assertEquals("2.19.1", catalog.findConnector("foo", true).get(0).getVersion());
+        assertEquals("Something more cool", catalog.findConnector("foo", true).get(0).getDescription());
+    }
+
+    @Test
+    public void testFindConnectorNotLatestVersionOnly() throws Exception {
+        CamelConnectorCatalog catalog = new DefaultCamelConnectorCatalog();
+
+        assertEquals(0, catalog.findConnector(false).size());
+
+        catalog.addConnector("org.apache.camel", "myfoo-connector", "2.19.0",
+            "MyFoo", "Something cool", "foo,timer", null, null);
+
+        catalog.addConnector("org.apache.camel", "myfoo-connector", "2.19.1",
+            "MyFoo", "Something more cool", "foo,timer", null, null);
+
+        assertEquals(2, catalog.findConnector("foo", false).size());
+        assertEquals(0, catalog.findConnector("bar", false).size());
+
+        assertEquals("2.19.0", catalog.findConnector("foo", false).get(0).getVersion());
+        assertEquals("Something cool", catalog.findConnector("foo", false).get(0).getDescription());
+        assertEquals("2.19.1", catalog.findConnector("foo", false).get(1).getVersion());
+        assertEquals("Something more cool", catalog.findConnector("foo", false).get(1).getDescription());
     }
 
 }

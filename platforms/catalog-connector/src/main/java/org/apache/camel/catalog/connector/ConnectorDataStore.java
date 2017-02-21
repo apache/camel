@@ -18,18 +18,47 @@ package org.apache.camel.catalog.connector;
 
 import java.util.List;
 
+/**
+ * Data store for connector details to be used by the {@link CamelConnectorCatalog}.
+ */
 public interface ConnectorDataStore {
 
+    /**
+     * Adds or updates the connector to the catalog
+     *
+     * @param dto                   the connector dto
+     * @param connectorJson         the <tt>camel-connector</tt> json file
+     * @param connectorSchemaJson   the <tt>camel-connector-schema</tt> json file
+     */
     void addConnector(ConnectorDto dto, String connectorJson, String connectorSchemaJson);
 
+    /**
+     * Removes the connector from the catalog
+     *
+     * @param dto  the connector dto
+     */
     void removeConnector(ConnectorDto dto);
 
-    List<ConnectorDto> findConnector();
+    /**
+     * Find all the connectors that matches the maven coordinate, name, label or description from the catalog
+     *
+     * @param filter             filter text
+     * @param latestVersionOnly  whether to include only latest version of the connectors
+     */
+    List<ConnectorDto> findConnector(String filter, boolean latestVersionOnly);
 
-    List<ConnectorDto> findConnector(String filter);
-
+    /**
+     * Returns the <tt>camel-connector</tt> json file for the given connector with the Maven coordinate
+     *
+     * @param dto  the connector dto
+     */
     String connectorJSon(ConnectorDto dto);
 
+    /**
+     * Returns the <tt>camel-connector-schema</tt> json file for the given connector with the Maven coordinate
+     *
+     * @param dto  the connector dto
+     */
     String connectorSchemaJSon(ConnectorDto dto);
 
 }
