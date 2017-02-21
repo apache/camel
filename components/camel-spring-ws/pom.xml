@@ -67,19 +67,20 @@
       <artifactId>spring-ws-support</artifactId>
       <version>${spring-ws-version}</version>
     </dependency>
+
+    <!-- test dependencies -->
     <dependency>
       <groupId>org.springframework.ws</groupId>
       <artifactId>spring-ws-security</artifactId>
       <version>${spring-ws-version}</version>
+      <scope>test</scope>
       <exclusions>
-            <exclusion>
-                <groupId>xalan</groupId>
-                <artifactId>xalan</artifactId>
-            </exclusion>
+        <exclusion>
+          <groupId>xalan</groupId>
+          <artifactId>xalan</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
-
-    <!-- test dependencies -->
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
