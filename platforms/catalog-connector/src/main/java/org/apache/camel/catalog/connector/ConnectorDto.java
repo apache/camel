@@ -29,6 +29,10 @@ public class ConnectorDto {
     private String artifactId;
     private String version;
 
+    public String getMavenGav() {
+        return groupId + ":" + artifactId + ":" + version;
+    }
+
     public String getName() {
         return name;
     }
@@ -114,4 +118,5 @@ public class ConnectorDto {
             + ", version='" + version + '\''
             + ']';
     }
+
 }

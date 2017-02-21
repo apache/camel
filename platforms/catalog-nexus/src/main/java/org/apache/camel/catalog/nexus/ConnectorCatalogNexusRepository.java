@@ -20,42 +20,42 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.camel.catalog.CatalogHelper;
 import org.apache.camel.catalog.CollectionStringBuffer;
+import org.apache.camel.catalog.connector.CamelConnectorCatalog;
 
 import static org.apache.camel.catalog.CatalogHelper.loadText;
 
 /**
- * Nexus repository that can scan for custom Camel connectors and add to the {@link ConnectorDataStore}.
+ * Nexus repository that can scan for custom Camel connectors and add to the {@link CamelConnectorCatalog}.
  */
-public class ConnectorDataStoreNexusRepository extends BaseNexusRepository {
+public class ConnectorCatalogNexusRepository extends BaseNexusRepository {
 
-    private ConnectorDataStore connectorDataStore;
+    private CamelConnectorCatalog camelConnectorCatalog;
 
-    public ConnectorDataStoreNexusRepository() {
+    public ConnectorCatalogNexusRepository() {
         super("connector");
     }
 
-    public ConnectorDataStore getConnectorDataStore() {
-        return connectorDataStore;
+    public CamelConnectorCatalog getCamelConnectorCatalog() {
+        return camelConnectorCatalog;
     }
 
-    public void setConnectorDataStore(ConnectorDataStore connectorDataStore) {
-        this.connectorDataStore = connectorDataStore;
+    /**
+     * Sets the {@link CamelConnectorCatalog} to be used.
+     */
+    public void setCamelConnectorCatalog(CamelConnectorCatalog camelConnectorCatalog) {
+        this.camelConnectorCatalog = camelConnectorCatalog;
     }
 
     @Override
     public void start() {
-        if (connectorDataStore == null) {
-            throw new IllegalArgumentException("ConnectorDataStore must be configured");
+        if (camelConnectorCatalog == null) {
+            throw new IllegalArgumentException("CamelConnectorCatalog must be configured");
         }
 
         super.start();
@@ -88,11 +88,13 @@ public class ConnectorDataStoreNexusRepository extends BaseNexusRepository {
      */
     protected void addConnector(NexusArtifactDto dto, String name, String description, String labels,
                                 String connectorJson, String connectorSchemaJson) {
-        if (connectorDataStore != null) {
-            ConnectorDto connector = new ConnectorDto(dto, name, description, labels, connectorJson, connectorSchemaJson);
-            log.info("Added connector: {}:{}:{}", dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
-            connectorDataStore.addConnector(connector);
-        }
+
+        String groupId = dto.getGroupId();
+        String artifactId = dto.getArtifactId();
+        String version = dto.getVersion();
+
+        camelConnectorCatalog.addConnector(groupId, artifactId, version, name, description, labels, connectorJson, connectorSchemaJson);
+        log.info("Added connector: {}:{}:{}", dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
     }
 
     /**

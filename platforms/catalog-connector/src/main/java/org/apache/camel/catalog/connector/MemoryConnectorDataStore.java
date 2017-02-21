@@ -17,7 +17,9 @@
 package org.apache.camel.catalog.connector;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
@@ -43,16 +45,71 @@ public class MemoryConnectorDataStore implements ConnectorDataStore {
     }
 
     @Override
-    public List<ConnectorDto> findConnector() {
-        List<ConnectorDto> dtos = new ArrayList<>();
-        store.forEach(e -> dtos.add(e.getDto()));
-        return dtos;
-    }
+    public List<ConnectorDto> findConnector(String filter, boolean latestVersionOnly) {
+        final List<ConnectorDto> answer = new ArrayList<>();
 
-    @Override
-    public List<ConnectorDto> findConnector(String filter) {
-        // TODO: collect
-        return null;
+        if (filter != null && !filter.isEmpty()) {
+            // search ignore case
+            filter = filter.toLowerCase(Locale.US);
+
+            for (ConnectorDetails detail : store) {
+                ConnectorDto dto = detail.getDto();
+                if (dto.getName().toLowerCase(Locale.US).contains(filter)) {
+                    answer.add(dto);
+                } else if (dto.getDescription().toLowerCase(Locale.US).contains(filter)) {
+                    answer.add(dto);
+                } else if (dto.getGroupId().toLowerCase(Locale.US).contains(filter)) {
+                    answer.add(dto);
+                } else if (dto.getArtifactId().toLowerCase(Locale.US).contains(filter)) {
+                    answer.add(dto);
+                } else if (dto.getVersion().toLowerCase(Locale.US).contains(filter)) {
+                    answer.add(dto);
+                } else {
+                    String labels = dto.getLabels();
+                    if (labels != null) {
+                        String[] arr = labels.split(",");
+                        for (String lab : arr) {
+                            lab = lab.toLowerCase(Locale.US);
+                            if (lab.contains(filter)) {
+                                answer.add(dto);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            store.forEach(d -> answer.add(d.getDto()));
+        }
+
+        // filter only latest version
+        if (latestVersionOnly && answer.size() > 1) {
+            // sort first
+            answer.sort(Comparator.comparing(ConnectorDto::getMavenGav));
+
+            // keep only latest in each group
+            List<ConnectorDto> unique = new ArrayList<>();
+            ConnectorDto prev = null;
+
+            for (ConnectorDto dto : answer) {
+                if (prev == null
+                    || (prev.getGroupId().equals(dto.getGroupId())
+                    && prev.getArtifactId().equals(dto.getArtifactId()))) {
+                    prev = dto;
+                } else {
+                    unique.add(prev);
+                    prev = dto;
+                }
+            }
+            if (prev != null) {
+                // special for last element
+                unique.add(prev);
+            }
+
+            return unique;
+        }
+
+        return answer;
     }
 
     @Override

@@ -42,6 +42,9 @@ public class ComponentCatalogNexusRepository extends BaseNexusRepository {
         return camelCatalog;
     }
 
+    /**
+     * Sets the {@link CamelCatalog} to be used.
+     */
     public void setCamelCatalog(CamelCatalog camelCatalog) {
         this.camelCatalog = camelCatalog;
     }
@@ -80,8 +83,8 @@ public class ComponentCatalogNexusRepository extends BaseNexusRepository {
      * @param json          component json schema
      */
     protected void addComponent(NexusArtifactDto dto, CamelCatalog camelCatalog, String scheme, String javaType, String json) {
-        log.info("Added component: {}:{}:{} to Camel Catalog", dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
         camelCatalog.addComponent(scheme, javaType, json);
+        log.info("Added component: {}:{}:{} to Camel Catalog", dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
     }
 
     /**
