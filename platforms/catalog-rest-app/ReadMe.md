@@ -1,7 +1,7 @@
 Camel Catalog REST Application
 ==============================
 
-This is a little standalone application which hosts the Camel Catalog REST API.
+This is a little standalone application which hosts the Camel Catalog and Connector Catalog REST API.
 
 You can run the application using
 

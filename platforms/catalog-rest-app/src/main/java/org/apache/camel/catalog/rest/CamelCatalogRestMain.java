@@ -27,8 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Main to start the Camel Catalog REST Api application which runs standalone using an embedded CXF/Jetty server
- * with embedded Swagger Doc and Swagger UI.
+ * Main to start the Camel Catalog and Connector Catalog REST Api application
+ * which runs standalone using an embedded CXF/Jetty server with embedded Swagger Doc and Swagger UI.
  */
 public class CamelCatalogRestMain {
 
@@ -36,6 +36,7 @@ public class CamelCatalogRestMain {
 
     private Server server;
     private CamelCatalogRest catalog;
+    private CamelConnectorCatalogRest connectorCatalog;
     private int port = 8080;
 
     public static void main(String[] args) {
@@ -47,19 +48,21 @@ public class CamelCatalogRestMain {
         LOGGER.info("Starting ...");
 
         catalog = new CamelCatalogRest();
+        connectorCatalog = new CamelConnectorCatalogRest();
 
         // setup Apache CXF REST server
         JAXRSServerFactoryBean sf = new JAXRSServerFactoryBean();
-        sf.setResourceClasses(CamelCatalogRest.class);
+        sf.setResourceClasses(CamelCatalogRest.class, CamelConnectorCatalogRest.class);
         sf.setResourceProvider(CamelCatalogRest.class, new SingletonResourceProvider(catalog));
+        sf.setResourceProvider(CamelConnectorCatalogRest.class, new SingletonResourceProvider(connectorCatalog));
 
         Swagger2Feature swagger = new Swagger2Feature();
         swagger.setBasePath("/");
         swagger.setScanAllResources(false);
         swagger.setPrettyPrint(true);
         swagger.setSupportSwaggerUi(true);
-        swagger.setTitle("Camel Catalog REST Api");
-        swagger.setDescription("REST Api for the Camel Catalog");
+        swagger.setTitle("Camel Catalog and Connector Catalog REST Api");
+        swagger.setDescription("REST Api for the Camel Catalog and Connector Catalog");
         swagger.setVersion(catalog.getCatalogVersion());
         swagger.setContact("Apache Camel");
         sf.getFeatures().add(swagger);
@@ -76,6 +79,11 @@ public class CamelCatalogRestMain {
         LOGGER.info("");
         LOGGER.info("\tRest API base path: http://localhost:{}/camel-catalog", port);
         LOGGER.info("\tRest API version: http://localhost:{}/camel-catalog/catalogVersion", port);
+        LOGGER.info("");
+        LOGGER.info("CamelConnectorCatalog REST Api started");
+        LOGGER.info("");
+        LOGGER.info("\tRest API base path: http://localhost:{}/camel-connector-catalog", port);
+        LOGGER.info("");
         LOGGER.info("\tSwagger Doc: http://localhost:{}/swagger.json", port);
         LOGGER.info("\tSwagger UI: http://localhost:{}/api-docs?url=/swagger.json", port);
         LOGGER.info("");
