@@ -147,6 +147,7 @@
 	* [AWS Simple Workflow](aws-swf-component.adoc)
 	* [AWS SimpleDB](aws-sdb-component.adoc)
 	* [Azure Storage Blob Service](azure-blob-component.adoc)
+	* [Azure Storage Queue Service](azure-queue-component.adoc)
 	* [Bean Validator](bean-validator-component.adoc)
 	* [Beanstalk](beanstalk-component.adoc)
 	* [Bonita](bonita-component.adoc)
