@@ -508,7 +508,7 @@
     <quartz-version-range>[1.8,2)</quartz-version-range>
     <quartz2-version>2.2.3</quartz2-version>
     <quickfixj-version>1.6.3</quickfixj-version>
-    <rabbitmq-amqp-client-version>4.0.2</rabbitmq-amqp-client-version>
+    <rabbitmq-amqp-client-version>4.1.0</rabbitmq-amqp-client-version>
     <reactive-streams-version>1.0.0</reactive-streams-version>
     <reactor-version>3.0.4.RELEASE</reactor-version>
     <reflections-bundle-version>0.9.10_3</reflections-bundle-version>
