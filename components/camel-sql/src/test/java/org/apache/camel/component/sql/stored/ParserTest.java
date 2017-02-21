@@ -93,15 +93,27 @@ public class ParserTest extends CamelTestSupport {
     }
 
     @Test
-    public void vendorSpeficSqlType() {
+    public void vendorSpecificPositiveSqlType() {
         Template template = parser.parseTemplate("ADDNUMBERS2(1342 ${header.foo})");
         assertEquals(1342, ((InputParameter) template.getParameterList().get(0)).getSqlType());
     }
 
     @Test
-    public void vendorSpeficSqlTypeOut() {
+    public void vendorSpecificNegativeSqlType() {
+        Template template = parser.parseTemplate("ADDNUMBERS2(-1342 ${header.foo})");
+        assertEquals(-1342, ((InputParameter) template.getParameterList().get(0)).getSqlType());
+    }
+
+    @Test
+    public void vendorSpecificPositiveSqlTypeOut() {
         Template template = parser.parseTemplate("ADDNUMBERS2(OUT 1342 h1)");
         assertEquals(1342, ((OutParameter) template.getParameterList().get(0)).getSqlType());
+    }
+
+    @Test
+    public void vendorSpecificNegativeSqlTypeOut() {
+        Template template = parser.parseTemplate("ADDNUMBERS2(OUT -1342 h1)");
+        assertEquals(-1342, ((OutParameter) template.getParameterList().get(0)).getSqlType());
     }
 
 
