@@ -15,12 +15,14 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class DefaultUndertowHttpBindingTest {
 
     @Test(timeout = 1000)
     public void readEntireDelayedPayload() throws Exception {
         String[] delayedPayloads = new String[] {
+                "",
                 "chunk",
         };
 
@@ -29,12 +31,13 @@ public class DefaultUndertowHttpBindingTest {
         DefaultUndertowHttpBinding binding = new DefaultUndertowHttpBinding();
         String result = new String(binding.readFromChannel(source));
 
-        assertThat(result, is(delayedPayloads[0]));
+        checkResult(result, delayedPayloads);
     }
 
     @Test(timeout = 1000)
     public void readEntireMultiDelayedPayload() throws Exception {
         String[] delayedPayloads = new String[] {
+                "",
                 "first ",
                 "second",
         };
@@ -44,6 +47,10 @@ public class DefaultUndertowHttpBindingTest {
         DefaultUndertowHttpBinding binding = new DefaultUndertowHttpBinding();
         String result = new String(binding.readFromChannel(source));
 
+        checkResult(result, delayedPayloads);
+    }
+
+    private void checkResult(String result, String[] delayedPayloads) {
         assertThat(result, is(
                 Stream.of(delayedPayloads)
                         .collect(Collectors.joining())));
@@ -52,6 +59,7 @@ public class DefaultUndertowHttpBindingTest {
     @Test(timeout = 1000)
     public void readEntireMultiDelayedWithPausePayload() throws Exception {
         String[] delayedPayloads = new String[] {
+                "",
                 "first ",
                 "",
                 "second",
@@ -62,9 +70,7 @@ public class DefaultUndertowHttpBindingTest {
         DefaultUndertowHttpBinding binding = new DefaultUndertowHttpBinding();
         String result = new String(binding.readFromChannel(source));
 
-        assertThat(result, is(
-                Stream.of(delayedPayloads)
-                        .collect(Collectors.joining())));
+        checkResult(result, delayedPayloads);
     }
 
     private StreamSourceChannel source(final String[] delayedPayloads) {
@@ -72,20 +78,23 @@ public class DefaultUndertowHttpBindingTest {
 
         return new EmptyStreamSourceChannel(thread()) {
             int chunk = 0;
+            boolean mustWait = false;  // make sure that the caller is not spinning on read==0
 
             @Override
             public int read(ByteBuffer dst) throws IOException {
-                // can only read payloads in the reader thread
-                if (sourceThread != Thread.currentThread()) {
-                    if (chunk < delayedPayloads.length) {
-                        byte[] delayedPayload = delayedPayloads[chunk].getBytes();
-                        dst.put(delayedPayload);
-                        chunk++;
-                        return delayedPayload.length;
-                    }
-                    return -1;
+                if (mustWait) {
+                    fail("must wait before reading");
                 }
-                return 0;
+                if (chunk < delayedPayloads.length) {
+                    byte[] delayedPayload = delayedPayloads[chunk].getBytes();
+                    dst.put(delayedPayload);
+                    chunk++;
+                    if (delayedPayload.length == 0) {
+                        mustWait = true;
+                    }
+                    return delayedPayload.length;
+                }
+                return -1;
             }
 
             @Override
@@ -96,6 +105,12 @@ public class DefaultUndertowHttpBindingTest {
                 if (sourceThread != Thread.currentThread()) {
                     super.resumeReads();
                 }
+            }
+
+            @Override
+            public void awaitReadable() throws IOException {
+                mustWait = false;
+                super.awaitReadable();
             }
         };
     }
