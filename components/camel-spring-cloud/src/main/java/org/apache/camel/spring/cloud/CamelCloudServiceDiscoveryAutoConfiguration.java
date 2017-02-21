@@ -33,7 +33,7 @@ import org.springframework.context.annotation.Lazy;
 
 @Configuration
 @EnableConfigurationProperties(CamelCloudConfigurationProperties.class)
-@Conditional(CamelCloudServiceDiscoveryAutoConfiguration.ServiceDiscoveryCondition.class)
+@Conditional(CamelCloudServiceDiscoveryAutoConfiguration.Condition.class)
 public class CamelCloudServiceDiscoveryAutoConfiguration {
 
     @Lazy
@@ -68,8 +68,8 @@ public class CamelCloudServiceDiscoveryAutoConfiguration {
     // Condition
     // *******************************
 
-    public static class ServiceDiscoveryCondition extends GroupCondition {
-        public ServiceDiscoveryCondition() {
+    public static class Condition extends GroupCondition {
+        public Condition() {
             super(
                 "camel.cloud",
                 "camel.cloud.service-discovery"

@@ -229,6 +229,8 @@
         <include>org.apache.camel:camel-spring-boot-starter</include>
         <include>org.apache.camel:camel-spring-cloud</include>
         <include>org.apache.camel:camel-spring-cloud-starter</include>
+        <include>org.apache.camel:camel-spring-cloud-netflix</include>
+        <include>org.apache.camel:camel-spring-cloud-netflix-starter</include>
         <include>org.apache.camel:camel-spring-dm</include>
         <include>org.apache.camel:camel-spring-integration</include>
         <include>org.apache.camel:camel-spring-javaconfig</include>

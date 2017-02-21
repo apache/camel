@@ -266,6 +266,7 @@
     <module>camel-splunk-starter</module>
     <module>camel-spring-batch-starter</module>
     <module>camel-spring-boot-starter</module>
+    <module>camel-spring-cloud-netflix-starter</module>
     <module>camel-spring-cloud-starter</module>
     <module>camel-spring-dm-starter</module>
     <module>camel-spring-integration-starter</module>

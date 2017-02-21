@@ -28,8 +28,6 @@ import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Scope;
 
 @Configuration
 @ConditionalOnBean({ CamelCloudAutoConfiguration.class, LoadBalancerClient.class })

@@ -250,6 +250,7 @@
     <module>camel-spring-batch</module>
     <module>camel-spring-boot</module>
     <module>camel-spring-cloud</module>
+    <module>camel-spring-cloud-netflix</module>
     <module>camel-spring-javaconfig</module>
     <module>camel-spring-integration</module>
     <module>camel-spring-ldap</module>
