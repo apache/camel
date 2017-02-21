@@ -2018,10 +2018,15 @@
         <version>${project.version}</version>
       </dependency>
 
-      <!-- camel commands -->
+      <!-- camel catalog -->
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-catalog</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-catalog-connector</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2059,6 +2064,8 @@
         <artifactId>camel-catalog-rest-app</artifactId>
         <version>${project.version}</version>
       </dependency>
+
+      <!-- camel commands -->
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-commands-core</artifactId>
