@@ -49,11 +49,28 @@ public class DefaultUndertowHttpBindingTest {
                         .collect(Collectors.joining())));
     }
 
+    @Test(timeout = 1000)
+    public void readEntireMultiDelayedWithPausePayload() throws Exception {
+        String[] delayedPayloads = new String[] {
+                "first ",
+                "",
+                "second",
+        };
+
+        StreamSourceChannel source = source(delayedPayloads);
+
+        DefaultUndertowHttpBinding binding = new DefaultUndertowHttpBinding();
+        String result = new String(binding.readFromChannel(source));
+
+        assertThat(result, is(
+                Stream.of(delayedPayloads)
+                        .collect(Collectors.joining())));
+    }
+
     private StreamSourceChannel source(final String[] delayedPayloads) {
-        XnioIoThread thread = thread();
         Thread sourceThread = Thread.currentThread();
 
-        return new EmptyStreamSourceChannel(thread) {
+        return new EmptyStreamSourceChannel(thread()) {
             int chunk = 0;
 
             @Override
