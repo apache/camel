@@ -48,5 +48,4 @@ public abstract class AbstractConfiguration implements Cloneable {
     public void setCredentials(StorageCredentials credentials) {
         this.credentials = credentials;
     }
-
 }
