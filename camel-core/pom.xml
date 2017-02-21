@@ -163,6 +163,12 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>java-hamcrest</artifactId>
+      <version>${hamcrest-version}</version>
+      <scope>test</scope>
+    </dependency>
 
     <!-- logging -->         
     <dependency>
@@ -633,6 +639,86 @@
         </dependency>
       </dependencies>
     </profile>
-  </profiles>
 
+    <profile>
+      <id>jdk9-build</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <dependencies>
+
+        <!-- enable the APT processor -->
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>apt</artifactId>
+          <scope>provided</scope>
+        </dependency>
+        <!-- enable Spring Boot configuration APT processor -->
+        <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-configuration-processor</artifactId>
+          <version>${spring-boot-version}</version>
+          <scope>provided</scope>
+        </dependency>
+        <!-- xmltokenizer using woodstox -->
+        <dependency>
+          <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>woodstox-core-asl</artifactId>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>${maven-compiler-plugin-version}</version>
+            <configuration>
+              <source>${jdk.version}</source>
+              <target>${jdk.version}</target>
+              <maxmem>512M</maxmem>
+              <fork>true</fork>
+              <compilerArgs>
+                <arg>-J--add-modules</arg>
+                <arg>-Jjava.xml.bind</arg>
+              </compilerArgs>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <!-- skip file stress tests as they are intended to run manually -->
+              <excludes>
+              <exclude>org/apache/camel/component/file/stress/**.java</exclude>
+              <exclude>**/DistributedCompletionIntervalTest.java</exclude>
+              <exclude>**/DistributedConcurrentPerCorrelationKeyTest.java</exclude>
+              <exclude>${platform.skip.tests}</exclude>
+              </excludes>
+              <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
+              <!-- needed for testing the properties component -->
+              <environmentVariables>
+              <FOO_SERVICE_HOST>myserver</FOO_SERVICE_HOST>
+              <FOO_SERVICE_PORT>8081</FOO_SERVICE_PORT>
+              </environmentVariables>
+              <argLine>--add-modules java.xml.bind,java.xml.ws --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.lang.reflect=ALL-UNNAMED</argLine>
+            </configuration>
+            <dependencies>
+              <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-core</artifactId>
+                <version>2.2.11</version>
+              </dependency>
+              <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <version>2.2.11</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+  
 </project>

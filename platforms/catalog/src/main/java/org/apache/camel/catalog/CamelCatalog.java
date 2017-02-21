@@ -130,6 +130,25 @@ public interface CamelCatalog {
     String getLoadedVersion();
 
     /**
+     * Gets the current loaded runtime provider version used by the catalog.
+     */
+    String getRuntimeProviderLoadedVersion();
+
+    /**
+     * Attempt to load the runtime provider version to be used by the catalog.
+     * <p/>
+     * Loading the runtime provider JAR of the given version of choice may require internet access
+     * to download the JAR from Maven central. You can pre download the JAR and install in a local
+     * Maven repository to avoid internet access for offline environments.
+     *
+     * @param groupId  the runtime provider Maven groupId
+     * @param artifactId  the runtime provider Maven artifactId
+     * @param version  the runtime provider Maven version
+     * @return <tt>true</tt> if the version was loaded, <tt>false</tt> if not.
+     */
+    boolean loadRuntimeProviderVersion(String groupId, String artifactId, String version);
+
+    /**
      * Find all the component names from the Camel catalog
      */
     List<String> findComponentNames();
@@ -150,6 +169,11 @@ public interface CamelCatalog {
     List<String> findModelNames();
 
     /**
+     * Find all the other (miscellaneous) names from the Camel catalog
+     */
+    List<String> findOtherNames();
+
+    /**
      * Find all the component names from the Camel catalog that matches the label
      */
     List<String> findComponentNames(String filter);
@@ -168,6 +192,11 @@ public interface CamelCatalog {
      * Find all the model names from the Camel catalog that matches the label
      */
     List<String> findModelNames(String filter);
+
+    /**
+     * Find all the other (miscellaneous) names from the Camel catalog that matches the label
+     */
+    List<String> findOtherNames(String filter);
 
     /**
      * Returns the component information as JSon format.
@@ -192,6 +221,14 @@ public interface CamelCatalog {
      * @return language details in JSon
      */
     String languageJSonSchema(String name);
+
+    /**
+     * Returns the other (miscellaneous) information as JSon format.
+     *
+     * @param name the other (miscellaneous) name
+     * @return other (miscellaneous) details in JSon
+     */
+    String otherJSonSchema(String name);
 
     /**
      * Returns the model information as JSon format.
@@ -250,6 +287,22 @@ public interface CamelCatalog {
     String languageHtmlDoc(String name);
 
     /**
+     * Returns the other (miscellaneous) documentation as Ascii doc format.
+     *
+     * @param name the other (miscellaneous) name
+     * @return other (miscellaneous) documentation in ascii doc format.
+     */
+    String otherAsciiDoc(String name);
+
+    /**
+     * Returns the other (miscellaneous) documentation as HTML format.
+     *
+     * @param name the other (miscellaneous) name
+     * @return other (miscellaneous) documentation in HTML format.
+     */
+    String otherHtmlDoc(String name);
+
+    /**
      * Find all the unique label names all the components are using.
      *
      * @return a set of all the labels.
@@ -276,6 +329,13 @@ public interface CamelCatalog {
      * @return a set of all the labels.
      */
     Set<String> findModelLabels();
+
+    /**
+     * Find all the unique label names all the other (miscellaneous) are using.
+     *
+     * @return a set of all the labels.
+     */
+    Set<String> findOtherLabels();
 
     /**
      * Returns the Apache Camel Maven Archetype catalog in XML format.
@@ -503,6 +563,11 @@ public interface CamelCatalog {
      * Lists all the models (EIPs) summary details in JSon
      */
     String listModelsAsJson();
+
+    /**
+     * Lists all the others (miscellaneous) summary details in JSon
+     */
+    String listOthersAsJson();
 
     /**
      * Reports a summary what the catalog contains in JSon

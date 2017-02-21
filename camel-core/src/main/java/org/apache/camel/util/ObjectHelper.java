@@ -1327,6 +1327,15 @@ public final class ObjectHelper {
      * @return <tt>true</tt> if it override, <tt>false</tt> otherwise
      */
     public static boolean isOverridingMethod(Method source, Method target, boolean exact) {
+
+        if (source.equals(target)) {
+            return true;
+        } else if (source.getDeclaringClass() == target.getDeclaringClass()) {
+            return false;
+        } else if (!source.getDeclaringClass().isAssignableFrom(target.getDeclaringClass())) {
+            return false;
+        }
+
         if (!source.getName().equals(target.getName())) {
             return false;
         }

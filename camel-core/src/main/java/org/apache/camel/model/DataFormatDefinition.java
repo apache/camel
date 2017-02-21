@@ -133,7 +133,7 @@ public class DataFormatDefinition extends IdentifiedType implements OtherAttribu
     protected DataFormat createDataFormat(RouteContext routeContext) {
         // must use getDataFormatName() as we need special logic in json dataformat
         if (getDataFormatName() != null) {
-            return routeContext.getCamelContext().resolveDataFormat(getDataFormatName());
+            return routeContext.getCamelContext().createDataFormat(getDataFormatName());
         }
         return null;
     }

@@ -1,5 +1,7 @@
 ## JavaScript Language
 
+*Available as of Camel version 1.0*
+
 Camel supports
 http://en.wikipedia.org/wiki/JavaScript[JavaScript/ECMAScript] among
 other link:scripting-languages.html[Scripting Languages] to allow an

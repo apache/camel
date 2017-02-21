@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mina2;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -48,9 +49,31 @@ public class Mina2CustomCodecTest extends BaseMina2Test {
     }
 
     @Test
+    public void testProducerFailInDecodingResponse() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
+        try {
+            template.requestBody(String.format("mina2:tcp://localhost:%1$s?sync=true&codec=#failingCodec", getPort()), "Hello World");
+            fail("Expecting that decode of result fails");
+        } catch (Exception e) {
+            assertTrue(e instanceof CamelExecutionException);
+            assertNotNull(e.getCause());
+            Throwable rootCause = e;
+            while (rootCause.getCause() != null) {
+                rootCause = rootCause.getCause();
+            }
+            assertTrue(rootCause instanceof IllegalArgumentException);
+            assertTrue(rootCause.getMessage().contains("Something went wrong in decode"));
+        }
+
+    }
+
+    @Test
     public void testTCPEncodeUTF8InputIsString() throws Exception {
         final String myUri = String.format("mina2:tcp://localhost:%1$s?encoding=UTF-8&sync=false", getNextPort());
         context.addRoutes(new RouteBuilder() {
+            @Override
             public void configure() {
                 from(myUri).to("mock:result");
             }
@@ -78,15 +101,19 @@ public class Mina2CustomCodecTest extends BaseMina2Test {
         }
     }
 
+    @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("myCodec", new MyCodec());
+        jndi.bind("failingCodec", new MyCodec(true));
         return jndi;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
 
+            @Override
             public void configure() throws Exception {
                 from(String.format("mina2:tcp://localhost:%1$s?sync=true&codec=#myCodec", getPort())).transform(constant("Bye World")).to("mock:result");
             }
@@ -95,9 +122,21 @@ public class Mina2CustomCodecTest extends BaseMina2Test {
 
     private static class MyCodec implements ProtocolCodecFactory {
 
+        private final boolean failing;
+
+        MyCodec(boolean failing) {
+            this.failing = failing;
+        }
+
+        MyCodec() {
+            this.failing = false;
+        }
+
+        @Override
         public ProtocolEncoder getEncoder(IoSession session) throws Exception {
             return new ProtocolEncoder() {
 
+                @Override
                 public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out)
                     throws Exception {
                     IoBuffer bb = IoBuffer.allocate(32).setAutoExpand(true);
@@ -107,6 +146,7 @@ public class Mina2CustomCodecTest extends BaseMina2Test {
                     out.write(bb);
                 }
 
+                @Override
                 public void dispose(IoSession ioSession) throws Exception {
                     // do nothing
                 }
@@ -114,10 +154,16 @@ public class Mina2CustomCodecTest extends BaseMina2Test {
 
         }
 
+        @Override
         public ProtocolDecoder getDecoder(IoSession session) throws Exception {
             return new CumulativeProtocolDecoder() {
 
+                @Override
                 protected boolean doDecode(IoSession session, IoBuffer in, ProtocolDecoderOutput out) throws Exception {
+                    if (failing) {
+                        throw new IllegalArgumentException("Something went wrong in decode");
+                    }
+
                     if (in.remaining() > 0) {
                         byte[] buf = new byte[in.remaining()];
                         in.get(buf);

@@ -27,7 +27,7 @@
 
   <artifactId>camel-grape</artifactId>
   <name>Camel :: Grape</name>
-  <description>Camel Component for Grape</description>
+  <description>The grape component allows you to fetch, load and manage additional jars when CamelContext is running</description>
 
   <properties>
     <groovy-eclipse-batch.version>2.4.3-01</groovy-eclipse-batch.version>

@@ -19,7 +19,11 @@ package org.apache.camel.maven.packaging.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.camel.maven.packaging.StringHelper.cutLastZeroDigit;
+
 public class ComponentModel {
+
+    private final boolean coreOnly;
 
     private String kind;
     private String scheme;
@@ -28,6 +32,7 @@ public class ComponentModel {
     private String alternativeSchemes;
     private String title;
     private String description;
+    private String firstVersion;
     private String label;
     private String deprecated;
     private String consumerOnly;
@@ -38,6 +43,10 @@ public class ComponentModel {
     private String version;
     private final List<ComponentOptionModel> componentOptions = new ArrayList<ComponentOptionModel>();
     private final List<EndpointOptionModel> endpointOptions = new ArrayList<EndpointOptionModel>();
+
+    public ComponentModel(boolean coreOnly) {
+        this.coreOnly = coreOnly;
+    }
 
     public String getKind() {
         return kind;
@@ -93,6 +102,14 @@ public class ComponentModel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getFirstVersion() {
+        return firstVersion;
+    }
+
+    public void setFirstVersion(String firstVersion) {
+        this.firstVersion = firstVersion;
     }
 
     public String getLabel() {
@@ -193,9 +210,13 @@ public class ComponentModel {
 
     public String getDocLink() {
         if ("camel-core".equals(artifactId)) {
-            return "src/main/docs";
+            return coreOnly ? "src/main/docs" : "../camel-core/src/main/docs";
         } else {
             return artifactId + "/src/main/docs";
         }
+    }
+
+    public String getFirstVersionShort() {
+        return cutLastZeroDigit(firstVersion);
     }
 }

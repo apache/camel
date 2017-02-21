@@ -648,7 +648,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     public String getComponentDocumentation(String componentName) throws IOException {
-        return context.getComponentDocumentation(componentName);
+        return null;
     }
 
     public String createRouteStaticEndpointJson() {

@@ -28,7 +28,6 @@ public final class CatalogHelper {
     private CatalogHelper() {
     }
 
-
     /**
      * Loads the entire stream into memory as a String and returns it.
      * <p/>
@@ -141,6 +140,56 @@ public final class CatalogHelper {
             return null;
         }
         return before(text, before);
+    }
+
+    /**
+     * Tests whether the value is <tt>null</tt> or an empty string.
+     *
+     * @param value  the value, if its a String it will be tested for text length as well
+     * @return true if empty
+     */
+    public static boolean isEmpty(Object value) {
+        return !isNotEmpty(value);
+    }
+
+    /**
+     * Tests whether the value is <b>not</b> <tt>null</tt> or an empty string.
+     *
+     * @param value  the value, if its a String it will be tested for text length as well
+     * @return true if <b>not</b> empty
+     */
+    public static boolean isNotEmpty(Object value) {
+        if (value == null) {
+            return false;
+        } else if (value instanceof String) {
+            String text = (String) value;
+            return text.trim().length() > 0;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Removes all leading and ending quotes (single and double) from the string
+     *
+     * @param s  the string
+     * @return the string without leading and ending quotes (single and double)
+     */
+    public static String removeLeadingAndEndingQuotes(String s) {
+        if (isEmpty(s)) {
+            return s;
+        }
+
+        String copy = s.trim();
+        if (copy.startsWith("'") && copy.endsWith("'")) {
+            return copy.substring(1, copy.length() - 1);
+        }
+        if (copy.startsWith("\"") && copy.endsWith("\"")) {
+            return copy.substring(1, copy.length() - 1);
+        }
+
+        // no quotes, so return as-is
+        return s;
     }
 
 }

@@ -45,10 +45,8 @@ import org.apache.kafka.common.config.SslConfigs;
 public class KafkaConfiguration {
 
     @UriPath @Metadata(required = "true")
-    private String brokers;
-
-    @UriParam @Metadata(required = "true")
     private String topic;
+
     @UriParam
     private String groupId;
     @UriParam(defaultValue = KafkaConstants.KAFKA_DEFAULT_PARTITIONER)
@@ -59,8 +57,14 @@ public class KafkaConfiguration {
     private int consumersCount = 1;
 
     //Common configuration properties
+    @UriParam(label = "common")
+    private String brokers;
     @UriParam
     private String clientId;
+
+    //interceptor.classes
+    @UriParam(label = "common,monitoring")
+    private String interceptorClasses;
 
     //key.deserializer
     @UriParam(label = "consumer", defaultValue = KafkaConstants.KAFKA_DEFAULT_DESERIALIZER)
@@ -274,6 +278,7 @@ public class KafkaConfiguration {
         addPropertyIfNotNull(props, ProducerConfig.BUFFER_MEMORY_CONFIG, getBufferMemorySize());
         addPropertyIfNotNull(props, ProducerConfig.COMPRESSION_TYPE_CONFIG, getCompressionCodec());
         addPropertyIfNotNull(props, ProducerConfig.RETRIES_CONFIG, getRetries());
+        addPropertyIfNotNull(props, ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, getInterceptorClasses());
         // SSL
         applySslConfiguration(props, getSslContextParameters());
         addPropertyIfNotNull(props, SslConfigs.SSL_KEY_PASSWORD_CONFIG, getSslKeyPassword());
@@ -333,6 +338,7 @@ public class KafkaConfiguration {
         addPropertyIfNotNull(props, ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, getMaxPartitionFetchBytes());
         addPropertyIfNotNull(props, ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, getSessionTimeoutMs());
         addPropertyIfNotNull(props, ConsumerConfig.MAX_POLL_RECORDS_CONFIG, getMaxPollRecords());
+        addPropertyIfNotNull(props, ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG, getInterceptorClasses());
         // SSL
         applySslConfiguration(props, getSslContextParameters());
         addPropertyIfNotNull(props, SslConfigs.SSL_KEY_PASSWORD_CONFIG, getSslKeyPassword());
@@ -607,11 +613,10 @@ public class KafkaConfiguration {
     }
 
     /**
-     * This is for bootstrapping and the producer will only use it for getting metadata (topics, partitions and replicas).
-     * The socket connections for sending the actual data will be established based on the broker information returned in the metadata.
+     * URL of the Kafka brokers to use.
      * The format is host1:port1,host2:port2, and the list can be a subset of brokers or a VIP pointing to a subset of brokers.
      * <p/>
-     * This option is known as <tt>metadata.broker.list</tt> in the Kafka documentation.
+     * This option is known as <tt>bootstrap.servers</tt> in the Kafka documentation.
      */
     public void setBrokers(String brokers) {
         this.brokers = brokers;
@@ -1359,5 +1364,19 @@ public class KafkaConfiguration {
      */
     public void setRecordMetadata(boolean recordMetadata) {
         this.recordMetadata = recordMetadata;
+    }
+
+
+    public String getInterceptorClasses() {
+        return interceptorClasses;
+    }
+    /**
+     * Sets interceptors for producer or consumers.
+     * Producer interceptors have to be classes implementing {@link org.apache.kafka.clients.producer.ProducerInterceptor}
+     * Consumer interceptors have to be classes implementing {@link org.apache.kafka.clients.consumer.ConsumerInterceptor}
+     * Note that if you use Producer interceptor on a consumer it will throw a class cast exception in runtime
+     */
+    public void setInterceptorClasses(String interceptorClasses) {
+        this.interceptorClasses = interceptorClasses;
     }
 }

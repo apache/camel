@@ -25,6 +25,7 @@ public final class ComponentModel {
     private String javaType;
     private String title;
     private String description;
+    private String firstVersion;
     private String groupId;
     private String artifactId;
     private String versionId;
@@ -89,6 +90,14 @@ public final class ComponentModel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getFirstVersion() {
+        return firstVersion;
+    }
+
+    public void setFirstVersion(String firstVersion) {
+        this.firstVersion = firstVersion;
     }
 
     public String getGroupId() {

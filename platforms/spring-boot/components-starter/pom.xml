@@ -83,6 +83,7 @@
     <module>camel-atom-starter</module>
     <module>camel-avro-starter</module>
     <module>camel-aws-starter</module>
+    <module>camel-azure-starter</module>
     <module>camel-bam-starter</module>
     <module>camel-barcode-starter</module>
     <module>camel-base64-starter</module>
@@ -122,6 +123,7 @@
     <module>camel-eclipse-starter</module>
     <module>camel-ehcache-starter</module>
     <module>camel-elasticsearch-starter</module>
+    <module>camel-elasticsearch5-starter</module>
     <module>camel-elsql-starter</module>
     <module>camel-etcd-starter</module>
     <module>camel-exec-starter</module>
@@ -223,6 +225,7 @@
     <module>camel-olingo2-starter</module>
     <module>camel-openshift-starter</module>
     <module>camel-openstack-starter</module>
+    <module>camel-opentracing-starter</module>
     <module>camel-optaplanner-starter</module>
     <module>camel-paho-starter</module>
     <module>camel-pdf-starter</module>
@@ -232,6 +235,7 @@
     <module>camel-quartz2-starter</module>
     <module>camel-quickfix-starter</module>
     <module>camel-rabbitmq-starter</module>
+    <module>camel-reactive-streams-starter</module>
     <module>camel-restlet-starter</module>
     <module>camel-ribbon-starter</module>
     <module>camel-rmi-starter</module>
@@ -282,6 +286,7 @@
     <module>camel-tagsoup-starter</module>
     <module>camel-tarfile-starter</module>
     <module>camel-telegram-starter</module>
+    <module>camel-tika-starter</module>
     <module>camel-twitter-starter</module>
     <module>camel-undertow-starter</module>
     <module>camel-univocity-parsers-starter</module>

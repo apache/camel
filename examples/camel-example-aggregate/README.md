@@ -6,8 +6,19 @@ This example shows how to use Camel Aggregator EIP which offers (since Camel 2.3
 database persistence.
 
 It's an interactive example where you can type in some numbers which then are aggregated
-(summed, per this sample's aggregation strategy) whenever the user types STOP.  
+(summed, per this sample's aggregation strategy) whenever the user types `STOP`.  
 The user can then enter more numbers to do another aggregation.
+
+#### How it works
+
+The example is an interactive example where it prompt on the console for you to enter a number and press `ENTER`. 
+The numbers you enter will then be aggregated and persisted. That means you can at any time hit `ctrl + c` to shutdown Camel. 
+
+Then you should be able to start the example again and resume where you left.
+When you want to complete the aggregation you can enter `STOP` as input and Camel will show you the result, 
+which is the sum of all the numbers entered.
+
+The persistent datastore is located in the `data/hawtdb.dat` file. Its automatic created the first time.
 
 #### Camel component used in this example
 
@@ -34,10 +45,6 @@ To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>.  If you restart it and res
 entering numbers you should see that it remembered previously entered values, as it
 uses a persistent store.
 
-### Documentation
-
-This example is documented at
-  [http://camel.apache.org/aggregate-example.html](http://camel.apache.org/aggregate-example.html)
 
 ### Forum, Help, etc
 

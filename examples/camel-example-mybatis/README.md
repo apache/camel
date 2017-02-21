@@ -41,12 +41,6 @@ This example uses OSGi Blueprint to setup and configure the database,
 as well the CamelContext. You can see this in the following file:
 In the `src/main/resources/OSGI-INF/blueprint/camel-mybatis.xml`
 
-
-### Documentation
-
-This example is documented at
-  <http://camel.apache.org/mybatis-example.html>
-
 ### Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums

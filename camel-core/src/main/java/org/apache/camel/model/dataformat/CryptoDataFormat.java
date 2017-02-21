@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version
  */
-@Metadata(label = "dataformat,transformation,security", title = "Crypto (Java Cryptographic Extension)")
+@Metadata(firstVersion = "2.3.0", label = "dataformat,transformation,security", title = "Crypto (Java Cryptographic Extension)")
 @XmlRootElement(name = "crypto")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CryptoDataFormat extends DataFormatDefinition {

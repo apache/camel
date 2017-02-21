@@ -31,7 +31,7 @@ import static org.apache.camel.component.grape.MavenCoordinates.parseMavenCoordi
 /**
  * The grape component allows you to fetch, load and manage additional jars when CamelContext is running.
  */
-@UriEndpoint(scheme = "grape", syntax = "grape:defaultCoordinates", title = "Grape", producerOnly = true, label = "management,deployment")
+@UriEndpoint(firstVersion = "2.16.0", scheme = "grape", syntax = "grape:defaultCoordinates", title = "Grape", producerOnly = true, label = "management,deployment")
 class GrapeEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")

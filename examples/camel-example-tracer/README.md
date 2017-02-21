@@ -25,14 +25,6 @@ to return as response in the console.
 
 To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
 
-### Documentation
-
-For a background in tracer and JPA see
-  http://camel.apache.org/tracer.html
-  http://camel.apache.org/jpa.html
-
-This example is documented at <http://camel.apache.org/tracer-example.html>
-
 ### Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums

@@ -37,6 +37,18 @@ public class DefaultVersionManager implements VersionManager {
     }
 
     @Override
+    public String getRuntimeProviderLoadedVersion() {
+        // not supported
+        return null;
+    }
+
+    @Override
+    public boolean loadRuntimeProviderVersion(String groupId, String artifactId, String version) {
+        // not supported
+        return false;
+    }
+
+    @Override
     public InputStream getResourceAsStream(String name) {
         return DefaultCamelCatalog.class.getClassLoader().getResourceAsStream(name);
     }

@@ -57,6 +57,9 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     private boolean recordSeparatorDisabled;
     private String recordSeparator;
     private Boolean skipHeaderRecord;
+    private Boolean trim;
+    private Boolean ignoreHeaderCase;
+    private Boolean trailingDelimiter;
 
     // Unmarshal options
     private boolean lazyLoad;
@@ -158,6 +161,18 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
 
         if (skipHeaderRecord != null) {
             answer = answer.withSkipHeaderRecord(skipHeaderRecord);
+        }
+        
+        if (trim != null) {
+            answer = answer.withTrim(trim);
+        }
+        
+        if (ignoreHeaderCase != null) {
+            answer = answer.withIgnoreHeaderCase(ignoreHeaderCase);
+        }
+        
+        if (trailingDelimiter != null) {
+            answer = answer.withTrailingDelimiter(trailingDelimiter);
         }
 
         return answer;
@@ -681,5 +696,80 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
     }
 
     //endregion
+    /**
+     * Sets whether or not to trim leading and trailing blanks.
+     * <p>
+     * If {@code null} then the default value of the format used.
+     * </p>
+     * 
+     * @param trim whether or not to trim leading and trailing blanks.
+     *            <code>null</code> value allowed.
+     * @return Current {@code CsvDataFormat}, fluent API.
+     */
+    public CsvDataFormat setTrim(Boolean trim) {
+        this.trim = trim;
+        return this;
+    }
 
+    /**
+     * Indicates whether or not to trim leading and trailing blanks.
+     * 
+     * @return {@link Boolean#TRUE} if leading and trailing blanks should be
+     *         trimmed. {@link Boolean#FALSE} otherwise. Could return
+     *         <code>null</code> if value has NOT been set.
+     */
+    public Boolean getTrim() {
+        return trim;
+    }
+
+    /**
+     * Sets whether or not to ignore case when accessing header names.
+     * <p>
+     * If {@code null} then the default value of the format used.
+     * </p>
+     * 
+     * @param ignoreHeaderCase whether or not to ignore case when accessing header names.
+     *            <code>null</code> value allowed.
+     * @return Current {@code CsvDataFormat}, fluent API.
+     */
+    public CsvDataFormat setIgnoreHeaderCase(Boolean ignoreHeaderCase) {
+        this.ignoreHeaderCase = ignoreHeaderCase;
+        return this;
+    }
+
+    /**
+     * Indicates whether or not to ignore case when accessing header names.
+     * 
+     * @return {@link Boolean#TRUE} if case should be ignored when accessing
+     *         header name. {@link Boolean#FALSE} otherwise. Could return
+     *         <code>null</code> if value has NOT been set.
+     */
+    public Boolean getIgnoreHeaderCase() {
+        return ignoreHeaderCase;
+    }
+
+    /**
+     * Sets whether or not to add a trailing delimiter.
+     * <p>
+     * If {@code null} then the default value of the format used.
+     * </p>
+     * 
+     * @param trailingDelimiter whether or not to add a trailing delimiter.
+     * @return Current {@code CsvDataFormat}, fluent API.
+     */
+    public CsvDataFormat setTrailingDelimiter(Boolean trailingDelimiter) {
+        this.trailingDelimiter = trailingDelimiter;
+        return this;
+    }
+
+    /**
+     * Indicates whether or not to add a trailing delimiter.
+     * 
+     * @return {@link Boolean#TRUE} if a trailing delimiter should be added.
+     *         {@link Boolean#FALSE} otherwise. Could return <code>null</code>
+     *         if value has NOT been set.
+     */
+    public Boolean getTrailingDelimiter() {
+        return trailingDelimiter;
+    }
 }

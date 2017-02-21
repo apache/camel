@@ -36,7 +36,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class RabbitMQProducerIntTest extends CamelTestSupport {
+public class RabbitMQProducerIntTest extends AbstractRabbitMQIntTest {
     private static final String EXCHANGE = "ex1";
     private static final String ROUTE = "route1";
     private static final String BASIC_URI_FORMAT = "rabbitmq:localhost:5672/%s?routingKey=%s&username=cameltest&password=cameltest&skipQueueDeclare=true";
@@ -86,7 +86,7 @@ public class RabbitMQProducerIntTest extends CamelTestSupport {
 
     @Before
     public void setUpRabbitMQ() throws Exception {
-        connection = createTestConnection();
+        connection = connection();
         channel = connection.createChannel();
         channel.queueDeclare("sammyq", false, false, true, null);
         channel.queueBind("sammyq", EXCHANGE, ROUTE);
@@ -160,16 +160,6 @@ public class RabbitMQProducerIntTest extends CamelTestSupport {
         templateWithGuranteedDeliveryBadRouteButNotMandatory.sendBodyAndHeader("publisher ack message", RabbitMQConstants.EXCHANGE_NAME, "ex1");
 
         assertThatBodiesReceivedIn(received);
-    }
-
-    private Connection createTestConnection() throws IOException, TimeoutException {
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost("localhost");
-        factory.setPort(5672);
-        factory.setUsername("cameltest");
-        factory.setPassword("cameltest");
-        factory.setVirtualHost("/");
-        return factory.newConnection();
     }
 
     private class ArrayPopulatingConsumer extends DefaultConsumer {

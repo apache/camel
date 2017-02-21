@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
-import org.apache.camel.component.rest.RestConsumerBindingProcessor;
-import org.apache.camel.model.NoOutputDefinition;
+import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.processor.RestBindingAdvice;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
@@ -42,7 +42,7 @@ import org.apache.camel.util.IntrospectionSupport;
 @Metadata(label = "rest")
 @XmlRootElement(name = "restBinding")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinition> {
+public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBindingDefinition> {
 
     @XmlTransient
     private Map<String, String> defaultValues;
@@ -80,8 +80,7 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
         return "RestBinding";
     }
 
-    @Override
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
+    public RestBindingAdvice createRestBindingAdvice(RouteContext routeContext) throws Exception {
 
         CamelContext context = routeContext.getCamelContext();
         RestConfiguration config = context.getRestConfiguration(component, true);
@@ -105,7 +104,7 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
 
         if (mode == null || "off".equals(mode)) {
             // binding mode is off, so create a off mode binding processor
-            return new RestConsumerBindingProcessor(context, null, null, null, null, consumes, produces, mode, skip, cors, corsHeaders, defaultValues);
+            return new RestBindingAdvice(context, null, null, null, null, consumes, produces, mode, skip, cors, corsHeaders, defaultValues);
         }
 
         // setup json data format
@@ -200,7 +199,7 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
             setAdditionalConfiguration(config, context, outJaxb, "xml.out.");
         }
 
-        return new RestConsumerBindingProcessor(context, json, jaxb, outJson, outJaxb, consumes, produces, mode, skip, cors, corsHeaders, defaultValues);
+        return new RestBindingAdvice(context, json, jaxb, outJson, outJaxb, consumes, produces, mode, skip, cors, corsHeaders, defaultValues);
     }
 
     private void setAdditionalConfiguration(RestConfiguration config, CamelContext context,
@@ -350,5 +349,10 @@ public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinit
      */
     public void setEnableCORS(Boolean enableCORS) {
         this.enableCORS = enableCORS;
+    }
+
+    @Override
+    public String getLabel() {
+        return "";
     }
 }

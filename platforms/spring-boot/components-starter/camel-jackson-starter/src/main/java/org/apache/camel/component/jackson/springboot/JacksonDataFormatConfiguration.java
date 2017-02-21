@@ -40,7 +40,7 @@ public class JacksonDataFormatConfiguration {
     /**
      * Which json library to use.
      */
-    private JsonLibrary library = JsonLibrary.Jackson;
+    private JsonLibrary library = JsonLibrary.XStream;
     /**
      * Class name of the java type to use when unarmshalling
      */

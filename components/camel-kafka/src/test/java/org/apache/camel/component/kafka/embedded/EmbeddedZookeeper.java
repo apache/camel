@@ -67,7 +67,6 @@ public class EmbeddedZookeeper {
         }
     }
 
-
     public void shutdown() {
         factory.shutdown();
         try {

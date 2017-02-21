@@ -41,6 +41,16 @@ public interface RuntimeProvider {
     String getProviderName();
 
     /**
+     * Maven group id of the runtime provider JAR dependency.
+     */
+    String getProviderGroupId();
+
+    /**
+     * Maven artifact id of the runtime provider JAR dependency.
+     */
+    String getProviderArtifactId();
+
+    /**
      * Gets the directory where the component json files are stored in the catalog JAR file
      */
     String getComponentJSonSchemaDirectory();
@@ -56,6 +66,11 @@ public interface RuntimeProvider {
     String getLanguageJSonSchemaDirectory();
 
     /**
+     * Gets the directory where the other (miscellaneous) json files are stored in the catalog JAR file
+     */
+    String getOtherJSonSchemaDirectory();
+
+    /**
      * Find all the component names from the Camel catalog supported by the provider
      */
     List<String> findComponentNames();
@@ -69,5 +84,10 @@ public interface RuntimeProvider {
      * Find all the language names from the Camel catalog supported by the provider
      */
     List<String> findLanguageNames();
+
+    /**
+     * Find all the other (miscellaneous) names from the Camel catalog supported by the provider
+     */
+    List<String> findOtherNames();
 
 }

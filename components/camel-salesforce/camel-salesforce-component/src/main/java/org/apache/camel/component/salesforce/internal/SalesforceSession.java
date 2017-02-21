@@ -72,8 +72,13 @@ public class SalesforceSession implements Service {
         ObjectHelper.notNull(config.getLoginUrl(), "loginUrl");
         ObjectHelper.notNull(config.getClientId(), "clientId");
         ObjectHelper.notNull(config.getClientSecret(), "clientSecret");
-        ObjectHelper.notNull(config.getUserName(), "userName");
-        ObjectHelper.notNull(config.getPassword(), "password");
+
+        if (ObjectHelper.isEmpty(config.getRefreshToken())) {
+            ObjectHelper.notNull(config.getUserName(), "userName");
+            ObjectHelper.notNull(config.getPassword(), "password");
+        } else {
+            ObjectHelper.notNull(config.getRefreshToken(), "refreshToken");
+        }
 
         this.httpClient = httpClient;
         this.timeout = timeout;
@@ -129,15 +134,21 @@ public class SalesforceSession implements Service {
      */
     public Request getLoginRequest(HttpConversation conversation) {
         final String loginUrl = (instanceUrl == null ? config.getLoginUrl() : instanceUrl) + OAUTH2_TOKEN_PATH;
-        LOG.info("Login user {} at Salesforce loginUrl: {}", config.getUserName(), loginUrl);
+        LOG.info("Login at Salesforce loginUrl: {}", loginUrl);
         final Fields fields = new Fields(true);
 
-        fields.put("grant_type", "password");
         fields.put("client_id", config.getClientId());
         fields.put("client_secret", config.getClientSecret());
-        fields.put("username", config.getUserName());
-        fields.put("password", config.getPassword());
         fields.put("format", "json");
+
+        if (ObjectHelper.isEmpty(config.getRefreshToken())) {
+            fields.put("grant_type", "password");
+            fields.put("username", config.getUserName());
+            fields.put("password", config.getPassword());
+        } else {
+            fields.put("grant_type", "refresh_token");
+            fields.put("refresh_token", config.getRefreshToken());
+        }
 
         final Request post;
         if (conversation == null) {
@@ -153,9 +164,6 @@ public class SalesforceSession implements Service {
 
     /**
      * Parses login response, allows SalesforceSecurityHandler to parse a login request for a failed authentication conversation.
-     * @param loginResponse
-     * @param responseContent
-     * @throws SalesforceException
      */
     public synchronized void parseLoginResponse(ContentResponse loginResponse, String responseContent) throws SalesforceException {
         final int responseStatus = loginResponse.getStatus();

@@ -1,6 +1,6 @@
 ## XML JSon DataFormat
 
-*Available as of Camel 2.10*
+*Available as of Camel version 2.10*
 
 Camel already supports a number of data formats to perform XML and
 JSON-related conversions, but all of them require a POJO either as an

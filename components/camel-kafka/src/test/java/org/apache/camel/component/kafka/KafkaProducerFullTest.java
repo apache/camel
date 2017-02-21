@@ -43,6 +43,7 @@ import org.junit.Test;
 public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
 
     private static final String TOPIC_STRINGS = "test";
+    private static final String TOPIC_INTERCEPTED = "test";
     private static final String TOPIC_STRINGS_IN_HEADER = "testHeader";
     private static final String TOPIC_BYTES = "testBytes";
     private static final String TOPIC_BYTES_IN_HEADER = "testBytesHeader";
@@ -51,12 +52,14 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
     private static KafkaConsumer<String, String> stringsConsumerConn;
     private static KafkaConsumer<byte[], byte[]> bytesConsumerConn;
 
-    @EndpointInject(uri = "kafka:localhost:{{kafkaPort}}?topic=" + TOPIC_STRINGS
-            + "&requestRequiredAcks=-1")
+    @EndpointInject(uri = "kafka:" + TOPIC_STRINGS + "?requestRequiredAcks=-1")
     private Endpoint toStrings;
+    @EndpointInject(uri = "kafka:" + TOPIC_INTERCEPTED + "?requestRequiredAcks=-1"
+            + "&interceptorClasses=org.apache.camel.component.kafka.MockProducerInterceptor")
+    private Endpoint toStringsWithInterceptor;
     @EndpointInject(uri = "mock:kafkaAck")
     private MockEndpoint mockEndpoint;
-    @EndpointInject(uri = "kafka:localhost:{{kafkaPort}}?topic=" + TOPIC_BYTES + "&requestRequiredAcks=-1"
+    @EndpointInject(uri = "kafka:" + TOPIC_BYTES + "?requestRequiredAcks=-1"
             + "&serializerClass=org.apache.kafka.common.serialization.ByteArraySerializer&"
             + "keySerializerClass=org.apache.kafka.common.serialization.ByteArraySerializer")
     private Endpoint toBytes;
@@ -66,6 +69,9 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
 
     @Produce(uri = "direct:startBytes")
     private ProducerTemplate bytesTemplate;
+
+    @Produce(uri = "direct:startTraced")
+    private ProducerTemplate interceptedTemplate;
 
     @BeforeClass
     public static void before() {
@@ -103,6 +109,8 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
                 from("direct:startStrings").to(toStrings).to(mockEndpoint);
 
                 from("direct:startBytes").to(toBytes).to(mockEndpoint);
+
+                from("direct:startTraced").to(toStringsWithInterceptor).to(mockEndpoint);
             }
         };
     }
@@ -132,6 +140,24 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
             assertTrue("Offset is positive", recordMetaData1.get(0).offset() >= 0);
             assertTrue("Topic Name start with 'test'", recordMetaData1.get(0).topic().startsWith("test"));
         }
+    }
+
+    @Test
+    public void producedStringMessageIsIntercepted() throws InterruptedException, IOException {
+        int messageInTopic = 10;
+        int messageInOtherTopic = 5;
+
+        CountDownLatch messagesLatch = new CountDownLatch(messageInTopic + messageInOtherTopic);
+
+        sendMessagesInRoute(messageInTopic, interceptedTemplate, "IT test message", KafkaConstants.PARTITION_KEY, "1");
+        sendMessagesInRoute(messageInOtherTopic, interceptedTemplate, "IT test message in other topic", KafkaConstants.PARTITION_KEY, "1", KafkaConstants.TOPIC, TOPIC_STRINGS_IN_HEADER);
+        createKafkaMessageConsumer(stringsConsumerConn, TOPIC_INTERCEPTED, TOPIC_STRINGS_IN_HEADER, messagesLatch);
+
+        boolean allMessagesReceived = messagesLatch.await(200, TimeUnit.MILLISECONDS);
+
+        assertTrue("Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount(), allMessagesReceived);
+
+        assertEquals(messageInTopic + messageInOtherTopic, MockProducerInterceptor.recordsCaptured.size());
     }
 
     @Test

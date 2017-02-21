@@ -44,7 +44,8 @@ import org.slf4j.LoggerFactory;
  * It works by allowing you to create DataSet instances both as a source of messages and as a way to assert that the data set is received.
  * Camel will use the throughput logger when sending dataset's.
  */
-@UriEndpoint(scheme = "dataset", title = "Dataset", syntax = "dataset:name", consumerClass = DataSetConsumer.class, label = "core,testing", lenientProperties = true)
+@UriEndpoint(firstVersion = "1.3.0", scheme = "dataset", title = "Dataset", syntax = "dataset:name",
+    consumerClass = DataSetConsumer.class, label = "core,testing", lenientProperties = true)
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private final transient Logger log;
     private final AtomicInteger receivedCounter = new AtomicInteger();

@@ -22,6 +22,7 @@ import org.apache.camel.component.telegram.TelegramConstants;
 import org.apache.camel.component.telegram.TelegramMediaType;
 import org.apache.camel.component.telegram.model.IncomingMessage;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
+import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
 import org.apache.camel.component.telegram.model.OutgoingMessage;
 import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
@@ -155,8 +156,18 @@ public final class TelegramConverter {
             result = video;
             break;
         }
+        case DOCUMENT:
         default: {
-            throw new IllegalArgumentException("Unsupported conversion from byte[] to media type " + type);
+            // this can be any file
+            OutgoingDocumentMessage document = new OutgoingDocumentMessage();
+            String title = (String) exchange.getIn().getHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION);
+
+            document.setCaption(title);
+            document.setFilenameWithExtension("file");
+            document.setDocument(message);
+
+            result = document;
+            break;
         }
         }
 

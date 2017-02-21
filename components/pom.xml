@@ -72,6 +72,7 @@
     <module>camel-atom</module>
     <module>camel-avro</module>
     <module>camel-aws</module>
+    <module>camel-azure</module>
     <module>camel-base64</module>
     <module>camel-beanio</module>
     <module>camel-beanstalk</module>
@@ -108,6 +109,7 @@
     <module>camel-ehcache</module>
     <module>camel-ejb</module>
     <module>camel-elasticsearch</module>
+    <module>camel-elasticsearch5</module>
     <module>camel-elsql</module>
     <module>camel-etcd</module>
     <module>camel-eventadmin</module>
@@ -205,6 +207,7 @@
     <module>camel-olingo2</module>
     <module>camel-openshift</module>
     <module>camel-openstack</module>
+    <module>camel-opentracing</module>
     <module>camel-optaplanner</module>
     <module>camel-paho</module>
     <module>camel-paxlogging</module>
@@ -216,6 +219,7 @@
     <module>camel-quartz2</module>
     <module>camel-quickfix</module>
     <module>camel-rabbitmq</module>
+    <module>camel-reactive-streams</module>
     <module>camel-restlet</module>
     <module>camel-rmi</module>
     <module>camel-routebox</module>
@@ -264,6 +268,7 @@
     <module>camel-tagsoup</module>
     <module>camel-tarfile</module>
     <module>camel-telegram</module>
+    <module>camel-tika</module>
     <module>camel-twitter</module>
     <module>camel-undertow</module>
     <module>camel-univocity-parsers</module>

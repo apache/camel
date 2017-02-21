@@ -22,8 +22,8 @@ import io.fabric8.kubernetes.api.model.DoneableNamespace;
 import io.fabric8.kubernetes.api.model.Namespace;
 import io.fabric8.kubernetes.api.model.NamespaceBuilder;
 import io.fabric8.kubernetes.api.model.NamespaceList;
-import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
-import io.fabric8.kubernetes.client.dsl.ClientResource;
+import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
+import io.fabric8.kubernetes.client.dsl.Resource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -103,7 +103,7 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
             throw new IllegalArgumentException(
                     "Get a specific namespace by labels require specify a labels set");
         }
-        ClientNonNamespaceOperation<Namespace, NamespaceList, DoneableNamespace, ClientResource<Namespace, DoneableNamespace>> namespaces = getEndpoint().getKubernetesClient().namespaces();
+        NonNamespaceOperation<Namespace, NamespaceList, DoneableNamespace, Resource<Namespace, DoneableNamespace>> namespaces = getEndpoint().getKubernetesClient().namespaces();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             namespaces.withLabel(entry.getKey(), entry.getValue());
         }

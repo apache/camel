@@ -27,11 +27,16 @@
   </parent>
 
   <artifactId>camel-example-reportincident</artifactId>
-  <name>Camel :: Example :: Report Incident</name>
+  <name>Camel :: Example :: Report Incident (deprecated)</name>
   <description>An example based on real life use case for reporting incidents using webservice that are transformed
     and send as emails to a backing system
   </description>
   <packaging>war</packaging>
+
+  <properties>
+    <category>Tutorial</category>
+    <title>Report Incident</title>
+  </properties>
 
   <dependencies>
     <dependency>

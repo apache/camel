@@ -31,6 +31,10 @@
   <name>Camel :: Example :: Java8</name>
   <description>An example for showing Camel DSL for Java 8</description>
 
+  <properties>
+    <category>Beginner</category>
+  </properties>
+
   <dependencies>
 
     <dependency>

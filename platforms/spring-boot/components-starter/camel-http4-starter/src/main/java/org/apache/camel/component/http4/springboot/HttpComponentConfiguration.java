@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http4.springboot;
 
+import javax.net.ssl.HostnameVerifier;
 import org.apache.camel.component.http4.HttpClientConfigurer;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpConfiguration;
@@ -23,7 +24,6 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.http.client.CookieStore;
 import org.apache.http.conn.HttpClientConnectionManager;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.protocol.HttpContext;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -81,12 +81,10 @@ public class HttpComponentConfiguration {
     @NestedConfigurationProperty
     private SSLContextParameters sslContextParameters;
     /**
-     * To use a custom X509HostnameVerifier such as
-     * org.apache.http.conn.ssl.StrictHostnameVerifier or
-     * org.apache.http.conn.ssl.AllowAllHostnameVerifier.
+     * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or
+     * org.apache.http.conn.ssl.NoopHostnameVerifier.
      */
-    @NestedConfigurationProperty
-    private X509HostnameVerifier x509HostnameVerifier;
+    private HostnameVerifier x509HostnameVerifier;
     /**
      * The maximum number of connections.
      */
@@ -175,12 +173,11 @@ public class HttpComponentConfiguration {
         this.sslContextParameters = sslContextParameters;
     }
 
-    public X509HostnameVerifier getX509HostnameVerifier() {
+    public HostnameVerifier getX509HostnameVerifier() {
         return x509HostnameVerifier;
     }
 
-    public void setX509HostnameVerifier(
-            X509HostnameVerifier x509HostnameVerifier) {
+    public void setX509HostnameVerifier(HostnameVerifier x509HostnameVerifier) {
         this.x509HostnameVerifier = x509HostnameVerifier;
     }
 

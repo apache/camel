@@ -69,7 +69,7 @@ public class BonitaAPI {
     }
 
     public CaseCreationResponse startCase(ProcessDefinitionResponse processDefinition,
-            Map<String, Serializable> rawInputs) {
+            Map<String, Serializable> rawInputs) throws Exception {
         if (processDefinition == null) {
             throw new IllegalArgumentException("ProcessDefinition is null");
         }

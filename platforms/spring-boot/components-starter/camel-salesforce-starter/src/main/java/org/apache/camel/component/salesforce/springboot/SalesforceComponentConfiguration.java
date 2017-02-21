@@ -46,7 +46,36 @@ public class SalesforceComponentConfiguration {
      */
     private SalesforceLoginConfigNestedConfiguration loginConfig;
     /**
-     * To use the shared SalesforceLoginConfig as configuration
+     * Salesforce login URL defaults to https://login.salesforce.com
+     */
+    private String loginUrl = "https://login.salesforce.com";
+    /**
+     * Salesforce connected application Consumer Key
+     */
+    private String clientId;
+    /**
+     * Salesforce connected application Consumer Secret
+     */
+    private String clientSecret;
+    /**
+     * Salesforce connected application Consumer token
+     */
+    private String refreshToken;
+    /**
+     * Salesforce account user name
+     */
+    private String userName;
+    /**
+     * Salesforce account password
+     */
+    private String password;
+    /**
+     * Flag to enable/disable lazy OAuth default is false. When enabled OAuth
+     * token retrieval or generation is not done until the first API call
+     */
+    private Boolean lazyLogin = false;
+    /**
+     * To use the shared SalesforceEndpointConfig as endpoint configuration
      */
     private SalesforceEndpointConfigNestedConfiguration config;
     /**
@@ -115,6 +144,62 @@ public class SalesforceComponentConfiguration {
     public void setLoginConfig(
             SalesforceLoginConfigNestedConfiguration loginConfig) {
         this.loginConfig = loginConfig;
+    }
+
+    public String getLoginUrl() {
+        return loginUrl;
+    }
+
+    public void setLoginUrl(String loginUrl) {
+        this.loginUrl = loginUrl;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Boolean getLazyLogin() {
+        return lazyLogin;
+    }
+
+    public void setLazyLogin(Boolean lazyLogin) {
+        this.lazyLogin = lazyLogin;
     }
 
     public SalesforceEndpointConfigNestedConfiguration getConfig() {
@@ -238,6 +323,96 @@ public class SalesforceComponentConfiguration {
 
     public void setPackages(String[] packages) {
         this.packages = packages;
+    }
+
+    public static class SalesforceLoginConfigNestedConfiguration {
+        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.salesforce.SalesforceLoginConfig.class;
+        /**
+         * Salesforce login URL, defaults to https://login.salesforce.com
+         */
+        private String loginUrl;
+        /**
+         * Salesforce connected application Consumer Key
+         */
+        private String clientId;
+        /**
+         * Salesforce connected application Consumer Secret
+         */
+        private String clientSecret;
+        /**
+         * Salesforce connected application Consumer token
+         */
+        private String refreshToken;
+        /**
+         * Salesforce account user name
+         */
+        private String userName;
+        /**
+         * Salesforce account password
+         */
+        private String password;
+        /**
+         * Flag to enable/disable lazy OAuth, default is false. When enabled,
+         * OAuth token retrieval or generation is not done until the first API
+         * call
+         */
+        private Boolean lazyLogin;
+
+        public String getLoginUrl() {
+            return loginUrl;
+        }
+
+        public void setLoginUrl(String loginUrl) {
+            this.loginUrl = loginUrl;
+        }
+
+        public String getClientId() {
+            return clientId;
+        }
+
+        public void setClientId(String clientId) {
+            this.clientId = clientId;
+        }
+
+        public String getClientSecret() {
+            return clientSecret;
+        }
+
+        public void setClientSecret(String clientSecret) {
+            this.clientSecret = clientSecret;
+        }
+
+        public String getRefreshToken() {
+            return refreshToken;
+        }
+
+        public void setRefreshToken(String refreshToken) {
+            this.refreshToken = refreshToken;
+        }
+
+        public String getUserName() {
+            return userName;
+        }
+
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
+
+        public Boolean getLazyLogin() {
+            return lazyLogin;
+        }
+
+        public void setLazyLogin(Boolean lazyLogin) {
+            this.lazyLogin = lazyLogin;
+        }
     }
 
     public static class SalesforceEndpointConfigNestedConfiguration {
@@ -814,84 +989,6 @@ public class SalesforceComponentConfiguration {
         public void setApprovalSkipEntryCriteria(
                 Boolean approvalSkipEntryCriteria) {
             this.approvalSkipEntryCriteria = approvalSkipEntryCriteria;
-        }
-    }
-
-    public static class SalesforceLoginConfigNestedConfiguration {
-        public static final Class CAMEL_NESTED_CLASS = org.apache.camel.component.salesforce.SalesforceLoginConfig.class;
-        /**
-         * Salesforce login URL, defaults to https://login.salesforce.com
-         */
-        private String loginUrl;
-        /**
-         * Salesforce connected application Consumer Key
-         */
-        private String clientId;
-        /**
-         * Salesforce connected application Consumer Secret
-         */
-        private String clientSecret;
-        /**
-         * Salesforce account user name
-         */
-        private String userName;
-        /**
-         * Salesforce account password
-         */
-        private String password;
-        /**
-         * Flag to enable/disable lazy OAuth, default is false. When enabled,
-         * OAuth token retrieval or generation is not done until the first API
-         * call
-         */
-        private Boolean lazyLogin;
-
-        public String getLoginUrl() {
-            return loginUrl;
-        }
-
-        public void setLoginUrl(String loginUrl) {
-            this.loginUrl = loginUrl;
-        }
-
-        public String getClientId() {
-            return clientId;
-        }
-
-        public void setClientId(String clientId) {
-            this.clientId = clientId;
-        }
-
-        public String getClientSecret() {
-            return clientSecret;
-        }
-
-        public void setClientSecret(String clientSecret) {
-            this.clientSecret = clientSecret;
-        }
-
-        public String getUserName() {
-            return userName;
-        }
-
-        public void setUserName(String userName) {
-            this.userName = userName;
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password;
-        }
-
-        public Boolean getLazyLogin() {
-            return lazyLogin;
-        }
-
-        public void setLazyLogin(Boolean lazyLogin) {
-            this.lazyLogin = lazyLogin;
         }
     }
 }

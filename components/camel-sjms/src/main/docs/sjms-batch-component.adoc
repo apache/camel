@@ -1,8 +1,6 @@
 ## Simple JMS Batch Component
-[[ConfluenceContent]]
-### SJMS Batch Component
 
-*Available as of Camel 2.16*
+*Available as of Camel version 2.16*
 
 SJMS Batch is a specialized component for highly performant,
 transactional batch consumption from a JMS queue. It can be thought of
@@ -76,7 +74,7 @@ for this component:
 </dependency>
 ----
 
-#### URI format
+### URI format
 
 [source]
 ----

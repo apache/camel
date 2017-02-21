@@ -1,6 +1,6 @@
 ## JSon GSon DataFormat
 
-*Available as of Camel 2.18*
+*Available as of Camel version 2.10*
 
 Gson is a link:data-format.html[Data Format] which uses the
 https://github.com/google/gson[Gson Library]
@@ -26,7 +26,7 @@ The JSon GSon dataformat supports 17 options which are listed below.
 | Name | Default | Java Type | Description
 | objectMapper |  | String | Lookup and use the existing ObjectMapper with the given id when using Jackson.
 | prettyPrint | false | Boolean | To enable pretty printing output nicely formatted. Is by default false.
-| library | Gson | JsonLibrary | Which json library to use.
+| library | XStream | JsonLibrary | Which json library to use.
 | unmarshalTypeName |  | String | Class name of the java type to use when unarmshalling
 | jsonView |  | Class<?> | When marshalling a POJO to JSON you might want to exclude certain fields from the JSON output. With Jackson you can use JSON views to accomplish this. This option is to refer to the class which has JsonView annotations
 | include |  | String | If you want to marshal a pojo to JSON and the pojo has some fields with null values. And you want to skip these null values you can set this option to NOT_NULL

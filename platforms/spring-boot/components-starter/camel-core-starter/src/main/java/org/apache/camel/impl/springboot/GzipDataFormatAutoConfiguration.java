@@ -20,7 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.GzipDataFormat;
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatFactory;
 import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionMessage;
@@ -35,7 +38,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
@@ -48,26 +50,36 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 @EnableConfigurationProperties(GzipDataFormatConfiguration.class)
 public class GzipDataFormatAutoConfiguration {
 
-    @Bean(name = "gzip-dataformat")
-    @Scope("prototype")
+    @Bean(name = "gzip-dataformat-factory")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(GzipDataFormat.class)
-    public GzipDataFormat configureGzipDataFormat(CamelContext camelContext,
-            GzipDataFormatConfiguration configuration) throws Exception {
-        GzipDataFormat dataformat = new GzipDataFormat();
-        if (CamelContextAware.class.isAssignableFrom(GzipDataFormat.class)) {
-            CamelContextAware contextAware = CamelContextAware.class
-                    .cast(dataformat);
-            if (contextAware != null) {
-                contextAware.setCamelContext(camelContext);
+    public DataFormatFactory configureGzipDataFormatFactory(
+            final CamelContext camelContext,
+            final GzipDataFormatConfiguration configuration) {
+        return new DataFormatFactory() {
+            public DataFormat newInstance() {
+                GzipDataFormat dataformat = new GzipDataFormat();
+                if (CamelContextAware.class
+                        .isAssignableFrom(GzipDataFormat.class)) {
+                    CamelContextAware contextAware = CamelContextAware.class
+                            .cast(dataformat);
+                    if (contextAware != null) {
+                        contextAware.setCamelContext(camelContext);
+                    }
+                }
+                try {
+                    Map<String, Object> parameters = new HashMap<>();
+                    IntrospectionSupport.getProperties(configuration,
+                            parameters, null, false);
+                    IntrospectionSupport.setProperties(camelContext,
+                            camelContext.getTypeConverter(), dataformat,
+                            parameters);
+                } catch (Exception e) {
+                    throw new RuntimeCamelException(e);
+                }
+                return dataformat;
             }
-        }
-        Map<String, Object> parameters = new HashMap<>();
-        IntrospectionSupport.getProperties(configuration, parameters, null,
-                false);
-        IntrospectionSupport.setProperties(camelContext,
-                camelContext.getTypeConverter(), dataformat, parameters);
-        return dataformat;
+        };
     }
 
     public static class Condition extends SpringBootCondition {

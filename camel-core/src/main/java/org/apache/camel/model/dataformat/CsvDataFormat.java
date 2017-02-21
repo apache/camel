@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * CSV data format
  */
-@Metadata(label = "dataformat,transformation,csv", title = "CSV")
+@Metadata(firstVersion = "1.3.0", label = "dataformat,transformation,csv", title = "CSV")
 @XmlRootElement(name = "csv")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CsvDataFormat extends DataFormatDefinition {
@@ -78,6 +78,13 @@ public class CsvDataFormat extends DataFormatDefinition {
     private Boolean skipHeaderRecord;
     @XmlAttribute
     private String quoteMode;
+    @XmlAttribute
+    private Boolean ignoreHeaderCase;
+    @XmlAttribute
+    private Boolean trim;
+    @XmlAttribute
+    private Boolean trailingDelimiter;
+
     // Unmarshall options
     @XmlAttribute
     private Boolean lazyLoad;
@@ -163,7 +170,16 @@ public class CsvDataFormat extends DataFormatDefinition {
         if (quoteMode != null) {
             setProperty(camelContext, dataFormat, "quoteMode", quoteMode);
         }
-        
+        if (trim != null) {
+            setProperty(camelContext, dataFormat, "trim", trim);
+        }
+        if (ignoreHeaderCase != null) {
+            setProperty(camelContext, dataFormat, "ignoreHeaderCase", ignoreHeaderCase);
+        }
+        if (trailingDelimiter != null) {
+            setProperty(camelContext, dataFormat, "trailingDelimiter", trailingDelimiter);
+        }
+
         // Unmarshall options
         if (lazyLoad != null) {
             setProperty(camelContext, dataFormat, "lazyLoad", lazyLoad);
@@ -437,6 +453,39 @@ public class CsvDataFormat extends DataFormatDefinition {
      */
     public void setRecordConverterRef(String recordConverterRef) {
         this.recordConverterRef = recordConverterRef;
+    }
+
+    /**
+     * Sets whether or not to trim leading and trailing blanks.
+     */
+    public void setTrim(Boolean trim) {
+        this.trim = trim;
+    }
+
+    public Boolean getTrim() {
+        return trim;
+    }
+    
+    /**
+     * Sets whether or not to ignore case when accessing header names.
+     */
+    public void setIgnoreHeaderCase(Boolean ignoreHeaderCase) {
+        this.ignoreHeaderCase = ignoreHeaderCase;
+    }
+    
+    public Boolean getIgnoreHeaderCase() {
+        return ignoreHeaderCase;
+    }
+    
+    /**
+     * Sets whether or not to add a trailing delimiter.
+     */
+    public void setTrailingDelimiter(Boolean trailingDelimiter) {
+        this.trailingDelimiter = trailingDelimiter;
+    }
+    
+    public Boolean getTrailingDelimiter() {
+        return trailingDelimiter;
     }
 
 }

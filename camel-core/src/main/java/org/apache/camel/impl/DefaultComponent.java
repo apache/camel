@@ -65,7 +65,14 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         // check URI string to the unsafe URI characters
         String encodedUri = preProcessUri(uri);
         URI u = new URI(encodedUri);
-        String path = URISupport.extractRemainderPath(u, useRawUri());
+        String path;
+        if (u.getScheme() != null) {
+            // if there is a scheme then there is also a path
+            path = URISupport.extractRemainderPath(u, useRawUri());
+        } else {
+            // this uri has no context-path as the leading text is the component name (scheme)
+            path = null;
+        }
 
         Map<String, Object> parameters;
         if (useRawUri()) {

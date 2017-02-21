@@ -31,6 +31,11 @@
   <description>AWS S3 CDI example</description>
   <packaging>jar</packaging>
 
+  <properties>
+    <category>Cloud</category>
+    <title>CDI AWS S3</title>
+  </properties>
+
   <dependencies>
 
     <!-- CDI API -->

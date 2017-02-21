@@ -381,8 +381,10 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      * Returns the HTML documentation for the given camel component
      *
      * @param componentName  the component name
+     * @deprecated use camel-catalog instead
      */
     @ManagedOperation(description = "Returns the HTML documentation for the given camel component")
+    @Deprecated
     String getComponentDocumentation(String componentName) throws IOException;
 
     @ManagedOperation(description = "Returns the JSON representation of all the static and dynamic endpoints defined in all the routes")

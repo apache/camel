@@ -27,7 +27,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "language,java", title = "MVEL")
+@Metadata(firstVersion = "2.0.0", label = "language,java", title = "MVEL")
 @XmlRootElement(name = "mvel")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MvelExpression extends ExpressionDefinition {

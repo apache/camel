@@ -32,6 +32,9 @@
   <description>An example for showing Camel using MyBatis SQL mapper component</description>
 
   <properties>
+    <category>Database</category>
+    <title>MyBatis</title>
+    
     <camel.osgi.export.pkg>org.apache.camel.example.mybatis.*</camel.osgi.export.pkg>
   </properties>
 

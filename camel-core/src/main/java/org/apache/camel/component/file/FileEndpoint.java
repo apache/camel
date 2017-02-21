@@ -38,7 +38,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The file component is used for reading or writing files.
  */
-@UriEndpoint(scheme = "file", title = "File", syntax = "file:directoryName", consumerClass = FileConsumer.class, label = "core,file")
+@UriEndpoint(firstVersion = "1.0.0", scheme = "file", title = "File", syntax = "file:directoryName", consumerClass = FileConsumer.class, label = "core,file")
 public class FileEndpoint extends GenericFileEndpoint<File> {
 
     private static final Integer CHMOD_WRITE_MASK = 02;

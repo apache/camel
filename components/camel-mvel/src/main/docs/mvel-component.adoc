@@ -1,6 +1,6 @@
 ## MVEL Component
 
-*Available as of Camel 2.12*
+*Available as of Camel version 2.12*
 
 The *mvel:* component allows you to process a message using an
 http://mvel.codehaus.org/[MVEL] template. This can be ideal when using

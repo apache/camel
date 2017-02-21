@@ -17,30 +17,31 @@
 
 package org.apache.camel.impl.cloud;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.util.ObjectHelper;
 
-public class CachingServiceDiscovery implements ServiceDiscovery {
+public final class CachingServiceDiscovery implements ServiceDiscovery {
     private final ServiceDiscovery delegate;
-    private List<ServiceDefinition> services;
-    private long lastUpdate;
+    private LoadingCache<String, List<ServiceDefinition>> cache;
     private long timeout;
 
     public CachingServiceDiscovery(ServiceDiscovery delegate) {
         this(delegate, 60 * 1000);
     }
 
+    public CachingServiceDiscovery(ServiceDiscovery delegate, long timeout, TimeUnit unit) {
+        this(delegate, unit.toMillis(timeout));
+    }
+
     public CachingServiceDiscovery(ServiceDiscovery delegate, long timeout) {
         this.delegate = ObjectHelper.notNull(delegate, "delegate");
-        this.lastUpdate = 0;
-        this.services = Collections.emptyList();
-        this.timeout = timeout;
+        setTimeout(timeout);
     }
 
     public ServiceDiscovery getDelegate() {
@@ -49,10 +50,13 @@ public class CachingServiceDiscovery implements ServiceDiscovery {
 
     public void setTimeout(long timeout) {
         this.timeout = timeout;
+        this.cache = Caffeine.newBuilder()
+            .expireAfterAccess(timeout, TimeUnit.MILLISECONDS)
+            .build(delegate::getUpdatedListOfServices);
     }
 
     public void setTimeout(long timeout, TimeUnit unit) {
-        this.timeout = unit.toMillis(timeout);
+        setTimeout(unit.toMillis(timeout));
     }
 
     public long getTimeout() {
@@ -76,22 +80,7 @@ public class CachingServiceDiscovery implements ServiceDiscovery {
 
     @Override
     public List<ServiceDefinition> getUpdatedListOfServices(String name) {
-        long now = System.currentTimeMillis();
-
-        if (lastUpdate == 0 || now > lastUpdate + timeout) {
-            List<ServiceDefinition> updatedList = delegate.getUpdatedListOfServices(name);
-            if (updatedList.isEmpty()) {
-                services = Collections.emptyList();
-            } else {
-                // List is copied as the delegated ServiceCallServiceDiscovery
-                // may update the list
-                services = Collections.unmodifiableList(new ArrayList<>(updatedList));
-            }
-
-            lastUpdate = now;
-        }
-
-        return services;
+        return cache.get(name);
     }
 
     // **********************

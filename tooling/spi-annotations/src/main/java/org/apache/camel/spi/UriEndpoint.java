@@ -33,6 +33,11 @@ import java.lang.annotation.Target;
 public @interface UriEndpoint {
 
     /**
+     * The first version this endpoint was added to Apache Camel.
+     */
+    String firstVersion() default "";
+
+    /**
      * Represents the URI scheme name of this endpoint.
      * <p/>
      * Multiple scheme names can be defined as a comma separated value.

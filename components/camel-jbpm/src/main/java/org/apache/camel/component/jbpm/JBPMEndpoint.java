@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The jbpm component provides integration with jBPM (Business Process Management).
  */
-@UriEndpoint(scheme = "jbpm", title = "JBPM", syntax = "jbpm:connectionURL", producerOnly = true, label = "process")
+@UriEndpoint(firstVersion = "2.6.0", scheme = "jbpm", title = "JBPM", syntax = "jbpm:connectionURL", producerOnly = true, label = "process")
 public class JBPMEndpoint extends DefaultEndpoint {
     private static final transient Logger LOGGER = LoggerFactory.getLogger(JBPMEndpoint.class);
 

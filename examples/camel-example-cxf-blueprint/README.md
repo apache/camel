@@ -76,9 +76,6 @@ Open the request 1 (under camel-example-cxf-blueprint --> ReportIncidentBinding 
 #### Step 6: Check the file system
    Check the folder "target/inbox/" in the Karaf base directory to see that a message has arrived.
 
-### Documentation
-This example is described in more detail at [http://camel.apache.org/cxf-example-osgi-blueprint.html](http://camel.apache.org/cxf-example-osgi-blueprint.html)
-
 ### Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums

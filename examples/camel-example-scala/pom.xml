@@ -31,6 +31,10 @@
   <name>Camel :: Example :: Scala</name>
   <description>A Camel route using Scala</description>
 
+  <properties>
+    <category>Other Languages</category>
+  </properties>
+
   <dependencies>
 
     <dependency>

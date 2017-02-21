@@ -17,11 +17,13 @@
 package org.apache.camel.catalog.maven;
 
 import java.io.InputStream;
+import java.util.List;
 
 import junit.framework.TestCase;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.CatalogHelper;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.catalog.springboot.SpringBootRuntimeProvider;
 import org.junit.Test;
 
 public class MavenVersionManagerTest extends TestCase {
@@ -76,6 +78,34 @@ public class MavenVersionManagerTest extends TestCase {
 
         // should contain the Camel 2.18 option
         assertTrue(json.contains("connectionClose"));
+    }
+
+    @Test
+    public void testRuntimeProviderLoadVersion() throws Exception {
+        CamelCatalog catalog = new DefaultCamelCatalog(false);
+        catalog.setVersionManager(new MavenVersionManager());
+        catalog.setRuntimeProvider(new SpringBootRuntimeProvider());
+
+        String version = "2.18.2";
+
+        boolean loaded = catalog.loadVersion(version);
+        assertTrue(loaded);
+
+        loaded = catalog.loadRuntimeProviderVersion(catalog.getRuntimeProvider().getProviderGroupId(), catalog.getRuntimeProvider().getProviderArtifactId(), version);
+        assertTrue(loaded);
+
+        assertEquals(version, catalog.getLoadedVersion());
+        assertEquals(version, catalog.getRuntimeProviderLoadedVersion());
+
+        List<String> names = catalog.findComponentNames();
+
+        assertTrue(names.contains("file"));
+        assertTrue(names.contains("ftp"));
+        assertTrue(names.contains("jms"));
+        // camel-ejb does not work in spring-boot
+        assertFalse(names.contains("ejb"));
+        // camel-pac-logging does not work in spring-boot
+        assertFalse(names.contains("paxlogging"));
     }
 
 }

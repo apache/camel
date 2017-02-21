@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Zip-file data format
  */
-@Metadata(label = "dataformat,transformation,file", title = "Zip File")
+@Metadata(firstVersion = "2.11.0", label = "dataformat,transformation,file", title = "Zip File")
 // TODO: use zipfile as name in Camel 3.0
 @XmlRootElement(name = "zipFile")
 @XmlAccessorType(XmlAccessType.FIELD)

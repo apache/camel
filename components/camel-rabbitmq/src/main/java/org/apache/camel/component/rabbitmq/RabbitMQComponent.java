@@ -17,18 +17,24 @@
 package org.apache.camel.component.rabbitmq;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
-
 import javax.net.ssl.TrustManager;
 
 import com.rabbitmq.client.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.util.IntrospectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RabbitMQComponent extends UriEndpointComponent {
+
+    public static final String ARG_PREFIX = "arg.";
+    public static final String EXCHANGE_ARG_PREFIX = "exchange.";
+    public static final String QUEUE_ARG_PREFIX = "queue.";
+    public static final String BINDING_ARG_PREFIX = "binding.";
 
     private static final Logger LOG = LoggerFactory.getLogger(RabbitMQComponent.class);
 
@@ -74,6 +80,17 @@ public class RabbitMQComponent extends UriEndpointComponent {
             LOG.debug("Creating RabbitMQEndpoint with host {}:{} and exchangeName: {}",
                     new Object[]{endpoint.getHostname(), endpoint.getPortNumber(), endpoint.getExchangeName()});
         }
+
+        HashMap<String, Object> args = new HashMap<>();
+        args.putAll(IntrospectionSupport.extractProperties(params, ARG_PREFIX));
+        endpoint.setArgs(args);
+
+        HashMap<String, Object> argsCopy = new HashMap<>(args);
+        
+        // Combine the three types of rabbit arguments with their individual endpoint properties
+        endpoint.getExchangeArgs().putAll(IntrospectionSupport.extractProperties(argsCopy, EXCHANGE_ARG_PREFIX));
+        endpoint.getQueueArgs().putAll(IntrospectionSupport.extractProperties(argsCopy, QUEUE_ARG_PREFIX));
+        endpoint.getBindingArgs().putAll(IntrospectionSupport.extractProperties(argsCopy, BINDING_ARG_PREFIX));
 
         return endpoint;
     }

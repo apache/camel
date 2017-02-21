@@ -1,5 +1,7 @@
 ## Mail Component
 
+*Available as of Camel version 1.0*
+
 The mail component provides access to Email via Spring's Mail support
 and the underlying JavaMail system.
 
@@ -116,7 +118,7 @@ The Mail component supports 63 endpoint options which are listed below:
 | unseen | consumer | true | boolean | Whether to limit by unseen mails only.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| fetchSize | consumer (advanced) | -1 | int | Sets the maximum number of messages to consume during a poll. This can be used to avoid overloading a mail server if a mailbox folder contains a lot of messages. Default value of -1 means no fetch size and all messages will be consumed. Setting the value to 0 is a special corner case where Camel will not consume any messages at all.
+| fetchSize | consumer (advanced) | 1 | int | Sets the maximum number of messages to consume during a poll. This can be used to avoid overloading a mail server if a mailbox folder contains a lot of messages. Default value of -1 means no fetch size and all messages will be consumed. Setting the value to 0 is a special corner case where Camel will not consume any messages at all.
 | folderName | consumer (advanced) | INBOX | String | The folder to poll.
 | mailUidGenerator | consumer (advanced) |  | MailUidGenerator | A pluggable MailUidGenerator that allows to use custom logic to generate UUID of the mail message.
 | mapMailMessage | consumer (advanced) | true | boolean | Specifies whether Camel should map the received mail message to Camel body/headers. If set to true the body of the mail message is mapped to the body of the Camel IN message and the mail headers are mapped to IN headers. If this option is set to false then the IN message contains a raw javax.mail.Message. You can retrieve this raw message by calling exchange.getIn().getBody(javax.mail.Message.class).

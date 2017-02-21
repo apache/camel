@@ -40,7 +40,7 @@ public class RabbitMQDeclareSupport {
         if (endpoint.getDeadLetterExchange() != null) {
             // TODO Do we need to setup the args for the DeadLetter?
             declareExchange(channel, endpoint.getDeadLetterExchange(), endpoint.getDeadLetterExchangeType(), Collections.<String, Object>emptyMap());
-            declareAndBindQueue(channel, endpoint.getDeadLetterQueue(), endpoint.getDeadLetterExchange(), endpoint.getDeadLetterRoutingKey(), null);
+            declareAndBindQueue(channel, endpoint.getDeadLetterQueue(), endpoint.getDeadLetterExchange(), endpoint.getDeadLetterRoutingKey(), null, null);
         }
     }
 
@@ -51,7 +51,7 @@ public class RabbitMQDeclareSupport {
 
         if (shouldDeclareQueue()) {
             // need to make sure the queueDeclare is same with the exchange declare
-            declareAndBindQueue(channel, endpoint.getQueue(), endpoint.getExchangeName(), endpoint.getRoutingKey(), resolvedQueueArguments());
+            declareAndBindQueue(channel, endpoint.getQueue(), endpoint.getExchangeName(), endpoint.getRoutingKey(), resolvedQueueArguments(), endpoint.getBindingArgs());
         }
     }
 
@@ -59,6 +59,7 @@ public class RabbitMQDeclareSupport {
         Map<String, Object> queueArgs = new HashMap<>();
         populateQueueArgumentsFromDeadLetterExchange(queueArgs);
         populateQueueArgumentsFromConfigurer(queueArgs);
+        queueArgs.putAll(endpoint.getQueueArgs());
         return queueArgs;
     }
 
@@ -76,6 +77,7 @@ public class RabbitMQDeclareSupport {
         if (endpoint.getExchangeArgsConfigurer() != null) {
             endpoint.getExchangeArgsConfigurer().configurArgs(exchangeArgs);
         }
+        exchangeArgs.putAll(endpoint.getExchangeArgs());
         return exchangeArgs;
     }
 
@@ -101,11 +103,17 @@ public class RabbitMQDeclareSupport {
         channel.exchangeDeclare(exchange, exchangeType, endpoint.isDurable(), endpoint.isAutoDelete(), exchangeArgs);
     }
 
-    private void declareAndBindQueue(final Channel channel, final String queue, final String exchange, final String routingKey, final Map<String, Object> arguments)
+    private void declareAndBindQueue(final Channel channel,
+                                     final String queue,
+                                     final String exchange,
+                                     final String routingKey,
+                                     final Map<String, Object> queueArgs,
+                                     final Map<String, Object> bindingArgs)
+
             throws IOException {
-        channel.queueDeclare(queue, endpoint.isDurable(), endpoint.isExclusive(), endpoint.isAutoDelete(), arguments);
+        channel.queueDeclare(queue, endpoint.isDurable(), endpoint.isExclusive(), endpoint.isAutoDelete(), queueArgs);
         if (shouldBindQueue()) {
-            channel.queueBind(queue, exchange, emptyIfNull(routingKey));
+            channel.queueBind(queue, exchange, emptyIfNull(routingKey), bindingArgs);
         }
     }
 

@@ -1,6 +1,6 @@
 ## SAP NetWeaver Component
 
-*Available as of Camel 2.12*
+*Available as of Camel version 2.12*
 
 The *sap-netweaver* integrates with the
 http://scn.sap.com/community/developer-center/netweaver-gateway[SAP

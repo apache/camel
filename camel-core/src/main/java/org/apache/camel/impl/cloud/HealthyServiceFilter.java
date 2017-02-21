@@ -27,7 +27,7 @@ public class HealthyServiceFilter implements ServiceFilter {
     public static final ServiceFilter INSTANCE = new HealthyServiceFilter();
 
     @Override
-    public <T extends ServiceDefinition> List<T> apply(List<T> services) {
+    public List<ServiceDefinition> apply(List<ServiceDefinition> services) {
         return services.stream().filter(s -> s.getHealth().isHealthy()).collect(Collectors.toList());
     }
 }

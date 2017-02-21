@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Executors;
@@ -25,6 +26,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -51,9 +53,10 @@ public class KafkaProducerTest {
 
     @SuppressWarnings({"unchecked"})
     public KafkaProducerTest() throws Exception {
-        endpoint = new KafkaEndpoint(
-                "kafka:broker1:1234,broker2:4567?topic=sometopic", null);
-        endpoint.getConfiguration().setBrokers("broker1:1234,broker2:4567");
+        KafkaComponent kafka = new KafkaComponent(new DefaultCamelContext());
+        kafka.setBrokers("broker1:1234,broker2:4567");
+
+        endpoint = kafka.createEndpoint("kafka:sometopic", "sometopic", new HashMap());
         producer = new KafkaProducer(endpoint);
 
         RecordMetadata rm = new RecordMetadata(null, 1, 1);

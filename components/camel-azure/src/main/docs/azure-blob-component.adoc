@@ -1,0 +1,165 @@
+## Azure Storage Blob Service Component
+
+*Available as of Camel version 2.19*
+
+The Azure Blob component supports storing and retrieving the blobs to/from
+https://azure.microsoft.com/services/storage/blobs/[Azure Storage Blob] service.
+
+Prerequisites
+
+You must have a valid Windows Azure Storage account. More information is available at
+https://docs.microsoft.com/azure/[Azure Documentation Portal].
+
+### URI Format
+
+[source,java]
+------------------------------
+azure-blob://accountName/containerName[/blobName][?options]
+------------------------------
+
+In most cases a blobName is required and the blob will be created if it does not already exist. +
+ You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+For example in order to download a blob content to/from the public block blob `blockBlob` 
+located on the `container1` in the `camelazure` storage account, use the following snippet:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("azure-blob:/camelazure/container1/blockBlob").
+to("file://blobdirectory");
+--------------------------------------------------------------------------------
+
+### URI Options
+
+
+// component options: START
+The Azure Storage Blob Service component has no options.
+// component options: END
+
+
+
+
+
+
+
+
+
+
+
+// endpoint options: START
+The Azure Storage Blob Service component supports 20 endpoint options which are listed below:
+
+{% raw %}
+[width="100%",cols="2,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| containerOrBlobUri | common |  | String | *Required* Container or Blob compact Uri
+| azureBlobClient | common |  | CloudBlob | The blob service client
+| blobOffset | common | 0 | Long | Set the blob offset for the upload or download operations default is 0
+| blobType | common | blockblob | BlobType | Set a blob type 'blockblob' is default
+| closeStreamAfterRead | common | true | boolean | Close the stream after read or keep it open default is true
+| credentials | common |  | StorageCredentials | Set the storage credentials required in most cases
+| dataLength | common |  | Long | Set the data length for the download or page blob upload operations
+| fileDir | common |  | String | Set the file directory where the downloaded blobs will be saved to
+| publicForRead | common | false | boolean | Blobs can be public for reading their content if this property is enabled then the credentials do not have to be set
+| streamReadSize | common |  | int | Set the minimum read size in bytes when reading the blob content
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| blobMetadata | producer |  | Map | Set the blob meta-data
+| blobPrefix | producer |  | String | Set a prefix which can be used for listing the blobs
+| closeStreamAfterWrite | producer | true | boolean | Close the stream after write or keep it open default is true
+| operation | producer | listBlobs | BlobServiceOperations | Required blob service operation hint to the producer
+| streamWriteSize | producer |  | int | Set the size of the buffer for writing block and page blocks
+| useFlatListing | producer | true | boolean | Specify if the flat or hierarchical blob listing should be used
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+|=======================================================================
+{% endraw %}
+// endpoint options: END
+
+
+
+Required Azure Storage Blob Service component options
+
+You have to provide the containerOrBlob name and the credentials if the private blob needs to be accessed.
+
+### Usage
+
+#### Message headers evaluated by the Azure Storage Blob Service producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelAwsS3BucketName` |`String` |The bucket Name which this object will be stored or which will be used for the current operation
+
+|=======================================================================
+
+#### Message headers set by the Azure Storage Blob Service producer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+|`CamelFileName` |`String` |The file name for the downloaded blob content.
+|=======================================================================
+
+#### Message headers set by the Azure Storage Blob Service producer consumer
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+
+|`CamelFileName` |`String` |The file name for the downloaded blob content.
+
+|=======================================================================
+
+#### Azure Blob Client configuration
+
+If your Camel Application is running behind a firewall or if you need to
+have more control over the Azure Blob Client configuration, you can
+create your own instance:
+
+[source,java]
+--------------------------------------------------------------------------------------
+StorageCredentials credentials = new StorageCredentialsAccountAndKey("camelazure", "thekey");
+
+CloudBlob client = new CloudBlob("camelazure", credentials);
+
+registry.bind("azureBlobClient", client);
+--------------------------------------------------------------------------------------
+
+and refer to it in your Camel azure-blob component configuration:
+
+[source,java]
+--------------------------------------------------------------------------------
+from("azure-blob:/camelazure/container1/blockBlob?azureBlobClient=#client")
+.to("mock:result");
+--------------------------------------------------------------------------------
+
+### Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-azure</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `${camel-version`} must be replaced by the actual version of Camel
+(2.19.0 or higher).
+
+### See Also
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]
+
+* link:azure.html[Azure Component]

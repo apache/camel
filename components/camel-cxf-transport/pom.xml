@@ -27,9 +27,14 @@
   <artifactId>camel-cxf-transport</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: CXF :: Transport</name>
-  <description>Camel Transport for CXF </description>
+  <description>Camel Transport for Apache CXF </description>
 
-   <properties>
+  <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.8.0</firstVersion>
+    <label>soap,webservice</label>
+    <title>CXF Transport</title>
+
     <camel.osgi.import>
       !org.apache.camel.component.cxf.*,
       !META-INF.cxf.camel,

@@ -27,7 +27,8 @@ import java.util.regex.Pattern;
 
 public final class JSonSchemaHelper {
 
-    private static final Pattern PATTERN = Pattern.compile("\"(.+?)\"|\\[(.+)\\]");
+    // 0 = text, 1 = enum, 2 = boolean, 3 = integer or number
+    private static final Pattern PATTERN = Pattern.compile("\"(.+?)\"|\\[(.+)\\]|(true|false)|(\\d+\\.?\\d*)");
     private static final String QUOT = "&quot;";
 
     private JSonSchemaHelper() {
@@ -81,19 +82,34 @@ public final class JSonSchemaHelper {
                     key = matcher.group(1);
                 } else {
                     String value = matcher.group(1);
-                    if (value == null) {
-                        value = matcher.group(2);
-                        // its an enum so strip out " and trim spaces after comma
-                        value = value.replaceAll("\"", "");
-                        value = value.replaceAll(", ", ",");
-                    }
                     if (value != null) {
+                        // its text based
                         value = value.trim();
                         // decode
                         value = value.replaceAll(QUOT, "\"");
                         value = decodeJson(value);
                     }
-                    row.put(key, value);
+                    if (value == null) {
+                        // not text then its maybe an enum?
+                        value = matcher.group(2);
+                        if (value != null) {
+                            // its an enum so strip out " and trim spaces after comma
+                            value = value.replaceAll("\"", "");
+                            value = value.replaceAll(", ", ",");
+                            value = value.trim();
+                        }
+                    }
+                    if (value == null) {
+                        // not text then its maybe a boolean?
+                        value = matcher.group(3);
+                    }
+                    if (value == null) {
+                        // not text then its maybe a integer?
+                        value = matcher.group(4);
+                    }
+                    if (value != null) {
+                        row.put(key, value);
+                    }
                     // reset
                     key = null;
                 }

@@ -1,6 +1,6 @@
 ## RabbitMQ Component
 
-*Available as of Camel 2.12*
+*Available as of Camel version 2.12*
 
 The *rabbitmq:* component allows you produce and consume messages from
 http://www.rabbitmq.com/[RabbitMQ] instances. Using the RabbitMQ AMQP
@@ -45,7 +45,7 @@ The RabbitMQ component has no options.
 
 
 // endpoint options: START
-The RabbitMQ component supports 56 endpoint options which are listed below:
+The RabbitMQ component supports 60 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -89,11 +89,15 @@ The RabbitMQ component supports 56 endpoint options which are listed below:
 | publisherAcknowledgements | producer | false | boolean | When true the message will be published with publisher acknowledgements turned on
 | publisherAcknowledgementsTimeout | producer |  | long | The amount of time in milliseconds to wait for a basic.ack response from RabbitMQ server
 | addresses | advanced |  | Address[] | If this option is set camel-rabbitmq will try to create connection based on the setting of option addresses. The addresses value is a string which looks like server1:12345 server2:12345
+| args | advanced |  | Map | Specify arguments for configuring the different RabbitMQ concepts a different prefix is required for each: Exchange: arg.exchange. Queue: arg.queue. Binding: arg.binding. For example to declare a queue with message ttl argument: http://localhost:5672/exchange/queueargs=arg.queue.x-message-ttl=60000
 | automaticRecoveryEnabled | advanced |  | Boolean | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when connection shutdown is not initiated by the application)
+| bindingArgs | advanced |  | Map | Key/value args for configuring the queue binding parameters when declare=true
 | clientProperties | advanced |  | Map | Connection client properties (client info used in negotiating with the server)
 | connectionFactory | advanced |  | ConnectionFactory | To use a custom RabbitMQ connection factory. When this option is set all connection options (connectionTimeout requestedChannelMax...) set on URI are not used
+| exchangeArgs | advanced |  | Map | Key/value args for configuring the exchange parameters when declare=true
 | exchangeArgsConfigurer | advanced |  | ArgsConfigurer | Set the configurer for setting the exchange args in Channel.exchangeDeclare
 | networkRecoveryInterval | advanced |  | Integer | Network recovery interval in milliseconds (interval used when recovering from network failure)
+| queueArgs | advanced |  | Map | Key/value args for configuring the queue parameters when declare=true
 | queueArgsConfigurer | advanced |  | ArgsConfigurer | Set the configurer for setting the queue args in Channel.queueDeclare
 | requestedChannelMax | advanced | 0 | int | Connection requested channel max (max number of channels offered)
 | requestedFrameMax | advanced | 0 | int | Connection requested frame max (max size of frame offered)
@@ -235,6 +239,25 @@ To send messages to an exchange called C
 -------------------------------
 ...to("rabbitmq://localhost/B")
 -------------------------------
+
+Declaring a headers exchange and queue
+
+[source,java]
+---------------------------------------------------------------------------------
+from("rabbitmq://localhost/ex?exchangeType=headers&queue=q&bindingArgs=#bindArgs")
+---------------------------------------------------------------------------------
+
+and place corresponding Map<String, Object> with the id of "bindArgs" in the Registry.
+
+For example declaring a method in spring
+
+[source,java]
+---------------------------------------------------------------------------------
+@Bean(name="bindArgs")
+public Map<String, Object> bindArgsBuilder() {
+    return Collections.singletonMap("foo", "bar");
+}
+---------------------------------------------------------------------------------
 
 ### See Also
 

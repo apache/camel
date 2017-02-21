@@ -79,6 +79,25 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testFindOtherNames() throws Exception {
+        List<String> names = catalog.findOtherNames();
+
+        assertTrue(names.contains("eclipse"));
+        assertTrue(names.contains("hystrix"));
+        assertTrue(names.contains("leveldb"));
+        assertTrue(names.contains("kura"));
+        assertTrue(names.contains("servletlistener"));
+        assertTrue(names.contains("swagger-java"));
+        assertTrue(names.contains("test-spring"));
+
+        assertFalse(names.contains("http-common"));
+        assertFalse(names.contains("core-osgi"));
+        assertFalse(names.contains("file"));
+        assertFalse(names.contains("ftp"));
+        assertFalse(names.contains("jetty"));
+    }
+
+    @Test
     public void testFindNames() throws Exception {
         List<String> names = catalog.findComponentNames();
         assertNotNull(names);
@@ -122,6 +141,9 @@ public class CamelCatalogTest {
         assertNotNull(schema);
 
         schema = catalog.modelJSonSchema("aggregate");
+        assertNotNull(schema);
+
+        schema = catalog.otherJSonSchema("swagger-java");
         assertNotNull(schema);
 
         // lets make it possible to find bean/method using both names
@@ -513,7 +535,26 @@ public class CamelCatalogTest {
         catalog.addComponent("activemq", "org.apache.activemq.camel.component.ActiveMQComponent");
 
         // activemq
-        EndpointValidationResult result = catalog.validateEndpointProperties("activemq:temp:queue:cheese");
+        EndpointValidationResult result = catalog.validateEndpointProperties("activemq:temp:queue:cheese?jmsMessageType=Bytes");
+        assertTrue(result.isSuccess());
+        result = catalog.validateEndpointProperties("activemq:temp:queue:cheese?jmsMessageType=Bytes");
+        assertTrue(result.isSuccess());
+        result = catalog.validateEndpointProperties("activemq:temp:queue:cheese?jmsMessageType=Bytes", false, true, false);
+        assertTrue(result.isSuccess());
+        result = catalog.validateEndpointProperties("activemq:temp:queue:cheese?jmsMessageType=Bytes", false, false, true);
+        assertTrue(result.isSuccess());
+    }
+
+    @Test
+    public void validateJmsProperties() throws Exception {
+        // jms
+        EndpointValidationResult result = catalog.validateEndpointProperties("jms:temp-queue:cheese?jmsMessageType=Bytes");
+        assertTrue(result.isSuccess());
+        result = catalog.validateEndpointProperties("jms:temp-queue:cheese?jmsMessageType=Bytes");
+        assertTrue(result.isSuccess());
+        result = catalog.validateEndpointProperties("jms:temp-queue:cheese?jmsMessageType=Bytes", false, true, false);
+        assertTrue(result.isSuccess());
+        result = catalog.validateEndpointProperties("jms:temp-queue:cheese?jmsMessageType=Bytes", false, false, true);
         assertTrue(result.isSuccess());
     }
 
@@ -772,6 +813,17 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testListOthersAsJson() throws Exception {
+        String json = catalog.listOthersAsJson();
+        assertNotNull(json);
+
+        // validate we can parse the json
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode tree = mapper.readTree(json);
+        assertNotNull(tree);
+    }
+
+    @Test
     public void testSummaryAsJson() throws Exception {
         String json = catalog.summaryAsJson();
         assertNotNull(json);
@@ -965,6 +1017,13 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testOtherAsciiDoc() throws Exception {
+        String doc = catalog.otherAsciiDoc("swagger-java");
+        assertNotNull(doc);
+        assertTrue(doc.contains("Swagger"));
+    }
+
+    @Test
     public void testValidateEndpointTwitterSpecial() throws Exception {
         String uri = "twitter://search?{{%s}}&keywords=java";
 
@@ -1000,6 +1059,74 @@ public class CamelCatalogTest {
         assertFalse(result.isSuccess());
 
         assertEquals("delete", result.getNotProducerOnly().iterator().next());
+    }
+
+    @Test
+    public void testJSonSchemaHelper() throws Exception {
+        String json = loadText(new FileInputStream("src/test/resources/org/foo/camel/dummy.json"));
+        assertNotNull(json);
+
+        // component
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("component", json, false);
+        assertEquals(12, rows.size());
+        assertTrue(JSonSchemaHelper.isComponentProducerOnly(rows));
+        assertFalse(JSonSchemaHelper.isComponentConsumerOnly(rows));
+        String desc = null;
+        for (Map<String, String> row : rows) {
+            if (row.containsKey("description")) {
+                desc = row.get("description");
+                break;
+            }
+        }
+        assertEquals("The dummy component logs message exchanges to the underlying logging mechanism.", desc);
+
+        // componentProperties
+        rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
+        assertEquals(1, rows.size());
+        Map<String, String> row = JSonSchemaHelper.getRow(rows, "exchangeFormatter");
+        assertNotNull(row);
+        assertEquals("org.apache.camel.spi.ExchangeFormatter", row.get("javaType"));
+        assertEquals("Exchange Formatter", row.get("displayName"));
+
+        // properties
+        rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+        assertEquals(31, rows.size());
+        row = JSonSchemaHelper.getRow(rows, "level");
+        assertNotNull(row);
+        assertEquals("INFO", row.get("defaultValue"));
+        String enums = JSonSchemaHelper.getPropertyEnum(rows, "level");
+        assertEquals("ERROR,WARN,INFO,DEBUG,TRACE,OFF", enums);
+        assertEquals("Level", row.get("displayName"));
+
+        row = JSonSchemaHelper.getRow(rows, "amount");
+        assertNotNull(row);
+        assertEquals("1", row.get("defaultValue"));
+        assertEquals("Number of drinks in the order", row.get("description"));
+        assertEquals("Amount", row.get("displayName"));
+
+        row = JSonSchemaHelper.getRow(rows, "maxChars");
+        assertNotNull(row);
+        assertEquals("false", row.get("deprecated"));
+        assertEquals("10000", row.get("defaultValue"));
+        assertEquals("Max Chars", row.get("displayName"));
+
+        row = JSonSchemaHelper.getRow(rows, "repeatCount");
+        assertNotNull(row);
+        assertEquals("long", row.get("javaType"));
+        assertEquals("0", row.get("defaultValue"));
+        assertEquals("Repeat Count", row.get("displayName"));
+
+        row = JSonSchemaHelper.getRow(rows, "fontSize");
+        assertNotNull(row);
+        assertEquals("false", row.get("deprecated"));
+        assertEquals("14", row.get("defaultValue"));
+        assertEquals("Font Size", row.get("displayName"));
+
+        row = JSonSchemaHelper.getRow(rows, "kerberosRenewJitter");
+        assertNotNull(row);
+        assertEquals("java.lang.Double", row.get("javaType"));
+        assertEquals("0.05", row.get("defaultValue"));
+        assertEquals("Kerberos Renew Jitter", row.get("displayName"));
     }
 
 }

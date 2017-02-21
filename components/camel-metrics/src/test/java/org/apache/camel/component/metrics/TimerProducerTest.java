@@ -150,18 +150,19 @@ public class TimerProducerTest {
         producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(endpoint, times(1)).getAction();
-        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, null, MetricsTimerAction.class);
+        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, (Object) null, MetricsTimerAction.class);
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
     public void testProcessNoActionOverride() throws Exception {
+        Object action = null;
         when(endpoint.getAction()).thenReturn(null);
-        when(in.getHeader(HEADER_TIMER_ACTION, null, MetricsTimerAction.class)).thenReturn(MetricsTimerAction.start);
+        when(in.getHeader(HEADER_TIMER_ACTION, action, MetricsTimerAction.class)).thenReturn(MetricsTimerAction.start);
         producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(endpoint, times(1)).getAction();
-        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, null, MetricsTimerAction.class);
+        inOrder.verify(in, times(1)).getHeader(HEADER_TIMER_ACTION, action, MetricsTimerAction.class);
         inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Context.class);
         inOrder.verify(registry, times(1)).timer(METRICS_NAME);
         inOrder.verify(timer, times(1)).time();

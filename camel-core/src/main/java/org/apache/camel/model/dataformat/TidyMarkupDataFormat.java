@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Tidymark (wellformed HTML) data format
  */
-@Metadata(label = "dataformat,transformation", title = "TidyMarkup")
+@Metadata(firstVersion = "2.0.0", label = "dataformat,transformation", title = "TidyMarkup")
 @XmlRootElement(name = "tidyMarkup")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TidyMarkupDataFormat extends DataFormatDefinition {

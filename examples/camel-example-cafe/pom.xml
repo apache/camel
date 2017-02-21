@@ -32,6 +32,7 @@
   <description>A cafe example showing how to work with Camel</description>
 
   <properties>
+    <category>EIP</category>
     <camel.osgi.export.pkg>org.apache.camel.example.cafe.*</camel.osgi.export.pkg>
   </properties>
 

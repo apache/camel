@@ -17,6 +17,7 @@
 package org.apache.camel.component.etcd.policy;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.etcd.EtcdConstants;
 import org.apache.camel.main.Main;
 
 public final class EtcdRoutePolicyMain {
@@ -29,11 +30,12 @@ public final class EtcdRoutePolicyMain {
         main.addRouteBuilder(new RouteBuilder() {
             public void configure() {
                 EtcdRoutePolicy policy = new EtcdRoutePolicy();
+                policy.setClientUris(EtcdConstants.ETCD_DEFAULT_URIS);
                 policy.setServicePath("/camel/services/leader");
                 policy.setServiceName(args[1]);
                 policy.setTtl(15);
 
-                fromF("file:///tmp/camel?delete=true")
+                from("file:///tmp/camel?delete=true")
                     .routeId(args[1])
                     .routePolicy(policy)
                     .setHeader("EtcdRouteID", constant(args[1]))

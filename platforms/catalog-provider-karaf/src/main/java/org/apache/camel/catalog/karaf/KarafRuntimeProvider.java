@@ -26,7 +26,7 @@ import org.apache.camel.catalog.CatalogHelper;
 import org.apache.camel.catalog.RuntimeProvider;
 
 /**
- * A karaf based {@link RuntimeProvider} which only includes the supported Camel components, data formats, and languages
+ * A karaf based {@link RuntimeProvider} which only includes the supported Camel components, data formats, languages and others
  * which can be installed in Karaf using the Camel Karaf features.xml descriptor.
  */
 public class KarafRuntimeProvider implements RuntimeProvider {
@@ -34,9 +34,11 @@ public class KarafRuntimeProvider implements RuntimeProvider {
     private static final String COMPONENT_DIR = "org/apache/camel/catalog/karaf/components";
     private static final String DATAFORMAT_DIR = "org/apache/camel/catalog/karaf/dataformats";
     private static final String LANGUAGE_DIR = "org/apache/camel/catalog/karaf/languages";
+    private static final String OTHER_DIR = "org/apache/camel/catalog/karaf/others";
     private static final String COMPONENTS_CATALOG = "org/apache/camel/catalog/karaf/components.properties";
     private static final String DATA_FORMATS_CATALOG = "org/apache/camel/catalog/karaf/dataformats.properties";
     private static final String LANGUAGE_CATALOG = "org/apache/camel/catalog/karaf/languages.properties";
+    private static final String OTHER_CATALOG = "org/apache/camel/catalog/karaf/others.properties";
 
     private CamelCatalog camelCatalog;
 
@@ -56,6 +58,16 @@ public class KarafRuntimeProvider implements RuntimeProvider {
     }
 
     @Override
+    public String getProviderGroupId() {
+        return "org.apache.camel";
+    }
+
+    @Override
+    public String getProviderArtifactId() {
+        return "camel-catalog-provider-karaf";
+    }
+
+    @Override
     public String getComponentJSonSchemaDirectory() {
         return COMPONENT_DIR;
     }
@@ -68,6 +80,11 @@ public class KarafRuntimeProvider implements RuntimeProvider {
     @Override
     public String getLanguageJSonSchemaDirectory() {
         return LANGUAGE_DIR;
+    }
+
+    @Override
+    public String getOtherJSonSchemaDirectory() {
+        return OTHER_DIR;
     }
 
     @Override
@@ -102,6 +119,20 @@ public class KarafRuntimeProvider implements RuntimeProvider {
     public List<String> findLanguageNames() {
         List<String> names = new ArrayList<String>();
         InputStream is = camelCatalog.getVersionManager().getResourceAsStream(LANGUAGE_CATALOG);
+        if (is != null) {
+            try {
+                CatalogHelper.loadLines(is, names);
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+        return names;
+    }
+
+    @Override
+    public List<String> findOtherNames() {
+        List<String> names = new ArrayList<String>();
+        InputStream is = camelCatalog.getVersionManager().getResourceAsStream(OTHER_CATALOG);
         if (is != null) {
             try {
                 CatalogHelper.loadLines(is, names);

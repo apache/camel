@@ -39,11 +39,11 @@ import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.cloud.ServiceDiscoveryAware;
 import org.apache.camel.cloud.ServiceFilter;
 import org.apache.camel.cloud.ServiceFilterAware;
-import org.apache.camel.impl.cloud.AllServiceFilter;
 import org.apache.camel.impl.cloud.DefaultLoadBalancer;
 import org.apache.camel.impl.cloud.DefaultServiceCallExpression;
 import org.apache.camel.impl.cloud.DefaultServiceCallProcessor;
 import org.apache.camel.impl.cloud.HealthyServiceFilter;
+import org.apache.camel.impl.cloud.PassThroughServiceFilter;
 import org.apache.camel.impl.cloud.RandomServiceChooser;
 import org.apache.camel.impl.cloud.RoundRobinServiceChooser;
 import org.apache.camel.model.NoOutputDefinition;
@@ -92,22 +92,32 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
 
     @XmlElements({
         @XmlElement(name = "cachingServiceDiscovery", type = CachingServiceCallServiceDiscoveryConfiguration.class),
+        @XmlElement(name = "chainedServiceDiscovery", type = ChainedServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "consulServiceDiscovery", type = ConsulServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "dnsServiceDiscovery", type = DnsServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "etcdServiceDiscovery", type = EtcdServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "kubernetesServiceDiscovery", type = KubernetesServiceCallServiceDiscoveryConfiguration.class),
-        @XmlElement(name = "multiServiceDiscovery", type = MultiServiceCallServiceDiscoveryConfiguration.class),
         @XmlElement(name = "staticServiceDiscovery", type = StaticServiceCallServiceDiscoveryConfiguration.class)}
     )
     private ServiceCallServiceDiscoveryConfiguration serviceDiscoveryConfiguration;
 
     @XmlElements({
-        @XmlElement(name = "ribbonLoadBalancer", type = RibbonServiceCallLoadBalancerConfiguration.class)}
+        @XmlElement(name = "blacklistServiceFilter", type = BlacklistServiceCallServiceFilterConfiguration.class),
+        @XmlElement(name = "chainedServiceFilter", type = ChainedServiceCallServiceFilterConfiguration.class),
+        @XmlElement(name = "customServiceFilter", type = CustomServiceCallServiceFilterConfiguration.class),
+        @XmlElement(name = "healthyServiceFilter", type = HealthyServiceCallServiceFilterConfiguration.class),
+        @XmlElement(name = "passThroughServiceFilter", type = PassThroughServiceCallServiceFilterConfiguration.class)}
+    )
+    private ServiceCallServiceFilterConfiguration serviceFilterConfiguration;
+
+    @XmlElements({
+        @XmlElement(name = "ribbonLoadBalancer", type = RibbonServiceCallLoadBalancerConfiguration.class),
+        @XmlElement(name = "defaultLoadBalancer", type = DefaultServiceCallLoadBalancerConfiguration.class) }
     )
     private ServiceCallLoadBalancerConfiguration loadBalancerConfiguration;
 
     @XmlElements({
-        @XmlElement(name = "expressionCOnfiguration", type = ServiceCallExpressionConfiguration.class)}
+        @XmlElement(name = "expressionConfiguration", type = ServiceCallExpressionConfiguration.class)}
     )
     private ServiceCallExpressionConfiguration expressionConfiguration;
 
@@ -305,6 +315,17 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         this.serviceDiscoveryConfiguration = serviceDiscoveryConfiguration;
     }
 
+    public ServiceCallServiceFilterConfiguration getServiceFilterConfiguration() {
+        return serviceFilterConfiguration;
+    }
+
+    /**
+     * Configures the ServiceFilter using the given configuration.
+     */
+    public void setServiceFilterConfiguration(ServiceCallServiceFilterConfiguration serviceFilterConfiguration) {
+        this.serviceFilterConfiguration = serviceFilterConfiguration;
+    }
+
     public ServiceCallLoadBalancerConfiguration getLoadBalancerConfiguration() {
         return loadBalancerConfiguration;
     }
@@ -460,6 +481,14 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     }
 
     /**
+     * Configures the ServiceFilter using the given configuration.
+     */
+    public ServiceCallDefinition serviceFilterConfiguration(ServiceCallServiceFilterConfiguration serviceFilterConfiguration) {
+        setServiceFilterConfiguration(serviceFilterConfiguration);
+        return this;
+    }
+
+    /**
      * Configures the LoadBalancer using the given configuration.
      */
     public ServiceCallDefinition loadBalancerConfiguration(ServiceCallLoadBalancerConfiguration loadBalancerConfiguration) {
@@ -562,8 +591,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return this;
     }
 
-    public MultiServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
-        MultiServiceCallServiceDiscoveryConfiguration conf = new MultiServiceCallServiceDiscoveryConfiguration(this);
+    public ChainedServiceCallServiceDiscoveryConfiguration multiServiceDiscovery() {
+        ChainedServiceCallServiceDiscoveryConfiguration conf = new ChainedServiceCallServiceDiscoveryConfiguration(this);
         setServiceDiscoveryConfiguration(conf);
 
         return conf;
@@ -577,8 +606,58 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     }
 
     // *****************************
+    // Shortcuts - ServiceFilter
+    // *****************************
+
+    public ServiceCallDefinition healthyFilter() {
+        HealthyServiceCallServiceFilterConfiguration conf = new HealthyServiceCallServiceFilterConfiguration(this);
+        setServiceFilterConfiguration(conf);
+
+        return this;
+    }
+
+    public ServiceCallDefinition passThroughFilter() {
+        PassThroughServiceCallServiceFilterConfiguration conf = new PassThroughServiceCallServiceFilterConfiguration(this);
+        setServiceFilterConfiguration(conf);
+
+        return this;
+    }
+
+    public ChainedServiceCallServiceFilterConfiguration multiFilter() {
+        ChainedServiceCallServiceFilterConfiguration conf = new ChainedServiceCallServiceFilterConfiguration(this);
+        setServiceFilterConfiguration(conf);
+
+        return conf;
+    }
+
+    public ServiceCallDefinition customFilter(String serviceFilter) {
+        CustomServiceCallServiceFilterConfiguration conf = new CustomServiceCallServiceFilterConfiguration();
+        conf.setServiceFilterRef(serviceFilter);
+
+        setServiceFilterConfiguration(conf);
+
+        return this;
+    }
+
+    public ServiceCallDefinition customFilter(ServiceFilter serviceFilter) {
+        CustomServiceCallServiceFilterConfiguration conf = new CustomServiceCallServiceFilterConfiguration();
+        conf.setServiceFilter(serviceFilter);
+
+        setServiceFilterConfiguration(conf);
+
+        return this;
+    }
+
+    // *****************************
     // Shortcuts - LoadBalancer
     // *****************************
+
+    public ServiceCallDefinition defaultLoadBalancer() {
+        DefaultServiceCallLoadBalancerConfiguration conf = new DefaultServiceCallLoadBalancerConfiguration();
+        setLoadBalancerConfiguration(conf);
+
+        return this;
+    }
 
     public ServiceCallDefinition ribbonLoadBalancer() {
         RibbonServiceCallLoadBalancerConfiguration conf = new RibbonServiceCallLoadBalancerConfiguration(this);
@@ -697,22 +776,33 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return answer;
     }
 
-    private ServiceFilter retrieveServiceFilter(CamelContext camelContext, ServiceCallConfigurationDefinition config) {
-        ServiceFilter answer = retrieve(ServiceFilter.class, camelContext, this::getServiceFilter, this::getServiceFilterRef);
-        if (answer == null && config != null) {
-            answer = retrieve(ServiceFilter.class, camelContext, config::getServiceFilter, config::getServiceFilterRef);
+    private ServiceFilter retrieveServiceFilter(CamelContext camelContext, ServiceCallConfigurationDefinition config) throws Exception {
+        ServiceFilter answer;
 
-            // If the ServiceFilter is not found but a ref is set, try to determine
-            // the implementation according to the ref name.
-            if (answer == null) {
-                String ref = config.getServiceFilterRef();
-                if (ObjectHelper.equal("healthy", ref, true)) {
-                    answer = new HealthyServiceFilter();
-                } else if (ObjectHelper.equal("all", ref, true)) {
-                    answer = new AllServiceFilter();
+        if (serviceFilterConfiguration != null) {
+            answer = serviceFilterConfiguration.newInstance(camelContext);
+        } else if (config != null && config.getServiceFilterConfiguration() != null) {
+            answer = config.getServiceFilterConfiguration().newInstance(camelContext);
+        } else {
+            answer = retrieve(ServiceFilter.class, camelContext, this::getServiceFilter, this::getServiceFilterRef);
+            if (answer == null && config != null) {
+                answer = retrieve(ServiceFilter.class, camelContext, config::getServiceFilter, config::getServiceFilterRef);
+
+                // If the ServiceFilter is not found but a ref is set, try to determine
+                // the implementation according to the ref name.
+                if (answer == null) {
+                    String ref = config.getServiceFilterRef();
+                    if (ObjectHelper.equal("healthy", ref, true)) {
+                        answer = new HealthyServiceFilter();
+                    } else if (ObjectHelper.equal("pass-through", ref, true)) {
+                        answer = new PassThroughServiceFilter();
+                    } else if (ObjectHelper.equal("passthrough", ref, true)) {
+                        answer = new PassThroughServiceFilter();
+                    }
                 }
             }
         }
+
         if (answer == null) {
             answer = findByType(camelContext, ServiceFilter.class);
         }

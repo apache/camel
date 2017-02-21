@@ -19,7 +19,6 @@ package org.apache.camel.processor.cache;
 import java.io.File;
 import java.io.InputStream;
 import java.io.StringReader;
-
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -30,8 +29,12 @@ import org.w3c.dom.Document;
 
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
+
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.Service;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.component.cache.CacheConstants;
 import org.apache.camel.component.cache.DefaultCacheManagerFactory;
 import org.apache.camel.converter.IOConverter;
@@ -40,18 +43,20 @@ import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CacheBasedXPathReplacer extends CacheValidate implements Processor {
+public class CacheBasedXPathReplacer extends CacheValidate implements Processor, Service {
     private static final Logger LOG = LoggerFactory.getLogger(CacheBasedXPathReplacer.class);
-    private String cacheName;
-    private String key;
-    private String xpath;
+
     private CacheManager cacheManager;
-    private Ehcache cache;
-    private Document document;
-    private DOMSource source;
-    private DOMResult result;
+
+    private String cacheName;
+    private Expression key;
+    private String xpath;
 
     public CacheBasedXPathReplacer(String cacheName, String key, String xpath) {
+        this(cacheName, ExpressionBuilder.constantExpression(key), xpath);
+    }
+
+    public CacheBasedXPathReplacer(String cacheName, Expression key, String xpath) {
         if (cacheName.contains("cache://")) {
             this.setCacheName(cacheName.replace("cache://", ""));
         } else {
@@ -62,19 +67,19 @@ public class CacheBasedXPathReplacer extends CacheValidate implements Processor 
     }
 
     public void process(Exchange exchange) throws Exception {
-        // Cache the buffer to the specified Cache against the specified key
-        cacheManager = new DefaultCacheManagerFactory().getInstance();
+        String cacheKey = key.evaluate(exchange, String.class);
 
-        if (isValid(cacheManager, cacheName, key)) {
-            cache = cacheManager.getCache(cacheName);
+        if (isValid(cacheManager, cacheName, cacheKey)) {
+            Ehcache cache = cacheManager.getCache(cacheName);
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Replacing XPath value {} in Message with value stored against key {} in CacheName {}",
-                        new Object[]{xpath, key, cacheName});
+                        new Object[]{xpath, cacheKey, cacheName});
             }
-            exchange.getIn().setHeader(CacheConstants.CACHE_KEY, key);
+            exchange.getIn().setHeader(CacheConstants.CACHE_KEY, cacheKey);
             Object body = exchange.getIn().getBody();
             InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, body);
+            Document document;
             try {
                 document = exchange.getContext().getTypeConverter().convertTo(Document.class, exchange, is);
             } finally {
@@ -82,7 +87,7 @@ public class CacheBasedXPathReplacer extends CacheValidate implements Processor 
             }
 
             InputStream cis = exchange.getContext().getTypeConverter()
-                .convertTo(InputStream.class, cache.get(key).getObjectValue());
+                .convertTo(InputStream.class, cache.get(cacheKey).getObjectValue());
 
             try {
                 Document cacheValueDocument = exchange.getContext().getTypeConverter()
@@ -95,19 +100,19 @@ public class CacheBasedXPathReplacer extends CacheValidate implements Processor 
                 Source xslSource = xmlConverter.toStreamSource(new StringReader(xslString));
                 TransformerFactory transformerFactory = xmlConverter.createTransformerFactory();
                 Transformer transformer = transformerFactory.newTransformer(xslSource);
-                source = xmlConverter.toDOMSource(document);
-                result = new DOMResult();
+                DOMSource source = xmlConverter.toDOMSource(document);
+                DOMResult result = new DOMResult();
 
                 transformer.setParameter("cacheValue", cacheValueDocument);
                 transformer.transform(source, result);
+
+                // DOMSource can be converted to byte[] by camel type converter mechanism
+                DOMSource dom = new DOMSource(result.getNode());
+                exchange.getIn().setBody(dom, byte[].class);
             } finally {
                 IOHelper.close(cis, "cis", LOG);
             }
         }
-
-        // DOMSource can be converted to byte[] by camel type converter mechanism
-        DOMSource dom = new DOMSource(result.getNode());
-        exchange.getIn().setBody(dom, byte[].class);
     }
 
     public String getCacheName() {
@@ -118,11 +123,15 @@ public class CacheBasedXPathReplacer extends CacheValidate implements Processor 
         this.cacheName = cacheName;
     }
 
-    public String getKey() {
+    public Expression getKey() {
         return key;
     }
 
     public void setKey(String key) {
+        this.key = ExpressionBuilder.constantExpression(key);
+    }
+
+    public void setKey(Expression key) {
         this.key = key;
     }
 
@@ -134,4 +143,16 @@ public class CacheBasedXPathReplacer extends CacheValidate implements Processor 
         this.xpath = xpath;
     }
 
+    @Override
+    public void start() throws Exception {
+        // Cache the buffer to the specified Cache against the specified key
+        if (cacheManager == null) {
+            cacheManager = new DefaultCacheManagerFactory().getInstance();
+        }
+    }
+
+    @Override
+    public void stop() throws Exception {
+        // noop
+    }
 }

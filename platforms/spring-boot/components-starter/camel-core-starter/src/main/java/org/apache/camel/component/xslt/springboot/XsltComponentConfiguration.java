@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.xslt.springboot;
 
+import java.util.List;
+import java.util.Map;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
@@ -57,13 +59,28 @@ public class XsltComponentConfiguration {
      * forced to reload at runtime via JMX using the clearCachedStylesheet
      * operation.
      */
-    private Boolean contentCache = true;
+    private Boolean contentCache = false;
     /**
      * Whether to use Saxon as the transformerFactoryClass. If enabled then the
      * class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to
      * the classpath.
      */
     private Boolean saxon = false;
+    /**
+     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition.
+     * You would need to add camel-saxon to the classpath. The function is
+     * looked up in the registry where you can comma to separate multiple values
+     * to lookup.
+     */
+    private List<Object> saxonExtensionFunctions;
+    /**
+     * To use a custom Saxon configuration
+     */
+    private Object saxonConfiguration;
+    /**
+     * To set custom Saxon configuration properties
+     */
+    private Map<String, Object> saxonConfigurationProperties;
 
     public XmlConverterNestedConfiguration getXmlConverter() {
         return xmlConverter;
@@ -103,6 +120,31 @@ public class XsltComponentConfiguration {
 
     public void setSaxon(Boolean saxon) {
         this.saxon = saxon;
+    }
+
+    public List<Object> getSaxonExtensionFunctions() {
+        return saxonExtensionFunctions;
+    }
+
+    public void setSaxonExtensionFunctions(List<Object> saxonExtensionFunctions) {
+        this.saxonExtensionFunctions = saxonExtensionFunctions;
+    }
+
+    public Object getSaxonConfiguration() {
+        return saxonConfiguration;
+    }
+
+    public void setSaxonConfiguration(Object saxonConfiguration) {
+        this.saxonConfiguration = saxonConfiguration;
+    }
+
+    public Map<String, Object> getSaxonConfigurationProperties() {
+        return saxonConfigurationProperties;
+    }
+
+    public void setSaxonConfigurationProperties(
+            Map<String, Object> saxonConfigurationProperties) {
+        this.saxonConfigurationProperties = saxonConfigurationProperties;
     }
 
     public static class XmlConverterNestedConfiguration {

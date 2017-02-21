@@ -23,7 +23,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * For interacting with cloud compute & blobstore service via jclouds.
  */
-@UriEndpoint(scheme = "jclouds", title = "JClouds", syntax = "jclouds:command:providerId", consumerClass = JcloudsConsumer.class, label = "api,cloud")
+@UriEndpoint(firstVersion = "2.9.0", scheme = "jclouds", title = "JClouds", syntax = "jclouds:command:providerId", consumerClass = JcloudsConsumer.class, label = "api,cloud")
 public abstract class JcloudsEndpoint extends DefaultEndpoint {
 
     @UriParam
