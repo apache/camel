@@ -40,6 +40,7 @@
     <module>myfoo-connector</module>
     <!-- run catalog last -->
     <module>catalog</module>
+    <module>catalog-connector</module>
     <module>catalog-provider-karaf</module>
     <module>catalog-provider-springboot</module>
     <module>catalog-lucene</module>
