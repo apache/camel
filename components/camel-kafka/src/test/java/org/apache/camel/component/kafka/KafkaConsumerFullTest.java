@@ -80,6 +80,9 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
     public void kafkaMessageIsConsumedByCamel() throws InterruptedException, IOException {
         to.expectedMessageCount(5);
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
+        // The LAST_RECORD_BEFORE_COMMIT header should not be configured on any exchange because autoCommitEnable=true
+        to.expectedHeaderValuesReceivedInAnyOrder(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, null, null, null, null, null);
+
         for (int k = 0; k < 5; k++) {
             String msg = "message-" + k;
             ProducerRecord<String, String> data = new ProducerRecord<String, String>(TOPIC, "1", msg);
@@ -119,6 +122,5 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
         // As wee set seek to beginning we should re-consume all messages
         to.assertIsSatisfied(3000);
     }
-
 }
 
