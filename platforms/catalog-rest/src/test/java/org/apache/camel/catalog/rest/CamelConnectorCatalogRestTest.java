@@ -27,24 +27,23 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.hasItems;
 
-public class CamelCatalogRestTest {
+public class CamelConnectorCatalogRestTest {
 
     private Server server;
-    private CamelCatalogRest catalog;
+    private CamelConnectorCatalogRest catalog;
     private int port;
 
     @Before
     public void setup() {
-        catalog = new CamelCatalogRest();
+        catalog = new CamelConnectorCatalogRest();
 
         port = AvailablePortFinder.getNextAvailable(9000);
 
         // setup Apache CXF REST server
         JAXRSServerFactoryBean sf = new JAXRSServerFactoryBean();
-        sf.setResourceClasses(CamelCatalogRest.class);
-        sf.setResourceProvider(CamelCatalogRest.class, new SingletonResourceProvider(catalog));
+        sf.setResourceClasses(CamelConnectorCatalogRest.class);
+        sf.setResourceProvider(CamelConnectorCatalogRest.class, new SingletonResourceProvider(catalog));
         // to use jackson for json
         sf.setProvider(JacksonJsonProvider.class);
         sf.setAddress("http://localhost:" + port);
@@ -62,24 +61,28 @@ public class CamelCatalogRestTest {
     }
 
     @Test
-    public void testFindComponentLabels() throws Exception {
+    public void testEmptyFindConnectors() throws Exception {
         given().
             baseUri("http://localhost:" + port).
             accept("application/json").
             when().
-                get("/camel-catalog/findComponentLabels").
+                get("/camel-connector-catalog/findConnector?latestVersionOnly=false").
             then().
-                body("$", hasItems("bigdata", "messaging"));
+                body(Matchers.hasToString("[]"));
     }
 
     @Test
-    public void testComponentJSonSchema() throws Exception {
+    public void testFindConnectors() throws Exception {
+        catalog.getCatalog().addConnector("org.apache.camel", "myfoo-connector", "2.19.0", "MyFoo", "Something cool", "foo,timer", null, null);
+
         given().
             baseUri("http://localhost:" + port).
             accept("application/json").
             when().
-                get("/camel-catalog/componentJSonSchema/quartz2").
+                get("/camel-connector-catalog/findConnector?latestVersionOnly=false").
             then().
-                body("component.description", Matchers.is("Provides a scheduled delivery of messages using the Quartz 2.x scheduler."));
+                body(Matchers.containsString("MyFoo"));
+
     }
+
 }
