@@ -14,15 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.spring.cloud;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.cloud.ServiceFilter;
 import org.apache.camel.impl.cloud.BlacklistServiceFilter;
-import org.apache.camel.impl.cloud.ChainedServiceFilter;
 import org.apache.camel.impl.cloud.HealthyServiceFilter;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.ObjectHelper;
@@ -35,11 +33,11 @@ import org.springframework.context.annotation.Lazy;
 
 @Configuration
 @EnableConfigurationProperties(CamelCloudConfigurationProperties.class)
-@Conditional(CamelCloudServiceFilterAutoConfiguration.ServiceFilterCondition.class)
+@Conditional(CamelCloudServiceFilterAutoConfiguration.Condition.class)
 public class CamelCloudServiceFilterAutoConfiguration {
     @Lazy
     @Bean(name = "service-filter")
-    public ServiceFilter serviceFilter(CamelCloudConfigurationProperties properties) {
+    public CamelCloudServiceFilter serviceFilter(CamelCloudConfigurationProperties properties) {
         BlacklistServiceFilter blacklist = new BlacklistServiceFilter();
 
         Map<String, List<String>> services = properties.getServiceFilter().getBlacklist();
@@ -54,15 +52,15 @@ public class CamelCloudServiceFilterAutoConfiguration {
             }
         }
 
-        return ChainedServiceFilter.wrap(new HealthyServiceFilter(), blacklist);
+        return new CamelCloudServiceFilter(Arrays.asList(new HealthyServiceFilter(), blacklist));
     }
 
     // *******************************
     // Condition
     // *******************************
 
-    public static class ServiceFilterCondition extends GroupCondition {
-        public ServiceFilterCondition() {
+    public static class Condition extends GroupCondition {
+        public Condition() {
             super(
                 "camel.cloud",
                 "camel.cloud.service-filter"
