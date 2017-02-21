@@ -19,6 +19,7 @@ package org.apache.camel.component.kafka;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -180,28 +181,32 @@ public class KafkaConsumer extends DefaultConsumer {
                 while (isRunAllowed() && !isStoppingOrStopped() && !isSuspendingOrSuspended()) {
                     ConsumerRecords<Object, Object> allRecords = consumer.poll(pollTimeoutMs);
                     for (TopicPartition partition : allRecords.partitions()) {
-                        List<ConsumerRecord<Object, Object>> partitionRecords = allRecords
-                            .records(partition);
-                        for (ConsumerRecord<Object, Object> record : partitionRecords) {
-                            if (LOG.isTraceEnabled()) {
-                                LOG.trace("partition = {}, offset = {}, key = {}, value = {}", record.partition(), record.offset(), record.key(), record.value());
+                        Iterator<ConsumerRecord<Object, Object>> recordIterator = allRecords.records(partition).iterator();
+                        if (recordIterator.hasNext()) {
+                            ConsumerRecord<Object, Object> record = null;
+                            while (recordIterator.hasNext()) {
+                                record = recordIterator.next();
+                                if (LOG.isTraceEnabled()) {
+                                    LOG.trace("partition = {}, offset = {}, key = {}, value = {}", record.partition(), record.offset(), record.key(),
+                                              record.value());
+                                }
+                                Exchange exchange = endpoint.createKafkaExchange(record);
+                                if (endpoint.getConfiguration().isAutoCommitEnable() != null && !endpoint.getConfiguration().isAutoCommitEnable()) {
+                                    exchange.getIn().setHeader(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, !recordIterator.hasNext());
+                                }
+                                try {
+                                    processor.process(exchange);
+                                } catch (Exception e) {
+                                    getExceptionHandler().handleException("Error during processing", exchange, e);
+                                }
                             }
-                            Exchange exchange = endpoint.createKafkaExchange(record);
-                            try {
-                                processor.process(exchange);
-                            } catch (Exception e) {
-                                getExceptionHandler().handleException("Error during processing", exchange, e);
+                            long partitionLastOffset = record.offset();
+                            if (offsetRepository != null) {
+                                offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(partitionLastOffset));
+                                // if autocommit is false
+                            } else if (endpoint.getConfiguration().isAutoCommitEnable() != null && !endpoint.getConfiguration().isAutoCommitEnable()) {
+                                consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(partitionLastOffset + 1)));
                             }
-                        }
-                        if (offsetRepository != null) {
-                            long partitionLastOffset = partitionRecords.get(partitionRecords.size() - 1).offset();
-                            offsetRepository.setState(serializeOffsetKey(partition), serializeOffsetValue(partitionLastOffset));
-                        } else if (endpoint.getConfiguration().isAutoCommitEnable() != null
-                            && !endpoint.getConfiguration().isAutoCommitEnable()) {
-                            // if autocommit is false
-                            long partitionLastoffset = partitionRecords.get(partitionRecords.size() - 1).offset();
-                            consumer.commitSync(Collections.singletonMap(
-                                partition, new OffsetAndMetadata(partitionLastoffset + 1)));
                         }
                     }
                 }
