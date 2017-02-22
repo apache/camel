@@ -75,15 +75,11 @@ public class HazelcastComponent extends UriEndpointComponent {
         // use the given hazelcast Instance or create one if not given
         HazelcastInstance hzInstance = getOrCreateHzInstance(getCamelContext(), parameters);
 
-        int defaultOperation = -1;
-        Object operation = getAndRemoveOrResolveReferenceParameter(parameters, HazelcastConstants.OPERATION_PARAM, Object.class);
-        if (operation == null) {
-            operation = getAndRemoveOrResolveReferenceParameter(parameters, "defaultOperation", Object.class);
+        String defaultOperation = getAndRemoveOrResolveReferenceParameter(parameters, HazelcastConstants.OPERATION_PARAM, String.class);
+        if (defaultOperation == null) {
+            defaultOperation = getAndRemoveOrResolveReferenceParameter(parameters, "defaultOperation", String.class);
         }
-        if (operation != null) {
-            defaultOperation = HazelcastComponentHelper.extractOperationNumber(operation, -1);
-        }
-       
+
         HazelcastDefaultEndpoint endpoint = null;
 
         // check type of endpoint
@@ -176,9 +172,7 @@ public class HazelcastComponent extends UriEndpointComponent {
                     HazelcastConstants.SEDA_PREFIX, HazelcastConstants.LIST_PREFIX, HazelcastConstants.REPLICATEDMAP_PREFIX, HazelcastConstants.SET_PREFIX, HazelcastConstants.RINGBUFFER_PREFIX, uri));
         }
 
-        if (defaultOperation != -1) {
-            endpoint.setDefaultOperation(defaultOperation);
-        }
+        endpoint.setDefaultOperation(defaultOperation);
 
         return endpoint;
     }
