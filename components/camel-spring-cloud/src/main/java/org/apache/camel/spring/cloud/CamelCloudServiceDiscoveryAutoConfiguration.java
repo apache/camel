@@ -52,7 +52,7 @@ public class CamelCloudServiceDiscoveryAutoConfiguration {
     @Lazy
     @Bean(name = "service-discovery")
     public CamelCloudServiceDiscovery serviceDiscovery(
-            CamelContext camelContext, CamelCloudConfigurationProperties properties, List<ServiceDiscovery> serviceDiscoveryList) throws NoTypeConversionAvailableException{
+            CamelContext camelContext, CamelCloudConfigurationProperties properties, List<ServiceDiscovery> serviceDiscoveryList) throws NoTypeConversionAvailableException {
 
         String cacheTimeout = properties.getServiceDiscovery().getCacheTimeout();
         Long timeout = null;

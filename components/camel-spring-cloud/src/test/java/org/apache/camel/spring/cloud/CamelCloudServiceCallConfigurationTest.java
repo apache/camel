@@ -37,7 +37,7 @@ import static org.junit.Assert.assertTrue;
 
 @DirtiesContext
 @RunWith(SpringRunner.class)
-@SpringBootApplication
+@SpringBootApplication()
 @SpringBootTest(
     classes = {
         CamelAutoConfiguration.class,

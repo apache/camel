@@ -35,7 +35,7 @@ public class CamelCloudDiscoveryClient implements DiscoveryClient {
         this(description, null, serviceDiscovery);
     }
 
-    public CamelCloudDiscoveryClient(String description, ServiceInstance localServiceDiscovery,ServiceDiscovery serviceDiscovery) {
+    public CamelCloudDiscoveryClient(String description, ServiceInstance localServiceDiscovery, ServiceDiscovery serviceDiscovery) {
         this.description = description;
         this.serviceDiscovery = serviceDiscovery;
         this.localInstance = localServiceDiscovery;
