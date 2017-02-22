@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -628,7 +629,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     public Map<String, Integer> getInitialReplayIdMap() {
-        return initialReplayIdMap;
+        return Optional.ofNullable(initialReplayIdMap).orElse(Collections.emptyMap());
     }
 
     /**

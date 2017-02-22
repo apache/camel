@@ -20,6 +20,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.salesforce.internal.OperationName;
+import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.UriEndpoint;
@@ -74,8 +75,8 @@ public class SalesforceEndpoint extends DefaultEndpoint {
                     operationName.value()));
         }
 
-        final SalesforceConsumer consumer = new SalesforceConsumer(this, processor,
-            getComponent().getSubscriptionHelper(topicName));
+        final SubscriptionHelper subscriptionHelper = getComponent().getSubscriptionHelper();
+        final SalesforceConsumer consumer = new SalesforceConsumer(this, processor, subscriptionHelper);
         configureConsumer(consumer);
         return consumer;
     }
