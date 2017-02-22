@@ -724,7 +724,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
             return new HttpClientTransportOverHTTP();
         }
 
-        int selectors = Runtime.getRuntime().availableProcessors() / 2;
+        int selectors = Math.max(1, Runtime.getRuntime().availableProcessors() / 2);
 
         if (selectors >= maxThreads) {
             selectors = maxThreads - 1;
