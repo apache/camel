@@ -50,7 +50,7 @@ public class ValidatorContractTest extends ContextTestSupport {
                     .type(A.class)
                     .withUri("direct:validator");
                 from("direct:a")
-                    .inputType(A.class, true)
+                    .inputTypeWithValidate(A.class)
                     .to("mock:a");
                 from("direct:validator")
                     .to("mock:validator");
@@ -82,7 +82,7 @@ public class ValidatorContractTest extends ContextTestSupport {
                     .type(A.class)
                     .withUri("direct:validator");
                 from("direct:a")
-                    .outputType(A.class, true)
+                    .outputTypeWithValidate(A.class)
                     .to("mock:a");
                 from("direct:validator")
                     .to("mock:validator");
