@@ -17,6 +17,13 @@
 package org.apache.camel.component.azure.queue;
 
 public enum QueueServiceOperations {
-    getMessage,
-    putMessage    
+    listQueues,
+    createQueue,
+    deleteQueue,
+    addMessage,
+    retrieveMessage,
+    peekMessage,
+    updateMessage,
+    deleteMessage
+    
 }

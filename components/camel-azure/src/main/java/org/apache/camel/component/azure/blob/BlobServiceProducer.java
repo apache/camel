@@ -120,9 +120,15 @@ public class BlobServiceProducer extends DefaultProducer {
         LOG.trace("Getting the blob list from the container [{}] from exchange [{}]...", 
                   getConfiguration().getContainerName(), exchange);
         BlobServiceConfiguration cfg = getConfiguration();
-        @SuppressWarnings("unchecked")
-        EnumSet<BlobListingDetails> details = 
-            (EnumSet<BlobListingDetails>)exchange.getIn().getHeader(BlobServiceConstants.BLOB_LISTING_DETAILS); 
+        EnumSet<BlobListingDetails> details = null;
+        Object detailsObject = exchange.getIn().getHeader(BlobServiceConstants.BLOB_LISTING_DETAILS);
+        if (detailsObject instanceof EnumSet) {
+            @SuppressWarnings("unchecked")
+            EnumSet<BlobListingDetails> theDetails = (EnumSet<BlobListingDetails>)detailsObject;
+            details = theDetails;
+        } else if (detailsObject instanceof BlobListingDetails) {
+            details = EnumSet.of((BlobListingDetails)detailsObject);
+        }
         Iterable<ListBlobItem> items = 
             client.listBlobs(cfg.getBlobPrefix(), cfg.isUseFlatListing(), 
                              details, opts.getRequestOpts(), opts.getOpContext());

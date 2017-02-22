@@ -216,7 +216,8 @@ public final class BlobServiceUtil {
 
 
     public static BlobServiceRequestOptions getRequestOptions(Exchange exchange) {
-        BlobServiceRequestOptions opts = exchange.getIn().getBody(BlobServiceRequestOptions.class);
+        BlobServiceRequestOptions opts = exchange.getIn().getHeader(
+            BlobServiceConstants.BLOB_SERVICE_REQUEST_OPTIONS, BlobServiceRequestOptions.class);
         if (opts != null) {
             return opts;
         } else {
