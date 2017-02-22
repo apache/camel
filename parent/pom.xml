@@ -264,7 +264,7 @@
     <httpunit-version>1.7</httpunit-version>
     <httpcore4-version>4.4.6</httpcore4-version>
     <httpclient4-version>4.5.3</httpclient4-version>
-    <httpasyncclient-version>4.1.2</httpasyncclient-version>
+    <httpasyncclient-version>4.1.3</httpasyncclient-version>
     <httpclient-version>3.1</httpclient-version>
     <hystrix-version>1.5.9</hystrix-version>
     <hystrix-bundle-version>1.5.9_1</hystrix-bundle-version>
