@@ -415,7 +415,7 @@ public class SubscriptionHelper extends ServiceSupport {
     void setupReplay(final SalesforceEndpoint endpoint) {
         final String topicName = endpoint.getTopicName();
 
-        final Optional<Integer> replayId = determineReplayIdFor(endpoint, topicName);
+        final Optional<Long> replayId = determineReplayIdFor(endpoint, topicName);
         if (replayId.isPresent()) {
             final String channelName = getChannelName(topicName);
 
@@ -423,20 +423,20 @@ public class SubscriptionHelper extends ServiceSupport {
         }
     }
 
-    static Optional<Integer> determineReplayIdFor(final SalesforceEndpoint endpoint, final String topicName) {
+    static Optional<Long> determineReplayIdFor(final SalesforceEndpoint endpoint, final String topicName) {
         final String channelName = getChannelName(topicName);
 
         final SalesforceComponent component = endpoint.getComponent();
 
         final SalesforceEndpointConfig endpointConfiguration = endpoint.getConfiguration();
-        final Map<String, Integer> endpointInitialReplayIdMap = endpointConfiguration.getInitialReplayIdMap();
-        final Integer endpointReplayId = endpointInitialReplayIdMap.getOrDefault(topicName, endpointInitialReplayIdMap.get(channelName));
-        final Integer endpointDefaultReplayId = endpointConfiguration.getDefaultReplayId();
+        final Map<String, Long> endpointInitialReplayIdMap = endpointConfiguration.getInitialReplayIdMap();
+        final Long endpointReplayId = endpointInitialReplayIdMap.getOrDefault(topicName, endpointInitialReplayIdMap.get(channelName));
+        final Long endpointDefaultReplayId = endpointConfiguration.getDefaultReplayId();
 
         final SalesforceEndpointConfig componentConfiguration = component.getConfig();
-        final Map<String, Integer> componentInitialReplayIdMap = componentConfiguration.getInitialReplayIdMap();
-        final Integer componentReplayId = componentInitialReplayIdMap.getOrDefault(topicName, componentInitialReplayIdMap.get(channelName));
-        final Integer componentDefaultReplayId = componentConfiguration.getDefaultReplayId();
+        final Map<String, Long> componentInitialReplayIdMap = componentConfiguration.getInitialReplayIdMap();
+        final Long componentReplayId = componentInitialReplayIdMap.getOrDefault(topicName, componentInitialReplayIdMap.get(channelName));
+        final Long componentDefaultReplayId = componentConfiguration.getDefaultReplayId();
 
         // the endpoint values have priority over component values, and the default values posteriority
         // over give topic values

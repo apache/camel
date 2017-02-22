@@ -483,7 +483,7 @@ The Salesforce component supports 42 endpoint options which are listed below:
 | backoffIncrement | common |  | long | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect.
 | batchId | common |  | String | Bulk API Batch ID
 | contentType | common |  | ContentType | Bulk API content type one of XML CSV ZIP_XML ZIP_CSV
-| defaultReplayId | common |  | Integer | Default replayId setting if no value is found in link initialReplayIdMap
+| defaultReplayId | common |  | Long | Default replayId setting if no value is found in link initialReplayIdMap
 | format | common |  | PayloadFormat | Payload format to use for Salesforce API calls either JSON or XML defaults to JSON
 | httpClient | common |  | SalesforceHttpClient | Custom Jetty Http Client to use to connect to Salesforce.
 | includeDetails | common |  | Boolean | Include details in Salesforce1 Analytics report defaults to false.
