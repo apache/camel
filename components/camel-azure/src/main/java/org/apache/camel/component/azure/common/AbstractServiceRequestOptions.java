@@ -14,24 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.azure.blob;
+package org.apache.camel.component.azure.common;
 
-public interface BlobServiceConstants {
+import com.microsoft.azure.storage.OperationContext;
 
-    String OPERATION = "operation";
-    String BLOB_CLIENT = "AzureBlobClient";
-    
-    String SERVICE_URI_SEGMENT = ".blob.core.windows.net";
-    String BLOB_SERVICE_REQUEST_OPTIONS = "BlobServiceRequestOptions";
-    String ACCESS_CONDITION = "BlobAccessCondition";
-    String BLOB_REQUEST_OPTIONS = "BlobRequestOptions";
-    String OPERATION_CONTEXT = "BlobOperationContext";
-    
-    String BLOB_LISTING_DETAILS = "BlobListingDetails";
-    
-    String COMMIT_BLOCK_LIST_LATER = "CommitBlobBlockListLater";
-    String APPEND_BLOCK_CREATED = "AppendBlobCreated";
-    String PAGE_BLOCK_CREATED = "PageBlobCreated";
-    String PAGE_BLOB_RANGE = "PageBlobRange";
-    String PAGE_BLOB_SIZE = "PageBlobSize";
+public abstract class AbstractServiceRequestOptions {
+    private OperationContext opContext;
+
+    public OperationContext getOpContext() {
+        return opContext;
+    }
+
+    public void setOpContext(OperationContext opContext) {
+        this.opContext = opContext;
+    }
 }

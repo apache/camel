@@ -38,7 +38,8 @@ public class QueueServiceConsumer extends ScheduledPollConsumer {
     protected int poll() throws Exception {
         Exchange exchange = super.getEndpoint().createExchange();
         try {
-            getMessage(exchange);
+            LOG.trace("Retrieving a message");
+            retrieveMessage(exchange);
             super.getAsyncProcessor().process(exchange);
             return 1;
         } catch (StorageException ex) {
@@ -50,10 +51,11 @@ public class QueueServiceConsumer extends ScheduledPollConsumer {
         }
     }
     
-    private void getMessage(Exchange exchange) throws Exception {
-        LOG.trace("Getting the message from the queue [{}] from exchange [{}]...", 
-                  getConfiguration().getQueueName(), exchange);
-        throw new UnsupportedOperationException();
+    private void retrieveMessage(Exchange exchange) throws Exception {
+        //TODO: Support the batch processing if needed, given that it is possible
+        // to retrieve more than 1 message in one go, similarly to camel-aws/s3 consumer. 
+        QueueServiceUtil.retrieveMessage(exchange, getConfiguration());
+        
     }
         
     protected QueueServiceConfiguration getConfiguration() {

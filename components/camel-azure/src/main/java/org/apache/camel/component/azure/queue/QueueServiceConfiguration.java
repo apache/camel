@@ -28,8 +28,17 @@ public class QueueServiceConfiguration extends AbstractConfiguration {
     @UriParam
     private CloudQueue azureQueueClient;
     
-    @UriParam(label = "producer", defaultValue = "getMessage")
-    private QueueServiceOperations operation = QueueServiceOperations.getMessage;
+    @UriParam(label = "producer", defaultValue = "listQueues")
+    private QueueServiceOperations operation = QueueServiceOperations.listQueues;
+    
+    @UriParam(label = "producer")
+    private int messageTimeToLive;
+    
+    @UriParam(label = "producer")
+    private int messageVisibilityDelay;
+    
+    @UriParam(label = "producer")
+    private String queuePrefix;
     
     public String getQueueName() {
         return queueName;
@@ -62,5 +71,38 @@ public class QueueServiceConfiguration extends AbstractConfiguration {
      */
     public void setOperation(QueueServiceOperations operation) {
         this.operation = operation;
+    }
+
+    public int getMessageTimeToLive() {
+        return messageTimeToLive;
+    }
+
+    /**
+     * Message Time To Live in seconds 
+     */
+    public void setMessageTimeToLive(int messageTimeToLive) {
+        this.messageTimeToLive = messageTimeToLive;
+    }
+
+    public int getMessageVisibilityDelay() {
+        return messageVisibilityDelay;
+    }
+
+    /**
+     * Message Visibility Delay in seconds 
+     */
+    public void setMessageVisibilityDelay(int messageVisibilityDelay) {
+        this.messageVisibilityDelay = messageVisibilityDelay;
+    }
+
+    public String getQueuePrefix() {
+        return queuePrefix;
+    }
+
+    /**
+     * Set a prefix which can be used for listing the queues 
+     */
+    public void setQueuePrefix(String queuePrefix) {
+        this.queuePrefix = queuePrefix;
     }
 }
