@@ -27,12 +27,40 @@ public class RibbonLoadBalancerFactory implements LoadBalancerFactory {
     private final RibbonConfiguration configuration;
 
     public RibbonLoadBalancerFactory() {
-        this.configuration = new RibbonConfiguration();
+        this(new RibbonConfiguration());
+    }
+
+    public RibbonLoadBalancerFactory(RibbonConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     // *************************************************************************
     // Properties
     // *************************************************************************
+
+    public String getNamespace() {
+        return configuration.getNamespace();
+    }
+
+    public void setNamespace(String namespace) {
+        configuration.setNamespace(namespace);
+    }
+
+    public String getUsername() {
+        return configuration.getUsername();
+    }
+
+    public void setUsername(String username) {
+        configuration.setUsername(username);
+    }
+
+    public String getPassword() {
+        return configuration.getPassword();
+    }
+
+    public void setPassword(String password) {
+        configuration.setPassword(password);
+    }
 
     public String getClientName() {
         return configuration.getClientName();
@@ -42,11 +70,11 @@ public class RibbonLoadBalancerFactory implements LoadBalancerFactory {
         configuration.setClientName(clientName);
     }
 
-    public Map<String, String> getProperies() {
+    public Map<String, String> getClientConfig() {
         return configuration.getClientConfig();
     }
 
-    public void setProperties(Map<String, String> clientConfig) {
+    public void setClientConfig(Map<String, String> clientConfig) {
         configuration.setClientConfig(clientConfig);
     }
 

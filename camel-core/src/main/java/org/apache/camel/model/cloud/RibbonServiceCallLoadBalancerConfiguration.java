@@ -16,17 +16,25 @@
  */
 package org.apache.camel.model.cloud;
 
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Metadata;
 
 @Metadata(label = "routing,cloud,load-balancing")
 @XmlRootElement(name = "ribbonLoadBalancer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RibbonServiceCallLoadBalancerConfiguration extends ServiceCallLoadBalancerConfiguration {
+    @XmlAttribute
+    private String namespace;
+    @XmlAttribute
+    private String username;
+    @XmlAttribute
+    private String password;
     @XmlAttribute
     private String clientName;
 
@@ -41,6 +49,39 @@ public class RibbonServiceCallLoadBalancerConfiguration extends ServiceCallLoadB
     // *************************************************************************
     // Properties
     // *************************************************************************
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    /**
+     * The namespace
+     */
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * The username
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * The password
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public String getClientName() {
         return clientName;
@@ -58,10 +99,46 @@ public class RibbonServiceCallLoadBalancerConfiguration extends ServiceCallLoadB
     // *************************************************************************
 
     /**
+     * Sets the namespace
+     */
+    public RibbonServiceCallLoadBalancerConfiguration namespace(String namespace) {
+        setNamespace(namespace);
+        return this;
+    }
+
+    /**
+     * Sets the username
+     */
+    public RibbonServiceCallLoadBalancerConfiguration username(String username) {
+        setUsername(username);
+        return this;
+    }
+
+    /**
+     * Sets the password
+     */
+    public RibbonServiceCallLoadBalancerConfiguration password(String password) {
+        setPassword(password);
+        return this;
+    }
+
+    /**
      * Sets the Ribbon client name
      */
     public RibbonServiceCallLoadBalancerConfiguration clientName(String clientName) {
         setClientName(clientName);
         return this;
+    }
+
+    // *************************************************************************
+    // Helpers
+    // *************************************************************************
+
+    @Override
+    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters) throws Exception  {
+        Map<String, Object> properties = (Map<String, Object>)parameters.get("properties");
+        if (properties != null) {
+            parameters.put("clientConfig", properties);
+        }
     }
 }
