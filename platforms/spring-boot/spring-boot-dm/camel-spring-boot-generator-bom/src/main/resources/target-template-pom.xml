@@ -29,7 +29,7 @@
 
     <artifactId>camel-spring-boot-dependencies</artifactId>
     <packaging>pom</packaging>
-    <name>Camel :: Platform :: Spring-Boot :: Dependency Management :: BOM</name>
+    <name>Camel :: Platforms :: Spring-Boot :: Dependency Management :: BOM</name>
     <description>Camel Spring-Boot BOM</description>
 
     <dependencyManagement>

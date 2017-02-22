@@ -24,7 +24,7 @@
   </parent>
   <artifactId>camel-spring-boot-dependencies</artifactId>
   <packaging>pom</packaging>
-  <name>Camel :: Platform :: Spring-Boot :: Dependency Management :: BOM</name>
+  <name>Camel :: Platforms :: Spring-Boot :: Dependency Management :: BOM</name>
   <description>Camel Spring-Boot BOM</description>
   <dependencyManagement>
     <dependencies>
@@ -463,11 +463,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-catalog</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-catalog-connector</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2290,16 +2285,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-cloud</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-spring-cloud-netflix</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-spring-cloud-netflix-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
