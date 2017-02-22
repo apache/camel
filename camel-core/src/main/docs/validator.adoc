@@ -78,7 +78,7 @@ XML DSL:
 -------------------------------------------------------------------
 <predicateValidator Type="csv:CSVOrder">
     <simple>${body} contains '{name:XOrder'</simple>
-</dataFormatTransformer>
+</predicateValidator>
 -------------------------------------------------------------------
 
 
@@ -107,8 +107,10 @@ And here is an example to specify endpoint ref in XML DSL:
 -------------------------------------------------------------------
 <endpointValidator uri="validator:xsd/schema.xsd" type="xml"/>
 -------------------------------------------------------------------
-
-
+Note that the Endpoint Validator just forwards the message to the specified endpoint. In above example,
+camel forwards the message to the `validator:` endpoint, which actually is a
+link:validator-component.adoc[Validation Component]. You can also use any other validation component like
+link:bean-validation.html[Bean Validation Component].
 
 [[Validator-Custom]]
 Custom Validator Options
@@ -166,13 +168,14 @@ XML DSL:
 -------------------------------------------------------------------
 
 If you have following route definition, above validator will be applied when `direct:abc` endpoint
-receives the message. Note that the `validate` attribute on the inputType declaration is set to `true`:
+receives the message. Note that `inputTypeWithValidate` is used instead of `inputType` in Java DSL,
+and the `validate` attribute on the inputType declaration is set to `true` in XML DSL:
 
 Java DSL:
 [source,java]
 -------------------------------------------------------------------
 from("direct:abc")
-    .inputType("xml:ABCOrder", true)
+    .inputTypeWithValidate("xml:ABCOrder")
     .log("${body}");
 -------------------------------------------------------------------
 
