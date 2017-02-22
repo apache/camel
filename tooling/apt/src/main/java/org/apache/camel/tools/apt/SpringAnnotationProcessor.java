@@ -320,7 +320,7 @@ public class SpringAnnotationProcessor {
         Set<String> oneOfTypes = new TreeSet<String>();
         oneOfTypes.add("route");
 
-        EipOption ep = new EipOption("route", "Route","element", fieldTypeName, false, "", "Contains the Camel routes", false, false, null, true, oneOfTypes, false);
+        EipOption ep = new EipOption("route", "Route", "element", fieldTypeName, false, "", "Contains the Camel routes", false, false, null, true, oneOfTypes, false);
         eipOptions.add(ep);
     }
 
@@ -336,7 +336,7 @@ public class SpringAnnotationProcessor {
         Set<String> oneOfTypes = new TreeSet<String>();
         oneOfTypes.add("rest");
 
-        EipOption ep = new EipOption("rest", "Rest","element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl", false, false, null, true, oneOfTypes, false);
+        EipOption ep = new EipOption("rest", "Rest", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl", false, false, null, true, oneOfTypes, false);
         eipOptions.add(ep);
     }
 
