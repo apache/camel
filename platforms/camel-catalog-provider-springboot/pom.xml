@@ -27,7 +27,7 @@
 
   <artifactId>camel-catalog-provider-springboot</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Platforms :: Catalog :: Provider Spring Boot</name>
+  <name>Camel :: Platforms :: Camel Catalog :: Provider Spring Boot</name>
   <description>Camel Catalog Spring Boot</description>
 
   <properties>

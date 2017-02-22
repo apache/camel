@@ -27,7 +27,7 @@
 
   <artifactId>camel-catalog-connector</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Platforms :: Catalog :: Connector</name>
+  <name>Camel :: Platforms :: Camel Catalog :: Connector</name>
   <description>Camel Catalog Connector</description>
 
   <properties>

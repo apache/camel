@@ -26,7 +26,7 @@
 
   <artifactId>camel-catalog-rest-app</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Platforms :: Catalog :: REST App</name>
+  <name>Camel :: Platforms :: Camel Catalog :: REST App</name>
   <description>Camel Catalog REST standalone application</description>
 
   <dependencies>

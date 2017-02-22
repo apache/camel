@@ -27,7 +27,7 @@
 
   <artifactId>camel-catalog-rest</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Platforms :: Catalog :: REST</name>
+  <name>Camel :: Platforms :: Camel Catalog :: REST</name>
   <description>Camel Catalog REST</description>
 
   <dependencies>
