@@ -61,22 +61,21 @@ import org.cometd.bayeux.client.ClientSession.Extension.Adapter;
  * @author yzhao
  * @since 198 (Winter '16)
  */
-public class CometDReplayExtension<V> extends Adapter {
+public class CometDReplayExtension extends Adapter {
     private static final String EXTENSION_NAME = "replay";
-    private final ConcurrentMap<String, V> dataMap = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Integer> dataMap = new ConcurrentHashMap<>();
     private final AtomicBoolean supported = new AtomicBoolean();
 
-    public CometDReplayExtension(Map<String, V> dataMap) {
-        this.dataMap.putAll(dataMap);
+    public void addTopicReplayId(final String topicName, final int replayId) {
+        dataMap.put(topicName, replayId);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public boolean rcv(ClientSession session, Message.Mutable message) {
-        Object data = message.get(EXTENSION_NAME);
-        if (this.supported.get() && data != null) {
+        Integer replayId = (Integer)message.get(EXTENSION_NAME);
+        if (this.supported.get() && replayId != null) {
             try {
-                dataMap.put(message.getChannel(), (V) data);
+                dataMap.put(message.getChannel(), replayId);
             } catch (ClassCastException e) {
                 return false;
             }

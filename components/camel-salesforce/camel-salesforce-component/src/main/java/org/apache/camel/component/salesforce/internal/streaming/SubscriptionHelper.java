@@ -17,25 +17,29 @@
 package org.apache.camel.component.salesforce.internal.streaming;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Stream;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 import org.apache.camel.CamelException;
+import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.component.salesforce.SalesforceComponent;
 import org.apache.camel.component.salesforce.SalesforceConsumer;
+import org.apache.camel.component.salesforce.SalesforceEndpoint;
+import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.support.ServiceSupport;
 import org.cometd.bayeux.Message;
-import org.cometd.bayeux.client.ClientSession;
 import org.cometd.bayeux.client.ClientSession.Extension;
 import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.client.BayeuxClient;
@@ -56,6 +60,8 @@ import static org.cometd.bayeux.Message.SUBSCRIPTION_FIELD;
 
 public class SubscriptionHelper extends ServiceSupport {
 
+    static final CometDReplayExtension REPLAY_EXTENSION = new CometDReplayExtension();
+
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionHelper.class);
 
     private static final int CONNECT_TIMEOUT = 110;
@@ -65,7 +71,7 @@ public class SubscriptionHelper extends ServiceSupport {
     private static final String EXCEPTION_FIELD = "exception";
     private static final int DISCONNECT_INTERVAL = 5000;
 
-    final BayeuxClient client;
+    BayeuxClient client;
 
     private final SalesforceComponent component;
     private final SalesforceSession session;
@@ -87,14 +93,11 @@ public class SubscriptionHelper extends ServiceSupport {
     private volatile boolean reconnecting;
     private final AtomicLong restartBackoff;
 
-    public SubscriptionHelper(SalesforceComponent component, String topicName) throws Exception {
+    public SubscriptionHelper(final SalesforceComponent component) throws SalesforceException {
         this.component = component;
         this.session = component.getSession();
 
         this.listenerMap = new ConcurrentHashMap<SalesforceConsumer, ClientSessionChannel.MessageListener>();
-
-        // create CometD client
-        this.client = createClient(component, topicName);
 
         restartBackoff = new AtomicLong(0);
         backoffIncrement = component.getConfig().getBackoffIncrement();
@@ -103,6 +106,9 @@ public class SubscriptionHelper extends ServiceSupport {
 
     @Override
     protected void doStart() throws Exception {
+
+        // create CometD client
+        this.client = createClient(component);
 
         // reset all error conditions
         handshakeError = null;
@@ -315,9 +321,11 @@ public class SubscriptionHelper extends ServiceSupport {
         if (!disconnected) {
             LOG.warn("Could not disconnect client connected to: {} after: {} msec.", getEndpointUrl(component), timeout);
         }
+
+        client = null;
     }
 
-    static BayeuxClient createClient(final SalesforceComponent component, final String topicName) throws Exception {
+    static BayeuxClient createClient(final SalesforceComponent component) throws SalesforceException {
         // use default Jetty client from SalesforceComponent, its shared by all consumers
         final SalesforceHttpClient httpClient = component.getConfig().getHttpClient();
 
@@ -343,35 +351,18 @@ public class SubscriptionHelper extends ServiceSupport {
         };
 
         BayeuxClient client = new BayeuxClient(getEndpointUrl(component), transport);
-        Integer replayId = null;
-        String channelName = getChannelName(topicName);
-        Map<String, Integer> replayIdMap = component.getConfig().getInitialReplayIdMap();
-        if (replayIdMap != null) {
-            replayId = replayIdMap.getOrDefault(topicName, replayIdMap.get(channelName));
-        }
-        if (replayId == null) {
-            replayId = component.getConfig().getDefaultReplayId();
-        }
-        if (replayId != null) {
-            LOG.info("Sending replayId={} for channel {}", replayId, channelName);
-            List<Extension> extensions = client.getExtensions();
-            Extension ext = null;
-            for (Iterator<Extension> iter = extensions.iterator(); iter.hasNext(); ext = iter.next()) {
-                if (ext instanceof CometDReplayExtension) {
-                    iter.remove();
-                }
-            }
-            Map<String, Integer> dataMap = new HashMap<>();
-            dataMap.put(channelName, replayId);
-            ClientSession.Extension extension = new CometDReplayExtension<>(dataMap);
-            client.addExtension(extension);
-        }
+
+        // added eagerly to check for support during handshake
+        client.addExtension(REPLAY_EXTENSION);
+
         return client;
     }
 
     public void subscribe(final String topicName, final SalesforceConsumer consumer) {
         // create subscription for consumer
         final String channelName = getChannelName(topicName);
+
+        setupReplay((SalesforceEndpoint) consumer.getEndpoint());
 
         // channel message listener
         LOG.info("Subscribing to channel {}...", channelName);
@@ -419,6 +410,38 @@ public class SubscriptionHelper extends ServiceSupport {
 
         // subscribe asynchronously
         clientChannel.subscribe(listener);
+    }
+
+    void setupReplay(final SalesforceEndpoint endpoint) {
+        final String topicName = endpoint.getTopicName();
+
+        final Optional<Integer> replayId = determineReplayIdFor(endpoint, topicName);
+        if (replayId.isPresent()) {
+            final String channelName = getChannelName(topicName);
+
+            REPLAY_EXTENSION.addTopicReplayId(channelName, replayId.get());
+        }
+    }
+
+    static Optional<Integer> determineReplayIdFor(final SalesforceEndpoint endpoint, final String topicName) {
+        final String channelName = getChannelName(topicName);
+
+        final SalesforceComponent component = endpoint.getComponent();
+
+        final SalesforceEndpointConfig endpointConfiguration = endpoint.getConfiguration();
+        final Map<String, Integer> endpointInitialReplayIdMap = endpointConfiguration.getInitialReplayIdMap();
+        final Integer endpointReplayId = endpointInitialReplayIdMap.getOrDefault(topicName, endpointInitialReplayIdMap.get(channelName));
+        final Integer endpointDefaultReplayId = endpointConfiguration.getDefaultReplayId();
+
+        final SalesforceEndpointConfig componentConfiguration = component.getConfig();
+        final Map<String, Integer> componentInitialReplayIdMap = componentConfiguration.getInitialReplayIdMap();
+        final Integer componentReplayId = componentInitialReplayIdMap.getOrDefault(topicName, componentInitialReplayIdMap.get(channelName));
+        final Integer componentDefaultReplayId = componentConfiguration.getDefaultReplayId();
+
+        // the endpoint values have priority over component values, and the default values posteriority
+        // over give topic values
+        return Stream.of(endpointReplayId, componentReplayId, endpointDefaultReplayId, componentDefaultReplayId)
+            .filter(Objects::nonNull).findFirst();
     }
 
     static String getChannelName(String topicName) {

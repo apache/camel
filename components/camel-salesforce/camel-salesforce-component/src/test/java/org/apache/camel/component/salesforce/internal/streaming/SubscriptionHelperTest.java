@@ -18,50 +18,20 @@ package org.apache.camel.component.salesforce.internal.streaming;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.apache.camel.component.salesforce.SalesforceComponent;
+import org.apache.camel.component.salesforce.SalesforceEndpoint;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
-import org.apache.camel.component.salesforce.SalesforceHttpClient;
-import org.apache.camel.component.salesforce.internal.SalesforceSession;
-import org.cometd.bayeux.Channel;
-import org.cometd.bayeux.Message;
-import org.cometd.bayeux.client.ClientSession;
-import org.cometd.bayeux.client.ClientSession.Extension;
-import org.cometd.client.BayeuxClient;
-import org.cometd.common.HashMapMessage;
-import org.junit.Before;
 import org.junit.Test;
 
+import static org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper.determineReplayIdFor;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class SubscriptionHelperTest {
-
-    static final ClientSession NOT_USED = null;
-
-    final SalesforceComponent component = mock(SalesforceComponent.class);
-
-    final SalesforceSession session = mock(SalesforceSession.class);
-
-    final SalesforceEndpointConfig config = mock(SalesforceEndpointConfig.class);
-
-    @Before
-    public void setupMocks() {
-        when(component.getSession()).thenReturn(session);
-
-        when(session.getInstanceUrl()).thenReturn("https://some.url");
-
-        when(component.getConfig()).thenReturn(config);
-        when(component.getConfig().getApiVersion()).thenReturn(SalesforceEndpointConfig.DEFAULT_VERSION);
-
-        when(config.getHttpClient()).thenReturn(mock(SalesforceHttpClient.class));
-
-    }
 
     @Test
     public void shouldSupportInitialConfigMapWithTwoKeySyntaxes() throws Exception {
@@ -70,45 +40,57 @@ public class SubscriptionHelperTest {
         initialReplayIdMap.put("/topic/my-topic-1", 20);
         initialReplayIdMap.put("/topic/my-topic-2", 30);
 
-        when(config.getDefaultReplayId()).thenReturn(14);
+        final SalesforceEndpointConfig config = new SalesforceEndpointConfig();
+        config.setDefaultReplayId(14);
+        config.setInitialReplayIdMap(initialReplayIdMap);
 
-        when(config.getInitialReplayIdMap()).thenReturn(initialReplayIdMap);
+        final SalesforceComponent component = mock(SalesforceComponent.class);
+        final SalesforceEndpoint endpoint = mock(SalesforceEndpoint.class);
 
-        assertEquals("Expecting replayId for `my-topic-1` to be 10, as short topic names have priority", (Object) 10,
-                fetchReplayExtensionValue("my-topic-1").get("/topic/my-topic-1"));
+        when(endpoint.getComponent()).thenReturn(component);
+        when(endpoint.getConfiguration()).thenReturn(config);
+        when(component.getConfig()).thenReturn(new SalesforceEndpointConfig());
 
-        assertEquals("Expecting replayId for `my-topic-2` to be 30, the only one given", (Object) 30,
-                fetchReplayExtensionValue("my-topic-2").get("/topic/my-topic-2"));
+        assertEquals("Expecting replayId for `my-topic-1` to be 10, as short topic names have priority",
+                     Optional.of(10), determineReplayIdFor(endpoint, "my-topic-1"));
 
-        assertEquals("Expecting replayId for `my-topic-3` to be 14, the default", (Object) 14,
-                fetchReplayExtensionValue("my-topic-3").get("/topic/my-topic-3"));
+        assertEquals("Expecting replayId for `my-topic-2` to be 30, the only one given", Optional.of(30),
+                     determineReplayIdFor(endpoint, "my-topic-2"));
+
+        assertEquals("Expecting replayId for `my-topic-3` to be 14, the default", Optional.of(14),
+                     determineReplayIdFor(endpoint, "my-topic-3"));
     }
 
-    Map<String, Integer> fetchReplayExtensionValue(final String topicName) throws Exception {
-        final BayeuxClient client = SubscriptionHelper.createClient(component, topicName);
+    @Test
+    public void precedenceShouldBeFollowed() {
+        final SalesforceEndpointConfig componentConfig = new SalesforceEndpointConfig();
+        componentConfig.setDefaultReplayId(1);
+        componentConfig.setInitialReplayIdMap(Collections.singletonMap("my-topic-1", 2));
+        componentConfig.setInitialReplayIdMap(Collections.singletonMap("my-topic-2", 3));
 
-        final List<Extension> extensions = client.getExtensions();
+        final SalesforceEndpointConfig endpointConfig = new SalesforceEndpointConfig();
+        endpointConfig.setDefaultReplayId(4);
+        endpointConfig.setInitialReplayIdMap(Collections.singletonMap("my-topic-1", 5));
 
-        final Optional<Extension> extension = extensions.stream().filter(e -> e instanceof CometDReplayExtension)
-                .findFirst();
+        final SalesforceComponent component = mock(SalesforceComponent.class);
+        when(component.getConfig()).thenReturn(componentConfig);
 
-        assertTrue("Client should be configured with CometDReplayExtension extension", extension.isPresent());
+        final SalesforceEndpoint endpoint = mock(SalesforceEndpoint.class);
+        when(endpoint.getComponent()).thenReturn(component);
+        when(endpoint.getConfiguration()).thenReturn(endpointConfig);
 
-        final CometDReplayExtension cometDReplayExtension = (CometDReplayExtension) extension.get();
+        assertEquals("Expecting replayId for `my-topic-1` to be 5, as endpoint configuration has priority",
+                     Optional.of(5), determineReplayIdFor(endpoint, "my-topic-1"));
 
-        final Message.Mutable handshake = new HashMapMessage();
-        handshake.setChannel(Channel.META_HANDSHAKE);
-        handshake.put(Message.EXT_FIELD, Collections.singletonMap("replay", true));
+        assertEquals("Expecting replayId for `my-topic-2` to be 3, as endpoint does not configure it",
+                     Optional.of(3), determineReplayIdFor(endpoint, "my-topic-2"));
 
-        cometDReplayExtension.rcvMeta(NOT_USED, handshake);
+        assertEquals("Expecting replayId for `my-topic-3` to be 4, as it is endpoint's default",
+                     Optional.of(4), determineReplayIdFor(endpoint, "my-topic-3"));
 
-        final Message.Mutable subscription = new HashMapMessage();
-        subscription.setChannel(Channel.META_SUBSCRIBE);
-        cometDReplayExtension.sendMeta(NOT_USED, subscription);
+        endpointConfig.setDefaultReplayId(null);
 
-        @SuppressWarnings("unchecked")
-        final Map<String, Integer> replays = (Map<String, Integer>) subscription.getExt().get("replay");
-
-        return replays;
+        assertEquals("Expecting replayId for `my-topic-3` to be 1, as it is component's default when endpoint does not have a default",
+                     Optional.of(1), determineReplayIdFor(endpoint, "my-topic-3"));
     }
 }
