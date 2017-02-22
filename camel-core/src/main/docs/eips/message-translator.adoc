@@ -1,12 +1,8 @@
-[[MessageTranslator-MessageTranslator]]
-Message Translator
-^^^^^^^^^^^^^^^^^^
+## Message Translator
 
-Camel supports the
-http://www.enterpriseintegrationpatterns.com/MessageTranslator.html[Message
-Translator] from the link:enterprise-integration-patterns.html[EIP
-patterns] by using an arbitrary link:processor.html[Processor] in the
-routing logic, by using a link:bean-integration.html[bean] to perform
+Camel supports the link:http://www.enterpriseintegrationpatterns.com/MessageTranslator.html[Message Translator]
+from the link:enterprise-integration-patterns.html[EIP patterns] by using an arbitrary link:processor.html[Processor]
+in the routing logic, by using a link:bean-integration.html[bean] to perform
 the transformation, or by using transform() in the DSL. You can also use
 a link:data-format.html[Data Format] to marshal and unmarshal messages
 in different encodings.
@@ -46,7 +42,7 @@ language can be substituted inside the transform element as shown below
 Or you can use the link:bean-integration.html[Bean Integration] to
 invoke a bean
 
-[source,java]
+[source,xml]
 -----------------------------------------------
 <route>
   <from uri="activemq:Input"/>
@@ -79,9 +75,7 @@ from("activemq:My.Queue").
   to("velocity:com/acme/MyResponse.vm");
 ----------------------------------------
 
-[[MessageTranslator-UsingThisPattern]]
-Using This Pattern
-++++++++++++++++++
+### Using This Pattern
 
 If you would like to use this EIP Pattern then please read the
 link:getting-started.html[Getting Started], you may also find the
@@ -90,7 +84,7 @@ of link:endpoint.html[Endpoint] and link:uris.html[URIs]. Then you could
 try out some of the link:examples.html[Examples] first before trying
 this pattern out.
 
-* link:content-enricher.html[Content Enricher]
+* link:./enrich-eip.adoc[Content Enricher]
 * link:using-getin-or-getout-methods-on-exchange.html[Using getIn or
 getOut methods on Exchange]
 
