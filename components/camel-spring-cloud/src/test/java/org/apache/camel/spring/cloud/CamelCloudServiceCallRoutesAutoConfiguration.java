@@ -19,10 +19,8 @@ package org.apache.camel.spring.cloud;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
-public class CamelCloudServiceCallConfiguration {
+public class CamelCloudServiceCallRoutesAutoConfiguration {
     @Bean
     public RouteBuilder myRouteBuilder() {
         return new RouteBuilder() {

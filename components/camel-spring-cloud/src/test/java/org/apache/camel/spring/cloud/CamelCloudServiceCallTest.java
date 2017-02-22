@@ -35,7 +35,7 @@ import org.springframework.test.context.junit4.SpringRunner;
     classes = {
         CamelAutoConfiguration.class,
         CamelCloudAutoConfiguration.class,
-        CamelCloudServiceCallConfiguration.class
+        CamelCloudServiceCallRoutesAutoConfiguration.class
     },
     properties = {
         "camel.cloud.load-balancer.enabled=false",
