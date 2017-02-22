@@ -1,4 +1,4 @@
-## Content Filter
+## Filter EIP
 Camel supports the link:http://www.enterpriseintegrationpatterns.com/ContentFilter.html[Content Filter] from the link:https://camel.apache.org/enterprise-integration-patterns.html[EIP patterns] using one of the following mechanisms in the routing logic to transform content from the inbound message.
 
 image:http://www.enterpriseintegrationpatterns.com/img/ContentFilter.gif[image]
