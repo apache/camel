@@ -372,7 +372,7 @@ public class CoreEipAnnotationProcessor {
             displayName = metadata.displayName();
         }
 
-        EipOption ep = new EipOption(name, displayName,"attribute", fieldTypeName, required, defaultValue, docComment, deprecated, isEnum, enums, false, null, false);
+        EipOption ep = new EipOption(name, displayName, "attribute", fieldTypeName, required, defaultValue, docComment, deprecated, isEnum, enums, false, null, false);
         eipOptions.add(ep);
 
         return false;
@@ -410,7 +410,7 @@ public class CoreEipAnnotationProcessor {
             displayName = metadata.displayName();
         }
 
-        EipOption ep = new EipOption(name, displayName,"value", fieldTypeName, required, defaultValue, docComment, deprecated, false, null, false, null, false);
+        EipOption ep = new EipOption(name, displayName, "value", fieldTypeName, required, defaultValue, docComment, deprecated, false, null, false, null, false);
         eipOptions.add(ep);
     }
 
@@ -548,52 +548,52 @@ public class CoreEipAnnotationProcessor {
 
         // group
         String docComment = findJavaDoc(elementUtils, null, "group", null, classElement, true);
-        EipOption ep = new EipOption("group", "Group","attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
+        EipOption ep = new EipOption("group", "Group", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // group
         docComment = findJavaDoc(elementUtils, null, "streamCache", null, classElement, true);
-        ep = new EipOption("streamCache", "Stream Cache","attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
+        ep = new EipOption("streamCache", "Stream Cache", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // trace
         docComment = findJavaDoc(elementUtils, null, "trace", null, classElement, true);
-        ep = new EipOption("trace", "Trace","attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
+        ep = new EipOption("trace", "Trace", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // trace
         docComment = findJavaDoc(elementUtils, null, "messageHistory", null, classElement, true);
-        ep = new EipOption("messageHistory", "Message History","attribute", "java.lang.String", false, "true", docComment, false, false, null, false, null, false);
+        ep = new EipOption("messageHistory", "Message History", "attribute", "java.lang.String", false, "true", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // trace
         docComment = findJavaDoc(elementUtils, null, "handleFault", null, classElement, true);
-        ep = new EipOption("handleFault", "Handle Fault","attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
+        ep = new EipOption("handleFault", "Handle Fault", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // delayer
         docComment = findJavaDoc(elementUtils, null, "delayer", null, classElement, true);
-        ep = new EipOption("delayer", "Delayer","attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
+        ep = new EipOption("delayer", "Delayer", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // autoStartup
         docComment = findJavaDoc(elementUtils, null, "autoStartup", null, classElement, true);
-        ep = new EipOption("autoStartup", "Auto Startup","attribute", "java.lang.String", false, "true", docComment, false, false, null, false, null, false);
+        ep = new EipOption("autoStartup", "Auto Startup", "attribute", "java.lang.String", false, "true", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // startupOrder
         docComment = findJavaDoc(elementUtils, null, "startupOrder", null, classElement, true);
-        ep = new EipOption("startupOrder", "Startup Order","attribute", "java.lang.Integer", false, "", docComment, false, false, null, false, null, false);
+        ep = new EipOption("startupOrder", "Startup Order", "attribute", "java.lang.Integer", false, "", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // errorHandlerRef
         docComment = findJavaDoc(elementUtils, null, "errorHandlerRef", null, classElement, true);
-        ep = new EipOption("errorHandlerRef", "Error Handler","attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
+        ep = new EipOption("errorHandlerRef", "Error Handler", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // routePolicyRef
         docComment = findJavaDoc(elementUtils, null, "routePolicyRef", null, classElement, true);
-        ep = new EipOption("routePolicyRef", "Route Policy","attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
+        ep = new EipOption("routePolicyRef", "Route Policy", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // shutdownRoute
@@ -601,7 +601,7 @@ public class CoreEipAnnotationProcessor {
         enums.add("Default");
         enums.add("Defer");
         docComment = findJavaDoc(elementUtils, null, "shutdownRoute", "Default", classElement, true);
-        ep = new EipOption("shutdownRoute", "Shutdown Route","attribute", "org.apache.camel.ShutdownRoute", false, "", docComment, false, true, enums, false, null, false);
+        ep = new EipOption("shutdownRoute", "Shutdown Route", "attribute", "org.apache.camel.ShutdownRoute", false, "", docComment, false, true, enums, false, null, false);
         eipOptions.add(ep);
 
         // shutdownRunningTask
@@ -616,7 +616,7 @@ public class CoreEipAnnotationProcessor {
         Set<String> oneOfTypes = new TreeSet<String>();
         oneOfTypes.add("from");
         docComment = findJavaDoc(elementUtils, null, "inputs", null, classElement, true);
-        ep = new EipOption("inputs", "Inputs","element", "java.util.List<org.apache.camel.model.FromDefinition>", true, "", docComment, false, false, null, true, oneOfTypes, false);
+        ep = new EipOption("inputs", "Inputs", "element", "java.util.List<org.apache.camel.model.FromDefinition>", true, "", docComment, false, false, null, true, oneOfTypes, false);
         eipOptions.add(ep);
 
         // outputs
@@ -639,7 +639,7 @@ public class CoreEipAnnotationProcessor {
         oneOfTypes.remove("route");
 
         docComment = findJavaDoc(elementUtils, null, "outputs", null, classElement, true);
-        ep = new EipOption("outputs", "Outputs","element", "java.util.List<org.apache.camel.model.ProcessorDefinition<?>>", true, "", docComment, false, false, null, true, oneOfTypes, false);
+        ep = new EipOption("outputs", "Outputs", "element", "java.util.List<org.apache.camel.model.ProcessorDefinition<?>>", true, "", docComment, false, false, null, true, oneOfTypes, false);
         eipOptions.add(ep);
     }
 
@@ -653,19 +653,19 @@ public class CoreEipAnnotationProcessor {
 
         // id
         String docComment = findJavaDoc(elementUtils, null, "id", null, classElement, true);
-        EipOption ep = new EipOption("id", "Id","attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
+        EipOption ep = new EipOption("id", "Id", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // description
         docComment = findJavaDoc(elementUtils, null, "description", null, classElement, true);
-        ep = new EipOption("description", "Description","element", "org.apache.camel.model.DescriptionDefinition", false, "", docComment, false, false, null, false, null, false);
+        ep = new EipOption("description", "Description", "element", "org.apache.camel.model.DescriptionDefinition", false, "", docComment, false, false, null, false, null, false);
         eipOptions.add(ep);
 
         // lets skip custom id as it has no value for end users to configure
         if (!skipUnwanted) {
             // custom id
             docComment = findJavaDoc(elementUtils, null, "customId", null, classElement, true);
-            ep = new EipOption("customId", "Custom Id","attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
+            ep = new EipOption("customId", "Custom Id", "attribute", "java.lang.String", false, "", docComment, false, false, null, false, null, false);
             eipOptions.add(ep);
         }
     }
@@ -683,7 +683,7 @@ public class CoreEipAnnotationProcessor {
             Set<String> oneOfTypes = new TreeSet<String>();
             oneOfTypes.add("route");
 
-            EipOption ep = new EipOption("routes", "Routes","element", fieldTypeName, false, "", "Contains the Camel routes", false, false, null, true, oneOfTypes, false);
+            EipOption ep = new EipOption("routes", "Routes", "element", fieldTypeName, false, "", "Contains the Camel routes", false, false, null, true, oneOfTypes, false);
             eipOptions.add(ep);
         }
     }
@@ -701,7 +701,7 @@ public class CoreEipAnnotationProcessor {
             Set<String> oneOfTypes = new TreeSet<String>();
             oneOfTypes.add("rest");
 
-            EipOption ep = new EipOption("rests", "Rests","element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl", false, false, null, true, oneOfTypes, false);
+            EipOption ep = new EipOption("rests", "Rests", "element", fieldTypeName, false, "", "Contains the rest services defined using the rest-dsl", false, false, null, true, oneOfTypes, false);
             eipOptions.add(ep);
         }
     }
