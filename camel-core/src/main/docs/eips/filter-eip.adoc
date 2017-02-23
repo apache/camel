@@ -1,13 +1,26 @@
 ## Filter EIP
 Camel supports the link:http://www.enterpriseintegrationpatterns.com/ContentFilter.html[Content Filter] from the link:https://camel.apache.org/enterprise-integration-patterns.html[EIP patterns] using one of the following mechanisms in the routing logic to transform content from the inbound message.
 
-image:http://www.enterpriseintegrationpatterns.com/img/ContentFilter.gif[image]
-
 * Message Translator
 * invoking a Java bean
 * Processor object
 
+image:http://www.enterpriseintegrationpatterns.com/img/ContentFilter.gif[image]
+
 A common way to filter messages is to use an Expression in the DSL like XQuery, SQL or one of the supported Scripting Languages.
+
+### Options
+
+// eip options: START
+The Filter EIP supports 0 options which are listed below:
+
+{% raw %}
+[width="100%",cols="3,1m,6",options="header"]
+|=======================================================================
+| Name | Java Type | Description
+|=======================================================================
+{% endraw %}
+// eip options: END
 
 ### Using the Fluent Builders
 Here is a simple example using the DSL directly
