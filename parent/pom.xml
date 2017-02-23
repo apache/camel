@@ -94,7 +94,7 @@
     <cassandra-driver-version>3.1.4</cassandra-driver-version>
     <cassandra-driver-guava-version>18.0</cassandra-driver-guava-version>
     <cassandra-version>3.7</cassandra-version>
-    <cassandra-unit-version>3.1.1.0</cassandra-unit-version>
+    <cassandra-unit-version>3.1.3.2</cassandra-unit-version>
     <castor-version>1.3.3</castor-version>
     <castor-bundle-version>1.3.3_1</castor-bundle-version>
     <cdi-api-1.0-version>1.0-SP4</cdi-api-1.0-version>
