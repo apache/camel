@@ -66,8 +66,8 @@ public class CometDReplayExtension extends Adapter {
     private final ConcurrentMap<String, Long> dataMap = new ConcurrentHashMap<>();
     private final AtomicBoolean supported = new AtomicBoolean();
 
-    public void addTopicReplayId(final String topicName, final long replayId) {
-        dataMap.put(topicName, replayId);
+    public void addChannelReplayId(final String channelName, final long replayId) {
+        dataMap.put(channelName, replayId);
     }
 
     @Override
