@@ -81,6 +81,18 @@ public class HttpMethodsTest extends BaseHttpTest {
 
         assertExchange(exchange);
     }
+    
+    @Test
+    public void httpGetWithUriParam() throws Exception {
+
+        Exchange exchange = template.request("http4://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/get?httpMethod=GET", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "POST");
+            }
+        });
+
+        assertExchange(exchange);
+    }
 
     @Test
     public void httpPatch() throws Exception {

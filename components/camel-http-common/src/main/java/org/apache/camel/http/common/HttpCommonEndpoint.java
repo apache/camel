@@ -132,6 +132,8 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     private boolean async;
     @UriParam(label = "producer", description = "Configure a cookie handler to maintain a HTTP session")
     private CookieHandler cookieHandler;
+    @UriParam(label = "producer", description = "Configure the http Method to use as URI param. In case this is set, it can't be overriden by the HttpMethod header.")
+    private String httpMethod;
 
     public HttpCommonEndpoint() {
     }
@@ -553,4 +555,15 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     public void setCookieHandler(CookieHandler cookieHandler) {
         this.cookieHandler = cookieHandler;
     }
+
+	public String getHttpMethod() {
+		return httpMethod;
+	}
+
+    /**
+     * Configure the Http method to use
+     */
+	public void setHttpMethod(String httpMethod) {
+		this.httpMethod = httpMethod;
+	}
 }
