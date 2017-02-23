@@ -18,9 +18,14 @@ package org.apache.camel.component.salesforce.api.dto;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
@@ -95,15 +100,32 @@ public final class Limits implements Serializable {
 
         private final int remaining;
 
+        private final Map<String, Usage> perApplication = new HashMap<>();
+
         @JsonCreator
         Usage(@JsonProperty("Max") final int max, @JsonProperty("Remaining") final int remaining) {
             this.max = max;
             this.remaining = remaining;
         }
 
+        /** Returns {@link Usage} for application */
+        public Optional<Usage> forApplication(final String application) {
+            return Optional.ofNullable(perApplication.get(application));
+        }
+
+        /** Further per application usage. */
+        public Set<String> getApplications() {
+            return perApplication.keySet();
+        }
+
         /** Maximum allowed by the limit */
         public int getMax() {
             return max;
+        }
+
+        /** Returns usages per application */
+        public Map<String, Usage> getPerApplicationUsage() {
+            return Collections.unmodifiableMap(perApplication);
         }
 
         /** Remaining invocations allowed */
@@ -121,7 +143,12 @@ public final class Limits implements Serializable {
                 return "Undefined";
             }
 
-            return "Max: " + max + ", Remaining: " + remaining;
+            return "Max: " + max + ", Remaining: " + remaining + ", per application: " + perApplication;
+        }
+
+        @JsonAnySetter
+        void addApplicationUsage(final String application, final Usage usage) {
+            perApplication.put(application, usage);
         }
     }
 
