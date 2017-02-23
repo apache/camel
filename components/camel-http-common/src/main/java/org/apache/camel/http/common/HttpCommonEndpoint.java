@@ -556,14 +556,14 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         this.cookieHandler = cookieHandler;
     }
 
-	public String getHttpMethod() {
-		return httpMethod;
-	}
+    public String getHttpMethod() {
+        return httpMethod;
+    }
 
     /**
      * Configure the Http method to use
      */
-	public void setHttpMethod(String httpMethod) {
-		this.httpMethod = httpMethod;
-	}
+    public void setHttpMethod(String httpMethod) {
+        this.httpMethod = httpMethod;
+    }
 }
