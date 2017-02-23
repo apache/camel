@@ -4954,6 +4954,14 @@
         </plugins>
       </build>
     </profile>
+
+    <profile>
+      <id>cleanrepo</id>
+      <build>
+        <defaultGoal>build-helper:remove-project-artifact</defaultGoal>
+      </build>
+    </profile>
+
     <profile>
       <id>setup.eclipse</id>
       <build>
