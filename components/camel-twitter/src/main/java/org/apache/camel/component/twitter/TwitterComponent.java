@@ -18,14 +18,17 @@ package org.apache.camel.component.twitter;
 
 import java.util.Map;
 
+import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
+import org.apache.camel.VerifiableComponent;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
 
 /**
  * Twitter component
  */
-public class TwitterComponent extends UriEndpointComponent {
+@Metadata(label = "verifiers", enums = "PARAMETERS,CONNECTIVITY")
+public class TwitterComponent extends UriEndpointComponent implements VerifiableComponent {
 
     @Metadata(label = "security", secret = true)
     private String consumerKey;
@@ -171,4 +174,10 @@ public class TwitterComponent extends UriEndpointComponent {
         return httpProxyPort;
     }
 
+    /**
+     * TODO: document
+     */
+    public ComponentVerifier getVerifier() {
+        return new TwitterComponentVerifier(getCamelContext());
+    }
 }

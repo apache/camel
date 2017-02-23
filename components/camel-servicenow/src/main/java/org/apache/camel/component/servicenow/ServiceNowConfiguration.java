@@ -194,7 +194,7 @@ public class ServiceNowConfiguration implements Cloneable {
         return oauthTokenUrl;
     }
 
-    public boolean hasOautTokenUrl() {
+    public boolean hasOauthTokenUrl() {
         return oauthTokenUrl != null;
     }
 

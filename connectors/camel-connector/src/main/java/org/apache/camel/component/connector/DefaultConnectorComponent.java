@@ -16,92 +16,52 @@
  */
 package org.apache.camel.component.connector;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
+import org.apache.camel.Component;
+import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
+import org.apache.camel.VerifiableComponent;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.IOHelper;
+import org.apache.camel.impl.verifier.ResultBuilder;
+import org.apache.camel.impl.verifier.ResultErrorBuilder;
 import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Base class for Camel Connector components.
  */
-public abstract class DefaultConnectorComponent extends DefaultComponent implements ConnectorComponent {
-
-    private static final Pattern NAME_PATTERN = Pattern.compile("\"name\"\\s?:\\s?\"([\\w|.]+)\".*");
-    private static final Pattern JAVA_TYPE_PATTERN = Pattern.compile("\"javaType\"\\s?:\\s?\"([\\w|.]+)\".*");
-    private static final Pattern BASE_JAVA_TYPE_PATTERN = Pattern.compile("\"baseJavaType\"\\s?:\\s?\"([\\w|.]+)\".*");
-    private static final Pattern BASE_SCHEME_PATTERN = Pattern.compile("\"baseScheme\"\\s?:\\s?\"([\\w|.]+)\".*");
-
+public abstract class DefaultConnectorComponent extends DefaultComponent implements ConnectorComponent, VerifiableComponent {
     private final Logger log = LoggerFactory.getLogger(getClass());
-
     private final CamelCatalog catalog = new DefaultCamelCatalog(false);
 
     private final String componentName;
-    private final String className;
-    private List<String> lines;
-    private String connectorJSon;
-    private String connectorName;
+    private final ConnectorModel model;
 
-    public DefaultConnectorComponent(String componentName, String className) {
+    protected DefaultConnectorComponent(String componentName, String className) {
         this.componentName = componentName;
-        this.className = className;
+        this.model = new ConnectorModel(componentName, className);
 
         // add to catalog
-        catalog.addComponent(componentName, className);
+        this.catalog.addComponent(componentName, className);
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String scheme = extractBaseScheme(lines);
+        Map<String, String> options = buildEnpointOptions(remaining, parameters);
 
-        Map<String, String> defaultOptions = extractEndpointDefaultValues(lines);
-
-        // gather all options to use when building the delegate uri
-        Map<String, String> options = new LinkedHashMap<>();
-
-        // default options from connector json
-        if (!defaultOptions.isEmpty()) {
-            defaultOptions.forEach((k, v) -> addConnectorOption(options, k, v));
-        }
-        // options from query parameters
-        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-            String key = entry.getKey();
-            String value = null;
-            if (entry.getValue() != null) {
-                value = entry.getValue().toString();
-            }
-            addConnectorOption(options, key, value);
-        }
+        // clean-up parameters so that validation won't fail later on
+        // in DefaultConnectorComponent.validateParameters()
         parameters.clear();
-
-        // add extra options from remaining (context-path)
-        if (remaining != null) {
-            String targetUri = scheme + ":" + remaining;
-            Map<String, String> extra = catalog.endpointProperties(targetUri);
-            if (extra != null && !extra.isEmpty()) {
-                extra.forEach((k, v) -> addConnectorOption(options, k, v));
-            }
-        }
-
+        
+        String scheme = model.getBaseScheme();
         String delegateUri = createEndpointUri(scheme, options);
+
         log.debug("Connector resolved: {} -> {}", uri, delegateUri);
 
         Endpoint delegate = getCamelContext().getEndpoint(delegateUri);
@@ -128,18 +88,12 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
 
     @Override
     public String getCamelConnectorJSon() {
-        if (connectorJSon == null) {
-            connectorJSon = lines.stream().collect(Collectors.joining("\n"));
-        }
-        return connectorJSon;
+        return model.getConnectorJSon();
     }
 
     @Override
     public String getConnectorName() {
-        if (connectorName == null) {
-            connectorName = extractName(lines);
-        }
-        return connectorName;
+        return model.getConnectorName();
     }
 
     @Override
@@ -147,26 +101,58 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         return componentName;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public ComponentVerifier getVerifier() {
+        final String scheme = model.getBaseScheme();
+        final Component component = getCamelContext().getComponent(scheme);
+
+        if (component instanceof VerifiableComponent) {
+            return (scope, map) -> {
+                Map<String, Object> options;
+
+                try {
+                    // A little nasty hack required as verifier uses Map<String, Object>
+                    // to be compatible with all the methods in CamelContext whereas
+                    // catalog deals with Map<String, String>
+                    options = (Map)buildEnpointOptions(null, map);
+                } catch (URISyntaxException e) {
+                    // If a failure is detected while reading the catalog, wrap it
+                    // and stop the validation step.
+                    return ResultBuilder.withStatusAndScope(ComponentVerifier.Result.Status.OK, scope)
+                        .error(ResultErrorBuilder.withException(e).build())
+                        .build();
+                }
+
+                return ((VerifiableComponent)component).getVerifier().verify(scope, options);
+            };
+        } else {
+            return (scope, map) -> {
+                return ResultBuilder.withStatusAndScope(ComponentVerifier.Result.Status.UNSUPPORTED, scope)
+                    .error(
+                        ResultErrorBuilder.withCode("unsupported")
+                            .attribute("camel.connector.name", getConnectorName())
+                            .attribute("camel.component.name", getComponentName())
+                            .build())
+                    .build();
+            };
+        }
+    }
+
     // --------------------------------------------------------------
 
     @Override
     protected void doStart() throws Exception {
-        this.lines = findCamelConnectorJSonSchema();
-        if (lines == null) {
-            throw new IllegalArgumentException("Cannot find camel-connector.json in classpath for connector " + componentName);
-        }
-
         // it may be a custom component so we need to register this in the camel catalog also
-        String scheme = extractBaseScheme(lines);
+        String scheme = model.getBaseScheme();
         if (!catalog.findComponentNames().contains(scheme)) {
-            String javaType = extractBaseJavaType(lines);
+            String javaType = model.getBaseJavaType();
             catalog.addComponent(scheme, javaType);
         }
 
         // the connector may have default values for the component level also
         // and if so we need to prepare these values and set on this component before we can start
-
-        Map<String, String> defaultOptions = extractComponentDefaultValues(lines);
+        Map<String, String> defaultOptions = model.getDefaultComponentOptions();
 
         if (!defaultOptions.isEmpty()) {
             Map<String, Object> parameters = new LinkedHashMap<>();
@@ -191,144 +177,44 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
     @Override
     protected void doStop() throws Exception {
         log.debug("Stopping connector: {}", componentName);
-
         super.doStop();
     }
 
-    private List<String> findCamelConnectorJSonSchema() throws Exception {
-        log.debug("Finding camel-connector.json in classpath for connector: {}", componentName);
-        Enumeration<URL> urls = getClass().getClassLoader().getResources("camel-connector.json");
-        while (urls.hasMoreElements()) {
-            URL url = urls.nextElement();
-            InputStream is = url.openStream();
-            if (is != null) {
-                List<String> lines = loadFile(is);
-                IOHelper.close(is);
+    // ***************************************
+    // Helpers
+    // ***************************************
 
-                String javaType = extractJavaType(lines);
-                log.debug("Found camel-connector.json in classpath with javaType: {}", javaType);
+    private Map<String, String> buildEnpointOptions(String remaining, Map<String, Object> parameters) throws URISyntaxException {
+        String scheme = model.getBaseScheme();
+        Map<String, String> defaultOptions = model.getDefaultEndpointOptions();
 
-                if (className.equals(javaType)) {
-                    return lines;
-                }
-            }
+        // gather all options to use when building the delegate uri
+        Map<String, String> options = new LinkedHashMap<>();
+
+        // default options from connector json
+        if (!defaultOptions.isEmpty()) {
+            defaultOptions.forEach((k, v) -> addConnectorOption(options, k, v));
         }
-        return null;
-    }
+        // options from query parameters
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            String key = entry.getKey();
+            String value = null;
+            if (entry.getValue() != null) {
+                value = entry.getValue().toString();
+            }
+            addConnectorOption(options, key, value);
+        }
 
-    private Map<String, String> extractComponentDefaultValues(List<String> lines) {
-        Map<String, String> answer = new LinkedHashMap<>();
-
-        // extract the default options
-        boolean found = false;
-        for (String line : lines) {
-            line = line.trim();
-            if (line.startsWith("\"componentValues\"")) {
-                found = true;
-            } else if (line.startsWith("}")) {
-                found = false;
-            } else if (found) {
-                int pos = line.indexOf(':');
-                String key = line.substring(0, pos);
-                String value = line.substring(pos + 1);
-                if (value.endsWith(",")) {
-                    value = value.substring(0, value.length() - 1);
-                }
-                key = StringHelper.removeLeadingAndEndingQuotes(key);
-                value = StringHelper.removeLeadingAndEndingQuotes(value);
-                answer.put(key, value);
+        // add extra options from remaining (context-path)
+        if (remaining != null) {
+            String targetUri = scheme + ":" + remaining;
+            Map<String, String> extra = catalog.endpointProperties(targetUri);
+            if (extra != null && !extra.isEmpty()) {
+                extra.forEach((k, v) -> addConnectorOption(options, k, v));
             }
         }
 
-        return answer;
+        return options;
     }
-
-    private Map<String, String> extractEndpointDefaultValues(List<String> lines) {
-        Map<String, String> answer = new LinkedHashMap<>();
-
-        // extract the default options
-        boolean found = false;
-        for (String line : lines) {
-            line = line.trim();
-            if (line.startsWith("\"endpointValues\"")) {
-                found = true;
-            } else if (line.startsWith("}")) {
-                found = false;
-            } else if (found) {
-                int pos = line.indexOf(':');
-                String key = line.substring(0, pos);
-                String value = line.substring(pos + 1);
-                if (value.endsWith(",")) {
-                    value = value.substring(0, value.length() - 1);
-                }
-                key = StringHelper.removeLeadingAndEndingQuotes(key);
-                value = StringHelper.removeLeadingAndEndingQuotes(value);
-                answer.put(key, value);
-            }
-        }
-
-        return answer;
-    }
-
-    private List<String> loadFile(InputStream fis) throws Exception {
-        List<String> lines = new ArrayList<>();
-        LineNumberReader reader = new LineNumberReader(new InputStreamReader(fis));
-
-        String line;
-        do {
-            line = reader.readLine();
-            if (line != null) {
-                lines.add(line);
-            }
-        } while (line != null);
-        reader.close();
-
-        return lines;
-    }
-
-    private String extractName(List<String> json) {
-        for (String line : json) {
-            line = line.trim();
-            Matcher matcher = NAME_PATTERN.matcher(line);
-            if (matcher.matches()) {
-                return matcher.group(1);
-            }
-        }
-        return null;
-    }
-
-    private String extractJavaType(List<String> json) {
-        for (String line : json) {
-            line = line.trim();
-            Matcher matcher = JAVA_TYPE_PATTERN.matcher(line);
-            if (matcher.matches()) {
-                return matcher.group(1);
-            }
-        }
-        return null;
-    }
-
-    private String extractBaseJavaType(List<String> json) {
-        for (String line : json) {
-            line = line.trim();
-            Matcher matcher = BASE_JAVA_TYPE_PATTERN.matcher(line);
-            if (matcher.matches()) {
-                return matcher.group(1);
-            }
-        }
-        return null;
-    }
-
-    private String extractBaseScheme(List<String> json) {
-        for (String line : json) {
-            line = line.trim();
-            Matcher matcher = BASE_SCHEME_PATTERN.matcher(line);
-            if (matcher.matches()) {
-                return matcher.group(1);
-            }
-        }
-        return null;
-    }
-
 }
 

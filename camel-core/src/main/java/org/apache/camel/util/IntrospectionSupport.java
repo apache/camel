@@ -431,6 +431,10 @@ public final class IntrospectionSupport {
     }
 
     public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix) {
+        return extractProperties(properties, optionPrefix, true);
+    }
+
+    public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix, boolean remove) {
         ObjectHelper.notNull(properties, "properties");
 
         Map<String, Object> rc = new LinkedHashMap<String, Object>(properties.size());
@@ -442,7 +446,10 @@ public final class IntrospectionSupport {
                 Object value = properties.get(name);
                 name = name.substring(optionPrefix.length());
                 rc.put(name, value);
-                it.remove();
+
+                if (remove) {
+                    it.remove();
+                }
             }
         }
 

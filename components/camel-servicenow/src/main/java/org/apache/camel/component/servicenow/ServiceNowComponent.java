@@ -19,7 +19,9 @@ package org.apache.camel.component.servicenow;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
+import org.apache.camel.VerifiableComponent;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.EndpointHelper;
@@ -28,7 +30,8 @@ import org.apache.camel.util.IntrospectionSupport;
 /**
  * Represents the component that manages {@link ServiceNowEndpoint}.
  */
-public class ServiceNowComponent extends UriEndpointComponent {
+@Metadata(label = "verifiers", enums = "PARAMETERS,CONNECTIVITY")
+public class ServiceNowComponent extends UriEndpointComponent implements VerifiableComponent {
 
     @Metadata(label = "advanced")
     private ServiceNowConfiguration configuration;
@@ -71,7 +74,7 @@ public class ServiceNowComponent extends UriEndpointComponent {
         if (!configuration.hasApiUrl()) {
             configuration.setApiUrl(String.format("https://%s.service-now.com/api", instanceName));
         }
-        if (!configuration.hasOautTokenUrl()) {
+        if (!configuration.hasOauthTokenUrl()) {
             configuration.setOauthTokenUrl(String.format("https://%s.service-now.com/oauth_token.do", instanceName));
         }
 
@@ -158,5 +161,12 @@ public class ServiceNowComponent extends UriEndpointComponent {
     @Metadata(label = "security", secret = true)
     public void setOauthTokenUrl(String oauthTokenUrl) {
         configuration.setOauthTokenUrl(oauthTokenUrl);
+    }
+
+    /**
+     * TODO: document
+     */
+    public ComponentVerifier getVerifier() {
+        return new ServiceNowComponentVerifier(this);
     }
 }

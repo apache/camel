@@ -138,12 +138,14 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         return new DefaultComponentConfiguration(this);
     }
 
+    @Override
     public EndpointConfiguration createConfiguration(String uri) throws Exception {
         MappedEndpointConfiguration config = new MappedEndpointConfiguration(getCamelContext());
         config.setURI(new URI(uri));
         return config;
     }
 
+    @Override
     public boolean useRawUri() {
         // should use encoded uri by default
         return false;
