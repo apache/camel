@@ -64,7 +64,7 @@ public final class HttpMethodHelper {
         // compute what method to use either GET or POST
         HttpMethods answer;
         if (ObjectHelper.isNotEmpty(endpoint.getHttpMethod())) {
-        	answer = HttpMethods.valueOf(endpoint.getHttpMethod());
+            answer = HttpMethods.valueOf(endpoint.getHttpMethod());
         } else {
             HttpMethods m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, HttpMethods.class);
             if (m != null) {
