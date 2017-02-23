@@ -57,7 +57,7 @@ The Atmosphere Websocket component supports 7 options which are listed below.
 
 
 // endpoint options: START
-The Atmosphere Websocket component supports 36 endpoint options which are listed below:
+The Atmosphere Websocket component supports 37 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -88,6 +88,7 @@ The Atmosphere Websocket component supports 36 endpoint options which are listed
 | connectionClose | producer | false | boolean | Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false.
 | cookieHandler | producer |  | CookieHandler | Configure a cookie handler to maintain a HTTP session
 | copyHeaders | producer | true | boolean | If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy. Setting this to false allows to only include the headers from the HTTP response (not propagating IN headers).
+| httpMethod | producer |  | String | Configure the http Method to use as URI param. In case this is set it can't be overriden by the HttpMethod header.
 | ignoreResponseBody | producer | false | boolean | If this option is true The http producer won't read response body and cache the input stream
 | okStatusCodeRange | producer | 200-299 | String | The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.
 | preserveHostHeader | producer | false | boolean | If the option is true HttpProducer will set the Host header to the value contained in the current exchange Host header useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client this allows applications which use the Host header to generate accurate URL's for a proxied service
