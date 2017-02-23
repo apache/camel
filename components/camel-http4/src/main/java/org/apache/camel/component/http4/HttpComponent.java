@@ -27,8 +27,10 @@ import java.util.concurrent.TimeUnit;
 import javax.net.ssl.HostnameVerifier;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
+import org.apache.camel.VerifiableComponent;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
@@ -68,7 +70,8 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class HttpComponent extends HttpCommonComponent implements RestProducerFactory {
+@Metadata(label = "verifiers", enums = "PARAMETERS,CONNECTIVITY")
+public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, VerifiableComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpComponent.class);
 
@@ -551,5 +554,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         
         super.doStop();
     }
-    
+
+    /**
+     * TODO: document
+     */
+    public ComponentVerifier getVerifier() {
+        return new HttpComponentVerifier(this);
+    }
 }

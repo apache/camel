@@ -24,9 +24,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.VerifiableComponent;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
 import org.apache.camel.http.common.HttpConfiguration;
@@ -35,7 +37,6 @@ import org.apache.camel.http.common.UrlRewrite;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestProducerFactory;
-import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -51,7 +52,8 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
  * The <a href="http://camel.apache.org/http.html">HTTP Component</a>
  *
  */
-public class HttpComponent extends HttpCommonComponent implements RestProducerFactory {
+@Metadata(label = "verifiers", enums = "PARAMETERS,CONNECTIVITY")
+public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, VerifiableComponent {
 
     @Metadata(label = "advanced")
     protected HttpClientConfigurer httpClientConfigurer;
@@ -367,5 +369,12 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
         // need to override and call super for component docs
         super.setAllowJavaSerializedObject(allowJavaSerializedObject);
+    }
+
+    /**
+     * TODO: document
+     */
+    public ComponentVerifier getVerifier() {
+        return new HttpComponentVerifier(this);
     }
 }

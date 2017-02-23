@@ -30,7 +30,9 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
+import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
+import org.apache.camel.VerifiableComponent;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
@@ -61,13 +63,14 @@ import static org.apache.camel.component.salesforce.SalesforceLoginConfig.DEFAUL
 /**
  * Represents the component that manages {@link SalesforceEndpoint}.
  */
-public class SalesforceComponent extends UriEndpointComponent implements EndpointCompleter {
+@Metadata(label = "verifiers", enums = "PARAMETERS,CONNECTIVITY")
+public class SalesforceComponent extends UriEndpointComponent implements EndpointCompleter, VerifiableComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceComponent.class);
 
-    private static final int CONNECTION_TIMEOUT = 60000;
-    private static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
-    private static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
+    static final int CONNECTION_TIMEOUT = 60000;
+    static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
+    static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
 
     @Metadata(label = "security")
     private SalesforceLoginConfig loginConfig;
@@ -701,5 +704,12 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
 
     public Map<String, Class<?>> getClassMap() {
         return classMap;
+    }
+
+    /**
+     * TODO: document
+     */
+    public ComponentVerifier getVerifier() {
+        return new SalesforceComponentVerifier(getCamelContext());
     }
 }

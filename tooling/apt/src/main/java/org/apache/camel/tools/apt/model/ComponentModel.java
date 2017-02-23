@@ -30,6 +30,7 @@ public final class ComponentModel {
     private String artifactId;
     private String versionId;
     private String label;
+    private String verifiers;
     private boolean consumerOnly;
     private boolean producerOnly;
     private boolean deprecated;
@@ -130,6 +131,14 @@ public final class ComponentModel {
 
     public void setLabel(String label) {
         this.label = label;
+    }
+
+    public String getVerifiers() {
+        return verifiers;
+    }
+
+    public void setVerifiers(String verifiers) {
+        this.verifiers = verifiers;
     }
 
     public boolean isConsumerOnly() {

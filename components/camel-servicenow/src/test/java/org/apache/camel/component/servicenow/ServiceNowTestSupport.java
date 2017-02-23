@@ -29,12 +29,38 @@ import org.slf4j.LoggerFactory;
 class ServiceNowTestSupport extends CamelTestSupport {
     protected static final Logger LOGGER = LoggerFactory.getLogger(ServiceNowTestSupport.class);
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return configureServicenowComponent(super.createCamelContext());
+    private final boolean setUpComponent;
+
+    public ServiceNowTestSupport() {
+        this(true);
     }
 
-    protected CamelContext configureServicenowComponent(CamelContext camelContext) throws Exception {
+    public ServiceNowTestSupport(boolean setUpComponent) {
+        this.setUpComponent = setUpComponent;
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        if (setUpComponent) {
+            configureServicenowComponent(context);
+        }
+
+        return context;
+    }
+
+    protected Map<String, Object> getParameters() {
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("instanceName", getSystemPropertyOrEnvVar("servicenow.instance"));
+        parameters.put("userName", getSystemPropertyOrEnvVar("servicenow.username"));
+        parameters.put("password", getSystemPropertyOrEnvVar("servicenow.password"));
+        parameters.put("oauthClientId", getSystemPropertyOrEnvVar("servicenow.oauth2.client.id"));
+        parameters.put("oauthClientSecret", getSystemPropertyOrEnvVar("servicenow.oauth2.client.secret"));
+
+        return parameters;
+    }
+
+    public void configureServicenowComponent(CamelContext camelContext) throws Exception {
         String userName = getSystemPropertyOrEnvVar("servicenow.username");
         String password = getSystemPropertyOrEnvVar("servicenow.password");
         String oauthClientId = getSystemPropertyOrEnvVar("servicenow.oauth2.client.id");
@@ -52,11 +78,9 @@ class ServiceNowTestSupport extends CamelTestSupport {
 
             camelContext.addComponent("servicenow", component);
         }
-
-        return camelContext;
     }
 
-    protected String getSystemPropertyOrEnvVar(String systemProperty) {
+    public static String getSystemPropertyOrEnvVar(String systemProperty) {
         String answer = System.getProperty(systemProperty);
         if (ObjectHelper.isEmpty(answer)) {
             String envProperty = systemProperty.toUpperCase().replaceAll("[.-]", "_");
