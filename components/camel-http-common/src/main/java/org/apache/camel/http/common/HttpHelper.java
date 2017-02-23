@@ -514,16 +514,20 @@ public final class HttpHelper {
 
         // compute what method to use either GET or POST
         HttpMethods answer;
-        HttpMethods m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, HttpMethods.class);
-        if (m != null) {
-            // always use what end-user provides in a header
-            answer = m;
-        } else if (queryString != null) {
-            // if a query string is provided then use GET
-            answer = HttpMethods.GET;
+        if (ObjectHelper.isNotEmpty(endpoint.getHttpMethod())) {
+        	answer = HttpMethods.valueOf(endpoint.getHttpMethod());
         } else {
-            // fallback to POST if we have payload, otherwise GET
-            answer = hasPayload ? HttpMethods.POST : HttpMethods.GET;
+            HttpMethods m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, HttpMethods.class);
+            if (m != null) {
+                // always use what end-user provides in a header
+                answer = m;
+            } else if (queryString != null) {
+                // if a query string is provided then use GET
+                answer = HttpMethods.GET;
+            } else {
+                // fallback to POST if we have payload, otherwise GET
+                answer = hasPayload ? HttpMethods.POST : HttpMethods.GET;
+            }
         }
 
         return answer;
