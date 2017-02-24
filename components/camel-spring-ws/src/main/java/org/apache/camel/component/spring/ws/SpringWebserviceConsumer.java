@@ -57,21 +57,25 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
 
         // start message processing
         getProcessor().process(exchange);
-
+        Message responseMessage = null;
+        Source responseBody = null;
         if (exchange.getException() != null) {
             throw exchange.getException();
         } else if (exchange.getPattern().isOutCapable()) {
-            Message responseMessage = exchange.getOut(Message.class);
-            if (responseMessage != null) {
-                Source responseBody = responseMessage.getBody(Source.class);
-                WebServiceMessage response = messageContext.getResponse();
-
-                configuration.getMessageFilter().filterConsumer(exchange, response);
-
-                XmlConverter xmlConverter = configuration.getXmlConverter();
-                xmlConverter.toResult(responseBody, response.getPayloadResult());
-            }
+            responseMessage = exchange.getOut(Message.class);
+        } else {
+            responseMessage = exchange.getIn(Message.class);
         }
+        if (responseMessage != null) {
+            responseBody = responseMessage.getBody(Source.class);
+            WebServiceMessage response = messageContext.getResponse();
+
+            configuration.getMessageFilter().filterConsumer(exchange, response);
+
+            XmlConverter xmlConverter = configuration.getXmlConverter();
+            xmlConverter.toResult(responseBody, response.getPayloadResult());
+        }
+
     }
 
     private void populateExchangeFromMessageContext(MessageContext messageContext, Exchange exchange) {
