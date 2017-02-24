@@ -29,17 +29,25 @@ import kafka.metrics.KafkaMetricsReporter;
 import kafka.server.KafkaConfig;
 import kafka.server.KafkaServer;
 import kafka.utils.ZkUtils;
+import org.junit.rules.ExternalResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import scala.Option;
 import scala.collection.mutable.Buffer;
 
-public class EmbeddedKafkaCluster {
+import static org.apache.camel.component.kafka.embedded.TestUtils.*;
+
+public class EmbeddedKafkaCluster extends ExternalResource {
+
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
     private final List<Integer> ports;
     private final String zkConnection;
     private final Properties baseProperties;
 
     private final String brokerList;
 
-    private final List<KafkaServer> brokers;
+    private final List<KafkaServer> kafkaServers;
     private final List<File> logDirs;
 
     public EmbeddedKafkaCluster(String zkConnection) {
@@ -50,24 +58,30 @@ public class EmbeddedKafkaCluster {
         this(zkConnection, baseProperties, Collections.singletonList(-1));
     }
 
+    public EmbeddedKafkaCluster(String zkConnection, Properties baseProperties, Integer port) {
+        this(zkConnection, baseProperties, Collections.singletonList(port));
+    }
+
     public EmbeddedKafkaCluster(String zkConnection, Properties baseProperties, List<Integer> ports) {
         this.zkConnection = zkConnection;
         this.ports = resolvePorts(ports);
         this.baseProperties = baseProperties;
-        this.brokers = new ArrayList<KafkaServer>();
-        this.logDirs = new ArrayList<File>();
+        this.kafkaServers = new ArrayList<>();
+        this.logDirs = new ArrayList<>();
 
         this.brokerList = constructBrokerList(this.ports);
     }
 
     public ZkUtils getZkUtils() {
-        for (KafkaServer server : brokers) {
-            return server.zkUtils();
+        // gets the first instance
+        for (KafkaServer kafkaServer : kafkaServers) {
+            return kafkaServer.zkUtils();
         }
         return null;
     }
 
     public void createTopic(String topic, int partitionCount) {
+        log.info("createTopic");
         AdminUtils.createTopic(getZkUtils(), topic, partitionCount, 1, new Properties(), RackAwareMode.Enforced$.MODULE$);
     }
 
@@ -103,10 +117,11 @@ public class EmbeddedKafkaCluster {
         return sb.toString();
     }
 
-    public void startup() {
+    public void before() {
+        log.info("before");
         for (int i = 0; i < ports.size(); i++) {
             Integer port = ports.get(i);
-            File logDir = TestUtils.constructTempDir("kafka-local");
+            File logDir = constructTempDir(perTest("kafka-log"));
 
             Properties properties = new Properties();
             properties.putAll(baseProperties);
@@ -117,12 +132,12 @@ public class EmbeddedKafkaCluster {
             properties.setProperty("log.dir", logDir.getAbsolutePath());
             properties.setProperty("num.partitions", String.valueOf(1));
             properties.setProperty("auto.create.topics.enable", String.valueOf(Boolean.TRUE));
-            System.out.println("EmbeddedKafkaCluster: local directory: " + logDir.getAbsolutePath());
+            log.info("log directory: " + logDir.getAbsolutePath());
             properties.setProperty("log.flush.interval.messages", String.valueOf(1));
 
             KafkaServer broker = startBroker(properties);
 
-            brokers.add(broker);
+            kafkaServers.add(broker);
             logDirs.add(logDir);
         }
     }
@@ -156,8 +171,8 @@ public class EmbeddedKafkaCluster {
         return zkConnection;
     }
 
-    public void shutdown() {
-        for (KafkaServer broker : brokers) {
+    public void after() {
+        for (KafkaServer broker : kafkaServers) {
             try {
                 broker.shutdown();
             } catch (Exception e) {
@@ -168,7 +183,7 @@ public class EmbeddedKafkaCluster {
             try {
                 TestUtils.deleteFile(logDir);
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                // do nothing
             }
         }
     }
