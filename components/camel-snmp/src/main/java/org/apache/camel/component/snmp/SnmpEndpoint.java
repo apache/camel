@@ -111,7 +111,11 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new SnmpProducer(this);
+        if (this.type == SnmpActionType.TRAP) {
+            return new SnmpTrapProducer(this);
+        } else {
+            return new SnmpProducer(this);
+        }
     }
 
     public boolean isSingleton() {
