@@ -37,6 +37,7 @@ import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
+import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
@@ -77,6 +78,8 @@ import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.spi.Validator;
+import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.util.LoadPropertiesException;
 
 /**
@@ -1262,7 +1265,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param from from data type
      * @param to to data type
-     * @return the resolved data format, or <tt>null</tt> if not found
+     * @return the resolved transformer, or <tt>null</tt> if not found
      */
     Transformer resolveTransformer(DataType from, DataType to);
 
@@ -1271,6 +1274,34 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the TransformerRegistry
      */
     TransformerRegistry getTransformerRegistry();
+
+    /**
+     * Sets the validators that can be referenced in the routes.
+     *
+     * @param validators the validators
+     */
+    void setValidators(List<ValidatorDefinition> validators);
+
+    /**
+     * Gets the validators that can be referenced in the routes.
+     *
+     * @return the validators available
+     */
+    List<ValidatorDefinition> getValidators();
+
+    /**
+     * Resolve a validator given from/to data type.
+     *
+     * @param from the data type
+     * @return the resolved validator, or <tt>null</tt> if not found
+     */
+    Validator resolveValidator(DataType type);
+
+    /**
+     * Gets the {@link org.apache.camel.spi.ValidatorRegistry}
+     * @return the ValidatorRegistry
+     */
+    ValidatorRegistry getValidatorRegistry();
 
     /**
      * @deprecated use {@link #setGlobalOptions(Map) setGlobalOptions(Map<String,String>) instead}.

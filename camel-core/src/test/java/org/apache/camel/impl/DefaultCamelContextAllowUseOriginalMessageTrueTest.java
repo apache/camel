@@ -33,6 +33,7 @@ public class DefaultCamelContextAllowUseOriginalMessageTrueTest extends ContextT
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:result").expectedHeaderReceived("HasOriginal", "true");
         getMockEndpoint("mock:result").expectedHeaderReceived("OriginalBody", "World");
+        getMockEndpoint("mock:result").message(0).header("OriginalExchangeId").isNotNull();
 
         template.sendBody("direct:start", "World");
 

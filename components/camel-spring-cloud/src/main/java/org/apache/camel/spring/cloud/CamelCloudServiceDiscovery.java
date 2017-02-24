@@ -14,39 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.spring.cloud;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.cloud.ServiceDefinition;
-import org.apache.camel.impl.cloud.DefaultServiceDefinition;
-import org.apache.camel.impl.cloud.DefaultServiceDiscovery;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.apache.camel.cloud.ServiceDiscovery;
+import org.apache.camel.impl.cloud.CachingServiceDiscovery;
+import org.apache.camel.impl.cloud.ChainedServiceDiscovery;
 
-public class CamelCloudServiceDiscovery extends DefaultServiceDiscovery {
-    private final List<DiscoveryClient> clients;
+public class CamelCloudServiceDiscovery implements ServiceDiscovery {
+    private ServiceDiscovery delegate;
 
-    public CamelCloudServiceDiscovery(List<DiscoveryClient> clients) {
-        this.clients = new ArrayList<>(clients);
+    public CamelCloudServiceDiscovery(Long timeout, List<ServiceDiscovery> serviceDiscoveryList) {
+        // Created a chained service discovery that collects services from multiple
+        // ServiceDiscovery
+        this.delegate = new ChainedServiceDiscovery(serviceDiscoveryList);
+
+        // If a timeout is provided, wrap the serviceDiscovery with a caching
+        // strategy so the discovery implementations are not queried for each
+        // discovery request
+        if (timeout != null && timeout > 0) {
+            this.delegate = CachingServiceDiscovery.wrap(this.delegate, timeout, TimeUnit.MILLISECONDS);
+        }
     }
 
     @Override
     public List<ServiceDefinition> getInitialListOfServices(String name) {
-        return getServers(name);
+        return delegate.getInitialListOfServices(name);
     }
 
     @Override
     public List<ServiceDefinition> getUpdatedListOfServices(String name) {
-        return getServers(name);
-    }
-
-    private List<ServiceDefinition> getServers(String name) {
-        return clients.stream()
-            .flatMap(c -> c.getInstances(name).stream())
-            .map(s -> new DefaultServiceDefinition(s.getServiceId(), s.getHost(), s.getPort(), s.getMetadata()))
-            .collect(Collectors.toList());
+        return delegate.getUpdatedListOfServices(name);
     }
 }

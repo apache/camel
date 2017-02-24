@@ -33,9 +33,6 @@ import org.apache.camel.spi.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public class ManagedTransformerRegistryTest extends ManagementTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ManagedTransformerRegistryTest.class);
 
@@ -50,11 +47,6 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
-
-        // resolve transformers explicitly as the route doesn't actually use them
-        context.resolveTransformer(new DataType("xml:foo"), new DataType("json:bar"));
-        context.resolveTransformer(new DataType(ManagedTransformerRegistryTest.class), new DataType("xml:test"));
-        context.resolveTransformer("custom");
 
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();

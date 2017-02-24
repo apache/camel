@@ -35,9 +35,9 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
 
     @UriPath(label = "producer", description = "The url of the HTTP endpoint to call.") @Metadata(required = "true")
     URI httpUri;
-    @UriParam(description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
+    @UriParam(label = "common", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
-    @UriParam(description = "To use a custom HttpBinding to control the mapping between Camel message and HttpClient.")
+    @UriParam(label = "common,advanced", description = "To use a custom HttpBinding to control the mapping between Camel message and HttpClient.")
     HttpBinding httpBinding;
     @UriParam(label = "producer", defaultValue = "true",
             description = "Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server."
@@ -74,7 +74,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     String proxyHost;
     @UriParam(label = "producer", description = "The proxy port number")
     int proxyPort;
-    @UriParam(label = "producer", enums = "Basic,Digest,NTLM", description = "Authentication method for proxy, either as Basic, Digest or NTLM.")
+    @UriParam(label = "producer,security", enums = "Basic,Digest,NTLM", description = "Authentication method for proxy, either as Basic, Digest or NTLM.")
     String authMethodPriority;
     @UriParam(description = "If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized"
             + " in the response as a application/x-java-serialized-object content type."
@@ -85,10 +85,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     boolean transferException;
     @UriParam(label = "producer", defaultValue = "false", description = "Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false.")
     boolean connectionClose;
-    @UriParam(label = "consumer",
+    @UriParam(label = "consumer,advanced",
             description = "Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off.")
     boolean traceEnabled;
-    @UriParam(label = "consumer",
+    @UriParam(label = "consumer,advanced",
             description = "Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off.")
     boolean optionsEnabled;
     @UriParam(label = "consumer",
@@ -104,7 +104,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             description = "If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy."
                     + " Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers).")
     boolean copyHeaders = true;
-    @UriParam(label = "consumer",
+    @UriParam(label = "consumer,advanced",
             description = "Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present."
                     + " This can be turned on in case HTTP clients do not send streamed data.")
     boolean eagerCheckContentAvailable;
@@ -120,18 +120,21 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             description = "If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP."
             + " Setting this to false will avoid the HTTP Form Encoded body mapping.")
     boolean mapHttpMessageFormUrlEncodedBody = true;
-    @UriParam(label = "producer", defaultValue = "200-299",
+    @UriParam(label = "producer,advanced", defaultValue = "200-299",
             description = "The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.")
     private String okStatusCodeRange = "200-299";
     @UriParam(label = "producer,advanced",
             description = "Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints."
                     + " See more details at http://camel.apache.org/urlrewrite.html")
+    @Deprecated
     private UrlRewrite urlRewrite;
     @UriParam(label = "consumer", defaultValue = "false",
             description = "Configure the consumer to work in async mode")
     private boolean async;
-    @UriParam(label = "producer", description = "Configure a cookie handler to maintain a HTTP session")
+    @UriParam(label = "producer,advanced", description = "Configure a cookie handler to maintain a HTTP session")
     private CookieHandler cookieHandler;
+    @UriParam(label = "producer", description = "Configure the HTTP method to use. The HttpMethod header cannot override this option if set.")
+    private HttpMethods httpMethod;
 
     public HttpCommonEndpoint() {
     }
@@ -427,6 +430,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         this.httpMethodRestrict = httpMethodRestrict;
     }
 
+    @Deprecated
     public UrlRewrite getUrlRewrite() {
         return urlRewrite;
     }
@@ -435,6 +439,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
      * Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints.
      * See more details at http://camel.apache.org/urlrewrite.html
      */
+    @Deprecated
     public void setUrlRewrite(UrlRewrite urlRewrite) {
         this.urlRewrite = urlRewrite;
     }
@@ -537,7 +542,6 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
 
     /**
      * If this option is true, the consumer will work in async mode
-     * @param async
      */
     public void setAsync(boolean async) {
         this.async = async;
@@ -552,5 +556,16 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
      */
     public void setCookieHandler(CookieHandler cookieHandler) {
         this.cookieHandler = cookieHandler;
+    }
+
+    public HttpMethods getHttpMethod() {
+        return httpMethod;
+    }
+
+    /**
+     * Configure the HTTP method to use. The HttpMethod header cannot override this option if set.
+     */
+    public void setHttpMethod(HttpMethods httpMethod) {
+        this.httpMethod = httpMethod;
     }
 }

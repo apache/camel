@@ -130,7 +130,7 @@ Token InputParameterSrc():
 }
 
 TOKEN: {
-    <NUMBER: (["0"-"9"])+>
+    <NUMBER: (["-","0"-"9"])+>
 }
 
 TOKEN: {

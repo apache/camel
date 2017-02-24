@@ -405,10 +405,8 @@ public class BeanInfo {
 
         MethodInfo methodInfo = createMethodInfo(clazz, method);
 
-        // methods already registered should be preferred to use instead of super classes of existing methods
-        // we want to us the method from the sub class over super classes, so if we have already registered
-        // the method then use it (we are traversing upwards: sub (child) -> super (farther) )
-        MethodInfo existingMethodInfo = overridesExistingMethod(methodInfo);
+        // Foster the use of a potentially already registered most specific override
+        MethodInfo existingMethodInfo = findMostSpecificOverride(methodInfo);
         if (existingMethodInfo != null) {
             LOG.trace("This method is already overridden in a subclass, so the method from the sub class is preferred: {}", existingMethodInfo);
             return existingMethodInfo;
@@ -905,20 +903,24 @@ public class BeanInfo {
     }
 
     /**
-     * Does the given method info override an existing method registered before (from a subclass)
+     * Gets the most specific override of a given method, if any. Indeed,
+     * overrides may have already been found while inspecting sub classes. Or
+     * the given method could override an interface extra method.
      *
-     * @param methodInfo  the method to test
-     * @return the already registered method to use, null if not overriding any
+     * @param proposedMethodInfo the method for which a more specific override is
+     *            searched
+     * @return The already registered most specific override if any, otherwise
+     *         <code>null</code>
      */
-    private MethodInfo overridesExistingMethod(MethodInfo methodInfo) {
-        for (MethodInfo info : methodMap.values()) {
-            Method source = info.getMethod();
-            Method target = methodInfo.getMethod();
+    private MethodInfo findMostSpecificOverride(MethodInfo proposedMethodInfo) {
+        for (MethodInfo alreadyRegisteredMethodInfo : methodMap.values()) {
+            Method alreadyRegisteredMethod = alreadyRegisteredMethodInfo.getMethod();
+            Method proposedMethod = proposedMethodInfo.getMethod();
 
-            boolean override = ObjectHelper.isOverridingMethod(source, target);
-            if (override) {
-                // same name, same parameters, then its overrides an existing class
-                return info;
+            if (ObjectHelper.isOverridingMethod(proposedMethod, alreadyRegisteredMethod, false)) {
+                return alreadyRegisteredMethodInfo;
+            } else if (ObjectHelper.isOverridingMethod(alreadyRegisteredMethod, proposedMethod, false)) {
+                return proposedMethodInfo;
             }
         }
 

@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 219
+Number of Components: 220
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -75,7 +75,10 @@ Number of Components: 219
 `aws-sdb:domainName` | 2.9 | The aws-sdb component is for storing and retrieving data from/to Amazon's SDB service.
 
 | link:camel-azure/src/main/docs/azure-blob-component.adoc[Azure Storage Blob Service] (camel-azure) +
-`azure-blob:containerOrBlobUri` |  | The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.
+`azure-blob:containerOrBlobUri` | 2.19 | The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.
+
+| link:camel-azure/src/main/docs/azure-queue-component.adoc[Azure Storage Queue Service] (camel-azure) +
+`azure-queue:queueOrMessageUri` | 2.19 | The azure-queue component is used for storing and retrieving messages from Azure Storage Queue Service.
 
 | link:../camel-core/src/main/docs/bean-component.adoc[Bean] (camel-core) +
 `bean:beanName` | 1.0 | The bean component is for invoking Java beans from Camel.
@@ -837,7 +840,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 34
+Number of Miscellaneous Components: 35
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -867,11 +870,11 @@ Number of Miscellaneous Components: 34
 
 | link:camel-opentracing/src/main/docs/opentracing.adoc[Opentracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
 
-| link:camel-ribbon/src/main/docs/ribbon.adoc[Ribbon] (camel-ribbon) | 2.18 | Camel Components
+| link:camel-ribbon/src/main/docs/ribbon.adoc[Ribbon] (camel-ribbon) | 2.18 | Using Netflix Ribbon for client side load balancing
 
 | link:camel-ruby/src/main/docs/ruby.adoc[Ruby] (camel-ruby) | 1.0 | *deprecated* Camel Ruby DSL
 
-| link:camel-rx/src/main/docs/rx.adoc[RX] (camel-rx) | 2.11 | Camel Reactive using RxJava library
+| link:camel-rx/src/main/docs/rx.adoc[RX] (camel-rx) | 2.11 | *deprecated* Camel Reactive using RxJava library
 
 | link:camel-scala/src/main/docs/scala.adoc[Scala] (camel-scala) | 1.4 | Camel Scala DSL
 
@@ -884,6 +887,8 @@ Number of Miscellaneous Components: 34
 | link:camel-spring-boot/src/main/docs/spring-boot.adoc[Spring Boot] (camel-spring-boot) | 2.15 | Using Camel with Spring Boot
 
 | link:camel-spring-cloud/src/main/docs/spring-cloud.adoc[Spring Cloud] (camel-spring-cloud) | 2.19 | Camel Cloud integration with Spring Cloud
+
+| link:camel-spring-cloud-netflix/src/main/docs/spring-cloud-netflix.adoc[Spring Cloud Netflix] (camel-spring-cloud-netflix) | 2.19 | Camel Cloud integration with Spring Cloud Netflix
 
 | link:camel-spring-dm/src/main/docs/spring-dm.adoc[Spring DM] (camel-spring-dm) | 2.18 | *deprecated* Camel SpringDM (OSGi) XML DSL
 

@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -160,9 +161,9 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     // Streaming API properties
     @UriParam
-    private Integer defaultReplayId;
+    private Long defaultReplayId;
     @UriParam
-    private Map<String, Integer> initialReplayIdMap;
+    private Map<String, Long> initialReplayIdMap;
 
     // Approval API properties
     private ApprovalRequest approval;
@@ -614,7 +615,7 @@ public class SalesforceEndpointConfig implements Cloneable {
         return Collections.unmodifiableMap(valueMap);
     }
 
-    public Integer getDefaultReplayId() {
+    public Long getDefaultReplayId() {
         return defaultReplayId;
     }
 
@@ -623,18 +624,18 @@ public class SalesforceEndpointConfig implements Cloneable {
      * 
      * @param defaultReplayId
      */
-    public void setDefaultReplayId(Integer defaultReplayId) {
+    public void setDefaultReplayId(Long defaultReplayId) {
         this.defaultReplayId = defaultReplayId;
     }
 
-    public Map<String, Integer> getInitialReplayIdMap() {
-        return initialReplayIdMap;
+    public Map<String, Long> getInitialReplayIdMap() {
+        return Optional.ofNullable(initialReplayIdMap).orElse(Collections.emptyMap());
     }
 
     /**
      * Replay IDs to start from per channel name.
      */
-    public void setInitialReplayIdMap(Map<String, Integer> initialReplayIdMap) {
+    public void setInitialReplayIdMap(Map<String, Long> initialReplayIdMap) {
         this.initialReplayIdMap = initialReplayIdMap;
     }
 

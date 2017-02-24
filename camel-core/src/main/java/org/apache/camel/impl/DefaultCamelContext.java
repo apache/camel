@@ -91,6 +91,7 @@ import org.apache.camel.impl.converter.BaseTypeConverterRegistry;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.converter.LazyLoadingTypeConverter;
 import org.apache.camel.impl.transformer.TransformerKey;
+import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.management.DefaultManagementMBeanAssembler;
 import org.apache.camel.management.DefaultManagementStrategy;
 import org.apache.camel.management.JmxSystemPropertyKeys;
@@ -108,6 +109,7 @@ import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
+import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.Debug;
@@ -160,6 +162,8 @@ import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.spi.Validator;
+import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CollectionStringBuffer;
@@ -283,8 +287,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private final StopWatch stopWatch = new StopWatch(false);
     private Date startDate;
     private ModelJAXBContextFactory modelJAXBContextFactory;
-    private List<TransformerDefinition> transformers = new ArrayList<TransformerDefinition>();
+    private List<TransformerDefinition> transformers = new ArrayList<>();
     private TransformerRegistry<TransformerKey> transformerRegistry;
+    private List<ValidatorDefinition> validators = new ArrayList<>();
+    private ValidatorRegistry<ValidatorKey> validatorRegistry;
     private ReloadStrategy reloadStrategy;
 
     /**
@@ -298,7 +304,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // create endpoint registry at first since end users may access endpoints before CamelContext is started
         this.endpoints = new DefaultEndpointRegistry(this);
-        this.transformerRegistry = new DefaultTransformerRegistry(this);
 
         // add the defer service startup listener
         this.startupListeners.add(deferStartupListener);
@@ -3134,7 +3139,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             log.info("Using ReloadStrategy: {}", reloadStrategy);
             addService(reloadStrategy, true, true);
         }
+
+        // Initialize declarative transformer/validator registry
+        transformerRegistry = new DefaultTransformerRegistry(this, transformers);
         addService(transformerRegistry, true, true);
+        validatorRegistry = new DefaultValidatorRegistry(this, validators);
+        addService(validatorRegistry, true, true);
 
         if (runtimeEndpointRegistry != null) {
             if (runtimeEndpointRegistry instanceof EventNotifier) {
@@ -4315,23 +4325,37 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     @Override
     public Transformer resolveTransformer(String scheme) {
-        if (scheme == null) {
-            return null;
-        }
-        return resolveTransformer(getTransformerKey(scheme));
+        return transformerRegistry.resolveTransformer(new TransformerKey(scheme));
     }
 
     @Override
     public Transformer resolveTransformer(DataType from, DataType to) {
-        if (from == null || to == null) {
-            return null;
-        }
-        return resolveTransformer(getTransformerKey(from, to));
+        return transformerRegistry.resolveTransformer(new TransformerKey(from, to));
     }
 
     @Override
     public TransformerRegistry getTransformerRegistry() {
         return transformerRegistry;
+    }
+
+    @Override
+    public void setValidators(List<ValidatorDefinition> validators) {
+        this.validators = validators;
+    }
+
+    @Override
+    public List<ValidatorDefinition> getValidators() {
+        return validators;
+    }
+
+    @Override
+    public Validator resolveValidator(DataType type) {
+        return validatorRegistry.resolveValidator(new ValidatorKey(type));
+    }
+
+    @Override
+    public ValidatorRegistry getValidatorRegistry() {
+        return validatorRegistry;
     }
 
     protected Map<String, RouteService> getRouteServices() {
@@ -4363,36 +4387,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     protected ModelJAXBContextFactory createModelJAXBContextFactory() {
         return new DefaultModelJAXBContextFactory();
-    }
-
-    protected Transformer resolveTransformer(TransformerKey key) {
-        Transformer transformer = transformerRegistry.get(key);
-        if (transformer != null) {
-            return transformer;
-        }
-        for (TransformerDefinition def : getTransformers()) {
-            if (key.match(def)) {
-                try {
-                    transformer = def.createTransformer(this);
-                    transformer.setCamelContext(this);
-                    addService(transformer);
-                } catch (Exception e) {
-                    throw new RuntimeCamelException(e);
-                }
-                log.debug("Registering Transformer '{}'", transformer);
-                transformerRegistry.put(key, transformer);
-                return transformer;
-            }
-        }
-        return null;
-    }
-
-    protected TransformerKey getTransformerKey(String scheme) {
-        return new TransformerKey(scheme);
-    }
-
-    protected TransformerKey getTransformerKey(DataType from, DataType to) {
-        return new TransformerKey(from, to);
     }
 
     @Override

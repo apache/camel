@@ -226,6 +226,26 @@ public class BlobServiceComponentConfigurationTest extends CamelTestSupport {
         }
     }
     
+    @Test
+    public void testTooFewPathSegments() throws Exception {
+        BlobServiceComponent component = new BlobServiceComponent(context);
+        try {
+            component.createEndpoint("azure-blob://camelazure");
+            fail();
+        } catch (IllegalArgumentException ex) {
+            assertEquals("At least the account and container names must be specified.", ex.getMessage());
+        }
+    }
+    
+    @Test
+    public void testHierarchicalBlobName() throws Exception {
+        registerCredentials();
+        BlobServiceComponent component = new BlobServiceComponent(context);
+        BlobServiceEndpoint endpoint = 
+            (BlobServiceEndpoint)component.createEndpoint("azure-blob://camelazure/component1/blob/sub?credentials=#creds");
+        assertEquals("blob/sub", endpoint.getConfiguration().getBlobName());
+    }
+    
     private static void createConsumer(Endpoint endpoint) throws Exception {
         endpoint.createConsumer(new Processor() {
             @Override

@@ -636,45 +636,113 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
     /**
      * Declare an input type.
+     * 
+     * @see {@link org.apache.camel.spi.Transformer}
      * @param urn input type URN
      * @return the builder
      */
     public RouteDefinition inputType(String urn) {
         inputType = new InputTypeDefinition();
         inputType.setUrn(urn);
+        inputType.setValidate(false);
+        return this;
+    }
+
+    /**
+     * Declare an input type with validation enabled.
+     * 
+     * @see {@link org.apache.camel.spi.Transformer}, {@link org.apache.camel.spi.Validator}
+     * @param urn input type URN
+     * @return the builder
+     */
+    public RouteDefinition inputTypeWithValidate(String urn) {
+        inputType = new InputTypeDefinition();
+        inputType.setUrn(urn);
+        inputType.setValidate(true);
         return this;
     }
 
     /**
      * Declare an input type with Java class.
+     * 
+     * @see {@link org.apache.camel.spi.Transformer}
      * @param clazz Class object of the input type
      * @return the builder
      */
     public RouteDefinition inputType(Class clazz) {
         inputType = new InputTypeDefinition();
         inputType.setJavaClass(clazz);
+        inputType.setValidate(false);
+        return this;
+    }
+
+    /**
+     * Declare an input type with Java class with validation enabled.
+     * 
+     * @see {@link org.apache.camel.spi.Transformer}, {@link org.apache.camel.spi.Validator}
+     * @param clazz Class object of the input type
+     * @return the builder
+     */
+    public RouteDefinition inputTypeWithValidate(Class clazz) {
+        inputType = new InputTypeDefinition();
+        inputType.setJavaClass(clazz);
+        inputType.setValidate(true);
         return this;
     }
 
     /**
      * Declare an output type.
+     * 
+     * @see {@link org.apache.camel.spi.Transformer}
      * @param urn output type URN
      * @return the builder
      */
     public RouteDefinition outputType(String urn) {
         outputType = new OutputTypeDefinition();
         outputType.setUrn(urn);
+        outputType.setValidate(false);
+        return this;
+    }
+
+    /**
+     * Declare an output type with validation enabled.
+     * 
+     * @see {@link org.apache.camel.spi.Transformer}, {@link org.apache.camel.spi.Validator}
+     * @param urn output type URN
+     * @return the builder
+     */
+    public RouteDefinition outputTypeWithValidate(String urn) {
+        outputType = new OutputTypeDefinition();
+        outputType.setUrn(urn);
+        outputType.setValidate(true);
         return this;
     }
 
     /**
      * Declare an output type with Java class.
+     * 
+     * @see {@link org.apache.camel.spi.Transformer}
      * @param clazz Class object of the output type
      * @return the builder
      */
     public RouteDefinition outputType(Class clazz) {
         outputType = new OutputTypeDefinition();
         outputType.setJavaClass(clazz);
+        outputType.setValidate(false);
+        return this;
+    }
+
+    /**
+     * Declare an output type with Java class with validation enabled.
+     * 
+     * @see {@link org.apache.camel.spi.Transformer}, {@link org.apache.camel.spi.Validator}
+     * @param clazz Class object of the output type
+     * @return the builder
+     */
+    public RouteDefinition outputTypeWithValidate(Class clazz) {
+        outputType = new OutputTypeDefinition();
+        outputType.setJavaClass(clazz);
+        outputType.setValidate(true);
         return this;
     }
 

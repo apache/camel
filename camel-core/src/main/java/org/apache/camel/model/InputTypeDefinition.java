@@ -36,8 +36,10 @@ import org.apache.camel.spi.Metadata;
 @XmlRootElement(name = "inputType")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeDefinition> {
-    @XmlAttribute(required = true)
+    @XmlAttribute @Metadata(required = "true")
     private String urn;
+    @XmlAttribute  @Metadata(defaultValue = "false")
+    private Boolean validate = false;
 
     public InputTypeDefinition() {
     }
@@ -64,6 +66,22 @@ public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeD
      */
     public void setJavaClass(Class<?> clazz) {
         this.urn = "java:" + clazz.getName();
+    }
+
+    /**
+     * Get if validation is required for this input type.
+     * @return true if validate
+     */
+    public boolean isValidate() {
+        return this.validate;
+    }
+
+    /**
+     * Set if validation is required for this input type.
+     * @param validate true if validate
+     */
+    public void setValidate(boolean validate) {
+        this.validate = validate;
     }
 
     @Override

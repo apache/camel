@@ -36,7 +36,7 @@ public class SpringZipkinSimpleRouteTest extends CamelSpringTestSupport {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(5).create();
 
         for (int i = 0; i < 5; i++) {
-            template.sendBody("seda:dude", "Hello World");
+            template.sendBody("direct:start", "Hello World");
         }
 
         assertTrue(notify.matches(30, TimeUnit.SECONDS));

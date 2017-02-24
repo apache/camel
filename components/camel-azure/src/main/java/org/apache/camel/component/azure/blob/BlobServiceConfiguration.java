@@ -63,11 +63,11 @@ public class BlobServiceConfiguration extends AbstractConfiguration {
     @UriParam
     private Long dataLength;
     
-    @UriParam
-    private boolean publicForRead;
-    
     @UriParam(label = "producer")
     private String blobPrefix;
+    
+    @UriParam
+    private boolean publicForRead;
     
     @UriParam(label = "producer", defaultValue = "true")
     private boolean useFlatListing = true;
@@ -77,7 +77,7 @@ public class BlobServiceConfiguration extends AbstractConfiguration {
     }
 
     /**
-     * Required blob service operation hint to the producer 
+     * Blob service operation hint to the producer 
      */
     public void setOperation(BlobServiceOperations operation) {
         this.operation = operation;
@@ -215,18 +215,6 @@ public class BlobServiceConfiguration extends AbstractConfiguration {
         this.dataLength = dataLength;
     }
 
-    public boolean isPublicForRead() {
-        return publicForRead;
-    }
-
-    /**
-     * Blobs can be public for reading their content, if this property is enabled
-     * then the credentials do not have to be set
-     */
-    public void setPublicForRead(boolean publicForRead) {
-        this.publicForRead = publicForRead;
-    }
-
     public String getBlobPrefix() {
         return blobPrefix;
     }
@@ -236,6 +224,18 @@ public class BlobServiceConfiguration extends AbstractConfiguration {
      */
     public void setBlobPrefix(String blobPrefix) {
         this.blobPrefix = blobPrefix;
+    }
+    
+    public boolean isPublicForRead() {
+        return publicForRead;
+    }
+
+    /**
+     * Storage resources can be public for reading their content, if this property is enabled
+     * then the credentials do not have to be set
+     */
+    public void setPublicForRead(boolean publicForRead) {
+        this.publicForRead = publicForRead;
     }
 
     public boolean isUseFlatListing() {

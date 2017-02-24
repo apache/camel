@@ -17,30 +17,28 @@
 
 package org.apache.camel.spring.cloud;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.apache.camel.cloud.ServiceDiscovery;
 import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 
 public class CamelCloudDiscoveryClient implements DiscoveryClient {
     private final String description;
-    private final Map<String, List<ServiceInstance>> services;
+    private final ServiceDiscovery serviceDiscovery;
     private ServiceInstance localInstance;
 
-    public CamelCloudDiscoveryClient(String description) {
-        this(description, Collections.emptyMap());
+    public CamelCloudDiscoveryClient(String description, ServiceDiscovery serviceDiscovery) {
+        this(description, null, serviceDiscovery);
     }
 
-    public CamelCloudDiscoveryClient(String description, Map<String, List<ServiceInstance>> services) {
+    public CamelCloudDiscoveryClient(String description, ServiceInstance localServiceDiscovery, ServiceDiscovery serviceDiscovery) {
         this.description = description;
-        this.services = new LinkedHashMap<>(services);
-        this.localInstance = null;
+        this.serviceDiscovery = serviceDiscovery;
+        this.localInstance = localServiceDiscovery;
     }
 
     @Override
@@ -53,31 +51,20 @@ public class CamelCloudDiscoveryClient implements DiscoveryClient {
         return this.localInstance;
     }
 
-    @Override
-    public List<ServiceInstance> getInstances(String serviceId) {
-        return services.get(serviceId);
-    }
-
-    @Override
-    public List<String> getServices() {
-        return new ArrayList<>(services.keySet());
-    }
-
-    public CamelCloudDiscoveryClient addServiceInstance(ServiceInstance instance) {
-        services.computeIfAbsent(instance.getServiceId(), key -> new LinkedList<>()).add(instance);
-        return this;
-    }
-
-    public CamelCloudDiscoveryClient addServiceInstance(String serviceId, String host, int port) {
-        return addServiceInstance(new DefaultServiceInstance(serviceId, host, port, false));
-    }
-
     public CamelCloudDiscoveryClient setLocalServiceInstance(ServiceInstance instance) {
         this.localInstance = instance;
         return this;
     }
 
-    public CamelCloudDiscoveryClient setLocalServiceInstance(String serviceId, String host, int port) {
-        return setLocalServiceInstance(new DefaultServiceInstance(serviceId, host, port, false));
+    @Override
+    public List<ServiceInstance> getInstances(String serviceId) {
+        return serviceDiscovery.getUpdatedListOfServices(serviceId).stream()
+            .map(s -> new DefaultServiceInstance(s.getName(), s.getHost(), s.getPort(), false, s.getMetadata()))
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> getServices() {
+        return Collections.emptyList();
     }
 }

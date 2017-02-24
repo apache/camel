@@ -31,7 +31,8 @@
 
   <properties>
     <compiler.fork>true</compiler.fork>
-
+    <cxf.codegenplugin.forkmode>once</cxf.codegenplugin.forkmode>
+    <cxf.codegen.jvmArgs/>
     <!-- dependency versions -->
     <abdera-version>1.1.3</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
@@ -87,13 +88,13 @@
     <brave-zipkin-version>4.0.6</brave-zipkin-version>
     <build-helper-maven-plugin-version>1.10</build-helper-maven-plugin-version>
     <c3p0-version>0.9.5.2</c3p0-version>
-    <caffeine-version>2.3.5</caffeine-version>
+    <caffeine-version>2.4.0</caffeine-version>
     <californium-version>1.0.5</californium-version>
     <camel-test-spring-artifactId>camel-test-spring</camel-test-spring-artifactId>
     <cassandra-driver-version>3.1.4</cassandra-driver-version>
     <cassandra-driver-guava-version>18.0</cassandra-driver-guava-version>
     <cassandra-version>3.7</cassandra-version>
-    <cassandra-unit-version>3.1.1.0</cassandra-unit-version>
+    <cassandra-unit-version>3.1.3.2</cassandra-unit-version>
     <castor-version>1.3.3</castor-version>
     <castor-bundle-version>1.3.3_1</castor-bundle-version>
     <cdi-api-1.0-version>1.0-SP4</cdi-api-1.0-version>
@@ -150,7 +151,7 @@
     <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
     <couchbase-client-version>1.4.12</couchbase-client-version>
     <curator-version>2.11.1</curator-version>
-    <cxf-version>3.1.9</cxf-version>
+    <cxf-version>3.1.10</cxf-version>
     <cxf-version-range>[3.0,4.0)</cxf-version-range>
     <cxf-xjc-plugin-version>3.0.5</cxf-xjc-plugin-version>
     <cxf-xjc-utils-version>3.0.5</cxf-xjc-utils-version>
@@ -248,7 +249,7 @@
     <hawtbuf-version>1.11</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
     <hawtdispatch-version>1.22</hawtdispatch-version>
-    <hazelcast-version>3.7.5</hazelcast-version>
+    <hazelcast-version>3.8</hazelcast-version>
     <hbase-version>1.2.1</hbase-version>
     <hessian-version>4.0.38</hessian-version>
     <hibernate-validator-version>5.4.0.Final</hibernate-validator-version>
@@ -263,7 +264,7 @@
     <httpunit-version>1.7</httpunit-version>
     <httpcore4-version>4.4.6</httpcore4-version>
     <httpclient4-version>4.5.3</httpclient4-version>
-    <httpasyncclient-version>4.1.2</httpasyncclient-version>
+    <httpasyncclient-version>4.1.3</httpasyncclient-version>
     <httpclient-version>3.1</httpclient-version>
     <hystrix-version>1.5.9</hystrix-version>
     <hystrix-bundle-version>1.5.9_1</hystrix-bundle-version>
@@ -288,7 +289,7 @@
     <jackson-version>1.9.12</jackson-version>
     <jackson-spark-version>2.4.5</jackson-spark-version>
     <jackson2-scala-version>2.6.1</jackson2-scala-version>
-    <jackson2-version>2.8.6</jackson2-version>
+    <jackson2-version>2.8.7</jackson2-version>
     <jackrabbit-version>2.15.0</jackrabbit-version>
     <jackrabbit-guava-version>15.0</jackrabbit-guava-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
@@ -388,7 +389,7 @@
     <karaf4-version>4.0.8</karaf4-version>
     <kie-version>6.5.0.Final</kie-version>
     <krati-version>0.4.9</krati-version>
-    <kubernetes-client-version>2.0.5</kubernetes-client-version>
+    <kubernetes-client-version>2.0.7</kubernetes-client-version>
     <kubernetes-model-version>1.0.66</kubernetes-model-version>
     <kxml2-bundle-version>2.3.0_3</kxml2-bundle-version>
     <leveldbjni-version>1.8</leveldbjni-version>
@@ -455,7 +456,7 @@
     <mustache-bundle-version>0.9.4_1</mustache-bundle-version>
     <mvel-version>2.3.1.Final</mvel-version>
     <mybatis-version>3.4.2</mybatis-version>
-    <narayana-version>5.5.1.Final</narayana-version>
+    <narayana-version>5.5.2.Final</narayana-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <netty3-version>3.10.6.Final</netty3-version>
     <netty-version>4.1.8.Final</netty-version>
@@ -483,7 +484,7 @@
     <openstack4j-guava-version>17.0</openstack4j-guava-version>
     <opentracing-java-globaltracer-version>0.1.0</opentracing-java-globaltracer-version>
     <opentracing-java-spanmanager-version>0.0.2</opentracing-java-spanmanager-version>
-    <opentracing-version>0.20.8</opentracing-version>
+    <opentracing-version>0.20.9</opentracing-version>
     <ops4j-base-version>1.5.0</ops4j-base-version>
     <optaplanner-version>6.5.0.Final</optaplanner-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
@@ -508,7 +509,7 @@
     <quartz-version-range>[1.8,2)</quartz-version-range>
     <quartz2-version>2.2.3</quartz2-version>
     <quickfixj-version>1.6.3</quickfixj-version>
-    <rabbitmq-amqp-client-version>4.0.2</rabbitmq-amqp-client-version>
+    <rabbitmq-amqp-client-version>4.1.0</rabbitmq-amqp-client-version>
     <reactive-streams-version>1.0.0</reactive-streams-version>
     <reactor-version>3.0.4.RELEASE</reactor-version>
     <reflections-bundle-version>0.9.10_3</reflections-bundle-version>
@@ -523,10 +524,10 @@
     <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
     <rhino-version>1.7R2</rhino-version>
     <ribbon-version>2.2.2</ribbon-version>
-    <roaster-version>2.19.5.Final</roaster-version>
+    <roaster-version>2.20.0.Final</roaster-version>
     <rome-bundle-version>1.0_3</rome-bundle-version>
     <rome-version>1.0</rome-version>
-    <rxjava-version>1.2.6</rxjava-version>
+    <rxjava-version>1.2.7</rxjava-version>
     <rxjava2-version>2.0.6</rxjava2-version>
     <saaj-impl-version>1.3.2_2</saaj-impl-version>
     <saxon-bundle-version>9.7.0-14_1</saxon-bundle-version>
@@ -1804,6 +1805,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spring-cloud-netflix</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-integration</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -2018,10 +2024,15 @@
         <version>${project.version}</version>
       </dependency>
 
-      <!-- camel commands -->
+      <!-- camel catalog -->
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-catalog</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-catalog-connector</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2059,6 +2070,8 @@
         <artifactId>camel-catalog-rest-app</artifactId>
         <version>${project.version}</version>
       </dependency>
+
+      <!-- camel commands -->
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-commands-core</artifactId>
@@ -3052,6 +3065,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spring-cloud-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spring-cloud-netflix-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -4936,6 +4954,14 @@
         </plugins>
       </build>
     </profile>
+
+    <profile>
+      <id>cleanrepo</id>
+      <build>
+        <defaultGoal>build-helper:remove-project-artifact</defaultGoal>
+      </build>
+    </profile>
+
     <profile>
       <id>setup.eclipse</id>
       <build>
@@ -5072,6 +5098,34 @@
             </configuration>
           </plugin>
         </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>jdk9-build</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <properties>
+        <cxf.codegen.jvmArgs>--add-modules java.activation,java.xml.bind,java.xml.ws --add-exports=java.xml.bind/com.sun.xml.internal.bind.v2.runtime=ALL-UNNAMED --add-exports=jdk.xml.dom/org.w3c.dom.html=ALL-UNNAMED --add-exports=java.xml/com.sun.org.apache.xerces.internal.impl.xs=ALL-UNNAMED --add-exports=java.xml.bind/com.sun.xml.internal.bind.marshaller=ALL-UNNAMED --add-opens java.xml.ws/javax.xml.ws.wsaddressing=ALL-UNNAMED --add-opens java.base/java.security=ALL-UNNAMED --add-opens java.base/java.net=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.concurrent=ALL-UNNAMED</cxf.codegen.jvmArgs>
+        <cxf.codegenplugin.forkmode>true</cxf.codegenplugin.forkmode>
+      </properties>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.cxf</groupId>
+              <artifactId>cxf-codegen-plugin</artifactId>
+              <dependencies>
+                <dependency>
+                  <groupId>javax.xml.bind</groupId>
+                  <artifactId>jaxb-api</artifactId>
+                  <version>${jaxb-version}</version>
+                </dependency>
+              </dependencies>
+            </plugin>
+          </plugins>
+        </pluginManagement>
       </build>
     </profile>
   </profiles>

@@ -18,7 +18,6 @@
 package org.apache.camel.spring.cloud;
 
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
@@ -26,8 +25,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -38,11 +35,11 @@ import org.springframework.test.context.junit4.SpringRunner;
     classes = {
         CamelAutoConfiguration.class,
         CamelCloudAutoConfiguration.class,
-        CamelCloudServiceCallRibbonTest.TestConfiguration.class
+        CamelCloudServiceCallRoutesAutoConfiguration.class
     },
     properties = {
         "ribbon.eureka.enabled=false",
-        "ribbon.listOfServers=localhost:9090,localhost:9091",
+        "ribbon.listOfServers=localhost:9090,localhost:9092",
         "ribbon.ServerListRefreshInterval=15000",
         "debug=false"
     }
@@ -54,32 +51,7 @@ public class CamelCloudServiceCallRibbonTest {
     @Test
     public void testServiceCall() throws Exception {
         Assert.assertEquals("9090", template.requestBody("direct:start", null, String.class));
-        Assert.assertEquals("9091", template.requestBody("direct:start", null, String.class));
+        Assert.assertEquals("9092", template.requestBody("direct:start", null, String.class));
     }
-
-    // **************************
-    // Configuration
-    // **************************
-
-    @Configuration
-    public static class TestConfiguration {
-        @Bean
-        public RouteBuilder myRouteBuilder() {
-            return new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from("direct:start")
-                        .serviceCall()
-                           .name("service-call");
-
-                    from("jetty:http://localhost:9090")
-                        .transform().constant("9090");
-                    from("jetty:http://localhost:9091")
-                        .transform().constant("9091");
-                }
-            };
-        }
-    }
-
 }
 

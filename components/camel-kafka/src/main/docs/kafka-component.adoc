@@ -152,13 +152,14 @@ http://kafka.apache.org/documentation.html#producerconfigs[http://kafka.apache.o
 
 The following headers are available when consuming messages from Kafka.
 [width="100%",cols="2m,2m,1m,5",options="header"]
-|=======================================================================================================
-| Header constant          | Header value      | Type    | Description
-| KafkaConstants.TOPIC     | "kafka.TOPIC"     | String  | The topic from where the message originated
-| KafkaConstants.PARTITION | "kafka.PARTITION" | Integer | The partition where the message was stored
-| KafkaConstants.OFFSET    | "kafka.OFFSET"    | Long    | The offset of the message
-| KafkaConstants.KEY       | "kafka.KEY"       | Object  | The key of the message if configured
-|=======================================================================================================
+|=================================================================================================================================================================================================================
+| Header constant                          | Header value                      | Type    | Description
+| KafkaConstants.TOPIC                     | "kafka.TOPIC"                     | String  | The topic from where the message originated
+| KafkaConstants.PARTITION                 | "kafka.PARTITION"                 | Integer | The partition where the message was stored
+| KafkaConstants.OFFSET                    | "kafka.OFFSET"                    | Long    | The offset of the message
+| KafkaConstants.KEY                       | "kafka.KEY"                       | Object  | The key of the message if configured
+| KafkaConstants.LAST_RECORD_BEFORE_COMMIT | "kafka.LAST_RECORD_BEFORE_COMMIT" | Boolean | Whether or not it's the last record before commit (only available if `autoCommitEnable` endpoint parameter is `false`)
+|=================================================================================================================================================================================================================
 
 #### Producer headers
 

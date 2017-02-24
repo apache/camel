@@ -574,7 +574,7 @@ public class SalesforceComponentConfiguration {
          * 
          * @param defaultReplayId
          */
-        private Integer defaultReplayId;
+        private Long defaultReplayId;
         /**
          * Replay IDs to start from per channel name.
          */
@@ -909,11 +909,11 @@ public class SalesforceComponentConfiguration {
             this.maxBackoff = maxBackoff;
         }
 
-        public Integer getDefaultReplayId() {
+        public Long getDefaultReplayId() {
             return defaultReplayId;
         }
 
-        public void setDefaultReplayId(Integer defaultReplayId) {
+        public void setDefaultReplayId(Long defaultReplayId) {
             this.defaultReplayId = defaultReplayId;
         }
 

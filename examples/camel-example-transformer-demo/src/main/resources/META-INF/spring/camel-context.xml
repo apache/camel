@@ -51,13 +51,23 @@
             <camel:dataFormatTransformer ref="jsondf" scheme="json"/>
         </camel:transformers>
         <!-- END SNIPPET: e3 -->
+        <!-- START SNIPPET: e8 -->
+        <camel:validators>
+            <camel:endpointValidator type="xml" uri="validator:xsd/schema.xsd"/>
+            <camel:predicateValidator type="json">
+                <camel:simple>${body} contains 'orderId' and ${body} not contains 'accepted'</camel:simple>
+            </camel:predicateValidator>
+            <camel:customValidator type="java:org.apache.camel.example.transformer.demo.OrderResponse"
+            className="org.apache.camel.example.transformer.demo.OrderResponseValidator"/>
+        </camel:validators>
+        <!-- END SNIPPET: e8 -->
 
         <!-- START SNIPPET: e4 -->
         <camel:route id="xml">
             <camel:from uri="direct:xml"/>
             <!--  This route expects XML as an input/output type -->
-            <camel:inputType urn="xml:XMLOrder"/>
-            <camel:outputType urn="xml:XMLOrderResponse"/>
+            <camel:inputType urn="xml:XMLOrder" validate="true"/>
+            <camel:outputType urn="xml:XMLOrderResponse" validate="true"/>
             <camel:to uri="direct:java"/>
         </camel:route>
         <!-- END SNIPPET: e4 -->
@@ -67,7 +77,7 @@
             <camel:from uri="direct:json"/>
             <!--  This route expects JSON as an input/output type -->
             <!--  Only scheme 'json' is specified for the type, which means it handles arbitrary JSON content -->
-            <camel:inputType urn="json"/>
+            <camel:inputType urn="json" validate="true"/>
             <camel:outputType urn="json"/>
             <camel:to uri="direct:java"/>
         </camel:route>
@@ -81,7 +91,7 @@
             <!--  If it comes from json route, the JSON-Java transformer is applied. -->
             <!--  If it's sent via ProducerTemplate directly without specifying input/output type, no transformer is applied. -->
             <camel:inputType urn="java:org.apache.camel.example.transformer.demo.Order"/>
-            <camel:outputType urn="java:org.apache.camel.example.transformer.demo.OrderResponse"/>
+            <camel:outputType urn="java:org.apache.camel.example.transformer.demo.OrderResponse" validate="true"/>
             <camel:wireTap uri="direct:csv"/>
             <camel:process ref="orderProcessor"/>
         </camel:route>

@@ -16,11 +16,19 @@
  */
 package org.apache.camel.spring.cloud;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "camel.cloud")
 public class CamelCloudConfigurationProperties {
     private boolean enabled = true;
+    private LoadBalancer loadBalancer = new LoadBalancer();
+    private ServiceDiscovery serviceDiscovery = new ServiceDiscovery();
+    private ServiceFilter serviceFilter = new ServiceFilter();
+    private ServiceChooser serviceChooser = new ServiceChooser();
 
     public boolean isEnabled() {
         return enabled;
@@ -28,5 +36,92 @@ public class CamelCloudConfigurationProperties {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public LoadBalancer getLoadBalancer() {
+        return loadBalancer;
+    }
+
+    public ServiceDiscovery getServiceDiscovery() {
+        return serviceDiscovery;
+    }
+
+    public ServiceFilter getServiceFilter() {
+        return serviceFilter;
+    }
+
+    public ServiceChooser getServiceChooser() {
+        return serviceChooser;
+    }
+
+    // *****************************************
+    // Nested configurations
+    // *****************************************
+
+    public static class LoadBalancer {
+        private boolean enabled = true;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+    }
+
+    public static class ServiceDiscovery {
+        private boolean enabled = true;
+        private Map<String, List<String>> services = new HashMap<>();
+        private String cacheTimeout;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public Map<String, List<String>> getServices() {
+            return services;
+        }
+
+        public String getCacheTimeout() {
+            return cacheTimeout;
+        }
+
+        public void setCacheTimeout(String cacheTimeout) {
+            this.cacheTimeout = cacheTimeout;
+        }
+    }
+
+    public static class ServiceFilter {
+        private boolean enabled = true;
+        private Map<String, List<String>> blacklist = new HashMap<>();
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public Map<String, List<String>> getBlacklist() {
+            return blacklist;
+        }
+    }
+
+    public static class ServiceChooser {
+        private boolean enabled = true;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
     }
 }

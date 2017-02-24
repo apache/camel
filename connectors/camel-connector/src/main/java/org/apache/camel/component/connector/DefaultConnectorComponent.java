@@ -19,6 +19,7 @@ package org.apache.camel.component.connector;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.catalog.CamelCatalog;
@@ -41,11 +43,12 @@ import org.slf4j.LoggerFactory;
 /**
  * Base class for Camel Connector components.
  */
-public abstract class DefaultConnectorComponent extends DefaultComponent {
+public abstract class DefaultConnectorComponent extends DefaultComponent implements ConnectorComponent {
 
+    private static final Pattern NAME_PATTERN = Pattern.compile("\"name\"\\s?:\\s?\"([\\w|.]+)\".*");
     private static final Pattern JAVA_TYPE_PATTERN = Pattern.compile("\"javaType\"\\s?:\\s?\"([\\w|.]+)\".*");
     private static final Pattern BASE_JAVA_TYPE_PATTERN = Pattern.compile("\"baseJavaType\"\\s?:\\s?\"([\\w|.]+)\".*");
-    private static final Pattern BASE_SCHEMA_PATTERN = Pattern.compile("\"baseScheme\"\\s?:\\s?\"([\\w|.]+)\".*");
+    private static final Pattern BASE_SCHEME_PATTERN = Pattern.compile("\"baseScheme\"\\s?:\\s?\"([\\w|.]+)\".*");
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -54,6 +57,8 @@ public abstract class DefaultConnectorComponent extends DefaultComponent {
     private final String componentName;
     private final String className;
     private List<String> lines;
+    private String connectorJSon;
+    private String connectorName;
 
     public DefaultConnectorComponent(String componentName, String className) {
         this.componentName = componentName;
@@ -74,7 +79,7 @@ public abstract class DefaultConnectorComponent extends DefaultComponent {
 
         // default options from connector json
         if (!defaultOptions.isEmpty()) {
-            options.putAll(defaultOptions);
+            defaultOptions.forEach((k, v) -> addConnectorOption(options, k, v));
         }
         // options from query parameters
         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
@@ -83,7 +88,7 @@ public abstract class DefaultConnectorComponent extends DefaultComponent {
             if (entry.getValue() != null) {
                 value = entry.getValue().toString();
             }
-            options.put(key, value);
+            addConnectorOption(options, key, value);
         }
         parameters.clear();
 
@@ -92,11 +97,11 @@ public abstract class DefaultConnectorComponent extends DefaultComponent {
             String targetUri = scheme + ":" + remaining;
             Map<String, String> extra = catalog.endpointProperties(targetUri);
             if (extra != null && !extra.isEmpty()) {
-                options.putAll(extra);
+                extra.forEach((k, v) -> addConnectorOption(options, k, v));
             }
         }
 
-        String delegateUri = catalog.asEndpointUri(scheme, options, false);
+        String delegateUri = createEndpointUri(scheme, options);
         log.debug("Connector resolved: {} -> {}", uri, delegateUri);
 
         Endpoint delegate = getCamelContext().getEndpoint(delegateUri);
@@ -104,25 +109,45 @@ public abstract class DefaultConnectorComponent extends DefaultComponent {
         return new DefaultConnectorEndpoint(uri, this, delegate);
     }
 
-    private List<String> findCamelConnectorJSonSchema() throws Exception {
-        Enumeration<URL> urls = getClass().getClassLoader().getResources("camel-connector.json");
-        while (urls.hasMoreElements()) {
-            URL url = urls.nextElement();
-            InputStream is = url.openStream();
-            if (is != null) {
-                List<String> lines = loadFile(is);
-                IOHelper.close(is);
-
-                String javaType = extractJavaType(lines);
-                log.trace("Found camel-connector.json in classpath with javaType: {}", javaType);
-
-                if (className.equals(javaType)) {
-                    return lines;
-                }
-            }
-        }
-        return null;
+    @Override
+    public String createEndpointUri(String scheme, Map<String, String> options) throws URISyntaxException {
+        log.trace("Creating endpoint uri with scheme: {}", scheme);
+        return catalog.asEndpointUri(scheme, options, false);
     }
+
+    @Override
+    public void addConnectorOption(Map<String, String> options, String name, String value) {
+        log.trace("Adding option: {}={}", name, value);
+        options.put(name, value);
+    }
+
+    @Override
+    public CamelCatalog getCamelCatalog() {
+        return catalog;
+    }
+
+    @Override
+    public String getCamelConnectorJSon() {
+        if (connectorJSon == null) {
+            connectorJSon = lines.stream().collect(Collectors.joining("\n"));
+        }
+        return connectorJSon;
+    }
+
+    @Override
+    public String getConnectorName() {
+        if (connectorName == null) {
+            connectorName = extractName(lines);
+        }
+        return connectorName;
+    }
+
+    @Override
+    public String getComponentName() {
+        return componentName;
+    }
+
+    // --------------------------------------------------------------
 
     @Override
     protected void doStart() throws Exception {
@@ -170,7 +195,26 @@ public abstract class DefaultConnectorComponent extends DefaultComponent {
         super.doStop();
     }
 
-    // --------------------------------------------------------------
+    private List<String> findCamelConnectorJSonSchema() throws Exception {
+        log.debug("Finding camel-connector.json in classpath for connector: {}", componentName);
+        Enumeration<URL> urls = getClass().getClassLoader().getResources("camel-connector.json");
+        while (urls.hasMoreElements()) {
+            URL url = urls.nextElement();
+            InputStream is = url.openStream();
+            if (is != null) {
+                List<String> lines = loadFile(is);
+                IOHelper.close(is);
+
+                String javaType = extractJavaType(lines);
+                log.debug("Found camel-connector.json in classpath with javaType: {}", javaType);
+
+                if (className.equals(javaType)) {
+                    return lines;
+                }
+            }
+        }
+        return null;
+    }
 
     private Map<String, String> extractComponentDefaultValues(List<String> lines) {
         Map<String, String> answer = new LinkedHashMap<>();
@@ -242,6 +286,17 @@ public abstract class DefaultConnectorComponent extends DefaultComponent {
         return lines;
     }
 
+    private String extractName(List<String> json) {
+        for (String line : json) {
+            line = line.trim();
+            Matcher matcher = NAME_PATTERN.matcher(line);
+            if (matcher.matches()) {
+                return matcher.group(1);
+            }
+        }
+        return null;
+    }
+
     private String extractJavaType(List<String> json) {
         for (String line : json) {
             line = line.trim();
@@ -267,7 +322,7 @@ public abstract class DefaultConnectorComponent extends DefaultComponent {
     private String extractBaseScheme(List<String> json) {
         for (String line : json) {
             line = line.trim();
-            Matcher matcher = BASE_SCHEMA_PATTERN.matcher(line);
+            Matcher matcher = BASE_SCHEME_PATTERN.matcher(line);
             if (matcher.matches()) {
                 return matcher.group(1);
             }

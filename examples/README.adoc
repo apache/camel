@@ -93,7 +93,9 @@ Number of Examples: 84
 | link:camel-example-transformer-cdi/README.md[Transformer CDI] (camel-example-transformer-cdi) | Input/Output Type Contract | An example demonstrating declarative transformation along data type declaration using Java DSL and CDI
   
 
-| link:camel-example-transformer-demo/README.md[Transformer Spring XML] (camel-example-transformer-demo) | Input/Output Type Contract | An example demonstrating declarative transformation along data type declaration using Spring DSL
+| link:camel-example-transformer-demo/README.md[Transformer and Validator Spring XML] (camel-example-transformer-demo) | Input/Output Type Contract | An example demonstrating declarative transformation and validation along data type declaration using Spring DSL
+
+| link:camel-example-validator-spring-boot/README.md[Validator Spring Boot] (camel-example-validator-spring-boot) | Input/Output Type Contract | An example demonstrating declarative validation along data type declaration using Spring Boot
 
 | link:camel-example-bam/README.md[BAM (deprecated)] (camel-example-bam) | Management and Monitoring | *deprecated* An example showing how to use Camel as a Business Activity Monitoring tool
 

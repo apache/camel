@@ -44,7 +44,7 @@ public class BlobServiceComponent extends UriEndpointComponent {
             parts = remaining.split("/"); 
         }
         if (parts == null || parts.length < 2) {
-            throw new IllegalArgumentException("At least account and container names must be specified.");
+            throw new IllegalArgumentException("At least the account and container names must be specified.");
         }
         
         configuration.setAccountName(parts[0]);

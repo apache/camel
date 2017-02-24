@@ -5,16 +5,15 @@ Transformer
 *Available as of Camel 2.19*
 
 Transformer performs declarative transformation of the message according
-to the declared link:eips/inputType-eip.html[Input Type] and/or
-link:eips/outputType-eip.html[Output Type] on a route definition which declares the expected
-message type.
+to the declared `Input Type` and/or `Output Type` on a route definition which declares
+the expected message type.
 There are two Exchange property indicates current message type, `Exchange.INPUT_TYPE`
 holds input message type and `Exchange.OUTPUT_TYPE` holds output message type. If the
-input type and/or output type declared by link:eips/inputType-eip.html[Input Type] and/or
-link:eips/outputType-eip.html[Output Type] in the route definition, and it is different from
-those properties at runtime, camel internal processor look for a Transformer which transforms
-from the current message type to the expected message type and apply. Once transform succeed or message
-is already in expected type, then `Exchange.INPUT_TYPE` or `Exchange.OUTPUT_TYPE` is updated.
+input type and/or output type declared by `Input Type` and/or `Output Type` in the route
+definition, and it is different from those properties at runtime, camel internal processor
+looks for a Transformer which transforms from the current message type to the expected message
+type and apply. Once transform succeed or message is already in expected type, then
+`Exchange.INPUT_TYPE` or `Exchange.OUTPUT_TYPE` is updated.
 
 
 
@@ -133,7 +132,7 @@ Note that Transformer must be a subclass of `org.apache.camel.spi.Transformer`
 
 | ref | Reference to the custom Transformer bean ID
 
-| type | Fully qualified class name of the custom Transformer class
+| className | Fully qualified class name of the custom Transformer class
 |=======================================================================
 Here is an example to specify custom Transformer class:
 Java DSL:
@@ -148,7 +147,7 @@ transformer()
 XML DSL:
 [source,xml]
 -------------------------------------------------------------------
-<customTransformer type="com.example.MyCustomTransformer" fromType="xml" toType="json"/>
+<customTransformer className="com.example.MyCustomTransformer" fromType="xml" toType="json"/>
 -------------------------------------------------------------------
 
 

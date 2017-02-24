@@ -110,6 +110,7 @@
     <module>camel-example-twitter-salesforce</module>
     <module>camel-example-twitter-websocket</module>
     <module>camel-example-twitter-websocket-blueprint</module>
+    <module>camel-example-validator-spring-boot</module>
     <module>camel-example-widget-gadget-cdi</module>
     <module>camel-example-widget-gadget-java</module>
     <module>camel-example-widget-gadget-xml</module>

@@ -22,6 +22,7 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.ByteBuffer;
+import java.nio.channels.ReadableByteChannel;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -54,7 +55,7 @@ import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xnio.ChannelListener;
+import org.xnio.channels.BlockingReadableByteChannel;
 import org.xnio.channels.StreamSourceChannel;
 
 /**
@@ -378,37 +379,18 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         return body;
     }
 
-    private byte[] readFromChannel(StreamSourceChannel source) throws IOException {
+    byte[] readFromChannel(StreamSourceChannel source) throws IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final ByteBuffer buffer = ByteBuffer.wrap(new byte[1024]);
 
+        ReadableByteChannel blockingSource = new BlockingReadableByteChannel(source);
+
         for (;;) {
-            int res = source.read(buffer);
+            int res = blockingSource.read(buffer);
             if (res == -1) {
                 return out.toByteArray();
             } else if (res == 0) {
-                source.getReadSetter().set(new ChannelListener<StreamSourceChannel>() {
-                    @Override
-                    public void handleEvent(StreamSourceChannel channel) {
-                        for (;;) {
-                            try {
-                                int res = channel.read(buffer);
-                                if (res == -1 || res == 0) {
-                                    out.toByteArray();
-                                    return;
-                                } else {
-                                    buffer.flip();
-                                    out.write(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.arrayOffset() + buffer.limit());
-                                    buffer.clear();
-                                }
-                            } catch (IOException e) {
-                                LOG.error("Exception reading from channel {}", e);
-                            }
-                        }
-                    }
-                });
-                source.resumeReads();
-                return out.toByteArray();
+                LOG.error("Channel did not block");
             } else {
                 buffer.flip();
                 out.write(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.arrayOffset() + buffer.limit());

@@ -59,9 +59,11 @@ public class TransformerBuilderTest extends TestSupport {
             @Override
             public void configure() throws Exception {
                 transformer().fromType("xml:foo").toType("json:bar").withDataFormat(new StringDataFormat());
+                from("direct:input").log("test");
             }
         };
         ctx.addRoutes(builder);
+        ctx.start();
         Transformer transformer = ctx.resolveTransformer(new DataType("xml:foo"), new DataType("json:bar"));
         assertNotNull(transformer);
         assertEquals(DataFormatTransformer.class, transformer.getClass());
@@ -78,10 +80,11 @@ public class TransformerBuilderTest extends TestSupport {
             @Override
             public void configure() throws Exception {
                 transformer().fromType("json:foo").toType("xml:bar").withUri("direct:transformer");
-                from("direct:transformer");
+                from("direct:transformer").log("test");
             }
         };
         ctx.addRoutes(builder);
+        ctx.start();
         Transformer transformer = ctx.resolveTransformer(new DataType("json:foo"), new DataType("xml:bar"));
         assertNotNull(transformer);
         assertEquals(ProcessorTransformer.class, transformer.getClass());
@@ -100,9 +103,11 @@ public class TransformerBuilderTest extends TestSupport {
             @Override
             public void configure() throws Exception {
                 transformer().scheme("other").withJava(MyTransformer.class);
+                from("direct:input").log("test");
             }
         };
         ctx.addRoutes(builder);
+        ctx.start();
         Transformer transformer = ctx.resolveTransformer("other");
         assertNotNull(transformer);
         assertEquals(MyTransformer.class, transformer.getClass());

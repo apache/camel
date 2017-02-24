@@ -18,7 +18,6 @@
 package org.apache.camel.spring.cloud;
 
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
@@ -26,8 +25,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -38,12 +35,12 @@ import org.springframework.test.context.junit4.SpringRunner;
     classes = {
         CamelAutoConfiguration.class,
         CamelCloudAutoConfiguration.class,
-        CamelCloudServiceCallTest.TestConfiguration.class
+        CamelCloudServiceCallRoutesAutoConfiguration.class
     },
     properties = {
-        "camel.cloud.servicecall.load-balancer.enabled=false",
-        "camel.cloud.servicecall.service-discovery.services[custom-svc-list]=localhost:9090,localhost:9091,localhost:9092",
-        "camel.cloud.servicecall.service-filter.blacklist[custom-svc-list]=localhost:9091",
+        "camel.cloud.load-balancer.enabled=false",
+        "camel.cloud.service-discovery.services[custom-svc-list]=localhost:9090,localhost:9091,localhost:9092",
+        "camel.cloud.service-filter.blacklist[custom-svc-list]=localhost:9091",
         "ribbon.enabled=false",
         "debug=false"
     }
@@ -57,35 +54,5 @@ public class CamelCloudServiceCallTest {
         Assert.assertEquals("9090", template.requestBody("direct:start", null, String.class));
         Assert.assertEquals("9092", template.requestBody("direct:start", null, String.class));
     }
-
-    // **************************
-    // Configuration
-    // **************************
-
-    @Configuration
-    public static class TestConfiguration {
-        @Bean
-        public RouteBuilder myRouteBuilder() {
-            return new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    from("direct:start")
-                        .serviceCall()
-                            .name("custom-svc-list/hello");
-
-                    from("jetty:http://localhost:9090/hello")
-                        .transform()
-                        .constant("9090");
-                    from("jetty:http://localhost:9091/hello")
-                        .transform()
-                        .constant("9091");
-                    from("jetty:http://localhost:9092/hello")
-                        .transform()
-                        .constant("9092");
-                }
-            };
-        }
-    }
-
 }
 

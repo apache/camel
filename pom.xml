@@ -703,5 +703,13 @@
         <javadoc.opts>-Xdoclint:none</javadoc.opts>
       </properties>
      </profile>
+
+     <profile>
+       <id>cleanrepo</id>
+       <build>
+         <defaultGoal>build-helper:remove-project-artifact</defaultGoal>
+       </build>
+     </profile>
+
   </profiles>
 </project>

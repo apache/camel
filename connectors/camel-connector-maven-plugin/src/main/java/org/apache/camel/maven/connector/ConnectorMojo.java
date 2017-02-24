@@ -34,11 +34,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.jar.AbstractJarMojo;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.plugins.jar.AbstractJarMojo;
 
 @Mojo(name = "jar", defaultPhase = LifecyclePhase.PREPARE_PACKAGE, requiresProject = true, threadSafe = true,
         requiresDependencyResolution = ResolutionScope.RUNTIME)
@@ -321,7 +321,10 @@ public class ConnectorMojo extends AbstractJarMojo {
     private String buildComponentHeaderSchema(List<Map<String, String>> rows, Map dto, String gitUrl) throws Exception {
         String baseScheme = (String) dto.get("baseScheme");
         String title = (String) dto.get("name");
-        String scheme = StringHelper.camelCaseToDash(title);
+        String scheme = (String) dto.get("scheme");
+        if (scheme == null || scheme.isEmpty()) {
+            scheme = StringHelper.camelCaseToDash(title);
+        }
         String baseSyntax = getOption(rows, "syntax");
         String syntax = baseSyntax.replaceFirst(baseScheme, scheme);
 
@@ -354,7 +357,9 @@ public class ConnectorMojo extends AbstractJarMojo {
         sb.append("    \"syntax\": \"" + syntax + "\",\n");
         sb.append("    \"title\": \"" + title + "\",\n");
         if (description != null) {
-            sb.append("    \"description\": \"" + description + "\",\n");
+            // ensure description is sanitized
+            String text = JSonSchemaHelper.sanitizeDescription(description, false);
+            sb.append("    \"description\": \"" + text + "\",\n");
         }
         if (label != null) {
             sb.append("    \"label\": \"" + label + "\",\n");

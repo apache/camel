@@ -195,6 +195,8 @@
             <id>generate-test-sources</id>
             <phase>generate-sources</phase>
             <configuration>
+              <fork>${cxf.codegenplugin.forkmode}</fork>
+              <additionalJvmArgs>${cxf.codegen.jvmArgs}</additionalJvmArgs>
               <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
               <defaultOptions>
                   <frontEnd>jaxws21</frontEnd>

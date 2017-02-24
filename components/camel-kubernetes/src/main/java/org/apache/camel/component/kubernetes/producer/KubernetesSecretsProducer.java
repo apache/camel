@@ -21,9 +21,9 @@ import java.util.Map;
 import io.fabric8.kubernetes.api.model.DoneableSecret;
 import io.fabric8.kubernetes.api.model.Secret;
 import io.fabric8.kubernetes.api.model.SecretList;
-import io.fabric8.kubernetes.client.dsl.ClientMixedOperation;
-import io.fabric8.kubernetes.client.dsl.ClientNonNamespaceOperation;
-import io.fabric8.kubernetes.client.dsl.ClientResource;
+import io.fabric8.kubernetes.client.dsl.MixedOperation;
+import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
+import io.fabric8.kubernetes.client.dsl.Resource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -103,7 +103,7 @@ public class KubernetesSecretsProducer extends DefaultProducer {
         String namespaceName = exchange.getIn().getHeader(
                 KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);
         if (!ObjectHelper.isEmpty(namespaceName)) {
-            ClientNonNamespaceOperation<Secret, SecretList, DoneableSecret, ClientResource<Secret, DoneableSecret>> secrets; 
+            NonNamespaceOperation<Secret, SecretList, DoneableSecret, Resource<Secret, DoneableSecret>> secrets; 
             secrets = getEndpoint().getKubernetesClient().secrets()
                     .inNamespace(namespaceName);
             for (Map.Entry<String, String> entry : labels.entrySet()) {
@@ -111,7 +111,7 @@ public class KubernetesSecretsProducer extends DefaultProducer {
             }
             secretsList = secrets.list();
         } else {
-            ClientMixedOperation<Secret, SecretList, DoneableSecret, ClientResource<Secret, DoneableSecret>> secrets; 
+            MixedOperation<Secret, SecretList, DoneableSecret, Resource<Secret, DoneableSecret>> secrets; 
             secrets = getEndpoint().getKubernetesClient().secrets();
             for (Map.Entry<String, String> entry : labels.entrySet()) {
                 secrets.withLabel(entry.getKey(), entry.getValue());
