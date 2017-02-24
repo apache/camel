@@ -42,8 +42,6 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 /**
  * A snmp producer
- * 
- *
  */
 public class SnmpProducer extends DefaultProducer {
    
