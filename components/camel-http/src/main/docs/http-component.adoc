@@ -149,22 +149,21 @@ The HTTP component supports 27 endpoint options which are listed below:
 | Name | Group | Default | Java Type | Description
 | httpUri | producer |  | URI | *Required* The url of the HTTP endpoint to call.
 | disableStreamCache | common | false | boolean | Determines whether or not the raw input stream from Servlet is cached or not (Camel will read the stream into a in memory/overflow to file Stream caching) cache. By default Camel will cache the Servlet input stream to support reading it multiple times to ensure it Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream such as streaming it directly to a file or other persistent store. DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body if this option is false to support reading the stream multiple times. If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance in case you do not need to read the message payload multiple times. The http/http4 producer will by default cache the response body stream. If setting this option to true then the producers will not cache the response body stream but use the response stream as-is as the message body.
-| authMethodPriority | producer |  | String | Authentication method for proxy either as Basic Digest or NTLM.
+| headerFilterStrategy | common |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+| httpBinding | common (advanced) |  | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
 | bridgeEndpoint | producer | false | boolean | If the option is true HttpProducer will ignore the Exchange.HTTP_URI header and use the endpoint's URI for request. You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back.
 | chunked | producer | true | boolean | If this option is false the Servlet will disable the HTTP streaming and set the content-length header on the response
 | connectionClose | producer | false | boolean | Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false.
-| cookieHandler | producer |  | CookieHandler | Configure a cookie handler to maintain a HTTP session
 | copyHeaders | producer | true | boolean | If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy. Setting this to false allows to only include the headers from the HTTP response (not propagating IN headers).
-| headerFilterStrategy | producer |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
-| httpBinding | producer |  | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
-| httpMethod | producer |  | String | Configure the http Method to use as URI param. In case this is set it can't be overriden by the HttpMethod header.
+| httpMethod | producer |  | HttpMethods | Configure the HTTP method to use. The HttpMethod header cannot override this option if set.
 | ignoreResponseBody | producer | false | boolean | If this option is true The http producer won't read response body and cache the input stream
-| okStatusCodeRange | producer | 200-299 | String | The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.
 | preserveHostHeader | producer | false | boolean | If the option is true HttpProducer will set the Host header to the value contained in the current exchange Host header useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client this allows applications which use the Host header to generate accurate URL's for a proxied service
 | proxyHost | producer |  | String | The proxy host name
 | proxyPort | producer |  | int | The proxy port number
 | throwExceptionOnFailure | producer | true | boolean | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code.
 | transferException | producer | false | boolean | If enabled and an Exchange failed processing on the consumer side and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
+| cookieHandler | producer (advanced) |  | CookieHandler | Configure a cookie handler to maintain a HTTP session
+| okStatusCodeRange | producer (advanced) | 200-299 | String | The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.
 | urlRewrite | producer (advanced) |  | UrlRewrite | Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints. See more details at http://camel.apache.org/urlrewrite.html
 | httpClientConfigurer | advanced |  | HttpClientConfigurer | Register a custom configuration strategy for new HttpClient instances created by producers or consumers such as to configure authentication mechanisms etc
 | httpClientOptions | advanced |  | Map | To configure the HttpClient using the key/values from the Map.
@@ -174,6 +173,7 @@ The HTTP component supports 27 endpoint options which are listed below:
 | mapHttpMessageFormUrlEncodedBody | advanced | true | boolean | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping.
 | mapHttpMessageHeaders | advanced | true | boolean | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| authMethodPriority | security |  | String | Authentication method for proxy either as Basic Digest or NTLM.
 |=======================================================================
 {% endraw %}
 // endpoint options: END
@@ -265,15 +265,15 @@ This exception contains the following information:
 * Response body as a `java.lang.String`, if server provided a body as
 response
 
-### Calling using GET or POST
+### Which HTTP method will be used
 
-The following algorithm is used to determine if either `GET` or `POST`
-HTTP method should be used: +
- 1. Use method provided in header. +
- 2. `GET` if query string is provided in header. +
- 3. `GET` if endpoint is configured with a query string. +
- 4. `POST` if there is data to send (body is not null). +
- 5. `GET` otherwise.
+The following algorithm is used to determine what HTTP method should be used: +
+ 1. Use method provided as endpoint configuration (`httpMethod`). +
+ 2. Use method provided in header (`Exchange.HTTP_METHOD`). +
+ 3. `GET` if query string is provided in header. +
+ 4. `GET` if endpoint is configured with a query string. +
+ 5. `POST` if there is data to send (body is not `null`). +
+ 6. `GET` otherwise.
 
 ### How to get access to HttpServletRequest and HttpServletResponse
 
