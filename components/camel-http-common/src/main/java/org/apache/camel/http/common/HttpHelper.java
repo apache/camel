@@ -512,11 +512,12 @@ public final class HttpHelper {
             queryString = endpoint.getHttpUri().getRawQuery();
         }
 
-        // compute what method to use either GET or POST
         HttpMethods answer;
-        if (ObjectHelper.isNotEmpty(endpoint.getHttpMethod())) {
-            answer = HttpMethods.valueOf(endpoint.getHttpMethod());
+        if (endpoint.getHttpMethod() != null) {
+            // endpoint configured take precedence
+            answer = endpoint.getHttpMethod();
         } else {
+            // compute what method to use either GET or POST (header take precedence)
             HttpMethods m = exchange.getIn().getHeader(Exchange.HTTP_METHOD, HttpMethods.class);
             if (m != null) {
                 // always use what end-user provides in a header
