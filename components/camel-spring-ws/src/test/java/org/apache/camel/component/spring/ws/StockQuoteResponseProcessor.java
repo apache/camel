@@ -40,7 +40,11 @@ public class StockQuoteResponseProcessor implements Processor {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document doc = db.parse(is);
-        exchange.getOut().setBody(doc);
+        if (exchange.getPattern().isOutCapable()) {
+            exchange.getOut().setBody(doc);
+        } else {
+            exchange.getIn().setBody(doc);
+        }
     }
 
 }
