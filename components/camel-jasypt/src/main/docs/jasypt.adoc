@@ -86,7 +86,7 @@ The idea is then to use those encrypted values in your
 link:properties.html[Properties] files. Notice how the password value is
 encrypted and the value has the tokens surrounding `ENC(value here)`
 
-*TIP*: When running jasypt tooling, if you come across `java.lang.NoClassDefFoundError: org/jasypt/encryption/pbe/StandardPBEStringEncryptor` this means you have to include jasypt{version}.jar in your classpath. Example of adding jar to classpath may be copying jasypt{version}.jar to $JAVA_HOME\jre\lib\ext 
+TIP: When running jasypt tooling, if you come across `java.lang.NoClassDefFoundError: org/jasypt/encryption/pbe/StandardPBEStringEncryptor` this means you have to include jasypt{version}.jar in your classpath. Example of adding jar to classpath may be copying jasypt{version}.jar to $JAVA_HOME\jre\lib\ext 
 
 
 ### URI Options
