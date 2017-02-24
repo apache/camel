@@ -31,7 +31,10 @@
   <description>Camel Kafka support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.kafka.*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>
+      org.apache.camel.component.kafka.*,
+      org.apache.camel.processor.idempotent.kafka
+    </camel.osgi.export.pkg>
     <camel.osgi.export.service>
       org.apache.camel.spi.ComponentResolver;component=kafka,
     </camel.osgi.export.service>
@@ -100,6 +103,13 @@
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-1.2-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>${commons-lang-version}</version>
       <scope>test</scope>
     </dependency>
 

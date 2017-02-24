@@ -48,13 +48,7 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
 
     @Before
     public void before() {
-        Properties props = new Properties();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:" + getKafkaPort());
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
-        props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_PARTITIONER);
-        props.put(ProducerConfig.ACKS_CONFIG, "1");
-
+        Properties props = getDefaultProperties();
         producer = new org.apache.kafka.clients.producer.KafkaProducer<String, String>(props);
     }
 

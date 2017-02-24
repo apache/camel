@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.kafka;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.kafka.embedded.EmbeddedKafkaCluster;
 import org.apache.camel.component.kafka.embedded.EmbeddedZookeeper;
@@ -28,47 +23,47 @@ import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Properties;
 
 public class BaseEmbeddedKafkaTest extends CamelTestSupport {
 
     static final Logger LOG = LoggerFactory.getLogger(BaseEmbeddedKafkaTest.class);
 
-    static EmbeddedZookeeper embeddedZookeeper;
-    static EmbeddedKafkaCluster embeddedKafkaCluster;
+    // start from somewhere in the 23xxx range
+    private static volatile int zookeeperPort = AvailablePortFinder.getNextAvailable(23000);
 
-    private static volatile int zookeeperPort;
+    @ClassRule
+    public static EmbeddedZookeeper embeddedZookeeper = new EmbeddedZookeeper(zookeeperPort);
 
-    private static volatile int kafkaPort;
+    private static volatile int kafkaPort = AvailablePortFinder.getNextAvailable(24000);
+
+    @ClassRule
+    public static EmbeddedKafkaCluster embeddedKafkaCluster =
+            new EmbeddedKafkaCluster(embeddedZookeeper.getConnection(),
+                    new Properties(), kafkaPort);
 
     @BeforeClass
     public static void beforeClass() {
-        // start from somewhere in the 23xxx range
-        zookeeperPort = AvailablePortFinder.getNextAvailable(23000);
-        // find another ports for proxy route test
-        kafkaPort = AvailablePortFinder.getNextAvailable(24000);
-
-        embeddedZookeeper = new EmbeddedZookeeper(zookeeperPort);
-        // -1 for any available port
-        List<Integer> kafkaPorts = Collections.singletonList(kafkaPort);
-        embeddedKafkaCluster = new EmbeddedKafkaCluster(embeddedZookeeper.getConnection(), new Properties(), kafkaPorts);
-        try {
-            embeddedZookeeper.startup();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         LOG.info("### Embedded Zookeeper connection: " + embeddedZookeeper.getConnection());
-        embeddedKafkaCluster.startup();
         LOG.info("### Embedded Kafka cluster broker list: " + embeddedKafkaCluster.getBrokerList());
     }
 
-    @AfterClass
-    public static void afterClass() {
-        embeddedKafkaCluster.shutdown();
-        embeddedZookeeper.shutdown();
+    protected Properties getDefaultProperties() {
+        Properties props = new Properties();
+        int kafkaPort = getKafkaPort();
+        LOG.info("Connecting to Kafka port {}", kafkaPort);
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:" + kafkaPort);
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
+        props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_PARTITIONER);
+        props.put(ProducerConfig.ACKS_CONFIG, "1");
+        return props;
     }
 
     @Override
