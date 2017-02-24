@@ -45,6 +45,9 @@ public class SalesforceEndpoint extends DefaultEndpoint {
     @UriParam
     private final SalesforceEndpointConfig config;
 
+    @UriParam(label = "consumer", description = "The replayId value to use when subscribing")
+    private Long replayId;
+
     public SalesforceEndpoint(String uri, SalesforceComponent salesforceComponent,
                               SalesforceEndpointConfig config, OperationName operationName, String topicName) {
         super(uri, salesforceComponent);
@@ -102,6 +105,14 @@ public class SalesforceEndpoint extends DefaultEndpoint {
 
     public String getTopicName() {
         return topicName;
+    }
+
+    public void setReplayId(final Long replayId) {
+        this.replayId = replayId;
+    }
+
+    public Long getReplayId() {
+        return replayId;
     }
 
     @Override

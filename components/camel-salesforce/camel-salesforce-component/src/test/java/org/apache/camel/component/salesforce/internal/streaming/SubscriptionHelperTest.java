@@ -47,6 +47,7 @@ public class SubscriptionHelperTest {
         final SalesforceComponent component = mock(SalesforceComponent.class);
         final SalesforceEndpoint endpoint = mock(SalesforceEndpoint.class);
 
+        when(endpoint.getReplayId()).thenReturn(null);
         when(endpoint.getComponent()).thenReturn(component);
         when(endpoint.getConfiguration()).thenReturn(config);
         when(component.getConfig()).thenReturn(new SalesforceEndpointConfig());
@@ -76,6 +77,7 @@ public class SubscriptionHelperTest {
         when(component.getConfig()).thenReturn(componentConfig);
 
         final SalesforceEndpoint endpoint = mock(SalesforceEndpoint.class);
+        when(endpoint.getReplayId()).thenReturn(null);
         when(endpoint.getComponent()).thenReturn(component);
         when(endpoint.getConfiguration()).thenReturn(endpointConfig);
 
@@ -92,5 +94,14 @@ public class SubscriptionHelperTest {
 
         assertEquals("Expecting replayId for `my-topic-3` to be 1, as it is component's default when endpoint does not have a default",
                      Optional.of(1L), determineReplayIdFor(endpoint, "my-topic-3"));
+
+        when(endpoint.getReplayId()).thenReturn(6L);
+
+        assertEquals("Expecting replayId for `my-topic-1` to be 6, as it is endpoint configured explicitly on the endpoint",
+                     Optional.of(6L), determineReplayIdFor(endpoint, "my-topic-1"));
+        assertEquals("Expecting replayId for `my-topic-2` to be 6, as it is endpoint configured explicitly on the endpoint",
+                     Optional.of(6L), determineReplayIdFor(endpoint, "my-topic-2"));
+        assertEquals("Expecting replayId for `my-topic-3` to be 6, as it is endpoint configured explicitly on the endpoint",
+                     Optional.of(6L), determineReplayIdFor(endpoint, "my-topic-3"));
     }
 }
