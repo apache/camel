@@ -430,6 +430,8 @@ public class SubscriptionHelper extends ServiceSupport {
     static Optional<Long> determineReplayIdFor(final SalesforceEndpoint endpoint, final String topicName) {
         final String channelName = getChannelName(topicName);
 
+        final Long replayId = endpoint.getReplayId();
+
         final SalesforceComponent component = endpoint.getComponent();
 
         final SalesforceEndpointConfig endpointConfiguration = endpoint.getConfiguration();
@@ -444,7 +446,7 @@ public class SubscriptionHelper extends ServiceSupport {
 
         // the endpoint values have priority over component values, and the default values posteriority
         // over give topic values
-        return Stream.of(endpointReplayId, componentReplayId, endpointDefaultReplayId, componentDefaultReplayId)
+        return Stream.of(replayId, endpointReplayId, componentReplayId, endpointDefaultReplayId, componentDefaultReplayId)
             .filter(Objects::nonNull).findFirst();
     }
 

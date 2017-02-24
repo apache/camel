@@ -468,7 +468,7 @@ The Salesforce component supports 23 options which are listed below.
 
 
 // endpoint options: START
-The Salesforce component supports 42 endpoint options which are listed below:
+The Salesforce component supports 43 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -513,6 +513,7 @@ The Salesforce component supports 42 endpoint options which are listed below:
 | sObjectSearch | common |  | String | Salesforce SOSL search string
 | updateTopic | common | false | boolean | Whether to update an existing Push Topic when using the Streaming API defaults to false
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| replayId | consumer |  | Long | The replayId value to use when subscribing
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
