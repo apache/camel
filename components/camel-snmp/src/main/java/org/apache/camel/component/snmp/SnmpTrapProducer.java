@@ -48,6 +48,7 @@ public class SnmpTrapProducer extends DefaultProducer {
     private Address targetAddress;
     private USM usm;
     private CommunityTarget target;
+
     public SnmpTrapProducer(SnmpEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
@@ -70,7 +71,6 @@ public class SnmpTrapProducer extends DefaultProducer {
         this.target.setRetries(this.endpoint.getRetries());
         this.target.setTimeout(this.endpoint.getTimeout());
         this.target.setVersion(this.endpoint.getSnmpVersion());
-
     }
     
     @Override
