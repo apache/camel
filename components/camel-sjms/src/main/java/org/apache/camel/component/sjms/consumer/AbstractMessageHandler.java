@@ -75,9 +75,6 @@ public abstract class AbstractMessageHandler implements MessageListener {
             log.debug("Processing Exchange.id:{}", exchange.getExchangeId());
 
             if (isTransacted()) {
-                if (synchronization != null) {
-                    exchange.addOnCompletion(synchronization);
-                }
                 if (isSharedJMSSession()) {
                     // Propagate a JMS Session as an initiator if sharedJMSSession is enabled
                     exchange.getIn().setHeader(SjmsConstants.JMS_SESSION, getSession());
@@ -87,6 +84,11 @@ public abstract class AbstractMessageHandler implements MessageListener {
                 if (isTransacted() || isSynchronous()) {
                     log.debug("Handling synchronous message: {}", exchange.getIn().getBody());
                     handleMessage(exchange);
+                    if (exchange.isFailed()) {
+                        synchronization.onFailure(exchange);
+                    } else {
+                        synchronization.onComplete(exchange);
+                    }
                 } else {
                     log.debug("Handling asynchronous message: {}", exchange.getIn().getBody());
                     executor.execute(new Runnable() {
