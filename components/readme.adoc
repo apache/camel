@@ -874,7 +874,7 @@ Number of Miscellaneous Components: 35
 
 | link:camel-ruby/src/main/docs/ruby.adoc[Ruby] (camel-ruby) | 1.0 | *deprecated* Camel Ruby DSL
 
-| link:camel-rx/src/main/docs/rx.adoc[RX] (camel-rx) | 2.11 | Camel Reactive using RxJava library
+| link:camel-rx/src/main/docs/rx.adoc[RX] (camel-rx) | 2.11 | *deprecated* Camel Reactive using RxJava library
 
 | link:camel-scala/src/main/docs/scala.adoc[Scala] (camel-scala) | 1.4 | Camel Scala DSL
 
