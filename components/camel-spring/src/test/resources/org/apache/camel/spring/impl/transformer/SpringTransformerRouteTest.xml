@@ -63,6 +63,7 @@
                 <throwException exceptionType="java.lang.Exception" message="expected XOrder object but was '${body}'"/>
             </when>
             <setBody><constant>response</constant></setBody>
+            <setProperty propertyName="CamelInputType"><constant>java:java.lang.String</constant></setProperty>
             <to uri="mock:xyzresult"/>
         </route>
         

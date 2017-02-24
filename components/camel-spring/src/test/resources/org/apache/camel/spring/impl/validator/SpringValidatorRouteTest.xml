@@ -38,7 +38,7 @@
             <inputType urn="json:JsonXOrder" validate="true"/>
             <outputType urn="json:JsonXOrderResponse"/>
             <setBody><constant>{name:XOrderResponse}</constant></setBody>
-            <setProperty propertyName="CamelOutputType"><constant>json:JsonXOrderResponse</constant></setProperty>
+            <setProperty propertyName="CamelInputType"><constant>json:JsonXOrderResponse</constant></setProperty>
         </route>
 
         <route>
@@ -49,7 +49,7 @@
                 <simple>${exchangeProperty.validator-invoked} == null</simple>
             </validate>
             <setBody><constant>&lt;XOrderResponse/&gt;</constant></setBody>
-            <setProperty propertyName="CamelOutputType"><constant>xml:XmlXOrderResponse</constant></setProperty>
+            <setProperty propertyName="CamelInputType"><constant>xml:XmlXOrderResponse</constant></setProperty>
         </route>
         
         <route>
@@ -60,7 +60,7 @@
                 <simple>${exchangeProperty.validator-invoked} == 'org.apache.camel.impl.validator.ValidatorRouteTest$OtherXOrderValidator'</simple>
             </validate>
             <setBody><constant>name=XOrderResponse</constant></setBody>
-            <setProperty propertyName="CamelOutputType"><constant>other:OtherXOrderResponse</constant></setProperty>
+            <setProperty propertyName="CamelInputType"><constant>other:OtherXOrderResponse</constant></setProperty>
         </route>
         
     </camelContext>

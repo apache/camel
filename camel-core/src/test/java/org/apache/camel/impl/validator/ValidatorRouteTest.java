@@ -102,7 +102,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
                     .inputTypeWithValidate("json:JsonXOrder")
                     .outputType("json:JsonXOrderResponse")
                     .setBody(simple("{name:XOrderResponse}"))
-                    .setProperty(Exchange.OUTPUT_TYPE, constant("json:JsonXOrderResponse"));
+                    .setProperty(Exchange.INPUT_TYPE, constant("json:JsonXOrderResponse"));
                 
                 context.addComponent("myxml", new MyXmlComponent());
                 validator()
@@ -113,7 +113,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
                     .outputTypeWithValidate("xml:XmlXOrderResponse")
                     .validate(exchangeProperty(VALIDATOR_INVOKED).isNull())
                     .setBody(simple("<XOrderResponse/>"))
-                    .setProperty(Exchange.OUTPUT_TYPE, constant("xml:XmlXOrderResponse"));
+                    .setProperty(Exchange.INPUT_TYPE, constant("xml:XmlXOrderResponse"));
                 
                 validator()
                     .type("other:OtherXOrder")
@@ -126,7 +126,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
                     .outputTypeWithValidate("other:OtherXOrderResponse")
                     .validate(exchangeProperty(VALIDATOR_INVOKED).isEqualTo(OtherXOrderValidator.class))
                     .setBody(simple("name=XOrderResponse"))
-                    .setProperty(Exchange.OUTPUT_TYPE, constant("other:OtherXOrderResponse"));
+                    .setProperty(Exchange.INPUT_TYPE, constant("other:OtherXOrderResponse"));
             }
         };
     }

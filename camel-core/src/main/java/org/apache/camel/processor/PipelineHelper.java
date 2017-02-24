@@ -110,6 +110,10 @@ public final class PipelineHelper {
         if (answer.hasOut()) {
             answer.setIn(answer.getOut());
             answer.setOut(null);
+            if (answer.hasProperties() && answer.getProperties().containsKey(Exchange.OUTPUT_TYPE)) {
+                answer.setProperty(Exchange.INPUT_TYPE, answer.getProperty(Exchange.OUTPUT_TYPE));
+                answer.removeProperty(Exchange.OUTPUT_TYPE);
+            }
         }
         return answer;
     }
