@@ -464,7 +464,7 @@
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
     <!-- should be in-sync with deltaspike -->
     <openwebbeans1-version>1.2.7</openwebbeans1-version>
-    <openwebbeans-version>1.7.0</openwebbeans-version>
+    <openwebbeans-version>1.7.2</openwebbeans-version>
     <oauth-provider-bundle-version>20100527_1</oauth-provider-bundle-version>
     <okclient-version>3.4.1</okclient-version>
     <okclient-bundle-version>3.4.1_1</okclient-bundle-version>
