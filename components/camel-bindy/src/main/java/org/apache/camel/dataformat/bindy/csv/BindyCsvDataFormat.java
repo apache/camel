@@ -36,6 +36,9 @@ import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,6 +109,26 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         }
     }
 
+    private void bindAndLink(final List<Map<String, Object>> models, final List<String> result, final int count) 
+            throws Exception {
+
+        final BindyCsvFactory factory = (BindyCsvFactory) getFactory();
+
+        // Pojos of the model
+        final Map<String, Object> model = factory.factory();
+
+        // Bind data from CSV record with model classes
+        factory.bind(result, model, count);
+
+        // Link objects together
+        factory.link(model);
+
+        LOG.debug("Graph of objects created: {}", model);
+
+        // Add objects graph to the list
+        models.add(model);
+    }
+
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         BindyCsvFactory factory = (BindyCsvFactory)getFactory();
         ObjectHelper.notNull(factory, "not instantiated");
@@ -113,86 +136,79 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         // List of Pojos
         List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
 
-        // Pojos of the model
-        Map<String, Object> model;
+        try (InputStreamReader in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange))) {
+            int count = 0;
 
-        InputStreamReader in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
+            if (factory.isMultiLine()) {
+                try (final CSVParser parser = new CSVParser(in, factory.getSkipFirstLine() ? CSVFormat.RFC4180.withFirstRecordAsHeader()
+                                                                                           : CSVFormat.RFC4180)) {
 
-        // Scanner is used to read big file
-        Scanner scanner = new Scanner(in);
+                    final Iterator<CSVRecord> csvRecords = parser.iterator();
+                    while (csvRecords.hasNext()) {
+                        final CSVRecord csvRecord = csvRecords.next();
+                        final Iterator<String> iterator = csvRecord.iterator();
+                        final List<String> result = new ArrayList<String>();
+                        iterator.forEachRemaining(result::add);
 
-        // Retrieve the separator defined to split the record
-        String separator = factory.getSeparator();
-        String quote = factory .getQuote();
-        ObjectHelper.notNull(separator, "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
-
-        int count = 0;
-        try {
-            // If the first line of the CSV file contains columns name, then we
-            // skip this line
-            if (factory.getSkipFirstLine()) {
-                // Check if scanner is empty
-                if (scanner.hasNextLine()) {
-                    scanner.nextLine();
-                }
-            }
-
-            while (scanner.hasNextLine()) {
-
-                // Read the line
-                String line = scanner.nextLine().trim();
-
-                if (ObjectHelper.isEmpty(line)) {
-                    // skip if line is empty
-                    continue;
+                        bindAndLink(models, result, ++count);
+                    }
                 }
 
-                // Increment counter
-                count++;
+            } else {
+                // Scanner is used to read big file
+                try (Scanner scanner = new Scanner(in)) {
+                    // Retrieve the separator defined to split the record
+                    String separator = factory.getSeparator();
+                    String quote = factory .getQuote();
+                    ObjectHelper.notNull(separator, "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
 
-                // Create POJO where CSV data will be stored
-                model = factory.factory();
-
-                // Split the CSV record according to the separator defined in
-                // annotated class @CSVRecord
-                String[] tokens = line.split(separator, factory.getAutospanLine() ? factory.getMaxpos() : -1);
-                List<String> result = Arrays.asList(tokens);
-                // must unquote tokens before use
-                result = unquoteTokens(result, separator, quote);
-
-                if (result.size() == 0 || result.isEmpty()) {
-                    throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
-                } else {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Size of the record splitted : {}", result.size());
+                    if (factory.getSkipFirstLine()) {
+                        // Check if scanner is empty
+                        if (scanner.hasNextLine()) {
+                            scanner.nextLine();
+                        }
                     }
 
-                    // Bind data from CSV record with model classes
-                    factory.bind(result, model, count);
+                    while (scanner.hasNextLine()) {
+                        // Read the line
+                        String line = scanner.nextLine().trim();
 
-                    // Link objects together
-                    factory.link(model);
+                        if (ObjectHelper.isEmpty(line)) {
+                            // skip if line is empty
+                            continue;
+                        }
 
-                    // Add objects graph to the list
-                    models.add(model);
+                        // Increment counter
+                        count++;
 
-                    LOG.debug("Graph of objects created: {}", model);
+                        // Split the CSV record according to the separator defined in
+                        // annotated class @CSVRecord
+                        String[] tokens = line.split(separator, factory.getAutospanLine() ? factory.getMaxpos() : -1);
+                        List<String> result = Arrays.asList(tokens);
+                        // must unquote tokens before use
+                        result = unquoteTokens(result, separator, quote);
+
+                        if (result.size() == 0 || result.isEmpty()) {
+                            throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
+                        } else {
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Size of the record splitted : {}", result.size());
+                            }
+
+                            bindAndLink(models, result, count);
+                        }
+                    }
                 }
             }
-
-            // BigIntegerFormatFactory if models list is empty or not
-            // If this is the case (correspond to an empty stream, ...)
-            if (models.size() == 0) {
-                throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
-            } else {
-                return extractUnmarshalResult(models);
-            }
-
-        } finally {
-            scanner.close();
-            IOHelper.close(in, "in", LOG);
         }
 
+        // BigIntegerFormatFactory if models list is empty or not
+        // If this is the case (correspond to an empty stream, ...)
+        if (models.size() == 0) {
+            throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
+        } else {
+            return extractUnmarshalResult(models);
+        }
     }
 
     /**
