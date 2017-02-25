@@ -38,17 +38,16 @@ import org.apache.camel.util.EndpointHelper;
 
 @UriParams
 public class JCacheConfiguration {
-    @UriParam(label = "advanced")
-    @Metadata(required = "true")
+    @UriParam(label = "common")
     private String cachingProvider;
 
-    @UriParam(label = "advanced")
+    @UriParam
     private Configuration cacheConfiguration;
 
-    @UriParam(label = "advanced")
+    @UriParam
     private Properties cacheConfigurationProperties;
 
-    @UriParam(label = "advanced")
+    @UriParam
     private String configurationUri;
 
     @UriParam(label = "advanced")
