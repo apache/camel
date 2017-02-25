@@ -60,7 +60,7 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
 
         if (exchange.getException() != null) {
             throw exchange.getException();
-        } else {
+        } else if (exchange.getPattern().isOutCapable()) {
             Message responseMessage = exchange.hasOut() ? exchange.getOut(Message.class) : exchange.getIn(Message.class);
             if (responseMessage != null) {
                 Source responseBody = responseMessage.getBody(Source.class);
