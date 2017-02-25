@@ -173,7 +173,7 @@ public class SchemaReader {
         if (getResourceResolver() != null) {
             factory.setResourceResolver(getResourceResolver());
         }  
-        if (!Boolean.parseBoolean(camelContext.getGlobalOptions().get(ACCESS_EXTERNAL_DTD))) {
+        if (camelContext != null && !Boolean.parseBoolean(camelContext.getGlobalOptions().get(ACCESS_EXTERNAL_DTD))) {
             try {
                 factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
             } catch (SAXException e) {
