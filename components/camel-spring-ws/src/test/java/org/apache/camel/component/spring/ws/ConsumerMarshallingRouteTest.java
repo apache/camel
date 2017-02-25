@@ -57,15 +57,7 @@ public class ConsumerMarshallingRouteTest extends CamelTestSupport {
 
     @Test
     public void consumeWebserviceWithPojoRequest() throws Exception {
-        QuoteRequest request = new QuoteRequest();
-        request.setSymbol("GOOG");
-
-        Object result = template.requestBody("direct:webservice-marshall", request);
-
-        assertNotNull(result);
-        assertTrue(result instanceof String);
-        String resultMessage = (String) result;
-        assertTrue(resultMessage.contains("Google Inc."));
+        consumePojoRequestStringResponseWithEnpoint("direct:webservice-marshall");
     }
 
     @Test
@@ -88,23 +80,24 @@ public class ConsumerMarshallingRouteTest extends CamelTestSupport {
 
         Object result = template.requestBody("direct:webservice-marshall-asinonly", request);
 
+        assertNull(result);
+    }
+    
+    @Test
+    public void consumeWebserviceWithPojoRequestAsIn() throws Exception {
+        consumePojoRequestStringResponseWithEnpoint("direct:webservice-marshall-asin");
+    }
+    
+    private void consumePojoRequestStringResponseWithEnpoint(String endpoint) {
+        QuoteRequest request = new QuoteRequest();
+        request.setSymbol("GOOG");
+
+        Object result = template.requestBody(endpoint, request);
+
         assertNotNull(result);
         assertTrue(result instanceof String);
         String resultMessage = (String) result;
         assertTrue(resultMessage.contains("Google Inc."));
-    }
-
-    @Test
-    public void consumeWebserviceWithPojoRequestAndPojoResponseAsInOnly() throws Exception {
-        QuoteRequest request = new QuoteRequest();
-        request.setSymbol("GOOG");
-
-        Object result = template.requestBody("direct:webservice-marshall-unmarshall-asinonly", request);
-
-        assertNotNull(result);
-        assertTrue(result instanceof QuoteResponse);
-        QuoteResponse quoteResponse = (QuoteResponse) result;
-        assertEquals("Google Inc.", quoteResponse.getName());
     }
 
     @Override
@@ -137,16 +130,20 @@ public class ConsumerMarshallingRouteTest extends CamelTestSupport {
                         .marshal(jaxb)
                         .to("spring-ws:http://localhost/?soapAction=http://www.stockquotes.edu/GetQuoteAsInOnly&webServiceTemplate=#webServiceTemplate")
                         .convertBodyTo(String.class);
-
-                // request webservice
-                from("direct:webservice-marshall-unmarshall-asinonly")
-                        .marshal(jaxb)
-                        .to("spring-ws:http://localhost/?soapAction=http://www.stockquotes.edu/GetQuoteAsInOnly&webServiceTemplate=#webServiceTemplate")
-                        .unmarshal(jaxb);
                 
                 // provide web service
-                from("spring-ws:soapaction:http://www.stockquotes.edu/GetQuoteAsInOnly?endpointMapping=#endpointMapping").setExchangePattern(ExchangePattern.InOnly).process(
-                        new StockQuoteResponseProcessor());
+                from("spring-ws:soapaction:http://www.stockquotes.edu/GetQuoteAsInOnly?endpointMapping=#endpointMapping").setExchangePattern(ExchangePattern.InOnly)
+                                                                                                                         .process(new StockQuoteResponseProcessor());
+                
+                // request webservice
+                from("direct:webservice-marshall-asin")
+                        .marshal(jaxb)
+                        .to("spring-ws:http://localhost/?soapAction=http://www.stockquotes.edu/GetQuoteAsIn&webServiceTemplate=#webServiceTemplate")
+                        .convertBodyTo(String.class);
+                
+                // provide web service
+                from("spring-ws:soapaction:http://www.stockquotes.edu/GetQuoteAsIn?endpointMapping=#endpointMapping").setHeader("setin", constant("true"))
+                                                                                                                         .process(new StockQuoteResponseProcessor());                
                 
                 
             }
