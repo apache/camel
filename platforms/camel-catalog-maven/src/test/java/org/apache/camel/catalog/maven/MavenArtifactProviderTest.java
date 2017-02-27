@@ -17,6 +17,7 @@
 package org.apache.camel.catalog.maven;
 
 import java.util.List;
+import java.util.Set;
 
 import junit.framework.TestCase;
 import org.apache.camel.catalog.CamelCatalog;
@@ -35,8 +36,8 @@ public class MavenArtifactProviderTest extends TestCase {
 
         int before = camelCatalog.findComponentNames().size();
 
-        boolean found = provider.addArtifactToCatalog(camelCatalog, null, "org.apache.camel", "dummy-component", camelCatalog.getCatalogVersion());
-        assertTrue(found);
+        Set<String> names = provider.addArtifactToCatalog(camelCatalog, null, "org.apache.camel", "dummy-component", camelCatalog.getCatalogVersion());
+        assertTrue(names.contains("dummy"));
 
         int after = camelCatalog.findComponentNames().size();
 
@@ -53,8 +54,8 @@ public class MavenArtifactProviderTest extends TestCase {
         List<ConnectorDto> list = camelConnectorCatalog.findConnector("foo", false);
         assertEquals(0, list.size());
 
-        boolean found = provider.addArtifactToCatalog(camelCatalog, camelConnectorCatalog, "org.apache.camel", "myfoo-connector", camelCatalog.getCatalogVersion());
-        assertTrue(found);
+        Set<String> names = provider.addArtifactToCatalog(camelCatalog, camelConnectorCatalog, "org.apache.camel", "myfoo-connector", camelCatalog.getCatalogVersion());
+        assertTrue(names.contains("MyFoo"));
 
         int after = camelCatalog.findComponentNames().size();
 
@@ -65,4 +66,5 @@ public class MavenArtifactProviderTest extends TestCase {
         assertEquals("MyFoo", list.get(0).getName());
         assertTrue(camelCatalog.findComponentNames().contains("my-foo"));
     }
+
 }

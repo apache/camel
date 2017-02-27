@@ -17,6 +17,7 @@
 package org.apache.camel.catalog.rest;
 
 import java.util.List;
+import java.util.Set;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -110,11 +111,11 @@ public class CamelConnectorCatalogRest {
 
     @POST
     @Path("/addConnectorFromMavenArtifact/{groupId}/{artifactId}/{version}")
-    @Produces("text/plain")
-    @ApiOperation(value = "Downloads the Maven artifact and scan for custom Camel connectors which will be added to the catalog")
-    public boolean addConnectorFromMavenArtifact(@ApiParam("The Maven groupId") @PathParam("groupId") String groupId,
-                                                 @ApiParam("The Maven artifactId") @PathParam("artifactId") String artifactId,
-                                                 @ApiParam("The Maven version") @PathParam("version") String version) {
+    @Produces("application/json")
+    @ApiOperation(value = "Downloads the Maven artifact and scan for custom Camel connectors which will be added to the catalog and returns the names of the found connectors")
+    public Set<String> addConnectorFromMavenArtifact(@ApiParam("The Maven groupId") @PathParam("groupId") String groupId,
+                                                     @ApiParam("The Maven artifactId") @PathParam("artifactId") String artifactId,
+                                                     @ApiParam("The Maven version") @PathParam("version") String version) {
         return maven.addArtifactToCatalog(null, catalog, groupId, artifactId, version);
     }
 

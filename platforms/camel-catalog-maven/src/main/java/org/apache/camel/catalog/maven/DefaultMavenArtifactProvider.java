@@ -18,8 +18,10 @@ package org.apache.camel.catalog.maven;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,8 +53,10 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
     }
 
     @Override
-    public boolean addArtifactToCatalog(CamelCatalog camelCatalog, CamelConnectorCatalog camelConnectorCatalog,
-                                        String groupId, String artifactId, String version) {
+    public Set<String> addArtifactToCatalog(CamelCatalog camelCatalog, CamelConnectorCatalog camelConnectorCatalog,
+                                            String groupId, String artifactId, String version) {
+        final Set<String> names = new LinkedHashSet<>();
+
         try {
             Grape.setEnableAutoDownload(true);
 
@@ -68,22 +72,21 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
             Grape.grab(param);
 
             // the classloader can load content from the downloaded JAR
-            boolean found = false;
             if (camelCatalog != null) {
-                found |= scanCamelComponents(camelCatalog, classLoader);
+                scanCamelComponents(camelCatalog, classLoader, names);
             }
             if (camelConnectorCatalog != null) {
-                found |= scanCamelConnectors(camelConnectorCatalog, classLoader, groupId, artifactId, version);
+                scanCamelConnectors(camelConnectorCatalog, classLoader, groupId, artifactId, version, names);
             }
 
-            return found;
         } catch (Exception e) {
-            return false;
+            LOG.warn("Error during add components from artifact " + groupId + ":" + artifactId + ":" + version + " due " + e.getMessage(), e);
         }
+
+        return names;
     }
 
-    protected boolean scanCamelComponents(CamelCatalog camelCatalog, ClassLoader classLoader) {
-        boolean found = false;
+    protected void scanCamelComponents(CamelCatalog camelCatalog, ClassLoader classLoader, Set<String> names) {
         // is there any custom Camel components in this library?
         Properties properties = loadComponentProperties(classLoader);
         if (properties != null) {
@@ -99,20 +102,18 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
                             if (json != null) {
                                 LOG.debug("Adding component: {}", scheme);
                                 camelCatalog.addComponent(scheme, javaType, json);
-                                found = true;
+                                names.add(scheme);
                             }
                         }
                     }
                 }
             }
         }
-        return found;
     }
 
-    protected boolean scanCamelConnectors(CamelConnectorCatalog camelConnectorCatalog, ClassLoader classLoader,
-                                          String groupId, String artifactId, String version) {
-        boolean found = false;
-
+    protected void scanCamelConnectors(CamelConnectorCatalog camelConnectorCatalog, ClassLoader classLoader,
+                                          String groupId, String artifactId, String version,
+                                          Set<String> names) {
         String[] json = loadConnectorJSonSchema(classLoader);
         if (json != null) {
             if (!camelConnectorCatalog.hasConnector(groupId, artifactId, version)) {
@@ -132,13 +133,12 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
                     camelConnectorCatalog.addConnector(groupId, artifactId, version,
                         name, description, csb.toString(), json[0], json[1]);
 
-                    found = true;
+                    names.add(name);
                 } catch (Throwable e) {
                     LOG.warn("Error parsing Connector JSon due " + e.getMessage(), e);
                 }
             }
         }
-        return found;
     }
 
 }
