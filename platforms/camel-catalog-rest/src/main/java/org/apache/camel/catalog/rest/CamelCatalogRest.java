@@ -19,6 +19,7 @@ package org.apache.camel.catalog.rest;
 import java.util.List;
 import java.util.Set;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -28,6 +29,8 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.catalog.maven.DefaultMavenArtifactProvider;
+import org.apache.camel.catalog.maven.MavenArtifactProvider;
 
 /**
  * A REST based {@link CamelCatalog} service as a JAX-RS resource class.
@@ -37,6 +40,7 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 public class CamelCatalogRest {
 
     private CamelCatalog catalog = new DefaultCamelCatalog(true);
+    private MavenArtifactProvider maven = new DefaultMavenArtifactProvider();
 
     public CamelCatalog getCatalog() {
         return catalog;
@@ -282,6 +286,24 @@ public class CamelCatalogRest {
     @ApiOperation(value = "Reports a summary what the catalog contains in JSon")
     public String summaryAsJson() {
         return catalog.summaryAsJson();
+    }
+
+    @POST
+    @Path("/addMavenRepository/{name}/{url}")
+    @ApiOperation(value = "Adds a third party Maven repository to use for downloading Maven artifacts")
+    public void addMavenRepository(@ApiParam("The name of the Maven repository") @PathParam("name") String name,
+                                   @ApiParam("The URL of the Maven repository") @PathParam("url") String url) {
+        maven.addMavenRepository(name, url);
+    }
+
+    @POST
+    @Path("/addComponentFromMavenArtifact/{groupId}/{artifactId}/{version}")
+    @Produces("text/plain")
+    @ApiOperation(value = "Downloads the Maven artifact and scan for custom Camel components which will be added to the catalog")
+    public boolean addComponentFromMavenArtifact(@ApiParam("The Maven groupId") @PathParam("groupId") String groupId,
+                                                 @ApiParam("The Maven artifactId") @PathParam("artifactId") String artifactId,
+                                                 @ApiParam("The Maven version") @PathParam("version") String version) {
+        return maven.addArtifactToCatalog(catalog, null, groupId, artifactId, version);
     }
 
 }

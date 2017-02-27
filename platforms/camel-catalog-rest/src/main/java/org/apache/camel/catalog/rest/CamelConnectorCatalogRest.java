@@ -18,6 +18,7 @@ package org.apache.camel.catalog.rest;
 
 import java.util.List;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -29,6 +30,8 @@ import io.swagger.annotations.ApiParam;
 import org.apache.camel.catalog.connector.CamelConnectorCatalog;
 import org.apache.camel.catalog.connector.ConnectorDto;
 import org.apache.camel.catalog.connector.DefaultCamelConnectorCatalog;
+import org.apache.camel.catalog.maven.DefaultMavenArtifactProvider;
+import org.apache.camel.catalog.maven.MavenArtifactProvider;
 
 /**
  * A REST based {@link CamelConnectorCatalog} service as a JAX-RS resource class.
@@ -38,6 +41,7 @@ import org.apache.camel.catalog.connector.DefaultCamelConnectorCatalog;
 public class CamelConnectorCatalogRest {
 
     private CamelConnectorCatalog catalog = new DefaultCamelConnectorCatalog();
+    private MavenArtifactProvider maven = new DefaultMavenArtifactProvider();
 
     public CamelConnectorCatalog getCatalog() {
         return catalog;
@@ -94,6 +98,24 @@ public class CamelConnectorCatalogRest {
                                       @ApiParam("Maven version of the connector")
                                       @PathParam("version") String version) {
         return catalog.connectorSchemaJSon(groupId, artifactId, version);
+    }
+
+    @POST
+    @Path("/addMavenRepository/{name}/{url}")
+    @ApiOperation(value = "Adds a third party Maven repository to use for downloading Maven artifacts")
+    public void addMavenRepository(@ApiParam("The name of the Maven repository") @PathParam("name") String name,
+                                   @ApiParam("The URL of the Maven repository") @PathParam("url") String url) {
+        maven.addMavenRepository(name, url);
+    }
+
+    @POST
+    @Path("/addConnectorFromMavenArtifact/{groupId}/{artifactId}/{version}")
+    @Produces("text/plain")
+    @ApiOperation(value = "Downloads the Maven artifact and scan for custom Camel connectors which will be added to the catalog")
+    public boolean addConnectorFromMavenArtifact(@ApiParam("The Maven groupId") @PathParam("groupId") String groupId,
+                                                 @ApiParam("The Maven artifactId") @PathParam("artifactId") String artifactId,
+                                                 @ApiParam("The Maven version") @PathParam("version") String version) {
+        return maven.addArtifactToCatalog(null, catalog, groupId, artifactId, version);
     }
 
 }
