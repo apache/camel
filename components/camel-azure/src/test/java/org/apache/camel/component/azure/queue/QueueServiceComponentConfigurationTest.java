@@ -59,6 +59,18 @@ public class QueueServiceComponentConfigurationTest extends CamelTestSupport {
         doTestCreateEndpointWithMinConfig(endpoint, false);
     }
     
+    @Test
+    public void testCreateEndpointWithMaxConfig() throws Exception {
+        registerCredentials();
+        
+        QueueServiceComponent component = new QueueServiceComponent(context);
+        QueueServiceEndpoint endpoint = 
+            (QueueServiceEndpoint) component.createEndpoint("azure-queue://camelazure/testqueue?credentials=#creds"
+                + "&operation=addMessage&queuePrefix=prefix&messageTimeToLive=100&messageVisibilityDelay=10");
+        
+        doTestCreateEndpointWithMaxConfig(endpoint, false);
+    }
+    
     private void doTestCreateEndpointWithMinConfig(QueueServiceEndpoint endpoint, boolean clientExpected)
         throws Exception {
         assertEquals("camelazure", endpoint.getConfiguration().getAccountName());
@@ -70,6 +82,31 @@ public class QueueServiceComponentConfigurationTest extends CamelTestSupport {
             assertNull(endpoint.getConfiguration().getAzureQueueClient());
             assertNotNull(endpoint.getConfiguration().getCredentials());
         }
+        assertEquals(QueueServiceOperations.listQueues, endpoint.getConfiguration().getOperation());
+        
+        assertNull(endpoint.getConfiguration().getQueuePrefix());
+        assertEquals(0, endpoint.getConfiguration().getMessageTimeToLive());
+        assertEquals(0, endpoint.getConfiguration().getMessageVisibilityDelay());
+        createConsumer(endpoint);
+    }
+    
+    private void doTestCreateEndpointWithMaxConfig(QueueServiceEndpoint endpoint, boolean clientExpected)
+        throws Exception {
+        assertEquals("camelazure", endpoint.getConfiguration().getAccountName());
+        assertEquals("testqueue", endpoint.getConfiguration().getQueueName());
+        if (clientExpected) {
+            assertNotNull(endpoint.getConfiguration().getAzureQueueClient());
+            assertNull(endpoint.getConfiguration().getCredentials());
+        } else {
+            assertNull(endpoint.getConfiguration().getAzureQueueClient());
+            assertNotNull(endpoint.getConfiguration().getCredentials());
+        }
+        assertEquals(QueueServiceOperations.addMessage, endpoint.getConfiguration().getOperation());
+        
+        assertEquals("prefix", endpoint.getConfiguration().getQueuePrefix());
+        assertEquals(100, endpoint.getConfiguration().getMessageTimeToLive());
+        assertEquals(10, endpoint.getConfiguration().getMessageVisibilityDelay());
+        
         createConsumer(endpoint);
     }
     

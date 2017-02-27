@@ -21,7 +21,7 @@ In most cases a blobName is required and the blob will be created if it does not
  You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-For example in order to download a blob content to/from the public block blob `blockBlob` 
+For example in order to download a blob content from the public block blob `blockBlob` 
 located on the `container1` in the `camelazure` storage account, use the following snippet:
 
 [source,java]
@@ -91,8 +91,6 @@ You have to provide the containerOrBlob name and the credentials if the private 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Header |Type |Description
-
-|`CamelAwsS3BucketName` |`String` |The bucket Name which this object will be stored or which will be used for the current operation
 
 |=======================================================================
 
