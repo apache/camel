@@ -85,7 +85,7 @@ their `pom.xml` for this component:
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-test-cdi</artifactId>
-    <scope>test</test>
+    <scope>test</scope>
     <version>x.x.x</version>
     <!-- use the same version as your Camel core version -->
 </dependency>
