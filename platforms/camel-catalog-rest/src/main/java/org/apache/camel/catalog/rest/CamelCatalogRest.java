@@ -298,11 +298,11 @@ public class CamelCatalogRest {
 
     @POST
     @Path("/addComponentFromMavenArtifact/{groupId}/{artifactId}/{version}")
-    @Produces("text/plain")
-    @ApiOperation(value = "Downloads the Maven artifact and scan for custom Camel components which will be added to the catalog")
-    public boolean addComponentFromMavenArtifact(@ApiParam("The Maven groupId") @PathParam("groupId") String groupId,
-                                                 @ApiParam("The Maven artifactId") @PathParam("artifactId") String artifactId,
-                                                 @ApiParam("The Maven version") @PathParam("version") String version) {
+    @Produces("application/json")
+    @ApiOperation(value = "Downloads the Maven artifact and scan for custom Camel components which will be added to the catalog and returns the names of the found components")
+    public Set<String> addComponentFromMavenArtifact(@ApiParam("The Maven groupId") @PathParam("groupId") String groupId,
+                                                     @ApiParam("The Maven artifactId") @PathParam("artifactId") String artifactId,
+                                                     @ApiParam("The Maven version") @PathParam("version") String version) {
         return maven.addArtifactToCatalog(catalog, null, groupId, artifactId, version);
     }
 

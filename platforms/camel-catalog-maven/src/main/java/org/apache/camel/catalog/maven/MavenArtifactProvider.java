@@ -16,6 +16,8 @@
  */
 package org.apache.camel.catalog.maven;
 
+import java.util.Set;
+
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.connector.CamelConnectorCatalog;
 
@@ -41,9 +43,9 @@ public interface MavenArtifactProvider {
      * @param groupId               Maven group id
      * @param artifactId            Maven artifact id
      * @param version               Maven version
-     * @return <tt>true</tt> if anything was added to the catalog, <tt>false</tt> if not.
+     * @return the names of the components that was added, or an empty set if none found or they already exists in the catalog
      */
-    boolean addArtifactToCatalog(CamelCatalog camelCatalog, CamelConnectorCatalog camelConnectorCatalog,
-                                 String groupId, String artifactId, String version);
+    Set<String> addArtifactToCatalog(CamelCatalog camelCatalog, CamelConnectorCatalog camelConnectorCatalog,
+                                     String groupId, String artifactId, String version);
 
 }
