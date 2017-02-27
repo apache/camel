@@ -40,6 +40,11 @@ public class MemoryConnectorDataStore implements ConnectorDataStore {
     }
 
     @Override
+    public boolean hasConnector(ConnectorDto dto) {
+        return store.contains(new ConnectorDetails(dto, null, null));
+    }
+
+    @Override
     public void removeConnector(ConnectorDto dto) {
         store.remove(new ConnectorDetails(dto, null, null));
     }

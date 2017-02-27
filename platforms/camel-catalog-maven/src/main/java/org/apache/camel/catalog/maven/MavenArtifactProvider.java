@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,6 +17,7 @@
 package org.apache.camel.catalog.maven;
 
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.connector.CamelConnectorCatalog;
 
 /**
  * Provider which allows downloading artifact using Maven and add content to the {@link CamelCatalog}.
@@ -33,13 +34,16 @@ public interface MavenArtifactProvider {
 
     /**
      * Downloads the artifact using the Maven coordinates and scans the JAR for Camel components
-     * which will be added to the CamelCatalog.
+     * which will be added to the CamelCatalog or CamelConnectorCatalog.
      *
-     * @param camelCatalog The Camel Catalog
-     * @param groupId      Maven group id
-     * @param artifactId   Maven artifact id
-     * @param version      Maven version
+     * @param camelCatalog          The Camel Catalog
+     * @param camelConnectorCatalog The Camel Connector Catalog
+     * @param groupId               Maven group id
+     * @param artifactId            Maven artifact id
+     * @param version               Maven version
      * @return <tt>true</tt> if anything was added to the catalog, <tt>false</tt> if not.
      */
-    boolean addArtifactToCatalog(CamelCatalog camelCatalog, String groupId, String artifactId, String version);
+    boolean addArtifactToCatalog(CamelCatalog camelCatalog, CamelConnectorCatalog camelConnectorCatalog,
+                                 String groupId, String artifactId, String version);
+
 }

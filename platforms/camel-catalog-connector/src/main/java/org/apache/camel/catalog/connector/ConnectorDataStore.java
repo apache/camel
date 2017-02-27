@@ -33,6 +33,13 @@ public interface ConnectorDataStore {
     void addConnector(ConnectorDto dto, String connectorJson, String connectorSchemaJson);
 
     /**
+     * Is the connector already registered in the catalog
+     *
+     * @param dto  the connector dto
+     */
+    boolean hasConnector(ConnectorDto dto);
+
+    /**
      * Removes the connector from the catalog
      *
      * @param dto  the connector dto

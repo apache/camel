@@ -28,9 +28,17 @@ public class DefaultCamelConnectorCatalog implements CamelConnectorCatalog {
     }
 
     @Override
+    public boolean hasConnector(String groupId, String artifactId, String version) {
+        ConnectorDto dto = new ConnectorDto();
+        dto.setGroupId(groupId);
+        dto.setArtifactId(artifactId);
+        dto.setVersion(version);
+        return dataStore.hasConnector(dto);
+    }
+
+    @Override
     public void addConnector(String groupId, String artifactId, String version, String name, String description, String labels,
                              String connectorJson, String connectorSchemaJson) {
-
         ConnectorDto dto = new ConnectorDto();
         dto.setGroupId(groupId);
         dto.setArtifactId(artifactId);
@@ -38,18 +46,15 @@ public class DefaultCamelConnectorCatalog implements CamelConnectorCatalog {
         dto.setName(name);
         dto.setDescription(description);
         dto.setLabels(labels);
-
         dataStore.addConnector(dto, connectorJson, connectorSchemaJson);
     }
 
     @Override
     public void removeConnector(String groupId, String artifactId, String version) {
-
         ConnectorDto dto = new ConnectorDto();
         dto.setGroupId(groupId);
         dto.setArtifactId(artifactId);
         dto.setVersion(version);
-
         dataStore.removeConnector(dto);
     }
 
