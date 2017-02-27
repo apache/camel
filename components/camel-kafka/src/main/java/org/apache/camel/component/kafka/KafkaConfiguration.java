@@ -106,8 +106,8 @@ public class KafkaConfiguration {
     //fetch.max.wait.ms
     @UriParam(label = "consumer", defaultValue = "500")
     private Integer fetchWaitMaxMs = 500;
-    @UriParam(label = "consumer")
-    private boolean seekToBeginning;
+    @UriParam(label = "consumer", enums = "beginning,end")
+    private String seekTo;
 
     //Consumer configuration properties
     @UriParam(label = "consumer")
@@ -1305,15 +1305,19 @@ public class KafkaConfiguration {
         this.valueDeserializer = valueDeserializer;
     }
 
-    public boolean isSeekToBeginning() {
-        return seekToBeginning;
+    public String getSeekTo() {
+        return seekTo;
     }
 
     /**
-     * If the option is true, then KafkaConsumer will read from beginning on startup.
+     * Set if KafkaConsumer will read from beginning or end on startup:
+     * beginning : read from beginning
+     * end : read from end
+     * 
+     * This is replacing the earlier property seekToBeginning
      */
-    public void setSeekToBeginning(boolean seekToBeginning) {
-        this.seekToBeginning = seekToBeginning;
+    public void setSeekTo(String seekTo) {
+        this.seekTo = seekTo;
     }
 
     public ExecutorService getWorkerPool() {

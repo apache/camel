@@ -172,11 +172,18 @@ public class KafkaConsumer extends DefaultConsumer {
                             }
                         }
                     }
-                } else if (endpoint.getConfiguration().isSeekToBeginning()) {
-                    LOG.debug("{} is seeking to the beginning on topic {}", threadId, topicName);
-                    // This poll to ensures we have an assigned partition otherwise seek won't work
-                    consumer.poll(100);
-                    consumer.seekToBeginning(consumer.assignment());
+                } else if (endpoint.getConfiguration().getSeekTo() != null) {
+                    if (endpoint.getConfiguration().getSeekTo().equals("beginning")) {
+                        LOG.debug("{} is seeking to the beginning on topic {}", threadId, topicName);
+                        // This poll to ensures we have an assigned partition otherwise seek won't work
+                        consumer.poll(100);
+                        consumer.seekToBeginning(consumer.assignment());
+                    } else if (endpoint.getConfiguration().getSeekTo().equals("end")) {
+                        LOG.debug("{} is seeking to the end on topic {}", threadId, topicName);
+                        // This poll to ensures we have an assigned partition otherwise seek won't work
+                        consumer.poll(100);
+                        consumer.seekToEnd(consumer.assignment());
+                    }
                 }
                 while (isRunAllowed() && !isStoppingOrStopped() && !isSuspendingOrSuspended()) {
                     ConsumerRecords<Object, Object> allRecords = consumer.poll(pollTimeoutMs);
