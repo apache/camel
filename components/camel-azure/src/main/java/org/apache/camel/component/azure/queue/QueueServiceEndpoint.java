@@ -34,16 +34,16 @@ import org.slf4j.LoggerFactory;
 @UriEndpoint(firstVersion = "2.19.0",
              scheme = "azure-queue",
              title = "Azure Storage Queue Service", 
-             syntax = "azure-blob:queueOrMessageUri", 
+             syntax = "azure-blob:containerAndQueueUri", 
              consumerClass = QueueServiceConsumer.class,
              label = "cloud,queue,azure")
 public class QueueServiceEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(QueueServiceEndpoint.class);
     
-    @UriPath(description = "Queue or Message compact Uri")
+    @UriPath(description = "Container Queue compact Uri")
     @Metadata(required = "true")
-    private String queueOrMessageUri; // to support component docs
+    private String containerAndQueueUri; // to support component docs
     @UriParam
     private QueueServiceConfiguration configuration;
 
