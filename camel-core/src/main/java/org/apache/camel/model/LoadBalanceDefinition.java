@@ -235,7 +235,9 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
      * @param halfOpenAfter     time interval in milliseconds for half open state.
      * @param exceptions        exception classes which we want to break if one of them was thrown
      * @return the builder
+     * @deprecated use Hystrix EIP instead which is the popular Netflix implementation of circuit breaker
      */
+    @Deprecated
     public LoadBalanceDefinition circuitBreaker(int threshold, long halfOpenAfter, Class<?>... exceptions) {
         CircuitBreakerLoadBalancerDefinition def = new CircuitBreakerLoadBalancerDefinition();
         def.setExceptionTypes(Arrays.asList(exceptions));
