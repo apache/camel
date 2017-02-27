@@ -31,6 +31,16 @@ public interface CamelConnectorCatalog {
     void setConnectorDataStore(ConnectorDataStore dataStore);
 
     /**
+     * Is the connector already registered in the catalog
+     *
+     * @param groupId               maven group id
+     * @param artifactId            maven artifact id
+     * @param version               maven version
+     * @return whether the catalog has the connector or not
+     */
+    boolean hasConnector(String groupId, String artifactId, String version);
+
+    /**
      * Adds or updates the connector to the catalog
      *
      * @param groupId               maven group id

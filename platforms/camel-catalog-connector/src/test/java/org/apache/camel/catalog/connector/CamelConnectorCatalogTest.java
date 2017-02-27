@@ -16,10 +16,11 @@
  */
 package org.apache.camel.catalog.connector;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class CamelConnectorCatalogTest {
 
@@ -33,6 +34,22 @@ public class CamelConnectorCatalogTest {
             "MyFoo", "Something cool", "foo,timer", null, null);
 
         assertEquals(1, catalog.findConnector(false).size());
+    }
+
+    @Test
+    public void testHasConnector() throws Exception {
+        CamelConnectorCatalog catalog = new DefaultCamelConnectorCatalog();
+
+        assertEquals(0, catalog.findConnector(false).size());
+
+        assertFalse(catalog.hasConnector("org.apache.camel", "myfoo-connector", "2.19.0"));
+
+        catalog.addConnector("org.apache.camel", "myfoo-connector", "2.19.0",
+            "MyFoo", "Something cool", "foo,timer", null, null);
+
+        assertEquals(1, catalog.findConnector(false).size());
+
+        assertTrue(catalog.hasConnector("org.apache.camel", "myfoo-connector", "2.19.0"));
     }
 
     @Test
