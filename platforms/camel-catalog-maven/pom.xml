@@ -43,6 +43,11 @@
       <artifactId>camel-catalog</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+
     <!-- use groovy grape to download JARs as that is easy to use -->
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
