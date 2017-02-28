@@ -296,6 +296,7 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      * @throws Exception is thrown if error occurred
      */
     @ManagedOperation(description = "Returns the JSON schema representation of the endpoint parameters for the given component name")
+    @Deprecated
     String componentParameterJsonSchema(String componentName) throws Exception;
 
     /**
@@ -375,6 +376,7 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      * @throws Exception is thrown if error occurred
      */
     @ManagedOperation(description = "Returns the list of available endpoint paths for the given component name, endpoint properties and completion text")
+    @Deprecated
     List<String> completeEndpointPath(String componentName, Map<String, Object> endpointParameters, String completionText) throws Exception;
 
     /**
