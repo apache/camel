@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.impl.cloud;
 
 import org.apache.camel.CamelContext;
@@ -22,6 +21,7 @@ import org.apache.camel.cloud.LoadBalancer;
 import org.apache.camel.cloud.LoadBalancerFactory;
 
 public class DefaultLoadBalancerFactory implements LoadBalancerFactory {
+
     @Override
     public LoadBalancer newInstance(CamelContext camelContext) throws Exception {
         DefaultLoadBalancer loadBalancer = new DefaultLoadBalancer();

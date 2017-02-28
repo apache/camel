@@ -19,6 +19,7 @@ package org.apache.camel.builder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.impl.validator.ProcessorValidator;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.validator.CustomValidatorDefinition;
 import org.apache.camel.model.validator.EndpointValidatorDefinition;
@@ -58,7 +59,7 @@ public class ValidatorBuilder {
     /**
      * Set the data type using Java class.
      *
-     * @param clazz Java class represents data type
+     * @param type Java class represents data type
      */
     public ValidatorBuilder type(Class<?> type) {
         this.type = new DataType(type).toString();

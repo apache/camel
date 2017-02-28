@@ -21,6 +21,7 @@ package org.apache.camel.cloud;
  * a {@link ServiceChooser}
  */
 public interface ServiceChooserAware {
+
     /**
      * Injects the {@link ServiceChooser}
      *

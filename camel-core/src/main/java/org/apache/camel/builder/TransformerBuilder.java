@@ -93,7 +93,7 @@ public class TransformerBuilder {
     /**
      * Set the 'to' data type using Java class.
      *
-     * @param clazz 'to' Java class
+     * @param to 'to' Java class
      */
     public TransformerBuilder toType(Class<?> to) {
         this.to = new DataType(to).toString();

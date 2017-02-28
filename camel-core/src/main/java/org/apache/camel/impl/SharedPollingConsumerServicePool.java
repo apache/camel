@@ -26,6 +26,7 @@ import org.apache.camel.StaticService;
  *
  * @version 
  */
+@Deprecated
 public class SharedPollingConsumerServicePool extends DefaultPollingConsumerServicePool implements ShutdownableService, StaticService, NonManagedService {
 
     public SharedPollingConsumerServicePool() {

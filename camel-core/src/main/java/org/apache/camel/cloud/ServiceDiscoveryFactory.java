@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
  * @see ServiceDiscovery
  */
 public interface ServiceDiscoveryFactory {
+
     /**
      * Creates an instance of a ServiceDiscovery.
      */

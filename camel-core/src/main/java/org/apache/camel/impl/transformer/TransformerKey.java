@@ -17,7 +17,6 @@
 package org.apache.camel.impl.transformer;
 
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.ValueHolder;

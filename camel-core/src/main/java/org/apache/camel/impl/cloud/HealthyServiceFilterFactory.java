@@ -21,6 +21,7 @@ import org.apache.camel.cloud.ServiceFilter;
 import org.apache.camel.cloud.ServiceFilterFactory;
 
 public class HealthyServiceFilterFactory implements ServiceFilterFactory {
+
     public HealthyServiceFilterFactory() {
     }
 

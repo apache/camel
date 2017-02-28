@@ -24,6 +24,7 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Validator;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,7 @@ public class ProcessorValidator extends Validator {
 
     /**
      * Perform content validation with specified type using Processor.
+     *
      * @param message message to apply validation
      * @param type 'from' data type
      */
@@ -68,7 +70,8 @@ public class ProcessorValidator extends Validator {
     }
 
     /**
-     * Set Processor.
+     * Set processor to use
+     *
      * @param processor Processor
      * @return this ProcessorTransformer instance
      */
@@ -89,6 +92,7 @@ public class ProcessorValidator extends Validator {
 
     @Override
     protected void doStart() throws Exception {
+        ObjectHelper.notNull(processor, "processor", this);
         ServiceHelper.startService(this.processor);
     }
 
