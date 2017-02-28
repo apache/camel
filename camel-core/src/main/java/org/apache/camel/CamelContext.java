@@ -1292,7 +1292,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * Resolve a validator given from/to data type.
      *
-     * @param from the data type
+     * @param type the data type
      * @return the resolved validator, or <tt>null</tt> if not found
      */
     Validator resolveValidator(DataType type);
