@@ -23,7 +23,7 @@ Number of EIPs: 61
 `<choice>` | Routes messages based on a series of predicates
 
 | link:src/main/docs/eips/circuitBreaker-eip.adoc[Circuit Breaker] +
-`<circuitBreaker>` | Circuit break load balancer
+`<circuitBreaker>` | *deprecated* Circuit break load balancer
 
 | link:src/main/docs/eips/convertBodyTo-eip.adoc[Convert Body To] +
 `<convertBodyTo>` | Converts the message body to another type
