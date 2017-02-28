@@ -110,7 +110,7 @@
     <chronicle-network-version>1.7.14</chronicle-network-version>
     <chronicle-queue-version>4.5.27</chronicle-queue-version>
     <chronicle-threads-version>1.7.7</chronicle-threads-version>
-    <chronicle-wire-version>1.7.27</chronicle-wire-version>
+    <chronicle-wire-version>1.7.30</chronicle-wire-version>
     <chunk-templates-version>3.2.4</chunk-templates-version>
     <chunk-templates-bundle-version>3.2.4_1</chunk-templates-bundle-version>
     <classmate-version>1.3.3</classmate-version>
