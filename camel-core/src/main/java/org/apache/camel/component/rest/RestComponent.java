@@ -16,18 +16,38 @@
  */
 package org.apache.camel.component.rest;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RestEndpointConfigurer;
+import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Rest component.
  */
 public class RestComponent extends UriEndpointComponent {
+
+    private static final Set<String> HTTP_METHODS = Collections.unmodifiableSet(new TreeSet<String>(String.CASE_INSENSITIVE_ORDER) {
+        {
+            addAll(Arrays.asList("get", "post", "put", "delete", "patch", "head", "trace", "connect", "options"));
+        }
+    });
 
     @Metadata(label = "common")
     private String componentName;
@@ -42,12 +62,66 @@ public class RestComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        RestEndpoint answer = new RestEndpoint(uri, this);
-        answer.setComponentName(componentName);
-        answer.setApiDoc(apiDoc);
+        final String methodOrComponent = StringHelper.before(remaining, ":");
 
+        if (ObjectHelper.isEmpty(remaining)) {
+            throw new IllegalArgumentException("Invalid syntax. Must be rest:method:path[:uriTemplate] or rest:<component>[:componentSpecific], "
+                + "where uriTemplate is optional and componentSpecific is optional and component specific");
+        }
+
+        final RestEndpoint answer = new RestEndpoint(uri, this);
+        answer.setComponentName(componentName);
+
+        final CamelContext context = getCamelContext();
+        final RestConfiguration restConfiguration = context.getRestConfiguration();
+
+        // if no explicit component name was given, then fallback and use default configured component name
+        if (answer.getComponentName() == null && restConfiguration != null) {
+            String name = restConfiguration.getProducerComponent();
+            if (name == null) {
+                // fallback and use the consumer name
+                name = restConfiguration.getComponent();
+            }
+            answer.setComponentName(name);
+        }
+
+        // if no explicit producer api was given, then fallback and use default configured
+        if (apiDoc == null && restConfiguration != null) {
+            answer.setApiDoc(restConfiguration.getProducerApiDoc());
+        }
+
+        setProperties(answer, parameters);
+        answer.setParameters(parameters);
+
+        // if the URI is in the format `rest:HTTP method:...`
+        // else try to lookup component provided SPI to configure the endpoint
+        if (HTTP_METHODS.contains(methodOrComponent)) {
+            configureClassicEndpoint(answer, uri, remaining, parameters);
+        } else {
+            configureFromSpi(answer, uri, remaining, parameters);
+        }
+
+
+        return answer;
+    }
+
+    /**
+     * Creates the <em>classic</em> {@link Endpoint}, configured from the endpoint URI and parameters.
+     *
+     * @param answer
+     *            {@link RestEndpoint} to configure
+     * @param uri
+     *            the full URI of the endpoint
+     * @param remaining
+     *            the remaining part of the URI without the query parameters or component prefix
+     * @param parameters
+     *            the optional parameters passed in
+     * @return
+     * @throws Exception
+     */
+    protected void configureClassicEndpoint(final RestEndpoint answer, final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
         // if no explicit host was given, then fallback and use default configured host
-        String h = resolveAndRemoveReferenceParameter(parameters, "host", String.class, host);
+        String h = Optional.ofNullable(answer.getHost()).orElse(host);
         if (h == null && getCamelContext().getRestConfiguration() != null) {
             h = getCamelContext().getRestConfiguration().getHost();
             int port = getCamelContext().getRestConfiguration().getPort();
@@ -60,28 +134,28 @@ public class RestComponent extends UriEndpointComponent {
         if (h != null && !(h.startsWith("http://") || h.startsWith("https://"))) {
             h = "http://" + h;
         }
-        answer.setHost(h);
 
-        String query = ObjectHelper.after(uri, "?");
+        if (ObjectHelper.isNotEmpty(h)) {
+            answer.setHost(h);
+        }
+
+        String query = StringHelper.after(uri, "?");
         if (query != null) {
             answer.setQueryParameters(query);
         }
-
-        setProperties(answer, parameters);
-        answer.setParameters(parameters);
 
         if (!remaining.contains(":")) {
             throw new IllegalArgumentException("Invalid syntax. Must be rest:method:path[:uriTemplate] where uriTemplate is optional");
         }
 
-        String method = ObjectHelper.before(remaining, ":");
-        String s = ObjectHelper.after(remaining, ":");
+        String method = StringHelper.before(remaining, ":");
+        String s = StringHelper.after(remaining, ":");
 
         String path;
         String uriTemplate;
         if (s != null && s.contains(":")) {
-            path = ObjectHelper.before(s, ":");
-            uriTemplate = ObjectHelper.after(s, ":");
+            path = StringHelper.before(s, ":");
+            uriTemplate = StringHelper.after(s, ":");
         } else {
             path = s;
             uriTemplate = null;
@@ -94,22 +168,42 @@ public class RestComponent extends UriEndpointComponent {
         answer.setMethod(method);
         answer.setPath(path);
         answer.setUriTemplate(uriTemplate);
+    }
 
-        // if no explicit component name was given, then fallback and use default configured component name
-        if (answer.getComponentName() == null && getCamelContext().getRestConfiguration() != null) {
-            String name = getCamelContext().getRestConfiguration().getProducerComponent();
-            if (name == null) {
-                // fallback and use the consumer name
-                name = getCamelContext().getRestConfiguration().getComponent();
+    protected void configureFromSpi(final RestEndpoint answer, final String uri, final String remaining,
+            final Map<String, Object> parameters) {
+
+        final CamelContext context = getCamelContext();
+
+        final RestEndpointConfigurer configurer;
+
+        final String component = StringHelper.before(remaining, ":");
+        try {
+            final FactoryFinder finder = context.getFactoryFinder(RestEndpoint.RESOURCE_PATH);
+            final Class<?> configurerClass = finder.findClass(component, "configurer.");
+
+            final Injector injector = context.getInjector();
+            final Object configurerInstance = injector.newInstance(configurerClass);
+            if (configurerInstance instanceof RestEndpointConfigurer) {
+                configurer = (RestEndpointConfigurer) configurerInstance;
+            } else {
+                throw new ClassCastException("The specified configurer: `" + configurerClass.getName()
+                    + "` does not implement `" + RestEndpointConfigurer.class.getName()
+                    + "` interface. Check that it does and check your classloading strategy.");
             }
-            answer.setComponentName(name);
-        }
-        // if no explicit producer api was given, then fallback and use default configured
-        if (answer.getApiDoc() == null && getCamelContext().getRestConfiguration() != null) {
-            answer.setApiDoc(getCamelContext().getRestConfiguration().getProducerApiDoc());
+        } catch (ClassNotFoundException | IOException e) {
+            throw new IllegalStateException(
+                    "Cannot find `" + component + "` on classpath to configure endpoint with URI: `" + uri
+                        + "`. Is there a " + component + " on the classpath? Does it contain `"
+                        + RestEndpoint.RESOURCE_PATH + component + "` with `configurer.class` property?", e);
         }
 
-        return answer;
+        final RestConfiguration restConfiguration = context.getRestConfiguration();
+        if (restConfiguration != null) {
+            restConfiguration.applyTo(answer);
+        }
+
+        configurer.configureEndpoint(context, answer, uri, remaining, parameters);
     }
 
     public String getComponentName() {

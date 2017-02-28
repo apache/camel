@@ -14,17 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.swagger;
+package org.apache.camel.spi;
 
-import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Test;
+import java.util.Map;
 
-public class SwaggerRestProducerFactoryTest {
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Producer;
+import org.apache.camel.component.rest.RestEndpoint;
 
-    @Test
-    public void shouldLoadSwaggerPetStoreModel() throws Exception {
-        SwaggerRestProducerFactory factory = new SwaggerRestProducerFactory();
+/**
+ * Allows SPI to plugin a {@link RestEndpointConfigurer} that configures the Camel {@link RestEndpoint} .
+ */
+public interface RestEndpointConfigurer {
 
-        factory.loadSwaggerModel(new DefaultCamelContext(), "petstore.json");
-    }
+    void configureEndpoint(CamelContext context, RestEndpoint endpoint, String uri, String remaining, Map<String, Object> parameters);
+
 }
