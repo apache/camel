@@ -30,7 +30,19 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.PARAMETER})
 public @interface PropertyInject {
+
+    /**
+     * Name of the property
+     */
     String value();
+
+    /**
+     * Default value to use if the property does not exists or has no value
+     */
     String defaultValue() default "";
+
+    /**
+     * Id of {@link CamelContext} to use
+     */
     String context() default "";
 }

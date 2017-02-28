@@ -22,6 +22,7 @@ import java.net.URI;
  * Holds an {@link Endpoint} configuration as a pojo that can be manipulated and validated.
  * Camel endpoint configuration is strongly related to URIs.
  */
+@Deprecated
 public interface EndpointConfiguration {
 
     String URI_SCHEME               = "scheme";

@@ -44,7 +44,19 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR})
 public @interface RoutingSlip {
+
+    /**
+     * Id of {@link CamelContext} to use
+     */
     String context() default "";
+
+    /**
+     * Sets the uri delimiter to use
+     */
     String delimiter() default ",";
+
+    /**
+     * Whether to ignore the invalidate endpoint exception when try to create a producer with that endpoint
+     */
     boolean ignoreInvalidEndpoints() default false;
 }
