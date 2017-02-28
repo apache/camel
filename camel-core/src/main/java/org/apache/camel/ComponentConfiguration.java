@@ -37,6 +37,7 @@ import org.apache.camel.impl.ParameterConfiguration;
  * Other implementations keep all the types as String and there is no validation until you try to create
  * an Endpoint from the values.
  */
+@Deprecated
 public interface ComponentConfiguration {
 
     /**
