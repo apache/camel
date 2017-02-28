@@ -41,7 +41,7 @@ public class KafkaConsumerOffsetRepositoryEmptyTest extends BaseEmbeddedKafkaTes
     @Override
     protected void doPreSetup() throws Exception {
         // Create the topic with 2 partitions + send 10 messages (5 in each partitions)
-        embeddedKafkaCluster.createTopic(TOPIC, 2);
+        kafkaBroker.createTopic(TOPIC, 2);
 
         Properties props = getDefaultProperties();
         producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);

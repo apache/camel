@@ -23,7 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.MemoryStateRepository;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.After;
 import org.junit.Test;
@@ -44,7 +43,7 @@ public class KafkaConsumerOffsetRepositoryResumeTest extends BaseEmbeddedKafkaTe
         producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
 
         // Create the topic with 2 partitions + send 10 messages (5 in each partitions)
-        embeddedKafkaCluster.createTopic(TOPIC, 2);
+        kafkaBroker.createTopic(TOPIC, 2);
         for (int i = 0; i < 10; i++) {
             producer.send(new ProducerRecord<>(TOPIC, i % 2, "key", "message-" + i));
         }
