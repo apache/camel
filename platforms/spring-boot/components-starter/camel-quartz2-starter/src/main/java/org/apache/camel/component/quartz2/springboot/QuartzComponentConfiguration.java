@@ -66,6 +66,12 @@ public class QuartzComponentConfiguration {
      */
     private Boolean prefixInstanceName = true;
     /**
+     * Whether to interrupt jobs on shutdown which forces the scheduler to
+     * shutdown quicker and attempt to interrupt any running jobs. If this is
+     * enabled then any running jobs can fail due to being interrupted.
+     */
+    private Boolean interruptJobsOnShutdown = false;
+    /**
      * To use the custom SchedulerFactory which is used to create the Scheduler.
      */
     @NestedConfigurationProperty
@@ -132,6 +138,14 @@ public class QuartzComponentConfiguration {
 
     public void setPrefixInstanceName(Boolean prefixInstanceName) {
         this.prefixInstanceName = prefixInstanceName;
+    }
+
+    public Boolean getInterruptJobsOnShutdown() {
+        return interruptJobsOnShutdown;
+    }
+
+    public void setInterruptJobsOnShutdown(Boolean interruptJobsOnShutdown) {
+        this.interruptJobsOnShutdown = interruptJobsOnShutdown;
     }
 
     public SchedulerFactory getSchedulerFactory() {

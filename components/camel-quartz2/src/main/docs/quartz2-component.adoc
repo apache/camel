@@ -47,7 +47,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Quartz2 component supports 9 options which are listed below.
+The Quartz2 component supports 10 options which are listed below.
 
 
 
@@ -62,6 +62,7 @@ The Quartz2 component supports 9 options which are listed below.
 | properties | consumer |  | Properties | Properties to configure the Quartz scheduler.
 | propertiesFile | consumer |  | String | File name of the properties to load from the classpath
 | prefixInstanceName | consumer | true | boolean | Whether to prefix the Quartz Scheduler instance name with the CamelContext name. This is enabled by default to let each CamelContext use its own Quartz scheduler instance by default. You can set this option to false to reuse Quartz scheduler instances between multiple CamelContext's.
+| interruptJobsOnShutdown | scheduler | false | boolean | Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any running jobs. If this is enabled then any running jobs can fail due to being interrupted.
 | schedulerFactory | advanced |  | SchedulerFactory | To use the custom SchedulerFactory which is used to create the Scheduler.
 | scheduler | advanced |  | Scheduler | To use the custom configured Quartz scheduler instead of creating a new Scheduler.
 |=======================================================================
