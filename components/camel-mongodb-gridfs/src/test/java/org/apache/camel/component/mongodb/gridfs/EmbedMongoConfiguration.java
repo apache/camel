@@ -39,7 +39,7 @@ import static org.springframework.util.SocketUtils.findAvailableTcpPort;
 @Configuration
 public class EmbedMongoConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(EmbedMongoConfiguration.class);
-    private static final int PORT = findAvailableTcpPort();
+    private static final int PORT = findAvailableTcpPort(18500); // 1024 is too low on CI servers to find free ports
 
     static {
         try {
