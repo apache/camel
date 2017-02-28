@@ -78,7 +78,7 @@ Number of Components: 220
 `azure-blob:containerOrBlobUri` | 2.19 | The azure-blob component is used for storing and retrieving blobs from Azure Storage Blob Service.
 
 | link:camel-azure/src/main/docs/azure-queue-component.adoc[Azure Storage Queue Service] (camel-azure) +
-`azure-queue:queueOrMessageUri` | 2.19 | The azure-queue component is used for storing and retrieving messages from Azure Storage Queue Service.
+`azure-queue:containerAndQueueUri` | 2.19 | The azure-queue component is used for storing and retrieving messages from Azure Storage Queue Service.
 
 | link:../camel-core/src/main/docs/bean-component.adoc[Bean] (camel-core) +
 `bean:beanName` | 1.0 | The bean component is for invoking Java beans from Camel.
