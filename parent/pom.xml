@@ -107,7 +107,7 @@
     <chronicle-core-version>1.7.15</chronicle-core-version>
     <chronicle-engine-version>1.13.26</chronicle-engine-version>
     <chronicle-map-version>2.4.15</chronicle-map-version>
-    <chronicle-network-version>1.7.13</chronicle-network-version>
+    <chronicle-network-version>1.7.14</chronicle-network-version>
     <chronicle-queue-version>4.5.25</chronicle-queue-version>
     <chronicle-threads-version>1.7.7</chronicle-threads-version>
     <chronicle-wire-version>1.7.27</chronicle-wire-version>
