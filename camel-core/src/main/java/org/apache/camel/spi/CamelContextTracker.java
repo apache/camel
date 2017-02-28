@@ -22,7 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.CamelContextTrackerRegistry;
 
 /**
- * A camel context creation tracker.
+ * A {@link CamelContext} creation tracker.
  */
 public class CamelContextTracker implements Closeable {
 

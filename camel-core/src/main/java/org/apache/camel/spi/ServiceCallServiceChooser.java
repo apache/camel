@@ -25,6 +25,7 @@ import java.util.List;
  */
 @FunctionalInterface
 public interface ServiceCallServiceChooser {
+
     /**
      * Chooses one of the service to use
      *

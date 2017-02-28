@@ -25,6 +25,7 @@ import java.util.List;
  * @see ServiceCallService
  */
 public interface ServiceCallServiceDiscovery {
+
     /**
      * Gets the initial list of services.
      * <p/>

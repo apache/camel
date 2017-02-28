@@ -21,6 +21,7 @@ package org.apache.camel.spi;
  * a {@link ServiceCallServiceDiscovery}
  */
 public interface ServiceCallServiceDiscoveryAware {
+
     /**
      * Injects the {@link ServiceCallServiceDiscovery}
      *

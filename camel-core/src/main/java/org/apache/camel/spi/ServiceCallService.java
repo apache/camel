@@ -25,6 +25,7 @@ import java.util.Map;
  * @see ServiceCallServiceDiscovery
  */
 public interface ServiceCallService {
+
     /**
      * Gets the service name.
      */

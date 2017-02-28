@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
  * @version 
  */
 public interface DataFormatResolver {
+
     /**
      * Resolves the given data format given its name.
      *
