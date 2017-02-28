@@ -103,7 +103,7 @@
     <cdi-api-2.0-version>2.0.Beta1</cdi-api-2.0-version>
     <cglib-bundle-version>3.2.4_1</cglib-bundle-version>
     <cglib-version>3.2.4</cglib-version>
-    <chronicle-bytes-version>1.7.33</chronicle-bytes-version>
+    <chronicle-bytes-version>1.7.34</chronicle-bytes-version>
     <chronicle-core-version>1.7.15</chronicle-core-version>
     <chronicle-engine-version>1.13.26</chronicle-engine-version>
     <chronicle-map-version>2.4.15</chronicle-map-version>
