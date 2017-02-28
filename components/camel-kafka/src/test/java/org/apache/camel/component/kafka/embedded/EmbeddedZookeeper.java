@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.zookeeper.server.NIOServerCnxnFactory;
 import org.apache.zookeeper.server.ServerCnxnFactory;
 import org.apache.zookeeper.server.ZooKeeperServer;
@@ -37,31 +38,17 @@ public class EmbeddedZookeeper extends ExternalResource {
     private File logDir;
     private ZooKeeperServer zooKeeperServer;
 
+
     public EmbeddedZookeeper() {
-        this(-1);
+        this(AvailablePortFinder.getNextAvailable());
     }
 
     public EmbeddedZookeeper(int port) {
-        this(port, 500);
-    }
-
-    public EmbeddedZookeeper(int port, int tickTime) {
-        this.port = resolvePort(port);
-        this.tickTime = tickTime;
-    }
-
-    private int resolvePort(int port) {
-        if (port == -1) {
-            return TestUtils.getAvailablePort();
-        }
-        return port;
+        this.port = port;
     }
 
     @Override
     public void before() throws IOException {
-        if (this.port == -1) {
-            this.port = TestUtils.getAvailablePort();
-        }
         this.snapshotDir = constructTempDir(perTest("zk-snapshot"));
         this.logDir = constructTempDir(perTest("zk-log"));
 
@@ -94,6 +81,10 @@ public class EmbeddedZookeeper extends ExternalResource {
 
     public String getConnection() {
         return "localhost:" + port;
+    }
+
+    public int getPort() {
+        return port;
     }
 
     @Override
