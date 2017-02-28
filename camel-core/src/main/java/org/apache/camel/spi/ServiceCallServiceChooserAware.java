@@ -21,6 +21,7 @@ package org.apache.camel.spi;
  * a {@link ServiceCallServiceChooser}
  */
 public interface ServiceCallServiceChooserAware {
+
     /**
      * Injects the {@link ServiceCallServiceChooser}
      *

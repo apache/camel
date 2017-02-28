@@ -49,7 +49,10 @@ import static org.apache.camel.util.CamelContextHelper.getMandatoryEndpoint;
  * Applies a {@link org.apache.camel.spi.Binding} to an underlying {@link Endpoint} so that the binding processes messages
  * before its sent to the endpoint and processes messages received by the endpoint consumer before its passed
  * to the real consumer.
+ *
+ * @deprecated use {@link org.apache.camel.spi.Contract} instead
  */
+@Deprecated
 @UriEndpoint(firstVersion = "2.11.0", scheme = "binding", title = "Binding", syntax = "binding:bindingName:delegateUri",
     consumerClass = BindingConsumerProcessor.class, label = "core,transformation")
 public class BindingEndpoint extends DefaultEndpoint implements HasBinding {

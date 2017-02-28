@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.spi;
 
 /**
@@ -25,5 +24,8 @@ package org.apache.camel.spi;
  */
 @FunctionalInterface
 public interface ServiceCallLoadBalancerRequest<T> {
+
+    // TODO: Document me
     T process(ServiceCallService service) throws Exception;
+
 }

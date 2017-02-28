@@ -22,6 +22,7 @@ package org.apache.camel.spi;
  */
 @FunctionalInterface
 public interface DataFormatFactory {
+
     /**
      * Creates a new DataFormat instance.
      *
