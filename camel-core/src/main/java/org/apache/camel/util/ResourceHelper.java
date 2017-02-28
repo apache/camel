@@ -32,7 +32,9 @@ import java.net.URLDecoder;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.ClassResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -123,8 +125,9 @@ public final class ResourceHelper {
      * <ul>
      *     <il>file:nameOfFile - to refer to the file system</il>
      *     <il>classpath:nameOfFile - to refer to the classpath (default)</il>
-     *     <il>http:uri - to load the resoufce using HTTP</il>
+     *     <il>http:uri - to load the resource using HTTP</il>
      *     <il>ref:nameOfBean - to lookup the resource in the {@link org.apache.camel.spi.Registry}</il>
+     *     <il>bean:nameOfBean.methodName - to lookup a bean in the {@link org.apache.camel.spi.Registry} and call the method</il>
      * </ul>
      * If no prefix has been given, then the resource is loaded from the classpath
      * <p/>
@@ -140,7 +143,34 @@ public final class ResourceHelper {
             String ref = uri.substring(4);
             String value = CamelContextHelper.mandatoryLookup(camelContext, ref, String.class);
             return new ByteArrayInputStream(value.getBytes());
+        } else if (uri.startsWith("bean:")) {
+            String bean = uri.substring(5);
+            if (bean.contains(".")) {
+                String method = StringHelper.after(bean, ".");
+                bean = StringHelper.before(bean, ".") + "?method=" + method;
+            }
+            Exchange dummy = new DefaultExchange(camelContext);
+            Object out = camelContext.resolveLanguage("bean").createExpression(bean).evaluate(dummy, Object.class);
+            if (dummy.getException() != null) {
+                IOException io = new IOException("Cannot find resource: " + uri + " from calling the bean");
+                io.initCause(dummy.getException());
+                throw io;
+            }
+            if (out != null) {
+                InputStream is = camelContext.getTypeConverter().tryConvertTo(InputStream.class, dummy, out);
+                if (is == null) {
+                    String text = camelContext.getTypeConverter().tryConvertTo(String.class, dummy, out);
+                    if (text != null) {
+                        return new ByteArrayInputStream(text.getBytes());
+                    }
+                } else {
+                    return is;
+                }
+            } else {
+                throw new IOException("Cannot find resource: " + uri + " from calling the bean");
+            }
         }
+
         InputStream is = resolveResourceAsInputStream(camelContext.getClassResolver(), uri);
         if (is == null) {
             String resolvedName = resolveUriPath(uri);
