@@ -175,6 +175,7 @@ public class TransformerRouteTest extends ContextTestSupport {
                             LOG.info("Asserting input -> XOrder convertion");
                             assertEquals(XOrder.class, exchange.getIn().getBody().getClass());
                             exchange.getIn().setBody("response");
+                            exchange.setProperty(Exchange.INPUT_TYPE, new DataType(String.class));
                         }
                     }).to("mock:xyzresult");
                 

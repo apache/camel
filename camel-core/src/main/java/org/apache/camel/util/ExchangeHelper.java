@@ -327,14 +327,29 @@ public final class ExchangeHelper {
             } else if (result.getPattern().isOutCapable() && !result.hasOut() && !result.isFailed()) {
                 // copy IN to OUT as we expect a OUT response
                 result.getOut().copyFrom(source.getIn());
+                if (source.hasProperties() && source.getProperties().containsKey(Exchange.INPUT_TYPE)) {
+                    result.setProperty(Exchange.OUTPUT_TYPE, source.getProperty(Exchange.INPUT_TYPE));
+                }
             }
             return;
         }
 
         if (result != source) {
             result.setException(source.getException());
+            if (source.hasProperties()) {
+                source.getProperties().forEach((key, value) -> {
+                    // excluding INPUT/OUTPUT - explicitly copy them if needed later
+                    if (!key.equals(Exchange.INPUT_TYPE) && !key.equals(Exchange.OUTPUT_TYPE)) {
+                        result.setProperty(key, value);
+                    }
+                });
+            }
+
             if (source.hasOut()) {
                 result.getOut().copyFrom(source.getOut());
+                if (source.hasProperties() && source.getProperties().containsKey(Exchange.OUTPUT_TYPE)) {
+                    result.setProperty(Exchange.OUTPUT_TYPE, source.getProperty(Exchange.OUTPUT_TYPE));
+                }
             } else if (result.getPattern() == ExchangePattern.InOptionalOut) {
                 // special case where the result is InOptionalOut and with no OUT response
                 // so we should return null to indicate this fact
@@ -347,18 +362,20 @@ public final class ExchangeHelper {
                 if (result.getPattern().isOutCapable()) {
                     // only set OUT if its OUT capable
                     result.getOut().copyFrom(source.getIn());
+                    if (source.hasProperties() && source.getProperties().containsKey(Exchange.INPUT_TYPE)) {
+                        result.setProperty(Exchange.OUTPUT_TYPE, source.getProperty(Exchange.INPUT_TYPE));
+                    }
                 } else {
                     // if not replace IN instead to keep the MEP
                     result.getIn().copyFrom(source.getIn());
+                    if (source.hasProperties() && source.getProperties().containsKey(Exchange.INPUT_TYPE)) {
+                        result.setProperty(Exchange.INPUT_TYPE, source.getProperty(Exchange.INPUT_TYPE));
+                    }
                     // clear any existing OUT as the result is on the IN
                     if (result.hasOut()) {
                         result.setOut(null);
                     }
                 }
-            }
-
-            if (source.hasProperties()) {
-                result.getProperties().putAll(source.getProperties());
             }
         }
     }
@@ -384,6 +401,9 @@ public final class ExchangeHelper {
             } else if (result.getPattern().isOutCapable() && !result.hasOut() && !result.isFailed()) {
                 // copy IN to OUT as we expect a OUT response
                 result.getOut().copyFrom(source.getIn());
+                if (result.hasProperties() && result.getProperties().containsKey(Exchange.INPUT_TYPE)) {
+                    result.setProperty(Exchange.OUTPUT_TYPE, result.getProperty(Exchange.INPUT_TYPE));
+                }
             }
             return;
         }
