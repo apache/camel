@@ -72,7 +72,6 @@ import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.SkipIterator;
 import org.apache.camel.util.StringHelper;
 
-
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
  *

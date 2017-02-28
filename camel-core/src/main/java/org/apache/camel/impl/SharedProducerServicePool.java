@@ -26,6 +26,7 @@ import org.apache.camel.StaticService;
  *
  * @version 
  */
+@Deprecated
 public class SharedProducerServicePool extends DefaultProducerServicePool implements ShutdownableService, StaticService, NonManagedService {
 
     public SharedProducerServicePool() {

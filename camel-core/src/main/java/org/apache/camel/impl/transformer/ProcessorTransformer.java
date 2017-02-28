@@ -23,6 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Transformer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +84,8 @@ public class ProcessorTransformer extends Transformer {
     }
 
     /**
-     * Set Processor.
+     * Set processor to use
+     *
      * @param processor Processor
      * @return this ProcessorTransformer instance
      */
@@ -105,6 +107,7 @@ public class ProcessorTransformer extends Transformer {
 
     @Override
     protected void doStart() throws Exception {
+        ObjectHelper.notNull(processor, "processor", this);
         ServiceHelper.startService(this.processor);
     }
 

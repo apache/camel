@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.impl.cloud;
 
 import java.util.Collections;
@@ -25,7 +24,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.support.ServiceSupport;
-
 
 public class DefaultServiceDiscovery
     extends ServiceSupport implements ServiceDiscovery, CamelContextAware {

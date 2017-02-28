@@ -21,6 +21,7 @@ package org.apache.camel.cloud;
  * a {@link ServiceFilter}
  */
 public interface ServiceFilterAware {
+
     /**
      * Injects the {@link ServiceFilter}
      *
