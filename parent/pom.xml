@@ -560,8 +560,8 @@
     <solr-version>5.5.2</solr-version>
     <solr-version-range>[5,6)</solr-version-range>
     <spark-version>1.6.1</spark-version>
-    <spark-rest-version>2.5.4</spark-rest-version>
-    <spark-rest-bundle-version>2.5.4_1</spark-rest-bundle-version>
+    <spark-rest-version>2.5.5</spark-rest-version>
+    <spark-rest-bundle-version>2.5.5_1</spark-rest-bundle-version>
     <splunk-version>1.5.0.0_1</splunk-version>
     <spring-batch-version>3.0.7.RELEASE</spring-batch-version>
     <spring-batch-bundle-version>3.0.7.RELEASE_1</spring-batch-bundle-version>
