@@ -1712,6 +1712,21 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression(exp, "456");
     }
 
+    public void testListIndexByNestedFunction() throws Exception {
+        List<String> alist = new ArrayList<>();
+        alist.add("1");
+        alist.add("99");
+        exchange.getIn().setHeader("ITEMS", alist);
+        exchange.getIn().setHeader("TOTAL_LOOPS", alist.size());
+
+        String exp = "${header.ITEMS[${exchangeProperty.CamelLoopIndex}]}";
+
+        exchange.setProperty(Exchange.LOOP_INDEX, 0);
+        assertExpression(exp, "1");
+        exchange.setProperty(Exchange.LOOP_INDEX, 1);
+        assertExpression(exp, "99");
+    }
+
     protected String getLanguageName() {
         return "simple";
     }
