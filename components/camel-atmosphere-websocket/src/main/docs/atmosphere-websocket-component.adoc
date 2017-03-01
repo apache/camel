@@ -57,7 +57,7 @@ The Atmosphere Websocket component supports 7 options which are listed below.
 
 
 // endpoint options: START
-The Atmosphere Websocket component supports 49 endpoint options which are listed below:
+The Atmosphere Websocket component supports 38 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -97,21 +97,10 @@ The Atmosphere Websocket component supports 49 endpoint options which are listed
 | mapHttpMessageFormUrlEncodedBody | advanced | true | boolean | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping.
 | mapHttpMessageHeaders | advanced | true | boolean | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| proxyAuthDomain | proxy |  | String | Proxy authentication domain to use with NTML
-| proxyAuthHost | proxy |  | String | Proxy authentication host
-| proxyAuthMethod | proxy |  | String | Proxy authentication method to use
-| proxyAuthPassword | proxy |  | String | Proxy authentication password
-| proxyAuthPort | proxy |  | int | Proxy authentication port
 | proxyAuthScheme | proxy |  | String | Proxy authentication scheme to use
-| proxyAuthUsername | proxy |  | String | Proxy authentication username
 | proxyHost | proxy |  | String | Proxy hostname to use
 | proxyPort | proxy |  | int | Proxy port to use
-| authDomain | security |  | String | Authentication domain to use with NTML
 | authHost | security |  | String | Authentication host to use with NTML
-| authMethod | security |  | String | Authentication methods allowed to use as a comma separated list of values Basic Digest or NTLM.
-| authMethodPriority | security |  | String | Which authentication method to prioritize to use either as Basic Digest or NTLM.
-| authPassword | security |  | String | Authentication password
-| authUsername | security |  | String | Authentication username
 |=======================================================================
 {% endraw %}
 // endpoint options: END
