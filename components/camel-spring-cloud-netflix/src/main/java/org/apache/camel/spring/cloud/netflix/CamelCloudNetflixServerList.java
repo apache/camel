@@ -68,7 +68,7 @@ public class CamelCloudNetflixServerList extends AbstractServerList<RibbonServic
             return Collections.emptyList();
         }
 
-        List<ServiceDefinition> services = serviceDiscovery.getInitialListOfServices(serviceId);
+        List<ServiceDefinition> services = serviceDiscovery.getServices(serviceId);
         if (serviceFilter != null) {
             services = serviceFilter.apply(services);
         }
@@ -82,7 +82,7 @@ public class CamelCloudNetflixServerList extends AbstractServerList<RibbonServic
             return Collections.emptyList();
         }
 
-        List<ServiceDefinition> services = serviceDiscovery.getUpdatedListOfServices(serviceId);
+        List<ServiceDefinition> services = serviceDiscovery.getServices(serviceId);
         if (serviceFilter != null) {
             services = serviceFilter.apply(services);
         }

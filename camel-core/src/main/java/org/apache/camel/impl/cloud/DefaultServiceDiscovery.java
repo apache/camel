@@ -31,12 +31,7 @@ public class DefaultServiceDiscovery
     private CamelContext camelContext;
 
     @Override
-    public List<ServiceDefinition> getInitialListOfServices(String name) {
-        return getUpdatedListOfServices(name);
-    }
-
-    @Override
-    public List<ServiceDefinition> getUpdatedListOfServices(String name) {
+    public List<ServiceDefinition> getServices(String name) {
         return Collections.emptyList();
     }
 

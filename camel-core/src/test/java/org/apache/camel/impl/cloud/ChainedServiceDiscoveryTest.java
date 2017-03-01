@@ -36,8 +36,8 @@ public class ChainedServiceDiscoveryTest extends ContextTestSupport {
         discovery2.addServer(new DefaultServiceDefinition("discovery2", "localhost", 1114));
 
         ChainedServiceDiscovery discovery = ChainedServiceDiscovery.wrap(discovery1, discovery2);
-        Assert.assertEquals(3, discovery.getUpdatedListOfServices("discovery1").size());
-        Assert.assertEquals(1, discovery.getUpdatedListOfServices("discovery2").size());
+        Assert.assertEquals(3, discovery.getServices("discovery1").size());
+        Assert.assertEquals(1, discovery.getServices("discovery2").size());
     }
 
     @Test
@@ -53,8 +53,8 @@ public class ChainedServiceDiscoveryTest extends ContextTestSupport {
 
         ChainedServiceDiscovery discovery = (ChainedServiceDiscovery)multiConf.newInstance(context);
         Assert.assertEquals(2, discovery.getDelegates().size());
-        Assert.assertEquals(3, discovery.getUpdatedListOfServices("discovery1").size());
-        Assert.assertEquals(1, discovery.getUpdatedListOfServices("discovery2").size());
+        Assert.assertEquals(3, discovery.getServices("discovery1").size());
+        Assert.assertEquals(1, discovery.getServices("discovery2").size());
     }
 
     @Test
@@ -65,7 +65,7 @@ public class ChainedServiceDiscoveryTest extends ContextTestSupport {
 
         ChainedServiceDiscovery discovery = (ChainedServiceDiscovery)multiConf.newInstance(context);
         Assert.assertEquals(2, discovery.getDelegates().size());
-        Assert.assertEquals(3, discovery.getUpdatedListOfServices("discovery1").size());
-        Assert.assertEquals(1, discovery.getUpdatedListOfServices("discovery2").size());
+        Assert.assertEquals(3, discovery.getServices("discovery1").size());
+        Assert.assertEquals(1, discovery.getServices("discovery2").size());
     }
 }

@@ -32,14 +32,14 @@ public class CachingServiceDiscoveryTest extends ContextTestSupport {
         CachingServiceDiscovery caching = CachingServiceDiscovery.wrap(discovery, 1, TimeUnit.SECONDS);
 
         discovery.addServer(new DefaultServiceDefinition("noname", "localhost", 1111));
-        Assert.assertEquals(1, caching.getUpdatedListOfServices("noname").size());
+        Assert.assertEquals(1, caching.getServices("noname").size());
         discovery.addServer(new DefaultServiceDefinition("noname", "localhost", 1112));
-        Assert.assertEquals(1, caching.getUpdatedListOfServices("noname").size());
+        Assert.assertEquals(1, caching.getServices("noname").size());
 
         // Let the cache expire
         Thread.sleep(1100);
 
-        Assert.assertEquals(2, caching.getUpdatedListOfServices("noname").size());
+        Assert.assertEquals(2, caching.getServices("noname").size());
     }
 
     @Test
@@ -55,13 +55,13 @@ public class CachingServiceDiscoveryTest extends ContextTestSupport {
         CachingServiceDiscovery caching = (CachingServiceDiscovery)cachingConf.newInstance(context);
         StaticServiceDiscovery delegate = (StaticServiceDiscovery)caching.getDelegate();
 
-        Assert.assertEquals(1, caching.getUpdatedListOfServices("no-name").size());
+        Assert.assertEquals(1, caching.getServices("no-name").size());
         delegate.addServer("no-name@localhost:1112");
-        Assert.assertEquals(1, caching.getUpdatedListOfServices("no-name").size());
+        Assert.assertEquals(1, caching.getServices("no-name").size());
 
         // Let the cache expire
         Thread.sleep(1100);
 
-        Assert.assertEquals(2, caching.getUpdatedListOfServices("no-name").size());
+        Assert.assertEquals(2, caching.getServices("no-name").size());
     }
 }

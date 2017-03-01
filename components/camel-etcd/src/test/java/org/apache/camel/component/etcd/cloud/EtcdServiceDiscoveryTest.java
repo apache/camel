@@ -70,7 +70,7 @@ public class EtcdServiceDiscoveryTest extends EtcdTestSupport {
         EtcdOnDemandServiceDiscovery strategy = new EtcdOnDemandServiceDiscovery(CONFIGURATION);
         strategy.start();
 
-        List<ServiceDefinition> type1 = strategy.getUpdatedListOfServices("serviceType-1");
+        List<ServiceDefinition> type1 = strategy.getServices("serviceType-1");
         assertEquals(3, type1.size());
         for (ServiceDefinition service : type1) {
             assertNotNull(service.getMetadata());
@@ -78,7 +78,7 @@ public class EtcdServiceDiscoveryTest extends EtcdTestSupport {
             assertTrue(service.getMetadata().containsKey("port_delta"));
         }
 
-        List<ServiceDefinition> type2 = strategy.getUpdatedListOfServices("serviceType-2");
+        List<ServiceDefinition> type2 = strategy.getServices("serviceType-2");
         assertEquals(2, type2.size());
         for (ServiceDefinition service : type2) {
             assertNotNull(service.getMetadata());
@@ -96,7 +96,7 @@ public class EtcdServiceDiscoveryTest extends EtcdTestSupport {
         EtcdWatchServiceDiscovery strategy = new EtcdWatchServiceDiscovery(CONFIGURATION);
         strategy.start();
 
-        assertEquals(1, strategy.getUpdatedListOfServices("serviceType-3").size());
+        assertEquals(1, strategy.getServices("serviceType-3").size());
 
         addServer(client, "serviceType-3");
         addServer(client, "serviceType-3");
@@ -104,7 +104,7 @@ public class EtcdServiceDiscoveryTest extends EtcdTestSupport {
 
         Thread.sleep(250);
 
-        assertEquals(3, strategy.getUpdatedListOfServices("serviceType-3").size());
+        assertEquals(3, strategy.getServices("serviceType-3").size());
 
         strategy.stop();
     }

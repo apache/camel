@@ -58,7 +58,7 @@ public class CamelCloudDiscoveryClient implements DiscoveryClient {
 
     @Override
     public List<ServiceInstance> getInstances(String serviceId) {
-        return serviceDiscovery.getUpdatedListOfServices(serviceId).stream()
+        return serviceDiscovery.getServices(serviceId).stream()
             .map(s -> new DefaultServiceInstance(s.getName(), s.getHost(), s.getPort(), false, s.getMetadata()))
             .collect(Collectors.toList());
     }

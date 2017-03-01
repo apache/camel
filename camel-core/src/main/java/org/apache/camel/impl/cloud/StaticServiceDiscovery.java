@@ -140,7 +140,7 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
     }
 
     @Override
-    public List<ServiceDefinition> getUpdatedListOfServices(String name) {
+    public List<ServiceDefinition> getServices(String name) {
         return Collections.unmodifiableList(
             services.stream()
                 .filter(s -> Objects.isNull(s.getName()) || Objects.equals(name, s.getName()))

@@ -179,7 +179,7 @@ public class RibbonLoadBalancer
 
         @Override
         public List<RibbonServiceDefinition> getInitialListOfServers() {
-            List<ServiceDefinition> services = serviceDiscovery.getInitialListOfServices(serviceName);
+            List<ServiceDefinition> services = serviceDiscovery.getServices(serviceName);
             if (serviceFilter != null) {
                 services = serviceFilter.apply(services);
             }
@@ -189,7 +189,7 @@ public class RibbonLoadBalancer
 
         @Override
         public List<RibbonServiceDefinition> getUpdatedListOfServers() {
-            List<ServiceDefinition> services = serviceDiscovery.getUpdatedListOfServices(serviceName);
+            List<ServiceDefinition> services = serviceDiscovery.getServices(serviceName);
             if (serviceFilter != null) {
                 services = serviceFilter.apply(services);
             }

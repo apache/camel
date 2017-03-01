@@ -51,7 +51,7 @@ public final class CachingServiceDiscovery implements ServiceDiscovery {
         this.timeout = timeout;
         this.cache = Caffeine.newBuilder()
             .expireAfterAccess(timeout, TimeUnit.MILLISECONDS)
-            .build(delegate::getUpdatedListOfServices);
+            .build(delegate::getServices);
     }
 
     public void setTimeout(long timeout, TimeUnit unit) {
@@ -73,13 +73,8 @@ public final class CachingServiceDiscovery implements ServiceDiscovery {
     }
 
     @Override
-    public List<ServiceDefinition> getInitialListOfServices(String name) {
-        return delegate.getInitialListOfServices(name);
-    }
-
-    @Override
-    public List<ServiceDefinition> getUpdatedListOfServices(String name) {
-        return cache.get(name);
+    public List<ServiceDefinition> getServices(String name) {
+        return delegate.getServices(name);
     }
 
     // **********************

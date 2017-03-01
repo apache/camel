@@ -36,16 +36,9 @@ public class ChainedServiceDiscovery implements ServiceDiscovery {
     }
 
     @Override
-    public List<ServiceDefinition> getInitialListOfServices(String name) {
+    public List<ServiceDefinition> getServices(String name) {
         return delegates.stream()
-            .flatMap(d -> d.getInitialListOfServices(name).stream())
-            .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<ServiceDefinition> getUpdatedListOfServices(String name) {
-        return delegates.stream()
-            .flatMap(d -> d.getInitialListOfServices(name).stream())
+            .flatMap(d -> d.getServices(name).stream())
             .collect(Collectors.toList());
     }
 

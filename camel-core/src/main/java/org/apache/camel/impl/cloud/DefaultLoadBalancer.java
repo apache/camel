@@ -129,7 +129,7 @@ public class DefaultLoadBalancer
     public <T> T process(String serviceName, LoadBalancerFunction<T> function) throws Exception {
         ServiceDefinition service;
 
-        List<ServiceDefinition> services = serviceDiscovery.getUpdatedListOfServices(serviceName);
+        List<ServiceDefinition> services = serviceDiscovery.getServices(serviceName);
         if (services == null || services.isEmpty()) {
             throw new RejectedExecutionException("No active services with name " + serviceName);
         } else {
