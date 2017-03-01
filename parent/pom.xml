@@ -158,8 +158,8 @@
     <deltaspike-version>1.7.2</deltaspike-version>
     <derby-version>10.11.1.1</derby-version>
     <disruptor-version>3.3.6</disruptor-version>
-    <dnsjava-version>2.1.7</dnsjava-version>
-    <dnsjava-bundle-version>2.1.7_1</dnsjava-bundle-version>
+    <dnsjava-version>2.1.8</dnsjava-version>
+    <dnsjava-bundle-version>2.1.8_1</dnsjava-bundle-version>
     <docker-java-version>3.0.7</docker-java-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
     <dozer-version>5.5.1</dozer-version>
