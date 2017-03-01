@@ -63,28 +63,39 @@ public class CxfConsumer extends DefaultConsumer {
     public CxfConsumer(final CxfEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         cxfEndpoint = endpoint;
-        // create server
-        ServerFactoryBean svrBean = endpoint.createServerFactoryBean();
-        svrBean.setInvoker(new CxfConsumerInvoker(endpoint));
-        server = svrBean.create();
-        // Apply the server configurer if it is possible 
+        server = createServer();
+    }
+
+    protected Server createServer() throws Exception {
+        ServerFactoryBean svrBean = cxfEndpoint.createServerFactoryBean();
+        svrBean.setInvoker(new CxfConsumerInvoker(cxfEndpoint));
+        Server server = svrBean.create();
+        // Apply the server configurer if it is possible
         if (cxfEndpoint.getCxfEndpointConfigurer() != null) {
             cxfEndpoint.getCxfEndpointConfigurer().configureServer(server);
         }
-        if (ObjectHelper.isNotEmpty(endpoint.getPublishedEndpointUrl())) {
-            server.getEndpoint().getEndpointInfo().setProperty("publishedEndpointUrl", endpoint.getPublishedEndpointUrl());
+        if (ObjectHelper.isNotEmpty(cxfEndpoint.getPublishedEndpointUrl())) {
+            server.getEndpoint().getEndpointInfo().setProperty("publishedEndpointUrl", cxfEndpoint.getPublishedEndpointUrl());
         }
+        return server;
     }
     
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        if (server == null) {
+            server = createServer();
+        }
         server.start();
     }
 
     @Override
     protected void doStop() throws Exception {
-        server.stop();
+        if (server != null) {
+            server.stop();
+            server.destroy();
+            server = null;
+        }
         super.doStop();
     }
 
