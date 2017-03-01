@@ -43,7 +43,9 @@ public class HttpComponentConfiguration {
     @NestedConfigurationProperty
     private HttpClientConfigurer httpClientConfigurer;
     /**
-     * To use a custom HttpClientConnectionManager to manage connections
+     * To use a custom and shared HttpClientConnectionManager to manage
+     * connections. If this has been configured then this is always used for all
+     * endpoints created by this component.
      */
     @NestedConfigurationProperty
     private HttpClientConnectionManager clientConnectionManager;

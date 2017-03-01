@@ -102,7 +102,7 @@ The Jetty 9 component supports 31 options which are listed below.
 
 
 // endpoint options: START
-The Jetty 9 component supports 55 endpoint options which are listed below:
+The Jetty 9 component supports 56 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -147,8 +147,6 @@ The Jetty 9 component supports 55 endpoint options which are listed below:
 | httpMethod | producer |  | HttpMethods | Configure the HTTP method to use. The HttpMethod header cannot override this option if set.
 | ignoreResponseBody | producer | false | boolean | If this option is true The http producer won't read response body and cache the input stream
 | preserveHostHeader | producer | false | boolean | If the option is true HttpProducer will set the Host header to the value contained in the current exchange Host header useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client this allows applications which use the Host header to generate accurate URL's for a proxied service
-| proxyHost | producer |  | String | The proxy host name
-| proxyPort | producer |  | int | The proxy port number
 | throwExceptionOnFailure | producer | true | boolean | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code.
 | httpClient | producer (advanced) |  | HttpClient | Sets a shared HttpClient to use for all producers created by this endpoint. By default each producer will use a new http client and not share. Important: Make sure to handle the lifecycle of the shared client such as stopping the client when it is no longer in use. Camel will call the start method on the client to ensure its started when this endpoint creates a producer. This options should only be used in special circumstances.
 | httpClientParameters | producer (advanced) |  | Map | Configuration of Jetty's HttpClient. For example setting httpClient.idleTimeout=30000 sets the idle timeout to 30 seconds. And httpClient.timeout=30000 sets the request timeout to 30 seconds in case you want to timeout sooner if you have long running request/response calls.
@@ -160,7 +158,10 @@ The Jetty 9 component supports 55 endpoint options which are listed below:
 | mapHttpMessageFormUrlEncodedBody | advanced | true | boolean | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping.
 | mapHttpMessageHeaders | advanced | true | boolean | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| authMethodPriority | security |  | String | Authentication method for proxy either as Basic Digest or NTLM.
+| proxyAuthScheme | proxy |  | String | Proxy authentication scheme to use
+| proxyHost | proxy |  | String | Proxy hostname to use
+| proxyPort | proxy |  | int | Proxy port to use
+| authHost | security |  | String | Authentication host to use with NTML
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
 | sslContextParametersRef | security |  | String | To configure security using SSLContextParameters
 |=======================================================================

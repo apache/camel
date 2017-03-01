@@ -125,12 +125,12 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     private HttpClientConfigurer configureBasicAuthentication(Map<String, Object> parameters, HttpClientConfigurer configurer) {
-        String authUsername = getAndRemoveParameter(parameters, "authUsername", String.class);
-        String authPassword = getAndRemoveParameter(parameters, "authPassword", String.class);
+        String authUsername = getParameter(parameters, "authUsername", String.class);
+        String authPassword = getParameter(parameters, "authPassword", String.class);
 
         if (authUsername != null && authPassword != null) {
-            String authDomain = getAndRemoveParameter(parameters, "authDomain", String.class);
-            String authHost = getAndRemoveParameter(parameters, "authHost", String.class);
+            String authDomain = getParameter(parameters, "authDomain", String.class);
+            String authHost = getParameter(parameters, "authHost", String.class);
             
             return CompositeHttpConfigurer.combineConfigurers(configurer, new BasicAuthenticationHttpClientConfigurer(authUsername, authPassword, authDomain, authHost));
         }
@@ -139,19 +139,19 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     private HttpClientConfigurer configureHttpProxy(Map<String, Object> parameters, HttpClientConfigurer configurer, boolean secure) throws Exception {
-        String proxyAuthScheme = getAndRemoveParameter(parameters, "proxyAuthScheme", String.class);
+        String proxyAuthScheme = getParameter(parameters, "proxyAuthScheme", String.class);
         if (proxyAuthScheme == null) {
             // fallback and use either http or https depending on secure
             proxyAuthScheme = secure ? "https" : "http";
         }
-        String proxyAuthHost = getAndRemoveParameter(parameters, "proxyAuthHost", String.class);
-        Integer proxyAuthPort = getAndRemoveParameter(parameters, "proxyAuthPort", Integer.class);
+        String proxyAuthHost = getParameter(parameters, "proxyAuthHost", String.class);
+        Integer proxyAuthPort = getParameter(parameters, "proxyAuthPort", Integer.class);
         
         if (proxyAuthHost != null && proxyAuthPort != null) {
-            String proxyAuthUsername = getAndRemoveParameter(parameters, "proxyAuthUsername", String.class);
-            String proxyAuthPassword = getAndRemoveParameter(parameters, "proxyAuthPassword", String.class);
-            String proxyAuthDomain = getAndRemoveParameter(parameters, "proxyAuthDomain", String.class);
-            String proxyAuthNtHost = getAndRemoveParameter(parameters, "proxyAuthNtHost", String.class);
+            String proxyAuthUsername = getParameter(parameters, "proxyAuthUsername", String.class);
+            String proxyAuthPassword = getParameter(parameters, "proxyAuthPassword", String.class);
+            String proxyAuthDomain = getParameter(parameters, "proxyAuthDomain", String.class);
+            String proxyAuthNtHost = getParameter(parameters, "proxyAuthNtHost", String.class);
             
             if (proxyAuthUsername != null && proxyAuthPassword != null) {
                 return CompositeHttpConfigurer.combineConfigurers(
@@ -205,7 +205,6 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, secure);
         URI endpointUri = URISupport.createRemainingURI(uriHttpUriAddress, httpClientParameters);
 
-
         // the endpoint uri should use the component name as scheme, so we need to re-create it once more
         String scheme = ObjectHelper.before(uri, "://");
         endpointUri = URISupport.createRemainingURI(
@@ -224,12 +223,21 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         LOG.debug("Creating endpoint uri {}", endpointUriString);
         final HttpClientConnectionManager localConnectionManager = createConnectionManager(parameters, sslContextParameters);
         HttpEndpoint endpoint = new HttpEndpoint(endpointUriString, this, clientBuilder, localConnectionManager, configurer);
+
+        // configure the endpoint with the common configuration from the component
+        if (getHttpConfiguration() != null) {
+            Map<String, Object> properties = new HashMap<>();
+            IntrospectionSupport.getProperties(getHttpConfiguration(), properties, null);
+            setProperties(endpoint, properties);
+        }
+
         if (urlRewrite != null) {
             // let CamelContext deal with the lifecycle of the url rewrite
             // this ensures its being shutdown when Camel shutdown etc.
             getCamelContext().addService(urlRewrite);
             endpoint.setUrlRewrite(urlRewrite);
         }
+
         // configure the endpoint
         setProperties(endpoint, parameters);
 
@@ -248,6 +256,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                         parameters);
 
         endpoint.setHttpUri(httpUri);
+
         if (headerFilterStrategy != null) {
             endpoint.setHeaderFilterStrategy(headerFilterStrategy);
         } else {
@@ -407,7 +416,8 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     }
 
     /**
-     * To use a custom HttpClientConnectionManager to manage connections
+     * To use a custom and shared HttpClientConnectionManager to manage connections.
+     * If this has been configured then this is always used for all endpoints created by this component.
      */
     public void setClientConnectionManager(HttpClientConnectionManager clientConnectionManager) {
         this.clientConnectionManager = clientConnectionManager;
