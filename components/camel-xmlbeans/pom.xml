@@ -134,4 +134,43 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>jdk9-build</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <!--Skip compile on Java 9 https://issues.apache.org/jira/browse/CAMEL-10895 -->
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>xmlbeans-maven-plugin</artifactId>
+            <version>${xmlbeans-maven-plugin-version}</version>
+            <executions>
+              <execution>
+                <id>generate-sources</id>
+                <phase>none</phase>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-compile</id>
+                <phase>none</phase>
+              </execution>
+              <execution>
+                <id>default-testCompile</id>
+                <phase>none</phase>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
