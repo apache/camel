@@ -16,11 +16,30 @@
  */
 package org.apache.camel.opentracing.decorators;
 
-public class HttpSpanDecorator extends AbstractHttpSpanDecorator {
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+
+import io.opentracing.Span;
+
+public class SqlSpanDecorator extends AbstractSpanDecorator {
+
+    public static final String CAMEL_SQL_QUERY = "CamelSqlQuery";
 
     @Override
     public String getComponent() {
-        return "http";
+        return "sql";
+    }
+
+    @Override
+    public void pre(Span span, Exchange exchange, Endpoint endpoint) {
+        super.pre(span, exchange, endpoint);
+
+        span.setTag("db.type", "sql");
+
+        Object sqlquery = exchange.getIn().getHeader(CAMEL_SQL_QUERY);
+        if (sqlquery instanceof String) {
+            span.setTag("db.statement", (String) sqlquery);
+        }
     }
 
 }

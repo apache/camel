@@ -485,7 +485,7 @@
     <openstack4j-version>3.0.2</openstack4j-version>
     <openstack4j-guava-version>17.0</openstack4j-guava-version>
     <opentracing-java-globaltracer-version>0.1.0</opentracing-java-globaltracer-version>
-    <opentracing-java-spanmanager-version>0.0.2</opentracing-java-spanmanager-version>
+    <opentracing-java-spanmanager-version>0.0.3</opentracing-java-spanmanager-version>
     <opentracing-version>0.20.9</opentracing-version>
     <ops4j-base-version>1.5.0</ops4j-base-version>
     <optaplanner-version>6.5.0.Final</optaplanner-version>

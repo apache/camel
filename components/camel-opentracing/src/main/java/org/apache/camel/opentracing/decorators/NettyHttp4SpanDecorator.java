@@ -16,11 +16,11 @@
  */
 package org.apache.camel.opentracing.decorators;
 
-public class HttpSpanDecorator extends AbstractHttpSpanDecorator {
+public class NettyHttp4SpanDecorator extends AbstractHttpSpanDecorator {
 
     @Override
     public String getComponent() {
-        return "http";
+        return "netty-http4";
     }
 
 }
