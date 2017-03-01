@@ -468,8 +468,8 @@
     <oauth-provider-bundle-version>20100527_1</oauth-provider-bundle-version>
     <okclient-version>3.4.1</okclient-version>
     <okclient-bundle-version>3.4.1_1</okclient-bundle-version>
-    <olingo2-version>2.0.7</olingo2-version>
-    <olingo-odata2-core-bundle-version>2.0.7_1</olingo-odata2-core-bundle-version>
+    <olingo2-version>2.0.8</olingo2-version>
+    <olingo-odata2-core-bundle-version>2.0.8_1</olingo-odata2-core-bundle-version>
     <olingo2-gson-version>2.4</olingo2-gson-version>
     <ognl-version>3.1.12</ognl-version>
     <ognl-bundle-version>3.1.12_1</ognl-bundle-version>
