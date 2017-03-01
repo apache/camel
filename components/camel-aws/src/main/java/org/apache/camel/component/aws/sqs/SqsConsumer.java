@@ -49,12 +49,9 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 /**
  * A Consumer of messages from the Amazon Web Service Simple Queue Service
  * <a href="http://aws.amazon.com/sqs/">AWS SQS</a>
- * 
  */
 public class SqsConsumer extends ScheduledBatchPollingConsumer {
     
@@ -189,7 +186,6 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
                 });
             }
 
-
             // add on completion to handle after work when the exchange is done
             exchange.addOnCompletion(new Synchronization() {
                 public void onComplete(Exchange exchange) {
@@ -205,7 +201,6 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
                     return "SqsConsumerOnCompletion";
                 }
             });
-
 
             LOG.trace("Processing exchange [{}]...", exchange);
             getAsyncProcessor().process(exchange, new AsyncCallback() {
@@ -294,19 +289,22 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
+        // start scheduler first
         if (getConfiguration().isExtendMessageVisibility() && scheduledExecutor == null) {
             this.scheduledExecutor = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "SqsTimeoutExtender");
         }
+
+        super.doStart();
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        super.doShutdown();
         if (scheduledExecutor != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(scheduledExecutor);
             scheduledExecutor = null;
         }
+
+        super.doShutdown();
     }
 
     private class TimeoutExtender implements Runnable {
