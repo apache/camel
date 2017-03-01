@@ -29,18 +29,12 @@ import org.apache.camel.TypeConverter;
 public class UriTypeConverter {
 
     @Converter
-    public static CharSequence toCharSequence(final Object value) {
-        final URI uri = toUri(value);
-
-        return uri.toString();
+    public static CharSequence toCharSequence(final URI value) {
+        return value.toString();
     }
 
     @Converter
-    public static URI toUri(final Object value) {
-        if (value instanceof URI) {
-            return (URI)value;
-        }
-
+    public static URI toUri(final CharSequence value) {
         final String stringValue = String.valueOf(value);
 
         try {
