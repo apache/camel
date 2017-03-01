@@ -90,7 +90,7 @@ Number of Components: 220
 `beanstalk:connectionSettings` | 2.15 | The beanstalk component is used for job retrieval and post-processing of Beanstalk jobs.
 
 | link:../camel-core/src/main/docs/binding-component.adoc[Binding] (camel-core) +
-`binding:bindingName:delegateUri` | 2.11 | The binding component is used for as a of wrapping an Endpoint in a contract with a data format.
+`binding:bindingName:delegateUri` | 2.11 | *deprecated* The binding component is used for as a of wrapping an Endpoint in a contract with a data format.
 
 | link:camel-bonita/src/main/docs/bonita-component.adoc[Bonita] (camel-bonita) +
 `bonita:operation` | 2.19 | Camel Bonita support
