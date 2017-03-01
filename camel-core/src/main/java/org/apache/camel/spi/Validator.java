@@ -26,17 +26,13 @@ import org.apache.camel.model.OutputTypeDefinition;
 import org.apache.camel.support.ServiceSupport;
 
 /**
- * <a href="http://camel.apache.org/transformer.html">Transformer</a>
- * performs message transformation according to the declared data type.
- * There are two Exchange property indicates current message type, {@link Exchange#INPUT_TYPE}
- * holds input message type and {@link Exchange#OUTPUT_TYPE} holds output message type. If the
- * input type and/or output type declared by {@link InputTypeDefinition}
- * and/or {@link OutputTypeDefinition} in the route definition is different from those property
- * at runtime, camel internal processor look for a Transformer which transforms from
- * the current message type to the expected message type.
+ * <a href="http://camel.apache.org/validator.html">Validator</a>
+ * performs message content validation according to the declared data type.
+ * {@link ContractAdvice} applies Validator if input/output type is declared on
+ * a route with validation enabled.
  *  
- * @see InputTypeDefinition
- * @see OutputTypeDefinition
+ * @see {@link ContractAdvice}
+ * {@link InputTypeDefinition} {@link OutputTypeDefinition}
  */
 public abstract class Validator extends ServiceSupport implements CamelContextAware {
 

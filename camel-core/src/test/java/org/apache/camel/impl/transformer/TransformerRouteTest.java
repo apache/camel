@@ -42,6 +42,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
+import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.Transformer;
 import org.slf4j.Logger;
@@ -98,7 +99,7 @@ public class TransformerRouteTest extends ContextTestSupport {
         });
 
         Exchange exchange = new DefaultExchange(context, ExchangePattern.InOut);
-        exchange.getIn().setBody("{name:XOrder}");
+        ((DataTypeAware)exchange.getIn()).setBody("{name:XOrder}", new DataType("json:JsonXOrder"));
         Exchange answerEx = template.send("direct:dataFormat", exchange);
         if (answerEx.getException() != null) {
             throw answerEx.getException();

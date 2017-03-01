@@ -22,16 +22,25 @@ import org.apache.camel.Message;
 import org.apache.camel.ValidationException;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.DataType;
+import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@code CamelInternalProcessorAdvice} which performs Transformation and Validation
+ * A {@link CamelInternalProcessorAdvice} which applies {@link Transformer} and {@link Validator}
  * according to the data type Contract.
+ * The default camel {@link Message} implements {@link DataTypeAware} which
+ * holds a {@link DataType} to indicate current message type. If the input type
+ * declared by {@link InputTypeDefinition} is diffrent from current IN message type,
+ * camel internal processor look for a Transformer which transforms from the current
+ * message type to the expected message type before routing.
+ * After routing, if the output type declared by {@link OutputTypeDefinition} is different
+ * from current OUT message (or IN message if no OUT), camel look for a Transformer and apply.
  * 
- * @see CamelInternalProcessor, CamelInternalProcessorAdvice
+ * @see {@link Transformer} {@link Validator}
+ * {@link InputTypeDefinition} {@link OutputTypeDefinition}
  */
 public class ContractAdvice implements CamelInternalProcessorAdvice {
     private static final Logger LOG = LoggerFactory.getLogger(CamelInternalProcessor.class);
@@ -44,13 +53,17 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
     
     @Override
     public Object before(Exchange exchange) throws Exception {
-        DataType from = getCurrentType(exchange, Exchange.INPUT_TYPE);
+        if (!(exchange.getIn() instanceof DataTypeAware)) {
+            return null;
+        }
+        DataTypeAware target = (DataTypeAware)exchange.getIn();
+        DataType from = target.getDataType();
         DataType to = contract.getInputType();
         if (to != null) {
             if (!to.equals(from)) {
                 LOG.debug("Looking for transformer for INPUT: from='{}', to='{}'", from, to);
                 doTransform(exchange.getIn(), from, to);
-                exchange.setProperty(Exchange.INPUT_TYPE, to);
+                target.setDataType(to);
             }
             if (contract.isValidateInput()) {
                 doValidate(exchange.getIn(), to);
@@ -65,18 +78,19 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
             // TODO can we add FAULT_TYPE processing?
             return;
         }
-        
+
         Message target = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-        if (!exchange.hasOut() && exchange.getProperty(Exchange.OUTPUT_TYPE) == null) {
-            exchange.setProperty(Exchange.OUTPUT_TYPE, exchange.getProperty(Exchange.INPUT_TYPE));
+        if (!(target instanceof DataTypeAware)) {
+            return;
         }
-        DataType from = getCurrentType(exchange, Exchange.OUTPUT_TYPE);
+        DataTypeAware typeAwareTarget = (DataTypeAware)target;
+        DataType from = typeAwareTarget.getDataType();
         DataType to = contract.getOutputType();
         if (to != null) {
             if (!to.equals(from)) {
                 LOG.debug("Looking for transformer for OUTPUT: from='{}', to='{}'", from, to);
                 doTransform(target, from, to);
-                exchange.setProperty(Exchange.OUTPUT_TYPE, to);
+                typeAwareTarget.setDataType(to);
             }
             if (contract.isValidateOutput()) {
                 doValidate(target, to);
@@ -87,7 +101,7 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
     private void doTransform(Message message, DataType from, DataType to) throws Exception {
         if (from == null) {
             // If 'from' is null, only Java-Java convertion is performed.
-            // It means if 'to' is other than Java, it's assumed to be already in expected shape.
+            // It means if 'to' is other than Java, it's assumed to be already in expected type.
             convertIfRequired(message, to);
             return;
         }
@@ -99,10 +113,11 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
             // Found matched transformer. Java-Java transformer is also allowed.
             return;
         } else if (from.isJavaType()) {
-            if (convertIfRequired(message, to)) {
-                // Java->Java transformation just relies on TypeConverter if no explicit transformer
-                return;
-            }
+            // Try TypeConverter as a fallback for Java->Java transformation
+            convertIfRequired(message, to);
+            // If Java->Other transformation required but no transformer matched,
+            // then assume it's already in expected type, i.e. do nothing.
+            return;
         } else if (applyTransformerChain(message, from, to)) {
             // Other->Other transformation - found a transformer chain
             return;
@@ -152,21 +167,9 @@ public class ContractAdvice implements CamelInternalProcessorAdvice {
         }
         return false;
     }
-    
+
     private Class<?> getClazz(String type, CamelContext context) throws Exception {
         return context.getClassResolver().resolveMandatoryClass(type);
-    }
-    
-    private DataType getCurrentType(Exchange exchange, String name) {
-        Object prop = exchange.getProperty(name);
-        if (prop instanceof DataType) {
-            return (DataType)prop;
-        } else if (prop instanceof String) {
-            DataType answer = new DataType((String)prop);
-            exchange.setProperty(name, answer);
-            return answer;
-        }
-        return null;
     }
 
     private void doValidate(Message message, DataType type) throws ValidationException {
