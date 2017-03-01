@@ -32,11 +32,6 @@ public class UriTypeConverterTest {
     static final String INVALID = ":";
 
     @Test(expected = TypeConversionException.class)
-    public void shouldComplainOnInvalidStringUrisConvertingToStrings() {
-        UriTypeConverter.toCharSequence(INVALID);
-    }
-
-    @Test(expected = TypeConversionException.class)
     public void shouldComplainOnInvalidStringUrisConvertingToUri() {
         UriTypeConverter.toUri(INVALID);
     }
