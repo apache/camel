@@ -29,6 +29,7 @@ import org.apache.camel.processor.binding.BindingException;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataType;
+import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.util.ExchangeHelper;
@@ -167,11 +168,8 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
             isJson = consumes != null && consumes.toLowerCase(Locale.ENGLISH).contains("json");
         }
 
-        // set the INPUT_TYPE to indicate body type
-        if (isJson) {
-            exchange.setProperty(Exchange.INPUT_TYPE, new DataType("json"));
-        } else if (isXml) {
-            exchange.setProperty(Exchange.INPUT_TYPE, new DataType("xml"));
+        if (exchange.getIn() instanceof DataTypeAware && (isJson || isXml)) {
+            ((DataTypeAware)exchange.getIn()).setDataType(new DataType(isJson ? "json" : "xml"));
         }
 
         // only allow xml/json if the binding mode allows that
@@ -196,7 +194,11 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                 // so force reading the body as a String which we can work with
                 body = MessageHelper.extractBodyAsString(exchange.getIn());
                 if (body != null) {
-                    exchange.getIn().setBody(body);
+                    if (exchange.getIn() instanceof DataTypeAware) {
+                        ((DataTypeAware)exchange.getIn()).setBody(body, new DataType(isJson ? "json" : "xml"));
+                    } else {
+                        exchange.getIn().setBody(body);
+                    }
 
                     if (isXml && isJson) {
                         // we have still not determined between xml or json, so check the body if its xml based or not
@@ -223,7 +225,6 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
             if (ObjectHelper.isNotEmpty(body)) {
                 jsonUnmarshal.process(exchange);
                 ExchangeHelper.prepareOutToIn(exchange);
-                exchange.setProperty(Exchange.INPUT_TYPE, new DataType(exchange.getIn().getBody().getClass()));
             }
             return;
         } else if (isXml && xmlUnmarshal != null) {
@@ -232,7 +233,6 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
             if (ObjectHelper.isNotEmpty(body)) {
                 xmlUnmarshal.process(exchange);
                 ExchangeHelper.prepareOutToIn(exchange);
-                exchange.setProperty(Exchange.INPUT_TYPE, new DataType(exchange.getIn().getBody().getClass()));
             }
             return;
         }
@@ -337,13 +337,13 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
                 // only marshal if its json content type
                 if (contentType.contains("json")) {
                     jsonMarshal.process(exchange);
-                    exchange.setProperty(Exchange.OUTPUT_TYPE, new DataType("json"));
+                    setOutputDataType(exchange, new DataType("json"));
                 }
             } else if (isXml && xmlMarshal != null) {
                 // only marshal if its xml content type
                 if (contentType.contains("xml")) {
                     xmlMarshal.process(exchange);
-                    exchange.setProperty(Exchange.OUTPUT_TYPE, new DataType("xml"));
+                    setOutputDataType(exchange, new DataType("xml"));
                 }
             } else {
                 // we could not bind
@@ -359,6 +359,13 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
             }
         } catch (Throwable e) {
             exchange.setException(e);
+        }
+    }
+
+    private void setOutputDataType(Exchange exchange, DataType type) {
+        Message target = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        if (target instanceof DataTypeAware) {
+            ((DataTypeAware)target).setDataType(type);
         }
     }
 

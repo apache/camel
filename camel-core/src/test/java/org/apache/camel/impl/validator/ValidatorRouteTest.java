@@ -64,7 +64,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         if (answerEx.getException() != null) {
             throw answerEx.getException();
         }
-        assertEquals("{name:XOrderResponse}", answerEx.getOut().getBody(String.class));
+        assertEquals("{name:XOrderResponse}", answerEx.getIn().getBody(String.class));
     }
 
     public void testEndpointValidator() throws Exception {
@@ -101,8 +101,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
                 from("direct:predicate")
                     .inputTypeWithValidate("json:JsonXOrder")
                     .outputType("json:JsonXOrderResponse")
-                    .setBody(simple("{name:XOrderResponse}"))
-                    .setProperty(Exchange.OUTPUT_TYPE, constant("json:JsonXOrderResponse"));
+                    .setBody(simple("{name:XOrderResponse}"));
                 
                 context.addComponent("myxml", new MyXmlComponent());
                 validator()
@@ -112,8 +111,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
                     .inputType("xml:XmlXOrder")
                     .outputTypeWithValidate("xml:XmlXOrderResponse")
                     .validate(exchangeProperty(VALIDATOR_INVOKED).isNull())
-                    .setBody(simple("<XOrderResponse/>"))
-                    .setProperty(Exchange.OUTPUT_TYPE, constant("xml:XmlXOrderResponse"));
+                    .setBody(simple("<XOrderResponse/>"));
                 
                 validator()
                     .type("other:OtherXOrder")
@@ -125,8 +123,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
                     .inputTypeWithValidate("other:OtherXOrder")
                     .outputTypeWithValidate("other:OtherXOrderResponse")
                     .validate(exchangeProperty(VALIDATOR_INVOKED).isEqualTo(OtherXOrderValidator.class))
-                    .setBody(simple("name=XOrderResponse"))
-                    .setProperty(Exchange.OUTPUT_TYPE, constant("other:OtherXOrderResponse"));
+                    .setBody(simple("name=XOrderResponse"));
             }
         };
     }
