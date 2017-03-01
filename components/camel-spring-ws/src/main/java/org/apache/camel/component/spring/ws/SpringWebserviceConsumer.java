@@ -19,6 +19,8 @@ package org.apache.camel.component.spring.ws;
 import java.util.Iterator;
 import java.util.Map;
 import javax.xml.namespace.QName;
+import javax.xml.soap.MimeHeaders;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
 
 import org.apache.camel.Endpoint;
@@ -36,6 +38,7 @@ import org.springframework.ws.server.endpoint.MessageEndpoint;
 import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapHeaderElement;
 import org.springframework.ws.soap.SoapMessage;
+import org.springframework.ws.soap.saaj.SaajSoapMessage;
 
 public class SpringWebserviceConsumer extends DefaultConsumer implements MessageEndpoint {
 
@@ -54,7 +57,10 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
     public void invoke(MessageContext messageContext) throws Exception {
         Exchange exchange = getEndpoint().createExchange(ExchangePattern.InOptionalOut);
         populateExchangeFromMessageContext(messageContext, exchange);
-
+        
+        // populate camel exchange with breadcrumb from transport header        
+        populateExchangeWithBreadcrumbFromMessageContext(messageContext, exchange);
+        
         // start message processing
         getProcessor().process(exchange);
 
@@ -73,6 +79,27 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
             }
         }
 
+    }
+    
+    private void populateExchangeWithBreadcrumbFromMessageContext(MessageContext messageContext, Exchange exchange) {
+        SaajSoapMessage saajSoap = (SaajSoapMessage) messageContext.getRequest();
+        SOAPMessage soapMesssageRequest = null;
+        if (saajSoap != null) {
+            soapMesssageRequest = saajSoap.getSaajMessage();
+            if (soapMesssageRequest != null) {
+                MimeHeaders mimeHeaders = soapMesssageRequest.getMimeHeaders();
+                if (mimeHeaders != null) {
+                    String[] breadcrumbIdHeaderValues = mimeHeaders.getHeader(Exchange.BREADCRUMB_ID);
+                    // expected to get one token
+                    // if more than one token expected, 
+                    // presumably breadcrumb generation strategy 
+                    // may be required to implement
+                    if (breadcrumbIdHeaderValues != null && breadcrumbIdHeaderValues.length >= 1) {
+                        exchange.getIn().setHeader(Exchange.BREADCRUMB_ID, breadcrumbIdHeaderValues[0]);
+                    }
+                }
+            }
+        }
     }
 
     private void populateExchangeFromMessageContext(MessageContext messageContext, Exchange exchange) {
