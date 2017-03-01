@@ -26,7 +26,11 @@ import org.apache.camel.TypeConverter;
 /**
  * A {@link TypeConverter} that converts to and from {@link URI}s.
  */
-public class UriTypeConverter {
+public final class UriTypeConverter {
+
+    private UriTypeConverter() {
+        // utility class
+    }
 
     @Converter
     public static CharSequence toCharSequence(final URI value) {
