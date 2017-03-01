@@ -167,7 +167,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 sd.pre(span, ese.getExchange(), ese.getEndpoint());
                 tracer.inject(span.context(), Format.Builtin.TEXT_MAP,
                     new CamelHeadersInjectAdapter(ese.getExchange().getIn().getHeaders()));
-                spanManager.manage(span);
+                spanManager.activate(span);
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("OpenTracing: start client span=" + span);
                 }
@@ -180,7 +180,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 sd.post(managedSpan.getSpan(), ((ExchangeSentEvent) event).getExchange(),
                     ((ExchangeSentEvent) event).getEndpoint());
                 managedSpan.getSpan().finish();
-                managedSpan.release();
+                managedSpan.deactivate();
             }
         }
 
@@ -210,7 +210,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 .withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_SERVER)
                 .start();
             sd.pre(span, exchange, route.getEndpoint());
-            spanManager.manage(span);
+            spanManager.activate(span);
             if (LOG.isTraceEnabled()) {
                 LOG.trace("OpenTracing: start server span=" + span);
             }
@@ -225,7 +225,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
             SpanDecorator sd = getSpanDecorator(route.getEndpoint());
             sd.post(managedSpan.getSpan(), exchange, route.getEndpoint());
             managedSpan.getSpan().finish();
-            managedSpan.release();
+            managedSpan.deactivate();
         }
     }
 
