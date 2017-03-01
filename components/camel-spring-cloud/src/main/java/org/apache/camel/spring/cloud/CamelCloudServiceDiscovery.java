@@ -41,12 +41,7 @@ public class CamelCloudServiceDiscovery implements ServiceDiscovery {
     }
 
     @Override
-    public List<ServiceDefinition> getInitialListOfServices(String name) {
-        return delegate.getInitialListOfServices(name);
-    }
-
-    @Override
-    public List<ServiceDefinition> getUpdatedListOfServices(String name) {
-        return delegate.getUpdatedListOfServices(name);
+    public List<ServiceDefinition> getServices(String name) {
+        return delegate.getServices(name);
     }
 }

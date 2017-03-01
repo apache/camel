@@ -28,7 +28,7 @@ public class EtcdOnDemandServiceDiscovery extends EtcdServiceDiscovery {
     }
 
     @Override
-    public List<ServiceDefinition> getUpdatedListOfServices(String name) {
+    public List<ServiceDefinition> getServices(String name) {
         return getServices(s -> name.equalsIgnoreCase(s.getName()));
     }
 }

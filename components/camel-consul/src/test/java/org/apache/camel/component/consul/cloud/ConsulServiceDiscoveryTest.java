@@ -74,7 +74,7 @@ public class ConsulServiceDiscoveryTest {
         ConsulConfiguration configuration = new ConsulConfiguration(null);
         ServiceDiscovery discovery = new ConsulServiceDiscovery(configuration);
 
-        List<ServiceDefinition> services = discovery.getUpdatedListOfServices("my-service");
+        List<ServiceDefinition> services = discovery.getServices("my-service");
         assertNotNull(services);
         assertEquals(3, services.size());
 

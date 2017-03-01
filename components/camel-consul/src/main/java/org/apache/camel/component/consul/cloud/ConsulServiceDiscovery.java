@@ -52,7 +52,7 @@ public final class ConsulServiceDiscovery extends DefaultServiceDiscovery {
     }
 
     @Override
-    public List<ServiceDefinition> getUpdatedListOfServices(String name) {
+    public List<ServiceDefinition> getServices(String name) {
         List<CatalogService> services = client.catalogClient()
             .getService(name, catalogOptions)
             .getResponse();
