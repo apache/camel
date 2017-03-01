@@ -16,11 +16,24 @@
  */
 package org.apache.camel.opentracing.decorators;
 
-public class HttpSpanDecorator extends AbstractHttpSpanDecorator {
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+
+public class TimerSpanDecorator extends AbstractSpanDecorator {
 
     @Override
     public String getComponent() {
-        return "http";
+        return "timer";
+    }
+
+    @Override
+    public String getOperationName(Exchange exchange, Endpoint endpoint) {
+        Object name = exchange.getProperty(Exchange.TIMER_NAME);
+        if (name instanceof String) {
+            return (String)name;
+        }
+
+        return super.getOperationName(exchange, endpoint);
     }
 
 }

@@ -16,11 +16,31 @@
  */
 package org.apache.camel.opentracing.decorators;
 
-public class HttpSpanDecorator extends AbstractHttpSpanDecorator {
+import static org.junit.Assert.*;
 
-    @Override
-    public String getComponent() {
-        return "http";
+import org.apache.camel.Exchange;
+import org.apache.camel.opentracing.SpanDecorator;
+import org.junit.Test;
+import org.mockito.Mockito;
+
+public class TimerSpanDecoratorTest {
+
+    private static final String TEST_NAME = "TestName";
+
+    @Test
+    public void testGetOperationName() {
+        Exchange exchange = Mockito.mock(Exchange.class);
+
+        Mockito.when(exchange.getProperty(Exchange.TIMER_NAME)).thenReturn(TEST_NAME);
+
+        SpanDecorator decorator = new TimerSpanDecorator() {
+            @Override
+            public String getComponent() {
+                return null;
+            }
+        };
+
+        assertEquals(TEST_NAME, decorator.getOperationName(exchange, null));
     }
 
 }
