@@ -235,11 +235,12 @@ public class UndertowComponent extends UriEndpointComponent implements RestConsu
         uriTemplate = FileUtil.stripLeadingSeparator(uriTemplate);
 
         // get the endpoint
-        String url;
-        if (uriTemplate != null) {
-            url = String.format("undertow:%s/%s/%s", host, basePath, uriTemplate);
-        } else {
-            url = String.format("undertow:%s/%s", host, basePath);
+        String url = "undertow:" + host;
+        if (!ObjectHelper.isEmpty(basePath)) {
+            url += "/" + basePath;
+        }
+        if (!ObjectHelper.isEmpty(uriTemplate)) {
+            url += "/" + uriTemplate;
         }
 
         UndertowEndpoint endpoint = camelContext.getEndpoint(url, UndertowEndpoint.class);

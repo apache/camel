@@ -379,12 +379,12 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         host = host.replace("http", "http4");
 
         // get the endpoint
-        String url;
-        if (uriTemplate != null) {
-
-            url = String.format("%s/%s/%s", host, basePath, uriTemplate);
-        } else {
-            url = String.format("%s/%s", host, basePath);
+        String url = host;
+        if (!ObjectHelper.isEmpty(basePath)) {
+            url += "/" + basePath;
+        }
+        if (!ObjectHelper.isEmpty(uriTemplate)) {
+            url += "/" + uriTemplate;
         }
 
         HttpEndpoint endpoint = camelContext.getEndpoint(url, HttpEndpoint.class);
