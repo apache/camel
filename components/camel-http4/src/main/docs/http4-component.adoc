@@ -60,7 +60,7 @@ The HTTP4 component supports 13 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | httpClientConfigurer | advanced |  | HttpClientConfigurer | To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.
-| clientConnectionManager | advanced |  | HttpClientConnectionManager | To use a custom HttpClientConnectionManager to manage connections
+| clientConnectionManager | advanced |  | HttpClientConnectionManager | To use a custom and shared HttpClientConnectionManager to manage connections. If this has been configured then this is always used for all endpoints created by this component.
 | httpBinding | producer |  | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
 | httpConfiguration | producer |  | HttpConfiguration | To use the shared HttpConfiguration as base configuration.
 | allowJavaSerializedObject | producer | false | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
@@ -86,7 +86,7 @@ The HTTP4 component supports 13 options which are listed below.
 
 
 // endpoint options: START
-The HTTP4 component supports 33 endpoint options which are listed below:
+The HTTP4 component supports 48 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -106,8 +106,6 @@ The HTTP4 component supports 33 endpoint options which are listed below:
 | httpMethod | producer |  | HttpMethods | Configure the HTTP method to use. The HttpMethod header cannot override this option if set.
 | ignoreResponseBody | producer | false | boolean | If this option is true The http producer won't read response body and cache the input stream
 | preserveHostHeader | producer | false | boolean | If the option is true HttpProducer will set the Host header to the value contained in the current exchange Host header useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client this allows applications which use the Host header to generate accurate URL's for a proxied service
-| proxyHost | producer |  | String | The proxy host name
-| proxyPort | producer |  | int | The proxy port number
 | throwExceptionOnFailure | producer | true | boolean | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code.
 | transferException | producer | false | boolean | If enabled and an Exchange failed processing on the consumer side and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
 | cookieHandler | producer (advanced) |  | CookieHandler | Configure a cookie handler to maintain a HTTP session
@@ -115,6 +113,7 @@ The HTTP4 component supports 33 endpoint options which are listed below:
 | urlRewrite | producer (advanced) |  | UrlRewrite | Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints. See more details at http://camel.apache.org/urlrewrite.html
 | clientBuilder | advanced |  | HttpClientBuilder | Provide access to the http client request parameters used on new RequestConfig instances used by producers or consumers of this endpoint.
 | clientConnectionManager | advanced |  | HttpClientConnectionManager | To use a custom HttpClientConnectionManager to manage connections
+| connectionsPerRoute | advanced | 20 | int | The maximum number of connections per route.
 | httpClient | advanced |  | HttpClient | Gets the HttpClient to be used by org.apache.camel.component.http4.HttpProducer
 | httpClientConfigurer | advanced |  | HttpClientConfigurer | Register a custom configuration strategy for new HttpClient instances created by producers or consumers such as to configure authentication mechanisms etc
 | httpClientOptions | advanced |  | Map | To configure the HttpClient using the key/values from the Map.
@@ -122,9 +121,25 @@ The HTTP4 component supports 33 endpoint options which are listed below:
 | mapHttpMessageBody | advanced | true | boolean | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping.
 | mapHttpMessageFormUrlEncodedBody | advanced | true | boolean | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping.
 | mapHttpMessageHeaders | advanced | true | boolean | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping.
+| maxTotalConnections | advanced | 200 | int | The maximum number of connections.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | useSystemProperties | advanced | false | boolean | To use System Properties as fallback for configuration
-| authMethodPriority | security |  | String | Authentication method for proxy either as Basic Digest or NTLM.
+| proxyAuthDomain | proxy |  | String | Proxy authentication domain to use with NTML
+| proxyAuthHost | proxy |  | String | Proxy authentication host
+| proxyAuthMethod | proxy |  | String | Proxy authentication method to use
+| proxyAuthPassword | proxy |  | String | Proxy authentication password
+| proxyAuthPort | proxy |  | int | Proxy authentication port
+| proxyAuthScheme | proxy |  | String | Proxy authentication scheme to use
+| proxyAuthUsername | proxy |  | String | Proxy authentication username
+| proxyHost | proxy |  | String | Proxy hostname to use
+| proxyPort | proxy |  | int | Proxy port to use
+| authDomain | security |  | String | Authentication domain to use with NTML
+| authHost | security |  | String | Authentication host to use with NTML
+| authMethod | security |  | String | Authentication methods allowed to use as a comma separated list of values Basic Digest or NTLM.
+| authMethodPriority | security |  | String | Which authentication method to prioritize to use either as Basic Digest or NTLM.
+| authPassword | security |  | String | Authentication password
+| authUsername | security |  | String | Authentication username
+| x509HostnameVerifier | security |  | HostnameVerifier | To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or org.apache.http.conn.ssl.NoopHostnameVerifier.
 |=======================================================================
 {% endraw %}
 // endpoint options: END

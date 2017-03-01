@@ -81,16 +81,16 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         }
 
         // authentication can be endpoint configured
-        String authUsername = getAndRemoveParameter(parameters, "authUsername", String.class);
-        String authMethod = getAndRemoveParameter(parameters, "authMethod", String.class);
+        String authUsername = getParameter(parameters, "authUsername", String.class);
+        String authMethod = getParameter(parameters, "authMethod", String.class);
         // validate that if auth username is given then the auth method is also provided
         if (authUsername != null && authMethod == null) {
             throw new IllegalArgumentException("Option authMethod must be provided to use authentication");
         }
         if (authMethod != null) {
-            String authPassword = getAndRemoveParameter(parameters, "authPassword", String.class);
-            String authDomain = getAndRemoveParameter(parameters, "authDomain", String.class);
-            String authHost = getAndRemoveParameter(parameters, "authHost", String.class);
+            String authPassword = getParameter(parameters, "authPassword", String.class);
+            String authDomain = getParameter(parameters, "authDomain", String.class);
+            String authHost = getParameter(parameters, "authHost", String.class);
             configurer = configureAuth(configurer, authMethod, authUsername, authPassword, authDomain, authHost, authMethods);
         } else if (httpConfiguration != null) {
             // or fallback to use component configuration
@@ -99,16 +99,16 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         }
 
         // proxy authentication can be endpoint configured
-        String proxyAuthUsername = getAndRemoveParameter(parameters, "proxyAuthUsername", String.class);
-        String proxyAuthMethod = getAndRemoveParameter(parameters, "proxyAuthMethod", String.class);
+        String proxyAuthUsername = getParameter(parameters, "proxyAuthUsername", String.class);
+        String proxyAuthMethod = getParameter(parameters, "proxyAuthMethod", String.class);
         // validate that if proxy auth username is given then the proxy auth method is also provided
         if (proxyAuthUsername != null && proxyAuthMethod == null) {
             throw new IllegalArgumentException("Option proxyAuthMethod must be provided to use proxy authentication");
         }
         if (proxyAuthMethod != null) {
-            String proxyAuthPassword = getAndRemoveParameter(parameters, "proxyAuthPassword", String.class);
-            String proxyAuthDomain = getAndRemoveParameter(parameters, "proxyAuthDomain", String.class);
-            String proxyAuthHost = getAndRemoveParameter(parameters, "proxyAuthHost", String.class);
+            String proxyAuthPassword = getParameter(parameters, "proxyAuthPassword", String.class);
+            String proxyAuthDomain = getParameter(parameters, "proxyAuthDomain", String.class);
+            String proxyAuthHost = getParameter(parameters, "proxyAuthHost", String.class);
             configurer = configureProxyAuth(configurer, proxyAuthMethod, proxyAuthUsername, proxyAuthPassword, proxyAuthDomain, proxyAuthHost, authMethods);
         } else if (httpConfiguration != null) {
             // or fallback to use component configuration
@@ -205,9 +205,6 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         Map<String, Object> httpClientParameters = new HashMap<String, Object>(parameters);
         // must extract well known parameters before we create the endpoint
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
-        String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class);
-        Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
-        String authMethodPriority = getAndRemoveParameter(parameters, "authMethodPriority", String.class);
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
         UrlRewrite urlRewrite = resolveAndRemoveReferenceParameter(parameters, "urlRewrite", UrlRewrite.class);
         // http client can be configured from URI options
@@ -238,7 +235,14 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
        
         // create the endpoint and connectionManagerParams already be set
         HttpEndpoint endpoint = createHttpEndpoint(endpointUri.toString(), this, clientParams, thisHttpConnectionManager, configurer);
-        
+
+        // configure the endpoint with the common configuration from the component
+        if (getHttpConfiguration() != null) {
+            Map<String, Object> properties = new HashMap<>();
+            IntrospectionSupport.getProperties(getHttpConfiguration(), properties, null);
+            setProperties(endpoint, properties);
+        }
+
         if (headerFilterStrategy != null) {
             endpoint.setHeaderFilterStrategy(headerFilterStrategy);
         } else {
@@ -258,25 +262,6 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         }
         if (binding != null) {
             endpoint.setBinding(binding);
-        }
-        if (proxyHost != null) {
-            endpoint.setProxyHost(proxyHost);
-            endpoint.setProxyPort(proxyPort);
-        } else if (httpConfiguration != null) {
-            endpoint.setProxyHost(httpConfiguration.getProxyHost());
-            endpoint.setProxyPort(httpConfiguration.getProxyPort());
-        }
-        if (authMethodPriority != null) {
-            endpoint.setAuthMethodPriority(authMethodPriority);
-        } else if (httpConfiguration != null && httpConfiguration.getAuthMethodPriority() != null) {
-            endpoint.setAuthMethodPriority(httpConfiguration.getAuthMethodPriority());
-        } else {
-            // no explicit auth method priority configured, so use convention over configuration
-            // and set priority based on auth method
-            if (!authMethods.isEmpty()) {
-                authMethodPriority = CollectionHelper.collectionAsCommaDelimitedString(authMethods);
-                endpoint.setAuthMethodPriority(authMethodPriority);
-            }
         }
         setProperties(endpoint, parameters);
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options

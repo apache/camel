@@ -141,7 +141,7 @@ The HTTP component supports 6 options which are listed below.
 
 
 // endpoint options: START
-The HTTP component supports 27 endpoint options which are listed below:
+The HTTP component supports 39 endpoint options which are listed below:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
@@ -158,8 +158,6 @@ The HTTP component supports 27 endpoint options which are listed below:
 | httpMethod | producer |  | HttpMethods | Configure the HTTP method to use. The HttpMethod header cannot override this option if set.
 | ignoreResponseBody | producer | false | boolean | If this option is true The http producer won't read response body and cache the input stream
 | preserveHostHeader | producer | false | boolean | If the option is true HttpProducer will set the Host header to the value contained in the current exchange Host header useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client this allows applications which use the Host header to generate accurate URL's for a proxied service
-| proxyHost | producer |  | String | The proxy host name
-| proxyPort | producer |  | int | The proxy port number
 | throwExceptionOnFailure | producer | true | boolean | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code.
 | transferException | producer | false | boolean | If enabled and an Exchange failed processing on the consumer side and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
 | cookieHandler | producer (advanced) |  | CookieHandler | Configure a cookie handler to maintain a HTTP session
@@ -173,7 +171,21 @@ The HTTP component supports 27 endpoint options which are listed below:
 | mapHttpMessageFormUrlEncodedBody | advanced | true | boolean | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping.
 | mapHttpMessageHeaders | advanced | true | boolean | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| authMethodPriority | security |  | String | Authentication method for proxy either as Basic Digest or NTLM.
+| proxyAuthDomain | proxy |  | String | Proxy authentication domain to use with NTML
+| proxyAuthHost | proxy |  | String | Proxy authentication host
+| proxyAuthMethod | proxy |  | String | Proxy authentication method to use
+| proxyAuthPassword | proxy |  | String | Proxy authentication password
+| proxyAuthPort | proxy |  | int | Proxy authentication port
+| proxyAuthScheme | proxy |  | String | Proxy authentication scheme to use
+| proxyAuthUsername | proxy |  | String | Proxy authentication username
+| proxyHost | proxy |  | String | Proxy hostname to use
+| proxyPort | proxy |  | int | Proxy port to use
+| authDomain | security |  | String | Authentication domain to use with NTML
+| authHost | security |  | String | Authentication host to use with NTML
+| authMethod | security |  | String | Authentication methods allowed to use as a comma separated list of values Basic Digest or NTLM.
+| authMethodPriority | security |  | String | Which authentication method to prioritize to use either as Basic Digest or NTLM.
+| authPassword | security |  | String | Authentication password
+| authUsername | security |  | String | Authentication username
 |=======================================================================
 {% endraw %}
 // endpoint options: END

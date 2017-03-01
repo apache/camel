@@ -70,12 +70,6 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
                     + " The http/http4 producer will by default cache the response body stream. If setting this option to true,"
                     + " then the producers will not cache the response body stream but use the response stream as-is as the message body.")
     boolean disableStreamCache;
-    @UriParam(label = "producer", description = "The proxy host name")
-    String proxyHost;
-    @UriParam(label = "producer", description = "The proxy port number")
-    int proxyPort;
-    @UriParam(label = "producer,security", enums = "Basic,Digest,NTLM", description = "Authentication method for proxy, either as Basic, Digest or NTLM.")
-    String authMethodPriority;
     @UriParam(description = "If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized"
             + " in the response as a application/x-java-serialized-object content type."
             + " On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException."
@@ -135,6 +129,37 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     private CookieHandler cookieHandler;
     @UriParam(label = "producer", description = "Configure the HTTP method to use. The HttpMethod header cannot override this option if set.")
     private HttpMethods httpMethod;
+
+    @UriParam(label = "producer,security", description = "Authentication methods allowed to use as a comma separated list of values Basic, Digest or NTLM.")
+    private String authMethod;
+    @UriParam(label = "producer,security", enums = "Basic,Digest,NTLM", description = "Which authentication method to prioritize to use, either as Basic, Digest or NTLM.")
+    private String authMethodPriority;
+    @UriParam(label = "producer,security", secret = true, description = "Authentication username")
+    private String authUsername;
+    @UriParam(label = "producer,security", secret = true, description = "Authentication password")
+    private String authPassword;
+    @UriParam(label = "producer,security", description = "Authentication domain to use with NTML")
+    private String authDomain;
+    @UriParam(label = "producer,security", description = "Authentication host to use with NTML")
+    private String authHost;
+    @UriParam(label = "producer,proxy", description = "Proxy hostname to use")
+    private String proxyHost;
+    @UriParam(label = "producer,proxy", description = "Proxy port to use")
+    private int proxyPort;
+    @UriParam(label = "producer,proxy", enums = "http,https", description = "Proxy authentication scheme to use")
+    private String proxyAuthScheme;
+    @UriParam(label = "producer,proxy", enums = "Basic,Digest,NTLM", description = "Proxy authentication method to use")
+    private String proxyAuthMethod;
+    @UriParam(label = "producer,proxy", secret = true, description = "Proxy authentication username")
+    private String proxyAuthUsername;
+    @UriParam(label = "producer,proxy", secret = true, description = "Proxy authentication password")
+    private String proxyAuthPassword;
+    @UriParam(label = "producer,proxy", description = "Proxy authentication host")
+    private String proxyAuthHost;
+    @UriParam(label = "producer,proxy", description = "Proxy authentication port")
+    private int proxyAuthPort;
+    @UriParam(label = "producer,proxy", description = "Proxy authentication domain to use with NTML")
+    private String proxyAuthDomain;
 
     public HttpCommonEndpoint() {
     }
@@ -333,39 +358,6 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
      */
     public void setChunked(boolean chunked) {
         this.chunked = chunked;
-    }
-
-    public String getProxyHost() {
-        return proxyHost;
-    }
-
-    /**
-     * The proxy host name
-     */
-    public void setProxyHost(String proxyHost) {
-        this.proxyHost = proxyHost;
-    }
-
-    public int getProxyPort() {
-        return proxyPort;
-    }
-
-    /**
-     * The proxy port number
-     */
-    public void setProxyPort(int proxyPort) {
-        this.proxyPort = proxyPort;
-    }
-
-    public String getAuthMethodPriority() {
-        return authMethodPriority;
-    }
-
-    /**
-     * Authentication method for proxy, either as Basic, Digest or NTLM.
-     */
-    public void setAuthMethodPriority(String authMethodPriority) {
-        this.authMethodPriority = authMethodPriority;
     }
 
     public boolean isTransferException() {
@@ -567,5 +559,170 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
      */
     public void setHttpMethod(HttpMethods httpMethod) {
         this.httpMethod = httpMethod;
+    }
+
+    public String getAuthMethod() {
+        return authMethod;
+    }
+
+    /**
+     * Authentication methods allowed to use as a comma separated list of values Basic, Digest or NTLM.
+     */
+    public void setAuthMethod(String authMethod) {
+        this.authMethod = authMethod;
+    }
+
+    public String getAuthMethodPriority() {
+        return authMethodPriority;
+    }
+
+    /**
+     * Which authentication method to prioritize to use, either as Basic, Digest or NTLM.
+     */
+    public void setAuthMethodPriority(String authMethodPriority) {
+        this.authMethodPriority = authMethodPriority;
+    }
+
+    public String getAuthUsername() {
+        return authUsername;
+    }
+
+    /**
+     * Authentication username
+     */
+    public void setAuthUsername(String authUsername) {
+        this.authUsername = authUsername;
+    }
+
+    public String getAuthPassword() {
+        return authPassword;
+    }
+
+    /**
+     * Authentication password
+     */
+    public void setAuthPassword(String authPassword) {
+        this.authPassword = authPassword;
+    }
+
+    public String getAuthDomain() {
+        return authDomain;
+    }
+
+    /**
+     * Authentication domain to use with NTML
+     */
+    public void setAuthDomain(String authDomain) {
+        this.authDomain = authDomain;
+    }
+
+    public String getAuthHost() {
+        return authHost;
+    }
+
+    /**
+     * Authentication host to use with NTML
+     */
+    public void setAuthHost(String authHost) {
+        this.authHost = authHost;
+    }
+
+    public String getProxyAuthScheme() {
+        return proxyAuthScheme;
+    }
+
+    /**
+     * Proxy authentication scheme to use
+     */
+    public void setProxyAuthScheme(String proxyAuthScheme) {
+        this.proxyAuthScheme = proxyAuthScheme;
+    }
+
+    public String getProxyAuthMethod() {
+        return proxyAuthMethod;
+    }
+
+    /**
+     * Proxy authentication method to use
+     */
+    public void setProxyAuthMethod(String proxyAuthMethod) {
+        this.proxyAuthMethod = proxyAuthMethod;
+    }
+
+    public String getProxyAuthUsername() {
+        return proxyAuthUsername;
+    }
+
+    /**
+     * Proxy authentication username
+     */
+    public void setProxyAuthUsername(String proxyAuthUsername) {
+        this.proxyAuthUsername = proxyAuthUsername;
+    }
+
+    public String getProxyAuthPassword() {
+        return proxyAuthPassword;
+    }
+
+    /**
+     * Proxy authentication password
+     */
+    public void setProxyAuthPassword(String proxyAuthPassword) {
+        this.proxyAuthPassword = proxyAuthPassword;
+    }
+
+    public String getProxyAuthDomain() {
+        return proxyAuthDomain;
+    }
+
+    /**
+     * Proxy authentication domain to use with NTML
+     */
+    public void setProxyAuthDomain(String proxyAuthDomain) {
+        this.proxyAuthDomain = proxyAuthDomain;
+    }
+
+    public String getProxyAuthHost() {
+        return proxyAuthHost;
+    }
+
+    /**
+     * Proxy authentication host to use with NTML
+     */
+    public void setProxyAuthHost(String proxyAuthHost) {
+        this.proxyAuthHost = proxyAuthHost;
+    }
+
+    public int getProxyAuthPort() {
+        return proxyAuthPort;
+    }
+
+    /**
+     * Proxy authentication port
+     */
+    public void setProxyAuthPort(int proxyAuthPort) {
+        this.proxyAuthPort = proxyAuthPort;
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    /**
+     * Proxy hostname to use
+     */
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public int getProxyPort() {
+        return proxyPort;
+    }
+
+    /**
+     * Proxy port to use
+     */
+    public void setProxyPort(int proxyPort) {
+        this.proxyPort = proxyPort;
     }
 }
