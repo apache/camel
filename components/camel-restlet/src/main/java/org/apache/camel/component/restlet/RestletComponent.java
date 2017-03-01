@@ -845,12 +845,14 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         String restletMethod = verb.toUpperCase(Locale.US);
 
         // get the endpoint
-        String url;
-        if (uriTemplate != null) {
-            url = String.format("restlet:%s/%s/%s?restletMethods=%s", host, basePath, uriTemplate, restletMethod);
-        } else {
-            url = String.format("restlet:%s/%s?restletMethods=%s", host, basePath, restletMethod);
+        String url = "restlet:" + host;
+        if (!ObjectHelper.isEmpty(basePath)) {
+            url += "/" + basePath;
         }
+        if (!ObjectHelper.isEmpty(uriTemplate)) {
+            url += "/" + uriTemplate;
+        }
+        url += "?restletMethods=" + restletMethod;
 
         RestletEndpoint endpoint = camelContext.getEndpoint(url, RestletEndpoint.class);
         if (parameters != null && !parameters.isEmpty()) {

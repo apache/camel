@@ -1185,11 +1185,12 @@ public abstract class JettyHttpComponent extends HttpCommonComponent implements 
         uriTemplate = FileUtil.stripLeadingSeparator(uriTemplate);
 
         // get the endpoint
-        String url;
-        if (uriTemplate != null) {
-            url = String.format("jetty:%s/%s/%s", host, basePath, uriTemplate);
-        } else {
-            url = String.format("jetty:%s/%s", host, basePath);
+        String url = "jetty:" + host;
+        if (!ObjectHelper.isEmpty(basePath)) {
+            url += "/" + basePath;
+        }
+        if (!ObjectHelper.isEmpty(uriTemplate)) {
+            url += "/" + uriTemplate;
         }
 
         JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);

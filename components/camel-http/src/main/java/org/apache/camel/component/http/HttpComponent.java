@@ -296,13 +296,12 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         uriTemplate = FileUtil.stripLeadingSeparator(uriTemplate);
 
         // get the endpoint
-        String url;
-        if (uriTemplate != null) {
-            // http is already prefixed in base path
-            url = String.format("%s/%s/%s", host, basePath, uriTemplate);
-        } else {
-            // http is already prefixed in base path
-            url = String.format("%s/%s", host, basePath);
+        String url = host;
+        if (!ObjectHelper.isEmpty(basePath)) {
+            url += "/" + basePath;
+        }
+        if (!ObjectHelper.isEmpty(uriTemplate)) {
+            url += "/" + uriTemplate;
         }
 
         HttpEndpoint endpoint = camelContext.getEndpoint(url, HttpEndpoint.class);
