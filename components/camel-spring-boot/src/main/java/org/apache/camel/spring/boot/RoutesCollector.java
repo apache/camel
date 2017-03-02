@@ -20,13 +20,17 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.main.MainDurationEventNotifier;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -105,9 +109,20 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                     }
 
                     if (configurationProperties.isMainRunController()) {
-                        LOG.info("Starting CamelMainRunController to ensure the main thread keeps running");
                         CamelMainRunController controller = new CamelMainRunController(applicationContext, camelContext);
+
+                        if (configurationProperties.getMainRunControllerMaxDurationMessages() > 0) {
+                            LOG.info("CamelMainRunController will terminate after processing maximum {} messages", configurationProperties.getMainRunControllerMaxDurationMessages());
+                            // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
+                            EventNotifier notifier = new MainDurationEventNotifier(camelContext, configurationProperties.getMainRunControllerMaxDurationMessages(),
+                                controller.getCompleted(), controller.getLatch());
+                            // register our event notifier
+                            ServiceHelper.startService(notifier);
+                            camelContext.getManagementStrategy().addEventNotifier(notifier);
+                        }
+
                         // controller will start Camel
+                        LOG.info("Starting CamelMainRunController to ensure the main thread keeps running");
                         controller.start();
                     } else {
                         // start camel manually
