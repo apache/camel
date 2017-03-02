@@ -20,6 +20,9 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
@@ -121,6 +124,12 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                             camelContext.getManagementStrategy().addEventNotifier(notifier);
                         }
 
+                        if (configurationProperties.getMainRunControllerMaxDurationSeconds() > 0) {
+                            LOG.info("CamelMainRunController will terminate after {} seconds", configurationProperties.getMainRunControllerMaxDurationSeconds());
+                            terminateMainControllerAfter(camelContext, configurationProperties.getMainRunControllerMaxDurationSeconds(),
+                                controller.getCompleted(), controller.getLatch());
+                        }
+
                         // controller will start Camel
                         LOG.info("Starting CamelMainRunController to ensure the main thread keeps running");
                         controller.start();
@@ -188,6 +197,22 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void terminateMainControllerAfter(final CamelContext camelContext, int seconds, final AtomicBoolean completed, final CountDownLatch latch) {
+        ScheduledExecutorService executorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "CamelMainRunControllerTerminateTaks");
+        Runnable task = () -> {
+            LOG.info("CamelMainRunController max seconds triggering shutdown of the JVM.");
+            try {
+                camelContext.stop();
+            } catch (Throwable e) {
+                LOG.warn("Error during stopping CamelContext", e);
+            } finally {
+                completed.set(true);
+                latch.countDown();
+            }
+        };
+        executorService.schedule(task, seconds, TimeUnit.SECONDS);
     }
 
 }
