@@ -134,6 +134,12 @@ public class CamelConfigurationProperties {
     private int durationMaxSeconds;
 
     /**
+     * To specify for how long time in seconds Camel can be idle before automatic terminating the JVM.
+     * You can use this to run Spring Boot for a short while.
+     */
+    private int durationMaxIdleSeconds;
+
+    /**
      * To specify how many messages to process by Camel before automatic terminating the JVM.
      * You can use this to run Spring Boot for a short while.
      */
@@ -499,6 +505,14 @@ public class CamelConfigurationProperties {
 
     public void setDurationMaxSeconds(int durationMaxSeconds) {
         this.durationMaxSeconds = durationMaxSeconds;
+    }
+
+    public int getDurationMaxIdleSeconds() {
+        return durationMaxIdleSeconds;
+    }
+
+    public void setDurationMaxIdleSeconds(int durationMaxIdleSeconds) {
+        this.durationMaxIdleSeconds = durationMaxIdleSeconds;
     }
 
     public int getDurationMaxMessages() {

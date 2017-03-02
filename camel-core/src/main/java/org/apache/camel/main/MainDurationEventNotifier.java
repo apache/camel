@@ -18,12 +18,16 @@ package org.apache.camel.main;
 
 import java.util.EventObject;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
+import org.apache.camel.management.event.ExchangeCreatedEvent;
 import org.apache.camel.management.event.ExchangeFailedEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,15 +40,20 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
     private static final Logger LOG = LoggerFactory.getLogger(MainLifecycleStrategy.class);
     private final CamelContext camelContext;
     private final int maxMessages;
+    private final long maxIdleSeconds;
     private final AtomicBoolean completed;
     private final CountDownLatch latch;
     private final boolean stopCamelContext;
 
     private volatile int doneMessages;
+    private volatile StopWatch watch;
+    private volatile ScheduledExecutorService executorService;
 
-    public MainDurationEventNotifier(CamelContext camelContext, int maxMessages, AtomicBoolean completed, CountDownLatch latch, boolean stopCamelContext) {
+    public MainDurationEventNotifier(CamelContext camelContext, int maxMessages, long maxIdleSeconds,
+                                     AtomicBoolean completed, CountDownLatch latch, boolean stopCamelContext) {
         this.camelContext = camelContext;
         this.maxMessages = maxMessages;
+        this.maxIdleSeconds = maxIdleSeconds;
         this.completed = completed;
         this.latch = latch;
         this.stopCamelContext = stopCamelContext;
@@ -52,18 +61,37 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
 
     @Override
     public void notify(EventObject event) throws Exception {
-        doneMessages++;
+        boolean begin = event instanceof ExchangeCreatedEvent;
+        boolean complete = event instanceof ExchangeCompletedEvent || event instanceof ExchangeFailedEvent;
 
-        if (maxMessages > 0 && doneMessages >= maxMessages) {
-            if (completed.compareAndSet(false, true)) {
-                LOG.info("Duration max messages triggering shutdown of the JVM.");
-                // shutting down CamelContext
-                if (stopCamelContext) {
-                    camelContext.stop();
+        if (maxMessages > 0 && complete) {
+            doneMessages++;
+
+            boolean result = doneMessages >= maxMessages;
+            LOG.trace("Duration max messages check {} >= {} -> {}", doneMessages, maxMessages, result);
+
+            if (result) {
+                if (completed.compareAndSet(false, true)) {
+                    LOG.info("Duration max messages triggering shutdown of the JVM.");
+                    try {
+                        // shutting down CamelContext
+                        if (stopCamelContext) {
+                            camelContext.stop();
+                        }
+                    } catch (Exception e) {
+                        LOG.warn("Error during stopping CamelContext. This exception is ignored.", e);
+                    } finally {
+                        // trigger stopping the Main
+                        latch.countDown();
+                    }
                 }
-                // trigger stopping the Main
-                latch.countDown();
             }
+        }
+
+        // idle reacts on both incoming and complete messages
+        if (maxIdleSeconds > 0 && (begin || complete)) {
+            LOG.trace("Message activity so restarting stop watch");
+            watch.restart();
         }
     }
 
@@ -76,4 +104,52 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
     public String toString() {
         return "MainDurationEventNotifier[" + maxMessages + " max messages]";
     }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (maxIdleSeconds > 0) {
+
+            // we only start watch when Camel is started
+            camelContext.addStartupListener((context, alreadyStarted) -> watch = new StopWatch());
+
+            // okay we need to trigger on idle after X period, and therefore we need a background task that checks this
+            executorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "MainDurationIdleChecker");
+            Runnable task = () -> {
+                if (watch == null) {
+                    // camel has not been started yet
+                    return;
+                }
+
+                // any inflight messages currently
+                int inflight = camelContext.getInflightRepository().size();
+                if (inflight > 0) {
+                    LOG.trace("Duration max idle check is skipped due {} inflight messages", inflight);
+                    return;
+                }
+
+                long seconds = watch.taken() / 1000;
+                boolean result = seconds >= maxIdleSeconds;
+                LOG.trace("Duration max idle check {} >= {} -> {}", seconds, maxIdleSeconds, result);
+
+                if (result) {
+                    if (completed.compareAndSet(false, true)) {
+                        LOG.info("Duration max idle triggering shutdown of the JVM.");
+                        try {
+                            // shutting down CamelContext
+                            if (stopCamelContext) {
+                                camelContext.stop();
+                            }
+                        } catch (Exception e) {
+                            LOG.warn("Error during stopping CamelContext. This exception is ignored.", e);
+                        } finally {
+                            // trigger stopping the Main
+                            latch.countDown();
+                        }
+                    }
+                }
+            };
+            executorService.scheduleAtFixedRate(task, 1,1, TimeUnit.SECONDS);
+        }
+    }
+
 }

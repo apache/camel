@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -32,7 +31,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultModelJAXBContextFactory;
-import org.apache.camel.impl.DurationRoutePolicyFactory;
 import org.apache.camel.impl.FileWatcherReloadStrategy;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.EventNotifier;
@@ -58,8 +56,9 @@ public abstract class MainSupport extends ServiceSupport {
     protected final AtomicBoolean completed = new AtomicBoolean(false);
     protected final AtomicInteger exitCode = new AtomicInteger(UNINITIALIZED_EXIT_CODE);
     protected long duration = -1;
+    protected long durationIdle = -1;
     protected int durationMaxMessages;
-    protected TimeUnit timeUnit = TimeUnit.MILLISECONDS;
+    protected TimeUnit timeUnit = TimeUnit.SECONDS;
     protected boolean trace;
     protected List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
     protected String routeBuilderClasses;
@@ -108,15 +107,14 @@ public abstract class MainSupport extends ServiceSupport {
             }
         });
         addOption(new ParameterOption("d", "duration",
-                "Sets the time duration that the application will run for, by default in milliseconds. You can use '10s' for 10 seconds etc",
+                "Sets the time duration (seconds) that the application will run for before terminating.",
                 "duration") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
-                String value = parameter.toUpperCase(Locale.ENGLISH);
-                if (value.endsWith("S")) {
-                    value = value.substring(0, value.length() - 1);
-                    setTimeUnit(TimeUnit.SECONDS);
+                // skip second marker to be backwards compatible
+                if (parameter.endsWith("s") || parameter.endsWith("S")) {
+                    parameter = parameter.substring(0, parameter.length() - 1);
                 }
-                setDuration(Integer.parseInt(value));
+                setDuration(Integer.parseInt(parameter));
             }
         });
         addOption(new ParameterOption("dm", "durationMaxMessages",
@@ -124,6 +122,17 @@ public abstract class MainSupport extends ServiceSupport {
                 "durationMaxMessages") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setDurationMaxMessages(Integer.parseInt(parameter));
+            }
+        });
+        addOption(new ParameterOption("di", "durationIdle",
+                "Sets the idle time duration (seconds) duration that the application can be idle before terminating.",
+                "durationIdle") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                // skip second marker to be backwards compatible
+                if (parameter.endsWith("s") || parameter.endsWith("S")) {
+                    parameter = parameter.substring(0, parameter.length() - 1);
+                }
+                setDurationIdle(Integer.parseInt(parameter));
             }
         });
         addOption(new Option("t", "trace", "Enables tracing") {
@@ -327,11 +336,25 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     /**
-     * Sets the duration to run the application for in milliseconds until it
+     * Sets the duration (in seconds) to run the application until it
      * should be terminated. Defaults to -1. Any value <= 0 will run forever.
      */
     public void setDuration(long duration) {
         this.duration = duration;
+    }
+
+    public long getDurationIdle() {
+        return durationIdle;
+    }
+
+    /**
+     * Sets the maximum idle duration (in seconds) when running the application, and
+     * if there has been no message processed after being idle for more than this duration
+     * then the application should be terminated.
+     * Defaults to -1. Any value <= 0 will run forever.
+     */
+    public void setDurationIdle(long durationIdle) {
+        this.durationIdle = durationIdle;
     }
 
     public int getDurationMaxMessages() {
@@ -351,7 +374,7 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     /**
-     * Sets the time unit duration.
+     * Sets the time unit duration (seconds by default).
      */
     public void setTimeUnit(TimeUnit timeUnit) {
         this.timeUnit = timeUnit;
@@ -430,6 +453,12 @@ public abstract class MainSupport extends ServiceSupport {
                     LOG.info("Waiting for: " + duration + " " + unit);
                     latch.await(duration, unit);
                     exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, durationHitExitCode);
+                    completed.set(true);
+                } else if (durationIdle > 0) {
+                    TimeUnit unit = getTimeUnit();
+                    LOG.info("Waiting to be idle for: " + duration + " " + unit);
+                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, durationHitExitCode);
+                    latch.await();
                     completed.set(true);
                 } else if (durationMaxMessages > 0) {
                     LOG.info("Waiting until: " + durationMaxMessages + " messages has been processed");
@@ -548,9 +577,11 @@ public abstract class MainSupport extends ServiceSupport {
             }
         }
 
-        if (durationMaxMessages > 0) {
+        if (durationMaxMessages > 0 || durationIdle > 0) {
+            // convert to seconds as that is what event notifier uses
+            long seconds = timeUnit.toSeconds(durationIdle);
             // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
-            EventNotifier notifier = new MainDurationEventNotifier(camelContext, durationMaxMessages, completed, latch, true);
+            EventNotifier notifier = new MainDurationEventNotifier(camelContext, durationMaxMessages, seconds, completed, latch, true);
             // register our event notifier
             ServiceHelper.startService(notifier);
             camelContext.getManagementStrategy().addEventNotifier(notifier);
