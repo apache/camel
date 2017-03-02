@@ -32,6 +32,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultModelJAXBContextFactory;
+import org.apache.camel.impl.DurationRoutePolicyFactory;
 import org.apache.camel.impl.FileWatcherReloadStrategy;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ModelJAXBContextFactory;
@@ -56,6 +57,7 @@ public abstract class MainSupport extends ServiceSupport {
     protected final AtomicBoolean completed = new AtomicBoolean(false);
     protected final AtomicInteger exitCode = new AtomicInteger(UNINITIALIZED_EXIT_CODE);
     protected long duration = -1;
+    protected int durationMaxMessages;
     protected TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     protected boolean trace;
     protected List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
@@ -114,6 +116,13 @@ public abstract class MainSupport extends ServiceSupport {
                     setTimeUnit(TimeUnit.SECONDS);
                 }
                 setDuration(Integer.parseInt(value));
+            }
+        });
+        addOption(new ParameterOption("dm", "durationMaxMessages",
+                "Sets the maximum messages duration that the application will process before terminating.",
+                "durationMaxMessages") {
+            protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
+                setDurationMaxMessages(Integer.parseInt(parameter));
             }
         });
         addOption(new Option("t", "trace", "Enables tracing") {
@@ -324,6 +333,18 @@ public abstract class MainSupport extends ServiceSupport {
         this.duration = duration;
     }
 
+    public int getDurationMaxMessages() {
+        return durationMaxMessages;
+    }
+
+    /**
+     * Sets the duration to run the application to process at most max messages until it
+     * should be terminated. Defaults to -1. Any value <= 0 will run forever.
+     */
+    public void setDurationMaxMessages(int durationMaxMessages) {
+        this.durationMaxMessages = durationMaxMessages;
+    }
+
     public TimeUnit getTimeUnit() {
         return timeUnit;
     }
@@ -518,6 +539,13 @@ public abstract class MainSupport extends ServiceSupport {
             } catch (Exception e) {
                 LOG.warn("Could not register service: " + reload + " as Service MBean.", e);
             }
+        }
+
+        if (durationMaxMessages > 0) {
+            DurationRoutePolicyFactory factory = new DurationRoutePolicyFactory();
+            factory.setMaxMessages(durationMaxMessages);
+            LOG.debug("Adding DurationRoutePolicyFactory with maxMessages: {}", durationMaxMessages);
+            camelContext.addRoutePolicyFactory(factory);
         }
 
         // try to load the route builders from the routeBuilderClasses
