@@ -41,7 +41,6 @@
     <module>apt</module>
     <module>camel-route-parser</module>
     <module>maven</module>
-    <module>archetypes</module>
     <module>camel-manual</module>
   </modules>
 
