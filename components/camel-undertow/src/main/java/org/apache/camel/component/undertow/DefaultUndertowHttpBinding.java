@@ -363,10 +363,6 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             LOG.trace("Content-Type: {}", contentType);
         }
 
-        // Set the Host header
-        final String host = message.getHeader("Host", String.class);
-        requestHeaders.put(Headers.HOST, Optional.ofNullable(host).orElseGet(()-> URI.create(clientRequest.getPath()).getAuthority()));
-
         TypeConverter tc = message.getExchange().getContext().getTypeConverter();
 
         //copy headers from Message to Request

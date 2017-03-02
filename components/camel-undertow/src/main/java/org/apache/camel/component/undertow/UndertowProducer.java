@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import io.undertow.client.ClientCallback;
 import io.undertow.client.ClientConnection;
@@ -42,6 +43,9 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xnio.IoFuture;
@@ -84,18 +88,25 @@ public class UndertowProducer extends DefaultAsyncProducer {
             IoFuture<ClientConnection> connect = client.connect(endpoint.getHttpURI(), worker, pool, options);
 
             // creating the url to use takes 2-steps
-            String url = UndertowHelper.createURL(exchange, getEndpoint());
-            URI uri = UndertowHelper.createURI(exchange, url, getEndpoint());
-            // get the url from the uri
-            url = uri.toASCIIString();
+            final String exchangeUri = UndertowHelper.createURL(exchange, getEndpoint());
+            final URI uri = UndertowHelper.createURI(exchange, exchangeUri, getEndpoint());
+
+            final String pathAndQuery = URISupport.pathAndQueryOf(uri);
 
             // what http method to use
             HttpString method = UndertowHelper.createMethod(exchange, endpoint, exchange.getIn().getBody() != null);
 
             ClientRequest request = new ClientRequest();
             request.setProtocol(Protocols.HTTP_1_1);
-            request.setPath(url);
+            request.setPath(pathAndQuery);
             request.setMethod(method);
+
+            final HeaderMap requestHeaders = request.getRequestHeaders();
+
+            // Set the Host header
+            Message message = exchange.getIn();
+            final String host = message.getHeader("Host", String.class);
+            requestHeaders.put(Headers.HOST, Optional.ofNullable(host).orElseGet(()-> uri.getAuthority()));
 
             Object body = getRequestBody(request, exchange);
 
@@ -103,18 +114,18 @@ public class UndertowProducer extends DefaultAsyncProducer {
             ByteBuffer bodyAsByte = tc.tryConvertTo(ByteBuffer.class, body);
 
             if (body != null) {
-                request.getRequestHeaders().put(Headers.CONTENT_LENGTH, bodyAsByte.array().length);
+                requestHeaders.put(Headers.CONTENT_LENGTH, bodyAsByte.array().length);
             }
 
             if (getEndpoint().getCookieHandler() != null) {
                 Map<String, List<String>> cookieHeaders = getEndpoint().getCookieHandler().loadCookies(exchange, uri);
                 for (Map.Entry<String, List<String>> entry : cookieHeaders.entrySet()) {
-                    request.getRequestHeaders().putAll(new HttpString(entry.getKey()), entry.getValue());
+                    requestHeaders.putAll(new HttpString(entry.getKey()), entry.getValue());
                 }
             }
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Executing http {} method: {}", method, url);
+                LOG.debug("Executing http {} method: {}", method, pathAndQuery);
             }
             connection = connect.get();
             connection.sendRequest(request, new UndertowProducerCallback(connection, bodyAsByte, exchange, callback));
