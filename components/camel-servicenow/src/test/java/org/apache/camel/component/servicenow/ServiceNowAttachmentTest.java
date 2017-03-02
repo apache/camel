@@ -40,7 +40,7 @@ public class ServiceNowAttachmentTest extends ServiceNowTestSupport {
         List<AttachmentMeta> attachmentMetaList = template.requestBodyAndHeaders(
             "direct:servicenow",
             null,
-            new KVBuilder()
+            kvBuilder()
                 .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_ATTACHMENT)
                 .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
                 .put(ServiceNowConstants.MODEL, AttachmentMeta.class)
@@ -120,11 +120,7 @@ public class ServiceNowAttachmentTest extends ServiceNowTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:servicenow")
-                    .to("servicenow:{{env:SERVICENOW_INSTANCE}}"
-                        + "?userName={{env:SERVICENOW_USERNAME}}"
-                        + "&password={{env:SERVICENOW_PASSWORD}}")
-                        //+ "&oauthClientId={{env:SERVICENOW_OAUTH2_CLIENT_ID}}"
-                        //+ "&oauthClientSecret={{env:SERVICENOW_OAUTH2_CLIENT_SECRET}}")
+                    .to("servicenow:{{env:SERVICENOW_INSTANCE}}")
                     .to("log:org.apache.camel.component.servicenow?level=INFO&showAll=true")
                     .to("mock:servicenow");
             }
