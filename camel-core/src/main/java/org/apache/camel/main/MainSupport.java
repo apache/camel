@@ -550,7 +550,7 @@ public abstract class MainSupport extends ServiceSupport {
 
         if (durationMaxMessages > 0) {
             // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
-            EventNotifier notifier = new MainDurationEventNotifier(camelContext, durationMaxMessages, completed, latch);
+            EventNotifier notifier = new MainDurationEventNotifier(camelContext, durationMaxMessages, completed, latch, true);
             // register our event notifier
             ServiceHelper.startService(notifier);
             camelContext.getManagementStrategy().addEventNotifier(notifier);

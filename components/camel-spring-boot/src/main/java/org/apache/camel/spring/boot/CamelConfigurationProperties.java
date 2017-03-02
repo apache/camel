@@ -16,7 +16,6 @@
  */
 package org.apache.camel.spring.boot;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -129,17 +128,16 @@ public class CamelConfigurationProperties {
     private boolean mainRunController;
 
     /**
-     * If main run controller is enabled then this option can specific for how long time in seconds
-     * to keep running the JVM before automatic terminating the JVM. You can use this to run Spring Boot
-     * for a short while.
+     * To specify for how long time in seconds to keep running the JVM before automatic terminating the JVM.
+     * You can use this to run Spring Boot for a short while.
      */
-    private int mainRunControllerMaxDurationSeconds;
+    private int durationMaxSeconds;
 
     /**
-     * If main run controller is enabled then this option can specific how many messages to process by Camel
-     * before automatic terminating the JVM. You can use this to run Spring Boot for a short while.
+     * To specify how many messages to process by Camel before automatic terminating the JVM.
+     * You can use this to run Spring Boot for a short while.
      */
-    private int mainRunControllerMaxDurationMessages;
+    private int durationMaxMessages;
 
     /**
      * Whether to include non-singleton beans (prototypes) when scanning for RouteBuilder instances.
@@ -495,20 +493,20 @@ public class CamelConfigurationProperties {
         this.mainRunController = mainRunController;
     }
 
-    public int getMainRunControllerMaxDurationSeconds() {
-        return mainRunControllerMaxDurationSeconds;
+    public int getDurationMaxSeconds() {
+        return durationMaxSeconds;
     }
 
-    public void setMainRunControllerMaxDurationSeconds(int mainRunControllerMaxDurationSeconds) {
-        this.mainRunControllerMaxDurationSeconds = mainRunControllerMaxDurationSeconds;
+    public void setDurationMaxSeconds(int durationMaxSeconds) {
+        this.durationMaxSeconds = durationMaxSeconds;
     }
 
-    public int getMainRunControllerMaxDurationMessages() {
-        return mainRunControllerMaxDurationMessages;
+    public int getDurationMaxMessages() {
+        return durationMaxMessages;
     }
 
-    public void setMainRunControllerMaxDurationMessages(int mainRunControllerMaxDurationMessages) {
-        this.mainRunControllerMaxDurationMessages = mainRunControllerMaxDurationMessages;
+    public void setDurationMaxMessages(int durationMaxMessages) {
+        this.durationMaxMessages = durationMaxMessages;
     }
 
     public int getLogDebugMaxChars() {
