@@ -7,13 +7,13 @@ Transformer
 Transformer performs declarative transformation of the message according
 to the declared `Input Type` and/or `Output Type` on a route definition which declares
 the expected message type.
-There are two Exchange property indicates current message type, `Exchange.INPUT_TYPE`
-holds input message type and `Exchange.OUTPUT_TYPE` holds output message type. If the
-input type and/or output type declared by `Input Type` and/or `Output Type` in the route
-definition, and it is different from those properties at runtime, camel internal processor
+The default camel Message implements `DataTypeAware`, which allows to hold the message type
+represented by `DataType`.
+If the input type and/or output type is declared by `Input Type` and/or `Output Type` in the route
+definition, and it is different from actual message type at runtime, camel internal processor
 looks for a Transformer which transforms from the current message type to the expected message
-type and apply. Once transform succeed or message is already in expected type, then
-`Exchange.INPUT_TYPE` or `Exchange.OUTPUT_TYPE` is updated.
+type and apply. Once transform succeed or message is already in expected type, then the message
+ data type is updated.
 
 
 
