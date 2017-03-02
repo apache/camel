@@ -138,8 +138,8 @@
     <module>buildingtools</module>
     <module>camel-core</module>
     <module>components</module>
-    <module>tooling</module>
     <module>archetypes</module>
+    <module>tooling</module>
     <module>platforms</module>
     <module>connectors</module>
     <module>tests</module>
