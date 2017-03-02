@@ -95,6 +95,15 @@ public class RunMojo extends AbstractExecMojo {
     protected String duration;
 
     /**
+     * Sets the duration of maximum number of messages that the application will process before terminating.
+     *
+     * @parameter property="camel.duration.maxMessages"
+     *            default-value="-1"
+     *
+     */
+    protected String durationMaxMessages;
+
+    /**
      * Whether to log the classpath when starting
      *
      * @parameter property="camel.logClasspath"
@@ -288,7 +297,7 @@ public class RunMojo extends AbstractExecMojo {
     private ExecutableDependency executableDependency;
 
     /**
-     * Wether to interrupt/join and possibly stop the daemon threads upon
+     * Whether to interrupt/join and possibly stop the daemon threads upon
      * quitting. <br/> If this is <code>false</code>, maven does nothing
      * about the daemon threads. When maven has no more work to do, the VM will
      * normally terminate any remaining daemon threads.
@@ -424,9 +433,15 @@ public class RunMojo extends AbstractExecMojo {
             args.add(basedPackages);
             usingSpringJavaConfigureMain = true;
         }
- 
-        args.add("-d");
-        args.add(duration);
+
+        if (!duration.equals("-1")) {
+            args.add("-d");
+            args.add(duration);
+        }
+        if (!durationMaxMessages.equals("-1")) {
+            args.add("-dm");
+            args.add(durationMaxMessages);
+        }
         if (arguments != null) {
             args.addAll(Arrays.asList(arguments));
         }

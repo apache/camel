@@ -35,6 +35,7 @@ import org.apache.camel.impl.DefaultModelJAXBContextFactory;
 import org.apache.camel.impl.DurationRoutePolicyFactory;
 import org.apache.camel.impl.FileWatcherReloadStrategy;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ReloadStrategy;
 import org.apache.camel.support.ServiceSupport;
@@ -119,7 +120,7 @@ public abstract class MainSupport extends ServiceSupport {
             }
         });
         addOption(new ParameterOption("dm", "durationMaxMessages",
-                "Sets the maximum messages duration that the application will process before terminating.",
+                "Sets the duration of maximum number of messages that the application will process before terminating.",
                 "durationMaxMessages") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setDurationMaxMessages(Integer.parseInt(parameter));
@@ -430,6 +431,11 @@ public abstract class MainSupport extends ServiceSupport {
                     latch.await(duration, unit);
                     exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, durationHitExitCode);
                     completed.set(true);
+                } else if (durationMaxMessages > 0) {
+                    LOG.info("Waiting until: " + durationMaxMessages + " messages has been processed");
+                    exitCode.compareAndSet(UNINITIALIZED_EXIT_CODE, durationHitExitCode);
+                    latch.await();
+                    completed.set(true);
                 } else {
                     latch.await();
                 }
@@ -445,6 +451,7 @@ public abstract class MainSupport extends ServiceSupport {
     public void run(String[] args) throws Exception {
         parseArguments(args);
         run();
+        LOG.info("MainSupport exiting code: {}", getExitCode());
     }
 
     /**
@@ -542,10 +549,11 @@ public abstract class MainSupport extends ServiceSupport {
         }
 
         if (durationMaxMessages > 0) {
-            DurationRoutePolicyFactory factory = new DurationRoutePolicyFactory();
-            factory.setMaxMessages(durationMaxMessages);
-            LOG.debug("Adding DurationRoutePolicyFactory with maxMessages: {}", durationMaxMessages);
-            camelContext.addRoutePolicyFactory(factory);
+            // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
+            EventNotifier notifier = new MainDurationEventNotifier(camelContext, durationMaxMessages, completed, latch);
+            // register our event notifier
+            ServiceHelper.startService(notifier);
+            camelContext.getManagementStrategy().addEventNotifier(notifier);
         }
 
         // try to load the route builders from the routeBuilderClasses
