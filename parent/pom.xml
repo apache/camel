@@ -176,6 +176,7 @@
     <elasticsearch-guava-version>18.0</elasticsearch-guava-version>
     <elasticsearch-version>2.4.3</elasticsearch-version>
     <elasticsearch5-version>5.1.2</elasticsearch5-version>
+    <elasticsearch5-bundle-version>5.1.2_1</elasticsearch5-bundle-version>
     <elasticsearch-cluster-runner-version>2.4.0.0</elasticsearch-cluster-runner-version>
     <elasticsearch5-cluster-runner-version>5.1.2.0</elasticsearch5-cluster-runner-version>
     <elsql-version>1.2</elsql-version>
