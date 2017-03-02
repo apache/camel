@@ -61,6 +61,7 @@ public class EmbeddedKafkaBroker extends ExternalResource {
         this.zkConnection = zkConnection;
         this.baseProperties = baseProperties;
 
+        log.info("Starting broker[{}] on port {}", brokerId, port);
         this.brokerList = "localhost:" + this.port;
     }
 
@@ -69,12 +70,10 @@ public class EmbeddedKafkaBroker extends ExternalResource {
     }
 
     public void createTopic(String topic, int partitionCount) {
-        log.info("createTopic");
         AdminUtils.createTopic(getZkUtils(), topic, partitionCount, 1, new Properties(), RackAwareMode.Enforced$.MODULE$);
     }
 
     public void before() {
-        log.info("before");
         logDir = constructTempDir(perTest("kafka-log"));
 
         Properties properties = new Properties();
