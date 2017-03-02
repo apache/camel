@@ -129,6 +129,19 @@ public class CamelConfigurationProperties {
     private boolean mainRunController;
 
     /**
+     * If main run controller is enabled then this option can specific for how long time in seconds
+     * to keep running the JVM before automatic terminating the JVM. You can use this to run Spring Boot
+     * for a short while.
+     */
+    private int mainRunControllerMaxDurationSeconds;
+
+    /**
+     * If main run controller is enabled then this option can specific how many messages to process by Camel
+     * before automatic terminating the JVM. You can use this to run Spring Boot for a short while.
+     */
+    private int mainRunControllerMaxDurationMessages;
+
+    /**
      * Whether to include non-singleton beans (prototypes) when scanning for RouteBuilder instances.
      * By default only singleton beans is included in the context scan.
      */
@@ -480,6 +493,22 @@ public class CamelConfigurationProperties {
 
     public void setMainRunController(boolean mainRunController) {
         this.mainRunController = mainRunController;
+    }
+
+    public int getMainRunControllerMaxDurationSeconds() {
+        return mainRunControllerMaxDurationSeconds;
+    }
+
+    public void setMainRunControllerMaxDurationSeconds(int mainRunControllerMaxDurationSeconds) {
+        this.mainRunControllerMaxDurationSeconds = mainRunControllerMaxDurationSeconds;
+    }
+
+    public int getMainRunControllerMaxDurationMessages() {
+        return mainRunControllerMaxDurationMessages;
+    }
+
+    public void setMainRunControllerMaxDurationMessages(int mainRunControllerMaxDurationMessages) {
+        this.mainRunControllerMaxDurationMessages = mainRunControllerMaxDurationMessages;
     }
 
     public int getLogDebugMaxChars() {

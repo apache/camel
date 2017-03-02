@@ -19,6 +19,7 @@ package org.apache.camel.spring.boot;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.PreDestroy;
 
 import org.apache.camel.CamelContext;
@@ -34,6 +35,7 @@ public class CamelSpringBootApplicationController {
 
     private final Main main;
     private final CountDownLatch latch = new CountDownLatch(1);
+    private final AtomicBoolean completed = new AtomicBoolean();
 
     public CamelSpringBootApplicationController(final ApplicationContext applicationContext, final CamelContext camelContext) {
         this.main = new Main() {
@@ -53,11 +55,20 @@ public class CamelSpringBootApplicationController {
                 try {
                     super.doStop();
                 } finally {
+                    completed.set(true);
                     // should use the latch on this instance
                     CamelSpringBootApplicationController.this.latch.countDown();
                 }
             }
         };
+    }
+
+    public CountDownLatch getLatch() {
+        return this.latch;
+    }
+
+    public AtomicBoolean getCompleted() {
+        return completed;
     }
 
     /**
