@@ -74,7 +74,7 @@ public final class CachingServiceDiscovery implements ServiceDiscovery {
 
     @Override
     public List<ServiceDefinition> getServices(String name) {
-        return delegate.getServices(name);
+        return cache.get(name);
     }
 
     // **********************
