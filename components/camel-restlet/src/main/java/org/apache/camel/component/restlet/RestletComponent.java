@@ -852,7 +852,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         if (!ObjectHelper.isEmpty(uriTemplate)) {
             url += "/" + uriTemplate;
         }
-        url += "?restletMethods=" + restletMethod;
+        url += "?restletMethod=" + restletMethod;
 
         RestletEndpoint endpoint = camelContext.getEndpoint(url, RestletEndpoint.class);
         if (parameters != null && !parameters.isEmpty()) {
