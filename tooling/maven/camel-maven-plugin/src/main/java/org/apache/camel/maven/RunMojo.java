@@ -84,15 +84,24 @@ public class RunMojo extends AbstractExecMojo {
     protected MavenProject project;
 
     /**
-     * The duration to run the application for which by default is in
-     * milliseconds. A value <= 0 will run forever.
-     * Adding a s indicates seconds - eg "5s" means 5 seconds.
+     * Sets the time duration (seconds) that the application will run for before terminating.
+     * A value <= 0 will run forever.
      *
      * @parameter property="camel.duration"
      *            default-value="-1"
      *
      */
     protected String duration;
+
+    /**
+     * Sets the idle time duration (seconds) duration that the application can be idle before terminating.
+     * A value <= 0 will run forever.
+     *
+     * @parameter property="camel.durationIdle"
+     *            default-value="-1"
+     *
+     */
+    protected String durationIdle;
 
     /**
      * Sets the duration of maximum number of messages that the application will process before terminating.
@@ -437,6 +446,10 @@ public class RunMojo extends AbstractExecMojo {
         if (!duration.equals("-1")) {
             args.add("-d");
             args.add(duration);
+        }
+        if (!durationIdle.equals("-1")) {
+            args.add("-di");
+            args.add(durationIdle);
         }
         if (!durationMaxMessages.equals("-1")) {
             args.add("-dm");
