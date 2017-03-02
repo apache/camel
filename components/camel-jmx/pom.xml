@@ -74,13 +74,67 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.jvnet.jaxb2.maven2</groupId>
-                <artifactId>maven-jaxb2-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
+    <profiles>
+        <profile>
+            <id>jdk8-build</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jvnet.jaxb2.maven2</groupId>
+                        <artifactId>maven-jaxb2-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+           <!-- TODO: This is a temporary workaround until org.codehaus.mojo:jaxb2-maven-plugin supports JDK9.
+           (https://github.com/mojohaus/jaxb2-maven-plugin/issues/43). We need to add the plugin back
+           once we are sure it works on both JDK8 and JDK9.
+           See https://issues.apache.org/jira/browse/CAMEL-10141 for more info. -->
+            <id>jdk9-build</id>
+            <activation>
+                <jdk>9</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.cxf</groupId>
+                        <artifactId>cxf-xjc-plugin</artifactId>
+                        <version>${cxf-xjc-plugin-version}</version>
+                        <configuration>
+                            <extensions>
+                                <extension>net.java.dev.jaxb2-commons:jaxb-fluent-api:2.1.8</extension>
+                            </extensions>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>generate-sources</id>
+                                <phase>generate-sources</phase>
+                                <configuration>
+                                    <fork>${cxf.codegenplugin.forkmode}</fork>
+                                    <additionalJvmArgs>${cxf.xjc.jvmArgs}</additionalJvmArgs>
+                                    <sourceRoot>${basedir}/target/xjc</sourceRoot>
+                                    <xsdOptions>
+                                        <xsdOption>
+                                            <xsd>${basedir}/src/main/resources/notifications.xsd</xsd>
+                                            <packagename>org.apache.camel.component.jmx.jaxb</packagename>
+                                            <extensionArgs>
+                                                <extensionArg>-Xfluent-api</extensionArg>
+                                            </extensionArgs>
+                                        </xsdOption>
+                                    </xsdOptions>
+                                </configuration>
+                                <goals>
+                                    <goal>xsdtojava</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
