@@ -194,13 +194,11 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     @ManagedOperation(description = "Does the store contain the given key")
     public boolean contains(String key) {
         LOG.debug("Checking cache for key:{}", key);
-        synchronized (cache) {
-            boolean containsKey = cache.containsKey(key);
-            if (containsKey) {
-                duplicateCount.incrementAndGet();
-            }
-            return containsKey;
+        boolean containsKey = cache.containsKey(key);
+        if (containsKey) {
+            duplicateCount.incrementAndGet();
         }
+        return containsKey;
     }
 
     @Override
