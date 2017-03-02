@@ -38,14 +38,16 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
     private final int maxMessages;
     private final AtomicBoolean completed;
     private final CountDownLatch latch;
+    private final boolean stopCamelContext;
 
     private volatile int doneMessages;
 
-    public MainDurationEventNotifier(CamelContext camelContext, int maxMessages, AtomicBoolean completed, CountDownLatch latch) {
+    public MainDurationEventNotifier(CamelContext camelContext, int maxMessages, AtomicBoolean completed, CountDownLatch latch, boolean stopCamelContext) {
         this.camelContext = camelContext;
         this.maxMessages = maxMessages;
         this.completed = completed;
         this.latch = latch;
+        this.stopCamelContext = stopCamelContext;
     }
 
     @Override
@@ -56,7 +58,9 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
             if (completed.compareAndSet(false, true)) {
                 LOG.info("Duration max messages triggering shutdown of the JVM.");
                 // shutting down CamelContext
-                camelContext.stop();
+                if (stopCamelContext) {
+                    camelContext.stop();
+                }
                 // trigger stopping the Main
                 latch.countDown();
             }

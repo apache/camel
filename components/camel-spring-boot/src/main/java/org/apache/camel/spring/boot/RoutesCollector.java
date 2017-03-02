@@ -21,6 +21,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -38,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.io.Resource;
 
@@ -114,19 +116,19 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                     if (configurationProperties.isMainRunController()) {
                         CamelMainRunController controller = new CamelMainRunController(applicationContext, camelContext);
 
-                        if (configurationProperties.getMainRunControllerMaxDurationMessages() > 0) {
-                            LOG.info("CamelMainRunController will terminate after processing maximum {} messages", configurationProperties.getMainRunControllerMaxDurationMessages());
+                        if (configurationProperties.getDurationMaxMessages() > 0) {
+                            LOG.info("CamelSpringBoot will terminate after processing {} messages", configurationProperties.getDurationMaxMessages());
                             // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
-                            EventNotifier notifier = new MainDurationEventNotifier(camelContext, configurationProperties.getMainRunControllerMaxDurationMessages(),
-                                controller.getCompleted(), controller.getLatch());
+                            EventNotifier notifier = new MainDurationEventNotifier(camelContext, configurationProperties.getDurationMaxMessages(),
+                                controller.getCompleted(), controller.getLatch(), true);
                             // register our event notifier
                             ServiceHelper.startService(notifier);
                             camelContext.getManagementStrategy().addEventNotifier(notifier);
                         }
 
-                        if (configurationProperties.getMainRunControllerMaxDurationSeconds() > 0) {
-                            LOG.info("CamelMainRunController will terminate after {} seconds", configurationProperties.getMainRunControllerMaxDurationSeconds());
-                            terminateMainControllerAfter(camelContext, configurationProperties.getMainRunControllerMaxDurationSeconds(),
+                        if (configurationProperties.getDurationMaxSeconds() > 0) {
+                            LOG.info("CamelSpringBoot will terminate after {} seconds", configurationProperties.getDurationMaxSeconds());
+                            terminateMainControllerAfter(camelContext, configurationProperties.getDurationMaxSeconds(),
                                 controller.getCompleted(), controller.getLatch());
                         }
 
@@ -134,6 +136,30 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
                         LOG.info("Starting CamelMainRunController to ensure the main thread keeps running");
                         controller.start();
                     } else {
+                        if (applicationContext instanceof ConfigurableApplicationContext) {
+                            ConfigurableApplicationContext cac = (ConfigurableApplicationContext) applicationContext;
+
+                            if (configurationProperties.getDurationMaxSeconds() > 0) {
+                                LOG.info("CamelSpringBoot will terminate after {} seconds", configurationProperties.getDurationMaxSeconds());
+                                terminateApplicationContext(cac, camelContext, configurationProperties.getDurationMaxSeconds());
+                            }
+
+                            if (configurationProperties.getDurationMaxMessages() > 0) {
+                                // needed by MainDurationEventNotifier to signal when we have processed the max messages
+                                final AtomicBoolean completed = new AtomicBoolean();
+                                final CountDownLatch latch = new CountDownLatch(1);
+
+                                // register lifecycle so we can trigger to shutdown the JVM when maximum number of messages has been processed
+                                EventNotifier notifier = new MainDurationEventNotifier(camelContext, configurationProperties.getDurationMaxMessages(), completed, latch, false);
+                                // register our event notifier
+                                ServiceHelper.startService(notifier);
+                                camelContext.getManagementStrategy().addEventNotifier(notifier);
+
+                                LOG.info("CamelSpringBoot will terminate after processing {} messages", configurationProperties.getDurationMaxMessages());
+                                terminateApplicationContext(cac, camelContext, configurationProperties.getDurationMaxMessages(), latch);
+                            }
+                        }
+
                         // start camel manually
                         maybeStart(camelContext);
                     }
@@ -200,9 +226,9 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
     }
 
     private void terminateMainControllerAfter(final CamelContext camelContext, int seconds, final AtomicBoolean completed, final CountDownLatch latch) {
-        ScheduledExecutorService executorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "CamelMainRunControllerTerminateTaks");
+        ScheduledExecutorService executorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "CamelSpringBootTerminateTask");
         Runnable task = () -> {
-            LOG.info("CamelMainRunController max seconds triggering shutdown of the JVM.");
+            LOG.info("CamelSpringBoot max seconds triggering shutdown of the JVM.");
             try {
                 camelContext.stop();
             } catch (Throwable e) {
@@ -213,6 +239,31 @@ public class RoutesCollector implements ApplicationListener<ContextRefreshedEven
             }
         };
         executorService.schedule(task, seconds, TimeUnit.SECONDS);
+    }
+
+    private void terminateApplicationContext(final ConfigurableApplicationContext applicationContext, final CamelContext camelContext, int seconds) {
+        ScheduledExecutorService executorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this, "CamelSpringBootTerminateTask");
+        Runnable task = () -> {
+            LOG.info("CamelSpringBoot max seconds triggering shutdown of the JVM.");
+            // we need to run a daemon thread to stop ourselves so this thread pool can be stopped nice also
+            new Thread(applicationContext::close).start();
+        };
+        executorService.schedule(task, seconds, TimeUnit.SECONDS);
+    }
+
+    private void terminateApplicationContext(final ConfigurableApplicationContext applicationContext, final CamelContext camelContext, int messages, final CountDownLatch latch) {
+        ExecutorService executorService = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, "CamelSpringBootTerminateTask");
+        Runnable task = () -> {
+            try {
+                latch.await();
+                LOG.info("CamelSpringBoot max messages " + messages + " triggering shutdown of the JVM.");
+                // we need to run a daemon thread to stop ourselves so this thread pool can be stopped nice also
+                new Thread(applicationContext::close).start();
+            } catch (Throwable e) {
+                // ignore
+            }
+        };
+        executorService.submit(task);
     }
 
 }
