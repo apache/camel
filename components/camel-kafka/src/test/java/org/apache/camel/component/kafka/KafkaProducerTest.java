@@ -82,7 +82,7 @@ public class KafkaProducerTest {
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getOut()).thenReturn(out);
 
-        in.setHeader(KafkaConstants.PARTITION_KEY, "4");
+        in.setHeader(KafkaConstants.PARTITION_KEY, 4);
 
         producer.process(exchange);
         Mockito.verify(producer.getKafkaProducer()).send(Matchers.any(ProducerRecord.class));
@@ -97,7 +97,7 @@ public class KafkaProducerTest {
         org.apache.kafka.clients.producer.KafkaProducer kp = producer.getKafkaProducer();
         Mockito.when(kp.send(Matchers.any(ProducerRecord.class))).thenThrow(new ApiException());
         Mockito.when(exchange.getIn()).thenReturn(in);
-        in.setHeader(KafkaConstants.PARTITION_KEY, "4");
+        in.setHeader(KafkaConstants.PARTITION_KEY, 4);
 
         producer.process(exchange);
 
@@ -110,7 +110,7 @@ public class KafkaProducerTest {
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getOut()).thenReturn(out);
 
-        in.setHeader(KafkaConstants.PARTITION_KEY, "4");
+        in.setHeader(KafkaConstants.PARTITION_KEY, 4);
 
         producer.process(exchange, callback);
 
@@ -131,7 +131,7 @@ public class KafkaProducerTest {
         org.apache.kafka.clients.producer.KafkaProducer kp = producer.getKafkaProducer();
         Mockito.when(kp.send(Matchers.any(ProducerRecord.class), Matchers.any(Callback.class))).thenThrow(new ApiException());
 
-        in.setHeader(KafkaConstants.PARTITION_KEY, "4");
+        in.setHeader(KafkaConstants.PARTITION_KEY, 4);
 
         producer.process(exchange, callback);
 
@@ -163,13 +163,13 @@ public class KafkaProducerTest {
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getOut()).thenReturn(out);
 
-        in.setHeader(KafkaConstants.PARTITION_KEY, "4");
+        in.setHeader(KafkaConstants.PARTITION_KEY, 4);
         in.setHeader(KafkaConstants.TOPIC, "anotherTopic");
         in.setHeader(KafkaConstants.KEY, "someKey");
 
         producer.process(exchange);
 
-        verifySendMessage("4", "anotherTopic", "someKey");
+        verifySendMessage(4, "anotherTopic", "someKey");
         assertRecordMetadataExists();
     }
 
@@ -200,12 +200,12 @@ public class KafkaProducerTest {
         endpoint.getConfiguration().setTopic("someTopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
         Mockito.when(exchange.getOut()).thenReturn(out);
-        in.setHeader(KafkaConstants.PARTITION_KEY, "4");
+        in.setHeader(KafkaConstants.PARTITION_KEY, 4);
         in.setHeader(KafkaConstants.KEY, "someKey");
 
         producer.process(exchange);
 
-        verifySendMessage("4", "someTopic", "someKey");
+        verifySendMessage(4, "someTopic", "someKey");
         assertRecordMetadataExists();
     }
 
@@ -230,11 +230,11 @@ public class KafkaProducerTest {
         Mockito.when(exchange.getOut()).thenReturn(out);
         in.setHeader(KafkaConstants.TOPIC, "anotherTopic");
         in.setHeader(KafkaConstants.KEY, "someKey");
-        in.setHeader(KafkaConstants.PARTITION_KEY, "4");
+        in.setHeader(KafkaConstants.PARTITION_KEY, 4);
 
         producer.process(exchange);
 
-        verifySendMessage("4", "someTopic", "someKey");
+        verifySendMessage(4, "someTopic", "someKey");
         assertRecordMetadataExists();
     }
 
@@ -251,10 +251,10 @@ public class KafkaProducerTest {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected void verifySendMessage(String partitionKey, String topic, String messageKey) {
+    protected void verifySendMessage(Integer partitionKey, String topic, String messageKey) {
         ArgumentCaptor<ProducerRecord> captor = ArgumentCaptor.forClass(ProducerRecord.class);
         Mockito.verify(producer.getKafkaProducer()).send(captor.capture());
-        assertEquals(new Integer(partitionKey), captor.getValue().partition());
+        assertEquals(partitionKey, captor.getValue().partition());
         assertEquals(messageKey, captor.getValue().key());
         assertEquals(topic, captor.getValue().topic());
     }
