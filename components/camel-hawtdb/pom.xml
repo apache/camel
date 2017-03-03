@@ -33,6 +33,7 @@
         <!-- use by camel-catalog -->
         <firstVersion>2.3.0</firstVersion>
         <label>database</label>
+        <title>HawtDB</title>
 
         <camel.osgi.export.pkg>org.apache.camel.component.hawtdb.*</camel.osgi.export.pkg>
     </properties>

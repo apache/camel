@@ -26,13 +26,14 @@
 
     <artifactId>camel-scala</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Scala</name>
+    <name>Camel :: Scala (deprecated)</name>
     <description>Camel Scala DSL</description>
 
     <properties>
         <!-- use by camel-catalog -->
         <firstVersion>1.4.0</firstVersion>
         <label>dsl</label>
+        <title>Scala DSL</title>
 
         <camel.osgi.import.before.defaults>
             scala.xml.*;version="[1.0,2)",
