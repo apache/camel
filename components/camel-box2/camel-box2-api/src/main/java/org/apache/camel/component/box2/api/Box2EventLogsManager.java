@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  * Provides operations to read Box enterprise (admin) event logs.
  * 
- * @author <a href="mailto:punkhornsw@gmail.com">William Collins</a>
+ * 
  *
  */
 public class Box2EventLogsManager {

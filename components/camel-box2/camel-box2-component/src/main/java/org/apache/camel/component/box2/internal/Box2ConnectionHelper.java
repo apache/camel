@@ -67,7 +67,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  * Utility class for creating Box API Connections
  * 
- * @author <a href="mailto:punkhornsw@gmail.com">William Collins</a>
+ * 
  *
  */
 public final class Box2ConnectionHelper {

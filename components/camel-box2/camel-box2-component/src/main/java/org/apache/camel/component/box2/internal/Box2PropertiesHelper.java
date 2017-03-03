@@ -22,7 +22,7 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 /**
  * Singleton {@link ApiMethodPropertiesHelper} for Box2 component.
  * 
- * @author <a href="mailto:punkhornsw@gmail.com">William Collins</a>
+ * 
  * 
  */
 public final class Box2PropertiesHelper extends ApiMethodPropertiesHelper<Box2Configuration> {

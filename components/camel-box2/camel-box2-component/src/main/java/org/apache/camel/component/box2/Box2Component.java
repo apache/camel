@@ -29,7 +29,7 @@ import org.apache.camel.util.component.AbstractApiComponent;
 /**
  * Represents the component that manages {@link Box2Endpoint}.
  * 
- * @author <a href="mailto:punkhornsw@gmail.com">William Collins</a>
+ * 
  * 
  */
 // @UriEndpoint(scheme = "box2", consumerClass = Box2Consumer.class,
