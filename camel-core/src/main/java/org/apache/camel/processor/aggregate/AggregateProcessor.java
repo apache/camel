@@ -27,6 +27,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
@@ -90,6 +91,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     private static final Logger LOG = LoggerFactory.getLogger(AggregateProcessor.class);
 
     private final Lock lock = new ReentrantLock();
+    private final AtomicBoolean aggregateRepositoryWarned = new AtomicBoolean();
     private final CamelContext camelContext;
     private final Processor processor;
     private String id;
@@ -451,6 +453,15 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         }
         if (answer == null) {
             throw new CamelExchangeException("AggregationStrategy " + aggregationStrategy + " returned null which is not allowed", newExchange);
+        }
+
+        // special for some repository implementations
+        if (aggregationRepository instanceof RecoverableAggregationRepository) {
+            boolean valid = oldExchange == null || answer.getExchangeId().equals(oldExchange.getExchangeId());
+            if (!valid && aggregateRepositoryWarned.compareAndSet(false, true)) {
+                LOG.warn("AggregationStrategy should return the oldExchange instance instead of the newExchange whenever possible"
+                    + " as otherwise this can lead to unexpected behavior with some RecoverableAggregationRepository implementations");
+            }
         }
 
         // update the aggregated size
