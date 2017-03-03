@@ -32,7 +32,7 @@ import org.apache.camel.util.jsse.SSLContextParameters;
 /**
  * Component configuration for Box2 component.
  * 
- * @author <a href="mailto:punkhornsw@gmail.com">William Collins</a>
+ * 
  * 
  */
 @UriParams

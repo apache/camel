@@ -47,7 +47,7 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 /**
  * Represents a Box2 endpoint.
  * 
- * @author <a href="mailto:punkhornsw@gmail.com">William Collins</a>
+ * 
  * 
  */
 @UriEndpoint(scheme = "box2", title = "Box2", syntax = "box2:apiName/methodName", consumerClass = Box2Consumer.class, consumerPrefix = "consumer", label = "api,file,cloud", lenientProperties = true)

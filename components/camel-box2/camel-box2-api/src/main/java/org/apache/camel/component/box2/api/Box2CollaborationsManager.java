@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  * Provides operations to manage Box collaborations.
  * 
- * @author <a href="mailto:punkhornsw@gmail.com">William Collins</a>
+ * 
  *
  */
 public class Box2CollaborationsManager {

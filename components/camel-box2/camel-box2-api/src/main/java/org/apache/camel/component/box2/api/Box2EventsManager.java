@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  * Provides operations to manage Box events.
  * 
- * @author <a href="mailto:punkhornsw@gmail.com">William Collins</a>
+ * 
  *
  */
 public class Box2EventsManager {

@@ -24,7 +24,7 @@ import org.apache.camel.util.component.AbstractApiProducer;
 /**
  * The Box2 producer.
  * 
- * @author <a href="mailto:punkhornsw@gmail.com">William Collins</a>
+ * 
  * 
  */
 public class Box2Producer extends AbstractApiProducer<Box2ApiName, Box2Configuration> {
