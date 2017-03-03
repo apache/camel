@@ -124,10 +124,15 @@ public class KafkaProducer extends DefaultAsyncProducer {
         if (topic == null) {
             throw new CamelExchangeException("No topic key set", exchange);
         }
-        final Object partitionKey = exchange.getIn().getHeader(KafkaConstants.PARTITION_KEY);
+
+        // endpoint take precedence over header configuration
+        final Integer partitionKey = endpoint.getConfiguration().getPartitionKey() != null
+            ? endpoint.getConfiguration().getPartitionKey() : exchange.getIn().getHeader(KafkaConstants.PARTITION_KEY, Integer.class);
         final boolean hasPartitionKey = partitionKey != null;
 
-        final Object messageKey = exchange.getIn().getHeader(KafkaConstants.KEY);
+        // endpoint take precedence over header configuration
+        final Object messageKey = endpoint.getConfiguration().getKey() != null
+            ? endpoint.getConfiguration().getKey() : exchange.getIn().getHeader(KafkaConstants.KEY);
         final boolean hasMessageKey = messageKey != null;
 
         Object msg = exchange.getIn().getBody();
@@ -149,7 +154,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
                 @Override
                 public ProducerRecord next() {
                     if (hasPartitionKey && hasMessageKey) {
-                        return new ProducerRecord(msgTopic, new Integer(partitionKey.toString()), messageKey, msgList.next());
+                        return new ProducerRecord(msgTopic, partitionKey, messageKey, msgList.next());
                     } else if (hasMessageKey) {
                         return new ProducerRecord(msgTopic, messageKey, msgList.next());
                     }
@@ -164,7 +169,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         }
         ProducerRecord record;
         if (hasPartitionKey && hasMessageKey) {
-            record = new ProducerRecord(topic, new Integer(partitionKey.toString()), messageKey, msg);
+            record = new ProducerRecord(topic, partitionKey, messageKey, msg);
         } else if (hasMessageKey) {
             record = new ProducerRecord(topic, messageKey, msg);
         } else {

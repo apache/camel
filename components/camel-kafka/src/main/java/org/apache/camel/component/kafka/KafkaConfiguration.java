@@ -136,6 +136,10 @@ public class KafkaConfiguration {
     @UriParam(label = "producer")
     private String keySerializerClass;
 
+    @UriParam(label = "producer")
+    private String key;
+    @UriParam(label = "producer")
+    private Integer partitionKey;
     @UriParam(label = "producer", enums = "-1,0,1,all", defaultValue = "1")
     private String requestRequiredAcks = "1";
     //buffer.memory
@@ -992,6 +996,30 @@ public class KafkaConfiguration {
      */
     public void setBufferMemorySize(Integer bufferMemorySize) {
         this.bufferMemorySize = bufferMemorySize;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    /**
+     * The record key (or null if no key is specified).
+     * If this option has been configured then it take precedence over header {@link KafkaConstants#KEY}
+     */
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public Integer getPartitionKey() {
+        return partitionKey;
+    }
+
+    /**
+     * The partition to which the record will be sent (or null if no partition was specified).
+     * If this option has been configured then it take precedence over header {@link KafkaConstants#PARTITION_KEY}
+     */
+    public void setPartitionKey(Integer partitionKey) {
+        this.partitionKey = partitionKey;
     }
 
     public String getRequestRequiredAcks() {
