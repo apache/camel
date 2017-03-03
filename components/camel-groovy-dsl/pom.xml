@@ -30,6 +30,10 @@
   <description>Camel Groovy DSL support</description>
 
   <properties>
+      <!-- use by camel-catalog -->
+    <firstVersion>2.19.0</firstVersion>
+    <label>dsl</label>
+
     <camel.osgi.import.pkg>
       org.codehaus.groovy.runtime.callsite,
       org.apache.camel.*;${camel.osgi.import.camel.version},

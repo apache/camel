@@ -331,6 +331,7 @@
 	* [CDI](cdi.adoc)
 	* [CXF Transport](cxf-transport.adoc)
 	* [Eclipse](eclipse.adoc)
+	* [Groovy Dsl](groovy-dsl.adoc)
 	* [Guice](guice.adoc)
 	* [Hawtdb](hawtdb.adoc)
 	* [Hystrix](hystrix.adoc)

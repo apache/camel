@@ -840,7 +840,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 35
+Number of Miscellaneous Components: 36
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -855,6 +855,8 @@ Number of Miscellaneous Components: 35
 | link:camel-cxf-transport/src/main/docs/cxf-transport.adoc[CXF Transport] (camel-cxf-transport) | 2.8 | Camel Transport for Apache CXF
 
 | link:camel-eclipse/src/main/docs/eclipse.adoc[Eclipse] (camel-eclipse) | 2.3 | *deprecated* Camel classpath scanning support for running in Eclipse Desktop Applications
+
+| link:camel-groovy-dsl/src/main/docs/groovy-dsl.adoc[Groovy Dsl] (camel-groovy-dsl) | 2.19 | *deprecated* Camel Groovy DSL support
 
 | link:camel-guice/src/main/docs/guice.adoc[Guice] (camel-guice) | 1.5 | Using Camel with Guice
 
