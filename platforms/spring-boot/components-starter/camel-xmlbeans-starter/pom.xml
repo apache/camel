@@ -48,7 +48,6 @@
     </dependency>
     <!--END OF GENERATED CODE-->
   </dependencies>
-
   <profiles>
     <profile>
       <id>jdk9-build</id>
