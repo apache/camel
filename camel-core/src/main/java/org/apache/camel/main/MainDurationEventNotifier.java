@@ -148,7 +148,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
                     }
                 }
             };
-            executorService.scheduleAtFixedRate(task, 1,1, TimeUnit.SECONDS);
+            executorService.scheduleAtFixedRate(task, 1, 1, TimeUnit.SECONDS);
         }
     }
 
