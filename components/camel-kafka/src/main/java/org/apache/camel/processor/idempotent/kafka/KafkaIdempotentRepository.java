@@ -58,15 +58,20 @@ import org.slf4j.LoggerFactory;
  * A Kafka topic-based implementation of {@link org.apache.camel.spi.IdempotentRepository}.
  *
  * Uses a local cache of previously seen Message IDs. Mutations that come in via the ({@link #add(String)}), or
- * {@link #remove(String)} method will update the local cache and broadcasting the change in state on a Kafka topic.
+ * {@link #remove(String)} method will update the local cache and broadcast the change in state on a Kafka topic to
+ * other instances. The cache is back-filled from the topic by a Kafka consumer.
  *
- * The topic used must be unique per repository instance. This class makes no
- * assumptions about number of partitions (it is designed to consume from all at the same time), or replication factor.
- * Each repository instance that uses the topic (e.g. on different machines running in parallel) controls its own
- * consumer group.
+ * The topic used must be unique per logical repository (i.e. two routes de-duplicate using different repositories,
+ * and different topics).
+ *
+ * This class makes no assumptions about the number of partitions (it is designed to consume from all at the
+ * same time), or replication factor of the topic.
+ *
+ * Each repository instance that uses the topic (e.g. typically on different machines running in parallel) controls its own
+ * consumer group, so in a cluster of 10 camel processes using the same topic each will control its own offset.
  *
  * On startup, the instance subscribes to the topic and rewinds the offset to the beginning, rebuilding the cache to the
- * latest state. The cache will not be considered to be warmed up until one poll of {@link #pollDurationMs} in length
+ * latest state. The cache will not be considered warmed up until one poll of {@link #pollDurationMs} in length
  * returns 0 records. Startup will not be completed until either the cache has warmed up, or 30 seconds go by; if the
  * latter happens the idempotent repository may be in an inconsistent state until its consumer catches up to the end
  * of the topic.
