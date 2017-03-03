@@ -42,7 +42,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-groovy</artifactId>
+      <artifactId>camel-groovy-dsl</artifactId>
     </dependency>
 
     <!-- used for jetty -->
