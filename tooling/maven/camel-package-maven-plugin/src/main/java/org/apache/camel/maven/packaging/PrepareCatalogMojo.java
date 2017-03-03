@@ -163,7 +163,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
     /**
      * The archetypes directory where all the Apache Camel Maven archetypes are
      *
-     * @parameter default-value="${project.build.directory}/../../../tooling/archetypes"
+     * @parameter default-value="${project.build.directory}/../../../archetypes"
      */
     protected File archetypesDir;
 
