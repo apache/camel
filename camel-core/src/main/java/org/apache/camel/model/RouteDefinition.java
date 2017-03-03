@@ -47,12 +47,15 @@ import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.model.rest.RestBindingDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.interceptor.HandleFault;
+import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Contract;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
+import org.apache.camel.spi.Transformer;
+import org.apache.camel.spi.Validator;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -96,7 +99,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     public RouteDefinition() {
     }
 
-    public RouteDefinition(String uri) {
+    public RouteDefinition(@AsEndpointUri String uri) {
         from(uri);
     }
 
@@ -107,7 +110,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     /**
      * This route is created from the REST DSL.
      */
-    public void fromRest(String uri) {
+    public void fromRest(@AsEndpointUri String uri) {
         from(uri);
         rest = true;
     }
@@ -314,7 +317,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @param uri the from uri
      * @return the builder
      */
-    public RouteDefinition from(String uri) {
+    public RouteDefinition from(@AsEndpointUri String uri) {
         getInputs().add(new FromDefinition(uri));
         return this;
     }
@@ -336,7 +339,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      * @param uris the from uris
      * @return the builder
      */
-    public RouteDefinition from(String... uris) {
+    public RouteDefinition from(@AsEndpointUri String... uris) {
         for (String uri : uris) {
             getInputs().add(new FromDefinition(uri));
         }
