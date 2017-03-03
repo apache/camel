@@ -68,8 +68,6 @@ import org.slf4j.LoggerFactory;
  *
  * To use, this repository must be placed in the Camel registry, either manually or by registration as a bean in
  * Spring/Blueprint, as it is CamelContext aware.
- *
- * @author jkorab
  */
 @ManagedResource(description = "Kafka IdempotentRepository")
 public class KafkaIdempotentRepository extends ServiceSupport implements IdempotentRepository<String>, CamelContextAware {
