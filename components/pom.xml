@@ -46,6 +46,7 @@
     <module>camel-spring-dm</module>
     <module>camel-bam</module>
     <module>camel-groovy</module>
+    <module>camel-groovy-dsl</module>
     <module>camel-scala</module>
     <module>camel-http-common</module>
     <module>camel-http</module>
