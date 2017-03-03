@@ -856,7 +856,7 @@ Number of Miscellaneous Components: 36
 
 | link:camel-eclipse/src/main/docs/eclipse.adoc[Eclipse] (camel-eclipse) | 2.3 | *deprecated* Camel classpath scanning support for running in Eclipse Desktop Applications
 
-| link:camel-groovy-dsl/src/main/docs/groovy-dsl.adoc[Groovy Dsl] (camel-groovy-dsl) | 2.19 | *deprecated* Camel Groovy DSL support
+| link:camel-groovy-dsl/src/main/docs/groovy-dsl.adoc[Groovy DSL] (camel-groovy-dsl) | 2.19 | *deprecated* Camel Groovy DSL support
 
 | link:camel-guice/src/main/docs/guice.adoc[Guice] (camel-guice) | 1.5 | Using Camel with Guice
 
@@ -878,7 +878,7 @@ Number of Miscellaneous Components: 36
 
 | link:camel-rx/src/main/docs/rx.adoc[RX] (camel-rx) | 2.11 | *deprecated* Camel Reactive using RxJava library
 
-| link:camel-scala/src/main/docs/scala.adoc[Scala] (camel-scala) | 1.4 | Camel Scala DSL
+| link:camel-scala/src/main/docs/scala.adoc[Scala DSL] (camel-scala) | 1.4 | *deprecated* Camel Scala DSL
 
 | link:camel-scr/src/main/docs/scr.adoc[SCR] (camel-scr) | 2.15 | Camel with OSGi SCR (Declarative Services)
 

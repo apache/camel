@@ -33,6 +33,7 @@
       <!-- use by camel-catalog -->
     <firstVersion>2.19.0</firstVersion>
     <label>dsl</label>
+    <title>Groovy DSL</title>
 
     <camel.osgi.import.pkg>
       org.codehaus.groovy.runtime.callsite,
