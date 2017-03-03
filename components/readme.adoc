@@ -98,6 +98,9 @@ Number of Components: 220
 | link:camel-box/src/main/docs/box-component.adoc[Box] (camel-box) +
 `box:apiName/methodName` | 2.14 | For uploading downloading and managing files folders groups collaborations etc on box DOT com.
 
+| link:camel-box2/src/main/docs/box2-component.adoc[Box] (camel-box2) +
+`box2:apiName/methodName` | 2.19 | For uploading downloading and managing files folders groups collaborations etc on box DOT com.
+
 | link:camel-braintree/src/main/docs/braintree-component.adoc[Braintree] (camel-braintree) +
 `braintree:apiName/methodName` | 2.17 | The braintree component is used for integrating with the Braintree Payment System.
 
