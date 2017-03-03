@@ -54,7 +54,7 @@ public interface AggregationStrategy {
      *
      * @param oldExchange the oldest exchange (is <tt>null</tt> on first aggregation as we only have the new exchange)
      * @param newExchange the newest exchange (can be <tt>null</tt> if there was no data possible to acquire)
-     * @return a combined composite of the two exchanges
+     * @return a combined composite of the two exchanges, favor returning the <tt>oldExchange</tt> whenever possible
      */
     Exchange aggregate(Exchange oldExchange, Exchange newExchange);
 }
