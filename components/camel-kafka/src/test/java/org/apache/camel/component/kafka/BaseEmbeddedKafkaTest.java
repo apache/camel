@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.Properties;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.kafka.embedded.EmbeddedKafkaBroker;
 import org.apache.camel.component.kafka.embedded.EmbeddedZookeeper;
@@ -29,11 +31,8 @@ import org.junit.ClassRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Properties;
 
 public class BaseEmbeddedKafkaTest extends CamelTestSupport {
-
-    static final Logger LOG = LoggerFactory.getLogger(BaseEmbeddedKafkaTest.class);
 
     @ClassRule
     public static EmbeddedZookeeper zookeeper = new EmbeddedZookeeper(
@@ -45,6 +44,8 @@ public class BaseEmbeddedKafkaTest extends CamelTestSupport {
                     AvailablePortFinder.getNextAvailable(24000),
                     zookeeper.getConnection(),
                     new Properties());
+
+    private static final Logger LOG = LoggerFactory.getLogger(BaseEmbeddedKafkaTest.class);
 
     @BeforeClass
     public static void beforeClass() {

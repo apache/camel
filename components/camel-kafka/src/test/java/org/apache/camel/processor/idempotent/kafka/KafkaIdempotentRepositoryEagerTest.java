@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.processor.idempotent.kafka;
 
 import org.apache.camel.CamelContext;
@@ -27,6 +43,12 @@ public class KafkaIdempotentRepositoryEagerTest extends CamelTestSupport {
 
     private KafkaIdempotentRepository kafkaIdempotentRepository;
 
+    @EndpointInject(uri = "mock:out")
+    private MockEndpoint mockOut;
+
+    @EndpointInject(uri = "mock:before")
+    private MockEndpoint mockBefore;
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
@@ -51,12 +73,6 @@ public class KafkaIdempotentRepositoryEagerTest extends CamelTestSupport {
         };
     }
 
-    @EndpointInject(uri = "mock:out")
-    MockEndpoint mockOut;
-
-    @EndpointInject(uri = "mock:before")
-    MockEndpoint mockBefore;
-
     @Test
     public void testRemovesDuplicates() throws InterruptedException {
         for (int i = 0; i < 10; i++) {
@@ -71,12 +87,12 @@ public class KafkaIdempotentRepositoryEagerTest extends CamelTestSupport {
 
     @Test
     public void testRollsBackOnException() throws InterruptedException {
-        mockOut.whenAnyExchangeReceived((exchange -> {
+        mockOut.whenAnyExchangeReceived(exchange -> {
             int id = exchange.getIn().getHeader("id", Integer.class);
             if (id == 0) {
                 throw new IllegalArgumentException("Boom!");
             }
-        }));
+        });
 
         for (int i = 0; i < 10; i++) {
             try {
