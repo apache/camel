@@ -31,9 +31,9 @@ import org.junit.Rule;
 import org.junit.Test;
 
 /**
- * @author jkorab
+ * Test for non-eager idempotentRepository usage.
  */
-public class KafkaIdempotentRepositoryLazyTest extends CamelTestSupport {
+public class KafkaIdempotentRepositoryNonEagerTest extends CamelTestSupport {
 
     @Rule
     public EmbeddedZookeeper zookeeper = new EmbeddedZookeeper();

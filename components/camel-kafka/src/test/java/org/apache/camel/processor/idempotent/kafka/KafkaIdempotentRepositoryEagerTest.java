@@ -31,7 +31,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 /**
- * @author jkorab
+ * Test for eager idempotentRepository usage.
  */
 public class KafkaIdempotentRepositoryEagerTest extends CamelTestSupport {
 
