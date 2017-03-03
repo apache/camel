@@ -34,6 +34,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -132,8 +133,6 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
 
     @Override
     protected void doStart() throws Exception {
-        log.info("Context: {}", camelContext);
-
         // each consumer instance must have control over its own offset, so assign a groupID at random
         String groupId = UUID.randomUUID().toString();
         log.debug("Creating consumer with {}[{}]", ConsumerConfig.GROUP_ID_CONFIG, groupId);
@@ -161,7 +160,7 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         // doStart() has already been called at this point
         this.camelContext = camelContext;
         ExecutorServiceManager executorServiceManager = camelContext.getExecutorServiceManager();
-        executorService = executorServiceManager.newFixedThreadPool(this, "KafkaIdempotentRepository", 1);
+        executorService = executorServiceManager.newSingleThreadExecutor(this, "KafkaIdempotentRepository");
         executorService.submit(topicPoller);
         log.info("Warming up cache");
         try {
@@ -172,7 +171,7 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
                         + "Duplicate records may not be detected.", topic);
             }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.error("Interrupted: {}", e.getMessage());
         }
 
     }
@@ -193,13 +192,10 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         } catch (InterruptedException e) {
             log.info("Interrupted waiting on latch: {}", e.getMessage());
         }
-        executorService.shutdown();
+        camelContext.getExecutorServiceManager().shutdown(executorService);
 
-        try {
-            consumer.close();
-        } finally {
-            producer.close();
-        }
+        IOHelper.close(consumer, "consumer", log);
+        IOHelper.close(producer, "producer", log);
     }
 
     @Override
@@ -208,6 +204,9 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
             duplicateCount.incrementAndGet();
             return false;
         } else {
+            // update the local cache and broadcast the addition on the topic, which will be reflected
+            // at a later point in any peers
+            cache.put(key, key);
             broadcastAction(key, CacheAction.add);
             return true;
         }
@@ -236,6 +235,9 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     @Override
     @ManagedOperation(description = "Remove the key from the store")
     public boolean remove(String key) {
+        // update the local cache and broadcast the addition on the topic, which will be reflected
+        // at a later point in any peers
+        cache.remove(key, key);
         broadcastAction(key, CacheAction.remove);
         return true;
     }
@@ -257,12 +259,12 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
 
     @ManagedOperation(description = "Number of times duplicate messages have been detected")
     public boolean isPollerRunning() {
-        return topicPoller.getRunning();
+        return topicPoller.isRunning();
     }
 
     private class TopicPoller implements Runnable {
 
-        private static final int POLL_DURATION_MS = 10;
+        private static final int POLL_DURATION_MS = 100;
 
         private final Logger log = LoggerFactory.getLogger(this.getClass());
         private final Consumer<String, String> consumer;
@@ -316,7 +318,7 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
                         cache.clear();
                     } else {
                         // this should never happen
-                        log.error("No idea how to {} a record. Shutting down.", action);
+                        log.warn("No idea how to {} a record. Shutting down.", action);
                         setRunning(false);
                         continue POLL_LOOP;
                     }
@@ -335,7 +337,7 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
             this.running.set(running);
         }
 
-        boolean getRunning() {
+        boolean isRunning() {
             return running.get();
         }
     }
