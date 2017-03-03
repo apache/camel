@@ -1,24 +1,20 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.processor.idempotent.kafka;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.api.management.ManagedOperation;
-import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.spi.ExecutorServiceManager;
-import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.LRUCache;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
-import org.apache.kafka.clients.consumer.*;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.Map;
@@ -30,6 +26,32 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.LRUCache;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
+
+import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringDeserializer;
+import org.apache.kafka.common.serialization.StringSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * A Kafka topic-based implementation of {@link org.apache.camel.spi.IdempotentRepository}.
@@ -51,8 +73,10 @@ import java.util.concurrent.atomic.AtomicLong;
 @ManagedResource(description = "Kafka IdempotentRepository")
 public class KafkaIdempotentRepository extends ServiceSupport implements IdempotentRepository<String>, CamelContextAware {
 
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaIdempotentRepository.class);
-    private final Map<String, Object> cache = Collections.synchronizedMap(new LRUCache<>(1000));
+    private static final int DEFAULT_MAXIMUM_CACHE_SIZE = 1000;
+
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Map<String, Object> cache;
 
     private final AtomicLong duplicateCount = new AtomicLong(0);
     private final String topic;
@@ -74,6 +98,10 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     }
 
     public KafkaIdempotentRepository(String topic, String bootstrapServers) {
+        this(topic, bootstrapServers, DEFAULT_MAXIMUM_CACHE_SIZE);
+    }
+
+    public KafkaIdempotentRepository(String topic, String bootstrapServers, int maxCacheSize) {
         StringHelper.notEmpty(topic, "topic");
         StringHelper.notEmpty(bootstrapServers, "bootstrapServers");
         Properties consumerConfig = new Properties();
@@ -85,24 +113,30 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         this.topic = topic;
         this.consumerConfig = consumerConfig;
         this.producerConfig = producerConfig;
+        this.cache = Collections.synchronizedMap(new LRUCache<>(maxCacheSize));
     }
 
     public KafkaIdempotentRepository(String topic, Properties consumerConfig, Properties producerConfig) {
+        this(topic, consumerConfig, producerConfig, DEFAULT_MAXIMUM_CACHE_SIZE);
+    }
+
+    public KafkaIdempotentRepository(String topic, Properties consumerConfig, Properties producerConfig, int maxCacheSize) {
         StringHelper.notEmpty(topic, "topic");
         this.topic = topic;
         ObjectHelper.notNull(consumerConfig, "consumerConfig");
         this.consumerConfig = consumerConfig;
         ObjectHelper.notNull(producerConfig, "producerConfig");
         this.producerConfig = producerConfig;
+        this.cache = Collections.synchronizedMap(new LRUCache<>(maxCacheSize));
     }
 
     @Override
     protected void doStart() throws Exception {
-        LOG.info("Context: {}", camelContext);
+        log.info("Context: {}", camelContext);
 
         // each consumer instance must have control over its own offset, so assign a groupID at random
         String groupId = UUID.randomUUID().toString();
-        LOG.debug("Creating consumer with {}[{}]", ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        log.debug("Creating consumer with {}[{}]", ConsumerConfig.GROUP_ID_CONFIG, groupId);
 
         consumerConfig.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         consumerConfig.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, Boolean.TRUE.toString());
@@ -129,13 +163,13 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         ExecutorServiceManager executorServiceManager = camelContext.getExecutorServiceManager();
         executorService = executorServiceManager.newFixedThreadPool(this, "KafkaIdempotentRepository", 1);
         executorService.submit(topicPoller);
-        LOG.info("Warming up cache");
+        log.info("Warming up cache");
         try {
             if (cacheReadyLatch.await(30, TimeUnit.SECONDS)) {
-                LOG.info("Cache OK");
+                log.info("Cache OK");
             } else {
-                LOG.warn("Timeout waiting for cache warm-up from topic {}. Proceeding anyway. " +
-                        "Duplicate records may not be detected.", topic);
+                log.warn("Timeout waiting for cache warm-up from topic {}. Proceeding anyway. "
+                        + "Duplicate records may not be detected.", topic);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -154,10 +188,10 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         topicPoller.setRunning(false);
         try {
             if (topicPoller.getShutdownLatch().await(30, TimeUnit.SECONDS)) {
-                LOG.info("Expired waiting on topicPoller to shut down");
+                log.info("Expired waiting on topicPoller to shut down");
             }
         } catch (InterruptedException e) {
-            LOG.info("Interrupted waiting on latch: {}", e.getMessage());
+            log.info("Interrupted waiting on latch: {}", e.getMessage());
         }
         executorService.shutdown();
 
@@ -181,11 +215,9 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
 
     private void broadcastAction(String key, CacheAction action) {
         try {
-            LOG.debug("Broadcasting action:{} for key:{}", action, key);
+            log.debug("Broadcasting action:{} for key:{}", action, key);
             producer.send(new ProducerRecord<>(topic, key, action.toString())).get(); // sync send
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
+        } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
     }
@@ -193,7 +225,7 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     @Override
     @ManagedOperation(description = "Does the store contain the given key")
     public boolean contains(String key) {
-        LOG.debug("Checking cache for key:{}", key);
+        log.debug("Checking cache for key:{}", key);
         boolean containsKey = cache.containsKey(key);
         if (containsKey) {
             duplicateCount.incrementAndGet();
@@ -230,9 +262,9 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
 
     private class TopicPoller implements Runnable {
 
-        public static final int POLL_DURATION_MS = 10;
+        private static final int POLL_DURATION_MS = 10;
 
-        private final Logger LOG = LoggerFactory.getLogger(this.getClass());
+        private final Logger log = LoggerFactory.getLogger(this.getClass());
         private final Consumer<String, String> consumer;
         private final CountDownLatch cacheReadyLatch;
 
@@ -246,20 +278,20 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
 
         @Override
         public void run() {
-            LOG.debug("Subscribing consumer to {}", topic);
+            log.debug("Subscribing consumer to {}", topic);
             consumer.subscribe(Collections.singleton(topic));
-            LOG.debug("Seeking to beginning");
+            log.debug("Seeking to beginning");
             consumer.seekToBeginning(consumer.assignment());
 
             POLL_LOOP: while (running.get()) {
-                LOG.trace("Polling");
+                log.trace("Polling");
                 ConsumerRecords<String, String> consumerRecords = consumer.poll(POLL_DURATION_MS);
                 if (consumerRecords.isEmpty()) {
                     // the first time this happens, we can assume that we have consumed all
                     // messages up to this point
-                    LOG.trace("0 messages fetched on poll");
+                    log.trace("0 messages fetched on poll");
                     if (cacheReadyLatch.getCount() > 0) {
-                        LOG.debug("Cache warmed up");
+                        log.debug("Cache warmed up");
                         cacheReadyLatch.countDown();
                     }
                 }
@@ -268,42 +300,42 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
                     try {
                         action = CacheAction.valueOf(consumerRecord.value());
                     } catch (IllegalArgumentException iax) {
-                        LOG.error("Unexpected action value:\"{}\" received on [topic:{}, partition:{}, offset:{}]. Shutting down.",
+                        log.error("Unexpected action value:\"{}\" received on [topic:{}, partition:{}, offset:{}]. Shutting down.",
                                 consumerRecord.key(), consumerRecord.topic(), consumerRecord.partition(), consumerRecord.offset());
                         setRunning(false);
                         continue POLL_LOOP;
                     }
                     String messageId = consumerRecord.key();
                     if (action == CacheAction.add) {
-                        LOG.debug("Adding to cache messageId:{}", messageId);
+                        log.debug("Adding to cache messageId:{}", messageId);
                         cache.put(messageId, messageId);
                     } else if (action == CacheAction.remove) {
-                        LOG.debug("Removing from cache messageId:{}", messageId);
+                        log.debug("Removing from cache messageId:{}", messageId);
                         cache.remove(messageId);
                     } else if (action == CacheAction.clear) {
                         cache.clear();
                     } else {
                         // this should never happen
-                        LOG.error("No idea how to {} a record. Shutting down.", action);
+                        log.error("No idea how to {} a record. Shutting down.", action);
                         setRunning(false);
                         continue POLL_LOOP;
                     }
                 }
 
             }
-            LOG.debug("TopicPoller finished - triggering shutdown latch");
+            log.debug("TopicPoller finished - triggering shutdown latch");
             shutdownLatch.countDown();
         }
 
-        public CountDownLatch getShutdownLatch() {
+        CountDownLatch getShutdownLatch() {
             return shutdownLatch;
         }
 
-        public void setRunning(boolean running) {
+        void setRunning(boolean running) {
             this.running.set(running);
         }
 
-        public boolean getRunning() {
+        boolean getRunning() {
             return running.get();
         }
     }

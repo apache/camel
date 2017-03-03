@@ -20,15 +20,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.Random;
 
 import org.apache.commons.lang.RandomStringUtils;
 
-import static java.io.File.separator;
 
 final class TestUtils {
-
-    private static final Random RANDOM = new Random();
 
     private static final String TMPDIR = System.getProperty("java.io.tmpdir");
 
@@ -36,7 +32,7 @@ final class TestUtils {
     }
 
     public static File constructTempDir(String suffix) {
-        File file = new File(TMPDIR + separator + suffix);
+        File file = new File(TMPDIR + File.separator + suffix);
         if (!file.mkdirs()) {
             throw new RuntimeException("could not create temp directory: " + file.getAbsolutePath());
         }
