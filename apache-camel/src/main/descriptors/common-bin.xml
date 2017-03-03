@@ -97,6 +97,7 @@
         <include>org.apache.camel:camel-google-pubsub</include>
         <include>org.apache.camel:camel-gora</include>
         <include>org.apache.camel:camel-groovy</include>
+        <include>org.apache.camel:camel-groovy-dsl</include>
         <include>org.apache.camel:camel-guava-eventbus</include>
         <include>org.apache.camel:camel-guice</include>
         <include>org.apache.camel:camel-gson</include>

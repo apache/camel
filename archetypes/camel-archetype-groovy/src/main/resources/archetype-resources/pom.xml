@@ -25,7 +25,7 @@
   <packaging>jar</packaging>
   <version>${version}</version>
 
-  <name>A Groovy Camel Route</name>
+  <name>A Groovy DSL Camel Route</name>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -52,7 +52,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-groovy</artifactId>
+      <artifactId>camel-groovy-dsl</artifactId>
     </dependency>
 
     <!-- used for jetty -->
