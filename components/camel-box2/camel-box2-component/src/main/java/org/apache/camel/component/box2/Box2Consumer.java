@@ -36,7 +36,7 @@ import org.apache.camel.util.component.ApiMethodHelper;
 /**
  * The Box2 consumer.
  * 
- * @author <a href="mailto:punkhornsw@gmail.com">William Collins</a>
+ * 
  * 
  */
 public class Box2Consumer extends AbstractApiConsumer<Box2ApiName, Box2Configuration> implements EventListener {

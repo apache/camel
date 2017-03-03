@@ -19,7 +19,7 @@ package org.apache.camel.component.box2.internal;
 /**
  * Constants for Box2 component.
  * 
- * @author <a href="mailto:punkhornsw@gmail.com">William Collins</a>
+ * 
  * 
  */
 public interface Box2Constants {
