@@ -38,13 +38,26 @@ The JBPM component has no options.
 
 
 // endpoint options: START
-The JBPM component supports 26 endpoint options which are listed below:
+The JBPM component is configured using the URI syntax with the following path and query parameters:
+
+    jbpm:connectionURL
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| connectionURL |  | URL | *Required* The URL to the jBPM server.
+|=======================================================================
+{% endraw %}
+
+#### 25 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| connectionURL | producer |  | URL | *Required* The URL to the jBPM server.
 | attachmentId | producer |  | Long | attachId to use when retrieving attachments
 | contentId | producer |  | Long | contentId to use when retrieving attachments
 | deploymentId | producer |  | String | *Required* The id of the deployment

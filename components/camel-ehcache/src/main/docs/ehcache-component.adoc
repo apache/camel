@@ -43,13 +43,26 @@ The Ehcache component has no options.
 
 
 // endpoint options: START
-The Ehcache component supports 16 endpoint options which are listed below:
+The Ehcache component is configured using the URI syntax with the following path and query parameters:
+
+    ehcache:cacheName
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| cacheName |  | String | *Required* the cache name
+|=======================================================================
+{% endraw %}
+
+#### 15 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| cacheName | common |  | String | *Required* the cache name
 | cacheManager | common |  | CacheManager | The cache manager
 | configUri | common |  | String | URI pointing to the Ehcache XML configuration file's location
 | createCacheIfNotExist | common | true | boolean | Configure if a cache need to be created if it does exist or can't be pre-configured.

@@ -36,13 +36,26 @@ The AWS Simple Notification System component has no options.
 
 
 // endpoint options: START
-The AWS Simple Notification System component supports 11 endpoint options which are listed below:
+The AWS Simple Notification System component is configured using the URI syntax with the following path and query parameters:
+
+    aws-sns:topicNameOrArn
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| topicNameOrArn |  | String | *Required* Topic name or ARN
+|=======================================================================
+{% endraw %}
+
+#### 10 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| topicNameOrArn | producer |  | String | *Required* Topic name or ARN
 | accessKey | producer |  | String | Amazon AWS Access Key
 | amazonSNSClient | producer |  | AmazonSNS | To use the AmazonSNS as the client
 | amazonSNSEndpoint | producer |  | String | The region with which the AWS-SNS client wants to work with.

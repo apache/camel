@@ -67,15 +67,28 @@ The Jetty Websocket component supports 13 options which are listed below.
 
 
 // endpoint options: START
-The Jetty Websocket component supports 21 endpoint options which are listed below:
+The Jetty Websocket component is configured using the URI syntax with the following path and query parameters:
+
+    websocket:host:port/resourceUri
+
+#### 3 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| host | 0.0.0.0 | String | The hostname. The default value is 0.0.0.0. Setting this option on the component will use the component configured value as default.
+| port | 9292 | Integer | The port number. The default value is 9292. Setting this option on the component will use the component configured value as default.
+| resourceUri |  | String | *Required* Name of the websocket channel to use
+|=======================================================================
+{% endraw %}
+
+#### 18 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | common | 0.0.0.0 | String | The hostname. The default value is 0.0.0.0. Setting this option on the component will use the component configured value as default.
-| port | common | 9292 | Integer | The port number. The default value is 9292. Setting this option on the component will use the component configured value as default.
-| resourceUri | common |  | String | *Required* Name of the websocket channel to use
 | maxBinaryMessageSize | common | 1 | Integer | Can be used to set the size in bytes that the websocket created by the websocketServlet may be accept before closing. (Default is -1 - or unlimited)
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | sessionSupport | consumer | false | boolean | Whether to enable session support which enables HttpSession for each http request.

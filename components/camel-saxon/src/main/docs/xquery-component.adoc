@@ -35,13 +35,26 @@ The XQuery component supports 4 options which are listed below.
 
 
 // endpoint options: START
-The XQuery component supports 32 endpoint options which are listed below:
+The XQuery component is configured using the URI syntax with the following path and query parameters:
+
+    xquery:resourceUri
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| resourceUri |  | String | *Required* The name of the template to load from classpath or file system
+|=======================================================================
+{% endraw %}
+
+#### 31 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| resourceUri | common |  | String | *Required* The name of the template to load from classpath or file system
 | allowStAX | common | false | boolean | Whether to allow using StAX mode
 | headerName | common |  | String | To use a Camel Message header as the input source instead of Message body.
 | namespacePrefixes | common |  | Map | Allows to control which namespace prefixes to use for a set of namespace mappings

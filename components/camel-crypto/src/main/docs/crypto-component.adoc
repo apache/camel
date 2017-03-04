@@ -95,14 +95,27 @@ The Crypto (JCE) component supports 2 options which are listed below.
 // component options: END
 
 // endpoint options: START
-The Crypto (JCE) component supports 21 endpoint options which are listed below:
+The Crypto (JCE) component is configured using the URI syntax with the following path and query parameters:
+
+    crypto:cryptoOperation:name
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| cryptoOperation |  | CryptoOperation | *Required* Set the Crypto operation from that supplied after the crypto scheme in the endpoint uri e.g. crypto:sign sets sign as the operation.
+| name |  | String | *Required* The logical name of this operation.
+|=======================================================================
+{% endraw %}
+
+#### 19 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| cryptoOperation | producer |  | CryptoOperation | *Required* Set the Crypto operation from that supplied after the crypto scheme in the endpoint uri e.g. crypto:sign sets sign as the operation.
-| name | producer |  | String | *Required* The logical name of this operation.
 | algorithm | producer | SHA1WithDSA | String | Sets the JCE name of the Algorithm that should be used for the signer.
 | alias | producer |  | String | Sets the alias used to query the KeyStore for keys and link java.security.cert.Certificate Certificates to be used in signing and verifying exchanges. This value can be provided at runtime via the message header link org.apache.camel.component.crypto.DigitalSignatureConstantsKEYSTORE_ALIAS
 | certificateName | producer |  | String | Sets the reference name for a PrivateKey that can be fond in the registry.

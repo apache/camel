@@ -126,13 +126,26 @@ The SQL component supports 3 options which are listed below.
 
 
 // endpoint options: START
-The SQL component supports 46 endpoint options which are listed below:
+The SQL component is configured using the URI syntax with the following path and query parameters:
+
+    sql:query
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| query |  | String | *Required* Sets the SQL query to perform. You can externalize the query by using file: or classpath: as prefix and specify the location of the file.
+|=======================================================================
+{% endraw %}
+
+#### 45 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| query | common |  | String | *Required* Sets the SQL query to perform. You can externalize the query by using file: or classpath: as prefix and specify the location of the file.
 | allowNamedParameters | common | true | boolean | Whether to allow using named parameters in the queries.
 | dataSource | common |  | DataSource | Sets the DataSource to use to communicate with the database.
 | dataSourceRef | common |  | String | Sets the reference to a DataSource to lookup from the registry to use for communicating with the database.

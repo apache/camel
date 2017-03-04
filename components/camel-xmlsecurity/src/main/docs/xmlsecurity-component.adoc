@@ -249,14 +249,27 @@ The XML Security component supports 3 options which are listed below.
 
 
 // endpoint options: START
-The XML Security component supports 37 endpoint options which are listed below:
+The XML Security component is configured using the URI syntax with the following path and query parameters:
+
+    xmlsecurity:command:name
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| command |  | XmlCommand | *Required* Whether to sign or verify.
+| name |  | String | *Required* The name part in the URI can be chosen by the user to distinguish between different signer/verifier endpoints within the camel context.
+|=======================================================================
+{% endraw %}
+
+#### 35 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| command | producer |  | XmlCommand | *Required* Whether to sign or verify.
-| name | producer |  | String | *Required* The name part in the URI can be chosen by the user to distinguish between different signer/verifier endpoints within the camel context.
 | baseUri | common |  | String | You can set a base URI which is used in the URI dereferencing. Relative URIs are then concatenated with the base URI.
 | clearHeaders | common | true | Boolean | Determines if the XML signature specific headers be cleared after signing and verification. Defaults to true.
 | cryptoContextProperties | common |  | Map | Sets the crypto context properties. See link XMLCryptoContextsetProperty(String Object). Possible properties are defined in XMLSignContext an XMLValidateContext (see Supported Properties). The following properties are set by default to the value link BooleanTRUE for the XML validation. If you want to switch these features off you must set the property value to link BooleanFALSE. org.jcp.xml.dsig.validateManifests javax.xml.crypto.dsig.cacheReference

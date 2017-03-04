@@ -68,13 +68,26 @@ The FOP component has no options.
 
 
 // endpoint options: START
-The FOP component supports 4 endpoint options which are listed below:
+The FOP component is configured using the URI syntax with the following path and query parameters:
+
+    fop:outputType
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| outputType |  | FopOutputType | *Required* The primary output format is PDF but other output formats are also supported.
+|=======================================================================
+{% endraw %}
+
+#### 3 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| outputType | producer |  | FopOutputType | *Required* The primary output format is PDF but other output formats are also supported.
 | fopFactory | producer |  | FopFactory | Allows to use a custom configured or implementation of org.apache.fop.apps.FopFactory.
 | userConfigURL | producer |  | String | The location of a configuration file which can be loaded from classpath or file system.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).

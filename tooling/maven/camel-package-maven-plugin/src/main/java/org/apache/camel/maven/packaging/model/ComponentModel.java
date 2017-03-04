@@ -42,6 +42,7 @@ public class ComponentModel {
     private String artifactId;
     private String version;
     private final List<ComponentOptionModel> componentOptions = new ArrayList<ComponentOptionModel>();
+    private final List<EndpointOptionModel> endpointPathOptions = new ArrayList<EndpointOptionModel>();
     private final List<EndpointOptionModel> endpointOptions = new ArrayList<EndpointOptionModel>();
 
     public ComponentModel(boolean coreOnly) {
@@ -188,8 +189,16 @@ public class ComponentModel {
         return endpointOptions;
     }
 
+    public List<EndpointOptionModel> getEndpointPathOptions() {
+        return endpointPathOptions;
+    }
+
     public void addEndpointOption(EndpointOptionModel option) {
         endpointOptions.add(option);
+    }
+
+    public void addEndpointPathOption(EndpointOptionModel option) {
+        endpointPathOptions.add(option);
     }
 
     public String getShortJavaType() {

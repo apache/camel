@@ -104,16 +104,29 @@ The Netty4 HTTP component supports 7 options which are listed below.
 
 
 // endpoint options: START
-The Netty4 HTTP component supports 83 endpoint options which are listed below:
+The Netty4 HTTP component is configured using the URI syntax with the following path and query parameters:
+
+    netty4-http:protocol:host:port/path
+
+#### 4 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| protocol |  | String | *Required* The protocol to use which is either http or https
+| host |  | String | *Required* The local hostname such as localhost or 0.0.0.0 when being a consumer. The remote HTTP server hostname when using producer.
+| port |  | int | The host port number
+| path |  | String | Resource path
+|=======================================================================
+{% endraw %}
+
+#### 79 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| protocol | common |  | String | *Required* The protocol to use which is either http or https
-| host | common |  | String | *Required* The local hostname such as localhost or 0.0.0.0 when being a consumer. The remote HTTP server hostname when using producer.
-| port | common |  | int | The host port number
-| path | common |  | String | Resource path
 | bridgeEndpoint | common | false | boolean | If the option is true the producer will ignore the Exchange.HTTP_URI header and use the endpoint's URI for request. You may also set the throwExceptionOnFailure to be false to let the producer send all the fault response back. The consumer working in the bridge mode will skip the gzip compression and WWW URL form encoding (by adding the Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED headers to the consumed exchange).
 | disconnect | common | false | boolean | Whether or not to disconnect(close) from Netty Channel right after use. Can be used for both consumer and producer.
 | keepAlive | common | true | boolean | Setting to ensure socket is not closed due to inactivity

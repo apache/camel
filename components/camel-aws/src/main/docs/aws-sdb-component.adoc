@@ -32,13 +32,26 @@ The AWS SimpleDB component has no options.
 
 
 // endpoint options: START
-The AWS SimpleDB component supports 11 endpoint options which are listed below:
+The AWS SimpleDB component is configured using the URI syntax with the following path and query parameters:
+
+    aws-sdb:domainName
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| domainName |  | String | *Required* The name of the domain currently worked with.
+|=======================================================================
+{% endraw %}
+
+#### 10 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| domainName | producer |  | String | *Required* The name of the domain currently worked with.
 | accessKey | producer |  | String | Amazon AWS Access Key
 | amazonSDBClient | producer |  | AmazonSimpleDB | To use the AmazonSimpleDB as the client
 | amazonSdbEndpoint | producer |  | String | The region with which the AWS-SDB client wants to work with.

@@ -66,13 +66,26 @@ The EHCache component supports 4 options which are listed below.
 
 
 // endpoint options: START
-The EHCache component supports 20 endpoint options which are listed below:
+The EHCache component is configured using the URI syntax with the following path and query parameters:
+
+    cache:cacheName
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| cacheName |  | String | *Required* Name of the cache
+|=======================================================================
+{% endraw %}
+
+#### 19 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| cacheName | common |  | String | *Required* Name of the cache
 | diskExpiryThreadIntervalSeconds | common |  | long | The number of seconds between runs of the disk expiry thread.
 | diskPersistent | common | false | boolean | Whether the disk store persists between restarts of the application.
 | diskStorePath | common |  | String | This parameter is ignored. CacheManager sets it using setter injection.

@@ -80,13 +80,26 @@ The iBatis component supports 4 options which are listed below.
 
 
 // endpoint options: START
-The iBatis component supports 28 endpoint options which are listed below:
+The iBatis component is configured using the URI syntax with the following path and query parameters:
+
+    ibatis:statement
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| statement |  | String | *Required* The statement name in the iBatis XML mapping file which maps to the query insert update or delete operation you wish to evaluate.
+|=======================================================================
+{% endraw %}
+
+#### 27 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| statement | common |  | String | *Required* The statement name in the iBatis XML mapping file which maps to the query insert update or delete operation you wish to evaluate.
 | isolation | common | TRANSACTION_REPEATABLE_READ | String | Transaction isolation level
 | useTransactions | common | true | boolean | Whether to use transactions. This option is by default true.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.

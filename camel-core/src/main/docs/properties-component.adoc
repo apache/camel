@@ -45,13 +45,26 @@ The Properties component supports 17 options which are listed below.
 
 
 // endpoint options: START
-The Properties component supports 7 endpoint options which are listed below:
+The Properties component is configured using the URI syntax with the following path and query parameters:
+
+    properties:key
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| key |  | String | *Required* Property key to use as placeholder
+|=======================================================================
+{% endraw %}
+
+#### 6 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| key | common |  | String | *Required* Property key to use as placeholder
 | ignoreMissingLocation | common | false | boolean | Whether to silently ignore if a location cannot be located such as a properties file not found.
 | locations | common |  | String | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.

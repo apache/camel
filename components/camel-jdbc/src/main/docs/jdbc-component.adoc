@@ -62,13 +62,26 @@ The JDBC component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The JDBC component supports 14 endpoint options which are listed below:
+The JDBC component is configured using the URI syntax with the following path and query parameters:
+
+    jdbc:dataSourceName
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| dataSourceName |  | String | *Required* Name of DataSource to lookup in the Registry.
+|=======================================================================
+{% endraw %}
+
+#### 13 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| dataSourceName | producer |  | String | *Required* Name of DataSource to lookup in the Registry.
 | allowNamedParameters | producer | true | boolean | Whether to allow using named parameters in the queries.
 | outputClass | producer |  | String | Specify the full package and class name to use as conversion when outputType=SelectOne or SelectList.
 | outputType | producer | SelectList | JdbcOutputType | Determines the output the producer should use.

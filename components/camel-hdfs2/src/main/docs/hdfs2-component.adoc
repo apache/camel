@@ -73,15 +73,28 @@ The HDFS2 component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The HDFS2 component supports 41 endpoint options which are listed below:
+The HDFS2 component is configured using the URI syntax with the following path and query parameters:
+
+    hdfs2:hostName:port/path
+
+#### 3 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| hostName |  | String | *Required* HDFS host to use
+| port | 8020 | int | HDFS port to use
+| path |  | String | *Required* The directory path to use
+|=======================================================================
+{% endraw %}
+
+#### 38 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| hostName | common |  | String | *Required* HDFS host to use
-| port | common | 8020 | int | HDFS port to use
-| path | common |  | String | *Required* The directory path to use
 | connectOnStartup | common | true | boolean | Whether to connect to the HDFS file system on starting the producer/consumer. If false then the connection is created on-demand. Notice that HDFS may take up till 15 minutes to establish a connection as it has hardcoded 45 x 20 sec redelivery. By setting this option to false allows your application to startup and not block for up till 15 minutes.
 | fileSystemType | common | HDFS | HdfsFileSystemType | Set to LOCAL to not use HDFS but local java.io.File instead.
 | fileType | common | NORMAL_FILE | HdfsFileType | The file type to use. For more details see Hadoop HDFS documentation about the various files types.

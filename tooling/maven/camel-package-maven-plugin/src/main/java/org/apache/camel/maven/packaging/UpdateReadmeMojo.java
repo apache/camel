@@ -799,7 +799,12 @@ public class UpdateReadmeMojo extends AbstractMojo {
                 String desc = "*Required* " + option.getDescription();
                 option.setDescription(desc);
             }
-            component.addEndpointOption(option);
+            // separate the options in path vs parameter so we can generate two different tables
+            if ("path".equals(option.getKind())) {
+                component.addEndpointPathOption(option);
+            } else {
+                component.addEndpointOption(option);
+            }
         }
 
         return component;

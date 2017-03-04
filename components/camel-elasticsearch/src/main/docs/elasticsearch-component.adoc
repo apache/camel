@@ -50,13 +50,26 @@ The Elasticsearch component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Elasticsearch component supports 12 endpoint options which are listed below:
+The Elasticsearch component is configured using the URI syntax with the following path and query parameters:
+
+    elasticsearch:clusterName
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| clusterName |  | String | *Required* Name of cluster or use local for local mode
+|=======================================================================
+{% endraw %}
+
+#### 11 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| clusterName | producer |  | String | *Required* Name of cluster or use local for local mode
 | clientTransportSniff | producer | true | Boolean | Is the client allowed to sniff the rest of the cluster or not (default true). This setting map to the client.transport.sniff setting.
 | consistencyLevel | producer | DEFAULT | WriteConsistencyLevel | The write consistency level to use with INDEX and BULK operations (can be any of ONE QUORUM ALL or DEFAULT)
 | data | producer |  | Boolean | Is the node going to be allowed to allocate data (shards) to it or not. This setting map to the node.data setting.

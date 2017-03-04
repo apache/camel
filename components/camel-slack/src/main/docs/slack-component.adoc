@@ -60,13 +60,26 @@ The Slack component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Slack component supports 6 endpoint options which are listed below:
+The Slack component is configured using the URI syntax with the following path and query parameters:
+
+    slack:channel
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| channel |  | String | *Required* The channel name (syntax name) or slackuser (syntax userName) to send a message directly to an user.
+|=======================================================================
+{% endraw %}
+
+#### 5 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| channel | producer |  | String | *Required* The channel name (syntax name) or slackuser (syntax userName) to send a message directly to an user.
 | iconEmoji | producer |  | String | Use a Slack emoji as an avatar
 | iconUrl | producer |  | String | The avatar that the component will use when sending message to a channel or user.
 | username | producer |  | String | This is the username that the bot will have when sending messages to a channel or user.

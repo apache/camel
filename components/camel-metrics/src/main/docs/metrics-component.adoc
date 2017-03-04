@@ -60,14 +60,27 @@ The Metrics component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Metrics component supports 9 endpoint options which are listed below:
+The Metrics component is configured using the URI syntax with the following path and query parameters:
+
+    metrics:metricsType:metricsName
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| metricsType |  | MetricsType | *Required* Type of metrics
+| metricsName |  | String | *Required* Name of metrics
+|=======================================================================
+{% endraw %}
+
+#### 7 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| metricsType | producer |  | MetricsType | *Required* Type of metrics
-| metricsName | producer |  | String | *Required* Name of metrics
 | action | producer |  | MetricsTimerAction | Action when using timer type
 | decrement | producer |  | Long | Decrement value when using counter type
 | increment | producer |  | Long | Increment value when using counter type

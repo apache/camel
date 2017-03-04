@@ -32,13 +32,26 @@ The AWS EC2 component has no options.
 
 
 // endpoint options: START
-The AWS EC2 component supports 9 endpoint options which are listed below:
+The AWS EC2 component is configured using the URI syntax with the following path and query parameters:
+
+    aws-ec2:label
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| label |  | String | *Required* Logical name
+|=======================================================================
+{% endraw %}
+
+#### 8 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| label | producer |  | String | *Required* Logical name
 | accessKey | producer |  | String | Amazon AWS Access Key
 | amazonEc2Client | producer |  | AmazonEC2Client | To use a existing configured AmazonEC2Client as client
 | amazonEc2Endpoint | producer |  | String | The region with which the AWS-EC2 client wants to work with.

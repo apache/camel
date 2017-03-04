@@ -122,13 +122,26 @@ The HBase component supports 3 options which are listed below.
 
 
 // endpoint options: START
-The HBase component supports 17 endpoint options which are listed below:
+The HBase component is configured using the URI syntax with the following path and query parameters:
+
+    hbase:tableName
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| tableName |  | String | *Required* The name of the table
+|=======================================================================
+{% endraw %}
+
+#### 16 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| tableName | common |  | String | *Required* The name of the table
 | cellMappingStrategyFactory | common |  | CellMappingStrategyFactory | To use a custom CellMappingStrategyFactory that is responsible for mapping cells.
 | filters | common |  | List | A list of filters to use.
 | mappingStrategyClassName | common |  | String | The class name of a custom mapping strategy implementation.

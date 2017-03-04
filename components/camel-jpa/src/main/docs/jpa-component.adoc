@@ -109,13 +109,26 @@ The JPA component supports 5 options which are listed below.
 
 
 // endpoint options: START
-The JPA component supports 42 endpoint options which are listed below:
+The JPA component is configured using the URI syntax with the following path and query parameters:
+
+    jpa:entityType
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| entityType |  | Class<?> | *Required* The JPA annotated class to use as entity.
+|=======================================================================
+{% endraw %}
+
+#### 41 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| entityType | common |  | Class<?> | *Required* The JPA annotated class to use as entity.
 | joinTransaction | common | true | boolean | The camel-jpa component will join transaction by default. You can use this option to turn this off for example if you use LOCAL_RESOURCE and join transaction doesn't work with your JPA provider. This option can also be set globally on the JpaComponent instead of having to set it on all endpoints.
 | persistenceUnit | common | camel | String | *Required* The JPA persistence unit used by default.
 | sharedEntityManager | common | false | boolean | Whether to use Spring's SharedEntityManager for the consumer/producer. Note in most cases joinTransaction should be set to false as this is not an EXTENDED EntityManager.

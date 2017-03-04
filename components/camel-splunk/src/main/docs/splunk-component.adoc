@@ -104,13 +104,26 @@ The Splunk component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Splunk component supports 43 endpoint options which are listed below:
+The Splunk component is configured using the URI syntax with the following path and query parameters:
+
+    splunk:name
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| name |  | String | *Required* Name has no purpose
+|=======================================================================
+{% endraw %}
+
+#### 42 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| name | common |  | String | *Required* Name has no purpose
 | app | common |  | String | Splunk app
 | connectionTimeout | common | 5000 | int | Timeout in MS when connecting to Splunk server
 | host | common | localhost | String | Splunk host.

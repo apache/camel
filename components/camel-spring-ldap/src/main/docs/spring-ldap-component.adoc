@@ -40,13 +40,26 @@ The Spring LDAP component has no options.
 
 
 // endpoint options: START
-The Spring LDAP component supports 4 endpoint options which are listed below:
+The Spring LDAP component is configured using the URI syntax with the following path and query parameters:
+
+    spring-ldap:templateName
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| templateName |  | String | *Required* Name of the Spring LDAP Template bean
+|=======================================================================
+{% endraw %}
+
+#### 3 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| templateName | producer |  | String | *Required* Name of the Spring LDAP Template bean
 | operation | producer |  | LdapOperation | *Required* The LDAP operation to be performed.
 | scope | producer | subtree | String | The scope of the search operation.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).

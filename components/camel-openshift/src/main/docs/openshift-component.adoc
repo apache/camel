@@ -54,13 +54,26 @@ The OpenShift component supports 5 options which are listed below.
 
 
 // endpoint options: START
-The OpenShift component supports 27 endpoint options which are listed below:
+The OpenShift component is configured using the URI syntax with the following path and query parameters:
+
+    openshift:clientId
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| clientId |  | String | *Required* The client id
+|=======================================================================
+{% endraw %}
+
+#### 26 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| clientId | common |  | String | *Required* The client id
 | domain | common |  | String | Domain name. If not specified then the default domain is used.
 | password | common |  | String | *Required* The password for login to openshift server.
 | server | common |  | String | Url to the openshift server. If not specified then the default value from the local openshift configuration file /.openshift/express.conf is used. And if that fails as well then openshift.redhat.com is used.

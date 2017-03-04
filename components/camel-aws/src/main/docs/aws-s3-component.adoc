@@ -49,13 +49,26 @@ The AWS S3 Storage Service component has no options.
 
 
 // endpoint options: START
-The AWS S3 Storage Service component supports 41 endpoint options which are listed below:
+The AWS S3 Storage Service component is configured using the URI syntax with the following path and query parameters:
+
+    aws-s3:bucketNameOrArn
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| bucketNameOrArn |  | String | *Required* Bucket name or ARN
+|=======================================================================
+{% endraw %}
+
+#### 40 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| bucketNameOrArn | common |  | String | *Required* Bucket name or ARN
 | accessKey | common |  | String | Amazon AWS Access Key
 | amazonS3Client | common |  | AmazonS3 | Reference to a com.amazonaws.services.sqs.AmazonS3 in the link:registry.htmlRegistry.
 | amazonS3Endpoint | common |  | String | The region with which the AWS-S3 client wants to work with.

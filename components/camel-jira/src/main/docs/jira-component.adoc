@@ -49,13 +49,26 @@ The JIRA component has no options.
 
 
 // endpoint options: START
-The JIRA component supports 10 endpoint options which are listed below:
+The JIRA component is configured using the URI syntax with the following path and query parameters:
+
+    jira:type
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| type |  | JIRAType | *Required* Operation to perform such as create a new issue or a new comment
+|=======================================================================
+{% endraw %}
+
+#### 9 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| type | common |  | JIRAType | *Required* Operation to perform such as create a new issue or a new comment
 | password | common |  | String | Password for login
 | serverUrl | common |  | String | *Required* URL to the JIRA server
 | username | common |  | String | Username for login

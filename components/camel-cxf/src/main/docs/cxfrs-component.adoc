@@ -72,14 +72,27 @@ The CXF-RS component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The CXF-RS component supports 31 endpoint options which are listed below:
+The CXF-RS component is configured using the URI syntax with the following path and query parameters:
+
+    cxfrs:beanId:address
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| beanId |  | String | To lookup an existing configured CxfRsEndpoint. Must used bean: as prefix.
+| address |  | String | The service publish address.
+|=======================================================================
+{% endraw %}
+
+#### 29 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| beanId | common |  | String | To lookup an existing configured CxfRsEndpoint. Must used bean: as prefix.
-| address | common |  | String | The service publish address.
 | features | common |  | List | Set the feature list to the CxfRs endpoint.
 | loggingFeatureEnabled | common | false | boolean | This option enables CXF Logging Feature which writes inbound and outbound REST messages to log.
 | loggingSizeLimit | common |  | int | To limit the total size of number of bytes the logger will output when logging feature has been enabled.

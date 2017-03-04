@@ -73,15 +73,28 @@ The CometD component supports 7 options which are listed below.
 
 
 // endpoint options: START
-The CometD component supports 19 endpoint options which are listed below:
+The CometD component is configured using the URI syntax with the following path and query parameters:
+
+    cometd:host:port/channelName
+
+#### 3 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| host |  | String | *Required* Hostname
+| port |  | int | *Required* Host port number
+| channelName |  | String | *Required* The channelName represents a topic that can be subscribed to by the Camel endpoints.
+|=======================================================================
+{% endraw %}
+
+#### 16 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | common |  | String | *Required* Hostname
-| port | common |  | int | *Required* Host port number
-| channelName | common |  | String | *Required* The channelName represents a topic that can be subscribed to by the Camel endpoints.
 | allowedOrigins | common | * | String | The origins domain that support to cross if the crosssOriginFilterOn is true
 | baseResource | common |  | String | The root directory for the web resources or classpath. Use the protocol file: or classpath: depending if you want that the component loads the resource from file system or classpath. Classpath is required for OSGI deployment where the resources are packaged in the jar
 | crossOriginFilterOn | common | false | boolean | If true the server will support for cross-domain filtering

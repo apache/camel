@@ -52,13 +52,26 @@ The ServiceNow component supports 8 options which are listed below.
 
 
 // endpoint options: START
-The ServiceNow component supports 41 endpoint options which are listed below:
+The ServiceNow component is configured using the URI syntax with the following path and query parameters:
+
+    servicenow:instanceName
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| instanceName |  | String | *Required* The ServiceNow instance name
+|=======================================================================
+{% endraw %}
+
+#### 40 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| instanceName | producer |  | String | *Required* The ServiceNow instance name
 | display | producer | true | String | Set this parameter to true to return only scorecards where the indicator Display field is selected. Set this parameter to all to return scorecards with any Display field value. This parameter is true by default.
 | displayValue | producer | false | String | Return the display value (true) actual value (false) or both (all) for reference fields (default: false)
 | excludeReferenceLink | producer |  | Boolean | True to exclude Table API links for reference fields (default: false)

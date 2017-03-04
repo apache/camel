@@ -35,14 +35,27 @@ The Spring Redis component has no options.
 
 
 // endpoint options: START
-The Spring Redis component supports 12 endpoint options which are listed below:
+The Spring Redis component is configured using the URI syntax with the following path and query parameters:
+
+    spring-redis:host:port
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| host |  | String | *Required* The host where Redis server is running.
+| port |  | Integer | *Required* Redis server port number
+|=======================================================================
+{% endraw %}
+
+#### 10 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | common |  | String | *Required* The host where Redis server is running.
-| port | common |  | Integer | *Required* Redis server port number
 | channels | common |  | String | List of topic names or name patterns to subscribe to. Multiple names can be separated by comma.
 | command | common | SET | Command | Default command which can be overridden by message header. Notice the consumer only supports the following commands: PSUBSCRIBE and SUBSCRIBE
 | connectionFactory | common |  | RedisConnectionFactory | Reference to a pre-configured RedisConnectionFactory instance to use.

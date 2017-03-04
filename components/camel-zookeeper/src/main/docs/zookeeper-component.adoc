@@ -56,14 +56,27 @@ The ZooKeeper component supports 2 options which are listed below.
 // component options: END
 
 // endpoint options: START
-The ZooKeeper component supports 14 endpoint options which are listed below:
+The ZooKeeper component is configured using the URI syntax with the following path and query parameters:
+
+    zookeeper:serverUrls/path
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| serverUrls |  | String | *Required* The zookeeper server hosts (multiple servers can be separated by comma)
+| path |  | String | *Required* The node in the ZooKeeper server (aka znode)
+|=======================================================================
+{% endraw %}
+
+#### 12 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| serverUrls | common |  | String | *Required* The zookeeper server hosts (multiple servers can be separated by comma)
-| path | common |  | String | *Required* The node in the ZooKeeper server (aka znode)
 | awaitExistence | common | true | boolean | Not in use
 | listChildren | common | false | boolean | Whether the children of the node should be listed
 | timeout | common | 5000 | int | The time interval to wait on connection before timing out.

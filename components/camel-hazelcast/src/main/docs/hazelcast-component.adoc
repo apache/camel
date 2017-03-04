@@ -66,14 +66,27 @@ The Hazelcast component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Hazelcast component supports 13 endpoint options which are listed below:
+The Hazelcast component is configured using the URI syntax with the following path and query parameters:
+
+    hazelcast:command:cacheName
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| command |  | HazelcastCommand | *Required* What operation to perform.
+| cacheName |  | String | *Required* The name of the cache
+|=======================================================================
+{% endraw %}
+
+#### 11 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| command | common |  | HazelcastCommand | *Required* What operation to perform.
-| cacheName | common |  | String | *Required* The name of the cache
 | defaultOperation | common |  | String | To specify a default operation to use if no operation header has been provided.
 | hazelcastInstance | common |  | HazelcastInstance | The hazelcast instance reference which can be used for hazelcast endpoint.
 | hazelcastInstanceName | common |  | String | The hazelcast instance reference name which can be used for hazelcast endpoint. If you don't specify the instance reference camel use the default hazelcast instance from the camel-hazelcast instance.

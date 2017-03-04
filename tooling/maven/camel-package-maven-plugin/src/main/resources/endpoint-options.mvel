@@ -1,4 +1,18 @@
-The @{title} component supports @{endpointOptions.size()} endpoint options which are listed below:
+The @{title} component is configured using the URI syntax with the following path and query parameters:
+
+    @{syntax}
+
+#### @{endpointPathOptions.size()} path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+@foreach{row : endpointPathOptions}| @{row.name} | @{row.defaultValue} | @{row.shortJavaType} | @{row.description}
+@end{}|=======================================================================
+{% endraw %}
+
+#### @{endpointOptions.size()} query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]

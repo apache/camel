@@ -17,13 +17,26 @@ The Grape component has no options.
 
 
 // endpoint options: START
-The Grape component supports 3 endpoint options which are listed below:
+The Grape component is configured using the URI syntax with the following path and query parameters:
+
+    grape:defaultCoordinates
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| defaultCoordinates |  | String | *Required* Maven coordinates to use as default to grab if the message body is empty.
+|=======================================================================
+{% endraw %}
+
+#### 2 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| defaultCoordinates |  |  | String | *Required* Maven coordinates to use as default to grab if the message body is empty.
 | exchangePattern |  | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange.
 | synchronous |  | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================

@@ -53,13 +53,26 @@ The SAP NetWeaver component has no options.
 
 
 // endpoint options: START
-The SAP NetWeaver component supports 7 endpoint options which are listed below:
+The SAP NetWeaver component is configured using the URI syntax with the following path and query parameters:
+
+    sap-netweaver:url
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| url |  | String | *Required* Url to the SAP net-weaver gateway server.
+|=======================================================================
+{% endraw %}
+
+#### 6 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| url | producer |  | String | *Required* Url to the SAP net-weaver gateway server.
 | flatternMap | producer | true | boolean | If the JSON Map contains only a single entry then flattern by storing that single entry value as the message body.
 | json | producer | true | boolean | Whether to return data in JSON format. If this option is false then XML is returned in Atom format.
 | jsonAsMap | producer | true | boolean | To transform the JSON from a String to a Map in the message body.

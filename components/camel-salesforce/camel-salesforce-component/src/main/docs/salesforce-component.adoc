@@ -469,14 +469,27 @@ The Salesforce component supports 24 options which are listed below.
 
 
 // endpoint options: START
-The Salesforce component supports 43 endpoint options which are listed below:
+The Salesforce component is configured using the URI syntax with the following path and query parameters:
+
+    salesforce:operationName:topicName
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| operationName |  | OperationName | The operation to use
+| topicName |  | String | The name of the topic to use
+|=======================================================================
+{% endraw %}
+
+#### 41 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| operationName | producer |  | OperationName | The operation to use
-| topicName | consumer |  | String | The name of the topic to use
 | apexMethod | common |  | String | APEX method name
 | apexQueryParams | common |  | Map | Query params for APEX method
 | apexUrl | common |  | String | APEX method URL

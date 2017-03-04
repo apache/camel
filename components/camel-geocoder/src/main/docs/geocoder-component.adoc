@@ -39,14 +39,27 @@ The Geocoder component has no options.
 
 
 // endpoint options: START
-The Geocoder component supports 16 endpoint options which are listed below:
+The Geocoder component is configured using the URI syntax with the following path and query parameters:
+
+    geocoder:address:latlng
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| address |  | String | The geo address which should be prefixed with address:
+| latlng |  | String | The geo latitude and longitude which should be prefixed with latlng:
+|=======================================================================
+{% endraw %}
+
+#### 14 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| address | producer |  | String | The geo address which should be prefixed with address:
-| latlng | producer |  | String | The geo latitude and longitude which should be prefixed with latlng:
 | clientId | producer |  | String | To use google premium with this client id
 | clientKey | producer |  | String | To use google premium with this client key
 | headersOnly | producer | false | boolean | Whether to only enrich the Exchange with headers and leave the body as-is.

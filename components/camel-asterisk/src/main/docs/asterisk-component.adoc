@@ -33,13 +33,26 @@ The Asterisk component has no options.
 // component options: END
 
 // endpoint options: START
-The Asterisk component supports 9 endpoint options which are listed below:
+The Asterisk component is configured using the URI syntax with the following path and query parameters:
+
+    asterisk:name
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| name |  | String | *Required* Logical name
+|=======================================================================
+{% endraw %}
+
+#### 8 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| name | common |  | String | *Required* Logical name
 | hostname | common |  | String | The hostname of the asterix server
 | password | common |  | String | Login password
 | username | common |  | String | Login username

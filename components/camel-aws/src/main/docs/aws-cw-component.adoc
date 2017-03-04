@@ -35,13 +35,26 @@ The AWS CloudWatch component has no options.
 
 
 // endpoint options: START
-The AWS CloudWatch component supports 12 endpoint options which are listed below:
+The AWS CloudWatch component is configured using the URI syntax with the following path and query parameters:
+
+    aws-cw:namespace
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| namespace |  | String | *Required* The metric namespace
+|=======================================================================
+{% endraw %}
+
+#### 11 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| namespace | producer |  | String | *Required* The metric namespace
 | accessKey | producer |  | String | Amazon AWS Access Key
 | amazonCwClient | producer |  | AmazonCloudWatch | To use the AmazonCloudWatch as the client
 | amazonCwEndpoint | producer |  | String | The region with which the AWS-CW client wants to work with.

@@ -60,13 +60,26 @@ The Undertow component supports 3 options which are listed below.
 
 
 // endpoint options: START
-The Undertow component supports 18 endpoint options which are listed below:
+The Undertow component is configured using the URI syntax with the following path and query parameters:
+
+    undertow:httpURI
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| httpURI |  | URI | *Required* The url of the HTTP endpoint to use.
+|=======================================================================
+{% endraw %}
+
+#### 17 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| httpURI | common |  | URI | *Required* The url of the HTTP endpoint to use.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | httpMethodRestrict | consumer |  | String | Used to only allow consuming if the HttpMethod matches such as GET/POST/PUT etc. Multiple methods can be specified separated by comma.
 | matchOnUriPrefix | consumer | true | Boolean | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.

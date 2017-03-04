@@ -40,13 +40,26 @@ The Timer component has no options.
 
 
 // endpoint options: START
-The Timer component supports 13 endpoint options which are listed below:
+The Timer component is configured using the URI syntax with the following path and query parameters:
+
+    timer:timerName
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| timerName |  | String | *Required* The name of the timer
+|=======================================================================
+{% endraw %}
+
+#### 12 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| timerName | consumer |  | String | *Required* The name of the timer
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | delay | consumer | 1000 | long | The number of milliseconds to wait before the first event is generated. Should not be used in conjunction with the time option. The default value is 1000. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
 | fixedRate | consumer | false | boolean | Events take place at approximately regular intervals separated by the specified period.

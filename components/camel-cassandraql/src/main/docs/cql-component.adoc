@@ -60,16 +60,29 @@ The Cassandra CQL component has no options.
 
 
 // endpoint options: START
-The Cassandra CQL component supports 18 endpoint options which are listed below:
+The Cassandra CQL component is configured using the URI syntax with the following path and query parameters:
+
+    cql:beanRef:hosts:port/keyspace
+
+#### 4 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| beanRef |  | String | beanRef is defined using bean:id
+| hosts |  | String | Hostname(s) cassansdra server(s). Multiple hosts can be separated by comma.
+| port |  | Integer | Port number of cassansdra server(s)
+| keyspace |  | String | Keyspace to use
+|=======================================================================
+{% endraw %}
+
+#### 14 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| beanRef | common |  | String | beanRef is defined using bean:id
-| hosts | common |  | String | Hostname(s) cassansdra server(s). Multiple hosts can be separated by comma.
-| port | common |  | Integer | Port number of cassansdra server(s)
-| keyspace | common |  | String | Keyspace to use
 | cluster | common |  | Cluster | To use the Cluster instance (you would normally not use this option)
 | clusterName | common |  | String | Cluster name
 | consistencyLevel | common |  | ConsistencyLevel | Consistency level to use

@@ -60,14 +60,27 @@ The Spark Rest component supports 12 options which are listed below.
 
 
 // endpoint options: START
-The Spark Rest component supports 13 endpoint options which are listed below:
+The Spark Rest component is configured using the URI syntax with the following path and query parameters:
+
+    spark-rest:verb:path
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| verb |  | String | *Required* get post put patch delete head trace connect or options.
+| path |  | String | *Required* The content path which support Spark syntax.
+|=======================================================================
+{% endraw %}
+
+#### 11 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| verb | consumer |  | String | *Required* get post put patch delete head trace connect or options.
-| path | consumer |  | String | *Required* The content path which support Spark syntax.
 | accept | consumer |  | String | Accept type such as: 'text/xml' or 'application/json'. By default we accept all kinds of types.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | disableStreamCache | consumer | false | boolean | Determines whether or not the raw input stream from Spark HttpRequestgetContent() is cached or not (Camel will read the stream into a in light-weight memory based Stream caching) cache. By default Camel will cache the Netty input stream to support reading it multiple times to ensure Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream such as streaming it directly to a file or other persistent store. Mind that if you enable this option then you cannot read the Netty stream multiple times out of the box and you would need manually to reset the reader index on the Spark raw stream.

@@ -69,13 +69,26 @@ The APNS component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The APNS component supports 21 endpoint options which are listed below:
+The APNS component is configured using the URI syntax with the following path and query parameters:
+
+    apns:name
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| name |  | String | Name of the endpoint
+|=======================================================================
+{% endraw %}
+
+#### 20 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| name | common |  | String | Name of the endpoint
 | tokens | common |  | String | Configure this property in case you want to statically declare tokens related to devices you want to notify. Tokens are separated by comma.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.

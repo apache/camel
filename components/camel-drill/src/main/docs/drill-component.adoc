@@ -42,13 +42,26 @@ The Drill component has no options.
 
 
 // endpoint options: START
-The Drill component supports 6 endpoint options which are listed below:
+The Drill component is configured using the URI syntax with the following path and query parameters:
+
+    drill:host
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| host |  | String | *Required* ZooKeeper host name or IP address. Use local instead of a host name or IP address to connect to the local Drillbit
+|=======================================================================
+{% endraw %}
+
+#### 5 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | producer |  | String | *Required* ZooKeeper host name or IP address. Use local instead of a host name or IP address to connect to the local Drillbit
 | clusterId | producer |  | String | Cluster ID https://drill.apache.org/docs/using-the-jdbc-driver/determining-the-cluster-id
 | directory | producer |  | String | Drill directory in ZooKeeper
 | mode | producer | ZK | DrillConnectionMode | Connection mode: zk: Zookeeper drillbit: Drillbit direct connection https://drill.apache.org/docs/using-the-jdbc-driver/

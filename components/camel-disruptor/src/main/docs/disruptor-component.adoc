@@ -118,13 +118,26 @@ The Disruptor component supports 8 options which are listed below.
 
 
 // endpoint options: START
-The Disruptor component supports 13 endpoint options which are listed below:
+The Disruptor component is configured using the URI syntax with the following path and query parameters:
+
+    disruptor:name
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| name |  | String | *Required* Name of queue
+|=======================================================================
+{% endraw %}
+
+#### 12 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| name | common |  | String | *Required* Name of queue
 | size | common | 1024 | int | The maximum capacity of the Disruptors ringbuffer Will be effectively increased to the nearest power of two. Notice: Mind if you use this option then its the first endpoint being created with the queue name that determines the size. To make sure all endpoints use same size then configure the size option on all of them or the first endpoint being created.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | concurrentConsumers | consumer | 1 | int | Number of concurrent threads processing exchanges.

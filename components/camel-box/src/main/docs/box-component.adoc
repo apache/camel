@@ -59,14 +59,27 @@ The Box component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Box component supports 21 endpoint options which are listed below:
+The Box component is configured using the URI syntax with the following path and query parameters:
+
+    box:apiName/methodName
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| apiName |  | BoxApiName | *Required* What kind of operation to perform
+| methodName |  | String | *Required* What sub operation to use for the selected operation
+|=======================================================================
+{% endraw %}
+
+#### 19 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| apiName | common |  | BoxApiName | *Required* What kind of operation to perform
-| methodName | common |  | String | *Required* What sub operation to use for the selected operation
 | clientId | common |  | String | Box application client ID
 | inBody | common |  | String | Sets the name of a parameter to be passed in the exchange In Body
 | loginTimeout | common | 30 | int | Amount of time the component will wait for a response from Box.com default is 30 seconds

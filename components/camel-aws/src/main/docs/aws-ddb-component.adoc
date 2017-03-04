@@ -32,13 +32,26 @@ The AWS DynamoDB component has no options.
 
 
 // endpoint options: START
-The AWS DynamoDB component supports 14 endpoint options which are listed below:
+The AWS DynamoDB component is configured using the URI syntax with the following path and query parameters:
+
+    aws-ddb:tableName
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| tableName |  | String | *Required* The name of the table currently worked with.
+|=======================================================================
+{% endraw %}
+
+#### 13 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| tableName | producer |  | String | *Required* The name of the table currently worked with.
 | accessKey | producer |  | String | Amazon AWS Access Key
 | amazonDDBClient | producer |  | AmazonDynamoDB | To use the AmazonDynamoDB as the client
 | amazonDdbEndpoint | producer |  | String | The region with which the AWS-DDB client wants to work with.

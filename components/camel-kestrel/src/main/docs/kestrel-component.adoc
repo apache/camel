@@ -87,14 +87,27 @@ The Kestrel component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Kestrel component supports 8 endpoint options which are listed below:
+The Kestrel component is configured using the URI syntax with the following path and query parameters:
+
+    kestrel:addresses/queue
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| addresses | localhost:22133 | String[] | The address(es) on which kestrel is running
+| queue |  | String | *Required* The queue we are polling
+|=======================================================================
+{% endraw %}
+
+#### 6 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| addresses | common | localhost:22133 | String[] | The address(es) on which kestrel is running
-| queue | common |  | String | *Required* The queue we are polling
 | concurrentConsumers | common | 1 | int | How many concurrent listeners to schedule for the thread pool
 | waitTimeMs | common | 100 | int | How long a given wait should block (server side) in milliseconds
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.

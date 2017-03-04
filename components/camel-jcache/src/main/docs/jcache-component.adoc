@@ -8,13 +8,26 @@
 
 
 // endpoint options: START
-The JCache component supports 23 endpoint options which are listed below:
+The JCache component is configured using the URI syntax with the following path and query parameters:
+
+    jcache:cacheName
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| cacheName |  | String | *Required* The name of the cache
+|=======================================================================
+{% endraw %}
+
+#### 22 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| cacheName | common |  | String | *Required* The name of the cache
 | cacheConfiguration | common |  | Configuration | A Configuration for the Cache
 | cacheConfigurationProperties | common |  | Properties | The Properties for the javax.cache.spi.CachingProvider to create the CacheManager
 | cachingProvider | common |  | String | The fully qualified class name of the javax.cache.spi.CachingProvider

@@ -48,13 +48,26 @@ The Azure Storage Blob Service component has no options.
 
 
 // endpoint options: START
-The Azure Storage Blob Service component supports 20 endpoint options which are listed below:
+The Azure Storage Blob Service component is configured using the URI syntax with the following path and query parameters:
+
+    azure-blob:containerOrBlobUri
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| containerOrBlobUri |  | String | *Required* Container or Blob compact Uri
+|=======================================================================
+{% endraw %}
+
+#### 19 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| containerOrBlobUri | common |  | String | *Required* Container or Blob compact Uri
 | azureBlobClient | common |  | CloudBlob | The blob service client
 | blobOffset | common | 0 | Long | Set the blob offset for the upload or download operations default is 0
 | blobType | common | blockblob | BlobType | Set a blob type 'blockblob' is default

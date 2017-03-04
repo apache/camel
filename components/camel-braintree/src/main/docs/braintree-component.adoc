@@ -54,14 +54,27 @@ The Braintree component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Braintree component supports 15 endpoint options which are listed below:
+The Braintree component is configured using the URI syntax with the following path and query parameters:
+
+    braintree:apiName/methodName
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| apiName |  | BraintreeApiName | *Required* What kind of operation to perform
+| methodName |  | String | What sub operation to use for the selected operation
+|=======================================================================
+{% endraw %}
+
+#### 13 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| apiName | common |  | BraintreeApiName | *Required* What kind of operation to perform
-| methodName | common |  | String | What sub operation to use for the selected operation
 | environment | common |  | String | *Required* The environment Either SANDBOX or PRODUCTION
 | inBody | common |  | String | Sets the name of a parameter to be passed in the exchange In Body
 | merchantId | common |  | String | *Required* The merchant id provided by Braintree.

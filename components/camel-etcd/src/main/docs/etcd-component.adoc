@@ -16,14 +16,27 @@
 
 
 // endpoint options: START
-The etcd component supports 31 endpoint options which are listed below:
+The etcd component is configured using the URI syntax with the following path and query parameters:
+
+    etcd:namespace/path
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| namespace |  | EtcdNamespace | *Required* The API namespace to use
+| path |  | String | The path the endpoint refers to
+|=======================================================================
+{% endraw %}
+
+#### 29 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| namespace | common |  | EtcdNamespace | *Required* The API namespace to use
-| path | common |  | String | The path the endpoint refers to
 | recursive | common | false | boolean | To apply an action recursively.
 | servicePath | common | /services/ | String | The path to look for for service discovery
 | timeout | common |  | Long | To set the maximum time an action could take to complete.

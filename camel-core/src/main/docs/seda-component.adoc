@@ -56,13 +56,26 @@ The SEDA component supports 4 options which are listed below.
 
 
 // endpoint options: START
-The SEDA component supports 17 endpoint options which are listed below:
+The SEDA component is configured using the URI syntax with the following path and query parameters:
+
+    seda:name
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| name |  | String | *Required* Name of queue
+|=======================================================================
+{% endraw %}
+
+#### 16 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| name | common |  | String | *Required* Name of queue
 | size | common | 2147483647 | int | The maximum capacity of the SEDA queue (i.e. the number of messages it can hold).
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | concurrentConsumers | consumer | 1 | int | Number of concurrent threads processing exchanges.

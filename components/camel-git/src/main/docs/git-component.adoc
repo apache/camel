@@ -36,13 +36,26 @@ The Git component has no options.
 
 
 // endpoint options: START
-The Git component supports 14 endpoint options which are listed below:
+The Git component is configured using the URI syntax with the following path and query parameters:
+
+    git:localPath
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| localPath |  | String | *Required* Local repository path
+|=======================================================================
+{% endraw %}
+
+#### 13 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| localPath | common |  | String | *Required* Local repository path
 | branchName | common |  | String | The branch name to work on
 | password | common |  | String | Remote repository password
 | remoteName | common |  | String | The remote repository name to use in particular operation like pull

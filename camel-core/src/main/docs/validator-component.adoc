@@ -68,13 +68,26 @@ The Validator component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Validator component supports 12 endpoint options which are listed below:
+The Validator component is configured using the URI syntax with the following path and query parameters:
+
+    validator:resourceUri
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| resourceUri |  | String | *Required* URL to a local resource on the classpathor a reference to lookup a bean in the Registry or a full URL to a remote resource or resource on the file system which contains the XSD to validate against.
+|=======================================================================
+{% endraw %}
+
+#### 11 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| resourceUri | producer |  | String | *Required* URL to a local resource on the classpathor a reference to lookup a bean in the Registry or a full URL to a remote resource or resource on the file system which contains the XSD to validate against.
 | failOnNullBody | producer | true | boolean | Whether to fail if no body exists.
 | failOnNullHeader | producer | true | boolean | Whether to fail if no header exists when validating against a header.
 | headerName | producer |  | String | To validate against a header instead of the message body.

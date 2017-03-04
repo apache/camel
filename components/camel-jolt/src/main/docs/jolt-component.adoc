@@ -61,13 +61,26 @@ The JOLT component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The JOLT component supports 6 endpoint options which are listed below:
+The JOLT component is configured using the URI syntax with the following path and query parameters:
+
+    jolt:resourceUri
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| resourceUri |  | String | *Required* Path to the resource. You can prefix with: classpath file http ref or bean. classpath file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot eg bean:myBean.myMethod.
+|=======================================================================
+{% endraw %}
+
+#### 5 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| resourceUri | producer |  | String | *Required* Path to the resource. You can prefix with: classpath file http ref or bean. classpath file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot eg bean:myBean.myMethod.
 | contentCache | producer | false | boolean | Sets whether to use resource content cache or not
 | inputType | producer | Hydrated | JoltInputOutputType | Specifies if the input is hydrated JSON or a JSON String.
 | outputType | producer | Hydrated | JoltInputOutputType | Specifies if the output should be hydrated JSON or a JSON String.

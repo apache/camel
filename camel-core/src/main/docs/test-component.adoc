@@ -58,13 +58,26 @@ The Test component has no options.
 
 
 // endpoint options: START
-The Test component supports 15 endpoint options which are listed below:
+The Test component is configured using the URI syntax with the following path and query parameters:
+
+    test:name
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| name |  | String | *Required* Name of endpoint to lookup in the registry to use for polling messages used for testing
+|=======================================================================
+{% endraw %}
+
+#### 14 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| name | producer |  | String | *Required* Name of endpoint to lookup in the registry to use for polling messages used for testing
 | anyOrder | producer | false | boolean | Whether the expected messages should arrive in the same order or can be in any order.
 | assertPeriod | producer | 0 | long | Sets a grace period after which the mock endpoint will re-assert to ensure the preliminary assertion is still valid. This is used for example to assert that exactly a number of messages arrives. For example if link expectedMessageCount(int) was set to 5 then the assertion is satisfied when 5 or more message arrives. To ensure that exactly 5 messages arrives then you would need to wait a little period to ensure no further message arrives. This is what you can use this link setAssertPeriod(long) method for. By default this period is disabled.
 | delimiter | producer |  | String | The split delimiter to use when split is enabled. By default the delimiter is new line based. The delimiter can be a regular expression.

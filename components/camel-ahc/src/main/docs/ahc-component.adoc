@@ -44,13 +44,26 @@ You can append query options to the URI in the following format,
 
 
 // endpoint options: START
-The AHC component supports 14 endpoint options which are listed below:
+The AHC component is configured using the URI syntax with the following path and query parameters:
+
+    ahc:httpUri
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| httpUri |  | URI | *Required* The URI to use such as http://hostname:port/path
+|=======================================================================
+{% endraw %}
+
+#### 13 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| httpUri | producer |  | URI | *Required* The URI to use such as http://hostname:port/path
 | bridgeEndpoint | producer | false | boolean | If the option is true then the Exchange.HTTP_URI header is ignored and use the endpoint's URI for request. You may also set the throwExceptionOnFailure to be false to let the AhcProducer send all the fault response back.
 | bufferSize | producer | 4096 | int | The initial in-memory buffer size used when transferring data between Camel and AHC Client.
 | connectionClose | producer | false | boolean | Define if the Connection Close header has to be added to HTTP Request. This parameter is false by default

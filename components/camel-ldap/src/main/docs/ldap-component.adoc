@@ -47,13 +47,26 @@ The LDAP component has no options.
 
 
 // endpoint options: START
-The LDAP component supports 6 endpoint options which are listed below:
+The LDAP component is configured using the URI syntax with the following path and query parameters:
+
+    ldap:dirContextName
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| dirContextName |  | String | *Required* Name of javax.naming.directory.DirContext bean to lookup in the registry.
+|=======================================================================
+{% endraw %}
+
+#### 5 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| dirContextName | producer |  | String | *Required* Name of javax.naming.directory.DirContext bean to lookup in the registry.
 | base | producer | ou=system | String | The base DN for searches.
 | pageSize | producer |  | Integer | When specified the ldap module uses paging to retrieve all results (most LDAP Servers throw an exception when trying to retrieve more than 1000 entries in one query). To be able to use this a LdapContext (subclass of DirContext) has to be passed in as ldapServerBean (otherwise an exception is thrown)
 | returnedAttributes | producer |  | String | Comma-separated list of attributes that should be set in each entry of the result

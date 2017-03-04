@@ -57,13 +57,26 @@ The MQTT component supports 4 options which are listed below.
 
 
 // endpoint options: START
-The MQTT component supports 40 endpoint options which are listed below:
+The MQTT component is configured using the URI syntax with the following path and query parameters:
+
+    mqtt:name
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| name |  | String | *Required* A logical name to use which is not the topic name.
+|=======================================================================
+{% endraw %}
+
+#### 39 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| name | common |  | String | *Required* A logical name to use which is not the topic name.
 | blockingExecutor | common |  | Executor | SSL connections perform blocking operations against internal thread pool unless you call the setBlockingExecutor method to configure that executor they will use instead.
 | byDefaultRetain | common | false | boolean | The default retain policy to be used on messages sent to the MQTT broker
 | cleanSession | common | false | boolean | Set to false if you want the MQTT server to persist topic subscriptions and ack positions across client sessions. Defaults to true.

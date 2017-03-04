@@ -80,15 +80,28 @@ The Netty4 component supports 4 options which are listed below.
 
 
 // endpoint options: START
-The Netty4 component supports 74 endpoint options which are listed below:
+The Netty4 component is configured using the URI syntax with the following path and query parameters:
+
+    netty4:protocol:host:port
+
+#### 3 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| protocol |  | String | *Required* The protocol to use which can be tcp or udp.
+| host |  | String | *Required* The hostname. For the consumer the hostname is localhost or 0.0.0.0 For the producer the hostname is the remote host to connect to
+| port |  | int | *Required* The host port number
+|=======================================================================
+{% endraw %}
+
+#### 71 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| protocol | common |  | String | *Required* The protocol to use which can be tcp or udp.
-| host | common |  | String | *Required* The hostname. For the consumer the hostname is localhost or 0.0.0.0 For the producer the hostname is the remote host to connect to
-| port | common |  | int | *Required* The host port number
 | disconnect | common | false | boolean | Whether or not to disconnect(close) from Netty Channel right after use. Can be used for both consumer and producer.
 | keepAlive | common | true | boolean | Setting to ensure socket is not closed due to inactivity
 | reuseAddress | common | true | boolean | Setting to facilitate socket multiplexing

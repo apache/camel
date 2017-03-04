@@ -75,13 +75,26 @@ The SIP component has no options.
 
 
 // endpoint options: START
-The SIP component supports 45 endpoint options which are listed below:
+The SIP component is configured using the URI syntax with the following path and query parameters:
+
+    sip:uri
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| uri |  | URI | *Required* URI of the SIP server to connect to (the username and password can be included such as: john:secretmyserver:9999)
+|=======================================================================
+{% endraw %}
+
+#### 44 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| uri | common |  | URI | *Required* URI of the SIP server to connect to (the username and password can be included such as: john:secretmyserver:9999)
 | cacheConnections | common | false | boolean | Should connections be cached by the SipStack to reduce cost of connection creation. This is useful if the connection is used for long running conversations.
 | contentSubType | common | plain | String | Setting for contentSubType can be set to any valid MimeSubType.
 | contentType | common | text | String | Setting for contentType can be set to any valid MimeType.
