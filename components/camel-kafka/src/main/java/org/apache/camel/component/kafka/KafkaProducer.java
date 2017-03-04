@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -35,6 +36,7 @@ import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.common.utils.Bytes;
 
 public class KafkaProducer extends DefaultAsyncProducer {
 
@@ -134,7 +136,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         Object key = endpoint.getConfiguration().getKey() != null
             ? endpoint.getConfiguration().getKey() : exchange.getIn().getHeader(KafkaConstants.KEY);
         final Object messageKey = key != null
-            ? getMessageKey(exchange, key, endpoint.getConfiguration().getKeySerializerClass()) : null;
+            ? tryConvertToSerializedType(exchange, key, endpoint.getConfiguration().getKeySerializerClass()) : null;
         final boolean hasMessageKey = messageKey != null;
 
         Object msg = exchange.getIn().getBody();
@@ -159,7 +161,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
                 public ProducerRecord next() {
                     // must convert each entry of the iterator into the value according to the serializer
                     Object next = msgList.next();
-                    Object value = getMessageValue(exchange, next, endpoint.getConfiguration().getSerializerClass());
+                    Object value = tryConvertToSerializedType(exchange, next, endpoint.getConfiguration().getSerializerClass());
 
                     if (hasPartitionKey && hasMessageKey) {
                         return new ProducerRecord(msgTopic, partitionKey, key, value);
@@ -177,7 +179,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         }
 
         // must convert each entry of the iterator into the value according to the serializer
-        Object value = getMessageValue(exchange, msg, endpoint.getConfiguration().getSerializerClass());
+        Object value = tryConvertToSerializedType(exchange, msg, endpoint.getConfiguration().getSerializerClass());
 
         ProducerRecord record;
         if (hasPartitionKey && hasMessageKey) {
@@ -234,24 +236,27 @@ public class KafkaProducer extends DefaultAsyncProducer {
         return true;
     }
 
-    protected Object getMessageKey(Exchange exchange, Object key, String keySerializer) {
-        Object answer = key;
-        if (KafkaConstants.KAFKA_DEFAULT_DESERIALIZER.equals(keySerializer)) {
-            // its string based so ensure key is string as well
-            answer = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, key);
-        }
-        // TODO: other serializers
-        return answer;
-    }
+    /**
+     * Attempts to convert the object to the same type as the serialized class specified
+     */
+    protected Object tryConvertToSerializedType(Exchange exchange, Object object, String serializerClass) {
+        Object answer = null;
 
-    protected Object getMessageValue(Exchange exchange, Object value, String valueSerializer) {
-        Object answer = value;
-        if (KafkaConstants.KAFKA_DEFAULT_DESERIALIZER.equals(valueSerializer)) {
-            // its string based so ensure value is string as well
-            answer = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+        if (KafkaConstants.KAFKA_DEFAULT_SERIALIZER.equals(serializerClass)) {
+            answer = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, object);
+        } else if ("org.apache.kafka.common.serialization.ByteArraySerializer".equals(serializerClass)) {
+            answer = exchange.getContext().getTypeConverter().tryConvertTo(byte[].class, exchange, object);
+        } else if ("org.apache.kafka.common.serialization.ByteBufferSerializer".equals(serializerClass)) {
+            answer = exchange.getContext().getTypeConverter().tryConvertTo(ByteBuffer.class, exchange, object);
+        } else if ("org.apache.kafka.common.serialization.BytesSerializer".equals(serializerClass)) {
+            // we need to convert to byte array first
+            byte[] array = exchange.getContext().getTypeConverter().tryConvertTo(byte[].class, exchange, object);
+            if (array != null) {
+                answer = new Bytes(array);
+            }
         }
-        // TODO: other serializers
-        return answer;
+
+        return answer != null ? answer : object;
     }
 
     private final class KafkaProducerCallBack implements Callback {
