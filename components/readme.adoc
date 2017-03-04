@@ -860,7 +860,7 @@ Number of Miscellaneous Components: 36
 
 | link:camel-guice/src/main/docs/guice.adoc[Guice] (camel-guice) | 1.5 | Using Camel with Guice
 
-| link:camel-hawtdb/src/main/docs/hawtdb.adoc[Hawtdb] (camel-hawtdb) | 2.3 | *deprecated* Using HawtDB as persistent EIP store
+| link:camel-hawtdb/src/main/docs/hawtdb.adoc[HawtDB] (camel-hawtdb) | 2.3 | *deprecated* Using HawtDB as persistent EIP store
 
 | link:camel-hystrix/src/main/docs/hystrix.adoc[Hystrix] (camel-hystrix) | 2.18 | Circuit Breaker EIP using Netflix Hystrix
 
@@ -870,7 +870,7 @@ Number of Miscellaneous Components: 36
 
 | link:camel-leveldb/src/main/docs/leveldb.adoc[LevelDB] (camel-leveldb) | 2.10 | Using LevelDB as persistent EIP store
 
-| link:camel-opentracing/src/main/docs/opentracing.adoc[Opentracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
+| link:camel-opentracing/src/main/docs/opentracing.adoc[OpenTracing] (camel-opentracing) | 2.19 | Distributed tracing using OpenTracing
 
 | link:camel-ribbon/src/main/docs/ribbon.adoc[Ribbon] (camel-ribbon) | 2.18 | Using Netflix Ribbon for client side load balancing
 
