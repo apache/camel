@@ -131,10 +131,10 @@ public class KafkaConfiguration {
     //Async producer config
     @UriParam(label = "producer", defaultValue = "10000")
     private Integer queueBufferingMaxMessages = 10000;
-    @UriParam(label = "producer")
-    private String serializerClass;
-    @UriParam(label = "producer")
-    private String keySerializerClass;
+    @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_SERIALIZER)
+    private String serializerClass = KafkaConstants.KAFKA_DEFAULT_SERIALIZER;
+    @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_SERIALIZER)
+    private String keySerializerClass = KafkaConstants.KAFKA_DEFAULT_SERIALIZER;
 
     @UriParam(label = "producer")
     private String key;
@@ -684,24 +684,17 @@ public class KafkaConfiguration {
     }
 
     public String getSerializerClass() {
-        if (serializerClass == null) {
-            return KafkaConstants.KAFKA_DEFAULT_SERIALIZER;
-        }
         return serializerClass;
     }
 
     /**
-     * The serializer class for messages. The default encoder takes a byte[] and returns the same byte[].
-     * The default class is kafka.serializer.DefaultEncoder
+     * The serializer class for messages.
      */
     public void setSerializerClass(String serializerClass) {
         this.serializerClass = serializerClass;
     }
 
     public String getKeySerializerClass() {
-        if (keySerializerClass == null) {
-            return KafkaConstants.KAFKA_DEFAULT_SERIALIZER;
-        }
         return keySerializerClass;
     }
 
