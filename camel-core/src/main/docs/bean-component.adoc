@@ -18,17 +18,7 @@ the link:registry.html[Registry]
 
 
 // component options: START
-The Bean component supports 1 options which are listed below.
-
-
-
-{% raw %}
-[width="100%",cols="2,1,1m,1m,5",options="header"]
-|=======================================================================
-| Name | Group | Default | Java Type | Description
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
-|=======================================================================
-{% endraw %}
+The Bean component has no options.
 // component options: END
 
 

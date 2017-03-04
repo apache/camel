@@ -147,14 +147,17 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     updated = updateTitles(file, model.getTitle() + " Component");
                     updated |= updateAvailableFrom(file, model.getFirstVersion());
 
-                    if (model.getComponentOptions() != null) {
-                        String options = templateComponentOptions(model);
-                        updated |= updateComponentOptions(file, options);
+                    // resolvePropertyPlaceholders is an option which only make sense to use if the component has other options
+                    boolean hasOptions = model.getComponentOptions().stream().anyMatch(o -> !o.getName().equals("resolvePropertyPlaceholders"));
+                    if (!hasOptions) {
+                        model.getComponentOptions().clear();
                     }
-                    if (model.getEndpointOptions() != null) {
-                        String options = templateEndpointOptions(model);
-                        updated |= updateEndpointOptions(file, options);
-                    }
+
+                    String options = templateComponentOptions(model);
+                    updated |= updateComponentOptions(file, options);
+
+                    options = templateEndpointOptions(model);
+                    updated |= updateEndpointOptions(file, options);
 
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
@@ -199,10 +202,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     updated = updateTitles(file, model.getTitle() + " DataFormat");
                     updated |= updateAvailableFrom(file, model.getFirstVersion());
 
-                    if (model.getDataFormatOptions() != null) {
-                        String options = templateDataFormatOptions(model);
-                        updated |= updateDataFormatOptions(file, options);
-                    }
+                    String options = templateDataFormatOptions(model);
+                    updated |= updateDataFormatOptions(file, options);
 
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
@@ -251,10 +252,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     updated = updateTitles(file, model.getTitle() + " Language");
                     updated |= updateAvailableFrom(file, model.getFirstVersion());
 
-                    if (model.getLanguageOptions() != null) {
-                        String options = templateLanguageOptions(model);
-                        updated |= updateLanguageOptions(file, options);
-                    }
+                    String options = templateLanguageOptions(model);
+                    updated |= updateLanguageOptions(file, options);
 
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
@@ -293,7 +292,6 @@ public class UpdateReadmeMojo extends AbstractMojo {
             for (File jsonFile : jsonFiles) {
                 String json = loadEipJson(jsonFile);
                 if (json != null) {
-
                     EipModel model = generateEipModel(json);
                     String title = asEipTitle(model.getName(), model.getTitle());
                     model.setTitle(title);
@@ -312,10 +310,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
                     updated = updateTitles(file, model.getTitle() + " EIP");
 
-                    if (model.getEipOptions() != null) {
-                        String options = templateEipOptions(model);
-                        updated |= updateEipOptions(file, options);
-                    }
+                    String options = templateEipOptions(model);
+                    updated |= updateEipOptions(file, options);
 
                     if (updated) {
                         getLog().info("Updated doc file: " + file);
@@ -375,10 +371,9 @@ public class UpdateReadmeMojo extends AbstractMojo {
         boolean updated = false;
 
         try {
-            String text = loadText(new FileInputStream(file));
-
             List<String> newLines = new ArrayList<>();
 
+            String text = loadText(new FileInputStream(file));
             String[] lines = text.split("\n");
             for (int i = 0; i < lines.length; i++) {
                 String line = lines[i];
