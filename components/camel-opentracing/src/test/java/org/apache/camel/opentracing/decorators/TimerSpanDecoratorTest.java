@@ -16,12 +16,12 @@
  */
 package org.apache.camel.opentracing.decorators;
 
-import static org.junit.Assert.*;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.opentracing.SpanDecorator;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import static org.junit.Assert.assertEquals;
 
 public class TimerSpanDecoratorTest {
 

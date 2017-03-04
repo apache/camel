@@ -16,10 +16,9 @@
  */
 package org.apache.camel.opentracing.decorators;
 
+import io.opentracing.Span;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-
-import io.opentracing.Span;
 
 public class JdbcSpanDecorator extends AbstractSpanDecorator {
 

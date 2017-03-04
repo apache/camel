@@ -16,8 +16,8 @@
  */
 package org.apache.camel.opentracing.decorators;
 
-import static org.junit.Assert.*;
-
+import io.opentracing.mock.MockSpan;
+import io.opentracing.mock.MockTracer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -25,8 +25,7 @@ import org.apache.camel.opentracing.SpanDecorator;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import io.opentracing.mock.MockSpan;
-import io.opentracing.mock.MockTracer;
+import static org.junit.Assert.assertEquals;
 
 public class JdbcSpanDecoratorTest {
 
