@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Function;
+import java.util.stream.Collector;
+import java.util.stream.Stream;
 
 import edu.emory.mathcs.backport.java.util.Collections;
 import org.apache.camel.maven.packaging.model.ComponentModel;
@@ -41,6 +44,9 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.mvel2.templates.TemplateRuntime;
 
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toSet;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 import static org.apache.camel.maven.packaging.PackageHelper.writeText;
 
@@ -231,6 +237,11 @@ public class PrepareReadmeMojo extends AbstractMojo {
                 }
             }
 
+            // how many different artifacts
+            int count = components.stream()
+                .map(ComponentModel::getArtifactId)
+                .collect(toSet()).size();
+
             // update the big readme file in the core/components dir
             File file;
             if (coreOnly) {
@@ -241,7 +252,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
 
             // update regular components
             boolean exists = file.exists();
-            String changed = templateComponents(components);
+            String changed = templateComponents(components, count);
             boolean updated = updateComponents(file, changed);
 
             if (updated) {
@@ -278,12 +289,17 @@ public class PrepareReadmeMojo extends AbstractMojo {
             // sort the models
             Collections.sort(others, new OtherComparator());
 
+            // how many different artifacts
+            int count = others.stream()
+                .map(OtherModel::getArtifactId)
+                .collect(toSet()).size();
+
             // update the big readme file in the components dir
             File file = new File(readmeComponentsDir, "readme.adoc");
 
             // update regular components
             boolean exists = file.exists();
-            String changed = templateOthers(others);
+            String changed = templateOthers(others, count);
             boolean updated = updateOthers(file, changed);
 
             if (updated) {
@@ -326,6 +342,11 @@ public class PrepareReadmeMojo extends AbstractMojo {
             // sort the models
             Collections.sort(models, new DataFormatComparator());
 
+            // how many different artifacts
+            int count = models.stream()
+                .map(DataFormatModel::getArtifactId)
+                .collect(toSet()).size();
+
             // filter out camel-core
             List<DataFormatModel> dataFormats = new ArrayList<>();
             for (DataFormatModel model : models) {
@@ -350,7 +371,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
 
             // update regular data formats
             boolean exists = file.exists();
-            String changed = templateDataFormats(dataFormats);
+            String changed = templateDataFormats(dataFormats, count);
             boolean updated = updateDataFormats(file, changed);
 
             if (updated) {
@@ -401,6 +422,11 @@ public class PrepareReadmeMojo extends AbstractMojo {
                 }
             }
 
+            // how many different artifacts
+            int count = languages.stream()
+                .map(LanguageModel::getArtifactId)
+                .collect(toSet()).size();
+
             // update the big readme file in the core/components dir
             File file;
             if (coreOnly) {
@@ -411,7 +437,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
 
             // update regular data formats
             boolean exists = file.exists();
-            String changed = templateLanguages(languages);
+            String changed = templateLanguages(languages, count);
             boolean updated = updateLanguages(file, changed);
 
             if (updated) {
@@ -439,11 +465,12 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
-    private String templateComponents(List<ComponentModel> models) throws MojoExecutionException {
+    private String templateComponents(List<ComponentModel> models, int artifacts) throws MojoExecutionException {
         try {
             String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-components.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("components", models);
+            map.put("numberOfArtifacts", artifacts);
             String out = (String) TemplateRuntime.eval(template, map);
             return out;
         } catch (Exception e) {
@@ -451,11 +478,12 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
-    private String templateOthers(List<OtherModel> models) throws MojoExecutionException {
+    private String templateOthers(List<OtherModel> models, int artifacts) throws MojoExecutionException {
         try {
             String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-others.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("others", models);
+            map.put("numberOfArtifacts", artifacts);
             String out = (String) TemplateRuntime.eval(template, map);
             return out;
         } catch (Exception e) {
@@ -463,11 +491,12 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
-    private String templateDataFormats(List<DataFormatModel> models) throws MojoExecutionException {
+    private String templateDataFormats(List<DataFormatModel> models, int artifacts) throws MojoExecutionException {
         try {
             String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-dataformats.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("dataformats", models);
+            map.put("numberOfArtifacts", artifacts);
             String out = (String) TemplateRuntime.eval(template, map);
             return out;
         } catch (Exception e) {
@@ -475,11 +504,12 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
-    private String templateLanguages(List<LanguageModel> models) throws MojoExecutionException {
+    private String templateLanguages(List<LanguageModel> models, int artifacts) throws MojoExecutionException {
         try {
             String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-languages.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("languages", models);
+            map.put("numberOfArtifacts", artifacts);
             String out = (String) TemplateRuntime.eval(template, map);
             return out;
         } catch (Exception e) {

@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 220
+Number of Components: 220 in 175 JAR artifacts
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -676,7 +676,7 @@ Data Formats
 ^^^^^^^^^^^^
 
 // dataformats: START
-Number of Data Formats: 45
+Number of Data Formats: 45 in 36 JAR artifacts
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -779,7 +779,7 @@ Expression Languages
 ^^^^^^^^^^^^^^^^^^^^
 
 // languages: START
-Number of Languages: 24
+Number of Languages: 24 in 12 JAR artifacts
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -840,7 +840,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 36
+Number of Miscellaneous Components: 36 in 36 JAR artifacts
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
