@@ -31,7 +31,7 @@ You can append query options to the URI in the following format,
 ### Options
 
 // component options: START
-The Scheduler component supports 1 options which are listed below.
+The Scheduler component supports 2 options which are listed below.
 
 
 
@@ -40,6 +40,7 @@ The Scheduler component supports 1 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | concurrentTasks | scheduler | 1 | int | Number of threads used by the scheduling thread pool. Is by default using a single thread
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

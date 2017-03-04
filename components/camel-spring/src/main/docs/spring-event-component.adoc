@@ -25,7 +25,7 @@ easily change in future releases, so please check back.
 
 
 // component options: START
-The Spring Event component supports 1 options which are listed below.
+The Spring Event component supports 2 options which are listed below.
 
 
 
@@ -34,6 +34,7 @@ The Spring Event component supports 1 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | applicationContext | common |  | ApplicationContext | The Spring ApplicationContext
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

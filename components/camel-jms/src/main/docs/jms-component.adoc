@@ -199,7 +199,7 @@ about these properties by consulting the relevant Spring documentation.
 
 
 // component options: START
-The JMS component supports 75 options which are listed below.
+The JMS component supports 76 options which are listed below.
 
 
 
@@ -282,6 +282,7 @@ The JMS component supports 75 options which are listed below.
 | waitForProvisionCorrelationToBeUpdatedThreadSleepingTime | advanced | 100 | long | Interval in millis to sleep each time while waiting for provisional correlation id to be updated.
 | correlationProperty | producer (advanced) |  | String | Use this JMS property to correlate messages in InOut exchange pattern (request-reply) instead of JMSCorrelationID property. This allows you to exchange messages with systems that do not correlate messages using JMSCorrelationID JMS property. If used JMSCorrelationID will not be used or set by Camel. The value of here named property will be generated if not supplied in the header of the message under the same name.
 | headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

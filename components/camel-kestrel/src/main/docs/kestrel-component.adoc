@@ -66,7 +66,7 @@ kestrel://kserver03:22133/massive?concurrentConsumers=25&waitTimeMs=500
 
 
 // component options: START
-The Kestrel component supports 1 options which are listed below.
+The Kestrel component supports 2 options which are listed below.
 
 
 
@@ -75,6 +75,7 @@ The Kestrel component supports 1 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | configuration | advanced |  | KestrelConfiguration | To use a shared configured configuration as base for creating new endpoints.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

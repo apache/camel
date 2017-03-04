@@ -38,7 +38,7 @@ You can append query options to the URI in the following format,
 ### JT400 options
 
 // component options: START
-The JT400 component supports 1 options which are listed below.
+The JT400 component supports 2 options which are listed below.
 
 
 
@@ -47,6 +47,7 @@ The JT400 component supports 1 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | connectionPool | advanced |  | AS400ConnectionPool | Returns the default connection pool used by this component.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

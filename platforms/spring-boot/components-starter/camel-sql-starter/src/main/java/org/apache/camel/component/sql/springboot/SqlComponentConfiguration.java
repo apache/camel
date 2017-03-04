@@ -36,6 +36,12 @@ public class SqlComponentConfiguration {
      * with sign in the SQL queries. This option is default true
      */
     private Boolean usePlaceholder = true;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public DataSource getDataSource() {
         return dataSource;
@@ -51,5 +57,14 @@ public class SqlComponentConfiguration {
 
     public void setUsePlaceholder(Boolean usePlaceholder) {
         this.usePlaceholder = usePlaceholder;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

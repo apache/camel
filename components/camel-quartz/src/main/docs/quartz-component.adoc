@@ -46,7 +46,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Quartz component supports 7 options which are listed below.
+The Quartz component supports 8 options which are listed below.
 
 
 
@@ -61,6 +61,7 @@ The Quartz component supports 7 options which are listed below.
 | startDelayedSeconds | scheduler |  | int | Seconds to wait before starting the quartz scheduler.
 | autoStartScheduler | consumer | true | boolean | Whether or not the scheduler should be auto started. This options is default true
 | enableJmx | consumer | true | boolean | Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX. This options is default true
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

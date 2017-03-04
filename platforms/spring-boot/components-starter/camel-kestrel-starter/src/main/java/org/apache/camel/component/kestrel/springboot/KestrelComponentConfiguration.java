@@ -32,6 +32,12 @@ public class KestrelComponentConfiguration {
      * endpoints.
      */
     private KestrelConfigurationNestedConfiguration configuration;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public KestrelConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -40,6 +46,15 @@ public class KestrelComponentConfiguration {
     public void setConfiguration(
             KestrelConfigurationNestedConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class KestrelConfigurationNestedConfiguration {

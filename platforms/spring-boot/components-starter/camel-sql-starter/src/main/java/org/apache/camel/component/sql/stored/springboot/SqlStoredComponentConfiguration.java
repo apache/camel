@@ -32,6 +32,12 @@ public class SqlStoredComponentConfiguration {
      * Sets the DataSource to use to communicate with the database.
      */
     private DataSource dataSource;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public DataSource getDataSource() {
         return dataSource;
@@ -39,5 +45,14 @@ public class SqlStoredComponentConfiguration {
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

@@ -38,7 +38,7 @@ you to send notifications to Nagios.
 
 
 // component options: START
-The Nagios component supports 1 options which are listed below.
+The Nagios component supports 2 options which are listed below.
 
 
 
@@ -47,6 +47,7 @@ The Nagios component supports 1 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | configuration | advanced |  | NagiosConfiguration | To use a shared NagiosConfiguration
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

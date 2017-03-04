@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kafka.KafkaComponent;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -50,19 +51,24 @@ public final class MessagePublisherClient {
                 PropertiesComponent pc = getContext().getComponent("properties", PropertiesComponent.class);
                 pc.setLocation("classpath:application.properties");
 
+                // setup kafka component with the brokers
+                KafkaComponent kafka = new KafkaComponent();
+                kafka.setBrokers("{{kafka.host}}:{{kafka.port}}");
+                camelContext.addComponent("kafka", kafka);
+
                 from("direct:kafkaStart").routeId("DirectToKafka")
-                    .to("kafka:{{producer.topic}}?brokers={{kafka.host}}:{{kafka.port}}").log("${headers}");
+                    .to("kafka:{{producer.topic}}").log("${headers}");
 
                 // Topic can be set in header as well.
 
                 from("direct:kafkaStartNoTopic").routeId("kafkaStartNoTopic")
-                    .to("kafka:dummy?brokers={{kafka.host}}:{{kafka.port}}")
+                    .to("kafka:dummy")
                     .log("${headers}");
 
                 // Use custom partitioner based on the key.
 
                 from("direct:kafkaStartWithPartitioner").routeId("kafkaStartWithPartitioner")
-                        .to("kafka:{{producer.topic}}?brokers={{kafka.host}}:{{kafka.port}}&partitioner={{producer.partitioner}}")
+                        .to("kafka:{{producer.topic}}?partitioner={{producer.partitioner}}")
                         .log("${headers}");
 
 

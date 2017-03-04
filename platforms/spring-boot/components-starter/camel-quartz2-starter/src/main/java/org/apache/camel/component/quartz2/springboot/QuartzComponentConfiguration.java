@@ -82,6 +82,12 @@ public class QuartzComponentConfiguration {
      */
     @NestedConfigurationProperty
     private Scheduler scheduler;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public Boolean getAutoStartScheduler() {
         return autoStartScheduler;
@@ -162,5 +168,14 @@ public class QuartzComponentConfiguration {
 
     public void setScheduler(Scheduler scheduler) {
         this.scheduler = scheduler;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

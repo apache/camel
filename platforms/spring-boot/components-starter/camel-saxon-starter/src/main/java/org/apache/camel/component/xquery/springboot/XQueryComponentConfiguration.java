@@ -44,6 +44,12 @@ public class XQueryComponentConfiguration {
      * To set custom Saxon configuration properties
      */
     private Map<String, Object> configurationProperties;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public ModuleURIResolver getModuleURIResolver() {
         return moduleURIResolver;
@@ -68,5 +74,14 @@ public class XQueryComponentConfiguration {
     public void setConfigurationProperties(
             Map<String, Object> configurationProperties) {
         this.configurationProperties = configurationProperties;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

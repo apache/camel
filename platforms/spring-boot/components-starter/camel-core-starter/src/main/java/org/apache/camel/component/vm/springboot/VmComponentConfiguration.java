@@ -44,6 +44,12 @@ public class VmComponentConfiguration {
      */
     @NestedConfigurationProperty
     private BlockingQueueFactory<Exchange> defaultQueueFactory;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public Integer getQueueSize() {
         return queueSize;
@@ -68,5 +74,14 @@ public class VmComponentConfiguration {
     public void setDefaultQueueFactory(
             BlockingQueueFactory<Exchange> defaultQueueFactory) {
         this.defaultQueueFactory = defaultQueueFactory;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

@@ -35,6 +35,12 @@ public class JoltComponentConfiguration {
      */
     @NestedConfigurationProperty
     private Transform transform;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public Transform getTransform() {
         return transform;
@@ -42,5 +48,14 @@ public class JoltComponentConfiguration {
 
     public void setTransform(Transform transform) {
         this.transform = transform;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

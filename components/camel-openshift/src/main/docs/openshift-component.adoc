@@ -33,7 +33,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The OpenShift component supports 4 options which are listed below.
+The OpenShift component supports 5 options which are listed below.
 
 
 
@@ -45,6 +45,7 @@ The OpenShift component supports 4 options which are listed below.
 | password | security |  | String | The password for login to openshift server.
 | domain | common |  | String | Domain name. If not specified then the default domain is used.
 | server | common |  | String | Url to the openshift server. If not specified then the default value from the local openshift configuration file /.openshift/express.conf is used. And if that fails as well then openshift.redhat.com is used.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -32,7 +32,7 @@ for this component:
 
 
 // component options: START
-The Spark Rest component supports 11 options which are listed below.
+The Spark Rest component supports 12 options which are listed below.
 
 
 
@@ -51,6 +51,7 @@ The Spark Rest component supports 11 options which are listed below.
 | truststorePassword | security |  | String | Configures connection to be secure to use the truststore password
 | sparkConfiguration | advanced |  | SparkConfiguration | To use the shared SparkConfiguration
 | sparkBinding | advanced |  | SparkBinding | To use a custom SparkBinding to map to/from Camel message.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

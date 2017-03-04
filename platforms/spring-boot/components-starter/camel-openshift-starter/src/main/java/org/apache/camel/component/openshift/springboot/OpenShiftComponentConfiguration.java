@@ -44,6 +44,12 @@ public class OpenShiftComponentConfiguration {
      * And if that fails as well then openshift.redhat.com is used.
      */
     private String server;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public String getUsername() {
         return username;
@@ -75,5 +81,14 @@ public class OpenShiftComponentConfiguration {
 
     public void setServer(String server) {
         this.server = server;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

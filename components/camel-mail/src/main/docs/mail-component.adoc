@@ -77,7 +77,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Mail component supports 2 options which are listed below.
+The Mail component supports 3 options which are listed below.
 
 
 
@@ -87,6 +87,7 @@ The Mail component supports 2 options which are listed below.
 | Name | Group | Default | Java Type | Description
 | configuration | advanced |  | MailConfiguration | Sets the Mail configuration
 | contentTypeResolver | advanced |  | ContentTypeResolver | Resolver to determine Content-Type for file attachments.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

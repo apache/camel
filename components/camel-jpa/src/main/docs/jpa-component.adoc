@@ -84,7 +84,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The JPA component supports 4 options which are listed below.
+The JPA component supports 5 options which are listed below.
 
 
 
@@ -96,6 +96,7 @@ The JPA component supports 4 options which are listed below.
 | transactionManager | common |  | PlatformTransactionManager | To use the PlatformTransactionManager for managing transactions.
 | joinTransaction | common | true | boolean | The camel-jpa component will join transaction by default. You can use this option to turn this off for example if you use LOCAL_RESOURCE and join transaction doesn't work with your JPA provider. This option can also be set globally on the JpaComponent instead of having to set it on all endpoints.
 | sharedEntityManager | common | false | boolean | Whether to use Spring's SharedEntityManager for the consumer/producer. Note in most cases joinTransaction should be set to false as this is not an EXTENDED EntityManager.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

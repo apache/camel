@@ -42,7 +42,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The JDBC component supports 1 options which are listed below.
+The JDBC component supports 2 options which are listed below.
 
 
 
@@ -51,6 +51,7 @@ The JDBC component supports 1 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | dataSource | producer |  | DataSource | To use the DataSource instance instead of looking up the data source by name from the registry.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

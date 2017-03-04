@@ -37,6 +37,12 @@ public class DirectComponentConfiguration {
      * The timeout value to use if block is enabled.
      */
     private Long timeout = 30000L;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public Boolean getBlock() {
         return block;
@@ -52,5 +58,14 @@ public class DirectComponentConfiguration {
 
     public void setTimeout(Long timeout) {
         this.timeout = timeout;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

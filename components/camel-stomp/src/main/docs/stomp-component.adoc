@@ -34,7 +34,7 @@ Where *destination* is the name of the queue.
 
 
 // component options: START
-The Stomp component supports 5 options which are listed below.
+The Stomp component supports 6 options which are listed below.
 
 
 
@@ -47,6 +47,7 @@ The Stomp component supports 5 options which are listed below.
 | login | security |  | String | The username
 | passcode | security |  | String | The password
 | host | common |  | String | The virtual host
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

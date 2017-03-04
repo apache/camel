@@ -62,7 +62,7 @@ option.
 
 
 // component options: START
-The Restlet component supports 20 options which are listed below.
+The Restlet component supports 21 options which are listed below.
 
 
 
@@ -90,6 +90,7 @@ The Restlet component supports 20 options which are listed below.
 | synchronous | producer |  | Boolean | Whether to use synchronous Restlet Client for the producer. Setting this option to true can yield faster performance as it seems the Restlet synchronous Client works better.
 | enabledConverters | advanced |  | List | A list of converters to enable as full class name or simple class name. All the converters automatically registered are enabled if empty or null
 | headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

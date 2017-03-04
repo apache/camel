@@ -38,6 +38,12 @@ public class HBaseComponentConfiguration {
      * The default value is 10.
      */
     private Integer poolMaxSize = 10;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public Configuration getConfiguration() {
         return configuration;
@@ -53,5 +59,14 @@ public class HBaseComponentConfiguration {
 
     public void setPoolMaxSize(Integer poolMaxSize) {
         this.poolMaxSize = poolMaxSize;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

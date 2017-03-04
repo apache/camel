@@ -41,6 +41,12 @@ public class GoogleDriveComponentConfiguration {
      */
     @NestedConfigurationProperty
     private GoogleDriveClientFactory clientFactory;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public GoogleDriveConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -57,6 +63,15 @@ public class GoogleDriveComponentConfiguration {
 
     public void setClientFactory(GoogleDriveClientFactory clientFactory) {
         this.clientFactory = clientFactory;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class GoogleDriveConfigurationNestedConfiguration {

@@ -41,7 +41,7 @@ in code).
 
 
 // component options: START
-The SCP component supports 1 options which are listed below.
+The SCP component supports 2 options which are listed below.
 
 
 
@@ -50,6 +50,7 @@ The SCP component supports 1 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | verboseLogging | producer | false | boolean | JSCH is verbose logging out of the box. Therefore we turn the logging down to DEBUG logging by default. But setting this option to true turns on the verbose logging again.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

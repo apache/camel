@@ -57,7 +57,7 @@ into Beanstalk.
 
 
 // component options: START
-The Beanstalk component supports 1 options which are listed below.
+The Beanstalk component supports 2 options which are listed below.
 
 
 
@@ -66,6 +66,7 @@ The Beanstalk component supports 1 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | connectionSettingsFactory | common |  | ConnectionSettingsFactory | Custom ConnectionSettingsFactory. Specify which ConnectionSettingsFactory to use to make connections to Beanstalkd. Especially useful for unit testing without beanstalkd daemon (you can mock ConnectionSettings)
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -51,6 +51,12 @@ public class DirectVmComponentConfiguration {
      * consumer side and vice versa. Default value: true.
      */
     private Boolean propagateProperties = true;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public Boolean getBlock() {
         return block;
@@ -83,5 +89,14 @@ public class DirectVmComponentConfiguration {
 
     public void setPropagateProperties(Boolean propagateProperties) {
         this.propagateProperties = propagateProperties;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

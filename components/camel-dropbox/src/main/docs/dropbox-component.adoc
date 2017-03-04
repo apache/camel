@@ -65,7 +65,17 @@ https://www.dropbox.com/developers/core/start/java[Dropbox
 documentation] that explains how to get them.  
 
 // component options: START
-The Dropbox component has no options.
+The Dropbox component supports 1 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+|=======================================================================
+{% endraw %}
 // component options: END
 
 // endpoint options: START

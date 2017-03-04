@@ -47,7 +47,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Quartz2 component supports 10 options which are listed below.
+The Quartz2 component supports 11 options which are listed below.
 
 
 
@@ -65,6 +65,7 @@ The Quartz2 component supports 10 options which are listed below.
 | interruptJobsOnShutdown | scheduler | false | boolean | Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any running jobs. If this is enabled then any running jobs can fail due to being interrupted.
 | schedulerFactory | advanced |  | SchedulerFactory | To use the custom SchedulerFactory which is used to create the Scheduler.
 | scheduler | advanced |  | Scheduler | To use the custom configured Quartz scheduler instead of creating a new Scheduler.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

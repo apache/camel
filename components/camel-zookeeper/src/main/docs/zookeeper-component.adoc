@@ -41,7 +41,7 @@ _znode_) that will be the target of the endpoint:
 ### Options
 
 // component options: START
-The ZooKeeper component supports 1 options which are listed below.
+The ZooKeeper component supports 2 options which are listed below.
 
 
 
@@ -50,6 +50,7 @@ The ZooKeeper component supports 1 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | configuration | advanced |  | ZooKeeperConfiguration | To use a shared ZooKeeperConfiguration
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -57,7 +57,7 @@ Endpoint prefix can be one of:
 
 
 // component options: START
-The Google Mail component supports 2 options which are listed below.
+The Google Mail component supports 3 options which are listed below.
 
 
 
@@ -67,6 +67,7 @@ The Google Mail component supports 2 options which are listed below.
 | Name | Group | Default | Java Type | Description
 | configuration | common |  | GoogleMailConfiguration | To use the shared configuration
 | clientFactory | advanced |  | GoogleMailClientFactory | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleMailClientFactory
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -102,7 +102,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The JClouds component supports 2 options which are listed below.
+The JClouds component supports 3 options which are listed below.
 
 
 
@@ -112,6 +112,7 @@ The JClouds component supports 2 options which are listed below.
 | Name | Group | Default | Java Type | Description
 | blobStores | common |  | List | To use the given BlobStore which must be configured when using blobstore.
 | computeServices | common |  | List | To use the given ComputeService which must be configured when use compute.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

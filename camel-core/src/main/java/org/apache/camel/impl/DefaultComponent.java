@@ -29,6 +29,7 @@ import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
@@ -47,6 +48,10 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     private static final Pattern RAW_PATTERN = Pattern.compile("RAW(.*&&.*)");
 
     private CamelContext camelContext;
+
+    @Metadata(label = "common", defaultValue = "true",
+        description = "Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.")
+    private boolean resolvePropertyPlaceholders = true;
 
     public DefaultComponent() {
     }
@@ -145,6 +150,22 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     /**
+     * Whether the component should resolve property placeholders on itself when starting.
+     * Only properties which are of String type can use property placeholders.
+     */
+    public void setResolvePropertyPlaceholders(boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
+    }
+
+    /**
+     * Whether the component should resolve property placeholders on itself when starting.
+     * Only properties which are of String type can use property placeholders.
+     */
+    public boolean isResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    /**
      * Strategy to do post configuration logic.
      * <p/>
      * Can be used to construct an URI based on the remaining parameters. For example the parameters that configures
@@ -222,6 +243,17 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
     protected void doStart() throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
+
+        if (isResolvePropertyPlaceholders()) {
+            // only resolve property placeholders if its in use
+            Component existing = CamelContextHelper.lookupPropertiesComponent(camelContext, false);
+            if (existing != null) {
+                LOG.debug("Resolving property placeholders on component: {}", this);
+                CamelContextHelper.resolvePropertyPlaceholders(camelContext, this);
+            } else {
+                LOG.debug("Cannot resolve property placeholders on component: {} as PropertiesComponent is not in use", this);
+            }
+        }
     }
 
     protected void doStop() throws Exception {
@@ -249,7 +281,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param bean  the bean
      * @param parameters  properties to set
      */
-    protected void setProperties(Object bean, Map<String, Object> parameters) throws Exception {        
+    protected void setProperties(Object bean, Map<String, Object> parameters) throws Exception {
         setProperties(getCamelContext(), bean, parameters);
     }
 
@@ -276,11 +308,11 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     /**
      * Gets the parameter and remove it from the parameter map. This method doesn't resolve
      * reference parameters in the registry.
-     * 
+     *
      * @param parameters the parameters
      * @param key        the key
      * @param type       the requested type to convert the value from the parameter
-     * @return  the converted value parameter, <tt>null</tt> if parameter does not exists.
+     * @return the converted value parameter, <tt>null</tt> if parameter does not exists.
      * @see #resolveAndRemoveReferenceParameter(Map, String, Class)
      */
     public <T> T getAndRemoveParameter(Map<String, Object> parameters, String key, Class<T> type) {
@@ -295,7 +327,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param key           the key
      * @param type          the requested type to convert the value from the parameter
      * @param defaultValue  use this default value if the parameter does not contain the key
-     * @return  the converted value parameter
+     * @return the converted value parameter
      * @see #resolveAndRemoveReferenceParameter(Map, String, Class, Object)
      */
     public <T> T getAndRemoveParameter(Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
@@ -317,7 +349,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param parameters    the parameters
      * @param key           the key
      * @param type          the requested type to convert the value from the parameter
-     * @return  the converted value parameter
+     * @return the converted value parameter
      */
     public <T> T getAndRemoveOrResolveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type) {
         return getAndRemoveOrResolveReferenceParameter(parameters, key, type, null);
@@ -331,7 +363,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param key           the key
      * @param type          the requested type to convert the value from the parameter
      * @param defaultValue  use this default value if the parameter does not contain the key
-     * @return  the converted value parameter
+     * @return the converted value parameter
      */
     public <T> T getAndRemoveOrResolveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
         String value = getAndRemoveParameter(parameters, key, String.class);
@@ -346,7 +378,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
     /**
      * Resolves a reference parameter in the registry and removes it from the map. 
-     * 
+     *
      * @param <T>           type of object to lookup in the registry.
      * @param parameters    parameter map.
      * @param key           parameter map key.
@@ -357,12 +389,12 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      *         registry.
      */
     public <T> T resolveAndRemoveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type) {
-        return resolveAndRemoveReferenceParameter(parameters, key, type, null); 
+        return resolveAndRemoveReferenceParameter(parameters, key, type, null);
     }
 
     /**
      * Resolves a reference parameter in the registry and removes it from the map. 
-     * 
+     *
      * @param <T>           type of object to lookup in the registry.
      * @param parameters    parameter map.
      * @param key           parameter map key.
@@ -381,11 +413,11 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             return EndpointHelper.resolveReferenceParameter(getCamelContext(), value, type);
         }
     }
-    
+
     /**
      * Resolves a reference list parameter in the registry and removes it from
      * the map.
-     * 
+     *
      * @param parameters parameter map.
      * @param key parameter map key.
      * @param elementType result list element type.
@@ -402,7 +434,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     /**
      * Resolves a reference list parameter in the registry and removes it from
      * the map.
-     * 
+     *
      * @param parameters parameter map.
      * @param key parameter map key.
      * @param elementType result list element type.
@@ -413,21 +445,21 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      *         not found in registry.
      * @see EndpointHelper#resolveReferenceListParameter(CamelContext, String, Class)
      */
-    public <T> List<T> resolveAndRemoveReferenceListParameter(Map<String, Object> parameters, String key, Class<T> elementType, List<T>  defaultValue) {
+    public <T> List<T> resolveAndRemoveReferenceListParameter(Map<String, Object> parameters, String key, Class<T> elementType, List<T> defaultValue) {
         String value = getAndRemoveParameter(parameters, key, String.class);
-        
+
         if (value == null) {
             return defaultValue;
         } else {
             return EndpointHelper.resolveReferenceListParameter(getCamelContext(), value, elementType);
         }
     }
-    
+
     /**
      * Returns the reminder of the text if it starts with the prefix.
      * <p/>
      * Is useable for string parameters that contains commands.
-     * 
+     *
      * @param prefix  the prefix
      * @param text  the text
      * @return the reminder, or null if no reminder

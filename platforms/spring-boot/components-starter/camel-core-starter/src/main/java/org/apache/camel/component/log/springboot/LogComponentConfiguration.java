@@ -35,6 +35,12 @@ public class LogComponentConfiguration {
      */
     @NestedConfigurationProperty
     private ExchangeFormatter exchangeFormatter;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public ExchangeFormatter getExchangeFormatter() {
         return exchangeFormatter;
@@ -42,5 +48,14 @@ public class LogComponentConfiguration {
 
     public void setExchangeFormatter(ExchangeFormatter exchangeFormatter) {
         this.exchangeFormatter = exchangeFormatter;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

@@ -38,7 +38,7 @@ You can append query options to the URI in the following format:
 ### Options
 
 // component options: START
-The SEDA component supports 3 options which are listed below.
+The SEDA component supports 4 options which are listed below.
 
 
 
@@ -49,6 +49,7 @@ The SEDA component supports 3 options which are listed below.
 | queueSize | advanced |  | int | Sets the default maximum capacity of the SEDA queue (i.e. the number of messages it can hold).
 | concurrentConsumers | consumer | 1 | int | Sets the default number of concurrent threads processing exchanges.
 | defaultQueueFactory | advanced |  | Exchange> | Sets the default queue factory.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END
