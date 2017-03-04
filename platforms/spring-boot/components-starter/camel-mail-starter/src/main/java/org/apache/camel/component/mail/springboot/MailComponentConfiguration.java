@@ -42,6 +42,12 @@ public class MailComponentConfiguration {
      */
     @NestedConfigurationProperty
     private ContentTypeResolver contentTypeResolver;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public MailConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -58,6 +64,15 @@ public class MailComponentConfiguration {
 
     public void setContentTypeResolver(ContentTypeResolver contentTypeResolver) {
         this.contentTypeResolver = contentTypeResolver;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class MailConfigurationNestedConfiguration {

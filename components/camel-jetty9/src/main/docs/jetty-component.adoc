@@ -50,7 +50,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Jetty 9 component supports 31 options which are listed below.
+The Jetty 9 component supports 32 options which are listed below.
 
 
 
@@ -89,6 +89,7 @@ The Jetty 9 component supports 31 options which are listed below.
 | sendServerVersion | consumer | true | boolean | If the option is true jetty server will send the date header to the client which sends the request. NOTE please make sure there is no any other camel-jetty endpoint is share the same port otherwise this option may not work as expected.
 | allowJavaSerializedObject | advanced | false | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
 | headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

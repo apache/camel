@@ -423,7 +423,7 @@ link:salesforce.html[Salesforce].
 
 
 // component options: START
-The Salesforce component supports 23 options which are listed below.
+The Salesforce component supports 24 options which are listed below.
 
 
 
@@ -454,6 +454,7 @@ The Salesforce component supports 23 options which are listed below.
 | httpProxyRealm | security |  | String | HTTP proxy authentication realm
 | httpProxyUseDigestAuth | security | false | boolean | Use HTTP proxy Digest authentication false by default
 | packages | common |  | String[] | Package names to scan for DTO classes (multiple packages can be separated by comma).
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

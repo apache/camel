@@ -83,7 +83,7 @@ You append query options to the URI using the following format,
 
 
 // component options: START
-The Simple JMS component supports 9 options which are listed below.
+The Simple JMS component supports 10 options which are listed below.
 
 
 
@@ -100,6 +100,7 @@ The Simple JMS component supports 9 options which are listed below.
 | timedTaskManager | advanced |  | TimedTaskManager | To use a custom TimedTaskManager
 | messageCreatedStrategy | advanced |  | MessageCreatedStrategy | To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of javax.jms.Message objects when Camel is sending a JMS message.
 | headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

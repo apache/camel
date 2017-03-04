@@ -41,7 +41,7 @@ format, `?option=value&option=value&...`
 
 
 // component options: START
-The JOLT component supports 1 options which are listed below.
+The JOLT component supports 2 options which are listed below.
 
 
 
@@ -50,6 +50,7 @@ The JOLT component supports 1 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | transform | advanced |  | Transform | Explicitly sets the Transform to use. If not set a Transform specified by the transformDsl will be created
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

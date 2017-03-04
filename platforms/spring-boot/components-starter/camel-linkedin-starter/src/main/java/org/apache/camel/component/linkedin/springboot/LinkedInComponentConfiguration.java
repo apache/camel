@@ -35,6 +35,12 @@ public class LinkedInComponentConfiguration {
      * To use the shared configuration
      */
     private LinkedInConfigurationNestedConfiguration configuration;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public LinkedInConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -43,6 +49,15 @@ public class LinkedInComponentConfiguration {
     public void setConfiguration(
             LinkedInConfigurationNestedConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class LinkedInConfigurationNestedConfiguration {

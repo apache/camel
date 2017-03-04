@@ -56,7 +56,7 @@ the root of the classpath and expected named as `SqlMapConfig.xml`. +
 
 
 // component options: START
-The iBatis component supports 3 options which are listed below.
+The iBatis component supports 4 options which are listed below.
 
 
 
@@ -67,6 +67,7 @@ The iBatis component supports 3 options which are listed below.
 | sqlMapClient | advanced |  | SqlMapClient | To use the given com.ibatis.sqlmap.client.SqlMapClient
 | sqlMapConfig | common | classpath:SqlMapConfig.xml | String | Location of iBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath
 | useTransactions | common | true | boolean | Whether to use transactions. This option is by default true.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

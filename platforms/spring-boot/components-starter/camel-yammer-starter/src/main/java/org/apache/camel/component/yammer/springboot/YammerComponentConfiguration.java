@@ -45,6 +45,12 @@ public class YammerComponentConfiguration {
      * To use a shared yammer configuration
      */
     private YammerConfigurationNestedConfiguration config;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public String getConsumerKey() {
         return consumerKey;
@@ -76,6 +82,15 @@ public class YammerComponentConfiguration {
 
     public void setConfig(YammerConfigurationNestedConfiguration config) {
         this.config = config;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class YammerConfigurationNestedConfiguration {

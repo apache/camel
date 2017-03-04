@@ -42,7 +42,7 @@ You can append query options to the URI in the following format,
 ### Options
 
 // component options: START
-The Servlet component supports 7 options which are listed below.
+The Servlet component supports 8 options which are listed below.
 
 
 
@@ -57,6 +57,7 @@ The Servlet component supports 7 options which are listed below.
 | httpConfiguration | advanced |  | HttpConfiguration | To use the shared HttpConfiguration as base configuration.
 | allowJavaSerializedObject | advanced | false | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
 | headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

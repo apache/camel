@@ -40,7 +40,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Mustache component supports 1 options which are listed below.
+The Mustache component supports 2 options which are listed below.
 
 
 
@@ -49,6 +49,7 @@ The Mustache component supports 1 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | mustacheFactory | advanced |  | MustacheFactory | To use a custom MustacheFactory
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

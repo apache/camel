@@ -107,7 +107,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The SQL component supports 2 options which are listed below.
+The SQL component supports 3 options which are listed below.
 
 
 
@@ -117,6 +117,7 @@ The SQL component supports 2 options which are listed below.
 | Name | Group | Default | Java Type | Description
 | dataSource | common |  | DataSource | Sets the DataSource to use to communicate with the database.
 | usePlaceholder | advanced | true | boolean | Sets whether to use placeholder and replace all placeholder characters with sign in the SQL queries. This option is default true
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -569,6 +569,12 @@ public class JmsComponentConfiguration {
      */
     @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public JmsConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -1186,6 +1192,15 @@ public class JmsComponentConfiguration {
     public void setHeaderFilterStrategy(
             HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class JmsConfigurationNestedConfiguration {

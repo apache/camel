@@ -64,7 +64,7 @@ The Apache Flink component supports 7 endpoint options which are listed below:
 
 
 // component options: START
-The Apache Flink component supports 4 options which are listed below.
+The Apache Flink component supports 5 options which are listed below.
 
 
 
@@ -76,6 +76,7 @@ The Apache Flink component supports 4 options which are listed below.
 | dataStream | producer |  | DataStream | DataStream to compute against.
 | dataSetCallback | producer |  | DataSetCallback | Function performing action against a DataSet.
 | dataStreamCallback | producer |  | DataStreamCallback | Function performing action against a DataStream.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

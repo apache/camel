@@ -33,6 +33,12 @@ public class SplunkComponentConfiguration {
      */
     @NestedConfigurationProperty
     private SplunkConfigurationFactory splunkConfigurationFactory;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public SplunkConfigurationFactory getSplunkConfigurationFactory() {
         return splunkConfigurationFactory;
@@ -41,5 +47,14 @@ public class SplunkComponentConfiguration {
     public void setSplunkConfigurationFactory(
             SplunkConfigurationFactory splunkConfigurationFactory) {
         this.splunkConfigurationFactory = splunkConfigurationFactory;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

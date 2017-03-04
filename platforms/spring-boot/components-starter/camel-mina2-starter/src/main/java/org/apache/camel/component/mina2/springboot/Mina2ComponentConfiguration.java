@@ -37,6 +37,12 @@ public class Mina2ComponentConfiguration {
      * To use the shared mina configuration.
      */
     private Mina2ConfigurationNestedConfiguration configuration;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public Mina2ConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -45,6 +51,15 @@ public class Mina2ComponentConfiguration {
     public void setConfiguration(
             Mina2ConfigurationNestedConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class Mina2ConfigurationNestedConfiguration {

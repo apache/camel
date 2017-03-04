@@ -43,6 +43,12 @@ public class KafkaComponentConfiguration {
      * pool down when no longer needed.
      */
     private ExecutorService workerPool;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public String getBrokers() {
         return brokers;
@@ -58,5 +64,14 @@ public class KafkaComponentConfiguration {
 
     public void setWorkerPool(ExecutorService workerPool) {
         this.workerPool = workerPool;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

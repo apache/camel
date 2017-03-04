@@ -31,7 +31,7 @@ elasticsearch://clusterName[?options]
 
 
 // component options: START
-The Elasticsearch component supports 1 options which are listed below.
+The Elasticsearch component supports 2 options which are listed below.
 
 
 
@@ -40,6 +40,7 @@ The Elasticsearch component supports 1 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | client | advanced |  | Client | To use an existing configured Elasticsearch client instead of creating a client per endpoint.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

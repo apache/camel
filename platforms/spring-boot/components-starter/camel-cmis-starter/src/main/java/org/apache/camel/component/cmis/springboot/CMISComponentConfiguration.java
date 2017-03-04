@@ -35,6 +35,12 @@ public class CMISComponentConfiguration {
      */
     @NestedConfigurationProperty
     private CMISSessionFacadeFactory sessionFacadeFactory;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public CMISSessionFacadeFactory getSessionFacadeFactory() {
         return sessionFacadeFactory;
@@ -43,5 +49,14 @@ public class CMISComponentConfiguration {
     public void setSessionFacadeFactory(
             CMISSessionFacadeFactory sessionFacadeFactory) {
         this.sessionFacadeFactory = sessionFacadeFactory;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

@@ -76,7 +76,7 @@ options related to UDP transport.
 
 
 // component options: START
-The Netty HTTP component supports 5 options which are listed below.
+The Netty HTTP component supports 6 options which are listed below.
 
 
 
@@ -89,6 +89,7 @@ The Netty HTTP component supports 5 options which are listed below.
 | headerFilterStrategy | advanced |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter headers.
 | securityConfiguration | security |  | NettyHttpSecurityConfiguration | Refers to a org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration for configuring secure web resources.
 | maximumPoolSize | advanced | 16 | int | The core pool size for the ordered thread pool if its in use. The default value is 16.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

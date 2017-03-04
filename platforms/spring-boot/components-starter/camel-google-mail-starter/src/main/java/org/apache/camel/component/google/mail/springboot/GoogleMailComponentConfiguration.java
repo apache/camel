@@ -40,6 +40,12 @@ public class GoogleMailComponentConfiguration {
      */
     @NestedConfigurationProperty
     private GoogleMailClientFactory clientFactory;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public GoogleMailConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -56,6 +62,15 @@ public class GoogleMailComponentConfiguration {
 
     public void setClientFactory(GoogleMailClientFactory clientFactory) {
         this.clientFactory = clientFactory;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class GoogleMailConfigurationNestedConfiguration {

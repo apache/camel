@@ -46,6 +46,12 @@ public class JCacheComponentConfiguration {
      * An implementation specific URI for the CacheManager
      */
     private String configurationUri;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public String getCachingProvider() {
         return cachingProvider;
@@ -78,5 +84,14 @@ public class JCacheComponentConfiguration {
 
     public void setConfigurationUri(String configurationUri) {
         this.configurationUri = configurationUri;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

@@ -21,6 +21,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -299,6 +300,10 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
          * @return Value of the property or {@code null} if not found
          */
         private String doGetPropertyValue(String key) {
+            if (ObjectHelper.isEmpty(key)) {
+                return parseProperty(key, null, properties);
+            }
+
             String value = null;
 
             // override is the default mode

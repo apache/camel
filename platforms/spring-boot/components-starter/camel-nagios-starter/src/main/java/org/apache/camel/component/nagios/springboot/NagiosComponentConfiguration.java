@@ -33,6 +33,12 @@ public class NagiosComponentConfiguration {
      * To use a shared NagiosConfiguration
      */
     private NagiosConfigurationNestedConfiguration configuration;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public NagiosConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -41,6 +47,15 @@ public class NagiosComponentConfiguration {
     public void setConfiguration(
             NagiosConfigurationNestedConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class NagiosConfigurationNestedConfiguration {

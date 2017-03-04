@@ -33,7 +33,7 @@ where `topic` is the name of the topic to listen too.
 ### URI options
 
 // component options: START
-The OSGi EventAdmin component supports 1 options which are listed below.
+The OSGi EventAdmin component supports 2 options which are listed below.
 
 
 
@@ -42,6 +42,7 @@ The OSGi EventAdmin component supports 1 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | bundleContext | common |  | BundleContext | The OSGi BundleContext is automatic injected by Camel
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

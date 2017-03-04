@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.aws.kinesis.springboot;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.aws.kinesis.KinesisComponent;
+import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionMessage;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
@@ -26,6 +29,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
@@ -40,16 +44,43 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 @ConditionalOnBean(type = "org.apache.camel.spring.boot.CamelAutoConfiguration")
 @Conditional(KinesisComponentAutoConfiguration.Condition.class)
 @AutoConfigureAfter(name = "org.apache.camel.spring.boot.CamelAutoConfiguration")
+@EnableConfigurationProperties(KinesisComponentConfiguration.class)
 public class KinesisComponentAutoConfiguration {
 
     @Lazy
     @Bean(name = "aws-kinesis-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(KinesisComponent.class)
-    public KinesisComponent configureKinesisComponent(CamelContext camelContext)
-            throws Exception {
+    public KinesisComponent configureKinesisComponent(
+            CamelContext camelContext,
+            KinesisComponentConfiguration configuration) throws Exception {
         KinesisComponent component = new KinesisComponent();
         component.setCamelContext(camelContext);
+        Map<String, Object> parameters = new HashMap<>();
+        IntrospectionSupport.getProperties(configuration, parameters, null,
+                false);
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            Object value = entry.getValue();
+            Class<?> paramClass = value.getClass();
+            if (paramClass.getName().endsWith("NestedConfiguration")) {
+                Class nestedClass = null;
+                try {
+                    nestedClass = (Class) paramClass.getDeclaredField(
+                            "CAMEL_NESTED_CLASS").get(null);
+                    HashMap<String, Object> nestedParameters = new HashMap<>();
+                    IntrospectionSupport.getProperties(value, nestedParameters,
+                            null, false);
+                    Object nestedProperty = nestedClass.newInstance();
+                    IntrospectionSupport.setProperties(camelContext,
+                            camelContext.getTypeConverter(), nestedProperty,
+                            nestedParameters);
+                    entry.setValue(nestedProperty);
+                } catch (NoSuchFieldException e) {
+                }
+            }
+        }
+        IntrospectionSupport.setProperties(camelContext,
+                camelContext.getTypeConverter(), component, parameters);
         return component;
     }
 

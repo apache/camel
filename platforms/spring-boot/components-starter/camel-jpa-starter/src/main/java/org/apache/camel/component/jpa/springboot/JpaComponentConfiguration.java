@@ -54,6 +54,12 @@ public class JpaComponentConfiguration {
      * an EXTENDED EntityManager.
      */
     private Boolean sharedEntityManager = false;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public EntityManagerFactory getEntityManagerFactory() {
         return entityManagerFactory;
@@ -87,5 +93,14 @@ public class JpaComponentConfiguration {
 
     public void setSharedEntityManager(Boolean sharedEntityManager) {
         this.sharedEntityManager = sharedEntityManager;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

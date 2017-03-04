@@ -80,7 +80,7 @@ both signing and verifying should be configured identically.
 ### Options
 
 // component options: START
-The Crypto (JCE) component supports 1 options which are listed below.
+The Crypto (JCE) component supports 2 options which are listed below.
 
 
 
@@ -89,6 +89,7 @@ The Crypto (JCE) component supports 1 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | configuration | advanced |  | DigitalSignatureConfiguration | To use the shared DigitalSignatureConfiguration as configuration
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -81,6 +81,12 @@ public class XsltComponentConfiguration {
      * To set custom Saxon configuration properties
      */
     private Map<String, Object> saxonConfigurationProperties;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public XmlConverterNestedConfiguration getXmlConverter() {
         return xmlConverter;
@@ -145,6 +151,15 @@ public class XsltComponentConfiguration {
     public void setSaxonConfigurationProperties(
             Map<String, Object> saxonConfigurationProperties) {
         this.saxonConfigurationProperties = saxonConfigurationProperties;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class XmlConverterNestedConfiguration {

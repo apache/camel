@@ -44,7 +44,7 @@ metrics:[ meter | counter | histogram | timer | gauge ]:metricname[?options]
 ### Options
 
 // component options: START
-The Metrics component supports 1 options which are listed below.
+The Metrics component supports 2 options which are listed below.
 
 
 
@@ -53,6 +53,7 @@ The Metrics component supports 1 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | metricRegistry | advanced |  | MetricRegistry | To use a custom configured MetricRegistry.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

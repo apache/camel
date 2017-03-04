@@ -29,7 +29,7 @@ Where *someName* can be any string to uniquely identify the endpoint
 
 
 // component options: START
-The Direct component supports 2 options which are listed below.
+The Direct component supports 3 options which are listed below.
 
 
 
@@ -39,6 +39,7 @@ The Direct component supports 2 options which are listed below.
 | Name | Group | Default | Java Type | Description
 | block | producer | false | boolean | If sending a message to a direct endpoint which has no active consumer then we can tell the producer to block and wait for the consumer to become active.
 | timeout | producer | 30000 | long | The timeout value to use if block is enabled.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

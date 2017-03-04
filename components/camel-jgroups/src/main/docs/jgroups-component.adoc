@@ -49,7 +49,7 @@ component should connect to.
 
 
 // component options: START
-The JGroups component supports 3 options which are listed below.
+The JGroups component supports 4 options which are listed below.
 
 
 
@@ -60,6 +60,7 @@ The JGroups component supports 3 options which are listed below.
 | channel | common |  | Channel | Channel to use
 | channelProperties | common |  | String | Specifies configuration properties of the JChannel used by the endpoint.
 | enableViewMessages | consumer | false | boolean | If set to true the consumer endpoint will receive org.jgroups.View messages as well (not only org.jgroups.Message instances). By default only regular messages are consumed by the endpoint.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

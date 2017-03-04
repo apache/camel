@@ -22,7 +22,7 @@ Where *operation* is the specific action to perform on Docker.
 ### General Options
 
 // component options: START
-The Docker component supports 1 options which are listed below.
+The Docker component supports 2 options which are listed below.
 
 
 
@@ -31,6 +31,7 @@ The Docker component supports 1 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | configuration | advanced |  | DockerConfiguration | To use the shared docker configuration
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END
