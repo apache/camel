@@ -45,14 +45,27 @@ The Flatpack component has no options.
 // component options: END
 
 // endpoint options: START
-The Flatpack component supports 27 endpoint options which are listed below:
+The Flatpack component is configured using the URI syntax with the following path and query parameters:
+
+    flatpack:type:resourceUri
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| type | delim | FlatpackType | Whether to use fixed or delimiter
+| resourceUri |  | String | *Required* URL for loading the flatpack mapping file from classpath or file system
+|=======================================================================
+{% endraw %}
+
+#### 25 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| type | common | delim | FlatpackType | Whether to use fixed or delimiter
-| resourceUri | common |  | String | *Required* URL for loading the flatpack mapping file from classpath or file system
 | allowShortLines | common | false | boolean | Allows for lines to be shorter than expected and ignores the extra characters
 | delimiter | common | , | char | The default character delimiter for delimited files.
 | ignoreExtraColumns | common | false | boolean | Allows for lines to be longer than expected and ignores the extra characters

@@ -187,14 +187,27 @@ The SMPP component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The SMPP component supports 40 endpoint options which are listed below:
+The SMPP component is configured using the URI syntax with the following path and query parameters:
+
+    smpp:host:port
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| host | localhost | String | Hostname for the SMSC server to use.
+| port | 2775 | Integer | Port number for the SMSC server to use.
+|=======================================================================
+{% endraw %}
+
+#### 38 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | common | localhost | String | Hostname for the SMSC server to use.
-| port | common | 2775 | Integer | Port number for the SMSC server to use.
 | initialReconnectDelay | common | 5000 | long | Defines the initial delay in milliseconds after the consumer/producer tries to reconnect to the SMSC after the connection was lost.
 | maxReconnect | common | 2147483647 | int | Defines the maximum number of attempts to reconnect to the SMSC if SMSC returns a negative bind response
 | reconnectDelay | common | 5000 | long | Defines the interval in milliseconds between the reconnect attempts if the connection to the SMSC was lost and the previous was not succeed.

@@ -44,14 +44,27 @@ The IRC component has no options.
 
 
 // endpoint options: START
-The IRC component supports 26 endpoint options which are listed below:
+The IRC component is configured using the URI syntax with the following path and query parameters:
+
+    irc:hostname:port
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| hostname |  | String | *Required* Hostname for the IRC chat server
+| port |  | int | Port number for the IRC chat server. If no port is configured then a default port of either 6667 6668 or 6669 is used.
+|=======================================================================
+{% endraw %}
+
+#### 24 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| hostname | common |  | String | *Required* Hostname for the IRC chat server
-| port | common |  | int | Port number for the IRC chat server. If no port is configured then a default port of either 6667 6668 or 6669 is used.
 | autoRejoin | common | true | boolean | Whether to auto re-join when being kicked
 | namesOnJoin | common | false | boolean | Sends NAMES command to channel after joining it. link onReply has to be true in order to process the result which will have the header value irc.num = '353'.
 | nickname | common |  | String | The nickname used in chat.

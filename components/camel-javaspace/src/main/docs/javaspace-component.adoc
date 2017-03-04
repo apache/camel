@@ -55,13 +55,26 @@ The JavaSpace component has no options.
 
 
 // endpoint options: START
-The JavaSpace component supports 11 endpoint options which are listed below:
+The JavaSpace component is configured using the URI syntax with the following path and query parameters:
+
+    javaspace:url
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| url |  | String | *Required* The URL to the JavaSpace server
+|=======================================================================
+{% endraw %}
+
+#### 10 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| url | common |  | String | *Required* The URL to the JavaSpace server
 | spaceName | common |  | String | *Required* Specifies the JavaSpace name.
 | transactional | common | false | boolean | If true sending and receiving entries is performed within a transaction.
 | transactionTimeout | common |  | long | Specifies the transaction timeout in millis. By default there is no timeout.

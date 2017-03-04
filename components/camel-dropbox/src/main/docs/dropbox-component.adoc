@@ -69,13 +69,26 @@ The Dropbox component has no options.
 // component options: END
 
 // endpoint options: START
-The Dropbox component supports 13 endpoint options which are listed below:
+The Dropbox component is configured using the URI syntax with the following path and query parameters:
+
+    dropbox:operation
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| operation |  | DropboxOperation | *Required* The specific action (typically is a CRUD action) to perform on Dropbox remote folder.
+|=======================================================================
+{% endraw %}
+
+#### 12 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| operation | common |  | DropboxOperation | *Required* The specific action (typically is a CRUD action) to perform on Dropbox remote folder.
 | accessToken | common |  | String | *Required* The access token to make API requests for a specific Dropbox user
 | client | common |  | DbxClient | To use an existing DbxClient instance as DropBox client.
 | clientIdentifier | common |  | String | *Required* Name of the app registered to make API requests

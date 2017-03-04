@@ -60,14 +60,27 @@ The Google Calendar component supports 3 options which are listed below.
 
 
 // endpoint options: START
-The Google Calendar component supports 16 endpoint options which are listed below:
+The Google Calendar component is configured using the URI syntax with the following path and query parameters:
+
+    google-calendar:apiName/methodName
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| apiName |  | GoogleCalendarApiName | *Required* What kind of operation to perform
+| methodName |  | String | *Required* What sub operation to use for the selected operation
+|=======================================================================
+{% endraw %}
+
+#### 14 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| apiName | common |  | GoogleCalendarApiName | *Required* What kind of operation to perform
-| methodName | common |  | String | *Required* What sub operation to use for the selected operation
 | accessToken | common |  | String | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage.
 | applicationName | common |  | String | Google calendar application name. Example would be camel-google-calendar/1.0
 | clientId | common |  | String | Client ID of the calendar application

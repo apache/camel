@@ -33,14 +33,27 @@ The Couchbase component has no options.
 // component options: END
 
 // endpoint options: START
-The Couchbase component supports 50 endpoint options which are listed below:
+The Couchbase component is configured using the URI syntax with the following path and query parameters:
+
+    couchbase:url
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| protocol |  | String | *Required* The protocol to use
+| hostname |  | String | *Required* The hostname to use
+|=======================================================================
+{% endraw %}
+
+#### 48 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| protocol | common |  | String | *Required* The protocol to use
-| hostname | common |  | String | *Required* The hostname to use
 | bucket | common |  | String | The bucket to use
 | key | common |  | String | The key to use
 | port | common | 8091 | int | The port number to use

@@ -50,13 +50,26 @@ The Bean Validator component has no options.
 
 
 // endpoint options: START
-The Bean Validator component supports 7 endpoint options which are listed below:
+The Bean Validator component is configured using the URI syntax with the following path and query parameters:
+
+    bean-validator:label
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| label |  | String | *Required* Where label is an arbitrary text value describing the endpoint
+|=======================================================================
+{% endraw %}
+
+#### 6 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| label | producer |  | String | *Required* Where label is an arbitrary text value describing the endpoint
 | constraintValidatorFactory | producer |  | ConstraintValidatorFactory | To use a custom ConstraintValidatorFactory
 | group | producer | javax.validation.groups.Default | String | To use a custom validation group
 | messageInterpolator | producer |  | MessageInterpolator | To use a custom MessageInterpolator

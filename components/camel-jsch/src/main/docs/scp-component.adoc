@@ -64,15 +64,28 @@ The SCP component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The SCP component supports 22 endpoint options which are listed below:
+The SCP component is configured using the URI syntax with the following path and query parameters:
+
+    scp:host:port/directoryName
+
+#### 3 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| host |  | String | *Required* Hostname of the FTP server
+| port |  | int | Port of the FTP server
+| directoryName |  | String | The starting directory
+|=======================================================================
+{% endraw %}
+
+#### 19 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | producer |  | String | *Required* Hostname of the FTP server
-| port | producer |  | int | Port of the FTP server
-| directoryName | producer |  | String | The starting directory
 | disconnect | common | false | boolean | Whether or not to disconnect from remote FTP server right after use. Disconnect will only disconnect the current connection to the FTP server. If you have a consumer which you want to stop then you need to stop the consumer/route instead.
 | chmod | producer | 664 | String | Allows you to set chmod on the stored file. For example chmod=664.
 | fileName | producer |  | String | Use Expression such as File Language to dynamically set the filename. For consumers it's used as a filename filter. For producers it's used to evaluate the filename to write. If an expression is set it take precedence over the CamelFileName header. (Note: The header itself can also be an Expression). The expression options support both String and Expression types. If the expression is a String type it is always evaluated using the File Language. If the expression is an Expression type the specified Expression type is used - this allows you for instance to use OGNL expressions. For the consumer you can use it to filter filenames so you can for instance consume today's file using the File Language syntax: mydata-$date:now:yyyyMMdd.txt. The producers support the CamelOverruleFileName header which takes precedence over any existing CamelFileName header; the CamelOverruleFileName is a header that is used only once and makes it easier as this avoids to temporary store CamelFileName and have to restore it afterwards.

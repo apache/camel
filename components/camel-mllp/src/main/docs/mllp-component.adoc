@@ -51,14 +51,27 @@ The MLLP component has no options.
 
 
 // endpoint options: START
-The MLLP component supports 24 endpoint options which are listed below:
+The MLLP component is configured using the URI syntax with the following path and query parameters:
+
+    mllp:hostname:port
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| hostname |  | String | *Required* Hostname or IP for connection for the TCP connection. The default value is null which means any local IP address
+| port |  | int | *Required* Port number for the TCP connection
+|=======================================================================
+{% endraw %}
+
+#### 22 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| hostname | common |  | String | *Required* Hostname or IP for connection for the TCP connection. The default value is null which means any local IP address
-| port | common |  | int | *Required* Port number for the TCP connection
 | autoAck | common | true | boolean | Enable/Disable the automatic generation of a MLLP Acknowledgement MLLP Consumers only
 | bufferWrites | common | true | boolean | Enable/Disable the validation of HL7 Payloads If enabled MLLP Payloads are buffered and written to the external system in a single write(byte) operation. If disabled the MLLP payload will not be buffered and three write operations will be used. The first operation will write the MLLP start-of-block character 0x0b (ASCII VT) the second operation will write the HL7 payload and the third operation will writh the MLLP end-of-block character and the MLLP end-of-data character 0x1c 0x0d (ASCII FS CR).
 | hl7Headers | common | true | boolean | Enable/Disable the automatic generation of message headers from the HL7 Message MLLP Consumers only

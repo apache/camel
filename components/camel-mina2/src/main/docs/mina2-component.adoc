@@ -85,15 +85,28 @@ The Mina2 component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Mina2 component supports 29 endpoint options which are listed below:
+The Mina2 component is configured using the URI syntax with the following path and query parameters:
+
+    mina2:protocol:host:port
+
+#### 3 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| protocol |  | String | *Required* Protocol to use
+| host |  | String | *Required* Hostname to use. Use localhost or 0.0.0.0 for local server as consumer. For producer use the hostname or ip address of the remote server.
+| port |  | int | *Required* Port number
+|=======================================================================
+{% endraw %}
+
+#### 26 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| protocol | common |  | String | *Required* Protocol to use
-| host | common |  | String | *Required* Hostname to use. Use localhost or 0.0.0.0 for local server as consumer. For producer use the hostname or ip address of the remote server.
-| port | common |  | int | *Required* Port number
 | disconnect | common | false | boolean | Whether or not to disconnect(close) from Mina session right after use. Can be used for both consumer and producer.
 | minaLogger | common | false | boolean | You can enable the Apache MINA logging filter. Apache MINA uses slf4j logging at INFO level to log all input and output.
 | sync | common | true | boolean | Setting to set endpoint as one-way or request-response.

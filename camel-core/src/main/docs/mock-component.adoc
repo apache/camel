@@ -93,13 +93,26 @@ The Mock component has no options.
 
 
 // endpoint options: START
-The Mock component supports 11 endpoint options which are listed below:
+The Mock component is configured using the URI syntax with the following path and query parameters:
+
+    mock:name
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| name |  | String | *Required* Name of mock endpoint
+|=======================================================================
+{% endraw %}
+
+#### 10 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| name | producer |  | String | *Required* Name of mock endpoint
 | assertPeriod | producer | 0 | long | Sets a grace period after which the mock endpoint will re-assert to ensure the preliminary assertion is still valid. This is used for example to assert that exactly a number of messages arrives. For example if link expectedMessageCount(int) was set to 5 then the assertion is satisfied when 5 or more message arrives. To ensure that exactly 5 messages arrives then you would need to wait a little period to ensure no further message arrives. This is what you can use this link setAssertPeriod(long) method for. By default this period is disabled.
 | expectedCount | producer | 1 | int | Specifies the expected number of message exchanges that should be received by this endpoint. Beware: If you want to expect that 0 messages then take extra care as 0 matches when the tests starts so you need to set a assert period time to let the test run for a while to make sure there are still no messages arrived; for that use link setAssertPeriod(long). An alternative is to use NotifyBuilder and use the notifier to know when Camel is done routing some messages before you call the link assertIsSatisfied() method on the mocks. This allows you to not use a fixed assert period to speedup testing times. If you want to assert that exactly n'th message arrives to this mock endpoint then see also the link setAssertPeriod(long) method for further details.
 | reportGroup | producer |  | int | A number that is used to turn on throughput logging based on groups of the size.

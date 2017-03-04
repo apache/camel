@@ -47,13 +47,26 @@ The Weather component has no options.
 
 
 // endpoint options: START
-The Weather component supports 44 endpoint options which are listed below:
+The Weather component is configured using the URI syntax with the following path and query parameters:
+
+    weather:name
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| name |  | String | *Required* The name value is not used.
+|=======================================================================
+{% endraw %}
+
+#### 43 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| name | common |  | String | *Required* The name value is not used.
 | appid | common |  | String | *Required* APPID ID used to authenticate the user connected to the API Server
 | headerName | common |  | String | To store the weather result in this header instead of the message body. This is useable if you want to keep current message body as-is.
 | language | common | en | WeatherLanguage | Language of the response.

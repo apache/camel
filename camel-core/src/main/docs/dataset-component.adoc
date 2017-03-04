@@ -50,13 +50,26 @@ The Dataset component has no options.
 
 
 // endpoint options: START
-The Dataset component supports 20 endpoint options which are listed below:
+The Dataset component is configured using the URI syntax with the following path and query parameters:
+
+    dataset:name
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| name |  | DataSet | *Required* Name of DataSet to lookup in the registry
+|=======================================================================
+{% endraw %}
+
+#### 19 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| name | common |  | DataSet | *Required* Name of DataSet to lookup in the registry
 | dataSetIndex | common | lenient | String | Controls the behaviour of the CamelDataSetIndex header. For Consumers: - off = the header will not be set - strict/lenient = the header will be set For Producers: - off = the header value will not be verified and will not be set if it is not present = strict = the header value must be present and will be verified = lenient = the header value will be verified if it is present and will be set if it is not present
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | initialDelay | consumer | 1000 | long | Time period in millis to wait before starting sending messages.

@@ -40,13 +40,26 @@ The Solr component has no options.
 
 
 // endpoint options: START
-The Solr component supports 14 endpoint options which are listed below:
+The Solr component is configured using the URI syntax with the following path and query parameters:
+
+    solr:url
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| url |  | String | *Required* Hostname and port for the solr server
+|=======================================================================
+{% endraw %}
+
+#### 13 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| url | producer |  | String | *Required* Hostname and port for the solr server
 | allowCompression | producer |  | Boolean | Server side must support gzip or deflate for this to have any effect
 | connectionTimeout | producer |  | Integer | connectionTimeout on the underlying HttpConnectionManager
 | defaultMaxConnectionsPerHost | producer |  | Integer | maxConnectionsPerHost on the underlying HttpConnectionManager

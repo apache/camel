@@ -113,14 +113,27 @@ The Simple JMS component supports 10 options which are listed below.
 
 
 // endpoint options: START
-The Simple JMS component supports 36 endpoint options which are listed below:
+The Simple JMS component is configured using the URI syntax with the following path and query parameters:
+
+    sjms:destinationType:destinationName
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| destinationType | queue | String | The kind of destination to use
+| destinationName |  | String | *Required* DestinationName is a JMS queue or topic name. By default the destinationName is interpreted as a queue name.
+|=======================================================================
+{% endraw %}
+
+#### 34 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| destinationType | common | queue | String | The kind of destination to use
-| destinationName | common |  | String | *Required* DestinationName is a JMS queue or topic name. By default the destinationName is interpreted as a queue name.
 | acknowledgementMode | common | AUTO_ACKNOWLEDGE | SessionAcknowledgementType | The JMS acknowledgement name which is one of: SESSION_TRANSACTED CLIENT_ACKNOWLEDGE AUTO_ACKNOWLEDGE DUPS_OK_ACKNOWLEDGE
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | consumerCount | consumer | 1 | int | Sets the number of consumer listeners used for this endpoint.

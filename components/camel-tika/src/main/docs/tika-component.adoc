@@ -40,13 +40,26 @@ The Tika component has no options.
 
 
 // endpoint options: START
-The Tika component supports 6 endpoint options which are listed below:
+The Tika component is configured using the URI syntax with the following path and query parameters:
+
+    tika:operation
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| operation |  | TikaOperation | *Required* Tika Operation. parse or detect
+|=======================================================================
+{% endraw %}
+
+#### 5 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| operation | producer |  | TikaOperation | *Required* Tika Operation. parse or detect
 | tikaConfig | producer |  | TikaConfig | Tika Config
 | tikaConfigUri | producer |  | String | Tika Config Uri: The URI of tika-config.xml
 | tikaParseOutputEncoding | producer |  | String | Tika Parse Output Encoding - Used to specify the character encoding of the parsed output. Defaults to Charset.defaultCharset() .

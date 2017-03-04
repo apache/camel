@@ -21,14 +21,27 @@ The Atmos component has no options.
 
 
 // endpoint options: START
-The Atmos component supports 14 endpoint options which are listed below:
+The Atmos component is configured using the URI syntax with the following path and query parameters:
+
+    atmos:name/operation
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| name |  | String | Atmos name
+| operation |  | AtmosOperation | *Required* Operation to perform
+|=======================================================================
+{% endraw %}
+
+#### 12 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| name | common |  | String | Atmos name
-| operation | common |  | AtmosOperation | *Required* Operation to perform
 | enableSslValidation | common | false | boolean | Atmos SSL validation
 | fullTokenId | common |  | String | Atmos client fullTokenId
 | localPath | common |  | String | Local path to put files

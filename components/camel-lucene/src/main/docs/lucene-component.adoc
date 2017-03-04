@@ -72,14 +72,27 @@ The Lucene component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Lucene component supports 7 endpoint options which are listed below:
+The Lucene component is configured using the URI syntax with the following path and query parameters:
+
+    lucene:host:operation
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| host |  | String | *Required* The URL to the lucene server
+| operation |  | LuceneOperation | *Required* Operation to do such as insert or query.
+|=======================================================================
+{% endraw %}
+
+#### 5 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | producer |  | String | *Required* The URL to the lucene server
-| operation | producer |  | LuceneOperation | *Required* Operation to do such as insert or query.
 | analyzer | producer |  | Analyzer | An Analyzer builds TokenStreams which analyze text. It thus represents a policy for extracting index terms from text. The value for analyzer can be any class that extends the abstract class org.apache.lucene.analysis.Analyzer. Lucene also offers a rich set of analyzers out of the box
 | indexDir | producer |  | File | A file system directory in which index files are created upon analysis of the document by the specified analyzer
 | maxHits | producer |  | int | An integer value that limits the result set of the search operation

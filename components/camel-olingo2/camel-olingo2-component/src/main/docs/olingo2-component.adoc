@@ -63,14 +63,27 @@ The Olingo2 component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Olingo2 component supports 16 endpoint options which are listed below:
+The Olingo2 component is configured using the URI syntax with the following path and query parameters:
+
+    olingo2:apiName/methodName
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| apiName |  | Olingo2ApiName | *Required* What kind of operation to perform
+| methodName |  | String | *Required* What sub operation to use for the selected operation
+|=======================================================================
+{% endraw %}
+
+#### 14 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| apiName | common |  | Olingo2ApiName | *Required* What kind of operation to perform
-| methodName | common |  | String | *Required* What sub operation to use for the selected operation
 | connectTimeout | common | 30000 | int | HTTP connection creation timeout in milliseconds defaults to 30000 (30 seconds)
 | contentType | common | application/json;charset=utf-8 | String | Content-Type header value can be used to specify JSON or XML message format defaults to application/json;charset=utf-8
 | httpAsyncClientBuilder | common |  | HttpAsyncClientBuilder | Custom HTTP async client builder for more complex HTTP client configuration overrides connectionTimeout socketTimeout proxy and sslContext. Note that a socketTimeout MUST be specified in the builder otherwise OData requests could block indefinitely

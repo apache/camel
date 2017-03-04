@@ -60,13 +60,26 @@ The MongoDB component has no options.
 
 
 // endpoint options: START
-The MongoDB component supports 24 endpoint options which are listed below:
+The MongoDB component is configured using the URI syntax with the following path and query parameters:
+
+    mongodb:connectionBean
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| connectionBean |  | String | *Required* Name of com.mongodb.Mongo to use.
+|=======================================================================
+{% endraw %}
+
+#### 23 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| connectionBean | common |  | String | *Required* Name of com.mongodb.Mongo to use.
 | collection | common |  | String | Sets the name of the MongoDB collection to bind to this endpoint
 | collectionIndex | common |  | String | Sets the collection index (JSON FORMAT : field1 : order1 field2 : order2)
 | createCollection | common | true | boolean | Create collection during initialisation if it doesn't exist. Default is true.

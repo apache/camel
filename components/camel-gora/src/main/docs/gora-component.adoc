@@ -83,13 +83,26 @@ The Gora component has no options.
 
 
 // endpoint options: START
-The Gora component supports 22 endpoint options which are listed below:
+The Gora component is configured using the URI syntax with the following path and query parameters:
+
+    gora:name
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| name |  | String | *Required* Instance name
+|=======================================================================
+{% endraw %}
+
+#### 21 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| name | common |  | String | *Required* Instance name
 | dataStoreClass | common |  | String | The type of the dataStore
 | keyClass | common |  | String | The type class of the key
 | valueClass | common |  | String | The type of the value

@@ -38,13 +38,26 @@ The CMIS component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The CMIS component supports 14 endpoint options which are listed below:
+The CMIS component is configured using the URI syntax with the following path and query parameters:
+
+    cmis:cmsUrl
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| cmsUrl |  | String | *Required* URL to the cmis repository
+|=======================================================================
+{% endraw %}
+
+#### 13 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| cmsUrl | common |  | String | *Required* URL to the cmis repository
 | pageSize | common | 100 | int | Number of nodes to retrieve per page
 | readContent | common | false | boolean | If set to true the content of document node will be retrieved in addition to the properties
 | readCount | common |  | int | Max number of nodes to read

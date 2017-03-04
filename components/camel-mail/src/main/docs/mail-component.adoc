@@ -98,14 +98,27 @@ The Mail component supports 3 options which are listed below.
 
 
 // endpoint options: START
-The Mail component supports 63 endpoint options which are listed below:
+The Mail component is configured using the URI syntax with the following path and query parameters:
+
+    imap:host:port
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| host |  | String | *Required* The mail server host name
+| port |  | int | The port number of the mail server
+|=======================================================================
+{% endraw %}
+
+#### 61 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | common |  | String | *Required* The mail server host name
-| port | common |  | int | The port number of the mail server
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | closeFolder | consumer | true | boolean | Whether the consumer should close the folder after polling. Setting this option to false and having disconnect=false as well then the consumer keep the folder open between polls.
 | copyTo | consumer |  | String | After processing a mail message it can be copied to a mail folder with the given name. You can override this configuration value with a header with the key copyTo allowing you to copy messages to folder names configured at runtime.

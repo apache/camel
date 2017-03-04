@@ -43,16 +43,29 @@ The PostgresSQL Event component has no options.
 
 
 // endpoint options: START
-The PostgresSQL Event component supports 11 endpoint options which are listed below:
+The PostgresSQL Event component is configured using the URI syntax with the following path and query parameters:
+
+    pgevent:host:port/database/channel
+
+#### 4 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| host | localhost | String | To connect using hostname and port to the database.
+| port | 5432 | Integer | To connect using hostname and port to the database.
+| database |  | String | *Required* The database name
+| channel |  | String | *Required* The channel name
+|=======================================================================
+{% endraw %}
+
+#### 7 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | common | localhost | String | To connect using hostname and port to the database.
-| port | common | 5432 | Integer | To connect using hostname and port to the database.
-| database | common |  | String | *Required* The database name
-| channel | common |  | String | *Required* The channel name
 | datasource | common |  | DataSource | To connect using the given javax.sql.DataSource instead of using hostname and port.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.

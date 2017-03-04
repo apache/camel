@@ -35,15 +35,28 @@ The REST component supports 4 options which are listed below.
 // component options: END
 
 // endpoint options: START
-The REST component supports 17 endpoint options which are listed below:
+The REST component is configured using the URI syntax with the following path and query parameters:
+
+    rest:method:path:uriTemplate
+
+#### 3 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| method |  | String | *Required* HTTP method to use.
+| path |  | String | *Required* The base path
+| uriTemplate |  | String | The uri template
+|=======================================================================
+{% endraw %}
+
+#### 14 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| method | common |  | String | *Required* HTTP method to use.
-| path | common |  | String | *Required* The base path
-| uriTemplate | common |  | String | The uri template
 | componentName | common |  | String | The Camel Rest component to use for the REST transport such as restlet spark-rest. If no component has been explicit configured then Camel will lookup if there is a Camel component that integrates with the Rest DSL or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found then that is being used.
 | consumes | common |  | String | Media type such as: 'text/xml' or 'application/json' this REST service accepts. By default we accept all kinds of types.
 | inType | common |  | String | To declare the incoming POJO binding type as a FQN class name

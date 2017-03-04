@@ -74,13 +74,26 @@ The Log component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Log component supports 26 endpoint options which are listed below:
+The Log component is configured using the URI syntax with the following path and query parameters:
+
+    log:loggerName
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| loggerName |  | String | *Required* The logger name to use
+|=======================================================================
+{% endraw %}
+
+#### 25 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| loggerName | producer |  | String | *Required* The logger name to use
 | groupActiveOnly | producer | true | Boolean | If true will hide stats when no new messages have been received for a time interval if false show stats regardless of message traffic.
 | groupDelay | producer |  | Long | Set the initial delay for stats (in millis)
 | groupInterval | producer |  | Long | If specified will group message stats by this time interval (in millis)

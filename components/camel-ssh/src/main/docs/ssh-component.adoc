@@ -58,14 +58,27 @@ The SSH component supports 12 options which are listed below.
 
 
 // endpoint options: START
-The SSH component supports 28 endpoint options which are listed below:
+The SSH component is configured using the URI syntax with the following path and query parameters:
+
+    ssh:host:port
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| host |  | String | *Required* Sets the hostname of the remote SSH server.
+| port | 22 | int | Sets the port number for the remote SSH server.
+|=======================================================================
+{% endraw %}
+
+#### 26 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | common |  | String | *Required* Sets the hostname of the remote SSH server.
-| port | common | 22 | int | Sets the port number for the remote SSH server.
 | timeout | common | 30000 | long | Sets the timeout in milliseconds to wait in establishing the remote SSH server connection. Defaults to 30000 milliseconds.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | pollCommand | consumer |  | String | Sets the command string to send to the remote SSH server during every poll cycle. Only works with camel-ssh component being used as a consumer i.e. from(ssh://...) You may need to end your command with a newline and that must be URL encoded 0A

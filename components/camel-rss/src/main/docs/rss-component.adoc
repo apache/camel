@@ -48,13 +48,26 @@ The RSS component has no options.
 
 
 // endpoint options: START
-The RSS component supports 28 endpoint options which are listed below:
+The RSS component is configured using the URI syntax with the following path and query parameters:
+
+    rss:feedUri
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| feedUri |  | String | *Required* The URI to the feed to poll.
+|=======================================================================
+{% endraw %}
+
+#### 27 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| feedUri | consumer |  | String | *Required* The URI to the feed to poll.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | feedHeader | consumer | true | boolean | Sets whether to add the feed object as a header
 | filter | consumer | true | boolean | Sets whether to use filtering or not of the entries.

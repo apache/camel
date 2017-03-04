@@ -305,14 +305,27 @@ The JMS component supports 76 options which are listed below.
 
 
 // endpoint options: START
-The JMS component supports 87 endpoint options which are listed below:
+The JMS component is configured using the URI syntax with the following path and query parameters:
+
+    jms:destinationType:destinationName
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| destinationType | queue | String | The kind of destination to use
+| destinationName |  | String | *Required* Name of the queue or topic to use as destination
+|=======================================================================
+{% endraw %}
+
+#### 85 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| destinationType | common | queue | String | The kind of destination to use
-| destinationName | common |  | String | *Required* Name of the queue or topic to use as destination
 | clientId | common |  | String | Sets the JMS client ID to use. Note that this value if specified must be unique and can only be used by a single JMS connection instance. It is typically only required for durable topic subscriptions. If using Apache ActiveMQ you may prefer to use Virtual Topics instead.
 | connectionFactory | common |  | ConnectionFactory | Sets the default connection factory to be used if a connection factory is not specified for either link setTemplateConnectionFactory(ConnectionFactory) or link setListenerConnectionFactory(ConnectionFactory)
 | disableReplyTo | common | false | boolean | If true a producer will behave like a InOnly exchange with the exception that JMSReplyTo header is sent out and not be suppressed like in the case of InOnly. Like InOnly the producer will not wait for a reply. A consumer with this flag will behave like InOnly. This feature can be used to bridge InOut requests to another queue so that a route on the other queue will send its response directly back to the original JMSReplyTo.

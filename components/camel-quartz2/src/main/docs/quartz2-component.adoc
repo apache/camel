@@ -74,14 +74,27 @@ The Quartz2 component supports 11 options which are listed below.
 
 
 // endpoint options: START
-The Quartz2 component supports 21 endpoint options which are listed below:
+The Quartz2 component is configured using the URI syntax with the following path and query parameters:
+
+    quartz2:groupName/triggerName
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| groupName | Camel | String | The quartz group name to use. The combination of group name and timer name should be unique.
+| triggerName |  | String | *Required* The quartz timer name to use. The combination of group name and timer name should be unique.
+|=======================================================================
+{% endraw %}
+
+#### 19 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| groupName | consumer | Camel | String | The quartz group name to use. The combination of group name and timer name should be unique.
-| triggerName | consumer |  | String | *Required* The quartz timer name to use. The combination of group name and timer name should be unique.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | cron | consumer |  | String | Specifies a cron expression to define when to trigger.
 | deleteJob | consumer | true | boolean | If set to true then the trigger automatically delete when route stop. Else if set to false it will remain in scheduler. When set to false it will also mean user may reuse pre-configured trigger with camel Uri. Just ensure the names match. Notice you cannot have both deleteJob and pauseJob set to true.

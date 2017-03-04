@@ -70,14 +70,27 @@ The Google Pubsub component supports 2 options which are listed below.
 // component options: END
 
 // endpoint options: START
-The Google Pubsub component supports 11 endpoint options which are listed below:
+The Google Pubsub component is configured using the URI syntax with the following path and query parameters:
+
+    google-pubsub:projectId:destinationName
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| projectId |  | String | *Required* Project Id
+| destinationName |  | String | *Required* Destination Name
+|=======================================================================
+{% endraw %}
+
+#### 9 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| projectId | common |  | String | *Required* Project Id
-| destinationName | common |  | String | *Required* Destination Name
 | ackMode | common | AUTO | AckMode | AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack explicitly
 | concurrentConsumers | common | 1 | Integer | The number of parallel streams consuming from the subscription
 | connectionFactory | common |  | GooglePubsubConnectionFactory | ConnectionFactory to obtain connection to PubSub Service. If non provided the default will be used.

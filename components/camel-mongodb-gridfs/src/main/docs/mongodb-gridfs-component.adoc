@@ -33,13 +33,26 @@ The MongoDB GridFS component has no options.
 
 
 // endpoint options: START
-The MongoDB GridFS component supports 18 endpoint options which are listed below:
+The MongoDB GridFS component is configured using the URI syntax with the following path and query parameters:
+
+    mongodb-gridfs:connectionBean
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| connectionBean |  | String | *Required* Name of com.mongodb.Mongo to use.
+|=======================================================================
+{% endraw %}
+
+#### 17 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| connectionBean | common |  | String | *Required* Name of com.mongodb.Mongo to use.
 | bucket | common | fs | String | Sets the name of the GridFS bucket within the database. Default is fs.
 | database | common |  | String | *Required* Sets the name of the MongoDB database to target
 | readPreference | common |  | ReadPreference | Sets a MongoDB ReadPreference on the Mongo connection. Read preferences set directly on the connection will be overridden by this setting. The link com.mongodb.ReadPreferencevalueOf(String) utility method is used to resolve the passed readPreference value. Some examples for the possible values are nearest primary or secondary etc.

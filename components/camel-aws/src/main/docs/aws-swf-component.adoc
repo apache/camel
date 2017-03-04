@@ -32,13 +32,26 @@ The AWS Simple Workflow component has no options.
 
 
 // endpoint options: START
-The AWS Simple Workflow component supports 30 endpoint options which are listed below:
+The AWS Simple Workflow component is configured using the URI syntax with the following path and query parameters:
+
+    aws-swf:type
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| type |  | String | *Required* Activity or workflow
+|=======================================================================
+{% endraw %}
+
+#### 29 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| type | common |  | String | *Required* Activity or workflow
 | accessKey | common |  | String | Amazon AWS Access Key.
 | amazonSWClient | common |  | AmazonSimpleWorkflowClient | To use the given AmazonSimpleWorkflowClient as client
 | dataConverter | common |  | DataConverter | An instance of com.amazonaws.services.simpleworkflow.flow.DataConverter to use for serializing/deserializing the data.

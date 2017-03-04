@@ -67,13 +67,26 @@ The Guava EventBus component supports 3 options which are listed below.
 
 
 // endpoint options: START
-The Guava EventBus component supports 7 endpoint options which are listed below:
+The Guava EventBus component is configured using the URI syntax with the following path and query parameters:
+
+    guava-eventbus:eventBusRef
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| eventBusRef |  | String | To lookup the Guava EventBus from the registry with the given name
+|=======================================================================
+{% endraw %}
+
+#### 6 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| eventBusRef | common |  | String | To lookup the Guava EventBus from the registry with the given name
 | eventClass | common |  | Class<?> | If used on the consumer side of the route will filter events received from the EventBus to the instances of the class and superclasses of eventClass. Null value of this option is equal to setting it to the java.lang.Object i.e. the consumer will capture all messages incoming to the event bus. This option cannot be used together with listenerInterface option.
 | listenerInterface | common |  | Class<?> | The interface with method(s) marked with the Subscribe annotation. Dynamic proxy will be created over the interface so it could be registered as the EventBus listener. Particularly useful when creating multi-event listeners and for handling DeadEvent properly. This option cannot be used together with eventClass option.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.

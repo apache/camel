@@ -39,13 +39,26 @@ FlinkEndpoint Options
 
 
 // endpoint options: START
-The Apache Flink component supports 7 endpoint options which are listed below:
+The Apache Flink component is configured using the URI syntax with the following path and query parameters:
+
+    flink:endpointType
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| endpointType |  | EndpointType | *Required* Type of the endpoint (dataset datastream).
+|=======================================================================
+{% endraw %}
+
+#### 6 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| endpointType | producer |  | EndpointType | *Required* Type of the endpoint (dataset datastream).
 | collect | producer | true | boolean | Indicates if results should be collected or counted.
 | dataSet | producer |  | DataSet | DataSet to compute against.
 | dataSetCallback | producer |  | DataSetCallback | Function performing action against a DataSet.

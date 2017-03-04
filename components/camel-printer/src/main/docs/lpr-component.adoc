@@ -52,15 +52,28 @@ The Printer component has no options.
 
 
 // endpoint options: START
-The Printer component supports 14 endpoint options which are listed below:
+The Printer component is configured using the URI syntax with the following path and query parameters:
+
+    lpr:hostname:port/printername
+
+#### 3 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| hostname |  | String | *Required* Hostname of the printer
+| port |  | int | Port number of the printer
+| printername |  | String | Name of the printer
+|=======================================================================
+{% endraw %}
+
+#### 11 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| hostname | producer |  | String | *Required* Hostname of the printer
-| port | producer |  | int | Port number of the printer
-| printername | producer |  | String | Name of the printer
 | copies | producer | 1 | int | Number of copies to print
 | docFlavor | producer |  | DocFlavor | Sets DocFlavor to use.
 | flavor | producer |  | String | Sets DocFlavor to use.

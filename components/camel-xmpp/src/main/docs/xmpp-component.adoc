@@ -43,15 +43,28 @@ The XMPP component has no options.
 
 
 // endpoint options: START
-The XMPP component supports 21 endpoint options which are listed below:
+The XMPP component is configured using the URI syntax with the following path and query parameters:
+
+    xmpp:host:port/participant
+
+#### 3 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| host |  | String | *Required* Hostname for the chat server
+| port |  | int | *Required* Port number for the chat server
+| participant |  | String | JID (Jabber ID) of person to receive messages. room parameter has precedence over participant.
+|=======================================================================
+{% endraw %}
+
+#### 18 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | common |  | String | *Required* Hostname for the chat server
-| port | common |  | int | *Required* Port number for the chat server
-| participant | common |  | String | JID (Jabber ID) of person to receive messages. room parameter has precedence over participant.
 | login | common | true | boolean | Whether to login the user.
 | nickname | common |  | String | Use nickname when joining room. If room is specified and nickname is not user will be used for the nickname.
 | pubsub | common | false | boolean | Accept pubsub packets on input default is false

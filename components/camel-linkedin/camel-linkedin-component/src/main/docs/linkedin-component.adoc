@@ -71,14 +71,27 @@ The Linkedin component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Linkedin component supports 16 endpoint options which are listed below:
+The Linkedin component is configured using the URI syntax with the following path and query parameters:
+
+    linkedin:apiName/methodName
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| apiName |  | LinkedInApiName | *Required* What kind of operation to perform
+| methodName |  | String | *Required* What sub operation to use for the selected operation
+|=======================================================================
+{% endraw %}
+
+#### 14 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| apiName | common |  | LinkedInApiName | *Required* What kind of operation to perform
-| methodName | common |  | String | *Required* What sub operation to use for the selected operation
 | clientId | common |  | String | LinkedIn application client ID
 | clientSecret | common |  | String | LinkedIn application client secret
 | httpParams | common |  | Map | Custom HTTP params for example proxy host and port use constants from AllClientPNames

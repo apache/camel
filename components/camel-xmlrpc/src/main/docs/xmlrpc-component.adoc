@@ -101,13 +101,26 @@ The XML RPC component has no options.
 
 
 // endpoint options: START
-The XML RPC component supports 19 endpoint options which are listed below:
+The XML RPC component is configured using the URI syntax with the following path and query parameters:
+
+    xmlrpc:address
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| address |  | String | *Required* The server url
+|=======================================================================
+{% endraw %}
+
+#### 18 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| address | producer |  | String | *Required* The server url
 | basicEncoding | producer |  | String | Sets the encoding for basic authentication null means UTF-8 is chosen.
 | connectionTimeout | producer |  | int | Set the connection timeout in milliseconds 0 is to disable it
 | contentLengthOptional | producer | false | boolean | Whether a Content-Length header may be omitted. The XML-RPC specification demands that such a header be present.

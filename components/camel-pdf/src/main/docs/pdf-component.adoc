@@ -40,13 +40,26 @@ The PDF component has no options.
 
 
 // endpoint options: START
-The PDF component supports 10 endpoint options which are listed below:
+The PDF component is configured using the URI syntax with the following path and query parameters:
+
+    pdf:operation
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| operation |  | PdfOperation | *Required* Operation type
+|=======================================================================
+{% endraw %}
+
+#### 9 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| operation | producer |  | PdfOperation | *Required* Operation type
 | font | producer | Helvetica | PDFont | Font
 | fontSize | producer | 14 | float | Font size in pixels
 | marginBottom | producer | 20 | int | Margin bottom in pixels

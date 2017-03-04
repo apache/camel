@@ -36,13 +36,26 @@ The AWS Kinesis component has no options.
 
 
 // endpoint options: START
-The AWS Kinesis component supports 25 endpoint options which are listed below:
+The AWS Kinesis component is configured using the URI syntax with the following path and query parameters:
+
+    aws-kinesis:streamName
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| streamName |  | String | *Required* Name of the stream
+|=======================================================================
+{% endraw %}
+
+#### 24 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| streamName | common |  | String | *Required* Name of the stream
 | amazonKinesisClient | common |  | AmazonKinesis | *Required* Amazon Kinesis client to use for all requests for this endpoint
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | iteratorType | consumer | TRIM_HORIZON | ShardIteratorType | Defines where in the Kinesis stream to start getting records

@@ -137,13 +137,26 @@ The Paho component supports 4 options which are listed below.
 
 
 // endpoint options: START
-The Paho component supports 12 endpoint options which are listed below:
+The Paho component is configured using the URI syntax with the following path and query parameters:
+
+    paho:topic
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| topic |  | String | *Required* Name of the topic
+|=======================================================================
+{% endraw %}
+
+#### 11 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| topic | common |  | String | *Required* Name of the topic
 | brokerUrl | common | tcp://localhost:1883 | String | The URL of the MQTT broker.
 | clientId | common |  | String | MQTT client identifier.
 | connectOptions | common |  | MqttConnectOptions | Client connection options

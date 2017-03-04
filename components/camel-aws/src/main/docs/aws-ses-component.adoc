@@ -32,13 +32,26 @@ The AWS Simple Email Service component has no options.
 
 
 // endpoint options: START
-The AWS Simple Email Service component supports 12 endpoint options which are listed below:
+The AWS Simple Email Service component is configured using the URI syntax with the following path and query parameters:
+
+    aws-ses:from
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| from |  | String | *Required* The sender's email address.
+|=======================================================================
+{% endraw %}
+
+#### 11 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| from | producer |  | String | *Required* The sender's email address.
 | accessKey | producer |  | String | Amazon AWS Access Key
 | amazonSESClient | producer |  | AmazonSimpleEmailService | To use the AmazonSimpleEmailService as the client
 | amazonSESEndpoint | producer |  | String | The region with which the AWS-SES client wants to work with.

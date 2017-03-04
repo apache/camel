@@ -105,13 +105,26 @@ The RouteBox component has no options.
 
 
 // endpoint options: START
-The RouteBox component supports 18 endpoint options which are listed below:
+The RouteBox component is configured using the URI syntax with the following path and query parameters:
+
+    routebox:routeboxName
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| routeboxName |  | String | *Required* Logical name for the routebox (eg like a queue name)
+|=======================================================================
+{% endraw %}
+
+#### 17 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| routeboxName | common |  | String | *Required* Logical name for the routebox (eg like a queue name)
 | dispatchMap | common |  | Map | A string representing a key in the Camel Registry matching an object value of the type HashMap. The HashMap key should contain strings that can be matched against the value set for the exchange header ROUTE_DISPATCH_KEY. The HashMap value should contain inner route consumer URI's to which requests should be directed.
 | dispatchStrategy | common |  | RouteboxDispatchStrategy | To use a custom RouteboxDispatchStrategy which allows to use custom dispatching instead of the default.
 | forkContext | common | true | boolean | Whether to fork and create a new inner CamelContext instead of reusing the same CamelContext.

@@ -44,13 +44,26 @@ The Consul component has no options.
 
 
 // endpoint options: START
-The Consul component supports 22 endpoint options which are listed below:
+The Consul component is configured using the URI syntax with the following path and query parameters:
+
+    consul:apiEndpoint
+
+#### 1 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| apiEndpoint |  | String | *Required* The API endpoint
+|=======================================================================
+{% endraw %}
+
+#### 21 query parameters:
 
 {% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| apiEndpoint | common |  | String | *Required* The API endpoint
 | connectTimeoutMillis | common |  | Long | Connect timeout for OkHttpClient
 | dc | common |  | String | The data center
 | key | common |  | String | The default key. Can be overridden by CamelConsulKey
