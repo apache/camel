@@ -816,6 +816,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         RestletEndpoint endpoint = camelContext.getEndpoint(url, RestletEndpoint.class);
         setProperties(camelContext, endpoint, parameters);
 
+        // the endpoint must be started before creating the consumer
+        ServiceHelper.startService(endpoint);
+
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
         if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
