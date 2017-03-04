@@ -29,22 +29,17 @@ public class DurationRoutePolicyMaxSecondsTest extends ContextTestSupport {
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(10);
         assertMockEndpointsSatisfied();
 
-        Exception cause = null;
-
         // need a little time to stop async
         for (int i = 0; i < 10; i++) {
             Thread.sleep(100);
-            try {
-                assertFalse(context.getRouteStatus("foo").isStarted());
-                assertTrue(context.getRouteStatus("foo").isStopped());
-            } catch (Exception e) {
-                cause = e;
+            boolean started = context.getRouteStatus("foo").isStarted();
+            boolean stopped = context.getRouteStatus("foo").isStopped();
+            if (!started && stopped) {
+                break;
             }
         }
-
-        if (cause != null) {
-            throw cause;
-        }
+        assertFalse(context.getRouteStatus("foo").isStarted());
+        assertTrue(context.getRouteStatus("foo").isStopped());
     }
 
     @Override

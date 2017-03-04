@@ -25,8 +25,10 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.connector.CamelConnectorCatalog;
 import org.apache.camel.catalog.connector.ConnectorDto;
 import org.apache.camel.catalog.connector.DefaultCamelConnectorCatalog;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("Cannot run on CI servers so run manually")
 public class MavenArtifactProviderTest extends TestCase {
 
     @Test
