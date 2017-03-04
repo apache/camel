@@ -15,5 +15,16 @@
 # limitations under the License.
 #
 
+org.apache.camel.opentracing.decorators.AhcSpanDecorator
+org.apache.camel.opentracing.decorators.Http4SpanDecorator
 org.apache.camel.opentracing.decorators.HttpSpanDecorator
+org.apache.camel.opentracing.decorators.JdbcSpanDecorator
 org.apache.camel.opentracing.decorators.JettySpanDecorator
+org.apache.camel.opentracing.decorators.MongoDBSpanDecorator
+org.apache.camel.opentracing.decorators.NettyHttp4SpanDecorator
+org.apache.camel.opentracing.decorators.NettyHttpSpanDecorator
+org.apache.camel.opentracing.decorators.RestletSpanDecorator
+org.apache.camel.opentracing.decorators.ServletSpanDecorator
+org.apache.camel.opentracing.decorators.SqlSpanDecorator
+org.apache.camel.opentracing.decorators.TimerSpanDecorator
+org.apache.camel.opentracing.decorators.UndertowSpanDecorator
