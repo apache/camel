@@ -27,9 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.function.Function;
-import java.util.stream.Collector;
-import java.util.stream.Stream;
 
 import edu.emory.mathcs.backport.java.util.Collections;
 import org.apache.camel.maven.packaging.model.ComponentModel;
@@ -44,8 +41,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.mvel2.templates.TemplateRuntime;
 
-import static java.util.stream.Collectors.counting;
-import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 import static org.apache.camel.maven.packaging.PackageHelper.writeText;
