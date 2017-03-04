@@ -16,11 +16,8 @@
  */
 package org.apache.camel.component.aws.s3.springboot;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.aws.s3.S3Component;
-import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionMessage;
 import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
@@ -29,7 +26,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
 import org.springframework.boot.bind.RelaxedPropertyResolver;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
@@ -44,42 +40,16 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 @ConditionalOnBean(type = "org.apache.camel.spring.boot.CamelAutoConfiguration")
 @Conditional(S3ComponentAutoConfiguration.Condition.class)
 @AutoConfigureAfter(name = "org.apache.camel.spring.boot.CamelAutoConfiguration")
-@EnableConfigurationProperties(S3ComponentConfiguration.class)
 public class S3ComponentAutoConfiguration {
 
     @Lazy
     @Bean(name = "aws-s3-component")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(S3Component.class)
-    public S3Component configureS3Component(CamelContext camelContext,
-            S3ComponentConfiguration configuration) throws Exception {
+    public S3Component configureS3Component(CamelContext camelContext)
+            throws Exception {
         S3Component component = new S3Component();
         component.setCamelContext(camelContext);
-        Map<String, Object> parameters = new HashMap<>();
-        IntrospectionSupport.getProperties(configuration, parameters, null,
-                false);
-        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-            Object value = entry.getValue();
-            Class<?> paramClass = value.getClass();
-            if (paramClass.getName().endsWith("NestedConfiguration")) {
-                Class nestedClass = null;
-                try {
-                    nestedClass = (Class) paramClass.getDeclaredField(
-                            "CAMEL_NESTED_CLASS").get(null);
-                    HashMap<String, Object> nestedParameters = new HashMap<>();
-                    IntrospectionSupport.getProperties(value, nestedParameters,
-                            null, false);
-                    Object nestedProperty = nestedClass.newInstance();
-                    IntrospectionSupport.setProperties(camelContext,
-                            camelContext.getTypeConverter(), nestedProperty,
-                            nestedParameters);
-                    entry.setValue(nestedProperty);
-                } catch (NoSuchFieldException e) {
-                }
-            }
-        }
-        IntrospectionSupport.setProperties(camelContext,
-                camelContext.getTypeConverter(), component, parameters);
         return component;
     }
 

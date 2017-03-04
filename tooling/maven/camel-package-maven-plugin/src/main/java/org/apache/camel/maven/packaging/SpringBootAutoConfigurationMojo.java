@@ -205,7 +205,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 ComponentModel model = compModels.get(0); // They should be equivalent
                 List<String> aliases = compModels.stream().map(ComponentModel::getScheme).sorted().collect(Collectors.toList());
 
-                boolean hasOptions = !model.getComponentOptions().isEmpty();
+                // resolvePropertyPlaceholders is an option which only make sense to use if the component has other options
+                boolean hasOptions = model.getComponentOptions().stream().anyMatch(o -> !o.getName().equals("resolvePropertyPlaceholders"));
 
                 // use springboot as sub package name so the code is not in normal
                 // package so the Spring Boot JARs can be optional at runtime
