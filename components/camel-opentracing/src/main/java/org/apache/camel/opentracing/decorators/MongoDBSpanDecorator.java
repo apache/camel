@@ -20,10 +20,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.opentracing.Span;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-
-import io.opentracing.Span;
 
 public class MongoDBSpanDecorator extends AbstractSpanDecorator {
 
@@ -34,7 +33,7 @@ public class MongoDBSpanDecorator extends AbstractSpanDecorator {
 
     @Override
     public String getOperationName(Exchange exchange, Endpoint endpoint) {
-        Map<String,String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
+        Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
         String opName = queryParameters.get("operation");
         if (opName != null) {
             return opName;
@@ -48,7 +47,7 @@ public class MongoDBSpanDecorator extends AbstractSpanDecorator {
 
         span.setTag("db.type", getComponent());
 
-        Map<String,String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
+        Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
         String database = queryParameters.get("database");
         if (database != null) {
             span.setTag("db.instance", database);
@@ -56,11 +55,11 @@ public class MongoDBSpanDecorator extends AbstractSpanDecorator {
         span.setTag("db.statement", queryParameters.toString());
     }
 
-    public static Map<String,String> toQueryParameters(String uri) {
+    public static Map<String, String> toQueryParameters(String uri) {
         int index = uri.indexOf('?');
         if (index != -1) {
             String queryString = uri.substring(index + 1);
-            Map<String,String> map = new HashMap<>();
+            Map<String, String> map = new HashMap<>();
             for (String param : queryString.split("&")) {
                 String[] parts = param.split("=");
                 if (parts.length == 2) {

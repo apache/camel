@@ -16,17 +16,17 @@
  */
 package org.apache.camel.opentracing.decorators;
 
-import static org.junit.Assert.*;
-
 import java.util.Map;
 
+import io.opentracing.mock.MockSpan;
+import io.opentracing.mock.MockTracer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.opentracing.SpanDecorator;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import io.opentracing.mock.MockSpan;
-import io.opentracing.mock.MockTracer;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class MongoDBSpanDecoratorTest {
 
@@ -37,8 +37,7 @@ public class MongoDBSpanDecoratorTest {
     public void testGetOperationName() {
         Endpoint endpoint = Mockito.mock(Endpoint.class);
 
-        Mockito.when(endpoint.getEndpointUri()).thenReturn(
-                MONGODB_STATEMENT);
+        Mockito.when(endpoint.getEndpointUri()).thenReturn(MONGODB_STATEMENT);
 
         SpanDecorator decorator = new MongoDBSpanDecorator();
 
@@ -47,7 +46,7 @@ public class MongoDBSpanDecoratorTest {
 
     @Test
     public void testToQueryParameters() {
-        Map<String,String> params = MongoDBSpanDecorator.toQueryParameters(MONGODB_STATEMENT);
+        Map<String, String> params = MongoDBSpanDecorator.toQueryParameters(MONGODB_STATEMENT);
         assertEquals(3, params.size());
         assertEquals("flights", params.get("database"));
         assertEquals("tickets", params.get("collection"));
@@ -58,8 +57,7 @@ public class MongoDBSpanDecoratorTest {
     public void testPre() {
         Endpoint endpoint = Mockito.mock(Endpoint.class);
 
-        Mockito.when(endpoint.getEndpointUri()).thenReturn(
-                MONGODB_STATEMENT);
+        Mockito.when(endpoint.getEndpointUri()).thenReturn(MONGODB_STATEMENT);
 
         SpanDecorator decorator = new MongoDBSpanDecorator();
 
