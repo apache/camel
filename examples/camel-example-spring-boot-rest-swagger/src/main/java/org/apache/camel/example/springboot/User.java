@@ -16,10 +16,10 @@
  */
 package org.apache.camel.example.springboot;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 /**
  * User entity
