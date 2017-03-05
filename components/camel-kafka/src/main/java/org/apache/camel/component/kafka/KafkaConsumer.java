@@ -217,6 +217,17 @@ public class KafkaConsumer extends DefaultConsumer {
                         }
                     }
                 }
+
+                if (endpoint.getConfiguration().isAutoCommitEnable() != null && endpoint.getConfiguration().isAutoCommitEnable()) {
+                    if ("async".equals(endpoint.getConfiguration().getAutoCommitOnStop())) {
+                        LOG.info("Auto commitAsync on stop {} from topic {}", threadId, topicName);
+                        consumer.commitAsync();
+                    } else if ("sync".equals(endpoint.getConfiguration().getAutoCommitOnStop())) {
+                        LOG.info("Auto commitSync on stop {} from topic {}", threadId, topicName);
+                        consumer.commitSync();
+                    }
+                }
+
                 LOG.info("Unsubscribing {} from topic {}", threadId, topicName);
                 consumer.unsubscribe();
             } catch (InterruptException e) {
