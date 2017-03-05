@@ -62,7 +62,7 @@ The HDFS2 component supports 2 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | jAASConfiguration | common |  | Configuration | To use the given configuration for security with JAAS.
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

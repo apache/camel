@@ -64,7 +64,7 @@ The Netty4 component supports 4 options which are listed below.
 | maximumPoolSize | advanced | 16 | int | The thread pool size for the EventExecutorGroup if its in use. The default value is 16.
 | configuration | advanced |  | NettyConfiguration | To use the NettyConfiguration as configuration when creating endpoints.
 | executorService | advanced |  | EventExecutorGroup | To use the given EventExecutorGroup
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

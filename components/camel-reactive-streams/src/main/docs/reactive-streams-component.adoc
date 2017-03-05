@@ -54,7 +54,7 @@ The Reactive Streams component supports 3 options which are listed below.
 | Name | Group | Default | Java Type | Description
 | internalEngineConfiguration | common |  | ReactiveStreamsEngineConfiguration | Configures the internal engine for Reactive Streams.
 | backpressureStrategy | common |  | ReactiveStreamsBackpressureStrategy | The backpressure strategy to use when pushing events to a slow subscriber.
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

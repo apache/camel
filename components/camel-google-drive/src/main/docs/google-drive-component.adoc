@@ -72,7 +72,7 @@ The Google Drive component supports 3 options which are listed below.
 | Name | Group | Default | Java Type | Description
 | configuration | common |  | GoogleDriveConfiguration | To use the shared configuration
 | clientFactory | advanced |  | GoogleDriveClientFactory | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleDriveClientFactory
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -89,7 +89,7 @@ The Netty4 HTTP component supports 7 options which are listed below.
 | securityConfiguration | security |  | NettyHttpSecurityConfiguration | Refers to a org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration for configuring secure web resources.
 | maximumPoolSize | advanced | 16 | int | The thread pool size for the EventExecutorGroup if its in use. The default value is 16.
 | executorService | advanced |  | EventExecutorGroup | To use the given EventExecutorGroup
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

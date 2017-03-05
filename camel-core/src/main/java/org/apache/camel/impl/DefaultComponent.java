@@ -49,7 +49,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
     private CamelContext camelContext;
 
-    @Metadata(label = "common", defaultValue = "true",
+    @Metadata(label = "advanced", defaultValue = "true",
         description = "Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.")
     private boolean resolvePropertyPlaceholders = true;
 

@@ -109,7 +109,7 @@ The Disruptor component supports 8 options which are listed below.
 | defaultBlockWhenFull | producer | true | boolean | To configure the default value for block when full The default value is true.
 | queueSize | common |  | int | To configure the ring buffer size
 | bufferSize | common | 1024 | int | To configure the ring buffer size
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

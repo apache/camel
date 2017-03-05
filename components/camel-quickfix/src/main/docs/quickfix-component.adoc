@@ -90,7 +90,7 @@ The QuickFix component supports 6 options which are listed below.
 | messageStoreFactory | advanced |  | MessageStoreFactory | To use the given MessageStoreFactory
 | configurations | common |  | Map | To use the given map of pre configured QuickFix configurations mapped to the key
 | lazyCreateEngines | common | false | boolean | If set to true the engines will be created and started when needed (when first message is send)
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

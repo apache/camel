@@ -111,7 +111,7 @@ The HBase component supports 3 options which are listed below.
 | Name | Group | Default | Java Type | Description
 | configuration | advanced |  | Configuration | To use the shared configuration
 | poolMaxSize | common | 10 | int | Maximum number of references to keep for each table in the HTable pool. The default value is 10.
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

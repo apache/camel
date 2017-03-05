@@ -72,7 +72,7 @@ The SQL StoredProcedure component supports 2 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | dataSource | producer |  | DataSource | Sets the DataSource to use to communicate with the database.
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

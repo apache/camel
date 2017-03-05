@@ -26,7 +26,7 @@ The XQuery component supports 4 options which are listed below.
 | moduleURIResolver | advanced |  | ModuleURIResolver | To use the custom ModuleURIResolver
 | configuration | advanced |  | Configuration | To use a custom Saxon configuration
 | configurationProperties | advanced |  | Map | To set custom Saxon configuration properties
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

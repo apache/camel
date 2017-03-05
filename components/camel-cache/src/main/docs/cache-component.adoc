@@ -55,7 +55,7 @@ The EHCache component supports 4 options which are listed below.
 | cacheManagerFactory | advanced |  | CacheManagerFactory | To use the given CacheManagerFactory for creating the CacheManager. By default the DefaultCacheManagerFactory is used.
 | configuration | common |  | CacheConfiguration | Sets the Cache configuration
 | configurationFile | common | classpath:ehcache.xml | String | Sets the location of the ehcache.xml file to load from classpath or file system. By default the file is loaded from classpath:ehcache.xml
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

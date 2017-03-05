@@ -66,7 +66,7 @@ The Netty component supports 3 options which are listed below.
 | Name | Group | Default | Java Type | Description
 | configuration | advanced |  | NettyConfiguration | To use the NettyConfiguration as configuration when creating endpoints.
 | maximumPoolSize | advanced | 16 | int | The core pool size for the ordered thread pool if its in use. The default value is 16.
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

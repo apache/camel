@@ -42,7 +42,7 @@ The EJB component supports 3 options which are listed below.
 | Name | Group | Default | Java Type | Description
 | context | producer |  | Context | The Context to use for looking up the EJBs
 | properties | producer |  | Properties | Properties for creating javax.naming.Context if a context has not been configured.
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END
