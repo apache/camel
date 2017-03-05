@@ -621,6 +621,7 @@ public class KafkaConfiguration {
     /**
      * Whether to perform an explicit auto commit when the consumer stops to ensure the broker
      * has a commit from the last consumed message. This requires the option autoCommitEnable is turned on.
+     * The possible values are: sync, async, or none. And sync is the default value.
      */
     public void setAutoCommitOnStop(String autoCommitOnStop) {
         this.autoCommitOnStop = autoCommitOnStop;
