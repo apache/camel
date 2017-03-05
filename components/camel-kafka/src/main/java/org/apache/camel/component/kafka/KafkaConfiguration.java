@@ -114,6 +114,8 @@ public class KafkaConfiguration {
     private String consumerId;
     @UriParam(label = "consumer", defaultValue = "true")
     private Boolean autoCommitEnable = true;
+    @UriParam(label = "consumer", defaultValue = "sync", enums = "sync,async,none")
+    private String autoCommitOnStop = "sync";
     @UriParam(label = "consumer")
     private StateRepository<String, String> offsetRepository;
 
@@ -610,6 +612,18 @@ public class KafkaConfiguration {
      */
     public void setAutoOffsetReset(String autoOffsetReset) {
         this.autoOffsetReset = autoOffsetReset;
+    }
+
+    public String getAutoCommitOnStop() {
+        return autoCommitOnStop;
+    }
+
+    /**
+     * Whether to perform an explicit auto commit when the consumer stops to ensure the broker
+     * has a commit from the last consumed message. This requires the option autoCommitEnable is turned on.
+     */
+    public void setAutoCommitOnStop(String autoCommitOnStop) {
+        this.autoCommitOnStop = autoCommitOnStop;
     }
 
     public String getBrokers() {
