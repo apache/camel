@@ -74,7 +74,7 @@ The JCache component supports 5 options which are listed below.
 | cacheConfiguration | common |  | Configuration | A Configuration for the Cache
 | cacheConfigurationProperties | common |  | Properties | The Properties for the javax.cache.spi.CachingProvider to create the CacheManager
 | configurationUri | common |  | String | An implementation specific URI for the CacheManager
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

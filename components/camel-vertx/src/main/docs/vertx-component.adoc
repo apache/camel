@@ -50,7 +50,7 @@ The Vert.x component supports 7 options which are listed below.
 | vertxOptions | common |  | VertxOptions | Options to use for creating vertx
 | vertx | common |  | Vertx | To use the given vertx EventBus instead of creating a new embedded EventBus
 | timeout | common | 60 | int | Timeout in seconds to wait for clustered Vertx EventBus to be ready. The default value is 60.
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

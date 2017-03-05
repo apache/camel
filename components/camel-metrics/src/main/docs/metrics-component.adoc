@@ -53,7 +53,7 @@ The Metrics component supports 2 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | metricRegistry | advanced |  | MetricRegistry | To use a custom configured MetricRegistry.
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

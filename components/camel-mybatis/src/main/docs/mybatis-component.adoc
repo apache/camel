@@ -54,7 +54,7 @@ The MyBatis component supports 3 options which are listed below.
 | Name | Group | Default | Java Type | Description
 | sqlSessionFactory | advanced |  | SqlSessionFactory | To use the SqlSessionFactory
 | configurationUri | common | SqlMapConfig.xml | String | Location of MyBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

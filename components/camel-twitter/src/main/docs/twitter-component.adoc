@@ -59,7 +59,7 @@ The Twitter component supports 9 options which are listed below.
 | httpProxyUser | proxy |  | String | The http proxy user which can be used for the camel-twitter.
 | httpProxyPassword | proxy |  | String | The http proxy password which can be used for the camel-twitter.
 | httpProxyPort | proxy |  | int | The http proxy port which can be used for the camel-twitter.
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

@@ -38,7 +38,7 @@ The Properties component supports 17 options which are listed below.
 | initialProperties | common |  | Properties | Sets initial properties which will be used before any locations are resolved.
 | overrideProperties | common |  | Properties | Sets a special list of override properties that take precedence and will use first if a property exist.
 | systemPropertiesMode | common | 2 | int | Sets the system property mode.
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

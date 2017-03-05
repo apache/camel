@@ -52,7 +52,7 @@ The Direct VM component supports 5 options which are listed below.
 | timeout | producer | 30000 | long | The timeout value to use if block is enabled.
 | headerFilterStrategy | common |  | HeaderFilterStrategy | Sets a HeaderFilterStrategy that will only be applied on producer endpoints (on both directions: request and response). Default value: none.
 | propagateProperties | advanced | true | boolean | Whether to propagate or not properties from the producer side to the consumer side and vice versa. Default value: true.
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

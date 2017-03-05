@@ -83,7 +83,7 @@ The XSLT component supports 9 options which are listed below.
 | saxonExtensionFunctions | producer |  | List | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry where you can comma to separate multiple values to lookup.
 | saxonConfiguration | producer | true | Object | To use a custom Saxon configuration
 | saxonConfigurationProperties | advanced |  | Map | To set custom Saxon configuration properties
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END

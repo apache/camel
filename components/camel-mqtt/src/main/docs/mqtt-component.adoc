@@ -46,7 +46,7 @@ The MQTT component supports 4 options which are listed below.
 | host | common |  | String | The URI of the MQTT broker to connect too - this component also supports SSL - e.g. ssl://127.0.0.1:8883
 | userName | security |  | String | Username to be used for authentication against the MQTT broker
 | password | security |  | String | Password to be used for authentication against the MQTT broker
-| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 {% endraw %}
 // component options: END
