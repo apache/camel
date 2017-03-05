@@ -1,0 +1,165 @@
+## REST Swagger Component
+
+*Available as of Camel version 2.19*
+
+
+// Licensed to the Apache Software Foundation (ASF) under one or more
+// contributor license agreements.  See the NOTICE file distributed with
+// this work for additional information regarding copyright ownership.
+// The ASF licenses this file to You under the Apache License, Version 2.0
+// (the "License"); you may not use this file except in compliance with
+// the License.  You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+The *rest-swagger* configures rest Consumers from 
+http://swagger.io/[Swagger] (Open API) specification document and
+delegates to a component implementing the _RestProducerFactory_
+interface. Currently known working components are:
+
+* link:http-component.html[http]
+* link:http4-component.html[http4]
+* link:netty4-http-component.html[netty4-http]
+* link:restlet-component.html[restlet]
+* link:jetty-component.html[jetty]
+* link:undertow-component.html[undertow]
+
+Maven users will need to add the following dependency to their
+`pom.xml` for this component:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-rest-swagger</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+### URI format
+
+[source,java]
+-------------------------------------------------------
+rest-swagger:operationId[:specificationPath]
+-------------------------------------------------------
+
+Where `operationId` is the ID of the operation in the Swagger
+specification, and `specificationPath` is the path to the
+specification.
+If the `specificationPath` is not specified it defaults to
+`swagger.json`. The lookup mechanism uses Camels `ObjectHelper` to
+load the resource -- which basically looks for the resource on the
+CLASSPATH, failing that Swagger's own resource loading support.
+
+Typically you would specify the `endpoint` and `delegate` or
+`delegateName` properties on either component or endpoint level.
+The `endpoint` is the base URL of the REST resource from the 
+specification: e.g. for path `/getPetById` in the specification and
+the full URL to the REST resource 
+`https://api.petstore.com/v2/getPetById` the `endpoint` should be:
+`https://api.petstore.com/v2/`.
+
+With `delegate` and `delegateName` you specify what component is used
+to perform the requests, in the case of the latter the named component
+needs to be present in the Camel context.
+
+Make sure that the _delegate_ component implements the required 
+_RestProducerFactory_ interface -- as do the components listed at the
+top.
+
+If you do not specify the _delegate_ at either component or endpoint
+level, CLASSPATH is searched for a suitable delegate. There should be
+only one component present on the CLASSPATH that implements the
+_RestProducerFactory_ interface.
+
+### Options
+
+// component options: START
+The REST Swagger component supports 5 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| delegate | producer |  | Component | The Component that this component will delegate to. The component must implement RestProducerFactory SPI interface.
+| delegateName | producer |  | String | Name of the Component to delegate the requests to the component should be added to CamelContext. The component must implement RestProducerFactory SPI interface.
+| endpoint | producer |  | String | The scheme host and optionally port number to use in the syntax code https://hostname:port. For example code https://api.example.com.
+| specificationPath | producer |  | String | Path to the Swagger specification file. Searched within CLASSPATH first and if not found delegated to Swaggers resource loading support.
+| resolvePropertyPlaceholders | common | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+|=======================================================================
+{% endraw %}
+// component options: END
+
+// endpoint options: START
+The REST Swagger component supports 6 endpoint options which are listed below:
+
+{% raw %}
+[width="100%",cols="2,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| operationId | producer |  | String | *Required* The ID of the operation from Swagger specification to use.
+| specificationPath | producer | swagger.json | String | Path to the Swagger specification file. Searched within CLASSPATH first and if not found delegated to Swaggers resource loading support.
+| delegate | producer |  | Component | The Component that this component will delegate to. The component must implement RestProducerFactory SPI interface.
+| delegateName | producer |  | String | Name of the Component to delegate the requests to the component should be added to CamelContext. The component must implement RestProducerFactory SPI interface.
+| endpoint | producer |  | String | The scheme host and optionally port number to use in the syntax code https://hostname:port. For example code https://api.example.com.
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+|=======================================================================
+{% endraw %}
+// endpoint options: END
+
+### Example: PetStore
+
+For example if you wanted to use the 
+http://petstore.swagger.io/[_PetStore_] provided REST API you should
+start by downloading or creating the Swagger specification file. If
+this file is stored as `swagger.json` it will be automaticaly used, so
+we'll take advantage of that. Let's use the link:undertow-component.html[Undertow]
+component to perform all the requests and Camels excelent support for 
+link:spring-boot.html[Spring Boot].
+
+Here are our dependencies
+
+Start by defining the _Undertow_ component and the
+_RestSwaggerComponent_:
+
+[source,java]
+----
+@Bean
+public Component petstore(CamelContext camelContext, UndertowComponent undertow) {
+    RestSwaggerComponent petstore = new RestSwaggerComponent(camelContext);
+    petstore.setEndpoint("http://petstore.swagger.io/v2");
+    petstore.setDelegate(undertow);
+
+    return petstore;
+}
+----
+
+NOTE: Support in Camel for Spring Boot will auto create the 
+`UndertoComponent` Spring bean, and you can configure it using
+`application.properties` (or `application.yml`) using prefix
+`camel.component.undertow.`. We are defining the `petstore`
+component here in order to have a named component in the Camel context
+that we can use to interact with the PetStore REST API.
+
+Now in our application we can simply use the `ProducerTemplate` to
+invoke PetStore REST methods:
+
+[source,java]
+----
+@Autowired
+ProducerTemplate template;
+
+String getPetJsonById(int petId) {
+    return template.requestBodyAndHeaders("petstore:getPetById", null, "petId", petId);
+}
+----
