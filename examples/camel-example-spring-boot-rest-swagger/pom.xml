@@ -29,6 +29,7 @@
   <description>An example showing Camel REST DSL and Swagger with Spring Boot</description>
 
   <properties>
+    <category>Rest</category>
     <spring.boot-version>${spring-boot-version}</spring.boot-version>
   </properties>
 
