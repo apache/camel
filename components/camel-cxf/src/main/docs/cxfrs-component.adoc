@@ -119,6 +119,7 @@ The CXF-RS endpoint is configured using URI syntax:
 | performInvocation | advanced | false | boolean | When the option is true Camel will perform the invocation of the resource class instance and put the response object into the exchange for further processing.
 | propagateContexts | advanced | false | boolean | When the option is true JAXRS UriInfo HttpHeaders Request and SecurityContext contexts will be available to custom CXFRS processors as typed Camel exchange properties. These contexts can be used to analyze the current requests using JAX-RS API.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| publishedEndpointUrl | producer |  | String | This option can override the endpointUrl that published from the WADL which can be accessed with resource address url plus ?_wadl
 |=======================================================================
 // endpoint options: END
 
