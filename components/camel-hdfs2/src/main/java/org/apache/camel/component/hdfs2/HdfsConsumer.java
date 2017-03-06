@@ -35,14 +35,14 @@ import org.apache.hadoop.fs.PathFilter;
 
 public final class HdfsConsumer extends ScheduledPollConsumer {
 
+    public static final long DEFAULT_CONSUMER_INITIAL_DELAY = 10 * 1000L;
+
     private final HdfsConfiguration config;
     private final StringBuilder hdfsPath;
     private final Processor processor;
     private final ReadWriteLock rwlock = new ReentrantReadWriteLock();
     private volatile HdfsInputStream istream;
     
-    public static final long DEFAULT_CONSUMER_INITIAL_DELAY = 10 * 1000L;
-
     public HdfsConsumer(HdfsEndpoint endpoint, Processor processor, HdfsConfiguration config) {
         super(endpoint, processor);
         this.config = config;
