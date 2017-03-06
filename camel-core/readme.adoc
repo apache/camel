@@ -6,7 +6,7 @@ Components
 
 
 // components: START
-Number of Components: 25 in 1 JAR artifacts
+Number of Components: 25 in 1 JAR artifacts (1 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -103,7 +103,7 @@ Data Formats
 
 
 // dataformats: START
-Number of Data Formats: 4 in 36 JAR artifacts
+Number of Data Formats: 4 in 36 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -133,7 +133,7 @@ Expression Languages
 
 
 // languages: START
-Number of Languages: 10 in 1 JAR artifacts
+Number of Languages: 10 in 1 JAR artifacts (0 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
