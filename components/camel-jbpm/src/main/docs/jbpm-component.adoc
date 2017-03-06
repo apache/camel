@@ -44,17 +44,14 @@ The JBPM component is configured using the URI syntax with the following path an
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | connectionURL |  | URL | *Required* The URL to the jBPM server.
 |=======================================================================
-{% endraw %}
 
 #### 25 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -84,7 +81,6 @@ The JBPM component is configured using the URI syntax with the following path an
 | password | security |  | String | Password for authentication
 | userName | security |  | String | Username for authentication
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

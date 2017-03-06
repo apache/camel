@@ -55,7 +55,6 @@ The MSV component supports 3 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -63,7 +62,6 @@ The MSV component supports 3 options which are listed below.
 | resourceResolverFactory | advanced |  | ValidatorResourceResolverFactory | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -78,17 +76,14 @@ The MSV component is configured using the URI syntax with the following path and
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | resourceUri |  | String | *Required* URL to a local resource on the classpath or a reference to lookup a bean in the Registry or a full URL to a remote resource or resource on the file system which contains the XSD to validate against.
 |=======================================================================
-{% endraw %}
 
 #### 11 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -104,7 +99,6 @@ The MSV component is configured using the URI syntax with the following path and
 | useDom | advanced | false | boolean | Whether DOMSource/DOMResult or SaxSource/SaxResult should be used by the validator.
 | useSharedSchema | advanced | true | boolean | Whether the Schema instance should be shared or not. This option is introduced to work around a JDK 1.6.x bug. Xerces should not have this issue.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

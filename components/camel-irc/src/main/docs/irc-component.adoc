@@ -50,18 +50,15 @@ The IRC component is configured using the URI syntax with the following path and
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | hostname |  | String | *Required* Hostname for the IRC chat server
 | port |  | int | Port number for the IRC chat server. If no port is configured then a default port of either 6667 6668 or 6669 is used.
 |=======================================================================
-{% endraw %}
 
 #### 24 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -90,7 +87,6 @@ The IRC component is configured using the URI syntax with the following path and
 | trustManager | security |  | SSLTrustManager | The trust manager used to verify the SSL server's certificate.
 | username | security |  | String | The IRC server user name.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

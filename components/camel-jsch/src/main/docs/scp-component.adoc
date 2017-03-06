@@ -45,14 +45,12 @@ The SCP component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | verboseLogging | producer | false | boolean | JSCH is verbose logging out of the box. Therefore we turn the logging down to DEBUG logging by default. But setting this option to true turns on the verbose logging again.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -70,7 +68,6 @@ The SCP component is configured using the URI syntax with the following path and
 
 #### 3 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -78,11 +75,9 @@ The SCP component is configured using the URI syntax with the following path and
 | port |  | int | Port of the FTP server
 | directoryName |  | String | The starting directory
 |=======================================================================
-{% endraw %}
 
 #### 19 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -106,7 +101,6 @@ The SCP component is configured using the URI syntax with the following path and
 | useUserKnownHostsFile | security | true | boolean | If knownHostFile has not been explicit configured then use the host file from System.getProperty(user.home) /.ssh/known_hosts
 | ciphers | security (advanced) |  | String | Set a comma separated list of ciphers that will be used in order of preference. Possible cipher names are defined by JCraft JSCH. Some examples include: aes128-ctraes128-cbc3des-ctr3des-cbcblowfish-cbcaes192-cbcaes256-cbc. If not specified the default list from JSCH will be used.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

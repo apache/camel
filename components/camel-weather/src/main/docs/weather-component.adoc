@@ -53,17 +53,14 @@ The Weather component is configured using the URI syntax with the following path
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | name |  | String | *Required* The name value is not used.
 |=======================================================================
-{% endraw %}
 
 #### 43 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -111,7 +108,6 @@ The Weather component is configured using the URI syntax with the following path
 | proxyHost | proxy |  | String | The proxy host name
 | proxyPort | proxy |  | Integer | The proxy port number
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

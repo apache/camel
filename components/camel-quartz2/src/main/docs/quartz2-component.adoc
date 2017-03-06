@@ -51,7 +51,6 @@ The Quartz2 component supports 11 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -67,7 +66,6 @@ The Quartz2 component supports 11 options which are listed below.
 | scheduler | advanced |  | Scheduler | To use the custom configured Quartz scheduler instead of creating a new Scheduler.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -80,18 +78,15 @@ The Quartz2 component is configured using the URI syntax with the following path
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | groupName | Camel | String | The quartz group name to use. The combination of group name and timer name should be unique.
 | triggerName |  | String | *Required* The quartz timer name to use. The combination of group name and timer name should be unique.
 |=======================================================================
-{% endraw %}
 
 #### 19 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -115,7 +110,6 @@ The Quartz2 component is configured using the URI syntax with the following path
 | startDelayedSeconds | scheduler |  | int | Seconds to wait before starting the quartz scheduler.
 | triggerStartDelay | scheduler | 500 | long | In case of scheduler has already started we want the trigger start slightly after current time to ensure endpoint is fully started before the job kicks in.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

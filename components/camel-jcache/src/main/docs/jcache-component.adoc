@@ -14,17 +14,14 @@ The JCache component is configured using the URI syntax with the following path 
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | cacheName |  | String | *Required* The name of the cache
 |=======================================================================
-{% endraw %}
 
 #### 22 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -51,7 +48,6 @@ The JCache component is configured using the URI syntax with the following path 
 | expiryPolicyFactory | advanced |  | ExpiryPolicy> | The ExpiryPolicy factory
 | lookupProviders | advanced | false | boolean | Configure if a camel-cache should try to find implementations of jcache api in runtimes like OSGi.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 
@@ -66,7 +62,6 @@ The JCache component supports 5 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -76,5 +71,4 @@ The JCache component supports 5 options which are listed below.
 | configurationUri | common |  | String | An implementation specific URI for the CacheManager
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END

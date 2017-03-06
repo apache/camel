@@ -51,17 +51,14 @@ The OptaPlanner component is configured using the URI syntax with the following 
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | configFile |  | String | *Required* Specifies the location to the solver file
 |=======================================================================
-{% endraw %}
 
 #### 7 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -73,7 +70,6 @@ The OptaPlanner component is configured using the URI syntax with the following 
 | threadPoolSize | producer | 10 | int | Specifies the thread pool size to use when async is true
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

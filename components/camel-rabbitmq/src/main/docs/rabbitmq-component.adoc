@@ -51,7 +51,6 @@ The RabbitMQ component is configured using the URI syntax with the following pat
 
 #### 3 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -59,11 +58,9 @@ The RabbitMQ component is configured using the URI syntax with the following pat
 | portNumber | 5672 | int | *Required* Port number for the host with the running rabbitmq instance or cluster. Default value is 5672.
 | exchangeName |  | String | *Required* The exchange name determines which exchange produced messages will sent to. In the case of consumers the exchange name determines which exchange the queue will bind to.
 |=======================================================================
-{% endraw %}
 
 #### 57 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -125,7 +122,6 @@ The RabbitMQ component is configured using the URI syntax with the following pat
 | trustManager | security |  | TrustManager | Configure SSL trust manager SSL should be enabled for this option to be effective
 | username | security | guest | String | Username in case of authenticated access
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

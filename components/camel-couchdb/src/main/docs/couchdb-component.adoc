@@ -54,7 +54,6 @@ The CouchDB component is configured using the URI syntax with the following path
 
 #### 4 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -63,11 +62,9 @@ The CouchDB component is configured using the URI syntax with the following path
 | port | 5984 | int | Port number for the running couchdb instance
 | database |  | String | *Required* Name of the database to use
 |=======================================================================
-{% endraw %}
 
 #### 12 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -84,7 +81,6 @@ The CouchDB component is configured using the URI syntax with the following path
 | password | security |  | String | Password for authenticated databases
 | username | security |  | String | Username in case of authenticated databases
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 ### Headers

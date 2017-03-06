@@ -56,14 +56,12 @@ The Facebook component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | configuration | advanced |  | FacebookConfiguration | To use the shared configuration
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -77,17 +75,14 @@ The Facebook component is configured using the URI syntax with the following pat
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | methodName |  | String | *Required* What operation to perform
 |=======================================================================
-{% endraw %}
 
 #### 102 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -194,7 +189,6 @@ The Facebook component is configured using the URI syntax with the following pat
 | oAuthAuthorizationURL | security | https://www.facebook.com/dialog/oauth | String | OAuth authorization URL
 | oAuthPermissions | security |  | String | Default OAuth permissions. Comma separated permission names. See https://developers.facebook.com/docs/reference/login/permissions for the detail
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

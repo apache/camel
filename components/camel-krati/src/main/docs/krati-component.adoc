@@ -57,17 +57,14 @@ The Krati component is configured using the URI syntax with the following path a
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | path |  | String | *Required* Path of the datastore is the relative path of the folder that krati will use for its datastore.
 |=======================================================================
-{% endraw %}
 
 #### 29 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -101,7 +98,6 @@ The Krati component is configured using the URI syntax with the following path a
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

@@ -33,17 +33,14 @@ The Browse component is configured using the URI syntax with the following path 
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | name |  | String | *Required* A name which can be any string to uniquely identify the endpoint
 |=======================================================================
-{% endraw %}
 
 #### 4 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -52,7 +49,6 @@ The Browse component is configured using the URI syntax with the following path 
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the default exchange pattern when creating an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

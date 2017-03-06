@@ -41,17 +41,14 @@ The AWS CloudWatch component is configured using the URI syntax with the followi
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | namespace |  | String | *Required* The metric namespace
 |=======================================================================
-{% endraw %}
 
 #### 11 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -67,7 +64,6 @@ The AWS CloudWatch component is configured using the URI syntax with the followi
 | value | producer |  | Double | The metric value
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

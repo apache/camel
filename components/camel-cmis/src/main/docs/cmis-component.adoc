@@ -25,14 +25,12 @@ The CMIS component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | sessionFacadeFactory | common |  | CMISSessionFacadeFactory | To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade instances
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -44,17 +42,14 @@ The CMIS component is configured using the URI syntax with the following path an
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | cmsUrl |  | String | *Required* URL to the cmis repository
 |=======================================================================
-{% endraw %}
 
 #### 13 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -72,7 +67,6 @@ The CMIS component is configured using the URI syntax with the following path an
 | password | security |  | String | Password for the cmis repository
 | username | security |  | String | Username for the cmis repository
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

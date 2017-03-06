@@ -68,17 +68,14 @@ The MongoDB component is configured using the URI syntax with the following path
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | connectionBean |  | String | *Required* Name of com.mongodb.Mongo to use.
 |=======================================================================
-{% endraw %}
 
 #### 19 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -102,7 +99,6 @@ The MongoDB component is configured using the URI syntax with the following path
 | tailTrackField | tail |  | String | Field where the last tracked value will be placed. If not specified link MongoDbTailTrackingConfigDEFAULT_FIELD will be used by default.
 | tailTrackIncreasingField | tail |  | String | Correlation field in the incoming record which is of increasing nature and will be used to position the tailing cursor every time it is generated. The cursor will be (re)created with a query of type: tailTrackIncreasingField lastValue (possibly recovered from persistent tail tracking). Can be of type Integer Date String etc. NOTE: No support for dot notation at the current time so the field should be at the top level of the document.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 Note on options of MoongoDB component 

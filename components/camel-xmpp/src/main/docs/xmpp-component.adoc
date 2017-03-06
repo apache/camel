@@ -49,7 +49,6 @@ The XMPP component is configured using the URI syntax with the following path an
 
 #### 3 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -57,11 +56,9 @@ The XMPP component is configured using the URI syntax with the following path an
 | port |  | int | *Required* Port number for the chat server
 | participant |  | String | JID (Jabber ID) of person to receive messages. room parameter has precedence over participant.
 |=======================================================================
-{% endraw %}
 
 #### 18 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -84,7 +81,6 @@ The XMPP component is configured using the URI syntax with the following path an
 | password | security |  | String | Password for login
 | user | security |  | String | User name (without server name). If not specified anonymous login will be attempted.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

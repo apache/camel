@@ -47,7 +47,6 @@ The Twitter component supports 9 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -61,7 +60,6 @@ The Twitter component supports 9 options which are listed below.
 | httpProxyPort | proxy |  | int | The http proxy port which can be used for the camel-twitter.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -138,17 +136,14 @@ The Twitter component is configured using the URI syntax with the following path
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | kind |  | String | *Required* What polling mode to use direct polling or event based. The event mode is only supported when the endpoint kind is event based.
 |=======================================================================
-{% endraw %}
 
 #### 42 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -195,7 +190,6 @@ The Twitter component is configured using the URI syntax with the following path
 | consumerKey | security |  | String | The consumer key. Can also be configured on the TwitterComponent level instead.
 | consumerSecret | security |  | String | The consumer secret. Can also be configured on the TwitterComponent level instead.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

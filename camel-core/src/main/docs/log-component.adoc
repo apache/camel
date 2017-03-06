@@ -60,14 +60,12 @@ The Log component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | exchangeFormatter | advanced |  | ExchangeFormatter | Sets a custom ExchangeFormatter to convert the Exchange to a String suitable for logging. If not specified we default to DefaultExchangeFormatter.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -80,17 +78,14 @@ The Log component is configured using the URI syntax with the following path and
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | loggerName |  | String | *Required* The logger name to use
 |=======================================================================
-{% endraw %}
 
 #### 25 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -120,7 +115,6 @@ The Log component is configured using the URI syntax with the following path and
 | skipBodyLineSeparator | formatting | true | boolean | Whether to skip line separators when logging the message body. This allows to log the message body in one line setting this option to false will preserve any line separators from the body which then will log the body as is.
 | style | formatting | Default | OutputStyle | Sets the outputs style to use.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

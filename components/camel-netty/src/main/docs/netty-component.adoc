@@ -60,7 +60,6 @@ The Netty component supports 3 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -68,7 +67,6 @@ The Netty component supports 3 options which are listed below.
 | maximumPoolSize | advanced | 16 | int | The core pool size for the ordered thread pool if its in use. The default value is 16.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -85,7 +83,6 @@ The Netty component is configured using the URI syntax with the following path a
 
 #### 3 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -93,11 +90,9 @@ The Netty component is configured using the URI syntax with the following path a
 | host |  | String | *Required* The hostname. For the consumer the hostname is localhost or 0.0.0.0 For the producer the hostname is the remote host to connect to
 | port |  | int | *Required* The host port number
 |=======================================================================
-{% endraw %}
 
 #### 67 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -169,7 +164,6 @@ The Netty component is configured using the URI syntax with the following path a
 | trustStoreFile | security |  | File | Server side certificate keystore to be used for encryption
 | trustStoreResource | security |  | String | Server side certificate keystore to be used for encryption. Is loaded by default from classpath but you can prefix with classpath: file: or http: to load the resource from different systems.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

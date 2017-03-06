@@ -55,18 +55,15 @@ The SNMP component is configured using the URI syntax with the following path an
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | host |  | String | *Required* Hostname of the SNMP enabled device
 | port |  | Integer | *Required* Port number of the SNMP enabled device
 |=======================================================================
-{% endraw %}
 
 #### 34 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -105,7 +102,6 @@ The SNMP component is configured using the URI syntax with the following path an
 | securityLevel | security | 3 | int | Sets the security level for this target. The supplied security level must be supported by the security model dependent information associated with the security name set for this target. The value 1 means: No authentication and no encryption. Anyone can create and read messages with this security level The value 2 means: Authentication and no encryption. Only the one with the right authentication key can create messages with this security level but anyone can read the contents of the message. The value 3 means: Authentication and encryption. Only the one with the right authentication key can create messages with this security level and only the one with the right encryption/decryption key can read the contents of the message.
 | securityName | security |  | String | Sets the security name to be used with this target.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 ### The result of a poll

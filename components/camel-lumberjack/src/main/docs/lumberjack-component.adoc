@@ -41,14 +41,12 @@ The Lumberjack component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | sslContextParameters | security |  | SSLContextParameters | Sets the default SSL configuration to use for all the endpoints. You can also configure it directly at the endpoint level.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -64,18 +62,15 @@ The Lumberjack component is configured using the URI syntax with the following p
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | host |  | String | *Required* Network interface on which to listen for Lumberjack
 | port | 5044 | int | Network port on which to listen for Lumberjack
 |=======================================================================
-{% endraw %}
 
 #### 5 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -85,7 +80,6 @@ The Lumberjack component is configured using the URI syntax with the following p
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

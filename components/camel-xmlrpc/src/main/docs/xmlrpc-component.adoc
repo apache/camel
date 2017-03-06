@@ -107,17 +107,14 @@ The XML RPC component is configured using the URI syntax with the following path
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | address |  | String | *Required* The server url
 |=======================================================================
-{% endraw %}
 
 #### 18 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -140,7 +137,6 @@ The XML RPC component is configured using the URI syntax with the following path
 | basicPassword | security |  | String | The password for basic authentication.
 | basicUserName | security |  | String | The user name for basic authentication.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

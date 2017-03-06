@@ -67,14 +67,12 @@ The SQL StoredProcedure component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | dataSource | producer |  | DataSource | Sets the DataSource to use to communicate with the database.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -87,17 +85,14 @@ The SQL StoredProcedure component is configured using the URI syntax with the fo
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | template |  | String | *Required* Sets the StoredProcedure template to perform
 |=======================================================================
-{% endraw %}
 
 #### 6 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -108,7 +103,6 @@ The SQL StoredProcedure component is configured using the URI syntax with the fo
 | useMessageBodyForTemplate | producer | false | boolean | Whether to use the message body as the template and then headers for parameters. If this option is enabled then the template in the uri is not used.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

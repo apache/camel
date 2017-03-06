@@ -42,14 +42,12 @@ The JT400 component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | connectionPool | advanced |  | AS400ConnectionPool | Returns the default connection pool used by this component.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -60,7 +58,6 @@ The JT400 component is configured using the URI syntax with the following path a
 
 #### 5 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -70,11 +67,9 @@ The JT400 component is configured using the URI syntax with the following path a
 | objectPath |  | String | *Required* Returns the fully qualified integrated file system path name of the target object of this endpoint.
 | type |  | Jt400Type | *Required* Whether to work with data queues or remote program call
 |=======================================================================
-{% endraw %}
 
 #### 29 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -108,7 +103,6 @@ The JT400 component is configured using the URI syntax with the following path a
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 | secured | security | false | boolean | Whether connections to AS/400 are secured with SSL.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

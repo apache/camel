@@ -50,17 +50,14 @@ The Consul component is configured using the URI syntax with the following path 
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | apiEndpoint |  | String | *Required* The API endpoint
 |=======================================================================
-{% endraw %}
 
 #### 21 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -86,7 +83,6 @@ The Consul component is configured using the URI syntax with the following path 
 | sslContextParameters | security |  | SSLContextParameters | SSL configuration using an org.apache.camel.util.jsse.SSLContextParameters instance.
 | userName | security |  | String | Sets the username to be used for basic authentication
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

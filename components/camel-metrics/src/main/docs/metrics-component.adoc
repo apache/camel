@@ -48,14 +48,12 @@ The Metrics component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | metricRegistry | advanced |  | MetricRegistry | To use a custom configured MetricRegistry.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -66,18 +64,15 @@ The Metrics component is configured using the URI syntax with the following path
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | metricsType |  | MetricsType | *Required* Type of metrics
 | metricsName |  | String | *Required* Name of metrics
 |=======================================================================
-{% endraw %}
 
 #### 7 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -89,7 +84,6 @@ The Metrics component is configured using the URI syntax with the following path
 | value | producer |  | Long | Value value when using histogram type
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

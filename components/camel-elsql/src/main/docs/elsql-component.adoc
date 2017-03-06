@@ -53,7 +53,6 @@ The ElSQL component supports 5 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -63,7 +62,6 @@ The ElSQL component supports 5 options which are listed below.
 | resourceUri | common |  | String | The resource file which contains the elsql SQL statements to use. You can specify multiple resources separated by comma. The resources are loaded on the classpath by default you can prefix with file: to load from file system. Notice you can set this option on the component and then you do not have to configure this on the endpoint.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 // endpoint options: START
@@ -73,18 +71,15 @@ The ElSQL component is configured using the URI syntax with the following path a
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | elsqlName |  | String | *Required* The name of the elsql to use (is NAMED in the elsql file)
 | resourceUri |  | String | The resource file which contains the elsql SQL statements to use. You can specify multiple resources separated by comma. The resources are loaded on the classpath by default you can prefix with file: to load from file system. Notice you can set this option on the component and then you do not have to configure this on the endpoint.
 |=======================================================================
-{% endraw %}
 
 #### 47 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -136,7 +131,6 @@ The ElSQL component is configured using the URI syntax with the following path a
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 ### Result of the query

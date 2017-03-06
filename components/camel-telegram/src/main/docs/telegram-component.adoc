@@ -47,14 +47,12 @@ The Telegram component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | authorizationToken | security |  | String | The default Telegram authorization token to be used when the information is not provided in the endpoints.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -66,18 +64,15 @@ The Telegram component is configured using the URI syntax with the following pat
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | type |  | String | *Required* The endpoint type. Currently only the 'bots' type is supported.
 | authorizationToken |  | String | *Required* The authorization token for using the bot (ask the BotFather) eg. 654321531:HGF_dTra456323dHuOedsE343211fqr3t-H.
 |=======================================================================
-{% endraw %}
 
 #### 22 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -104,7 +99,6 @@ The Telegram component is configured using the URI syntax with the following pat
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

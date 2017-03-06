@@ -45,14 +45,12 @@ The ZooKeeper component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | configuration | advanced |  | ZooKeeperConfiguration | To use a shared ZooKeeperConfiguration
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 // endpoint options: START
@@ -62,18 +60,15 @@ The ZooKeeper component is configured using the URI syntax with the following pa
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | serverUrls |  | String | *Required* The zookeeper server hosts (multiple servers can be separated by comma)
 | path |  | String | *Required* The node in the ZooKeeper server (aka znode)
 |=======================================================================
-{% endraw %}
 
 #### 12 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -90,7 +85,6 @@ The ZooKeeper component is configured using the URI syntax with the following pa
 | createMode | producer | EPHEMERAL | String | The create mode that should be used for the newly created node
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

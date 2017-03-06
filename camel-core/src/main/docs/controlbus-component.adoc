@@ -74,18 +74,15 @@ The Control Bus component is configured using the URI syntax with the following 
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | command |  | String | *Required* Command can be either route or language
 | language |  | Language | Allows you to specify the name of a Language to use for evaluating the message body. If there is any result from the evaluation then the result is put in the message body.
 |=======================================================================
-{% endraw %}
 
 #### 5 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -95,7 +92,6 @@ The Control Bus component is configured using the URI syntax with the following 
 | routeId | producer |  | String | To specify a route by its id. The special keyword current indicates the current route.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

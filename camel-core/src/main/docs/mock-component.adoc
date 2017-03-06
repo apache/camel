@@ -99,17 +99,14 @@ The Mock component is configured using the URI syntax with the following path an
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | name |  | String | *Required* Name of mock endpoint
 |=======================================================================
-{% endraw %}
 
 #### 10 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -124,7 +121,6 @@ The Mock component is configured using the URI syntax with the following path an
 | copyOnExchange | producer (advanced) | true | boolean | Sets whether to make a deep copy of the incoming Exchange when received at this mock endpoint. Is by default true.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

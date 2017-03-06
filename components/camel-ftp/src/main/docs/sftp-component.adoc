@@ -36,7 +36,6 @@ The SFTP component is configured using the URI syntax with the following path an
 
 #### 3 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -44,11 +43,9 @@ The SFTP component is configured using the URI syntax with the following path an
 | port |  | int | Port of the FTP server
 | directoryName |  | String | The starting directory
 |=======================================================================
-{% endraw %}
 
 #### 109 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -162,5 +159,4 @@ The SFTP component is configured using the URI syntax with the following path an
 | username | security |  | String | Username to use for login
 | useUserKnownHostsFile | security | true | boolean | If knownHostFile has not been explicit configured then use the host file from System.getProperty(user.home)/.ssh/known_hosts
 |=======================================================================
-{% endraw %}
 // endpoint options: END

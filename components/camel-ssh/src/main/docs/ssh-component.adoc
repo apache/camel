@@ -34,7 +34,6 @@ The SSH component supports 12 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -51,7 +50,6 @@ The SSH component supports 12 options which are listed below.
 | certResource | security |  | String | Sets the resource path of the certificate to use for Authentication. Will use ResourceHelperKeyPairProvider to resolve file based certificate and depends on keyType setting.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -64,18 +62,15 @@ The SSH component is configured using the URI syntax with the following path and
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | host |  | String | *Required* Sets the hostname of the remote SSH server.
 | port | 22 | int | Sets the port number for the remote SSH server.
 |=======================================================================
-{% endraw %}
 
 #### 26 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -106,7 +101,6 @@ The SSH component is configured using the URI syntax with the following path and
 | password | security |  | String | Sets the password to use in connecting to remote SSH server. Requires keyPairProvider to be set to null.
 | username | security |  | String | Sets the username to use in logging into the remote SSH server.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

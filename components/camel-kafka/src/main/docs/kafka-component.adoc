@@ -38,7 +38,6 @@ The Kafka component supports 3 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -46,7 +45,6 @@ The Kafka component supports 3 options which are listed below.
 | workerPool | advanced |  | ExecutorService | To use a shared custom worker pool for continue routing Exchange after kafka server has acknowledge the message that was sent to it from KafkaProducer using asynchronous non-blocking processing. If using this option then you must handle the lifecycle of the thread pool to shut the pool down when no longer needed.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -58,17 +56,14 @@ The Kafka component is configured using the URI syntax with the following path a
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | topic |  | String | *Required* Name of the topic to use.
 |=======================================================================
-{% endraw %}
 
 #### 82 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -155,7 +150,6 @@ The Kafka component is configured using the URI syntax with the following path a
 | sslTruststorePassword | security |  | String | The password for the trust store file.
 | sslTruststoreType | security | JKS | String | The file format of the trust store file. Default value is JKS.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 For more information about Producer/Consumer configuration:

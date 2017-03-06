@@ -39,18 +39,15 @@ The Couchbase component is configured using the URI syntax with the following pa
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | protocol |  | String | *Required* The protocol to use
 | hostname |  | String | *Required* The hostname to use
 |=======================================================================
-{% endraw %}
 
 #### 48 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -103,5 +100,4 @@ The Couchbase component is configured using the URI syntax with the following pa
 | password | security |  | String | The password to use
 | username | security |  | String | The username to use
 |=======================================================================
-{% endraw %}
 // endpoint options: END

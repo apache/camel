@@ -66,17 +66,14 @@ The Dozer component is configured using the URI syntax with the following path a
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | name |  | String | *Required* A human readable name of the mapping.
 |=======================================================================
-{% endraw %}
 
 #### 7 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -88,7 +85,6 @@ The Dozer component is configured using the URI syntax with the following path a
 | unmarshalId | producer |  | String | The id of a dataFormat defined within the Camel Context to use for unmarshalling the mapping input from a non-Java type.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 ### Using Data Formats with Dozer
