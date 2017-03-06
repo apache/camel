@@ -26,11 +26,13 @@ The Binding component has no options.
 
 
 // endpoint options: START
-The Binding component is configured using the URI syntax with the following path and query parameters:
+The Binding endpoint is configured using URI syntax:
 
     binding:bindingName:delegateUri
 
-#### 2 path parameters:
+  with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -39,7 +41,7 @@ The Binding component is configured using the URI syntax with the following path
 | delegateUri |  | String | *Required* Uri of the delegate endpoint.
 |=======================================================================
 
-#### 4 query parameters:
+#### Query Parameters (4 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

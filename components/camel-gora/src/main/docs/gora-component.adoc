@@ -83,9 +83,11 @@ The Gora component has no options.
 
 
 // endpoint options: START
-The Gora component is configured using the URI syntax with the following path and query parameters:
+The Gora endpoint is configured using URI syntax:
 
     gora:name
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

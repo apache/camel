@@ -72,9 +72,11 @@ The Quartz2 component supports 11 options which are listed below.
 
 
 // endpoint options: START
-The Quartz2 component is configured using the URI syntax with the following path and query parameters:
+The Quartz2 endpoint is configured using URI syntax:
 
     quartz2:groupName/triggerName
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

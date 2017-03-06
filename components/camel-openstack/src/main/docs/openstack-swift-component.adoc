@@ -39,9 +39,11 @@ The OpenStack Swift component has no options.
 // component options: END
 
 // endpoint options: START
-The OpenStack Swift component is configured using the URI syntax with the following path and query parameters:
+The OpenStack Swift endpoint is configured using URI syntax:
 
     openstack-swift:host
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

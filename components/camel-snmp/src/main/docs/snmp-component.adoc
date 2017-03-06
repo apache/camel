@@ -49,9 +49,11 @@ The SNMP component has no options.
 
 
 // endpoint options: START
-The SNMP component is configured using the URI syntax with the following path and query parameters:
+The SNMP endpoint is configured using URI syntax:
 
     snmp:host:port
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

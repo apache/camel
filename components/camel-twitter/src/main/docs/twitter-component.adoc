@@ -130,9 +130,11 @@ Removed from Camel 2.11 onwards.*
 
 
 // endpoint options: START
-The Twitter component is configured using the URI syntax with the following path and query parameters:
+The Twitter endpoint is configured using URI syntax:
 
     twitter:kind
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

@@ -62,9 +62,11 @@ The SCP component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The SCP component is configured using the URI syntax with the following path and query parameters:
+The SCP endpoint is configured using URI syntax:
 
     scp:host:port/directoryName
+
+  with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

@@ -77,11 +77,13 @@ The VM component supports 4 options which are listed below.
 
 
 // endpoint options: START
-The VM component is configured using the URI syntax with the following path and query parameters:
+The VM endpoint is configured using URI syntax:
 
     vm:name
 
-#### 1 path parameters:
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -89,7 +91,7 @@ The VM component is configured using the URI syntax with the following path and 
 | name |  | String | *Required* Name of queue
 |=======================================================================
 
-#### 16 query parameters:
+#### Query Parameters (16 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

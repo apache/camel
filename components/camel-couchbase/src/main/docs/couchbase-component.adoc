@@ -33,9 +33,11 @@ The Couchbase component has no options.
 // component options: END
 
 // endpoint options: START
-The Couchbase component is configured using the URI syntax with the following path and query parameters:
+The Couchbase endpoint is configured using URI syntax:
 
     couchbase:url
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

@@ -61,9 +61,11 @@ The Servlet component supports 8 options which are listed below.
 // component options: END
 
 // endpoint options: START
-The Servlet component is configured using the URI syntax with the following path and query parameters:
+The Servlet endpoint is configured using URI syntax:
 
     servlet:contextPath
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

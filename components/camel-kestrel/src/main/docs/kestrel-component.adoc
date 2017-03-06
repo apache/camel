@@ -85,9 +85,11 @@ The Kestrel component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Kestrel component is configured using the URI syntax with the following path and query parameters:
+The Kestrel endpoint is configured using URI syntax:
 
     kestrel:addresses/queue
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

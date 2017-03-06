@@ -58,11 +58,13 @@ The Test component has no options.
 
 
 // endpoint options: START
-The Test component is configured using the URI syntax with the following path and query parameters:
+The Test endpoint is configured using URI syntax:
 
     test:name
 
-#### 1 path parameters:
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -70,7 +72,7 @@ The Test component is configured using the URI syntax with the following path an
 | name |  | String | *Required* Name of endpoint to lookup in the registry to use for polling messages used for testing
 |=======================================================================
 
-#### 14 query parameters:
+#### Query Parameters (14 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

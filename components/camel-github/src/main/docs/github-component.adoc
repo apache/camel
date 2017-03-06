@@ -51,9 +51,11 @@ The GitHub component has no options.
 
 
 // endpoint options: START
-The GitHub component is configured using the URI syntax with the following path and query parameters:
+The GitHub endpoint is configured using URI syntax:
 
     github:type/branchName
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

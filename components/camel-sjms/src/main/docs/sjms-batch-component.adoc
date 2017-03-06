@@ -134,9 +134,11 @@ The Simple JMS Batch component supports 5 options which are listed below.
 
 
 // endpoint options: START
-The Simple JMS Batch component is configured using the URI syntax with the following path and query parameters:
+The Simple JMS Batch endpoint is configured using URI syntax:
 
     sjms-batch:destinationName
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

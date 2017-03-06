@@ -39,9 +39,11 @@ The Elasticsearch5 component has no options.
 
 
 // endpoint options: START
-The Elasticsearch5 component is configured using the URI syntax with the following path and query parameters:
+The Elasticsearch5 endpoint is configured using URI syntax:
 
     elasticsearch5:clusterName
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

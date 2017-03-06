@@ -68,9 +68,11 @@ The Google Pubsub component supports 2 options which are listed below.
 // component options: END
 
 // endpoint options: START
-The Google Pubsub component is configured using the URI syntax with the following path and query parameters:
+The Google Pubsub endpoint is configured using URI syntax:
 
     google-pubsub:projectId:destinationName
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

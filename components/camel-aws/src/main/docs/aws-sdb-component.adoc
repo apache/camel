@@ -32,9 +32,11 @@ The AWS SimpleDB component has no options.
 
 
 // endpoint options: START
-The AWS SimpleDB component is configured using the URI syntax with the following path and query parameters:
+The AWS SimpleDB endpoint is configured using URI syntax:
 
     aws-sdb:domainName
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

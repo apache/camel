@@ -32,9 +32,11 @@ The AWS Simple Workflow component has no options.
 
 
 // endpoint options: START
-The AWS Simple Workflow component is configured using the URI syntax with the following path and query parameters:
+The AWS Simple Workflow endpoint is configured using URI syntax:
 
     aws-swf:type
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

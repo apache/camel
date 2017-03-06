@@ -70,9 +70,11 @@ The CXF-RS component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The CXF-RS component is configured using the URI syntax with the following path and query parameters:
+The CXF-RS endpoint is configured using URI syntax:
 
     cxfrs:beanId:address
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

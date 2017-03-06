@@ -41,9 +41,11 @@ The Spring Event component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Spring Event component is configured using the URI syntax with the following path and query parameters:
+The Spring Event endpoint is configured using URI syntax:
 
     spring-event:name
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

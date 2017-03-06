@@ -44,9 +44,11 @@ The IRC component has no options.
 
 
 // endpoint options: START
-The IRC component is configured using the URI syntax with the following path and query parameters:
+The IRC endpoint is configured using URI syntax:
 
     irc:hostname:port
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

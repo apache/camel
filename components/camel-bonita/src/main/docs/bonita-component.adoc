@@ -21,9 +21,11 @@ The Bonita component has no options.
 
 
 // endpoint options: START
-The Bonita component is configured using the URI syntax with the following path and query parameters:
+The Bonita endpoint is configured using URI syntax:
 
     bonita:operation
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

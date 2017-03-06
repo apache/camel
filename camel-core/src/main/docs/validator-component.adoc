@@ -66,11 +66,13 @@ The Validator component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Validator component is configured using the URI syntax with the following path and query parameters:
+The Validator endpoint is configured using URI syntax:
 
     validator:resourceUri
 
-#### 1 path parameters:
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -78,7 +80,7 @@ The Validator component is configured using the URI syntax with the following pa
 | resourceUri |  | String | *Required* URL to a local resource on the classpathor a reference to lookup a bean in the Registry or a full URL to a remote resource or resource on the file system which contains the XSD to validate against.
 |=======================================================================
 
-#### 11 query parameters:
+#### Query Parameters (11 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

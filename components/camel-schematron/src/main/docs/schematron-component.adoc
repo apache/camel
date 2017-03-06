@@ -36,9 +36,11 @@ The Schematron component has no options.
 
 
 // endpoint options: START
-The Schematron component is configured using the URI syntax with the following path and query parameters:
+The Schematron endpoint is configured using URI syntax:
 
     schematron:path
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

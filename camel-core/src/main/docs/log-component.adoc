@@ -72,11 +72,13 @@ The Log component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Log component is configured using the URI syntax with the following path and query parameters:
+The Log endpoint is configured using URI syntax:
 
     log:loggerName
 
-#### 1 path parameters:
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -84,7 +86,7 @@ The Log component is configured using the URI syntax with the following path and
 | loggerName |  | String | *Required* The logger name to use
 |=======================================================================
 
-#### 25 query parameters:
+#### Query Parameters (25 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

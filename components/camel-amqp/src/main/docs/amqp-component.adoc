@@ -131,9 +131,11 @@ The AMQP component supports 76 options which are listed below.
 
 
 // endpoint options: START
-The AMQP component is configured using the URI syntax with the following path and query parameters:
+The AMQP endpoint is configured using URI syntax:
 
     amqp:destinationType:destinationName
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

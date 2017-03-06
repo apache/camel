@@ -93,11 +93,13 @@ The Mock component has no options.
 
 
 // endpoint options: START
-The Mock component is configured using the URI syntax with the following path and query parameters:
+The Mock endpoint is configured using URI syntax:
 
     mock:name
 
-#### 1 path parameters:
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -105,7 +107,7 @@ The Mock component is configured using the URI syntax with the following path an
 | name |  | String | *Required* Name of mock endpoint
 |=======================================================================
 
-#### 10 query parameters:
+#### Query Parameters (10 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

@@ -27,11 +27,13 @@ The Class component has no options.
 
 
 // endpoint options: START
-The Class component is configured using the URI syntax with the following path and query parameters:
+The Class endpoint is configured using URI syntax:
 
     class:beanName
 
-#### 1 path parameters:
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -39,7 +41,7 @@ The Class component is configured using the URI syntax with the following path a
 | beanName |  | String | *Required* Sets the name of the bean to invoke
 |=======================================================================
 
-#### 5 query parameters:
+#### Query Parameters (5 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

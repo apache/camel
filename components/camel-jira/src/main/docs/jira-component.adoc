@@ -49,9 +49,11 @@ The JIRA component has no options.
 
 
 // endpoint options: START
-The JIRA component is configured using the URI syntax with the following path and query parameters:
+The JIRA endpoint is configured using URI syntax:
 
     jira:type
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

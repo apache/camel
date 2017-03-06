@@ -33,9 +33,11 @@ The Asterisk component has no options.
 // component options: END
 
 // endpoint options: START
-The Asterisk component is configured using the URI syntax with the following path and query parameters:
+The Asterisk endpoint is configured using URI syntax:
 
     asterisk:name
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

@@ -88,11 +88,13 @@ The XSLT component supports 9 options which are listed below.
 
 
 // endpoint options: START
-The XSLT component is configured using the URI syntax with the following path and query parameters:
+The XSLT endpoint is configured using URI syntax:
 
     xslt:resourceUri
 
-#### 1 path parameters:
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -100,7 +102,7 @@ The XSLT component is configured using the URI syntax with the following path an
 | resourceUri |  | String | *Required* The name of the template to load from classpath or file system
 |=======================================================================
 
-#### 17 query parameters:
+#### Query Parameters (17 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

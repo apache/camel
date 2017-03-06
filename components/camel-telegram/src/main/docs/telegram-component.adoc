@@ -58,9 +58,11 @@ The Telegram component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Telegram component is configured using the URI syntax with the following path and query parameters:
+The Telegram endpoint is configured using URI syntax:
 
     telegram:type/authorizationToken
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

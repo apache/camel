@@ -44,11 +44,13 @@ The Stub component supports 4 options which are listed below.
 
 
 // endpoint options: START
-The Stub component is configured using the URI syntax with the following path and query parameters:
+The Stub endpoint is configured using URI syntax:
 
     stub:name
 
-#### 1 path parameters:
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -56,7 +58,7 @@ The Stub component is configured using the URI syntax with the following path an
 | name |  | String | *Required* Name of queue
 |=======================================================================
 
-#### 16 query parameters:
+#### Query Parameters (16 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

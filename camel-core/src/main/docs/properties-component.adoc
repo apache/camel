@@ -43,11 +43,13 @@ The Properties component supports 17 options which are listed below.
 
 
 // endpoint options: START
-The Properties component is configured using the URI syntax with the following path and query parameters:
+The Properties endpoint is configured using URI syntax:
 
     properties:key
 
-#### 1 path parameters:
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -55,7 +57,7 @@ The Properties component is configured using the URI syntax with the following p
 | key |  | String | *Required* Property key to use as placeholder
 |=======================================================================
 
-#### 6 query parameters:
+#### Query Parameters (6 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

@@ -43,9 +43,11 @@ The Kubernetes component has no options.
 
 
 // endpoint options: START
-The Kubernetes component is configured using the URI syntax with the following path and query parameters:
+The Kubernetes endpoint is configured using URI syntax:
 
     kubernetes:masterUrl
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

@@ -40,9 +40,11 @@ The Spring LDAP component has no options.
 
 
 // endpoint options: START
-The Spring LDAP component is configured using the URI syntax with the following path and query parameters:
+The Spring LDAP endpoint is configured using URI syntax:
 
     spring-ldap:templateName
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

@@ -56,9 +56,11 @@ The SSH component supports 12 options which are listed below.
 
 
 // endpoint options: START
-The SSH component is configured using the URI syntax with the following path and query parameters:
+The SSH endpoint is configured using URI syntax:
 
     ssh:host:port
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

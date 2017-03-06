@@ -48,9 +48,11 @@ The JCR component has no options.
 
 
 // endpoint options: START
-The JCR component is configured using the URI syntax with the following path and query parameters:
+The JCR endpoint is configured using URI syntax:
 
     jcr:host/base
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

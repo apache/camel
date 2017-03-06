@@ -185,9 +185,11 @@ The SMPP component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The SMPP component is configured using the URI syntax with the following path and query parameters:
+The SMPP endpoint is configured using URI syntax:
 
     smpp:host:port
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

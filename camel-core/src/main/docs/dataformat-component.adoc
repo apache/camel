@@ -28,11 +28,13 @@ The Data Format component has no options.
 
 
 // endpoint options: START
-The Data Format component is configured using the URI syntax with the following path and query parameters:
+The Data Format endpoint is configured using URI syntax:
 
     dataformat:name:operation
 
-#### 2 path parameters:
+  with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -41,7 +43,7 @@ The Data Format component is configured using the URI syntax with the following 
 | operation |  | String | *Required* Operation to use either marshal or unmarshal
 |=======================================================================
 
-#### 1 query parameters:
+#### Query Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

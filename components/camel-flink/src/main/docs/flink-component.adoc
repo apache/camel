@@ -39,9 +39,11 @@ FlinkEndpoint Options
 
 
 // endpoint options: START
-The Apache Flink component is configured using the URI syntax with the following path and query parameters:
+The Apache Flink endpoint is configured using URI syntax:
 
     flink:endpointType
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

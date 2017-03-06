@@ -46,9 +46,11 @@ The OSGi EventAdmin component supports 2 options which are listed below.
 // component options: END
 
 // endpoint options: START
-The OSGi EventAdmin component is configured using the URI syntax with the following path and query parameters:
+The OSGi EventAdmin endpoint is configured using URI syntax:
 
     eventadmin:topic
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

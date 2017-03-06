@@ -35,9 +35,11 @@ The AWS CloudWatch component has no options.
 
 
 // endpoint options: START
-The AWS CloudWatch component is configured using the URI syntax with the following path and query parameters:
+The AWS CloudWatch endpoint is configured using URI syntax:
 
     aws-cw:namespace
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

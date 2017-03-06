@@ -84,9 +84,11 @@ The Mina component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Mina component is configured using the URI syntax with the following path and query parameters:
+The Mina endpoint is configured using URI syntax:
 
     mina:protocol:host:port
+
+  with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

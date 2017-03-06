@@ -36,9 +36,11 @@ The AWS Kinesis component has no options.
 
 
 // endpoint options: START
-The AWS Kinesis component is configured using the URI syntax with the following path and query parameters:
+The AWS Kinesis endpoint is configured using URI syntax:
 
     aws-kinesis:streamName
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

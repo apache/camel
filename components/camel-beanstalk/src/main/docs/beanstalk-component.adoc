@@ -73,9 +73,11 @@ The Beanstalk component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Beanstalk component is configured using the URI syntax with the following path and query parameters:
+The Beanstalk endpoint is configured using URI syntax:
 
     beanstalk:connectionSettings
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

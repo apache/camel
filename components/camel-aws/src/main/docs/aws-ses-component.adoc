@@ -32,9 +32,11 @@ The AWS Simple Email Service component has no options.
 
 
 // endpoint options: START
-The AWS Simple Email Service component is configured using the URI syntax with the following path and query parameters:
+The AWS Simple Email Service endpoint is configured using URI syntax:
 
     aws-ses:from
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

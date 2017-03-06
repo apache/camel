@@ -44,9 +44,11 @@ You can append query options to the URI in the following format,
 
 
 // endpoint options: START
-The AHC component is configured using the URI syntax with the following path and query parameters:
+The AHC endpoint is configured using URI syntax:
 
     ahc:httpUri
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

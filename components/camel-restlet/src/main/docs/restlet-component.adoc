@@ -97,9 +97,11 @@ The Restlet component supports 21 options which are listed below.
 
 
 // endpoint options: START
-The Restlet component is configured using the URI syntax with the following path and query parameters:
+The Restlet endpoint is configured using URI syntax:
 
     restlet:protocol:host:port/uriPattern
+
+  with the following path and query parameters:
 
 #### Path Parameters (4 parameters):
 

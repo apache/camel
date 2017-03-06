@@ -35,9 +35,11 @@ The Spring Redis component has no options.
 
 
 // endpoint options: START
-The Spring Redis component is configured using the URI syntax with the following path and query parameters:
+The Spring Redis endpoint is configured using URI syntax:
 
     spring-redis:host:port
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

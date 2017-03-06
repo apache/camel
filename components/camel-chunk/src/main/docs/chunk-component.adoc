@@ -42,9 +42,11 @@ The Chunk component has no options.
 
 
 // endpoint options: START
-The Chunk component is configured using the URI syntax with the following path and query parameters:
+The Chunk endpoint is configured using URI syntax:
 
     chunk:resourceUri
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

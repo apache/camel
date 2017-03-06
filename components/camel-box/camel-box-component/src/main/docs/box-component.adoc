@@ -60,9 +60,11 @@ The Box component supports 2 options which are listed below.
 // component options: END
 
 // endpoint options: START
-The Box component is configured using the URI syntax with the following path and query parameters:
+The Box endpoint is configured using URI syntax:
 
     box:apiName/methodName
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

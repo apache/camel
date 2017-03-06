@@ -135,9 +135,11 @@ The Paho component supports 4 options which are listed below.
 
 
 // endpoint options: START
-The Paho component is configured using the URI syntax with the following path and query parameters:
+The Paho endpoint is configured using URI syntax:
 
     paho:topic
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

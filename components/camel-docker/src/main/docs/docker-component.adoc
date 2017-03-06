@@ -36,9 +36,11 @@ The Docker component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Docker component is configured using the URI syntax with the following path and query parameters:
+The Docker endpoint is configured using URI syntax:
 
     docker:operation
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

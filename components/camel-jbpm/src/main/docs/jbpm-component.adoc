@@ -38,9 +38,11 @@ The JBPM component has no options.
 
 
 // endpoint options: START
-The JBPM component is configured using the URI syntax with the following path and query parameters:
+The JBPM endpoint is configured using URI syntax:
 
     jbpm:connectionURL
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

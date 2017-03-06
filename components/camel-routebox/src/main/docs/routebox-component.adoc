@@ -105,9 +105,11 @@ The RouteBox component has no options.
 
 
 // endpoint options: START
-The RouteBox component is configured using the URI syntax with the following path and query parameters:
+The RouteBox endpoint is configured using URI syntax:
 
     routebox:routeboxName
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

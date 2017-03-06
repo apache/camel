@@ -62,9 +62,11 @@ The AHC Websocket component supports 7 options which are listed below.
 
 
 // endpoint options: START
-The AHC Websocket component is configured using the URI syntax with the following path and query parameters:
+The AHC Websocket endpoint is configured using URI syntax:
 
     ahc-ws:httpUri
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
