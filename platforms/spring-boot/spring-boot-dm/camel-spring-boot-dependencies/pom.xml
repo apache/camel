@@ -1009,11 +1009,6 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-groovy-dsl</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
         <artifactId>camel-groovy-starter</artifactId>
         <version>${project.version}</version>
       </dependency>

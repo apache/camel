@@ -98,9 +98,6 @@ Number of Components: 220 in 175 JAR artifacts
 | link:camel-box/src/main/docs/box-component.adoc[Box] (camel-box) +
 `box:apiName/methodName` | 2.14 | For uploading downloading and managing files folders groups collaborations etc on box DOT com.
 
-| link:camel-box2/src/main/docs/box2-component.adoc[Box] (camel-box2) +
-`box2:apiName/methodName` | 2.19 | For uploading downloading and managing files folders groups collaborations etc on box DOT com.
-
 | link:camel-braintree/src/main/docs/braintree-component.adoc[Braintree] (camel-braintree) +
 `braintree:apiName/methodName` | 2.17 | The braintree component is used for integrating with the Braintree Payment System.
 
@@ -843,7 +840,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 36 in 36 JAR artifacts
+Number of Miscellaneous Components: 37 in 37 JAR artifacts
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -852,6 +849,8 @@ Number of Miscellaneous Components: 36 in 36 JAR artifacts
 | link:camel-bam/src/main/docs/bam.adoc[BAM] (camel-bam) | 1.0 | *deprecated* Business Activity Monitoring
 
 | link:camel-blueprint/src/main/docs/blueprint.adoc[Blueprint] (camel-blueprint) | 2.4 | Using Camel with OSGi Blueprint
+
+| link:camel-box2-parent/src/main/docs/box2-parent.adoc[Box2 Parent] (camel-box2-parent) |  | Parent project for Camel {Box2} Component
 
 | link:camel-cdi/src/main/docs/cdi.adoc[CDI] (camel-cdi) | 2.10 | Using Camel with CDI
 
