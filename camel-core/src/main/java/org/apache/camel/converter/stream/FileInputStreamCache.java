@@ -108,6 +108,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                 long i = fc.transferTo(pos, len - pos, out);
                 pos += i;
             }
+            fc.close();
             s.close();
             fc.close();
         } else {
