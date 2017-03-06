@@ -116,6 +116,10 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         return false;
     }
 
+    public String getCmdExecFactory() {
+        return DockerConstants.DEFAULT_CMD_EXEC_FACTORY;
+    }
+
     public T getMockObject() {
         return mockObject;
     }
@@ -131,7 +135,7 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         parameters.put(DockerConstants.DOCKER_SECURE, isSecure());
         parameters.put(DockerConstants.DOCKER_TLSVERIFY, isTlsVerify());
         parameters.put(DockerConstants.DOCKER_SOCKET_ENABLED, isSocket());
-
+        parameters.put(DockerConstants.DOCKER_CMD_EXEC_FACTORY, getCmdExecFactory());
         return parameters;
     }
 
@@ -146,6 +150,7 @@ public abstract class BaseDockerHeaderTest<T> extends CamelTestSupport {
         clientProfile.setSecure(isSecure());
         clientProfile.setTlsVerify(isTlsVerify());
         clientProfile.setSocket(isSocket());
+        clientProfile.setCmdExecFactory(getCmdExecFactory());
 
         return clientProfile;
 

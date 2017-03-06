@@ -48,7 +48,7 @@ The Docker component is configured using the URI syntax with the following path 
 | operation |  | DockerOperation | *Required* Which operation to use
 |=======================================================================
 
-#### Query Parameters (19 parameters):
+#### Query Parameters (20 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
@@ -60,6 +60,7 @@ The Docker component is configured using the URI syntax with the following path 
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| cmdExecFactory | advanced | com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory | String | The fully qualified class name of the DockerCmdExecFactory implementation to use
 | followRedirectFilter | advanced | false | boolean | Whether to follow redirect filter
 | loggingFilter | advanced | false | boolean | Whether to use logging filter
 | maxPerRouteConnections | advanced | 100 | Integer | Maximum route connections

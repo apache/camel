@@ -40,6 +40,7 @@ public final class DockerTestUtils {
         parameters.put(DockerConstants.DOCKER_SECURE, dockerConfiguration.isSecure());
         parameters.put(DockerConstants.DOCKER_TLSVERIFY, dockerConfiguration.isTlsVerify());
         parameters.put(DockerConstants.DOCKER_SOCKET_ENABLED, dockerConfiguration.isSocket());
+        parameters.put(DockerConstants.DOCKER_CMD_EXEC_FACTORY, dockerConfiguration.getCmdExecFactory());
 
         return parameters;
     }
@@ -55,6 +56,7 @@ public final class DockerTestUtils {
         clientProfile.setSecure(dockerConfiguration.isSecure());
         clientProfile.setTlsVerify(dockerConfiguration.isTlsVerify());
         clientProfile.setSocket(dockerConfiguration.isSocket());
+        clientProfile.setCmdExecFactory(dockerConfiguration.getCmdExecFactory());
         
         return clientProfile;
     }
