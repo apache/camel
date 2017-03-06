@@ -65,9 +65,11 @@ The Jetty Websocket component supports 13 options which are listed below.
 
 
 // endpoint options: START
-The Jetty Websocket component is configured using the URI syntax with the following path and query parameters:
+The Jetty Websocket endpoint is configured using URI syntax:
 
     websocket:host:port/resourceUri
+
+  with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

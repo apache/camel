@@ -70,9 +70,11 @@ The MSV component supports 3 options which are listed below.
 
 
 // endpoint options: START
-The MSV component is configured using the URI syntax with the following path and query parameters:
+The MSV endpoint is configured using URI syntax:
 
     msv:resourceUri
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

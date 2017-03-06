@@ -56,9 +56,11 @@ The Atmosphere Websocket component supports 8 options which are listed below.
 
 
 // endpoint options: START
-The Atmosphere Websocket component is configured using the URI syntax with the following path and query parameters:
+The Atmosphere Websocket endpoint is configured using URI syntax:
 
     atmosphere-websocket:servicePath
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

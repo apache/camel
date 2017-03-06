@@ -303,9 +303,11 @@ The JMS component supports 76 options which are listed below.
 
 
 // endpoint options: START
-The JMS component is configured using the URI syntax with the following path and query parameters:
+The JMS endpoint is configured using URI syntax:
 
     jms:destinationType:destinationName
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

@@ -16,9 +16,11 @@
 
 
 // endpoint options: START
-The etcd component is configured using the URI syntax with the following path and query parameters:
+The etcd endpoint is configured using URI syntax:
 
     etcd:namespace/path
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

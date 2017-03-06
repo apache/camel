@@ -35,9 +35,11 @@ The Hipchat component has no options.
 
 
 // endpoint options: START
-The Hipchat component is configured using the URI syntax with the following path and query parameters:
+The Hipchat endpoint is configured using URI syntax:
 
     hipchat:protocol:host:port
+
+  with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

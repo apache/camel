@@ -58,9 +58,11 @@ The Metrics component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Metrics component is configured using the URI syntax with the following path and query parameters:
+The Metrics endpoint is configured using URI syntax:
 
     metrics:metricsType:metricsName
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

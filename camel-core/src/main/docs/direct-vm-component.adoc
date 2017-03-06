@@ -59,11 +59,13 @@ The Direct VM component supports 5 options which are listed below.
 
 
 // endpoint options: START
-The Direct VM component is configured using the URI syntax with the following path and query parameters:
+The Direct VM endpoint is configured using URI syntax:
 
     direct-vm:name
 
-#### 1 path parameters:
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -71,7 +73,7 @@ The Direct VM component is configured using the URI syntax with the following pa
 | name |  | String | *Required* Name of direct-vm endpoint
 |=======================================================================
 
-#### 9 query parameters:
+#### Query Parameters (9 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

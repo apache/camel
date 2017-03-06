@@ -30,9 +30,11 @@ The FTPS component has no options.
 
 
 // endpoint options: START
-The FTPS component is configured using the URI syntax with the following path and query parameters:
+The FTPS endpoint is configured using URI syntax:
 
     ftps:host:port/directoryName
+
+  with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

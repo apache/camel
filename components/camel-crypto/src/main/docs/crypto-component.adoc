@@ -93,9 +93,11 @@ The Crypto (JCE) component supports 2 options which are listed below.
 // component options: END
 
 // endpoint options: START
-The Crypto (JCE) component is configured using the URI syntax with the following path and query parameters:
+The Crypto (JCE) endpoint is configured using URI syntax:
 
     crypto:cryptoOperation:name
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

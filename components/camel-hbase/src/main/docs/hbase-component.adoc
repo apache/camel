@@ -120,9 +120,11 @@ The HBase component supports 3 options which are listed below.
 
 
 // endpoint options: START
-The HBase component is configured using the URI syntax with the following path and query parameters:
+The HBase endpoint is configured using URI syntax:
 
     hbase:tableName
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

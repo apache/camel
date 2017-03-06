@@ -30,9 +30,11 @@ The SFTP component has no options.
 
 
 // endpoint options: START
-The SFTP component is configured using the URI syntax with the following path and query parameters:
+The SFTP endpoint is configured using URI syntax:
 
     sftp:host:port/directoryName
+
+  with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

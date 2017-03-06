@@ -70,9 +70,11 @@ The Lucene component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Lucene component is configured using the URI syntax with the following path and query parameters:
+The Lucene endpoint is configured using URI syntax:
 
     lucene:host:operation
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

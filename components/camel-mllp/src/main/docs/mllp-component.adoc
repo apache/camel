@@ -51,9 +51,11 @@ The MLLP component has no options.
 
 
 // endpoint options: START
-The MLLP component is configured using the URI syntax with the following path and query parameters:
+The MLLP endpoint is configured using URI syntax:
 
     mllp:hostname:port
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

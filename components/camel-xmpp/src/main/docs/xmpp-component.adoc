@@ -43,9 +43,11 @@ The XMPP component has no options.
 
 
 // endpoint options: START
-The XMPP component is configured using the URI syntax with the following path and query parameters:
+The XMPP endpoint is configured using URI syntax:
 
     xmpp:host:port/participant
+
+  with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

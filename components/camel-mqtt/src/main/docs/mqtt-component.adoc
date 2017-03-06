@@ -55,9 +55,11 @@ The MQTT component supports 4 options which are listed below.
 
 
 // endpoint options: START
-The MQTT component is configured using the URI syntax with the following path and query parameters:
+The MQTT endpoint is configured using URI syntax:
 
     mqtt:name
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

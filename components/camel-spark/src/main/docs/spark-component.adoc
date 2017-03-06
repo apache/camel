@@ -68,9 +68,11 @@ The Apache Spark component supports 3 options which are listed below.
 
 
 // endpoint options: START
-The Apache Spark component is configured using the URI syntax with the following path and query parameters:
+The Apache Spark endpoint is configured using URI syntax:
 
     spark:endpointType
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

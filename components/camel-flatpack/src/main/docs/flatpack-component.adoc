@@ -45,9 +45,11 @@ The Flatpack component has no options.
 // component options: END
 
 // endpoint options: START
-The Flatpack component is configured using the URI syntax with the following path and query parameters:
+The Flatpack endpoint is configured using URI syntax:
 
     flatpack:type:resourceUri
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

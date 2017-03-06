@@ -48,9 +48,11 @@ The RSS component has no options.
 
 
 // endpoint options: START
-The RSS component is configured using the URI syntax with the following path and query parameters:
+The RSS endpoint is configured using URI syntax:
 
     rss:feedUri
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

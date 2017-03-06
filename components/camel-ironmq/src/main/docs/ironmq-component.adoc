@@ -40,9 +40,11 @@ Where **queueName** identifies the IronMQ queue you want to publish or consume m
 
 
 // endpoint options: START
-The IronMQ component is configured using the URI syntax with the following path and query parameters:
+The IronMQ endpoint is configured using URI syntax:
 
     ironmq:queueName
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

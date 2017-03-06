@@ -50,11 +50,13 @@ The Dataset component has no options.
 
 
 // endpoint options: START
-The Dataset component is configured using the URI syntax with the following path and query parameters:
+The Dataset endpoint is configured using URI syntax:
 
     dataset:name
 
-#### 1 path parameters:
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -62,7 +64,7 @@ The Dataset component is configured using the URI syntax with the following path
 | name |  | DataSet | *Required* Name of DataSet to lookup in the registry
 |=======================================================================
 
-#### 19 query parameters:
+#### Query Parameters (19 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

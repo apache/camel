@@ -45,9 +45,11 @@ The Spring Integration component has no options.
 
 
 // endpoint options: START
-The Spring Integration component is configured using the URI syntax with the following path and query parameters:
+The Spring Integration endpoint is configured using URI syntax:
 
     spring-integration:defaultChannel
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

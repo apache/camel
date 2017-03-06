@@ -32,9 +32,11 @@ The AWS EC2 component has no options.
 
 
 // endpoint options: START
-The AWS EC2 component is configured using the URI syntax with the following path and query parameters:
+The AWS EC2 endpoint is configured using URI syntax:
 
     aws-ec2:label
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

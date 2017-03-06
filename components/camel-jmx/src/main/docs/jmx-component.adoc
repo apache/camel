@@ -26,9 +26,11 @@ The JMX component has no options.
 // component options: END
 
 // endpoint options: START
-The JMX component is configured using the URI syntax with the following path and query parameters:
+The JMX endpoint is configured using URI syntax:
 
     jmx:serverURL
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

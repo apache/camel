@@ -52,9 +52,11 @@ The OpenShift component supports 5 options which are listed below.
 
 
 // endpoint options: START
-The OpenShift component is configured using the URI syntax with the following path and query parameters:
+The OpenShift endpoint is configured using URI syntax:
 
     openshift:clientId
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

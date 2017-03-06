@@ -140,9 +140,11 @@ The HTTP component supports 7 options which are listed below.
 
 
 // endpoint options: START
-The HTTP component is configured using the URI syntax with the following path and query parameters:
+The HTTP endpoint is configured using URI syntax:
 
     http:httpUri
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

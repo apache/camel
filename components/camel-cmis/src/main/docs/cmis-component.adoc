@@ -36,9 +36,11 @@ The CMIS component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The CMIS component is configured using the URI syntax with the following path and query parameters:
+The CMIS endpoint is configured using URI syntax:
 
     cmis:cmsUrl
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

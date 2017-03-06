@@ -60,9 +60,11 @@ The Cassandra CQL component has no options.
 
 
 // endpoint options: START
-The Cassandra CQL component is configured using the URI syntax with the following path and query parameters:
+The Cassandra CQL endpoint is configured using URI syntax:
 
     cql:beanRef:hosts:port/keyspace
+
+  with the following path and query parameters:
 
 #### Path Parameters (4 parameters):
 

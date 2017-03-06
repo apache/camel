@@ -48,9 +48,11 @@ The Camel Context component has no options.
 
 
 // endpoint options: START
-The Camel Context component is configured using the URI syntax with the following path and query parameters:
+The Camel Context endpoint is configured using URI syntax:
 
     context:contextId:localEndpointUrl
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

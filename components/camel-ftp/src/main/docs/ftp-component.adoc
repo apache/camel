@@ -79,9 +79,11 @@ The FTP component has no options.
 
 
 // endpoint options: START
-The FTP component is configured using the URI syntax with the following path and query parameters:
+The FTP endpoint is configured using URI syntax:
 
     ftp:host:port/directoryName
+
+  with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

@@ -48,9 +48,11 @@ The Elasticsearch component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Elasticsearch component is configured using the URI syntax with the following path and query parameters:
+The Elasticsearch endpoint is configured using URI syntax:
 
     elasticsearch:clusterName
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

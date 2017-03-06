@@ -53,9 +53,11 @@ The Stream component has no options.
 
 
 // endpoint options: START
-The Stream component is configured using the URI syntax with the following path and query parameters:
+The Stream endpoint is configured using URI syntax:
 
     stream:kind
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

@@ -52,9 +52,11 @@ The Printer component has no options.
 
 
 // endpoint options: START
-The Printer component is configured using the URI syntax with the following path and query parameters:
+The Printer endpoint is configured using URI syntax:
 
     lpr:hostname:port/printername
+
+  with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

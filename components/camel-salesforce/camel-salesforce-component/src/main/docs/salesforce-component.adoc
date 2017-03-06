@@ -467,9 +467,11 @@ The Salesforce component supports 24 options which are listed below.
 
 
 // endpoint options: START
-The Salesforce component is configured using the URI syntax with the following path and query parameters:
+The Salesforce endpoint is configured using URI syntax:
 
     salesforce:operationName:topicName
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

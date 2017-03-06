@@ -45,11 +45,13 @@ The Scheduler component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Scheduler component is configured using the URI syntax with the following path and query parameters:
+The Scheduler endpoint is configured using URI syntax:
 
     scheduler:name
 
-#### 1 path parameters:
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -57,7 +59,7 @@ The Scheduler component is configured using the URI syntax with the following pa
 | name |  | String | *Required* The name of the scheduler
 |=======================================================================
 
-#### 20 query parameters:
+#### Query Parameters (20 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

@@ -39,9 +39,11 @@ The OpenStack Glance component has no options.
 // component options: END
 
 // endpoint options: START
-The OpenStack Glance component is configured using the URI syntax with the following path and query parameters:
+The OpenStack Glance endpoint is configured using URI syntax:
 
     openstack-glance:host
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

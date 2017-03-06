@@ -35,9 +35,11 @@ The AWS DynamoDB Streams component has no options.
 
 
 // endpoint options: START
-The AWS DynamoDB Streams component is configured using the URI syntax with the following path and query parameters:
+The AWS DynamoDB Streams endpoint is configured using URI syntax:
 
     aws-ddbstream:tableName
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

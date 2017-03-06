@@ -47,9 +47,11 @@ The Jing component has no options.
 
 
 // endpoint options: START
-The Jing component is configured using the URI syntax with the following path and query parameters:
+The Jing endpoint is configured using URI syntax:
 
     jing:resourceUri
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

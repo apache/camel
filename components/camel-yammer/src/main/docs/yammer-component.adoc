@@ -66,9 +66,11 @@ You can also configure these options directly in the endpoint.
 
 
 // endpoint options: START
-The Yammer component is configured using the URI syntax with the following path and query parameters:
+The Yammer endpoint is configured using URI syntax:
 
     yammer:function
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

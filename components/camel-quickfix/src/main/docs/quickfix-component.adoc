@@ -94,9 +94,11 @@ The QuickFix component supports 6 options which are listed below.
 // component options: END
 
 // endpoint options: START
-The QuickFix component is configured using the URI syntax with the following path and query parameters:
+The QuickFix endpoint is configured using URI syntax:
 
     quickfix:configurationName
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

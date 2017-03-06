@@ -36,9 +36,11 @@ The AWS Simple Notification System component has no options.
 
 
 // endpoint options: START
-The AWS Simple Notification System component is configured using the URI syntax with the following path and query parameters:
+The AWS Simple Notification System endpoint is configured using URI syntax:
 
     aws-sns:topicNameOrArn
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

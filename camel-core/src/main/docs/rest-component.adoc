@@ -33,11 +33,13 @@ The REST component supports 4 options which are listed below.
 // component options: END
 
 // endpoint options: START
-The REST component is configured using the URI syntax with the following path and query parameters:
+The REST endpoint is configured using URI syntax:
 
     rest:method:path:uriTemplate
 
-#### 3 path parameters:
+  with the following path and query parameters:
+
+#### Path Parameters (3 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -47,7 +49,7 @@ The REST component is configured using the URI syntax with the following path an
 | uriTemplate |  | String | The uri template
 |=======================================================================
 
-#### 14 query parameters:
+#### Query Parameters (14 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

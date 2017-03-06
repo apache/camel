@@ -40,9 +40,11 @@ The Tika component has no options.
 
 
 // endpoint options: START
-The Tika component is configured using the URI syntax with the following path and query parameters:
+The Tika endpoint is configured using URI syntax:
 
     tika:operation
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

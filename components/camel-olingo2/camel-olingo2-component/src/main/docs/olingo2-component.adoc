@@ -61,9 +61,11 @@ The Olingo2 component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Olingo2 component is configured using the URI syntax with the following path and query parameters:
+The Olingo2 endpoint is configured using URI syntax:
 
     olingo2:apiName/methodName
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

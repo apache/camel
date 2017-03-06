@@ -60,9 +60,11 @@ The Dozer component has no options.
 // component options: END
 
 // endpoint options: START
-The Dozer component is configured using the URI syntax with the following path and query parameters:
+The Dozer endpoint is configured using URI syntax:
 
     dozer:name
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

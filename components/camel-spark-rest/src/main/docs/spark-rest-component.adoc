@@ -58,9 +58,11 @@ The Spark Rest component supports 12 options which are listed below.
 
 
 // endpoint options: START
-The Spark Rest component is configured using the URI syntax with the following path and query parameters:
+The Spark Rest endpoint is configured using URI syntax:
 
     spark-rest:verb:path
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

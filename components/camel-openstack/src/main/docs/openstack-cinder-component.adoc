@@ -39,9 +39,11 @@ The OpenStack Cinder component has no options.
 // component options: END
 
 // endpoint options: START
-The OpenStack Cinder component is configured using the URI syntax with the following path and query parameters:
+The OpenStack Cinder endpoint is configured using URI syntax:
 
     openstack-cinder:host
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

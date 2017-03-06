@@ -247,9 +247,11 @@ The XML Security component supports 3 options which are listed below.
 
 
 // endpoint options: START
-The XML Security component is configured using the URI syntax with the following path and query parameters:
+The XML Security endpoint is configured using URI syntax:
 
     xmlsecurity:command:name
+
+  with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

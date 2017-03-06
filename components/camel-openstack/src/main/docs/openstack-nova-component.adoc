@@ -39,9 +39,11 @@ The OpenStack Nova component has no options.
 // component options: END
 
 // endpoint options: START
-The OpenStack Nova component is configured using the URI syntax with the following path and query parameters:
+The OpenStack Nova endpoint is configured using URI syntax:
 
     openstack-nova:host
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

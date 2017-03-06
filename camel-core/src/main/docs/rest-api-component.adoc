@@ -471,11 +471,13 @@ The REST API component has no options.
 
 
 // endpoint options: START
-The REST API component is configured using the URI syntax with the following path and query parameters:
+The REST API endpoint is configured using URI syntax:
 
     rest-api:path/contextIdPattern
 
-#### 2 path parameters:
+  with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -484,7 +486,7 @@ The REST API component is configured using the URI syntax with the following pat
 | contextIdPattern |  | String | Optional CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern.
 |=======================================================================
 
-#### 6 query parameters:
+#### Query Parameters (6 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

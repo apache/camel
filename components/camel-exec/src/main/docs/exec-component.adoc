@@ -38,9 +38,11 @@ The Exec component has no options.
 // component options: END
 
 // endpoint options: START
-The Exec component is configured using the URI syntax with the following path and query parameters:
+The Exec endpoint is configured using URI syntax:
 
     exec:executable
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

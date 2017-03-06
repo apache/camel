@@ -71,9 +71,11 @@ The HDFS2 component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The HDFS2 component is configured using the URI syntax with the following path and query parameters:
+The HDFS2 endpoint is configured using URI syntax:
 
     hdfs2:hostName:port/path
+
+  with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

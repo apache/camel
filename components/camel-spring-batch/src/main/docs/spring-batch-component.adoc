@@ -61,9 +61,11 @@ The Spring Batch component supports 3 options which are listed below.
 
 
 // endpoint options: START
-The Spring Batch component is configured using the URI syntax with the following path and query parameters:
+The Spring Batch endpoint is configured using URI syntax:
 
     spring-batch:jobName
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

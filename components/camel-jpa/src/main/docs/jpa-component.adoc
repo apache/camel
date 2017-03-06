@@ -107,9 +107,11 @@ The JPA component supports 5 options which are listed below.
 
 
 // endpoint options: START
-The JPA component is configured using the URI syntax with the following path and query parameters:
+The JPA endpoint is configured using URI syntax:
 
     jpa:entityType
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

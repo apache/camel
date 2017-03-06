@@ -48,9 +48,11 @@ The Azure Storage Queue Service component has no options.
 
 
 // endpoint options: START
-The Azure Storage Queue Service component is configured using the URI syntax with the following path and query parameters:
+The Azure Storage Queue Service endpoint is configured using URI syntax:
 
     azure-queue:containerAndQueueUri
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

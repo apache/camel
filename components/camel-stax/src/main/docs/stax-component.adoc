@@ -54,9 +54,11 @@ The StAX component has no options.
 
 
 // endpoint options: START
-The StAX component is configured using the URI syntax with the following path and query parameters:
+The StAX endpoint is configured using URI syntax:
 
     stax:contentHandlerClass
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

@@ -53,9 +53,11 @@ The OSGi PAX Logging component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The OSGi PAX Logging component is configured using the URI syntax with the following path and query parameters:
+The OSGi PAX Logging endpoint is configured using URI syntax:
 
     paxlogging:appender
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

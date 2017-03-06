@@ -68,11 +68,13 @@ The Control Bus component has no options.
 
 
 // endpoint options: START
-The Control Bus component is configured using the URI syntax with the following path and query parameters:
+The Control Bus endpoint is configured using URI syntax:
 
     controlbus:command:language
 
-#### 2 path parameters:
+  with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -81,7 +83,7 @@ The Control Bus component is configured using the URI syntax with the following 
 | language |  | Language | Allows you to specify the name of a Language to use for evaluating the message body. If there is any result from the evaluation then the result is put in the message body.
 |=======================================================================
 
-#### 5 query parameters:
+#### Query Parameters (5 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

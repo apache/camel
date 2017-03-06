@@ -51,9 +51,11 @@ The Krati component has no options.
 
 
 // endpoint options: START
-The Krati component is configured using the URI syntax with the following path and query parameters:
+The Krati endpoint is configured using URI syntax:
 
     krati:path
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

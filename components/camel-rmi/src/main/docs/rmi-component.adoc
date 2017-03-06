@@ -53,9 +53,11 @@ The RMI component has no options.
 
 
 // endpoint options: START
-The RMI component is configured using the URI syntax with the following path and query parameters:
+The RMI endpoint is configured using URI syntax:
 
     rmi:hostname:port/name
+
+  with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

@@ -57,9 +57,11 @@ The Vert.x component supports 7 options which are listed below.
 
 
 // endpoint options: START
-The Vert.x component is configured using the URI syntax with the following path and query parameters:
+The Vert.x endpoint is configured using URI syntax:
 
     vertx:address
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

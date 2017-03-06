@@ -25,11 +25,13 @@ The Ref component has no options.
 
 
 // endpoint options: START
-The Ref component is configured using the URI syntax with the following path and query parameters:
+The Ref endpoint is configured using URI syntax:
 
     ref:name
 
-#### 1 path parameters:
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -37,7 +39,7 @@ The Ref component is configured using the URI syntax with the following path and
 | name |  | String | *Required* Name of endpoint to lookup in the registry.
 |=======================================================================
 
-#### 4 query parameters:
+#### Query Parameters (4 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

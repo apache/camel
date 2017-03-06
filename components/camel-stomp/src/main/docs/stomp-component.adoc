@@ -55,9 +55,11 @@ The Stomp component supports 6 options which are listed below.
 
 
 // endpoint options: START
-The Stomp component is configured using the URI syntax with the following path and query parameters:
+The Stomp endpoint is configured using URI syntax:
 
     stomp:destination
+
+  with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

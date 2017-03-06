@@ -45,9 +45,11 @@ The RabbitMQ component has no options.
 
 
 // endpoint options: START
-The RabbitMQ component is configured using the URI syntax with the following path and query parameters:
+The RabbitMQ endpoint is configured using URI syntax:
 
     rabbitmq:hostname:portNumber/exchangeName
+
+  with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 
