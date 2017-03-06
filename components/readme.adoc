@@ -857,7 +857,7 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts
 
 | link:camel-groovy-dsl/src/main/docs/groovy-dsl.adoc[Groovy DSL] (camel-groovy-dsl) | 2.19 | *deprecated* Camel Groovy DSL support
 
-| link:camel-guice/src/main/docs/guice.adoc[Guice] (camel-guice) | 1.5 | Using Camel with Guice
+| link:camel-guice/src/main/docs/guice.adoc[Guice] (camel-guice) | 1.5 | *deprecated* Using Camel with Guice
 
 | link:camel-hawtdb/src/main/docs/hawtdb.adoc[HawtDB] (camel-hawtdb) | 2.3 | *deprecated* Using HawtDB as persistent EIP store
 
