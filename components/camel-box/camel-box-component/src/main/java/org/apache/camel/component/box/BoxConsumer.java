@@ -35,9 +35,6 @@ import org.apache.camel.util.component.ApiMethodHelper;
 
 /**
  * The Box consumer.
- * 
- * 
- * 
  */
 public class BoxConsumer extends AbstractApiConsumer<BoxApiName, BoxConfiguration> implements EventListener {
 

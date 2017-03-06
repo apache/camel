@@ -23,9 +23,6 @@ import org.apache.camel.util.component.AbstractApiProducer;
 
 /**
  * The Box producer.
- * 
- * 
- * 
  */
 public class BoxProducer extends AbstractApiProducer<BoxApiName, BoxConfiguration> {
 

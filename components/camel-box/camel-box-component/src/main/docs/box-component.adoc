@@ -44,6 +44,69 @@ The Box component supports three different types of authenticated connections.
 
 *App User Authentication* uses the *OAuth 2.0 with JSON Web Tokens (JWT)* to authenticate its connections as an *App User* for a *Box Application*. This type of authentication enables app users to access, edit, and save their Box content in its *Box Application* through the Box component.
 
+### Box Options
+
+// component options: START
+The Box component supports 2 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| configuration | common |  | BoxConfiguration | To use the shared configuration
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+|=======================================================================
+{% endraw %}
+// component options: END
+
+// endpoint options: START
+The Box component is configured using the URI syntax with the following path and query parameters:
+
+    box:apiName/methodName
+
+#### 2 path parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| apiName |  | BoxApiName | *Required* What kind of operation to perform
+| methodName |  | String | *Required* What sub operation to use for the selected operation
+|=======================================================================
+{% endraw %}
+
+#### 20 query parameters:
+
+{% raw %}
+[width="100%",cols="2,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| clientId | common |  | String | Box application client ID
+| enterpriseId | common |  | String | The enterprise ID to use for an App Enterprise.
+| inBody | common |  | String | Sets the name of a parameter to be passed in the exchange In Body
+| userId | common |  | String | The user ID to use for an App User.
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| httpParams | advanced |  | Map | Custom HTTP params for settings like proxy host
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| accessTokenCache | security |  | IAccessTokenCache | Custom Access Token Cache for storing and retrieving access tokens.
+| clientSecret | security |  | String | Box application client secret
+| encryptionAlgorithm | security | RSA_SHA_256 | EncryptionAlgorithm | The type of encryption algorithm for JWT. Supported Algorithms: RSA_SHA_256 RSA_SHA_384 RSA_SHA_512
+| maxCacheEntries | security | 100 | int | The maximum number of access tokens in cache.
+| authenticationType | authentication | APP_USER_AUTHENTICATION | String | The type of authentication for connection. Types of Authentication: STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION - OAuth 2.0 with JSON Web Tokens
+| privateKeyFile | security |  | String | The private key for generating the JWT signature.
+| privateKeyPassword | security |  | String | The password for the private key.
+| publicKeyId | security |  | String | The ID for public key for validating the JWT signature.
+| sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters.
+| userName | security |  | String | Box user name MUST be provided
+| userPassword | security |  | String | Box user password MUST be provided if authSecureStorage is not set or returns null on first call
+|=======================================================================
+{% endraw %}
+// endpoint options: END
+
 ### URI format
 
 [source,java]
