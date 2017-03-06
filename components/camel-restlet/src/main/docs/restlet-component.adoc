@@ -101,7 +101,7 @@ The Restlet component is configured using the URI syntax with the following path
 
     restlet:protocol:host:port/uriPattern
 
-#### 4 path parameters:
+#### Path Parameters (4 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -112,7 +112,7 @@ The Restlet component is configured using the URI syntax with the following path
 | uriPattern |  | String | The resource pattern such as /customer/id
 |=======================================================================
 
-#### 18 query parameters:
+#### Query Parameters (18 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

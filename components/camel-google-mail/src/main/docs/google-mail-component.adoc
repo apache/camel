@@ -81,7 +81,7 @@ The Google Mail component is configured using the URI syntax with the following 
 
     google-mail:apiName/methodName
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -90,7 +90,7 @@ The Google Mail component is configured using the URI syntax with the following 
 | methodName |  | String | *Required* What sub operation to use for the selected operation
 |=======================================================================
 
-#### 11 query parameters:
+#### Query Parameters (11 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

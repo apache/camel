@@ -76,7 +76,7 @@ The Quartz2 component is configured using the URI syntax with the following path
 
     quartz2:groupName/triggerName
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -85,7 +85,7 @@ The Quartz2 component is configured using the URI syntax with the following path
 | triggerName |  | String | *Required* The quartz timer name to use. The combination of group name and timer name should be unique.
 |=======================================================================
 
-#### 19 query parameters:
+#### Query Parameters (19 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

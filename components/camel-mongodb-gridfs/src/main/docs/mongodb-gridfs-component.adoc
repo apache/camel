@@ -37,7 +37,7 @@ The MongoDB GridFS component is configured using the URI syntax with the followi
 
     mongodb-gridfs:connectionBean
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -45,7 +45,7 @@ The MongoDB GridFS component is configured using the URI syntax with the followi
 | connectionBean |  | String | *Required* Name of com.mongodb.Mongo to use.
 |=======================================================================
 
-#### 17 query parameters:
+#### Query Parameters (17 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

@@ -56,7 +56,7 @@ The JT400 component is configured using the URI syntax with the following path a
 
     jt400:userID:password/systemName/objectPath.type
 
-#### 5 path parameters:
+#### Path Parameters (5 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -68,7 +68,7 @@ The JT400 component is configured using the URI syntax with the following path a
 | type |  | Jt400Type | *Required* Whether to work with data queues or remote program call
 |=======================================================================
 
-#### 29 query parameters:
+#### Query Parameters (29 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

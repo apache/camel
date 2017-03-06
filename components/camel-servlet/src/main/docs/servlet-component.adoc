@@ -65,7 +65,7 @@ The Servlet component is configured using the URI syntax with the following path
 
     servlet:contextPath
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -73,7 +73,7 @@ The Servlet component is configured using the URI syntax with the following path
 | contextPath |  | String | *Required* The context-path to use
 |=======================================================================
 
-#### 21 query parameters:
+#### Query Parameters (21 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

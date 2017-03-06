@@ -39,7 +39,7 @@ The Spring Redis component is configured using the URI syntax with the following
 
     spring-redis:host:port
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -48,7 +48,7 @@ The Spring Redis component is configured using the URI syntax with the following
 | port |  | Integer | *Required* Redis server port number
 |=======================================================================
 
-#### 10 query parameters:
+#### Query Parameters (10 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

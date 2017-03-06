@@ -56,7 +56,7 @@ The Braintree component is configured using the URI syntax with the following pa
 
     braintree:apiName/methodName
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -65,7 +65,7 @@ The Braintree component is configured using the URI syntax with the following pa
 | methodName |  | String | What sub operation to use for the selected operation
 |=======================================================================
 
-#### 13 query parameters:
+#### Query Parameters (13 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

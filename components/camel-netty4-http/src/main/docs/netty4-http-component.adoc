@@ -106,7 +106,7 @@ The Netty4 HTTP component is configured using the URI syntax with the following 
 
     netty4-http:protocol:host:port/path
 
-#### 4 path parameters:
+#### Path Parameters (4 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -117,7 +117,7 @@ The Netty4 HTTP component is configured using the URI syntax with the following 
 | path |  | String | Resource path
 |=======================================================================
 
-#### 79 query parameters:
+#### Query Parameters (79 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

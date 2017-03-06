@@ -89,7 +89,7 @@ The HTTP4 component is configured using the URI syntax with the following path a
 
     http4:httpUri
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -97,7 +97,7 @@ The HTTP4 component is configured using the URI syntax with the following path a
 | httpUri |  | URI | *Required* The url of the HTTP endpoint to call.
 |=======================================================================
 
-#### 47 query parameters:
+#### Query Parameters (47 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

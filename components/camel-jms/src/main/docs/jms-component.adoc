@@ -307,7 +307,7 @@ The JMS component is configured using the URI syntax with the following path and
 
     jms:destinationType:destinationName
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -316,7 +316,7 @@ The JMS component is configured using the URI syntax with the following path and
 | destinationName |  | String | *Required* Name of the queue or topic to use as destination
 |=======================================================================
 
-#### 85 query parameters:
+#### Query Parameters (85 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

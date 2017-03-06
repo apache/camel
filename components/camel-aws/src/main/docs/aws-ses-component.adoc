@@ -36,7 +36,7 @@ The AWS Simple Email Service component is configured using the URI syntax with t
 
     aws-ses:from
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -44,7 +44,7 @@ The AWS Simple Email Service component is configured using the URI syntax with t
 | from |  | String | *Required* The sender's email address.
 |=======================================================================
 
-#### 11 query parameters:
+#### Query Parameters (11 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

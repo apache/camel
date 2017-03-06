@@ -106,7 +106,7 @@ The Splunk component is configured using the URI syntax with the following path 
 
     splunk:name
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -114,7 +114,7 @@ The Splunk component is configured using the URI syntax with the following path 
 | name |  | String | *Required* Name has no purpose
 |=======================================================================
 
-#### 42 query parameters:
+#### Query Parameters (42 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

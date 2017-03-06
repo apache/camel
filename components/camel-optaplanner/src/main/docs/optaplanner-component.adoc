@@ -49,7 +49,7 @@ The OptaPlanner component is configured using the URI syntax with the following 
 
     optaplanner:configFile
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -57,7 +57,7 @@ The OptaPlanner component is configured using the URI syntax with the following 
 | configFile |  | String | *Required* Specifies the location to the solver file
 |=======================================================================
 
-#### 7 query parameters:
+#### Query Parameters (7 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

@@ -115,7 +115,7 @@ The Simple JMS component is configured using the URI syntax with the following p
 
     sjms:destinationType:destinationName
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -124,7 +124,7 @@ The Simple JMS component is configured using the URI syntax with the following p
 | destinationName |  | String | *Required* DestinationName is a JMS queue or topic name. By default the destinationName is interpreted as a queue name.
 |=======================================================================
 
-#### 34 query parameters:
+#### Query Parameters (34 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

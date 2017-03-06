@@ -64,7 +64,7 @@ The Dozer component is configured using the URI syntax with the following path a
 
     dozer:name
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -72,7 +72,7 @@ The Dozer component is configured using the URI syntax with the following path a
 | name |  | String | *Required* A human readable name of the mapping.
 |=======================================================================
 
-#### 7 query parameters:
+#### Query Parameters (7 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

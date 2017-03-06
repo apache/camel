@@ -78,7 +78,7 @@ The HDFS component is configured using the URI syntax with the following path an
 
     hdfs:hostName:port/path
 
-#### 3 path parameters:
+#### Path Parameters (3 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -88,7 +88,7 @@ The HDFS component is configured using the URI syntax with the following path an
 | path |  | String | *Required* The directory path to use
 |=======================================================================
 
-#### 38 query parameters:
+#### Query Parameters (38 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

@@ -68,7 +68,7 @@ The EHCache component is configured using the URI syntax with the following path
 
     cache:cacheName
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -76,7 +76,7 @@ The EHCache component is configured using the URI syntax with the following path
 | cacheName |  | String | *Required* Name of the cache
 |=======================================================================
 
-#### 19 query parameters:
+#### Query Parameters (19 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

@@ -52,7 +52,7 @@ The JCR component is configured using the URI syntax with the following path and
 
     jcr:host/base
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -61,7 +61,7 @@ The JCR component is configured using the URI syntax with the following path and
 | base |  | String | Get the base node when accessing the repository
 |=======================================================================
 
-#### 14 query parameters:
+#### Query Parameters (14 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

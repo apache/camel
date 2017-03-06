@@ -55,7 +55,7 @@ The GitHub component is configured using the URI syntax with the following path 
 
     github:type/branchName
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -64,7 +64,7 @@ The GitHub component is configured using the URI syntax with the following path 
 | branchName |  | String | Name of branch
 |=======================================================================
 
-#### 12 query parameters:
+#### Query Parameters (12 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

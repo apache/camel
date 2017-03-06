@@ -52,7 +52,7 @@ The CouchDB component is configured using the URI syntax with the following path
 
     couchdb:protocol:hostname:port/database
 
-#### 4 path parameters:
+#### Path Parameters (4 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -63,7 +63,7 @@ The CouchDB component is configured using the URI syntax with the following path
 | database |  | String | *Required* Name of the database to use
 |=======================================================================
 
-#### 12 query parameters:
+#### Query Parameters (12 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

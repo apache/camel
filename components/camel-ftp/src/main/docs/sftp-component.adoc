@@ -34,7 +34,7 @@ The SFTP component is configured using the URI syntax with the following path an
 
     sftp:host:port/directoryName
 
-#### 3 path parameters:
+#### Path Parameters (3 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -44,7 +44,7 @@ The SFTP component is configured using the URI syntax with the following path an
 | directoryName |  | String | The starting directory
 |=======================================================================
 
-#### 109 query parameters:
+#### Query Parameters (109 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

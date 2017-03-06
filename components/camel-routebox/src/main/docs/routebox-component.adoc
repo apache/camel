@@ -109,7 +109,7 @@ The RouteBox component is configured using the URI syntax with the following pat
 
     routebox:routeboxName
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -117,7 +117,7 @@ The RouteBox component is configured using the URI syntax with the following pat
 | routeboxName |  | String | *Required* Logical name for the routebox (eg like a queue name)
 |=======================================================================
 
-#### 17 query parameters:
+#### Query Parameters (17 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

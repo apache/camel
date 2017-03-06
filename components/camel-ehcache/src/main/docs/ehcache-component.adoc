@@ -47,7 +47,7 @@ The Ehcache component is configured using the URI syntax with the following path
 
     ehcache:cacheName
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -55,7 +55,7 @@ The Ehcache component is configured using the URI syntax with the following path
 | cacheName |  | String | *Required* the cache name
 |=======================================================================
 
-#### 15 query parameters:
+#### Query Parameters (15 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

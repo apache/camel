@@ -44,7 +44,7 @@ The Spring LDAP component is configured using the URI syntax with the following 
 
     spring-ldap:templateName
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -52,7 +52,7 @@ The Spring LDAP component is configured using the URI syntax with the following 
 | templateName |  | String | *Required* Name of the Spring LDAP Template bean
 |=======================================================================
 
-#### 3 query parameters:
+#### Query Parameters (3 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

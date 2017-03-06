@@ -82,7 +82,7 @@ The iBatis component is configured using the URI syntax with the following path 
 
     ibatis:statement
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -90,7 +90,7 @@ The iBatis component is configured using the URI syntax with the following path 
 | statement |  | String | *Required* The statement name in the iBatis XML mapping file which maps to the query insert update or delete operation you wish to evaluate.
 |=======================================================================
 
-#### 27 query parameters:
+#### Query Parameters (27 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

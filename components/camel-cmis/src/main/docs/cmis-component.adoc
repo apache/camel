@@ -40,7 +40,7 @@ The CMIS component is configured using the URI syntax with the following path an
 
     cmis:cmsUrl
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -48,7 +48,7 @@ The CMIS component is configured using the URI syntax with the following path an
 | cmsUrl |  | String | *Required* URL to the cmis repository
 |=======================================================================
 
-#### 13 query parameters:
+#### Query Parameters (13 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

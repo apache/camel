@@ -41,7 +41,7 @@ The AWS Simple Queue Service component is configured using the URI syntax with t
 
     aws-sqs:queueNameOrArn
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -49,7 +49,7 @@ The AWS Simple Queue Service component is configured using the URI syntax with t
 | queueNameOrArn |  | String | *Required* Queue name or ARN
 |=======================================================================
 
-#### 44 query parameters:
+#### Query Parameters (44 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

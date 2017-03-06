@@ -97,7 +97,7 @@ The Crypto (JCE) component is configured using the URI syntax with the following
 
     crypto:cryptoOperation:name
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -106,7 +106,7 @@ The Crypto (JCE) component is configured using the URI syntax with the following
 | name |  | String | *Required* The logical name of this operation.
 |=======================================================================
 
-#### 19 query parameters:
+#### Query Parameters (19 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

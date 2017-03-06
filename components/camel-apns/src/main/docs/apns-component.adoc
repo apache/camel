@@ -71,7 +71,7 @@ The APNS component is configured using the URI syntax with the following path an
 
     apns:name
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -79,7 +79,7 @@ The APNS component is configured using the URI syntax with the following path an
 | name |  | String | Name of the endpoint
 |=======================================================================
 
-#### 20 query parameters:
+#### Query Parameters (20 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

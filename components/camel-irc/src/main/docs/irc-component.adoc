@@ -48,7 +48,7 @@ The IRC component is configured using the URI syntax with the following path and
 
     irc:hostname:port
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -57,7 +57,7 @@ The IRC component is configured using the URI syntax with the following path and
 | port |  | int | Port number for the IRC chat server. If no port is configured then a default port of either 6667 6668 or 6669 is used.
 |=======================================================================
 
-#### 24 query parameters:
+#### Query Parameters (24 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

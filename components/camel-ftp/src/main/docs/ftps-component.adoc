@@ -34,7 +34,7 @@ The FTPS component is configured using the URI syntax with the following path an
 
     ftps:host:port/directoryName
 
-#### 3 path parameters:
+#### Path Parameters (3 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -44,7 +44,7 @@ The FTPS component is configured using the URI syntax with the following path an
 | directoryName |  | String | The starting directory
 |=======================================================================
 
-#### 110 query parameters:
+#### Query Parameters (110 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

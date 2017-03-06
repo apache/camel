@@ -60,7 +60,7 @@ The Lumberjack component is configured using the URI syntax with the following p
 
     lumberjack:host:port
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -69,7 +69,7 @@ The Lumberjack component is configured using the URI syntax with the following p
 | port | 5044 | int | Network port on which to listen for Lumberjack
 |=======================================================================
 
-#### 5 query parameters:
+#### Query Parameters (5 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

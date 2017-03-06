@@ -49,7 +49,7 @@ The RabbitMQ component is configured using the URI syntax with the following pat
 
     rabbitmq:hostname:portNumber/exchangeName
 
-#### 3 path parameters:
+#### Path Parameters (3 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -59,7 +59,7 @@ The RabbitMQ component is configured using the URI syntax with the following pat
 | exchangeName |  | String | *Required* The exchange name determines which exchange produced messages will sent to. In the case of consumers the exchange name determines which exchange the queue will bind to.
 |=======================================================================
 
-#### 57 query parameters:
+#### Query Parameters (57 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

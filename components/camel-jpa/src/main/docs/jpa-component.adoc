@@ -111,7 +111,7 @@ The JPA component is configured using the URI syntax with the following path and
 
     jpa:entityType
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -119,7 +119,7 @@ The JPA component is configured using the URI syntax with the following path and
 | entityType |  | Class<?> | *Required* The JPA annotated class to use as entity.
 |=======================================================================
 
-#### 41 query parameters:
+#### Query Parameters (41 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

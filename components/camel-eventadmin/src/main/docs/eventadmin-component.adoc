@@ -50,7 +50,7 @@ The OSGi EventAdmin component is configured using the URI syntax with the follow
 
     eventadmin:topic
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -58,7 +58,7 @@ The OSGi EventAdmin component is configured using the URI syntax with the follow
 | topic |  | String | Name of topic to listen or send to
 |=======================================================================
 
-#### 5 query parameters:
+#### Query Parameters (5 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

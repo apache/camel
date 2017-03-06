@@ -44,7 +44,7 @@ The Solr component is configured using the URI syntax with the following path an
 
     solr:url
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -52,7 +52,7 @@ The Solr component is configured using the URI syntax with the following path an
 | url |  | String | *Required* Hostname and port for the solr server
 |=======================================================================
 
-#### 13 query parameters:
+#### Query Parameters (13 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

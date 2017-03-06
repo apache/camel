@@ -47,7 +47,7 @@ The XMPP component is configured using the URI syntax with the following path an
 
     xmpp:host:port/participant
 
-#### 3 path parameters:
+#### Path Parameters (3 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -57,7 +57,7 @@ The XMPP component is configured using the URI syntax with the following path an
 | participant |  | String | JID (Jabber ID) of person to receive messages. room parameter has precedence over participant.
 |=======================================================================
 
-#### 18 query parameters:
+#### Query Parameters (18 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

@@ -49,7 +49,7 @@ The Flatpack component is configured using the URI syntax with the following pat
 
     flatpack:type:resourceUri
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -58,7 +58,7 @@ The Flatpack component is configured using the URI syntax with the following pat
 | resourceUri |  | String | *Required* URL for loading the flatpack mapping file from classpath or file system
 |=======================================================================
 
-#### 25 query parameters:
+#### Query Parameters (25 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

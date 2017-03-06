@@ -62,7 +62,7 @@ The Metrics component is configured using the URI syntax with the following path
 
     metrics:metricsType:metricsName
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -71,7 +71,7 @@ The Metrics component is configured using the URI syntax with the following path
 | metricsName |  | String | *Required* Name of metrics
 |=======================================================================
 
-#### 7 query parameters:
+#### Query Parameters (7 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

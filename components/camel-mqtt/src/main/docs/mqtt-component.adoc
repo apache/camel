@@ -59,7 +59,7 @@ The MQTT component is configured using the URI syntax with the following path an
 
     mqtt:name
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -67,7 +67,7 @@ The MQTT component is configured using the URI syntax with the following path an
 | name |  | String | *Required* A logical name to use which is not the topic name.
 |=======================================================================
 
-#### 39 query parameters:
+#### Query Parameters (39 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

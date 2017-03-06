@@ -62,7 +62,7 @@ The Telegram component is configured using the URI syntax with the following pat
 
     telegram:type/authorizationToken
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -71,7 +71,7 @@ The Telegram component is configured using the URI syntax with the following pat
 | authorizationToken |  | String | *Required* The authorization token for using the bot (ask the BotFather) eg. 654321531:HGF_dTra456323dHuOedsE343211fqr3t-H.
 |=======================================================================
 
-#### 22 query parameters:
+#### Query Parameters (22 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

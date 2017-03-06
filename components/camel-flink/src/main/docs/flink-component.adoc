@@ -43,7 +43,7 @@ The Apache Flink component is configured using the URI syntax with the following
 
     flink:endpointType
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -51,7 +51,7 @@ The Apache Flink component is configured using the URI syntax with the following
 | endpointType |  | EndpointType | *Required* Type of the endpoint (dataset datastream).
 |=======================================================================
 
-#### 6 query parameters:
+#### Query Parameters (6 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

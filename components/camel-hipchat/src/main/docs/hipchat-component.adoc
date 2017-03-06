@@ -39,7 +39,7 @@ The Hipchat component is configured using the URI syntax with the following path
 
     hipchat:protocol:host:port
 
-#### 3 path parameters:
+#### Path Parameters (3 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -49,7 +49,7 @@ The Hipchat component is configured using the URI syntax with the following path
 | port | 80 | Integer | The port for the hipchat server. Is by default 80.
 |=======================================================================
 
-#### 21 query parameters:
+#### Query Parameters (21 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
