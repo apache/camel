@@ -33,11 +33,9 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.aws.sqs.SqsHeaderFilterStrategy;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.spi.Metadata;
-import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriPath;
+import org.apache.camel.spi.*;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(firstVersion = "2.8.0", scheme = "aws-sns", title = "AWS Simple Notification System", syntax = "aws-sns:topicNameOrArn",
     producerOnly = true, label = "cloud,mobile,messaging")
-public class SnsEndpoint extends DefaultEndpoint {
+public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(SnsEndpoint.class);
 
@@ -58,6 +56,8 @@ public class SnsEndpoint extends DefaultEndpoint {
     private String topicNameOrArn; // to support component docs
     @UriParam
     private SnsConfiguration configuration;
+    @UriParam
+    private HeaderFilterStrategy headerFilterStrategy;
 
     @Deprecated
     public SnsEndpoint(String uri, CamelContext context, SnsConfiguration configuration) {
@@ -67,6 +67,17 @@ public class SnsEndpoint extends DefaultEndpoint {
     public SnsEndpoint(String uri, Component component, SnsConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    /**
+     * To use a custom HeaderFilterStrategy to map headers to/from Camel.
+     */
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        this.headerFilterStrategy = strategy;
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -91,6 +102,11 @@ public class SnsEndpoint extends DefaultEndpoint {
         if (ObjectHelper.isNotEmpty(configuration.getAmazonSNSEndpoint())) {
             LOG.trace("Updating the SNS region with : {} " + configuration.getAmazonSNSEndpoint());
             snsClient.setEndpoint(configuration.getAmazonSNSEndpoint());
+        }
+
+        // check the setting the headerFilterStrategy
+        if (headerFilterStrategy == null) {
+            headerFilterStrategy = new SqsHeaderFilterStrategy();
         }
         
         if (configuration.getTopicArn() == null) {
