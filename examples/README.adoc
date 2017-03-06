@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 86
+Number of Examples: 86 (7 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |=======================================================================

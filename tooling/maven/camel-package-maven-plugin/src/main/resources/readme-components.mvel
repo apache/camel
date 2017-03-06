@@ -1,6 +1,6 @@
 @if{!components.isEmpty()}
 
-Number of Components: @{components.size} in @{numberOfArtifacts} JAR artifacts
+Number of Components: @{components.size} in @{numberOfArtifacts} JAR artifacts (@{numberOfDeprecated} deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================

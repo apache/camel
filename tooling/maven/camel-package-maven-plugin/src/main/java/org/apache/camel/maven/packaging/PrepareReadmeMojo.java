@@ -165,12 +165,17 @@ public class PrepareReadmeMojo extends AbstractMojo {
             // sort the models
             Collections.sort(models, new EipComparator());
 
+            // how many deprecated
+            long deprecated = models.stream()
+                .filter(EipModel::isDeprecated)
+                .count();
+
             // update the big readme file in the core dir
             File file = new File(readmeCoreDir, "readme-eip.adoc");
 
             // update regular components
             boolean exists = file.exists();
-            String changed = templateEips(models);
+            String changed = templateEips(models, deprecated);
             boolean updated = updateEips(file, changed);
 
             if (updated) {
@@ -237,6 +242,11 @@ public class PrepareReadmeMojo extends AbstractMojo {
                 .map(ComponentModel::getArtifactId)
                 .collect(toSet()).size();
 
+            // how many deprecated
+            long deprecated = components.stream()
+                .filter(c -> "true".equals(c.getDeprecated()))
+                .count();
+
             // update the big readme file in the core/components dir
             File file;
             if (coreOnly) {
@@ -247,7 +257,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
 
             // update regular components
             boolean exists = file.exists();
-            String changed = templateComponents(components, count);
+            String changed = templateComponents(components, count, deprecated);
             boolean updated = updateComponents(file, changed);
 
             if (updated) {
@@ -289,12 +299,17 @@ public class PrepareReadmeMojo extends AbstractMojo {
                 .map(OtherModel::getArtifactId)
                 .collect(toSet()).size();
 
+            // how many deprecated
+            long deprecated = others.stream()
+                .filter(o -> "true".equals(o.getDeprecated()))
+                .count();
+
             // update the big readme file in the components dir
             File file = new File(readmeComponentsDir, "readme.adoc");
 
             // update regular components
             boolean exists = file.exists();
-            String changed = templateOthers(others, count);
+            String changed = templateOthers(others, count, deprecated);
             boolean updated = updateOthers(file, changed);
 
             if (updated) {
@@ -342,6 +357,11 @@ public class PrepareReadmeMojo extends AbstractMojo {
                 .map(DataFormatModel::getArtifactId)
                 .collect(toSet()).size();
 
+            // how many deprecated
+            long deprecated = models.stream()
+                .filter(m -> "true".equals(m.getDeprecated()))
+                .count();
+
             // filter out camel-core
             List<DataFormatModel> dataFormats = new ArrayList<>();
             for (DataFormatModel model : models) {
@@ -366,7 +386,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
 
             // update regular data formats
             boolean exists = file.exists();
-            String changed = templateDataFormats(dataFormats, count);
+            String changed = templateDataFormats(dataFormats, count, deprecated);
             boolean updated = updateDataFormats(file, changed);
 
             if (updated) {
@@ -422,6 +442,11 @@ public class PrepareReadmeMojo extends AbstractMojo {
                 .map(LanguageModel::getArtifactId)
                 .collect(toSet()).size();
 
+            // how many deprecated
+            long deprecated = languages.stream()
+                .filter(l -> "true".equals(l.getDeprecated()))
+                .count();
+
             // update the big readme file in the core/components dir
             File file;
             if (coreOnly) {
@@ -432,7 +457,7 @@ public class PrepareReadmeMojo extends AbstractMojo {
 
             // update regular data formats
             boolean exists = file.exists();
-            String changed = templateLanguages(languages, count);
+            String changed = templateLanguages(languages, count, deprecated);
             boolean updated = updateLanguages(file, changed);
 
             if (updated) {
@@ -448,11 +473,12 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
-    private String templateEips(List<EipModel> models) throws MojoExecutionException {
+    private String templateEips(List<EipModel> models, long deprecated) throws MojoExecutionException {
         try {
             String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-eips.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("eips", models);
+            map.put("numberOfDeprecated", deprecated);
             String out = (String) TemplateRuntime.eval(template, map);
             return out;
         } catch (Exception e) {
@@ -460,12 +486,13 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
-    private String templateComponents(List<ComponentModel> models, int artifacts) throws MojoExecutionException {
+    private String templateComponents(List<ComponentModel> models, int artifacts, long deprecated) throws MojoExecutionException {
         try {
             String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-components.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("components", models);
             map.put("numberOfArtifacts", artifacts);
+            map.put("numberOfDeprecated", deprecated);
             String out = (String) TemplateRuntime.eval(template, map);
             return out;
         } catch (Exception e) {
@@ -473,12 +500,13 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
-    private String templateOthers(List<OtherModel> models, int artifacts) throws MojoExecutionException {
+    private String templateOthers(List<OtherModel> models, int artifacts, long deprecated) throws MojoExecutionException {
         try {
             String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-others.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("others", models);
             map.put("numberOfArtifacts", artifacts);
+            map.put("numberOfDeprecated", deprecated);
             String out = (String) TemplateRuntime.eval(template, map);
             return out;
         } catch (Exception e) {
@@ -486,12 +514,13 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
-    private String templateDataFormats(List<DataFormatModel> models, int artifacts) throws MojoExecutionException {
+    private String templateDataFormats(List<DataFormatModel> models, int artifacts, long deprecated) throws MojoExecutionException {
         try {
             String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-dataformats.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("dataformats", models);
             map.put("numberOfArtifacts", artifacts);
+            map.put("numberOfDeprecated", deprecated);
             String out = (String) TemplateRuntime.eval(template, map);
             return out;
         } catch (Exception e) {
@@ -499,12 +528,13 @@ public class PrepareReadmeMojo extends AbstractMojo {
         }
     }
 
-    private String templateLanguages(List<LanguageModel> models, int artifacts) throws MojoExecutionException {
+    private String templateLanguages(List<LanguageModel> models, int artifacts, long deprecated) throws MojoExecutionException {
         try {
             String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-languages.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("languages", models);
             map.put("numberOfArtifacts", artifacts);
+            map.put("numberOfDeprecated", deprecated);
             String out = (String) TemplateRuntime.eval(template, map);
             return out;
         } catch (Exception e) {

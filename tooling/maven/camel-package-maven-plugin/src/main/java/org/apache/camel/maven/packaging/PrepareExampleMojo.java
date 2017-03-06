@@ -140,12 +140,17 @@ public class PrepareExampleMojo extends AbstractMojo {
             // sort the models
             Collections.sort(models, new ExampleComparator());
 
+            // how many deprecated
+            long deprecated = models.stream()
+                .filter(m -> "true".equals(m.getDeprecated()))
+                .count();
+
             // update the big readme file in the examples dir
             File file = new File(".", "README.adoc");
 
             // update regular components
             boolean exists = file.exists();
-            String changed = templateExamples(models);
+            String changed = templateExamples(models, deprecated);
             boolean updated = updateExamples(file, changed);
 
             if (updated) {
@@ -161,11 +166,12 @@ public class PrepareExampleMojo extends AbstractMojo {
         }
     }
 
-    private String templateExamples(List<ExampleModel> models) throws MojoExecutionException {
+    private String templateExamples(List<ExampleModel> models, long deprecated) throws MojoExecutionException {
         try {
             String template = loadText(UpdateReadmeMojo.class.getClassLoader().getResourceAsStream("readme-examples.mvel"));
             Map<String, Object> map = new HashMap<>();
             map.put("examples", models);
+            map.put("numberOfDeprecated", deprecated);
             String out = (String) TemplateRuntime.eval(template, map);
             return out;
         } catch (Exception e) {
