@@ -152,7 +152,6 @@
 	* [Beanstalk](beanstalk-component.adoc)
 	* [Bonita](bonita-component.adoc)
 	* [Box](box-component.adoc)
-	* [Box2](box2-component.adoc)
 	* [Braintree](braintree-component.adoc)
 	* [Camel Context](context-component.adoc)
 	* [Cassandra CQL](cql-component.adoc)
@@ -329,6 +328,7 @@
 * Miscellaneous Components
 	* [BAM](bam.adoc)
 	* [Blueprint](blueprint.adoc)
+	* [Box2 Parent](box2-parent.adoc)
 	* [CDI](cdi.adoc)
 	* [CXF Transport](cxf-transport.adoc)
 	* [Eclipse](eclipse.adoc)
