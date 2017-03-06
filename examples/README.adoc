@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 84
+Number of Examples: 86
 
 [width="100%",cols="4,2,4",options="header"]
 |=======================================================================
@@ -29,7 +29,7 @@ Number of Examples: 84
 
 | link:camel-example-ftp/README.md[FTP] (camel-example-ftp) | Beginner | An example for showing Camel FTP integration
 
-| link:camel-example-java8/readme.md[Java8] (camel-example-java8) | Beginner | An example for showing Camel DSL for Java 8
+| link:camel-example-java8/readme.adoc[Java8] (camel-example-java8) | Beginner | An example for showing Camel DSL for Java 8
 
 | link:camel-example-pojo-messaging/README.md[POJO Routing] (camel-example-pojo-messaging) | Beginner | An example showing how to produce and consume messages from Camel endpoints using annotated POJOs
   
@@ -95,7 +95,7 @@ Number of Examples: 84
 
 | link:camel-example-transformer-demo/README.md[Transformer and Validator Spring XML] (camel-example-transformer-demo) | Input/Output Type Contract | An example demonstrating declarative transformation and validation along data type declaration using Spring DSL
 
-| link:camel-example-validator-spring-boot/README.md[Validator Spring Boot] (camel-example-validator-spring-boot) | Input/Output Type Contract | An example demonstrating declarative validation along data type declaration using Spring Boot
+| link:camel-example-validator-spring-boot/readme.adoc[Validator Spring Boot] (camel-example-validator-spring-boot) | Input/Output Type Contract | An example showing how to work with declarative validation and Spring Boot
 
 | link:camel-example-bam/README.md[BAM (deprecated)] (camel-example-bam) | Management and Monitoring | *deprecated* An example showing how to use Camel as a Business Activity Monitoring tool
 
@@ -154,15 +154,17 @@ Number of Examples: 84
 
 | link:camel-example-scala/ReadMe.md[Scala] (camel-example-scala) | Other Languages | A Camel route using Scala
 
-| link:camel-example-java8-rx/readme.md[Java8 RX] (camel-example-java8-rx) | Reactive | An example for showing Camel RX for Java 8
+| link:camel-example-java8-rx/readme.adoc[Java8 RX] (camel-example-java8-rx) | Reactive | An example for showing Camel RX for Java 8
 
-| link:camel-example-reactive-streams/readme.md[Reactive Streams] (camel-example-reactive-streams) | Reactive | An example that shows how Camel can exchange data using reactive streams with Spring Boot reactor
+| link:camel-example-reactive-streams/readme.adoc[Reactive Streams] (camel-example-reactive-streams) | Reactive | An example that shows how Camel can exchange data using reactive streams with Spring Boot reactor
 
 | link:camel-example-cdi-rest-servlet/README.md[CDI Rest] (camel-example-cdi-rest-servlet) | Rest | REST DSL / Servlet with CDI example
 
 | link:camel-example-restlet-jdbc/README.md[Restlet JDBC] (camel-example-restlet-jdbc) | Rest | An example showing how to create REST API with Camel Restlet and JDBC components
 
 | link:camel-example-spark-rest/README.md[Spark REST] (camel-example-spark-rest) | Rest | An example using Spark REST
+
+| link:camel-example-spring-boot-rest-swagger/README.adoc[Spring Boot Rest Swagger] (camel-example-spring-boot-rest-swagger) | Rest | An example showing Camel REST DSL and Swagger with Spring Boot
 
 | link:camel-example-swagger-cdi/README.md[Swagger CDI] (camel-example-swagger-cdi) | Rest | An example using REST DSL and Swagger Java with CDI
 
