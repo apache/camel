@@ -18,6 +18,7 @@ package org.apache.camel.builder;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -42,24 +43,23 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     private final ClassValue<ConvertBodyProcessor> resultProcessors;
     private Map<String, Object> headers;
     private Object body;
-    private Endpoint endpoint;
-    private Consumer<ProducerTemplate> templateCustomizer;
-    private Supplier<Exchange> exchangeSupplier;
-    private Supplier<Processor> processorSupplier;
-    private volatile ProducerTemplate template;
-    private Endpoint defaultEndpoint;
+    private Optional<Consumer<ProducerTemplate>> templateCustomizer;
+    private Optional<Supplier<Exchange>> exchangeSupplier;
+    private Optional<Supplier<Processor>> processorSupplier;
+    private Optional<Endpoint> endpoint;
+    private Optional<Endpoint> defaultEndpoint;
     private int maximumCacheSize;
-    private boolean eventNotifierEnabled = true;
+    private boolean eventNotifierEnabled;
+    private volatile ProducerTemplate template;
 
     public DefaultFluentProducerTemplate(CamelContext context) {
         this.context = context;
-        this.headers = null;
-        this.body = null;
-        this.endpoint = null;
-        this.templateCustomizer = null;
-        this.exchangeSupplier = null;
-        this.processorSupplier = () -> this::populateExchange;
-        this.template = null;
+        this.endpoint = Optional.empty();
+        this.defaultEndpoint = Optional.empty();
+        this.eventNotifierEnabled = true;
+        this.templateCustomizer = Optional.empty();
+        this.exchangeSupplier = Optional.empty();
+        this.processorSupplier = Optional.empty();
         this.resultProcessors = new ClassValue<ConvertBodyProcessor>() {
             @Override
             protected ConvertBodyProcessor computeValue(Class<?> type) {
@@ -95,12 +95,12 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
 
     @Override
     public Endpoint getDefaultEndpoint() {
-        return defaultEndpoint;
+        return defaultEndpoint.orElse(null);
     }
 
     @Override
     public void setDefaultEndpoint(Endpoint defaultEndpoint) {
-        this.defaultEndpoint = defaultEndpoint;
+        this.defaultEndpoint = Optional.of(defaultEndpoint);
     }
 
     @Override
@@ -168,7 +168,7 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
 
     @Override
     public FluentProducerTemplate withTemplateCustomizer(final Consumer<ProducerTemplate> templateCustomizer) {
-        this.templateCustomizer = templateCustomizer;
+        this.templateCustomizer = Optional.of(templateCustomizer);
         return this;
     }
 
@@ -179,7 +179,7 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
 
     @Override
     public FluentProducerTemplate withExchange(final Supplier<Exchange> exchangeSupplier) {
-        this.exchangeSupplier = exchangeSupplier;
+        this.exchangeSupplier = Optional.of(exchangeSupplier);
         return this;
     }
 
@@ -190,7 +190,7 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
 
     @Override
     public FluentProducerTemplate withProcessor(final Supplier<Processor> processorSupplier) {
-        this.processorSupplier = processorSupplier;
+        this.processorSupplier = Optional.of(processorSupplier);
         return this;
     }
 
@@ -201,7 +201,7 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
 
     @Override
     public FluentProducerTemplate to(Endpoint endpoint) {
-        this.endpoint = endpoint;
+        this.endpoint = Optional.of(endpoint);
         return this;
     }
 
@@ -217,13 +217,13 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
     @Override
     @SuppressWarnings("unchecked")
     public <T> T request(Class<T> type) throws CamelExecutionException {
-        T result;
-        Endpoint target = endpoint != null ? endpoint : defaultEndpoint;
-        // we must have an endpoint to send to
-        if (target == null) {
-            throw new IllegalArgumentException("No endpoint configured on FluentProducerTemplate. You can configure an endpoint with to(uri)");
-        }
+        // Determine the target endpoint
+        final Endpoint target = target();
 
+        // Create the default processor if not provided.
+        final Supplier<Processor> processorSupplier = this.processorSupplier.orElse(() -> defaultProcessor());
+
+        T result;
         if (type == Exchange.class) {
             result = (T)template().request(target, processorSupplier.get());
         } else if (type == Message.class) {
@@ -253,18 +253,23 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
 
     @Override
     public <T> Future<T> asyncRequest(Class<T> type) {
-        Endpoint target = endpoint != null ? endpoint : defaultEndpoint;
-
-        // we must have an endpoint to send to
-        if (target == null) {
-            throw new IllegalArgumentException("No endpoint configured on FluentProducerTemplate. You can configure an endpoint with to(uri)");
-        }
+        // Determine the target endpoint
+        final Endpoint target = target();
 
         Future<T> result;
-        if (headers != null) {
-            result = template().asyncRequestBodyAndHeaders(target, body, headers, type);
+        if (ObjectHelper.isNotEmpty(headers)) {
+            // Make a copy of the headers and body so that async processing won't
+            // be invalidated by subsequent reuse of the template
+            final Map<String, Object> headersCopy = new HashMap<>(headers);
+            final Object bodyCopy = body;
+
+            result = template().asyncRequestBodyAndHeaders(target, bodyCopy, headersCopy, type);
         } else {
-            result = template().asyncRequestBody(target, body, type);
+            // Make a copy of the and body so that async processing won't be
+            // invalidated by subsequent reuse of the template
+            final Object bodyCopy = body;
+
+            result = template().asyncRequestBody(target, bodyCopy, type);
         }
 
         return result;
@@ -276,30 +281,22 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
 
     @Override
     public Exchange send() throws CamelExecutionException {
-        Endpoint target = endpoint != null ? endpoint : defaultEndpoint;
+        // Determine the target endpoint
+        final Endpoint target = target();
 
-        // we must have an endpoint to send to
-        if (target == null) {
-            throw new IllegalArgumentException("No endpoint configured on FluentProducerTemplate. You can configure an endpoint with to(uri)");
-        }
-
-        return exchangeSupplier != null
-            ? template().send(target, exchangeSupplier.get())
-            : template().send(target, processorSupplier.get());
+        return exchangeSupplier.isPresent()
+            ? template().send(target, exchangeSupplier.get().get())
+            : template().send(target, processorSupplier.orElse(() -> defaultProcessor()).get());
     }
 
     @Override
     public Future<Exchange> asyncSend() {
-        Endpoint target = endpoint != null ? endpoint : defaultEndpoint;
+        // Determine the target endpoint
+        final Endpoint target = target();
 
-        // we must have an endpoint to send to
-        if (target == null) {
-            throw new IllegalArgumentException("No endpoint configured on FluentProducerTemplate. You can configure an endpoint with to(uri)");
-        }
-
-        return exchangeSupplier != null
-            ? template().asyncSend(target, exchangeSupplier.get())
-            : template().asyncSend(target, processorSupplier.get());
+        return exchangeSupplier.isPresent()
+            ? template().asyncSend(target, exchangeSupplier.get().get())
+            : template().asyncSend(target, processorSupplier.orElse(() -> defaultAsyncProcessor()).get());
     }
 
     // ************************
@@ -320,25 +317,40 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
 
         if (template == null) {
             template = maximumCacheSize > 0 ? context.createProducerTemplate(maximumCacheSize) : context.createProducerTemplate();
-            if (defaultEndpoint != null) {
-                template.setDefaultEndpoint(defaultEndpoint);
-            }
+            defaultEndpoint.ifPresent(template::setDefaultEndpoint);
             template.setEventNotifierEnabled(eventNotifierEnabled);
-            if (templateCustomizer != null) {
-                templateCustomizer.accept(template);
-            }
+            templateCustomizer.ifPresent(tc -> tc.accept(template));
         }
 
         return template;
     }
 
-    private void populateExchange(Exchange exchange) throws Exception {
-        if (headers != null && !headers.isEmpty()) {
-            exchange.getIn().getHeaders().putAll(headers);
+    private Processor defaultProcessor() {
+        return exchange -> {
+            ObjectHelper.ifNotEmpty(headers, exchange.getIn().getHeaders()::putAll);
+            ObjectHelper.ifNotEmpty(body, exchange.getIn()::setBody);
+        };
+    }
+
+    private Processor defaultAsyncProcessor() {
+        final Map<String, Object> headersCopy = ObjectHelper.isNotEmpty(this.headers) ? new HashMap<>(this.headers) : null;
+        final Object bodyCopy = this.body;
+
+        return exchange -> {
+            ObjectHelper.ifNotEmpty(headersCopy, exchange.getIn().getHeaders()::putAll);
+            ObjectHelper.ifNotEmpty(bodyCopy, exchange.getIn()::setBody);
+        };
+    }
+
+    private Endpoint target() {
+        if (endpoint.isPresent()) {
+            return endpoint.get();
         }
-        if (body != null) {
-            exchange.getIn().setBody(body);
+        if (defaultEndpoint.isPresent()) {
+            return defaultEndpoint.get();
         }
+
+        throw new IllegalArgumentException("No endpoint configured on FluentProducerTemplate. You can configure an endpoint with to(uri)");
     }
 
     @Override
