@@ -17,8 +17,6 @@ Number of Examples: 86
 |=======================================================================
 | Example | Category | Description
 
-| link:camel-example-opentracing/README.md[Opentracing] (camel-example-opentracing) |  | An example showing how to trace incoming and outgoing messages from Camel with OpenTracing
-
 | link:camel-example-cdi/README.md[CDI] (camel-example-cdi) | Beginner | An example showing how to work with Camel and CDI for dependency injection
 
 | link:camel-example-cdi-properties/README.md[CDI Properties] (camel-example-cdi-properties) | Beginner | DeltaSpike configuration properties CDI example
@@ -104,6 +102,8 @@ Number of Examples: 86
 | link:camel-example-jmx/README.md[JMX] (camel-example-jmx) | Management and Monitoring | An example showing how to work with Camel and JMX
 
 | link:camel-example-management/README.md[Management] (camel-example-management) | Management and Monitoring | An example for showing Camel JMX management
+
+| link:camel-example-opentracing/README.md[OpenTracing] (camel-example-opentracing) | Management and Monitoring | An example showing how to trace incoming and outgoing messages from Camel with OpenTracing
 
 | link:camel-example-splunk/README.md[Splunk] (camel-example-splunk) | Management and Monitoring | An example using Splunk
 
