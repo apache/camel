@@ -63,6 +63,8 @@ public class DockerConfiguration implements Cloneable {
     private boolean tlsVerify;
     @UriParam(label = "advanced", defaultValue = "true")
     private boolean socket;
+    @UriParam(label = "advanced", defaultValue = "com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory")
+    private String cmdExecFactory = "com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory";
     
     private Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -253,6 +255,17 @@ public class DockerConfiguration implements Cloneable {
         this.socket = socket;
     }
 
+    public String getCmdExecFactory() {
+        return cmdExecFactory;
+    }
+
+    /**
+     * The fully qualified class name of the DockerCmdExecFactory implementation to use
+     */
+    public void setCmdExecFactory(String cmdExecFactory) {
+        this.cmdExecFactory = cmdExecFactory;
+    }
+
     public DockerConfiguration copy() {
         try {
             return (DockerConfiguration) clone();
@@ -260,5 +273,4 @@ public class DockerConfiguration implements Cloneable {
             throw new RuntimeCamelException(e);
         }
     }
-
 }

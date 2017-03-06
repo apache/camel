@@ -18,34 +18,47 @@ package org.apache.camel.component.docker.it;
 
 import java.util.concurrent.TimeUnit;
 
+import com.github.dockerjava.api.model.Version;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * Integration test listing images on Docker Platform
- */
-public class DockerProducerTestIT extends DockerITTestSupport {
+public class DockerCustomCmdExecFactoryTestIT extends DockerITTestSupport  {
 
     @Test
-    public void testDocker() throws Exception {
+    public void testNettyCmdExecFactoryConfig() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived(FakeDockerCmdExecFactory.FAKE_VERSION);
+
         template.sendBody("direct:in", "");
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);
-
         assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
+        mock.getExchanges();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        FakeDockerCmdExecFactory.class.getDeclaredConstructors();
+
         return new RouteBuilder() {
             public void configure() {
                 from("direct:in")
-                    .to("docker://imagelist")
+                    .to("docker://version?cmdExecFactory=" + FakeDockerCmdExecFactory.class.getName())
                     .log("${body}")
+                    .process(new Processor() {
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            Version version = exchange.getIn().getBody(Version.class);
+                            exchange.getOut().setBody(version.getVersion());
+                        }
+                    })
                     .to("mock:result");
             }
         };
     }
+
 }

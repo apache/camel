@@ -33,7 +33,7 @@ public final class DockerHelper {
     private static final String STRING_DELIMITER = ";";
 
     private DockerHelper() {
-        // Helpser class
+        // Helper class
     }
 
     /**
@@ -73,11 +73,10 @@ public final class DockerHelper {
                 throw new DockerClientException("Failed to validate parameter type for property " + key);
             }
         }
-
     }
 
     /**
-     * Transforms a Docker Component header value to its' analogous URI
+     * Transforms a Docker Component header value to its analogous URI
      * parameter
      *
      * @param name
@@ -99,7 +98,7 @@ public final class DockerHelper {
     }
 
     /**
-     * Transforms a Docker Component URI parameter to its' analogous header
+     * Transforms a Docker Component URI parameter to its analogous header
      * value
      *
      * @param name
@@ -174,7 +173,6 @@ public final class DockerHelper {
         }
 
         return null;
-
     }
 
     /**
@@ -212,7 +210,6 @@ public final class DockerHelper {
         }
 
         return null;
-
     }
 
     /**
@@ -236,7 +233,6 @@ public final class DockerHelper {
         }
 
         return null;
-
     }
 
 }
