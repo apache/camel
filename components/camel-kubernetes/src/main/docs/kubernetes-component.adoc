@@ -49,17 +49,14 @@ The Kubernetes component is configured using the URI syntax with the following p
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | masterUrl |  | String | *Required* Kubernetes Master url
 |=======================================================================
-{% endraw %}
 
 #### 27 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -91,7 +88,6 @@ The Kubernetes component is configured using the URI syntax with the following p
 | trustCerts | security |  | Boolean | Define if the certs we used are trusted anyway or not
 | username | security |  | String | Username to connect to Kubernetes
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

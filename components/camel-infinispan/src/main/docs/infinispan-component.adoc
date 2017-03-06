@@ -51,17 +51,14 @@ The Infinispan component is configured using the URI syntax with the following p
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | host |  | String | *Required* Specifies the host of the cache on Infinispan instance
 |=======================================================================
-{% endraw %}
 
 #### 14 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -80,7 +77,6 @@ The Infinispan component is configured using the URI syntax with the following p
 | flags | advanced |  | String | A comma separated list of Flag to be applied by default on each cache invocation not applicable to remote caches.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

@@ -54,17 +54,14 @@ The Azure Storage Queue Service component is configured using the URI syntax wit
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | containerAndQueueUri |  | String | *Required* Container Queue compact Uri
 |=======================================================================
-{% endraw %}
 
 #### 10 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -79,7 +76,6 @@ The Azure Storage Queue Service component is configured using the URI syntax wit
 | queuePrefix | producer |  | String | Set a prefix which can be used for listing the queues
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

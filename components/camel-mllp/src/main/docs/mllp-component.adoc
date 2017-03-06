@@ -57,18 +57,15 @@ The MLLP component is configured using the URI syntax with the following path an
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | hostname |  | String | *Required* Hostname or IP for connection for the TCP connection. The default value is null which means any local IP address
 | port |  | int | *Required* Port number for the TCP connection
 |=======================================================================
-{% endraw %}
 
 #### 22 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -95,7 +92,6 @@ The MLLP component is configured using the URI syntax with the following path an
 | readTimeout | timeout | 500 | int | The SO_TIMEOUT value (in milliseconds) used after the start of an MLLP frame has been received
 | receiveTimeout | timeout | 10000 | int | The SO_TIMEOUT value (in milliseconds) used when waiting for the start of an MLLP frame
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

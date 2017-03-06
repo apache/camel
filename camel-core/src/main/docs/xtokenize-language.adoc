@@ -19,7 +19,6 @@ The XML Tokenize language supports 4 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -28,5 +27,4 @@ The XML Tokenize language supports 4 options which are listed below.
 | group |  | Integer | To group N parts together
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |=======================================================================
-{% endraw %}
 // language options: END

@@ -46,17 +46,14 @@ The Solr component is configured using the URI syntax with the following path an
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | url |  | String | *Required* Hostname and port for the solr server
 |=======================================================================
-{% endraw %}
 
 #### 13 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -74,7 +71,6 @@ The Solr component is configured using the URI syntax with the following path an
 | collection | solrCloud |  | String | Set the collection name which the solrCloud server could use
 | zkHost | solrCloud |  | String | Set the ZooKeeper host information which the solrCloud could use such as zkhost=localhost:8123.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

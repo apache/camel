@@ -55,14 +55,12 @@ The Lucene component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | config | advanced |  | LuceneConfiguration | To use a shared lucene configuration
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -78,18 +76,15 @@ The Lucene component is configured using the URI syntax with the following path 
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | host |  | String | *Required* The URL to the lucene server
 | operation |  | LuceneOperation | *Required* Operation to do such as insert or query.
 |=======================================================================
-{% endraw %}
 
 #### 5 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -99,7 +94,6 @@ The Lucene component is configured using the URI syntax with the following path 
 | srcDir | producer |  | File | An optional directory containing files to be used to be analyzed and added to the index at producer startup.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

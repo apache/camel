@@ -68,14 +68,12 @@ The Mina component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | configuration | advanced |  | MinaConfiguration | To use the shared mina configuration.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -92,7 +90,6 @@ The Mina component is configured using the URI syntax with the following path an
 
 #### 3 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -100,11 +97,9 @@ The Mina component is configured using the URI syntax with the following path an
 | host |  | String | *Required* Hostname to use. Use localhost or 0.0.0.0 for local server as consumer. For producer use the hostname or ip address of the remote server.
 | port |  | int | *Required* Port number
 |=======================================================================
-{% endraw %}
 
 #### 21 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -130,7 +125,6 @@ The Mina component is configured using the URI syntax with the following path an
 | textline | codec | false | boolean | Only used for TCP. If no codec is specified you can use this flag to indicate a text line based codec; if not specified or the value is false then Object Serialization is assumed over TCP.
 | textlineDelimiter | codec |  | TextLineDelimiter | Only used for TCP and if textline=true. Sets the text line delimiter to use. If none provided Camel will use DEFAULT. This delimiter is used to mark the end of text.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

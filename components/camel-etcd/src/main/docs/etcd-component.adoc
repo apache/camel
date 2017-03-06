@@ -22,18 +22,15 @@ The etcd component is configured using the URI syntax with the following path an
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | namespace |  | EtcdNamespace | *Required* The API namespace to use
 | path |  | String | The path the endpoint refers to
 |=======================================================================
-{% endraw %}
 
 #### 29 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -67,7 +64,6 @@ The etcd component is configured using the URI syntax with the following path an
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters.
 | userName | security |  | String | The user name to use for basic authentication.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

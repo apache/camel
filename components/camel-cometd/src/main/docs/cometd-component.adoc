@@ -52,7 +52,6 @@ The CometD component supports 7 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -64,7 +63,6 @@ The CometD component supports 7 options which are listed below.
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -79,7 +77,6 @@ The CometD component is configured using the URI syntax with the following path 
 
 #### 3 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -87,11 +84,9 @@ The CometD component is configured using the URI syntax with the following path 
 | port |  | int | *Required* Host port number
 | channelName |  | String | *Required* The channelName represents a topic that can be subscribed to by the Camel endpoints.
 |=======================================================================
-{% endraw %}
 
 #### 16 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -112,7 +107,6 @@ The CometD component is configured using the URI syntax with the following path 
 | disconnectLocalSession | producer | false | boolean | Whether to disconnect local sessions after publishing a message to its channel. Disconnecting local session is needed as they are not swept by default by CometD and therefore you can run out of memory.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

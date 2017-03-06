@@ -32,17 +32,14 @@ The JMX component is configured using the URI syntax with the following path and
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | serverURL |  | String | server url comes from the remaining endpoint
 |=======================================================================
-{% endraw %}
 
 #### 29 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -76,7 +73,6 @@ The JMX component is configured using the URI syntax with the following path and
 | notifyMatch | string | false | boolean | URI Property: string monitor only If true the string monitor will fire a notification when the string attribute matches the string to compare.
 | stringToCompare | string |  | String | URI Property: string monitor only Value for the string monitor's string to compare.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 ### Activating JMX in Camel

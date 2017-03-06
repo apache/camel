@@ -42,7 +42,6 @@ The XPath language supports 8 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -55,7 +54,6 @@ The XPath language supports 8 options which are listed below.
 | headerName |  | String | Name of header to use as input instead of the message body
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |=======================================================================
-{% endraw %}
 // language options: END
 
 ### Namespaces

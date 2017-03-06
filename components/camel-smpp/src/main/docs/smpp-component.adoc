@@ -171,14 +171,12 @@ The SMPP component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | configuration | advanced |  | SmppConfiguration | To use the shared SmppConfiguration as configuration.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -193,18 +191,15 @@ The SMPP component is configured using the URI syntax with the following path an
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | host | localhost | String | Hostname for the SMSC server to use.
 | port | 2775 | Integer | Port number for the SMSC server to use.
 |=======================================================================
-{% endraw %}
 
 #### 38 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -247,7 +242,6 @@ The SMPP component is configured using the URI syntax with the following path an
 | systemId | security | smppclient | String | The system id (username) for connecting to SMSC server.
 | usingSSL | security | false | boolean | Whether using SSL with the smpps protocol
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

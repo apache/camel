@@ -81,17 +81,14 @@ The SIP component is configured using the URI syntax with the following path and
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | uri |  | URI | *Required* URI of the SIP server to connect to (the username and password can be included such as: john:secretmyserver:9999)
 |=======================================================================
-{% endraw %}
 
 #### 44 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -140,7 +137,6 @@ The SIP component is configured using the URI syntax with the following path and
 | maxForwards | proxy |  | int | Number of maximum proxy forwards
 | useRouterForAllUris | proxy | false | boolean | This setting is used when requests are sent to the Presence Agent via a proxy.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 ### Sending Messages to/from a SIP endpoint

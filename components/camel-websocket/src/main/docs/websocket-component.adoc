@@ -36,7 +36,6 @@ The Jetty Websocket component supports 13 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -54,7 +53,6 @@ The Jetty Websocket component supports 13 options which are listed below.
 | socketFactory | common |  | Map | To configure a map which contains custom WebSocketFactory for sub protocols. The key in the map is the sub protocol. The default key is reserved for the default implementation.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -73,7 +71,6 @@ The Jetty Websocket component is configured using the URI syntax with the follow
 
 #### 3 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -81,11 +78,9 @@ The Jetty Websocket component is configured using the URI syntax with the follow
 | port | 9292 | Integer | The port number. The default value is 9292. Setting this option on the component will use the component configured value as default.
 | resourceUri |  | String | *Required* Name of the websocket channel to use
 |=======================================================================
-{% endraw %}
 
 #### 18 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -108,7 +103,6 @@ The Jetty Websocket component is configured using the URI syntax with the follow
 | enableJmx | monitoring | false | boolean | If this option is true Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details.
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

@@ -49,7 +49,6 @@ The PostgresSQL Event component is configured using the URI syntax with the foll
 
 #### 4 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -58,11 +57,9 @@ The PostgresSQL Event component is configured using the URI syntax with the foll
 | database |  | String | *Required* The database name
 | channel |  | String | *Required* The channel name
 |=======================================================================
-{% endraw %}
 
 #### 7 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -74,7 +71,6 @@ The PostgresSQL Event component is configured using the URI syntax with the foll
 | pass | security |  | String | Password for login
 | user | security | postgres | String | Username for login
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

@@ -45,7 +45,6 @@ The AHC Websocket component supports 7 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -57,7 +56,6 @@ The AHC Websocket component supports 7 options which are listed below.
 | headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -70,17 +68,14 @@ The AHC Websocket component is configured using the URI syntax with the followin
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | httpUri |  | URI | *Required* The URI to use such as http://hostname:port/path
 |=======================================================================
-{% endraw %}
 
 #### 18 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -103,7 +98,6 @@ The AHC Websocket component is configured using the URI syntax with the followin
 | clientConfigRealmOptions | security |  | Map | To configure the AsyncHttpClientConfig Realm using the key/values from the Map.
 | sslContextParameters | security |  | SSLContextParameters | Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. This reference overrides any configured SSLContextParameters at the component level. See Using the JSSE Configuration Utility. Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

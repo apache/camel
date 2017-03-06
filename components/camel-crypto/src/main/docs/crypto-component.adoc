@@ -84,14 +84,12 @@ The Crypto (JCE) component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | configuration | advanced |  | DigitalSignatureConfiguration | To use the shared DigitalSignatureConfiguration as configuration
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 // endpoint options: START
@@ -101,18 +99,15 @@ The Crypto (JCE) component is configured using the URI syntax with the following
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | cryptoOperation |  | CryptoOperation | *Required* Set the Crypto operation from that supplied after the crypto scheme in the endpoint uri e.g. crypto:sign sets sign as the operation.
 | name |  | String | *Required* The logical name of this operation.
 |=======================================================================
-{% endraw %}
 
 #### 19 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -136,7 +131,6 @@ The Crypto (JCE) component is configured using the URI syntax with the following
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | password | security |  | String | Sets the password used to access an aliased PrivateKey in the KeyStore.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

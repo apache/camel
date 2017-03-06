@@ -106,7 +106,6 @@ The JClouds component supports 3 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -114,7 +113,6 @@ The JClouds component supports 3 options which are listed below.
 | computeServices | common |  | List | To use the given ComputeService which must be configured when use compute.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -129,18 +127,15 @@ The JClouds component is configured using the URI syntax with the following path
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | command |  | JcloudsCommand | *Required* What command to execute such as blobstore or compute.
 | providerId |  | String | *Required* The name of the cloud provider that provides the target service (e.g. aws-s3 or aws_ec2).
 |=======================================================================
-{% endraw %}
 
 #### 15 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -160,7 +155,6 @@ The JClouds component is configured using the URI syntax with the following path
 | operation | compute |  | String | Specifies the type of operation that will be performed to the blobstore.
 | user | compute |  | String | The user on the target node that will run the script.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

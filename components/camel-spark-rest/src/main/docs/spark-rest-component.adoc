@@ -36,7 +36,6 @@ The Spark Rest component supports 12 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -53,7 +52,6 @@ The Spark Rest component supports 12 options which are listed below.
 | sparkBinding | advanced |  | SparkBinding | To use a custom SparkBinding to map to/from Camel message.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -66,18 +64,15 @@ The Spark Rest component is configured using the URI syntax with the following p
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | verb |  | String | *Required* get post put patch delete head trace connect or options.
 | path |  | String | *Required* The content path which support Spark syntax.
 |=======================================================================
-{% endraw %}
 
 #### 11 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -93,7 +88,6 @@ The Spark Rest component is configured using the URI syntax with the following p
 | sparkBinding | advanced |  | SparkBinding | To use a custom SparkBinding to map to/from Camel message.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

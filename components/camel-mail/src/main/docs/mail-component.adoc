@@ -81,7 +81,6 @@ The Mail component supports 3 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -89,7 +88,6 @@ The Mail component supports 3 options which are listed below.
 | contentTypeResolver | advanced |  | ContentTypeResolver | Resolver to determine Content-Type for file attachments.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -104,18 +102,15 @@ The Mail component is configured using the URI syntax with the following path an
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | host |  | String | *Required* The mail server host name
 | port |  | int | The port number of the mail server
 |=======================================================================
-{% endraw %}
 
 #### 61 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -181,7 +176,6 @@ The Mail component is configured using the URI syntax with the following path an
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters.
 | username | security |  | String | The username for login
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

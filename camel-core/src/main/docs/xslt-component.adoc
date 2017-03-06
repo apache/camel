@@ -71,7 +71,6 @@ The XSLT component supports 9 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -85,7 +84,6 @@ The XSLT component supports 9 options which are listed below.
 | saxonConfigurationProperties | advanced |  | Map | To set custom Saxon configuration properties
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -96,17 +94,14 @@ The XSLT component is configured using the URI syntax with the following path an
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | resourceUri |  | String | *Required* The name of the template to load from classpath or file system
 |=======================================================================
-{% endraw %}
 
 #### 17 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -128,7 +123,6 @@ The XSLT component is configured using the URI syntax with the following path an
 | transformerFactoryClass | advanced |  | String | To use a custom XSLT transformer factory specified as a FQN class name
 | uriResolver | advanced |  | URIResolver | To use a custom javax.xml.transform.URIResolver
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

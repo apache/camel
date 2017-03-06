@@ -45,18 +45,15 @@ The Geocoder component is configured using the URI syntax with the following pat
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | address |  | String | The geo address which should be prefixed with address:
 | latlng |  | String | The geo latitude and longitude which should be prefixed with latlng:
 |=======================================================================
-{% endraw %}
 
 #### 14 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -75,7 +72,6 @@ The Geocoder component is configured using the URI syntax with the following pat
 | proxyHost | proxy |  | String | The proxy host name
 | proxyPort | proxy |  | Integer | The proxy port number
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

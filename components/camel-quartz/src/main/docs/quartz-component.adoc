@@ -50,7 +50,6 @@ The Quartz component supports 8 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -63,7 +62,6 @@ The Quartz component supports 8 options which are listed below.
 | enableJmx | consumer | true | boolean | Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX. This options is default true
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -76,18 +74,15 @@ The Quartz component is configured using the URI syntax with the following path 
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | groupName | Camel | String | The quartz group name to use. The combination of group name and timer name should be unique.
 | timerName |  | String | *Required* The quartz timer name to use. The combination of group name and timer name should be unique.
 |=======================================================================
-{% endraw %}
 
 #### 13 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -105,7 +100,6 @@ The Quartz component is configured using the URI syntax with the following path 
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | triggerParameters | advanced |  | Map | To configure additional options on the trigger.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

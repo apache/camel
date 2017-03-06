@@ -22,7 +22,6 @@ The REST component supports 4 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -31,7 +30,6 @@ The REST component supports 4 options which are listed below.
 | host | producer |  | String | Host and port of HTTP service to use (override host in swagger schema)
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 // endpoint options: START
@@ -41,7 +39,6 @@ The REST component is configured using the URI syntax with the following path an
 
 #### 3 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -49,11 +46,9 @@ The REST component is configured using the URI syntax with the following path an
 | path |  | String | *Required* The base path
 | uriTemplate |  | String | The uri template
 |=======================================================================
-{% endraw %}
 
 #### 14 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -72,7 +67,6 @@ The REST component is configured using the URI syntax with the following path an
 | queryParameters | producer |  | String | Query parameters for the HTTP service to call
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 ### Supported rest components

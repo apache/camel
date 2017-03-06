@@ -38,17 +38,14 @@ The AWS Simple Workflow component is configured using the URI syntax with the fo
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | type |  | String | *Required* Activity or workflow
 |=======================================================================
-{% endraw %}
 
 #### 29 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -82,7 +79,6 @@ The AWS Simple Workflow component is configured using the URI syntax with the fo
 | workflowList | workflow |  | String | The list name to consume workflows from.
 | workflowTypeRegistrationOptions | workflow |  | WorkflowTypeRegistrationOptions | Workflow registration options
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

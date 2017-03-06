@@ -87,7 +87,6 @@ The Simple JMS component supports 10 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -102,7 +101,6 @@ The Simple JMS component supports 10 options which are listed below.
 | headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -119,18 +117,15 @@ The Simple JMS component is configured using the URI syntax with the following p
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | destinationType | queue | String | The kind of destination to use
 | destinationName |  | String | *Required* DestinationName is a JMS queue or topic name. By default the destinationName is interpreted as a queue name.
 |=======================================================================
-{% endraw %}
 
 #### 34 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -169,7 +164,6 @@ The Simple JMS component is configured using the URI syntax with the following p
 | transactionCommitStrategy | transaction |  | TransactionCommitStrategy | Sets the commit strategy.
 | sharedJMSSession | transaction (advanced) | true | boolean | Specifies whether to share JMS session with other SJMS endpoints. Turn this off if your route is accessing to multiple JMS providers. If you need transaction against multiple JMS providers use jms component to leverage XA transaction.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

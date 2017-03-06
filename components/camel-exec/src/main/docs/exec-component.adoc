@@ -44,17 +44,14 @@ The Exec component is configured using the URI syntax with the following path an
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | executable |  | String | *Required* Sets the executable to be executed. The executable must not be empty or null.
 |=======================================================================
-{% endraw %}
 
 #### 8 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -67,7 +64,6 @@ The Exec component is configured using the URI syntax with the following path an
 | workingDir | producer |  | String | The directory in which the command should be executed. If null the working directory of the current process will be used.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 ### Message headers

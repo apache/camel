@@ -85,14 +85,12 @@ The Simple language supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | resultType |  | String | Sets the class name of the result type (type from output)
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |=======================================================================
-{% endraw %}
 // language options: END
 
 ### Variables

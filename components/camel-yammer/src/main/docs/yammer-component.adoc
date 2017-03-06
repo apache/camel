@@ -45,7 +45,6 @@ The Yammer component supports 5 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -55,7 +54,6 @@ The Yammer component supports 5 options which are listed below.
 | config | advanced |  | YammerConfiguration | To use a shared yammer configuration
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -74,17 +72,14 @@ The Yammer component is configured using the URI syntax with the following path 
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | function |  | YammerFunctionType | *Required* The function to use
 |=======================================================================
-{% endraw %}
 
 #### 28 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -117,7 +112,6 @@ The Yammer component is configured using the URI syntax with the following path 
 | consumerKey | security |  | String | *Required* The consumer key
 | consumerSecret | security |  | String | *Required* The consumer secret
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

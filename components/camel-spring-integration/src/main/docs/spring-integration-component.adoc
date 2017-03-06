@@ -51,17 +51,14 @@ The Spring Integration component is configured using the URI syntax with the fol
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | defaultChannel |  | String | *Required* The default channel name which is used by the Spring Integration Spring context. It will equal to the inputChannel name for the Spring Integration consumer and the outputChannel name for the Spring Integration provider.
 |=======================================================================
-{% endraw %}
 
 #### 7 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -73,7 +70,6 @@ The Spring Integration component is configured using the URI syntax with the fol
 | outputChannel | producer |  | String | The Spring integration output channel name that is used to send messages to Spring integration.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

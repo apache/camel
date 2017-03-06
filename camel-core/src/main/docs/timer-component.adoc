@@ -46,17 +46,14 @@ The Timer component is configured using the URI syntax with the following path a
 
 #### 1 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | timerName |  | String | *Required* The name of the timer
 |=======================================================================
-{% endraw %}
 
 #### 12 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -73,7 +70,6 @@ The Timer component is configured using the URI syntax with the following path a
 | time | advanced |  | Date | A java.util.Date the first event should be generated. If using the URI the pattern expected is: yyyy-MM-dd HH:mm:ss or yyyy-MM-dd'T'HH:mm:ss.
 | timer | advanced |  | Timer | To use a custom Timer
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

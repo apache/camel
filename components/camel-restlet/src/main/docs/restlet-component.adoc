@@ -66,7 +66,6 @@ The Restlet component supports 21 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -92,7 +91,6 @@ The Restlet component supports 21 options which are listed below.
 | headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -105,7 +103,6 @@ The Restlet component is configured using the URI syntax with the following path
 
 #### 4 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -114,11 +111,9 @@ The Restlet component is configured using the URI syntax with the following path
 | port | 80 | int | *Required* The port number of the restlet service
 | uriPattern |  | String | The resource pattern such as /customer/id
 |=======================================================================
-{% endraw %}
 
 #### 18 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -141,7 +136,6 @@ The Restlet component is configured using the URI syntax with the following path
 | restletRealm | security |  | Map | To configure the security realms of restlet as a map.
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

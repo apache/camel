@@ -85,7 +85,6 @@ The FTP component is configured using the URI syntax with the following path and
 
 #### 3 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -93,11 +92,9 @@ The FTP component is configured using the URI syntax with the following path and
 | port |  | int | Port of the FTP server
 | directoryName |  | String | The starting directory
 |=======================================================================
-{% endraw %}
 
 #### 102 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -204,7 +201,6 @@ The FTP component is configured using the URI syntax with the following path and
 | password | security |  | String | Password to use for login
 | username | security |  | String | Username to use for login
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

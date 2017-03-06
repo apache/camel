@@ -41,18 +41,15 @@ The Spring Redis component is configured using the URI syntax with the following
 
 #### 2 path parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | host |  | String | *Required* The host where Redis server is running.
 | port |  | Integer | *Required* Redis server port number
 |=======================================================================
-{% endraw %}
 
 #### 10 query parameters:
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -67,7 +64,6 @@ The Spring Redis component is configured using the URI syntax with the following
 | listenerContainer | consumer (advanced) |  | RedisMessageListenerContainer | Reference to a pre-configured RedisMessageListenerContainer instance to use.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 
