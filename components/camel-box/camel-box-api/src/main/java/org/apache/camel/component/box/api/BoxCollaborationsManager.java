@@ -29,11 +29,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Box Collaborations Manager
- * 
  * <p>
  * Provides operations to manage Box collaborations.
- * 
- * 
  *
  */
 public class BoxCollaborationsManager {
@@ -201,8 +198,6 @@ public class BoxCollaborationsManager {
      * 
      * @param collaborationId
      *            - the id of comment to change.
-     * @param message
-     *            - the new message for the comment.
      * @return The comment with changed message.
      */
     public void deleteCollaboration(String collaborationId) {
@@ -226,9 +221,7 @@ public class BoxCollaborationsManager {
      */
     public Collection<BoxCollaboration.Info> getPendingCollaborations() {
         try {
-
             return BoxCollaboration.getPendingCollaborations(boxConnection);
-
         } catch (BoxAPIException e) {
             throw new RuntimeException(
                     String.format("Box API returned the error code %d\n\n%s", e.getResponseCode(), e.getResponse()), e);

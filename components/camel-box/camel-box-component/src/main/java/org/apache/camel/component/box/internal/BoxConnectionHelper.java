@@ -66,9 +66,6 @@ import org.slf4j.LoggerFactory;
  * 
  * <p>
  * Utility class for creating Box API Connections
- * 
- * 
- *
  */
 public final class BoxConnectionHelper {
 

@@ -53,13 +53,13 @@
 		<dependency>
 			<groupId>com.box</groupId>
 			<artifactId>box-java-sdk</artifactId>
-			<version>2.1.1</version>
+			<version>${box-java-sdk-version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>net.sourceforge.htmlunit</groupId>
 			<artifactId>htmlunit</artifactId>
-			<version>2.24</version>
+			<version>${htmlunit.version}</version>
 		</dependency>
 
 		<!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
@@ -82,7 +82,7 @@
 		<dependency>
 			<groupId>com.box</groupId>
 			<artifactId>box-java-sdk</artifactId>
-			<version>2.1.1</version>
+      <version>${box-java-sdk-version}</version>
 			<classifier>javadoc</classifier>
 			<scope>provided</scope>
 		</dependency>

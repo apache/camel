@@ -19,15 +19,14 @@ package org.apache.camel.component.box;
 import java.util.Map;
 
 import com.box.sdk.BoxAPIConnection;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.box.api.BoxFilesManager;
 import org.apache.camel.component.box.api.BoxCollaborationsManager;
 import org.apache.camel.component.box.api.BoxCommentsManager;
 import org.apache.camel.component.box.api.BoxEventLogsManager;
 import org.apache.camel.component.box.api.BoxEventsManager;
+import org.apache.camel.component.box.api.BoxFilesManager;
 import org.apache.camel.component.box.api.BoxFoldersManager;
 import org.apache.camel.component.box.api.BoxGroupsManager;
 import org.apache.camel.component.box.api.BoxSearchManager;
@@ -45,15 +44,12 @@ import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 
 /**
- * Represents a Box endpoint.
- * 
- * 
- * 
+ * For uploading downloading and managing files folders groups collaborations etc on box DOT com.
  */
 @UriEndpoint(scheme = "box", title = "Box", syntax = "box:apiName/methodName", consumerClass = BoxConsumer.class, consumerPrefix = "consumer", label = "api,file,cloud", lenientProperties = true)
 public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguration> {
 
-    @UriParam(name = "configuration", description = "Box 2 Configuration")
+    @UriParam
     private BoxConfiguration configuration;
 
     // cached connection
@@ -70,11 +66,6 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
         this.configuration = endpointConfiguration;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.camel.impl.DefaultEndpoint#getComponent()
-     */
     @Override
     public BoxComponent getComponent() {
         return (BoxComponent) super.getComponent();
@@ -82,27 +73,15 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
 
     /**
      * The BoxAPIConnection of endpoint.
-     * 
-     * @return the BoxAPIConnection of endpoint.
      */
     public BoxAPIConnection getBoxConnection() {
         return boxConnection;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.camel.Endpoint#createProducer()
-     */
     public Producer createProducer() throws Exception {
         return new BoxProducer(this);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.camel.Endpoint#createConsumer(org.apache.camel.Processor)
-     */
     public Consumer createConsumer(Processor processor) throws Exception {
         // make sure inBody is not set for consumers
         if (inBody != null) {
@@ -114,34 +93,15 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
         return consumer;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.camel.util.component.AbstractApiEndpoint#getPropertiesHelper()
-     */
     @Override
     protected ApiMethodPropertiesHelper<BoxConfiguration> getPropertiesHelper() {
         return BoxPropertiesHelper.getHelper();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.apache.camel.util.component.AbstractApiEndpoint#getThreadProfileName(
-     * )
-     */
     protected String getThreadProfileName() {
         return BoxConstants.THREAD_PROFILE_NAME;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.camel.util.component.AbstractApiEndpoint#
-     * afterConfigureProperties()
-     */
     @Override
     protected void afterConfigureProperties() {
         // create connection eagerly, a good way to validate configuration
@@ -149,12 +109,6 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.camel.util.component.AbstractApiEndpoint#getApiProxy(org.
-     * apache.camel.util.component.ApiMethod, java.util.Map)
-     */
     @Override
     public Object getApiProxy(ApiMethod method, Map<String, Object> args) {
         if (apiProxy == null) {

@@ -18,9 +18,6 @@ package org.apache.camel.component.box.internal;
 
 /**
  * Constants for Box component.
- * 
- * 
- * 
  */
 public interface BoxConstants {
 

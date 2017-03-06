@@ -21,9 +21,6 @@ import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 
 /**
  * Singleton {@link ApiMethodPropertiesHelper} for Box component.
- * 
- * 
- * 
  */
 public final class BoxPropertiesHelper extends ApiMethodPropertiesHelper<BoxConfiguration> {
 
