@@ -40,6 +40,8 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
     private final Processor processor;
     private final ReadWriteLock rwlock = new ReentrantReadWriteLock();
     private volatile HdfsInputStream istream;
+    
+    public static final long DEFAULT_CONSUMER_INITIAL_DELAY = 10 * 1000L;
 
     public HdfsConsumer(HdfsEndpoint endpoint, Processor processor, HdfsConfiguration config) {
         super(endpoint, processor);
