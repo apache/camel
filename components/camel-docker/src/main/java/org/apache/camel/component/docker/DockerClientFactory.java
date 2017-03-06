@@ -23,6 +23,9 @@ import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.core.LocalDirectorySSLConfig;
 import com.github.dockerjava.core.SSLConfig;
 import com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory;
+import com.github.dockerjava.netty.NettyDockerCmdExecFactory;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.component.docker.exception.DockerException;
 import org.apache.camel.component.docker.ssl.NoImplSslConfig;
@@ -45,8 +48,6 @@ public final class DockerClientFactory {
 
         ObjectHelper.notNull(dockerConfiguration, "dockerConfiguration");
 
-        DockerClientProfile clientProfile = new DockerClientProfile();
-
         Integer port = DockerHelper.getProperty(DockerConstants.DOCKER_PORT, dockerConfiguration, message, Integer.class, dockerConfiguration.getPort());
         String host = DockerHelper.getProperty(DockerConstants.DOCKER_HOST, dockerConfiguration, message, String.class, dockerConfiguration.getHost());
 
@@ -66,6 +67,10 @@ public final class DockerClientFactory {
         Boolean tlsVerify = DockerHelper.getProperty(DockerConstants.DOCKER_TLSVERIFY, dockerConfiguration, message, Boolean.class, dockerConfiguration.isTlsVerify());
         Boolean socket = DockerHelper.getProperty(DockerConstants.DOCKER_SOCKET_ENABLED, dockerConfiguration, message, Boolean.class, dockerConfiguration.isSocket());
 
+        String cmdExecFactory = DockerHelper.getProperty(DockerConstants.DOCKER_CMD_EXEC_FACTORY,
+            dockerConfiguration, message, String.class, dockerConfiguration.getCmdExecFactory());
+
+        DockerClientProfile clientProfile = new DockerClientProfile();
         clientProfile.setHost(host);
         clientProfile.setPort(port);
         clientProfile.setEmail(email);
@@ -79,6 +84,7 @@ public final class DockerClientFactory {
         clientProfile.setSecure(secure);
         clientProfile.setTlsVerify(tlsVerify);
         clientProfile.setSocket(socket);
+        clientProfile.setCmdExecFactory(cmdExecFactory);
 
         DockerClient dockerClient = dockerComponent.getClient(clientProfile);
 
@@ -96,25 +102,49 @@ public final class DockerClientFactory {
             sslConfig = new NoImplSslConfig();
         }
 
-        DefaultDockerClientConfig.Builder configBuilder = DefaultDockerClientConfig.createDefaultConfigBuilder().withDockerHost(clientProfile.toUrl())
-            .withDockerTlsVerify(clientProfile.isTlsVerify()).withRegistryUsername(clientProfile.getUsername()).withRegistryPassword(clientProfile.getPassword())
-            .withRegistryEmail(clientProfile.getEmail()).withRegistryUrl(clientProfile.getServerAddress()).withCustomSslConfig(sslConfig);
+        DefaultDockerClientConfig.Builder configBuilder = DefaultDockerClientConfig.createDefaultConfigBuilder()
+            .withDockerHost(clientProfile.toUrl())
+            .withDockerTlsVerify(clientProfile.isTlsVerify())
+            .withRegistryUsername(clientProfile.getUsername())
+            .withRegistryPassword(clientProfile.getPassword())
+            .withRegistryEmail(clientProfile.getEmail())
+            .withRegistryUrl(clientProfile.getServerAddress())
+            .withCustomSslConfig(sslConfig);
 
         if (clientProfile.getCertPath() != null) {
             configBuilder.withDockerCertPath(clientProfile.getCertPath());
         }
 
-        // @Deprecated: isFollowRedirectFilterEnabled, isLoggingFilterEnabled
+        CamelContext camelContext = dockerComponent.getCamelContext();
+        try {
+            DockerCmdExecFactory factory = null;
 
-        DockerCmdExecFactory dockerCmdExecFactory = new JerseyDockerCmdExecFactory().withReadTimeout(clientProfile.getRequestTimeout())
-            .withConnectTimeout(clientProfile.getRequestTimeout()).withMaxTotalConnections(clientProfile.getMaxTotalConnections())
-            .withMaxPerRouteConnections(clientProfile.getMaxPerRouteConnections());
+            if (cmdExecFactory.equals(JerseyDockerCmdExecFactory.class.getName())) {
+                factory = new JerseyDockerCmdExecFactory();
+                ((JerseyDockerCmdExecFactory) factory)
+                    .withReadTimeout(clientProfile.getRequestTimeout())
+                    .withConnectTimeout(clientProfile.getRequestTimeout())
+                    .withMaxTotalConnections(clientProfile.getMaxTotalConnections())
+                    .withMaxPerRouteConnections(clientProfile.getMaxPerRouteConnections());
+            } else if (cmdExecFactory.equals(NettyDockerCmdExecFactory.class.getName())) {
+                factory = new NettyDockerCmdExecFactory();
+                ((NettyDockerCmdExecFactory) factory)
+                    .withConnectTimeout(clientProfile.getRequestTimeout());
+            } else {
+                Class<DockerCmdExecFactory> clazz = camelContext.getClassResolver().resolveMandatoryClass(cmdExecFactory, DockerCmdExecFactory.class);
+                factory = ObjectHelper.newInstance(clazz);
+            }
 
-        dockerClient = DockerClientBuilder.getInstance(configBuilder).withDockerCmdExecFactory(dockerCmdExecFactory).build();
+            dockerClient = DockerClientBuilder.getInstance(configBuilder)
+                .withDockerCmdExecFactory(factory)
+                .build();
 
-        dockerComponent.setClient(clientProfile, dockerClient);
+            dockerComponent.setClient(clientProfile, dockerClient);
 
-        return dockerClient;
+            return dockerClient;
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Unable to resolve DockerCmdExecFactory class: " + cmdExecFactory, e);
+        }
     }
 
 }

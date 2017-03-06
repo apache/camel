@@ -18,21 +18,20 @@ package org.apache.camel.component.docker.it;
 
 import java.util.concurrent.TimeUnit;
 
+import com.github.dockerjava.netty.NettyDockerCmdExecFactory;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-/**
- * Integration test listing images on Docker Platform
- */
-public class DockerProducerTestIT extends DockerITTestSupport {
+public class DockerNettyCmdExecFactoryTestIT extends DockerITTestSupport {
 
     @Test
-    public void testDocker() throws Exception {
-        template.sendBody("direct:in", "");
-
+    public void testNettyCmdExecFactoryConfig() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
+
+        template.sendBody("direct:in", "");
 
         assertMockEndpointsSatisfied(60, TimeUnit.SECONDS);
     }
@@ -42,7 +41,7 @@ public class DockerProducerTestIT extends DockerITTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:in")
-                    .to("docker://imagelist")
+                    .to("docker://version?cmdExecFactory=" + NettyDockerCmdExecFactory.class.getName())
                     .log("${body}")
                     .to("mock:result");
             }

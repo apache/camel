@@ -50,6 +50,8 @@ public class DockerClientProfile {
 
     private Boolean socket;
 
+    private String cmdExecFactory;
+
     public String getHost() {
         return host;
     }
@@ -161,6 +163,14 @@ public class DockerClientProfile {
         this.socket = socket;
     }
 
+    public String getCmdExecFactory() {
+        return cmdExecFactory;
+    }
+
+    public void setCmdExecFactory(String cmdExecFactory) {
+        this.cmdExecFactory = cmdExecFactory;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -178,6 +188,7 @@ public class DockerClientProfile {
         result = prime * result + ((secure == null) ? 0 : secure.hashCode());
         result = prime * result + ((serverAddress == null) ? 0 : serverAddress.hashCode());
         result = prime * result + ((username == null) ? 0 : username.hashCode());
+        result = prime * result + ((cmdExecFactory == null) ? 0 : cmdExecFactory.hashCode());
         return result;
     }
 
@@ -282,6 +293,13 @@ public class DockerClientProfile {
                 return false;
             }
         } else if (!username.equals(other.username)) {
+            return false;
+        }
+        if (cmdExecFactory == null) {
+            if (other.cmdExecFactory != null) {
+                return false;
+            }
+        } else if (!cmdExecFactory.equals(other.cmdExecFactory)) {
             return false;
         }
         return true;

@@ -127,6 +127,11 @@ public class DockerComponentConfiguration {
          * Socket connection mode
          */
         private Boolean socket;
+        /**
+         * The fully qualified class name of the DockerCmdExecFactory
+         * implementation to use
+         */
+        private String cmdExecFactory = "com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory";
 
         public String getHost() {
             return host;
@@ -262,6 +267,14 @@ public class DockerComponentConfiguration {
 
         public void setSocket(Boolean socket) {
             this.socket = socket;
+        }
+
+        public String getCmdExecFactory() {
+            return cmdExecFactory;
+        }
+
+        public void setCmdExecFactory(String cmdExecFactory) {
+            this.cmdExecFactory = cmdExecFactory;
         }
     }
 }
