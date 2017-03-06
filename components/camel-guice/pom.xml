@@ -26,7 +26,7 @@
 
   <artifactId>camel-guice</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Guice</name>
+  <name>Camel :: Guice (deprecated)</name>
   <description>Using Camel with Guice</description>
 
   <properties>
