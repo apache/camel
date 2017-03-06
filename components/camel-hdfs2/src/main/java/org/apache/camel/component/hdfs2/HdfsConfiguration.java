@@ -70,8 +70,8 @@ public class HdfsConfiguration {
     private String openedSuffix = HdfsConstants.DEFAULT_OPENED_SUFFIX;
     @UriParam(label = "advanced", defaultValue = HdfsConstants.DEFAULT_READ_SUFFIX)
     private String readSuffix = HdfsConstants.DEFAULT_READ_SUFFIX;
-    @UriParam(label = "consumer")
-    private long initialDelay;
+    @UriParam(label = "consumer", defaultValue = "" + HdfsConsumer.DEFAULT_CONSUMER_INITIAL_DELAY)
+    private long initialDelay = HdfsConsumer.DEFAULT_CONSUMER_INITIAL_DELAY;
     @UriParam(label = "consumer", defaultValue = "" + HdfsConstants.DEFAULT_DELAY)
     private long delay = HdfsConstants.DEFAULT_DELAY;
     @UriParam(label = "consumer", defaultValue = HdfsConstants.DEFAULT_PATTERN)
