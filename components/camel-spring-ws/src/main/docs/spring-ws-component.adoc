@@ -91,7 +91,7 @@ The Spring WebService component is configured using the URI syntax with the foll
 
     spring-ws:type:lookupKey:webServiceEndpointUri
 
-#### 3 path parameters:
+#### Path Parameters (3 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -101,7 +101,7 @@ The Spring WebService component is configured using the URI syntax with the foll
 | webServiceEndpointUri |  | String | The default Web Service endpoint uri to use for the producer.
 |=======================================================================
 
-#### 22 query parameters:
+#### Query Parameters (22 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

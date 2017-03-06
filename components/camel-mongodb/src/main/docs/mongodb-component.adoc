@@ -64,7 +64,7 @@ The MongoDB component is configured using the URI syntax with the following path
 
     mongodb:connectionBean
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -72,7 +72,7 @@ The MongoDB component is configured using the URI syntax with the following path
 | connectionBean |  | String | *Required* Name of com.mongodb.Mongo to use.
 |=======================================================================
 
-#### 23 query parameters:
+#### Query Parameters (23 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

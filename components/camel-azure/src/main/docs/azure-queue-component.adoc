@@ -52,7 +52,7 @@ The Azure Storage Queue Service component is configured using the URI syntax wit
 
     azure-queue:containerAndQueueUri
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -60,7 +60,7 @@ The Azure Storage Queue Service component is configured using the URI syntax wit
 | containerAndQueueUri |  | String | *Required* Container Queue compact Uri
 |=======================================================================
 
-#### 10 query parameters:
+#### Query Parameters (10 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

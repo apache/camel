@@ -70,7 +70,7 @@ The Yammer component is configured using the URI syntax with the following path 
 
     yammer:function
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -78,7 +78,7 @@ The Yammer component is configured using the URI syntax with the following path 
 | function |  | YammerFunctionType | *Required* The function to use
 |=======================================================================
 
-#### 28 query parameters:
+#### Query Parameters (28 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

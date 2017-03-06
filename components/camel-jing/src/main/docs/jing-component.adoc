@@ -51,7 +51,7 @@ The Jing component is configured using the URI syntax with the following path an
 
     jing:resourceUri
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -59,7 +59,7 @@ The Jing component is configured using the URI syntax with the following path an
 | resourceUri |  | String | *Required* URL to a local resource on the classpath or a full URL to a remote resource or resource on the file system which contains the schema to validate against.
 |=======================================================================
 
-#### 2 query parameters:
+#### Query Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

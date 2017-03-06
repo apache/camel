@@ -60,7 +60,7 @@ The Freemarker component is configured using the URI syntax with the following p
 
     freemarker:resourceUri
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -68,7 +68,7 @@ The Freemarker component is configured using the URI syntax with the following p
 | resourceUri |  | String | *Required* Path to the resource. You can prefix with: classpath file http ref or bean. classpath file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot eg bean:myBean.myMethod.
 |=======================================================================
 
-#### 5 query parameters:
+#### Query Parameters (5 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

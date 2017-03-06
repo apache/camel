@@ -54,7 +54,7 @@ The Bean Validator component is configured using the URI syntax with the followi
 
     bean-validator:label
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -62,7 +62,7 @@ The Bean Validator component is configured using the URI syntax with the followi
 | label |  | String | *Required* Where label is an arbitrary text value describing the endpoint
 |=======================================================================
 
-#### 6 query parameters:
+#### Query Parameters (6 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

@@ -55,7 +55,7 @@ The MLLP component is configured using the URI syntax with the following path an
 
     mllp:hostname:port
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -64,7 +64,7 @@ The MLLP component is configured using the URI syntax with the following path an
 | port |  | int | *Required* Port number for the TCP connection
 |=======================================================================
 
-#### 22 query parameters:
+#### Query Parameters (22 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

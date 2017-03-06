@@ -57,7 +57,7 @@ The Stream component is configured using the URI syntax with the following path 
 
     stream:kind
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -65,7 +65,7 @@ The Stream component is configured using the URI syntax with the following path 
 | kind |  | String | *Required* Kind of stream to use such as System.in or System.out.
 |=======================================================================
 
-#### 18 query parameters:
+#### Query Parameters (18 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

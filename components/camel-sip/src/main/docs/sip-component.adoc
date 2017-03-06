@@ -79,7 +79,7 @@ The SIP component is configured using the URI syntax with the following path and
 
     sip:uri
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -87,7 +87,7 @@ The SIP component is configured using the URI syntax with the following path and
 | uri |  | URI | *Required* URI of the SIP server to connect to (the username and password can be included such as: john:secretmyserver:9999)
 |=======================================================================
 
-#### 44 query parameters:
+#### Query Parameters (44 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

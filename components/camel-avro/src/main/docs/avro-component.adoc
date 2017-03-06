@@ -193,7 +193,7 @@ The Avro component is configured using the URI syntax with the following path an
 
     avro:transport:host:port/messageName
 
-#### 4 path parameters:
+#### Path Parameters (4 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -204,7 +204,7 @@ The Avro component is configured using the URI syntax with the following path an
 | messageName |  | String | The name of the message to send.
 |=======================================================================
 
-#### 10 query parameters:
+#### Query Parameters (10 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

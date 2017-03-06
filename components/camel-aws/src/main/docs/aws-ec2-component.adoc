@@ -36,7 +36,7 @@ The AWS EC2 component is configured using the URI syntax with the following path
 
     aws-ec2:label
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -44,7 +44,7 @@ The AWS EC2 component is configured using the URI syntax with the following path
 | label |  | String | *Required* Logical name
 |=======================================================================
 
-#### 8 query parameters:
+#### Query Parameters (8 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

@@ -69,7 +69,7 @@ The ElSQL component is configured using the URI syntax with the following path a
 
     elsql:elsqlName:resourceUri
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -78,7 +78,7 @@ The ElSQL component is configured using the URI syntax with the following path a
 | resourceUri |  | String | The resource file which contains the elsql SQL statements to use. You can specify multiple resources separated by comma. The resources are loaded on the classpath by default you can prefix with file: to load from file system. Notice you can set this option on the component and then you do not have to configure this on the endpoint.
 |=======================================================================
 
-#### 47 query parameters:
+#### Query Parameters (47 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

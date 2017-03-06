@@ -47,7 +47,7 @@ The String Template component is configured using the URI syntax with the follow
 
     string-template:resourceUri
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -55,7 +55,7 @@ The String Template component is configured using the URI syntax with the follow
 | resourceUri |  | String | *Required* Path to the resource. You can prefix with: classpath file http ref or bean. classpath file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot eg bean:myBean.myMethod.
 |=======================================================================
 
-#### 4 query parameters:
+#### Query Parameters (4 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

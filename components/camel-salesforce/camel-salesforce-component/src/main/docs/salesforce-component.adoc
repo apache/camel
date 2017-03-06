@@ -471,7 +471,7 @@ The Salesforce component is configured using the URI syntax with the following p
 
     salesforce:operationName:topicName
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -480,7 +480,7 @@ The Salesforce component is configured using the URI syntax with the following p
 | topicName |  | String | The name of the topic to use
 |=======================================================================
 
-#### 41 query parameters:
+#### Query Parameters (41 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

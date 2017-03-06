@@ -81,7 +81,7 @@ The Netty component is configured using the URI syntax with the following path a
 
     netty:protocol:host:port
 
-#### 3 path parameters:
+#### Path Parameters (3 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -91,7 +91,7 @@ The Netty component is configured using the URI syntax with the following path a
 | port |  | int | *Required* The host port number
 |=======================================================================
 
-#### 67 query parameters:
+#### Query Parameters (67 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

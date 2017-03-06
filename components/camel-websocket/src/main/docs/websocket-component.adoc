@@ -69,7 +69,7 @@ The Jetty Websocket component is configured using the URI syntax with the follow
 
     websocket:host:port/resourceUri
 
-#### 3 path parameters:
+#### Path Parameters (3 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -79,7 +79,7 @@ The Jetty Websocket component is configured using the URI syntax with the follow
 | resourceUri |  | String | *Required* Name of the websocket channel to use
 |=======================================================================
 
-#### 18 query parameters:
+#### Query Parameters (18 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

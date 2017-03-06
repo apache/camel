@@ -20,7 +20,7 @@ The etcd component is configured using the URI syntax with the following path an
 
     etcd:namespace/path
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -29,7 +29,7 @@ The etcd component is configured using the URI syntax with the following path an
 | path |  | String | The path the endpoint refers to
 |=======================================================================
 
-#### 29 query parameters:
+#### Query Parameters (29 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

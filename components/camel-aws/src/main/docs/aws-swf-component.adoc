@@ -36,7 +36,7 @@ The AWS Simple Workflow component is configured using the URI syntax with the fo
 
     aws-swf:type
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -44,7 +44,7 @@ The AWS Simple Workflow component is configured using the URI syntax with the fo
 | type |  | String | *Required* Activity or workflow
 |=======================================================================
 
-#### 29 query parameters:
+#### Query Parameters (29 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

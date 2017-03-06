@@ -49,7 +49,7 @@ The Infinispan component is configured using the URI syntax with the following p
 
     infinispan:host
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -57,7 +57,7 @@ The Infinispan component is configured using the URI syntax with the following p
 | host |  | String | *Required* Specifies the host of the cache on Infinispan instance
 |=======================================================================
 
-#### 14 query parameters:
+#### Query Parameters (14 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

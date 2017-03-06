@@ -66,7 +66,7 @@ The AHC Websocket component is configured using the URI syntax with the followin
 
     ahc-ws:httpUri
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -74,7 +74,7 @@ The AHC Websocket component is configured using the URI syntax with the followin
 | httpUri |  | URI | *Required* The URI to use such as http://hostname:port/path
 |=======================================================================
 
-#### 18 query parameters:
+#### Query Parameters (18 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

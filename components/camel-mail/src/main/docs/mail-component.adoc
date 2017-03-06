@@ -100,7 +100,7 @@ The Mail component is configured using the URI syntax with the following path an
 
     imap:host:port
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -109,7 +109,7 @@ The Mail component is configured using the URI syntax with the following path an
 | port |  | int | The port number of the mail server
 |=======================================================================
 
-#### 61 query parameters:
+#### Query Parameters (61 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

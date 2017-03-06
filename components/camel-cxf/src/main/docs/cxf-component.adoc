@@ -134,7 +134,7 @@ The CXF component is configured using the URI syntax with the following path and
 
     cxf:beanId:address
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -143,7 +143,7 @@ The CXF component is configured using the URI syntax with the following path and
 | address |  | String | The service publish address.
 |=======================================================================
 
-#### 34 query parameters:
+#### Query Parameters (34 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

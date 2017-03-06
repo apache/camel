@@ -105,7 +105,7 @@ The XML RPC component is configured using the URI syntax with the following path
 
     xmlrpc:address
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -113,7 +113,7 @@ The XML RPC component is configured using the URI syntax with the following path
 | address |  | String | *Required* The server url
 |=======================================================================
 
-#### 18 query parameters:
+#### Query Parameters (18 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

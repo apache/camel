@@ -251,7 +251,7 @@ The XML Security component is configured using the URI syntax with the following
 
     xmlsecurity:command:name
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -260,7 +260,7 @@ The XML Security component is configured using the URI syntax with the following
 | name |  | String | *Required* The name part in the URI can be chosen by the user to distinguish between different signer/verifier endpoints within the camel context.
 |=======================================================================
 
-#### 35 query parameters:
+#### Query Parameters (35 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

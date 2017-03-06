@@ -55,7 +55,7 @@ The Krati component is configured using the URI syntax with the following path a
 
     krati:path
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -63,7 +63,7 @@ The Krati component is configured using the URI syntax with the following path a
 | path |  | String | *Required* Path of the datastore is the relative path of the folder that krati will use for its datastore.
 |=======================================================================
 
-#### 29 query parameters:
+#### Query Parameters (29 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

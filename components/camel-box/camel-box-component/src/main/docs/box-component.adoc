@@ -64,7 +64,7 @@ The Box component is configured using the URI syntax with the following path and
 
     box:apiName/methodName
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -73,7 +73,7 @@ The Box component is configured using the URI syntax with the following path and
 | methodName |  | String | *Required* What sub operation to use for the selected operation
 |=======================================================================
 
-#### 20 query parameters:
+#### Query Parameters (20 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

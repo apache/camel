@@ -65,7 +65,7 @@ The Olingo2 component is configured using the URI syntax with the following path
 
     olingo2:apiName/methodName
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -74,7 +74,7 @@ The Olingo2 component is configured using the URI syntax with the following path
 | methodName |  | String | *Required* What sub operation to use for the selected operation
 |=======================================================================
 
-#### 14 query parameters:
+#### Query Parameters (14 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

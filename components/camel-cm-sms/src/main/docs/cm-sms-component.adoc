@@ -41,7 +41,7 @@ The CM SMS Gateway component is configured using the URI syntax with the followi
 
     cm-sms:host
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -49,7 +49,7 @@ The CM SMS Gateway component is configured using the URI syntax with the followi
 | host |  | String | *Required* SMS Provider HOST with scheme
 |=======================================================================
 
-#### 5 query parameters:
+#### Query Parameters (5 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

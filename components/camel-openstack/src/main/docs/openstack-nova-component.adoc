@@ -43,7 +43,7 @@ The OpenStack Nova component is configured using the URI syntax with the followi
 
     openstack-nova:host
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -51,7 +51,7 @@ The OpenStack Nova component is configured using the URI syntax with the followi
 | host |  | String | *Required* OpenStack host url
 |=======================================================================
 
-#### 9 query parameters:
+#### Query Parameters (9 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

@@ -52,7 +52,7 @@ The Elasticsearch component is configured using the URI syntax with the followin
 
     elasticsearch:clusterName
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -60,7 +60,7 @@ The Elasticsearch component is configured using the URI syntax with the followin
 | clusterName |  | String | *Required* Name of cluster or use local for local mode
 |=======================================================================
 
-#### 11 query parameters:
+#### Query Parameters (11 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

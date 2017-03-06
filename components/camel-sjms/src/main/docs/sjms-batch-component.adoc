@@ -138,7 +138,7 @@ The Simple JMS Batch component is configured using the URI syntax with the follo
 
     sjms-batch:destinationName
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -146,7 +146,7 @@ The Simple JMS Batch component is configured using the URI syntax with the follo
 | destinationName |  | String | *Required* The destination name. Only queues are supported names may be prefixed by 'queue:'.
 |=======================================================================
 
-#### 22 query parameters:
+#### Query Parameters (22 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

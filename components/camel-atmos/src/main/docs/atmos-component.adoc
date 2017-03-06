@@ -25,7 +25,7 @@ The Atmos component is configured using the URI syntax with the following path a
 
     atmos:name/operation
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -34,7 +34,7 @@ The Atmos component is configured using the URI syntax with the following path a
 | operation |  | AtmosOperation | *Required* Operation to perform
 |=======================================================================
 
-#### 12 query parameters:
+#### Query Parameters (12 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

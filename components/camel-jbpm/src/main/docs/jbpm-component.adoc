@@ -42,7 +42,7 @@ The JBPM component is configured using the URI syntax with the following path an
 
     jbpm:connectionURL
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -50,7 +50,7 @@ The JBPM component is configured using the URI syntax with the following path an
 | connectionURL |  | URL | *Required* The URL to the jBPM server.
 |=======================================================================
 
-#### 25 query parameters:
+#### Query Parameters (25 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

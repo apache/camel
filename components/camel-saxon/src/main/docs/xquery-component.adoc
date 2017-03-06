@@ -37,7 +37,7 @@ The XQuery component is configured using the URI syntax with the following path 
 
     xquery:resourceUri
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -45,7 +45,7 @@ The XQuery component is configured using the URI syntax with the following path 
 | resourceUri |  | String | *Required* The name of the template to load from classpath or file system
 |=======================================================================
 
-#### 31 query parameters:
+#### Query Parameters (31 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

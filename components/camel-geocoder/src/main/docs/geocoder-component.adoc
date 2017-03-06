@@ -43,7 +43,7 @@ The Geocoder component is configured using the URI syntax with the following pat
 
     geocoder:address:latlng
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -52,7 +52,7 @@ The Geocoder component is configured using the URI syntax with the following pat
 | latlng |  | String | The geo latitude and longitude which should be prefixed with latlng:
 |=======================================================================
 
-#### 14 query parameters:
+#### Query Parameters (14 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

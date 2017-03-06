@@ -128,7 +128,7 @@ The SQL component is configured using the URI syntax with the following path and
 
     sql:query
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -136,7 +136,7 @@ The SQL component is configured using the URI syntax with the following path and
 | query |  | String | *Required* Sets the SQL query to perform. You can externalize the query by using file: or classpath: as prefix and specify the location of the file.
 |=======================================================================
 
-#### 45 query parameters:
+#### Query Parameters (45 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

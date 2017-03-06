@@ -36,7 +36,7 @@ The AWS SimpleDB component is configured using the URI syntax with the following
 
     aws-sdb:domainName
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -44,7 +44,7 @@ The AWS SimpleDB component is configured using the URI syntax with the following
 | domainName |  | String | *Required* The name of the domain currently worked with.
 |=======================================================================
 
-#### 10 query parameters:
+#### Query Parameters (10 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

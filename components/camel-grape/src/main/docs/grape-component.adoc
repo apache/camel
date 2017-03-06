@@ -21,7 +21,7 @@ The Grape component is configured using the URI syntax with the following path a
 
     grape:defaultCoordinates
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -29,7 +29,7 @@ The Grape component is configured using the URI syntax with the following path a
 | defaultCoordinates |  | String | *Required* Maven coordinates to use as default to grab if the message body is empty.
 |=======================================================================
 
-#### 2 query parameters:
+#### Query Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

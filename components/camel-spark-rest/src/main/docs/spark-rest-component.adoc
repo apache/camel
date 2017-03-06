@@ -62,7 +62,7 @@ The Spark Rest component is configured using the URI syntax with the following p
 
     spark-rest:verb:path
 
-#### 2 path parameters:
+#### Path Parameters (2 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -71,7 +71,7 @@ The Spark Rest component is configured using the URI syntax with the following p
 | path |  | String | *Required* The content path which support Spark syntax.
 |=======================================================================
 
-#### 11 query parameters:
+#### Query Parameters (11 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================

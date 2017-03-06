@@ -57,7 +57,7 @@ The OSGi PAX Logging component is configured using the URI syntax with the follo
 
     paxlogging:appender
 
-#### 1 path parameters:
+#### Path Parameters (1 parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -65,7 +65,7 @@ The OSGi PAX Logging component is configured using the URI syntax with the follo
 | appender |  | String | *Required* Appender is the name of the pax appender that need to be configured in the PaxLogging service configuration.
 |=======================================================================
 
-#### 4 query parameters:
+#### Query Parameters (4 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
