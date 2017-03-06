@@ -94,7 +94,6 @@
     <module>camel-bonita-starter</module>
     <module>camel-boon-starter</module>
     <module>camel-box-starter</module>
-    <module>camel-box2-starter</module>
     <module>camel-braintree-starter</module>
     <module>camel-cache-starter</module>
     <module>camel-cassandraql-starter</module>
