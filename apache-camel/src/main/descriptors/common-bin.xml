@@ -45,6 +45,7 @@
         <include>org.apache.camel:camel-bonita</include>
         <include>org.apache.camel:camel-boon</include>
         <include>org.apache.camel:camel-box</include>
+        <include>org.apache.camel:camel-box-api</include>
         <include>org.apache.camel:camel-braintree</include>
         <include>org.apache.camel:camel-cache</include>
         <include>org.apache.camel:camel-cassandraql</include>
