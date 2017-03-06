@@ -97,7 +97,7 @@ The HTTP4 component is configured using the URI syntax with the following path a
 | httpUri |  | URI | *Required* The url of the HTTP endpoint to call.
 |=======================================================================
 
-#### Query Parameters (47 parameters):
+#### Query Parameters (48 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
@@ -112,6 +112,7 @@ The HTTP4 component is configured using the URI syntax with the following path a
 | connectionClose | producer | false | boolean | Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false.
 | cookieStore | producer |  | CookieStore | To use a custom org.apache.http.client.CookieStore. By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store. Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy). If a cookieHandler is set then the cookie store is also forced to be a noop cookie store as cookie handling is then performed by the cookieHandler.
 | copyHeaders | producer | true | boolean | If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy. Setting this to false allows to only include the headers from the HTTP response (not propagating IN headers).
+| deleteWithBody | producer | false | boolean | Whether the HTTP DELETE should include the message body or not. By default HTTP DELETE do not include any HTTP message. However in some rare cases users may need to be able to include the message body.
 | httpMethod | producer |  | HttpMethods | Configure the HTTP method to use. The HttpMethod header cannot override this option if set.
 | ignoreResponseBody | producer | false | boolean | If this option is true The http producer won't read response body and cache the input stream
 | preserveHostHeader | producer | false | boolean | If the option is true HttpProducer will set the Host header to the value contained in the current exchange Host header useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client this allows applications which use the Host header to generate accurate URL's for a proxied service
