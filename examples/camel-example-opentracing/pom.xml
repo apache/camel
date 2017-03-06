@@ -31,6 +31,11 @@
   <name>Camel :: Example :: OpenTracing</name>
   <description>An example showing how to trace incoming and outgoing messages from Camel with OpenTracing</description>
 
+  <properties>
+    <category>Management and Monitoring</category>
+    <title>OpenTracing</title>
+  </properties>
+
   <modules>
     <module>client</module>
     <module>service1</module>
