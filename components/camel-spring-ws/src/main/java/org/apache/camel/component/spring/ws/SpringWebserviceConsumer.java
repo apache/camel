@@ -83,11 +83,11 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
     
     private void populateExchangeWithBreadcrumbFromMessageContext(MessageContext messageContext, Exchange exchange) {
         SaajSoapMessage saajSoap = (SaajSoapMessage) messageContext.getRequest();
-        SOAPMessage soapMesssageRequest = null;
+        SOAPMessage soapMessageRequest = null;
         if (saajSoap != null) {
-            soapMesssageRequest = saajSoap.getSaajMessage();
-            if (soapMesssageRequest != null) {
-                MimeHeaders mimeHeaders = soapMesssageRequest.getMimeHeaders();
+            soapMessageRequest = saajSoap.getSaajMessage();
+            if (soapMessageRequest != null) {
+                MimeHeaders mimeHeaders = soapMessageRequest.getMimeHeaders();
                 if (mimeHeaders != null) {
                     String[] breadcrumbIdHeaderValues = mimeHeaders.getHeader(Exchange.BREADCRUMB_ID);
                     // expected to get one token
