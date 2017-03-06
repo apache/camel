@@ -5,11 +5,9 @@ The @{title} dataformat supports @{dataFormatOptions.size()} options which are l
 @end{}
 
 @if{!dataFormatOptions.isEmpty()}
-{% raw %}
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 @foreach{row : dataFormatOptions}| @{row.name} | @{row.defaultValue} | @{row.shortJavaType} | @{row.description}
 @end{}|=======================================================================
-{% endraw %}
 @end{}
