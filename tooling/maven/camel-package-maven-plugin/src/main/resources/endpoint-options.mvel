@@ -2,7 +2,7 @@ The @{title} component is configured using the URI syntax with the following pat
 
     @{syntax}
 
-#### @{endpointPathOptions.size()} path parameters:
+#### Path Parameters (@{endpointPathOptions.size()} parameters):
 
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
@@ -10,7 +10,7 @@ The @{title} component is configured using the URI syntax with the following pat
 @foreach{row : endpointPathOptions}| @{row.name} | @{row.defaultValue} | @{row.shortJavaType} | @{row.description}
 @end{}|=======================================================================
 
-#### @{endpointOptions.size()} query parameters:
+#### Query Parameters (@{endpointOptions.size()} parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
