@@ -26,7 +26,9 @@ org.apache.camel.component.aws.ddbstream.springboot.DdbStreamComponentAutoConfig
 org.apache.camel.component.aws.sqs.springboot.SqsComponentAutoConfiguration,\
 org.apache.camel.component.aws.ec2.springboot.EC2ComponentAutoConfiguration,\
 org.apache.camel.component.aws.cw.springboot.CwComponentAutoConfiguration,\
-org.apache.camel.component.aws.ddb.springboot.DdbComponentAutoConfiguration
+org.apache.camel.component.aws.ddb.springboot.DdbComponentAutoConfiguration,\
+org.apache.camel.component.aws.firehose.springboot.KinesisFirehoseComponentAutoConfiguration
+
 
 
 
