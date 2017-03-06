@@ -375,24 +375,27 @@ public final class ObjectHelper {
     }
 
     /**
-     * Tests whether the value is <b>not</b> <tt>null</tt> or an empty string.
+     * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string or an empty collection.
      *
      * @param value  the value, if its a String it will be tested for text length as well
      * @return true if <b>not</b> empty
      */
+    @SuppressWarnings("unchecked")
     public static boolean isNotEmpty(Object value) {
         if (value == null) {
             return false;
         } else if (value instanceof String) {
             String text = (String) value;
             return text.trim().length() > 0;
+        } else if (value instanceof Collection) {
+            return !((Collection<?>)value).isEmpty();
         } else {
             return true;
         }
     }
 
     /**
-     * Tests whether the value is <b>not</b> <tt>null</tt> or an empty string.
+     * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string or an empty collection.
      *
      * @param value  the value, if its a String it will be tested for text length as well
      * @param consumer  the consumer, the operation to be executed against value if not empty
