@@ -30,6 +30,10 @@
   <name>Camel :: Example :: OpenTracing :: Service 2</name>
   <description>An example showing how to trace incoming and outgoing messages from Camel with OpenTracing</description>
 
+  <properties>
+    <opentracing-agent.lib>${project.build.directory}/lib</opentracing-agent.lib>
+  </properties>
+
   <!-- import Camel BOM -->
   <dependencyManagement>
     <dependencies>
@@ -52,17 +56,47 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-opentracing</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-undertow</artifactId>
     </dependency>
 
     <dependency>
+      <groupId>org.jboss.xnio</groupId>
+      <artifactId>xnio-nio</artifactId>
+      <version>${jboss-xnio-version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-slf4j-impl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-1.2-api</artifactId>
+    </dependency>
+
+    <!-- OpenTracing dependencies -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-opentracing</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-example-opentracing-loggingtracer</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.opentracing.contrib</groupId>
+      <artifactId>opentracing-agent</artifactId>
+      <version>${opentracing-java-agent-version}</version>
+      <scope>provided</scope>
     </dependency>
 
   </dependencies>
@@ -70,37 +104,42 @@
   <build>
 
     <plugins>
-      <!-- allows the routes to be run via 'mvn camel:run' -->
       <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
-        <version>${project.version}</version>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>get-agent</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>io.opentracing.contrib</groupId>
+                  <artifactId>opentracing-agent</artifactId>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${opentracing-agent.lib}</outputDirectory>
+                  <destFileName>opentracing-agent.jar</destFileName>
+                </artifactItem>
+              </artifactItems>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
         <configuration>
-          <mainClass>sample.camel.Service2Application</mainClass>
+          <executable>java</executable>
+          <arguments>
+            <argument>-javaagent:${opentracing-agent.lib}/opentracing-agent.jar</argument>
+            <argument>-classpath</argument>
+            <classpath/>
+            <argument>sample.camel.Service2Application</argument>
+          </arguments>
         </configuration>
-        <dependencies>  
-          <!-- logging -->
-          <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>${log4j2-version}</version>
-          </dependency>
-          <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>${log4j2-version}</version>
-          </dependency>
-          <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <version>${log4j2-version}</version>
-          </dependency>
-          <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-1.2-api</artifactId>
-            <version>${log4j2-version}</version>
-          </dependency>
-        </dependencies>
       </plugin>
     </plugins>
 

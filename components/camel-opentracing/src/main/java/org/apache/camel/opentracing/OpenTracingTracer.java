@@ -41,6 +41,8 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.opentracing.propagation.CamelHeadersExtractAdapter;
+import org.apache.camel.opentracing.propagation.CamelHeadersInjectAdapter;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.support.EventNotifierSupport;

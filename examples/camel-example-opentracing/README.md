@@ -32,12 +32,16 @@ $ cd service1
 $ mvn compile spring-boot:run
 ```
 
+This service uses an annotation _CamelOpenTracing_ to indicate that the service should be traced.
+
 When service1 is ready then start service2
 
 ```sh
 $ cd service2
-$ mvn compile camel:run
+$ mvn compile exec:exec
 ```
+
+This service is instrumented using an OpenTracing Java Agent, so the code does not need to be modified. The only requirement is that the OpenTracing Tracer and Camel OpenTracing component dependencies are added, and that the _opentracing-agent.jar_ Java Agent is specified when executing the service.
 
 And then start the client that calls service1 every 30 seconds.
 
@@ -45,6 +49,8 @@ And then start the client that calls service1 every 30 seconds.
 $ cd client
 $ mvn compile camel:run
 ```
+
+The client application explicitly instantiates and initializes the OpenTracing Tracer with the _CamelContext_.
 
 The shells will show *SPAN FINISHED* messages indicating what spans have been reported from the client
 and two services.

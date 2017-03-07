@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.opentracing;
+package org.apache.camel.opentracing.propagation;
 
 import java.util.HashMap;
 import java.util.Iterator;
