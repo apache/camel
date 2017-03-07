@@ -242,7 +242,7 @@ public class SshComponentConfiguration {
          *            authentication.
          * @see KeyPairProvider
          */
-        private String keyType = "KeyPairProvider.SSH_RSA";
+        private String keyType = org.apache.sshd.common.KeyPairProvider.SSH_RSA;
         /**
          * Sets the timeout in milliseconds to wait in establishing the remote
          * SSH server connection. Defaults to 30000 milliseconds.

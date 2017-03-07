@@ -426,7 +426,7 @@ public class NettyComponentConfiguration {
         /**
          * Which protocols to enable when using SSL
          */
-        private String enabledProtocols = "DEFAULT_ENABLED_PROTOCOLS";
+        private String enabledProtocols = org.apache.camel.component.netty.NettyConfiguration.DEFAULT_ENABLED_PROTOCOLS;
 
         public Long getRequestTimeout() {
             return requestTimeout;
