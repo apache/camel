@@ -83,7 +83,7 @@ You append query options to the URI using the following format,
 
 
 // component options: START
-The Simple JMS component supports 10 options which are listed below.
+The Simple JMS component supports 15 options which are listed below.
 
 
 
@@ -98,6 +98,11 @@ The Simple JMS component supports 10 options which are listed below.
 | destinationCreationStrategy | advanced |  | DestinationCreationStrategy | To use a custom DestinationCreationStrategy.
 | timedTaskManager | advanced |  | TimedTaskManager | To use a custom TimedTaskManager
 | messageCreatedStrategy | advanced |  | MessageCreatedStrategy | To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of javax.jms.Message objects when Camel is sending a JMS message.
+| connectionTestOnBorrow | advanced | true | boolean | When using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource then should each javax.jms.Connection be tested (calling start) before returned from the pool.
+| connectionUsername | security |  | String | The username to use when creating javax.jms.Connection when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
+| connectionPassword | security |  | String | The password to use when creating javax.jms.Connection when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
+| connectionClientId | advanced |  | String | The client ID to use when creating javax.jms.Connection when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
+| connectionMaxWait | advanced | 5000 | long | The max wait time in millis to block and wait on free connection when the pool is exhausted when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
 | headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
