@@ -481,7 +481,7 @@ public class NettyComponentConfiguration {
         /**
          * Which protocols to enable when using SSL
          */
-        private String enabledProtocols = "DEFAULT_ENABLED_PROTOCOLS";
+        private String enabledProtocols = org.apache.camel.component.netty4.NettyConfiguration.DEFAULT_ENABLED_PROTOCOLS;
         private Boolean reconnect;
         private Integer reconnectInterval;
 

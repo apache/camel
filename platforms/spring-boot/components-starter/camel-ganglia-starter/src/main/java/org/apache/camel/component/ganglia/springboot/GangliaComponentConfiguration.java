@@ -65,7 +65,7 @@ public class GangliaComponentConfiguration {
         /**
          * Host name for Ganglia server
          */
-        private String host = "DEFAULT_DESTINATION";
+        private String host = org.apache.camel.component.ganglia.GangliaConfiguration.DEFAULT_DESTINATION;
         /**
          * Port for Ganglia server
          */

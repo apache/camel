@@ -124,7 +124,7 @@ public class BoxComponentConfiguration {
          * @param authenticationTypethe
          *            authenticationType to set
          */
-        private String authenticationType = "APP_USER_AUTHENTICATION";
+        private String authenticationType = org.apache.camel.component.box.BoxConfiguration.APP_USER_AUTHENTICATION;
         /**
          * Box application client ID
          * 
