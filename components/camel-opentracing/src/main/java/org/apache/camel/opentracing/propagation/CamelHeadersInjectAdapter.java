@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.opentracing;
+package org.apache.camel.opentracing.propagation;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -35,6 +35,9 @@ public final class CamelHeadersInjectAdapter implements TextMap {
 
     @Override
     public void put(String key, String value) {
-        this.map.put(key, value);
+        // Assume any header property that begins with 'Camel' is for internal use
+        if (!key.startsWith("Camel")) {
+            this.map.put(key, value);
+        }
     }
 }
