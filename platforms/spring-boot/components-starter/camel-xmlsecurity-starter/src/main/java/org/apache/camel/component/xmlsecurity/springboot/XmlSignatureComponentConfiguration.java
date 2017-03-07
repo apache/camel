@@ -644,7 +644,7 @@ public class XmlSignatureComponentConfiguration {
          * {@link #setOutputNodeSearch(Object)} . The supported default search
          * types you can find in {@link DefaultXmlSignature2Message} .
          */
-        private String outputNodeSearchType = "DefaultXmlSignature2Message.OUTPUT_NODE_SEARCH_TYPE_DEFAULT";
+        private String outputNodeSearchType = org.apache.camel.component.xmlsecurity.api.DefaultXmlSignature2Message.OUTPUT_NODE_SEARCH_TYPE_DEFAULT;
         /**
          * Indicator whether the XML signature elements (elements with local
          * name "Signature" and namesapce

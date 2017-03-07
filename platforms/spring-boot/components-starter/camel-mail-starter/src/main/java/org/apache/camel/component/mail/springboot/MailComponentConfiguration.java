@@ -131,7 +131,7 @@ public class MailComponentConfiguration {
         /**
          * The from email address
          */
-        private String from = "MailConstants.MAIL_DEFAULT_FROM";
+        private String from = org.apache.camel.component.mail.MailConstants.MAIL_DEFAULT_FROM;
         /**
          * Deletes the messages after they have been processed. This is done by
          * setting the DELETED flag on the mail message. If false, the SEEN flag
@@ -152,7 +152,7 @@ public class MailComponentConfiguration {
         /**
          * The folder to poll.
          */
-        private String folderName = "MailConstants.MAIL_DEFAULT_FOLDER";
+        private String folderName = org.apache.camel.component.mail.MailConstants.MAIL_DEFAULT_FOLDER;
         /**
          * Option to let Camel ignore unsupported charset in the local JVM when
          * sending mails. If the charset is unsupported then charset=XXX (where
@@ -218,7 +218,7 @@ public class MailComponentConfiguration {
          * email clients, set the alternative mail body with this key as a
          * header.
          */
-        private String alternativeBodyHeader = "MailConstants.MAIL_ALTERNATIVE_BODY";
+        private String alternativeBodyHeader = org.apache.camel.component.mail.MailConstants.MAIL_ALTERNATIVE_BODY;
         /**
          * Whether to use disposition inline or attachment.
          */
