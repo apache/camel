@@ -118,6 +118,11 @@
       <artifactId>velocity</artifactId>
       <version>${velocity-version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.velocity</groupId>
+      <artifactId>velocity-tools</artifactId>
+      <version>${velocity-tools-version}</version>
+    </dependency>
 
     <!-- logging -->
     <dependency>

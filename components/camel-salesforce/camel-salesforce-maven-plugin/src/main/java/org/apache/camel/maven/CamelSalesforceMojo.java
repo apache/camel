@@ -72,6 +72,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.tools.generic.EscapeTool;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.log.Log4JLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
@@ -614,6 +615,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
                     context = new VelocityContext();
                     context.put("packageName", packageName);
                     context.put("utility", utility);
+                    context.put("esc", new EscapeTool());
                     context.put("field", field);
                     context.put("enumName", enumName);
                     context.put("generatedDate", generatedDate);
