@@ -50,7 +50,7 @@ The AWS Simple Notification System endpoint is configured using URI syntax:
 | topicNameOrArn |  | String | *Required* Topic name or ARN
 |=======================================================================
 
-#### Query Parameters (10 parameters):
+#### Query Parameters (11 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
@@ -58,6 +58,7 @@ The AWS Simple Notification System endpoint is configured using URI syntax:
 | accessKey | producer |  | String | Amazon AWS Access Key
 | amazonSNSClient | producer |  | AmazonSNS | To use the AmazonSNS as the client
 | amazonSNSEndpoint | producer |  | String | The region with which the AWS-SNS client wants to work with.
+| headerFilterStrategy | producer |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to map headers to/from Camel.
 | messageStructure | producer |  | String | The message structure to use such as json
 | policy | producer |  | String | The policy for this queue
 | proxyHost | producer |  | String | To define a proxy host when instantiating the SQS client
