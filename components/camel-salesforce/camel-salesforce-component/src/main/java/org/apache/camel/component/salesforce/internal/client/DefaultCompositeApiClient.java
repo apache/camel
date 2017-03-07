@@ -60,11 +60,15 @@ import org.eclipse.jetty.client.util.InputStreamContentProvider;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultCompositeApiClient extends AbstractClientBase implements CompositeApiClient {
 
     private static final Class[] ADDITIONAL_TYPES = new Class[] {SObjectTree.class, SObjectTreeResponse.class,
         SObjectBatchResponse.class};
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultCompositeApiClient.class);
 
     private final PayloadFormat format;
 
@@ -241,6 +245,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
                 return Optional.of(fromXml(responseStream));
             }
         } catch (XStreamException | IOException e) {
+            LOG.warn("Unable to read response from the Composite API", e);
             return Optional.empty();
         } finally {
             try {
