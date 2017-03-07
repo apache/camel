@@ -36,6 +36,14 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-azure</artifactId>
       <version>${project.version}</version>
+      <!--START OF GENERATED CODE-->
+      <exclusions>
+        <exclusion>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+        </exclusion>
+      </exclusions>
+      <!--END OF GENERATED CODE-->
     </dependency>
     <!--START OF GENERATED CODE-->
     <dependency>

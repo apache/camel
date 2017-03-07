@@ -1,11 +1,12 @@
 package org.apache.camel.component.azure.servicebus;
 
-import org.apache.commons.io.IOUtils;
-
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.stream.Collectors;
 
 public class Utilities {
     public static String encodeURIComponent(String s)
@@ -33,8 +34,8 @@ public class Utilities {
     }
 
     public static String readString(InputStream inputStream) throws IOException {
-        return IOUtils.toString(new java.io.InputStreamReader(inputStream));
-
+        try (BufferedReader buffer = new BufferedReader(new InputStreamReader(inputStream))) {
+            return buffer.lines().collect(Collectors.joining("\n"));
+        }
     }
-
 }

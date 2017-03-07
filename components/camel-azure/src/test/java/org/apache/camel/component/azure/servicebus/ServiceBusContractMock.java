@@ -1,14 +1,20 @@
 package org.apache.camel.component.azure.servicebus;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.microsoft.windowsazure.core.pipeline.filter.ServiceRequestFilter;
 import com.microsoft.windowsazure.core.pipeline.filter.ServiceResponseFilter;
 import com.microsoft.windowsazure.core.pipeline.jersey.ServiceFilter;
 import com.microsoft.windowsazure.exception.ServiceException;
 import com.microsoft.windowsazure.services.servicebus.ServiceBusContract;
 import com.microsoft.windowsazure.services.servicebus.models.*;
-import org.apache.log4j.Logger;
-
-import java.util.*;
 
 public class ServiceBusContractMock implements ServiceBusContract {
     private Map<String, TopicInfo> _dummyTopicInfos = new HashMap<>();
@@ -20,7 +26,7 @@ public class ServiceBusContractMock implements ServiceBusContract {
     private Map<String, List<String>> _dummyTopicSubscriptions = new HashMap<>();
     private Map<String, BrokeredMessage> _dummyLocks = new HashMap<>();
 
-    private Logger LOG = Logger.getLogger(ServiceBusContractMock.class);
+    private Logger LOG = LoggerFactory.getLogger(ServiceBusContractMock.class);
 
     protected BrokeredMessage getBrokeredMessage(String queuePath) {
         BrokeredMessage message = null;
