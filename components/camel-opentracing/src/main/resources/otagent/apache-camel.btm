@@ -1,0 +1,16 @@
+
+# State 0 - camel context not initialized
+# State 1 - camel context initialized
+
+RULE apache-camel: Install OpenTracing tracer
+CLASS org.apache.camel.impl.DefaultCamelContext
+METHOD startRouteDefinitions
+HELPER io.opentracing.contrib.agent.OpenTracingHelper
+BIND
+  ottracer:org.apache.camel.opentracing.OpenTracingTracer = new org.apache.camel.opentracing.OpenTracingTracer();
+AT ENTRY
+IF getState($0) == 0
+DO
+  ottracer.init($0);
+  setState($0, 1);
+ENDRULE

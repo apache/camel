@@ -17,14 +17,11 @@
 package sample.camel;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.opentracing.OpenTracingTracer;
 
 public class Service2Route extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        OpenTracingTracer ottracer = new OpenTracingTracer();
-        ottracer.init(getContext());
 
         from("undertow:http://0.0.0.0:7070/service2").routeId("service2").streamCaching()
                 .log(" Service2 request: ${body}")
