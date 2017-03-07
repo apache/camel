@@ -35,7 +35,7 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
         template().sendBodyAndHeaders(
             "direct:servicenow",
             null,
-            new KVBuilder()
+            kvBuilder()
                 .put(ServiceNowConstants.RESOURCE, "table")
                 .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
                 .put(ServiceNowParams.SYSPARM_LIMIT, 10)
@@ -63,7 +63,7 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
         template().sendBodyAndHeaders(
             "direct:servicenow-defaults",
             null,
-            new KVBuilder()
+            kvBuilder()
                 .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
                 .put(ServiceNowParams.SYSPARM_LIMIT, 10)
                 .build()
@@ -103,7 +103,7 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
             template().sendBodyAndHeaders(
                 "direct:servicenow",
                 incident,
-                new KVBuilder()
+                kvBuilder()
                     .put(ServiceNowConstants.RESOURCE, "table")
                     .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
                     .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
@@ -136,7 +136,7 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
             template().sendBodyAndHeaders(
                 "direct:servicenow",
                 null,
-                new KVBuilder()
+                kvBuilder()
                     .put(ServiceNowConstants.RESOURCE, "table")
                     .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
                     .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
@@ -171,7 +171,7 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
             template().sendBodyAndHeaders(
                 "direct:servicenow",
                 incident,
-                new KVBuilder()
+                kvBuilder()
                     .put(ServiceNowConstants.RESOURCE, "table")
                     .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_MODIFY)
                     .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
@@ -201,7 +201,7 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
             template().sendBodyAndHeaders(
                 "direct:servicenow",
                 null,
-                new KVBuilder()
+                kvBuilder()
                     .put(ServiceNowConstants.RESOURCE, "table")
                     .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
                     .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
@@ -233,7 +233,7 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
             template().sendBodyAndHeaders(
                 "direct:servicenow",
                 null,
-                new KVBuilder()
+                kvBuilder()
                     .put(ServiceNowConstants.RESOURCE, "table")
                     .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
                     .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
@@ -263,7 +263,7 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
             template().sendBodyAndHeaders(
                 "direct:servicenow",
                 null,
-                new KVBuilder()
+                kvBuilder()
                     .put(ServiceNowConstants.RESOURCE, "table")
                     .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_DELETE)
                     .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
@@ -285,7 +285,7 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
                 template().sendBodyAndHeaders(
                     "direct:servicenow",
                     null,
-                    new KVBuilder()
+                    kvBuilder()
                         .put(ServiceNowConstants.RESOURCE, "table")
                         .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
                         .put(ServiceNowParams.PARAM_SYS_ID, sysId)
@@ -311,20 +311,12 @@ public class ServiceNowTableTest extends ServiceNowTestSupport {
             public void configure() {
                 from("direct:servicenow")
                     .to("servicenow:{{env:SERVICENOW_INSTANCE}}"
-                        + "?userName={{env:SERVICENOW_USERNAME}}"
-                        + "&password={{env:SERVICENOW_PASSWORD}}"
-                        //+ "&oauthClientId={{env:SERVICENOW_OAUTH2_CLIENT_ID}}"
-                        //+ "&oauthClientSecret={{env:SERVICENOW_OAUTH2_CLIENT_SECRET}}"
-                        + "&model.incident=org.apache.camel.component.servicenow.model.Incident")
+                        + "?model.incident=org.apache.camel.component.servicenow.model.Incident")
                     .to("log:org.apache.camel.component.servicenow?level=INFO&showAll=true")
                     .to("mock:servicenow");
                 from("direct:servicenow-defaults")
                     .to("servicenow:{{env:SERVICENOW_INSTANCE}}"
-                        + "?userName={{env:SERVICENOW_USERNAME}}"
-                        + "&password={{env:SERVICENOW_PASSWORD}}"
-                        //+ "&oauthClientId={{env:SERVICENOW_OAUTH2_CLIENT_ID}}"
-                        //+ "&oauthClientSecret={{env:SERVICENOW_OAUTH2_CLIENT_SECRET}}"
-                        + "&model.incident=org.apache.camel.component.servicenow.model.Incident"
+                        + "?model.incident=org.apache.camel.component.servicenow.model.Incident"
                         + "&resource=table"
                         + "&table=incident")
                     .to("log:org.apache.camel.component.servicenow?level=INFO&showAll=true")

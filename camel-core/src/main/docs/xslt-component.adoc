@@ -1,5 +1,7 @@
 ## XSLT Component
 
+*Available as of Camel version 1.3*
+
 The *xslt:* component allows you to process a message using an
 http://www.w3.org/TR/xslt[XSLT] template. This can be ideal when using
 link:templating.html[Templating] to generate respopnses for requests.
@@ -65,32 +67,46 @@ directly in the camel-core.
 ### Options
 
 // component options: START
-The XSLT component supports 5 options which are listed below.
+The XSLT component supports 9 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | xmlConverter | advanced |  | XmlConverter | To use a custom implementation of org.apache.camel.converter.jaxp.XmlConverter
 | uriResolverFactory | advanced |  | XsltUriResolverFactory | To use a custom javax.xml.transform.URIResolver which depends on a dynamic endpoint resource URI or which is a subclass of XsltUriResolver. Do not use in combination with uriResolver. See also link setUriResolver(URIResolver).
 | uriResolver | advanced |  | URIResolver | To use a custom javax.xml.transform.URIResolver. Do not use in combination with uriResolverFactory. See also link setUriResolverFactory(XsltUriResolverFactory).
-| contentCache | producer | true | boolean | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation.
+| contentCache | producer | false | boolean | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation.
 | saxon | producer | false | boolean | Whether to use Saxon as the transformerFactoryClass. If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath.
+| saxonExtensionFunctions | producer |  | List | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry where you can comma to separate multiple values to lookup.
+| saxonConfiguration | producer | true | Object | To use a custom Saxon configuration
+| saxonConfigurationProperties | advanced |  | Map | To set custom Saxon configuration properties
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 // endpoint options: START
-The XSLT component supports 17 endpoint options which are listed below:
+The XSLT endpoint is configured using URI syntax:
 
-{% raw %}
+    xslt:resourceUri
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| resourceUri |  | String | *Required* The name of the template to load from classpath or file system
+|=======================================================================
+
+#### Query Parameters (17 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| resourceUri | producer |  | String | *Required* The name of the template to load from classpath or file system
 | allowStAX | producer | true | boolean | Whether to allow using StAX as the javax.xml.transform.Source.
 | contentCache | producer | true | boolean | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation.
 | deleteOutputFile | producer | false | boolean | If you have output=file then this option dictates whether or not the output file should be deleted when the Exchange is done processing. For example suppose the output file is a temporary file then it can be a good idea to delete it after use.
@@ -102,13 +118,13 @@ The XSLT component supports 17 endpoint options which are listed below:
 | entityResolver | advanced |  | EntityResolver | To use a custom org.xml.sax.EntityResolver with javax.xml.transform.sax.SAXSource.
 | errorListener | advanced |  | ErrorListener | Allows to configure to use a custom javax.xml.transform.ErrorListener. Beware when doing this then the default error listener which captures any errors or fatal errors and store information on the Exchange as properties is not in use. So only use this option for special use-cases.
 | resultHandlerFactory | advanced |  | ResultHandlerFactory | Allows you to use a custom org.apache.camel.builder.xml.ResultHandlerFactory which is capable of using custom org.apache.camel.builder.xml.ResultHandler types.
+| saxonConfiguration | advanced |  | Object | To use a custom Saxon configuration
 | saxonExtensionFunctions | advanced |  | String | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry where you can comma to separate multiple values to lookup.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | transformerFactory | advanced |  | TransformerFactory | To use a custom XSLT transformer factory
 | transformerFactoryClass | advanced |  | String | To use a custom XSLT transformer factory specified as a FQN class name
 | uriResolver | advanced |  | URIResolver | To use a custom javax.xml.transform.URIResolver
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

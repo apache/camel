@@ -44,6 +44,12 @@ public class JGroupsComponentConfiguration {
      * only regular messages are consumed by the endpoint.
      */
     private Boolean enableViewMessages = false;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public Channel getChannel() {
         return channel;
@@ -67,5 +73,14 @@ public class JGroupsComponentConfiguration {
 
     public void setEnableViewMessages(Boolean enableViewMessages) {
         this.enableViewMessages = enableViewMessages;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

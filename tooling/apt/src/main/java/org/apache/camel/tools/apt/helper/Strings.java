@@ -115,4 +115,26 @@ public final class Strings {
         return text;
     }
 
+    /**
+     * Capitalizes the name as a title
+     *
+     * @param name  the name
+     * @return as a title
+     */
+    public static String asTitle(String name) {
+        StringBuilder sb = new StringBuilder();
+        for (char c : name.toCharArray()) {
+            boolean upper = Character.isUpperCase(c);
+            boolean first = sb.length() == 0;
+            if (first) {
+                sb.append(Character.toUpperCase(c));
+            } else if (upper) {
+                sb.append(' ');
+                sb.append(c);
+            } else {
+                sb.append(Character.toLowerCase(c));
+            }
+        }
+        return sb.toString().trim();
+    }
 }

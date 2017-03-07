@@ -45,7 +45,7 @@ import org.apache.camel.spi.UriPath;
  * - the types of payloads we're polling aren't typically large (plus, paging is available in the API)
  * - need to support apps running somewhere not publicly accessible where a webhook would fail
  */
-@UriEndpoint(scheme = "jira", title = "JIRA", syntax = "jira:type", label = "api,reporting")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "jira", title = "JIRA", syntax = "jira:type", label = "api,reporting")
 public class JIRAEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")

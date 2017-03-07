@@ -1,6 +1,6 @@
 ## Avro Component
 
-*Available as of Camel 2.10*
+*Available as of Camel version 2.10*
 
 This component provides a dataformat for avro, which allows
 serialization and deserialization of messages using Apache Avro's binary
@@ -171,17 +171,16 @@ wrapping.
 
 
 // component options: START
-The Avro component supports 1 options which are listed below.
+The Avro component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | configuration | advanced |  | AvroConfiguration | To use a shared AvroConfiguration to configure options once
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -190,16 +189,28 @@ The Avro component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The Avro component supports 14 endpoint options which are listed below:
+The Avro endpoint is configured using URI syntax:
 
-{% raw %}
+    avro:transport:host:port/messageName
+
+  with the following path and query parameters:
+
+#### Path Parameters (4 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| transport |  | AvroTransport | *Required* Transport to use
+| port |  | int | *Required* Port number to use
+| host |  | String | *Required* Hostname to use
+| messageName |  | String | The name of the message to send.
+|=======================================================================
+
+#### Query Parameters (10 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| transport | common |  | AvroTransport | *Required* Transport to use
-| port | common |  | int | *Required* Port number to use
-| host | common |  | String | *Required* Hostname to use
-| messageName | common |  | String | The name of the message to send.
 | protocol | common |  | Protocol | Avro protocol to use
 | protocolClassName | common |  | String | Avro protocol to use defined by the FQN class name
 | protocolLocation | common |  | String | Avro protocol location
@@ -211,7 +222,6 @@ The Avro component supports 14 endpoint options which are listed below:
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

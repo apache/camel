@@ -26,7 +26,7 @@
 
   <artifactId>camel-spring</artifactId>
   <name>Camel :: Spring</name>
-  <description>Camel Spring support</description>
+  <description>Camel Spring with XML DSL</description>
   <packaging>jar</packaging>
 
   <properties>
@@ -328,6 +328,8 @@
                 <mkdir dir="${project.build.directory}/schema" />
                 <schemagen srcdir="${project.build.directory}/schema-src" destdir="${project.build.directory}/schema">
                     <schema namespace="http://camel.apache.org/schema/spring" file="camel-spring.xsd" />
+                    <compilerarg line="-target ${jdk.version}"/>
+                    <compilerarg line="-source ${jdk.version}"/>
                     <classpath refid="maven.compile.classpath" />
                 </schemagen>
 
@@ -553,6 +555,35 @@
             <scope>test</scope>
           </dependency>
         </dependencies>
+    </profile>
+
+    <profile>
+      <id>jdk9-build</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <build>
+        <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-antrun-plugin</artifactId>
+              <dependencies>
+                <dependency>
+                  <groupId>javax.xml.bind</groupId>
+                  <artifactId>jaxb-api</artifactId>
+                  <version>${jaxb-version}</version>
+                </dependency>
+                <dependency>
+                  <groupId>javax.activation</groupId>
+                  <artifactId>activation</artifactId>
+                  <version>1.1.1</version>
+                </dependency>
+              </dependencies>
+            </plugin>
+          </plugins>
+        </pluginManagement>
+      </build>
     </profile>
   </profiles>
 

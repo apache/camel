@@ -1,5 +1,7 @@
 ## XQuery Component
 
+*Available as of Camel version 1.0*
+
 Camel supports http://www.w3.org/TR/xquery/[XQuery] to allow an
 link:expression.html[Expression] or link:predicate.html[Predicate] to be
 used in the link:dsl.html[DSL] or link:xml-configuration.html[Xml
@@ -13,30 +15,43 @@ link:recipient-list.html[Recipient List].
 
 
 // component options: START
-The XQuery component supports 1 options which are listed below.
+The XQuery component supports 4 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | moduleURIResolver | advanced |  | ModuleURIResolver | To use the custom ModuleURIResolver
+| configuration | advanced |  | Configuration | To use a custom Saxon configuration
+| configurationProperties | advanced |  | Map | To set custom Saxon configuration properties
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 
 
 // endpoint options: START
-The XQuery component supports 31 endpoint options which are listed below:
+The XQuery endpoint is configured using URI syntax:
 
-{% raw %}
+    xquery:resourceUri
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| resourceUri |  | String | *Required* The name of the template to load from classpath or file system
+|=======================================================================
+
+#### Query Parameters (31 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| resourceUri | common |  | String | *Required* The name of the template to load from classpath or file system
 | allowStAX | common | false | boolean | Whether to allow using StAX mode
 | headerName | common |  | String | To use a Camel Message header as the input source instead of Message body.
 | namespacePrefixes | common |  | Map | Allows to control which namespace prefixes to use for a set of namespace mappings
@@ -49,6 +64,7 @@ The XQuery component supports 31 endpoint options which are listed below:
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | configuration | advanced |  | Configuration | To use a custom Saxon configuration
+| configurationProperties | advanced |  | Map | To set custom Saxon configuration properties
 | moduleURIResolver | advanced |  | ModuleURIResolver | To use the custom ModuleURIResolver
 | parameters | advanced |  | Map | Additional parameters
 | properties | advanced |  | Properties | Properties to configure the serialization parameters
@@ -68,7 +84,6 @@ The XQuery component supports 31 endpoint options which are listed below:
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

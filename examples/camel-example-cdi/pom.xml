@@ -30,6 +30,11 @@
   <name>Camel :: Example :: CDI</name>
   <description>An example showing how to work with Camel and CDI for dependency injection</description>
 
+  <properties>
+    <category>Beginner</category>
+    <title>CDI</title>
+  </properties>
+
   <dependencies>
 
     <!-- CDI API -->

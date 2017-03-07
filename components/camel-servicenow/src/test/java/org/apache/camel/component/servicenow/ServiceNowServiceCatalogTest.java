@@ -35,7 +35,7 @@ public class ServiceNowServiceCatalogTest extends ServiceNowTestSupport {
         List<Map> result1 = template.requestBodyAndHeaders(
             "direct:servicenow",
             null,
-            new KVBuilder()
+            kvBuilder()
                 .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_SERVICE_CATALOG)
                 .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
                 .build(),
@@ -47,7 +47,7 @@ public class ServiceNowServiceCatalogTest extends ServiceNowTestSupport {
         List<Map> result2 = template.requestBodyAndHeaders(
             "direct:servicenow",
             null,
-            new KVBuilder()
+            kvBuilder()
                 .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_SERVICE_CATALOG)
                 .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
                 .put(ServiceNowConstants.ACTION_SUBJECT, ServiceNowConstants.ACTION_SUBJECT_CATEGORIES)
@@ -64,7 +64,7 @@ public class ServiceNowServiceCatalogTest extends ServiceNowTestSupport {
         List<Map> result = template.requestBodyAndHeaders(
             "direct:servicenow",
             null,
-            new KVBuilder()
+            kvBuilder()
                 .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_SERVICE_CATALOG)
                 .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
                 .put(ServiceNowConstants.ACTION_SUBJECT, "Invalid")
@@ -84,11 +84,7 @@ public class ServiceNowServiceCatalogTest extends ServiceNowTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:servicenow")
-                    .to("servicenow:{{env:SERVICENOW_INSTANCE}}"
-                        + "?userName={{env:SERVICENOW_USERNAME}}"
-                        + "&password={{env:SERVICENOW_PASSWORD}}")
-                        //+ "&oauthClientId={{env:SERVICENOW_OAUTH2_CLIENT_ID}}"
-                        //+ "&oauthClientSecret={{env:SERVICENOW_OAUTH2_CLIENT_SECRET}}")
+                    .to("servicenow:{{env:SERVICENOW_INSTANCE}}")
                     .to("log:org.apache.camel.component.servicenow?level=INFO&showAll=true")
                     .to("mock:servicenow");
             }

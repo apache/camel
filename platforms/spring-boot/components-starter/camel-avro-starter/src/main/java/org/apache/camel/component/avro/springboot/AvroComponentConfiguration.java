@@ -33,6 +33,12 @@ public class AvroComponentConfiguration {
      * To use a shared AvroConfiguration to configure options once
      */
     private AvroConfigurationNestedConfiguration configuration;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public AvroConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -41,6 +47,15 @@ public class AvroComponentConfiguration {
     public void setConfiguration(
             AvroConfigurationNestedConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class AvroConfigurationNestedConfiguration {

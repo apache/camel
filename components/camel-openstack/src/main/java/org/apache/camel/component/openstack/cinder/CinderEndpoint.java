@@ -29,7 +29,7 @@ import org.openstack4j.core.transport.Config;
 /**
  * The openstack-cinder component allows messages to be sent to an OpenStack block storage services.
  */
-@UriEndpoint(scheme = "openstack-cinder", title = "OpenStack Cinder", syntax = "openstack-cinder:host", label = "cloud,paas", producerOnly = true)
+@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-cinder", title = "OpenStack Cinder", syntax = "openstack-cinder:host", label = "cloud,paas", producerOnly = true)
 public class CinderEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "snapshots,volumes")

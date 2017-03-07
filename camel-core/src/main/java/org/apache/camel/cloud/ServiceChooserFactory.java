@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
  * @see ServiceChooser
  */
 public interface ServiceChooserFactory {
+
     /**
      * Creates an instance of a ServiceChooser.
      */

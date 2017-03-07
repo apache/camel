@@ -20,7 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.dataformat.mime.multipart.MimeMultipartDataFormat;
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatFactory;
 import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionMessage;
@@ -35,7 +38,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
 /**
@@ -48,29 +50,36 @@ import org.springframework.core.type.AnnotatedTypeMetadata;
 @EnableConfigurationProperties(MimeMultipartDataFormatConfiguration.class)
 public class MimeMultipartDataFormatAutoConfiguration {
 
-    @Bean(name = "mime-multipart-dataformat")
-    @Scope("prototype")
+    @Bean(name = "mime-multipart-dataformat-factory")
     @ConditionalOnClass(CamelContext.class)
     @ConditionalOnMissingBean(MimeMultipartDataFormat.class)
-    public MimeMultipartDataFormat configureMimeMultipartDataFormat(
-            CamelContext camelContext,
-            MimeMultipartDataFormatConfiguration configuration)
-            throws Exception {
-        MimeMultipartDataFormat dataformat = new MimeMultipartDataFormat();
-        if (CamelContextAware.class
-                .isAssignableFrom(MimeMultipartDataFormat.class)) {
-            CamelContextAware contextAware = CamelContextAware.class
-                    .cast(dataformat);
-            if (contextAware != null) {
-                contextAware.setCamelContext(camelContext);
+    public DataFormatFactory configureMimeMultipartDataFormatFactory(
+            final CamelContext camelContext,
+            final MimeMultipartDataFormatConfiguration configuration) {
+        return new DataFormatFactory() {
+            public DataFormat newInstance() {
+                MimeMultipartDataFormat dataformat = new MimeMultipartDataFormat();
+                if (CamelContextAware.class
+                        .isAssignableFrom(MimeMultipartDataFormat.class)) {
+                    CamelContextAware contextAware = CamelContextAware.class
+                            .cast(dataformat);
+                    if (contextAware != null) {
+                        contextAware.setCamelContext(camelContext);
+                    }
+                }
+                try {
+                    Map<String, Object> parameters = new HashMap<>();
+                    IntrospectionSupport.getProperties(configuration,
+                            parameters, null, false);
+                    IntrospectionSupport.setProperties(camelContext,
+                            camelContext.getTypeConverter(), dataformat,
+                            parameters);
+                } catch (Exception e) {
+                    throw new RuntimeCamelException(e);
+                }
+                return dataformat;
             }
-        }
-        Map<String, Object> parameters = new HashMap<>();
-        IntrospectionSupport.getProperties(configuration, parameters, null,
-                false);
-        IntrospectionSupport.setProperties(camelContext,
-                camelContext.getTypeConverter(), dataformat, parameters);
-        return dataformat;
+        };
     }
 
     public static class Condition extends SpringBootCondition {

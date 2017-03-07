@@ -18,8 +18,10 @@ package org.apache.camel.component.directvm;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.ExchangeHelper;
 
 /**
  * The Direct-VM producer.
@@ -52,7 +54,7 @@ public class DirectVmProducer extends DefaultAsyncProducer {
 
         // Only clone the Exchange if we actually need to filter out properties or headers.
         final Exchange submitted = (!endpoint.isPropagateProperties() || headerFilterStrategy != null) ? exchange.copy(true) : exchange;
-        
+
         // Clear properties in the copy if we are not propagating them.
         if (!endpoint.isPropagateProperties()) {
             submitted.getProperties().clear();
@@ -64,11 +66,16 @@ public class DirectVmProducer extends DefaultAsyncProducer {
         }
         
         return consumer.getAsyncProcessor().process(submitted, done -> {
-            exchange.setException(submitted.getException());
-            exchange.getOut().copyFrom(submitted.hasOut() ? submitted.getOut() : submitted.getIn());
+            Message msg = submitted.hasOut() ? submitted.getOut() : submitted.getIn();
 
             if (headerFilterStrategy != null) {
-                exchange.getOut().getHeaders().entrySet().removeIf(e -> headerFilterStrategy.applyFilterToExternalHeaders(e.getKey(), e.getValue(), submitted));
+                msg.getHeaders().entrySet().removeIf(e -> headerFilterStrategy.applyFilterToExternalHeaders(e.getKey(), e.getValue(), submitted));
+            }
+
+            if (exchange != submitted) {
+                // only need to copy back if they are different
+                exchange.setException(submitted.getException());
+                exchange.getOut().copyFrom(msg);
             }
 
             if (endpoint.isPropagateProperties()) {

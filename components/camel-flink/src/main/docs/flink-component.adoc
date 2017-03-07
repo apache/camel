@@ -1,6 +1,6 @@
 ## Apache Flink Component
 
-*Available as of Camel 2.18*
+*Available as of Camel version 2.18*
 
 This documentation page covers the https://flink.apache.org[Apache Flink]
 component for the Apache Camel. The *camel-flink* component provides a
@@ -39,13 +39,25 @@ FlinkEndpoint Options
 
 
 // endpoint options: START
-The Apache Flink component supports 7 endpoint options which are listed below:
+The Apache Flink endpoint is configured using URI syntax:
 
-{% raw %}
+    flink:endpointType
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| endpointType |  | EndpointType | *Required* Type of the endpoint (dataset datastream).
+|=======================================================================
+
+#### Query Parameters (6 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| endpointType | producer |  | EndpointType | *Required* Type of the endpoint (dataset datastream).
 | collect | producer | true | boolean | Indicates if results should be collected or counted.
 | dataSet | producer |  | DataSet | DataSet to compute against.
 | dataSetCallback | producer |  | DataSetCallback | Function performing action against a DataSet.
@@ -53,7 +65,6 @@ The Apache Flink component supports 7 endpoint options which are listed below:
 | dataStreamCallback | producer |  | DataStreamCallback | Function performing action against a DataStream.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 
@@ -64,11 +75,10 @@ The Apache Flink component supports 7 endpoint options which are listed below:
 
 
 // component options: START
-The Apache Flink component supports 4 options which are listed below.
+The Apache Flink component supports 5 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -76,8 +86,8 @@ The Apache Flink component supports 4 options which are listed below.
 | dataStream | producer |  | DataStream | DataStream to compute against.
 | dataSetCallback | producer |  | DataSetCallback | Function performing action against a DataSet.
 | dataStreamCallback | producer |  | DataStreamCallback | Function performing action against a DataStream.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 

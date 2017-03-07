@@ -45,7 +45,8 @@ import org.slf4j.LoggerFactory;
 /**
  * The aws-sns component is used for sending messages to an Amazon Simple Notification Topic.
  */
-@UriEndpoint(scheme = "aws-sns", title = "AWS Simple Notification System", syntax = "aws-sns:topicNameOrArn", producerOnly = true, label = "cloud,mobile,messaging")
+@UriEndpoint(firstVersion = "2.8.0", scheme = "aws-sns", title = "AWS Simple Notification System", syntax = "aws-sns:topicNameOrArn",
+    producerOnly = true, label = "cloud,mobile,messaging")
 public class SnsEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SnsEndpoint.class);
@@ -158,14 +159,27 @@ public class SnsEndpoint extends DefaultEndpoint {
      */
     AmazonSNS createSNSClient() {
         AmazonSNS client = null;
-        AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+        ClientConfiguration clientConfiguration = null;
+        boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-            ClientConfiguration clientConfiguration = new ClientConfiguration();
+            clientConfiguration = new ClientConfiguration();
             clientConfiguration.setProxyHost(configuration.getProxyHost());
             clientConfiguration.setProxyPort(configuration.getProxyPort());
-            client = new AmazonSNSClient(credentials, clientConfiguration);
+            isClientConfigFound = true;
+        }
+        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+            AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+            if (isClientConfigFound) {
+                client = new AmazonSNSClient(credentials, clientConfiguration);
+            } else {
+                client = new AmazonSNSClient(credentials);
+            }
         } else {
-            client = new AmazonSNSClient(credentials);
+            if (isClientConfigFound) {
+                client = new AmazonSNSClient();
+            } else {
+                client = new AmazonSNSClient(clientConfiguration);
+            }
         }
         return client;
     }

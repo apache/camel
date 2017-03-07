@@ -50,8 +50,10 @@ import org.apache.camel.impl.ConsumerCache;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultEndpointRegistry;
 import org.apache.camel.impl.DefaultTransformerRegistry;
+import org.apache.camel.impl.DefaultValidatorRegistry;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.impl.ProducerCache;
+import org.apache.camel.impl.ThrottlingExceptionRoutePolicy;
 import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
 import org.apache.camel.management.mbean.ManagedAsyncProcessorAwaitManager;
 import org.apache.camel.management.mbean.ManagedBacklogDebugger;
@@ -67,10 +69,12 @@ import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedRuntimeEndpointRegistry;
 import org.apache.camel.management.mbean.ManagedService;
 import org.apache.camel.management.mbean.ManagedStreamCachingStrategy;
+import org.apache.camel.management.mbean.ManagedThrottlingExceptionRoutePolicy;
 import org.apache.camel.management.mbean.ManagedThrottlingInflightRoutePolicy;
 import org.apache.camel.management.mbean.ManagedTracer;
 import org.apache.camel.management.mbean.ManagedTransformerRegistry;
 import org.apache.camel.management.mbean.ManagedTypeConverterRegistry;
+import org.apache.camel.management.mbean.ManagedValidatorRegistry;
 import org.apache.camel.model.AOPDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
@@ -469,6 +473,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             return getManagedObjectForProcessor(context, (Processor) service, route);
         } else if (service instanceof ThrottlingInflightRoutePolicy) {
             answer = new ManagedThrottlingInflightRoutePolicy(context, (ThrottlingInflightRoutePolicy) service);
+        } else if (service instanceof ThrottlingExceptionRoutePolicy) {
+            answer = new ManagedThrottlingExceptionRoutePolicy(context, (ThrottlingExceptionRoutePolicy) service);
         } else if (service instanceof ConsumerCache) {
             answer = new ManagedConsumerCache(context, (ConsumerCache) service);
         } else if (service instanceof ProducerCache) {
@@ -491,6 +497,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             answer = getManagementObjectStrategy().getManagedObjectForEventNotifier(context, (EventNotifier) service);
         } else if (service instanceof DefaultTransformerRegistry) {
             answer = new ManagedTransformerRegistry(context, (DefaultTransformerRegistry)service);
+        } else if (service instanceof DefaultValidatorRegistry) {
+            answer = new ManagedValidatorRegistry(context, (DefaultValidatorRegistry)service);
         } else if (service != null) {
             // fallback as generic service
             answer = getManagementObjectStrategy().getManagedObjectForService(context, service);

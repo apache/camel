@@ -58,6 +58,12 @@ public class QuickfixjComponentConfiguration {
      * first message is send)
      */
     private Boolean lazyCreateEngines = false;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public MessageFactory getMessageFactory() {
         return messageFactory;
@@ -98,5 +104,14 @@ public class QuickfixjComponentConfiguration {
 
     public void setLazyCreateEngines(Boolean lazyCreateEngines) {
         this.lazyCreateEngines = lazyCreateEngines;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

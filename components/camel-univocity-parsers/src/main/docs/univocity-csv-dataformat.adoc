@@ -1,6 +1,6 @@
 ## uniVocity CSV DataFormat
 
-*Available as of Camel 2.15.0*
+*Available as of Camel version 2.15*
 
 This link:data-format.html[Data
 Format] uses http://www.univocity.com/pages/about-parsers[uniVocity-parsers]
@@ -47,7 +47,6 @@ The uniVocity CSV dataformat supports 18 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -70,7 +69,6 @@ The uniVocity CSV dataformat supports 18 options which are listed below.
 | asMap | false | Boolean | Whether the unmarshalling should produce maps for the lines values instead of lists. It requires to have header (either defined or collected). The default value is false
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
-{% endraw %}
 // dataformat options: END
 
 

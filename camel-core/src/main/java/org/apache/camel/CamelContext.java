@@ -37,6 +37,7 @@ import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
+import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
@@ -77,6 +78,8 @@ import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.spi.Validator;
+import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.util.LoadPropertiesException;
 
 /**
@@ -1206,6 +1209,14 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     DataFormat resolveDataFormat(String name);
 
     /**
+     * Creates the given data format given its name.
+     *
+     * @param name the data format name or a reference to a data format factory in the {@link Registry}
+     * @return the resolved data format, or <tt>null</tt> if not found
+     */
+    DataFormat createDataFormat(String name);
+
+    /**
      * Resolve a data format definition given its name
      *
      * @param name the data format definition name or a reference to it in the {@link Registry}
@@ -1254,7 +1265,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @param from from data type
      * @param to to data type
-     * @return the resolved data format, or <tt>null</tt> if not found
+     * @return the resolved transformer, or <tt>null</tt> if not found
      */
     Transformer resolveTransformer(DataType from, DataType to);
 
@@ -1263,6 +1274,34 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the TransformerRegistry
      */
     TransformerRegistry getTransformerRegistry();
+
+    /**
+     * Sets the validators that can be referenced in the routes.
+     *
+     * @param validators the validators
+     */
+    void setValidators(List<ValidatorDefinition> validators);
+
+    /**
+     * Gets the validators that can be referenced in the routes.
+     *
+     * @return the validators available
+     */
+    List<ValidatorDefinition> getValidators();
+
+    /**
+     * Resolve a validator given from/to data type.
+     *
+     * @param type the data type
+     * @return the resolved validator, or <tt>null</tt> if not found
+     */
+    Validator resolveValidator(DataType type);
+
+    /**
+     * Gets the {@link org.apache.camel.spi.ValidatorRegistry}
+     * @return the ValidatorRegistry
+     */
+    ValidatorRegistry getValidatorRegistry();
 
     /**
      * @deprecated use {@link #setGlobalOptions(Map) setGlobalOptions(Map<String,String>) instead}.
@@ -1303,7 +1342,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * @deprecated use {@link #getGlobalOption(String)} instead.
      */
-    String getProperty(String name);
+    String getProperty(String key);
 
     /**
      * Gets the global option value that can be referenced in the camel context
@@ -1315,7 +1354,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      *
      * @return the string value of the global option
      */
-    String getGlobalOption(String name);
+    String getGlobalOption(String key);
 
     /**
      * Gets the default FactoryFinder which will be used for the loading the factory class from META-INF
@@ -1722,7 +1761,9 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Returns the HTML documentation for the given Camel component
      *
      * @return the HTML or <tt>null</tt> if the component is <b>not</b> built with HTML document included.
+     * @deprecated use camel-catalog instead
      */
+    @Deprecated
     String getComponentDocumentation(String componentName) throws IOException;
 
     /**

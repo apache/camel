@@ -1,6 +1,6 @@
 ## Kubernetes Component
 
-*Available as of Camel 2.17*
+*Available as of Camel version 2.17*
 
 The *Kubernetes* component is a component for integrating your
 application with Kubernetes standalone or on top of Openshift. 
@@ -43,13 +43,25 @@ The Kubernetes component has no options.
 
 
 // endpoint options: START
-The Kubernetes component supports 28 endpoint options which are listed below:
+The Kubernetes endpoint is configured using URI syntax:
 
-{% raw %}
+    kubernetes:masterUrl
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| masterUrl |  | String | *Required* Kubernetes Master url
+|=======================================================================
+
+#### Query Parameters (27 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| masterUrl | common |  | String | *Required* Kubernetes Master url
 | apiVersion | common |  | String | The Kubernetes API Version to use
 | category | common |  | String | *Required* Kubernetes Producer and Consumer category
 | dnsDomain | common |  | String | The dns domain used for ServiceCall EIP
@@ -78,7 +90,6 @@ The Kubernetes component supports 28 endpoint options which are listed below:
 | trustCerts | security |  | Boolean | Define if the certs we used are trusted anyway or not
 | username | security |  | String | Username to connect to Kubernetes
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

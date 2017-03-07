@@ -28,6 +28,10 @@ public class DnsServiceDiscoveryFactory implements ServiceDiscoveryFactory {
         this.configuration = new DnsConfiguration();
     }
 
+    public DnsServiceDiscoveryFactory(DnsConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
     // *************************************************************************
     // Properties
     // *************************************************************************

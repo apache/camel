@@ -26,7 +26,11 @@ public class ConsulServiceDiscoveryFactory implements ServiceDiscoveryFactory {
     private final ConsulConfiguration configuration;
 
     public ConsulServiceDiscoveryFactory() {
-        this.configuration = new ConsulConfiguration();
+        this(new ConsulConfiguration());
+    }
+
+    public ConsulServiceDiscoveryFactory(ConsulConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     // *************************************************************************

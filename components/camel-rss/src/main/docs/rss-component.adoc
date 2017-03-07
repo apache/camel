@@ -1,5 +1,7 @@
 ## RSS Component
 
+*Available as of Camel version 2.0*
+
 The *rss:* component is used for polling RSS feeds. Camel will default
 poll the feed every 60th seconds.
 
@@ -46,13 +48,25 @@ The RSS component has no options.
 
 
 // endpoint options: START
-The RSS component supports 28 endpoint options which are listed below:
+The RSS endpoint is configured using URI syntax:
 
-{% raw %}
+    rss:feedUri
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| feedUri |  | String | *Required* The URI to the feed to poll.
+|=======================================================================
+
+#### Query Parameters (27 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| feedUri | consumer |  | String | *Required* The URI to the feed to poll.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | feedHeader | consumer | true | boolean | Sets whether to add the feed object as a header
 | filter | consumer | true | boolean | Sets whether to use filtering or not of the entries.
@@ -81,7 +95,6 @@ The RSS component supports 28 endpoint options which are listed below:
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

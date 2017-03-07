@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.etcd;
 
-import java.net.URI;
-
 import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.EtcdSecurityContext;
 import org.apache.camel.CamelContext;
@@ -178,21 +176,6 @@ public class EtcdConfiguration {
     }
 
     public EtcdClient createClient() throws Exception {
-        String[] uris;
-        if (getUris() != null) {
-            uris = getUris().split(",");
-        } else {
-            uris = EtcdConstants.ETCD_DEFAULT_URIS.split(",");
-        }
-
-        URI[] etcdUriList = new URI[uris.length];
-
-        for (int i = 0; i < uris.length; i++) {
-            etcdUriList[i] = camelContext != null
-                ? URI.create(camelContext.resolvePropertyPlaceholders(uris[i]))
-                : URI.create(uris[i]);
-        }
-
         return new EtcdClient(
             new EtcdSecurityContext(
                 sslContextParameters != null
@@ -200,7 +183,7 @@ public class EtcdConfiguration {
                     : null,
                 userName,
                 password),
-            etcdUriList
+            EtcdHelper.resolveURIs(camelContext, getUris())
         );
     }
 }

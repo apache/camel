@@ -27,9 +27,13 @@
 
   <name>Camel :: Spring Boot</name>
   <artifactId>camel-spring-boot</artifactId>
-  <description>Camel :: Spring Boot</description>
+  <description>Using Camel with Spring Boot</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.15.0</firstVersion>
+    <label>spring,microservice</label>
+
     <camel.osgi.export.pkg/>
   </properties>
 

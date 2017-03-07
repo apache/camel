@@ -1,6 +1,6 @@
 ## CouchDB Component
 
-*Available as of Camel 2.11*
+*Available as of Camel version 2.11*
 
 The *couchdb:* component allows you to treat
 http://couchdb.apache.org/[CouchDB] instances as a producer or consumer
@@ -48,29 +48,41 @@ The CouchDB component has no options.
 // component options: END
 
 // endpoint options: START
-The CouchDB component supports 15 endpoint options which are listed below:
+The CouchDB endpoint is configured using URI syntax:
 
-{% raw %}
+    couchdb:protocol:hostname:port/database
+
+  with the following path and query parameters:
+
+#### Path Parameters (4 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| protocol |  | String | *Required* The protocol to use for communicating with the database.
+| hostname |  | String | *Required* Hostname of the running couchdb instance
+| port | 5984 | int | Port number for the running couchdb instance
+| database |  | String | *Required* Name of the database to use
+|=======================================================================
+
+#### Query Parameters (12 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| protocol | common |  | String | *Required* The protocol to use for communicating with the database.
-| hostname | common |  | String | *Required* Hostname of the running couchdb instance
-| port | common | 5984 | int | Port number for the running couchdb instance
-| database | common |  | String | *Required* Name of the database to use
 | createDatabase | common | false | boolean | Creates the database if it does not already exist
-| deletes | common | true | boolean | Document deletes are published as events
-| heartbeat | common | 30000 | long | How often to send an empty message to keep socket alive in millis
-| password | common |  | String | Password for authenticated databases
-| style | common | main_only | String | Specifies how many revisions are returned in the changes array. The default main_only will only return the current winning revision; all_docs will return all leaf revisions (including conflicts and deleted former conflicts.)
-| updates | common | true | boolean | Document inserts/updates are published as events
-| username | common |  | String | Username in case of authenticated databases
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| deletes | consumer | true | boolean | Document deletes are published as events
+| heartbeat | consumer | 30000 | long | How often to send an empty message to keep socket alive in millis
+| since | consumer |  | String | Start tracking changes immediately after the given update sequence. The default null will start monitoring from the latest sequence.
+| style | consumer | main_only | String | Specifies how many revisions are returned in the changes array. The default main_only will only return the current winning revision; all_docs will return all leaf revisions (including conflicts and deleted former conflicts.)
+| updates | consumer | true | boolean | Document inserts/updates are published as events
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| password | security |  | String | Password for authenticated databases
+| username | security |  | String | Username in case of authenticated databases
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 ### Headers

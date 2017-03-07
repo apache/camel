@@ -16,4 +16,5 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.apache.camel.component.etcd.springboot.EtcdComponentAutoConfiguration
+org.apache.camel.component.etcd.springboot.EtcdComponentAutoConfiguration,\
+org.apache.camel.component.etcd.springboot.cloud.EtcdCloudAutoConfiguration

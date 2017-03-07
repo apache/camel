@@ -33,9 +33,6 @@ import org.apache.camel.spi.Transformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version 
- */
 public class ManagedTransformerRegistryTest extends ManagementTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ManagedTransformerRegistryTest.class);
 
@@ -102,8 +99,8 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
                 assertEquals("xml:test", to);
             } else if (description.startsWith("MyTransformer")) {
                 assertEquals("custom", scheme);
-                assertEquals("null:null", from);
-                assertEquals("null:null", to);
+                assertEquals(null, from);
+                assertEquals(null, to);
             } else {
                 fail("Unexpected transformer:" + description);
             }
@@ -136,7 +133,7 @@ public class ManagedTransformerRegistryTest extends ManagementTestSupport {
     public static class MyTransformer extends Transformer {
         @Override
         public void transform(Message message, DataType from, DataType to) throws Exception {
-            return;
+            // empty
         }
     }
 }

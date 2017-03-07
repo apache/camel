@@ -1,6 +1,6 @@
 ## ZooKeeper Component
 
-*Available as of Camel 2.9*
+*Available as of Camel version 2.9*
 
 The ZooKeeper component allows interaction with a
 http://hadoop.apache.org/zookeeper/[ZooKeeper] cluster and exposes the
@@ -41,28 +41,39 @@ _znode_) that will be the target of the endpoint:
 ### Options
 
 // component options: START
-The ZooKeeper component supports 1 options which are listed below.
+The ZooKeeper component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | configuration | advanced |  | ZooKeeperConfiguration | To use a shared ZooKeeperConfiguration
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 // endpoint options: START
-The ZooKeeper component supports 14 endpoint options which are listed below:
+The ZooKeeper endpoint is configured using URI syntax:
 
-{% raw %}
+    zookeeper:serverUrls/path
+
+  with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| serverUrls |  | String | *Required* The zookeeper server hosts (multiple servers can be separated by comma)
+| path |  | String | *Required* The node in the ZooKeeper server (aka znode)
+|=======================================================================
+
+#### Query Parameters (12 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| serverUrls | common |  | String | *Required* The zookeeper server hosts (multiple servers can be separated by comma)
-| path | common |  | String | *Required* The node in the ZooKeeper server (aka znode)
 | awaitExistence | common | true | boolean | Not in use
 | listChildren | common | false | boolean | Whether the children of the node should be listed
 | timeout | common | 5000 | int | The time interval to wait on connection before timing out.
@@ -76,7 +87,6 @@ The ZooKeeper component supports 14 endpoint options which are listed below:
 | createMode | producer | EPHEMERAL | String | The create mode that should be used for the newly created node
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

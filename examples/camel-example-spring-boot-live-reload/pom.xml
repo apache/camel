@@ -31,6 +31,8 @@
   <description>An example showing how to use the live reload feature of Spring Boot with Camel</description>
 
   <properties>
+    <category>Beginner</category>
+
     <spring.boot-version>${spring-boot-version}</spring.boot-version>
   </properties>
 
@@ -61,6 +63,7 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
     </dependency>
+    <!-- devtools enables the live reload functionality -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-devtools</artifactId>

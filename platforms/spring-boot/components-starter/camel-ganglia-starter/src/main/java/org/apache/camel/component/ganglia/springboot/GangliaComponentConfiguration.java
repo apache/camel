@@ -35,6 +35,12 @@ public class GangliaComponentConfiguration {
      * To use the shared configuration
      */
     private GangliaConfigurationNestedConfiguration configuration;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public GangliaConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -43,6 +49,15 @@ public class GangliaComponentConfiguration {
     public void setConfiguration(
             GangliaConfigurationNestedConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class GangliaConfigurationNestedConfiguration {

@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * The hazelcast component allows you to work with the Hazelcast distributed data grid / cache.
  */
-@UriEndpoint(scheme = "hazelcast", title = "Hazelcast", syntax = "hazelcast:command:cacheName", consumerClass = HazelcastDefaultConsumer.class, label = "cache,datagrid")
+@UriEndpoint(firstVersion = "2.7.0", scheme = "hazelcast", title = "Hazelcast", syntax = "hazelcast:command:cacheName", consumerClass = HazelcastDefaultConsumer.class, label = "cache,datagrid")
 public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")
@@ -42,8 +42,9 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
     protected HazelcastInstance hazelcastInstance;
     @UriParam
     protected String hazelcastInstanceName;
-    @UriParam
-    private int defaultOperation = -1;
+    @UriParam(enums = "put,delete,get,update,query,getAll,clear,evict,evictAll,putIfAbsent,addAll,removeAll,retainAll,valueCount,containsKey,containsValue,keySet,removevalue,increment"
+        + ",decrement,setvalue,destroy,compareAndSet,getAndAdd,add,offer,peek,poll,remainingCapacity,drainTo,publish,capacity,readonceHead,readonceTail")
+    private String defaultOperation;
     @UriParam
     private HazelcastSedaConfiguration hazelcastSedaConfiguration; // to include component schema docs
 
@@ -113,11 +114,12 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
     /**
      * To specify a default operation to use, if no operation header has been provided.
      */
-    public void setDefaultOperation(int defaultOperation) {
+    public void setDefaultOperation(String defaultOperation) {
         this.defaultOperation = defaultOperation;
     }
 
-    public int getDefaultOperation() {
+    public String getDefaultOperation() {
         return defaultOperation;
     }
+
 }

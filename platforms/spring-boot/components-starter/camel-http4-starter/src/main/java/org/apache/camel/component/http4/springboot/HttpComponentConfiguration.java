@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http4.springboot;
 
+import javax.net.ssl.HostnameVerifier;
 import org.apache.camel.component.http4.HttpClientConfigurer;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpConfiguration;
@@ -23,7 +24,6 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.http.client.CookieStore;
 import org.apache.http.conn.HttpClientConnectionManager;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.protocol.HttpContext;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -43,7 +43,9 @@ public class HttpComponentConfiguration {
     @NestedConfigurationProperty
     private HttpClientConfigurer httpClientConfigurer;
     /**
-     * To use a custom HttpClientConnectionManager to manage connections
+     * To use a custom and shared HttpClientConnectionManager to manage
+     * connections. If this has been configured then this is always used for all
+     * endpoints created by this component.
      */
     @NestedConfigurationProperty
     private HttpClientConnectionManager clientConnectionManager;
@@ -81,12 +83,10 @@ public class HttpComponentConfiguration {
     @NestedConfigurationProperty
     private SSLContextParameters sslContextParameters;
     /**
-     * To use a custom X509HostnameVerifier such as
-     * org.apache.http.conn.ssl.StrictHostnameVerifier or
-     * org.apache.http.conn.ssl.AllowAllHostnameVerifier.
+     * To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or
+     * org.apache.http.conn.ssl.NoopHostnameVerifier.
      */
-    @NestedConfigurationProperty
-    private X509HostnameVerifier x509HostnameVerifier;
+    private HostnameVerifier x509HostnameVerifier;
     /**
      * The maximum number of connections.
      */
@@ -115,6 +115,12 @@ public class HttpComponentConfiguration {
      */
     @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public HttpClientConfigurer getHttpClientConfigurer() {
         return httpClientConfigurer;
@@ -175,12 +181,11 @@ public class HttpComponentConfiguration {
         this.sslContextParameters = sslContextParameters;
     }
 
-    public X509HostnameVerifier getX509HostnameVerifier() {
+    public HostnameVerifier getX509HostnameVerifier() {
         return x509HostnameVerifier;
     }
 
-    public void setX509HostnameVerifier(
-            X509HostnameVerifier x509HostnameVerifier) {
+    public void setX509HostnameVerifier(HostnameVerifier x509HostnameVerifier) {
         this.x509HostnameVerifier = x509HostnameVerifier;
     }
 
@@ -223,5 +228,14 @@ public class HttpComponentConfiguration {
     public void setHeaderFilterStrategy(
             HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

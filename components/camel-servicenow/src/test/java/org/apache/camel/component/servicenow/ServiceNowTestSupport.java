@@ -22,31 +22,63 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class ServiceNowTestSupport extends CamelTestSupport {
-
     protected static final Logger LOGGER = LoggerFactory.getLogger(ServiceNowTestSupport.class);
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return super.createCamelContext();
+        return configureServicenowComponent(super.createCamelContext());
     }
 
-    protected static class KVBuilder {
+    protected CamelContext configureServicenowComponent(CamelContext camelContext) throws Exception {
+        String userName = getSystemPropertyOrEnvVar("servicenow.username");
+        String password = getSystemPropertyOrEnvVar("servicenow.password");
+        String oauthClientId = getSystemPropertyOrEnvVar("servicenow.oauth2.client.id");
+        String oauthClientSecret = getSystemPropertyOrEnvVar("servicenow.oauth2.client.secret");
+
+        if (ObjectHelper.isNotEmpty(userName) && ObjectHelper.isNotEmpty(password)) {
+            ServiceNowComponent component = new ServiceNowComponent();
+            component.setUserName(userName);
+            component.setPassword(password);
+
+            if (ObjectHelper.isNotEmpty(oauthClientId) && ObjectHelper.isNotEmpty(oauthClientSecret)) {
+                component.setOauthClientId(oauthClientId);
+                component.setOauthClientSecret(oauthClientSecret);
+            }
+
+            camelContext.addComponent("servicenow", component);
+        }
+
+        return camelContext;
+    }
+
+    protected String getSystemPropertyOrEnvVar(String systemProperty) {
+        String answer = System.getProperty(systemProperty);
+        if (ObjectHelper.isEmpty(answer)) {
+            String envProperty = systemProperty.toUpperCase().replaceAll("[.-]", "_");
+            answer = System.getenv(envProperty);
+        }
+
+        return answer;
+    }
+
+    protected static KVBuilder kvBuilder() {
+        return new KVBuilder(new HashMap<>());
+    }
+
+    protected static KVBuilder kvBuilder(Map<String, Object> headers) {
+        return new KVBuilder(headers);
+    }
+
+    protected static final class KVBuilder {
         private final Map<String, Object> headers;
 
-        public KVBuilder() {
-            this(new HashMap<>());
-        }
-
         private KVBuilder(Map<String, Object> headers) {
-            this.headers = headers;
-        }
-
-        public KVBuilder on(Map<String, Object> headers) {
-            return new KVBuilder(headers);
+            this.headers = new HashMap<>(headers);
         }
 
         public KVBuilder put(String key, Object val) {

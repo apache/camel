@@ -26,9 +26,14 @@
   <artifactId>camel-bam</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: BAM (deprecated)</name>
-  <description>Camel Business Activity Monitor support</description>
+  <description>Business Activity Monitoring</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>1.0.0</firstVersion>
+    <label>monitoring</label>
+    <title>BAM</title>
+
     <camel.osgi.export.pkg>org.apache.camel.bam.*</camel.osgi.export.pkg>
     <eclipselink-version>2.3.2</eclipselink-version>
   </properties>

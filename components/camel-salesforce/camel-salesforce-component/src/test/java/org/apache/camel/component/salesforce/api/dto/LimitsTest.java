@@ -36,6 +36,7 @@ import org.junit.Test;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -57,7 +58,10 @@ public class LimitsTest {
 
         final Limits limits = (Limits) read;
 
-        assertFalse("Should have some usage present", limits.getDailyApiRequests().isUnknown());
+        final Usage dailyApiRequests = limits.getDailyApiRequests();
+        assertFalse("Should have some usage present", dailyApiRequests.isUnknown());
+        assertFalse("Per application usage should be present", dailyApiRequests.getPerApplicationUsage().isEmpty());
+        assertNotNull("'Camel Salesman' application usage should be present", dailyApiRequests.forApplication("Camel Salesman"));
     }
 
     @Test

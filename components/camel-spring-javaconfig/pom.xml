@@ -26,10 +26,15 @@
 
   <artifactId>camel-spring-javaconfig</artifactId>
   <name>Camel :: Spring JavaConfig</name>
-  <description>Camel Spring JavaConfig support</description>
+  <description> Using Camel with Spring Java Configuration</description>
   <packaging>jar</packaging>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.0.0</firstVersion>
+    <label>spring</label>
+    <title>Spring Java Configuration</title>
+
     <camel.osgi.export.pkg>org.apache.camel.spring.javaconfig.*</camel.osgi.export.pkg>
   </properties>
 

@@ -25,11 +25,12 @@ import java.util.List;
  */
 @FunctionalInterface
 public interface ServiceFilter {
+
     /**
      * Chooses one of the service to use
      *
      * @param services  list of services
      * @return the chosen service to use.
      */
-    <T extends ServiceDefinition> List<T> apply(List<T> services);
+    List<ServiceDefinition> apply(List<ServiceDefinition> services);
 }

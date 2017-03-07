@@ -1,6 +1,6 @@
 ## AWS CloudWatch Component
 
-*Available as of Camel 2.11
+*Available as of Camel version 2.11*
 
 The CW component allows messages to be sent to an
 http://aws.amazon.com/cloudwatch/[Amazon CloudWatch] metrics. The
@@ -35,13 +35,25 @@ The AWS CloudWatch component has no options.
 
 
 // endpoint options: START
-The AWS CloudWatch component supports 12 endpoint options which are listed below:
+The AWS CloudWatch endpoint is configured using URI syntax:
 
-{% raw %}
+    aws-cw:namespace
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| namespace |  | String | *Required* The metric namespace
+|=======================================================================
+
+#### Query Parameters (11 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| namespace | producer |  | String | *Required* The metric namespace
 | accessKey | producer |  | String | Amazon AWS Access Key
 | amazonCwClient | producer |  | AmazonCloudWatch | To use the AmazonCloudWatch as the client
 | amazonCwEndpoint | producer |  | String | The region with which the AWS-CW client wants to work with.
@@ -54,7 +66,6 @@ The AWS CloudWatch component supports 12 endpoint options which are listed below
 | value | producer |  | Double | The metric value
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

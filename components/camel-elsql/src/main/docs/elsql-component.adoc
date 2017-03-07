@@ -1,6 +1,6 @@
 ## ElSQL Component
 
-*Available as of Camel 2.16*
+*Available as of Camel version 2.16*
 
 The *elsql:* component is an extension to the existing
 link:sql-component.html[SQL Component] that uses
@@ -49,11 +49,10 @@ If a named parameter cannot be resolved, then an exception is thrown.
 ### Options
 
 // component options: START
-The ElSQL component supports 4 options which are listed below.
+The ElSQL component supports 5 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -61,19 +60,31 @@ The ElSQL component supports 4 options which are listed below.
 | dataSource | common |  | DataSource | Sets the DataSource to use to communicate with the database.
 | elSqlConfig | advanced |  | ElSqlConfig | To use a specific configured ElSqlConfig. It may be better to use the databaseVendor option instead.
 | resourceUri | common |  | String | The resource file which contains the elsql SQL statements to use. You can specify multiple resources separated by comma. The resources are loaded on the classpath by default you can prefix with file: to load from file system. Notice you can set this option on the component and then you do not have to configure this on the endpoint.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 // endpoint options: START
-The ElSQL component supports 49 endpoint options which are listed below:
+The ElSQL endpoint is configured using URI syntax:
 
-{% raw %}
+    elsql:elsqlName:resourceUri
+
+  with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| elsqlName |  | String | *Required* The name of the elsql to use (is NAMED in the elsql file)
+| resourceUri |  | String | The resource file which contains the elsql SQL statements to use. You can specify multiple resources separated by comma. The resources are loaded on the classpath by default you can prefix with file: to load from file system. Notice you can set this option on the component and then you do not have to configure this on the endpoint.
+|=======================================================================
+
+#### Query Parameters (47 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| elsqlName | common |  | String | *Required* The name of the elsql to use (is NAMED in the elsql file)
-| resourceUri | common |  | String | The resource file which contains the elsql SQL statements to use. You can specify multiple resources separated by comma. The resources are loaded on the classpath by default you can prefix with file: to load from file system. Notice you can set this option on the component and then you do not have to configure this on the endpoint.
 | allowNamedParameters | common | true | boolean | Whether to allow using named parameters in the queries.
 | databaseVendor | common |  | ElSqlDatabaseVendor | To use a vendor specific com.opengamma.elsql.ElSqlConfig
 | dataSource | common |  | DataSource | Sets the DataSource to use to communicate with the database.
@@ -84,7 +95,7 @@ The ElSQL component supports 49 endpoint options which are listed below:
 | separator | common | , | char | The separator to use when parameter values is taken from message body (if the body is a String type) to be inserted at placeholders.Notice if you use named parameters then a Map type is used instead. The default value is comma
 | breakBatchOnConsumeFail | consumer | false | boolean | Sets whether to break batch if onConsume failed.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| expectedUpdateCount | consumer | -1 | int | Sets an expected update count to validate when using onConsume.
+| expectedUpdateCount | consumer | 1 | int | Sets an expected update count to validate when using onConsume.
 | maxMessagesPerPoll | consumer |  | int | Sets the maximum number of messages to poll
 | onConsume | consumer |  | String | After processing each row then this query can be executed if the Exchange was processed successfully for example to mark the row as processed. The query can have parameter.
 | onConsumeBatchComplete | consumer |  | String | After processing the entire batch this query can be executed to bulk update rows etc. The query cannot have parameters.
@@ -122,7 +133,6 @@ The ElSQL component supports 49 endpoint options which are listed below:
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 ### Result of the query

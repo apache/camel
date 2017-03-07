@@ -23,7 +23,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.MemoryStateRepository;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.After;
 import org.junit.Test;
@@ -38,19 +37,14 @@ public class KafkaConsumerOffsetRepositoryEmptyTest extends BaseEmbeddedKafkaTes
 
     private MemoryStateRepository stateRepository;
 
+    // FIXME lifecycle issue here
     @Override
     protected void doPreSetup() throws Exception {
-        Properties props = new Properties();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:" + getKafkaPort());
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
-        props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_PARTITIONER);
-        props.put(ProducerConfig.ACKS_CONFIG, "1");
-
-        producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
-
         // Create the topic with 2 partitions + send 10 messages (5 in each partitions)
-        embeddedKafkaCluster.createTopic(TOPIC, 2);
+        kafkaBroker.createTopic(TOPIC, 2);
+
+        Properties props = getDefaultProperties();
+        producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
         for (int i = 0; i < 10; i++) {
             producer.send(new ProducerRecord<>(TOPIC, i % 2, "key", "message-" + i));
         }
@@ -95,11 +89,11 @@ public class KafkaConsumerOffsetRepositoryEmptyTest extends BaseEmbeddedKafkaTes
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("kafka:localhost:{{kafkaPort}}?topic=" + TOPIC +  //
-                             "&groupId=A" +                            //
-                             "&autoOffsetReset=earliest" +             // Ask to start from the beginning if we have unknown offset
-                             "&consumersCount=2" +                     // We have 2 partitions, we want 1 consumer per partition
-                             "&offsetRepository=#offset")              // Keep the offset in our repository
+                from("kafka:" + TOPIC
+                             + "?groupId=A"
+                             + "&autoOffsetReset=earliest"             // Ask to start from the beginning if we have unknown offset
+                             + "&consumersCount=2"                     // We have 2 partitions, we want 1 consumer per partition
+                             + "&offsetRepository=#offset")            // Keep the offset in our repository
                         .to("mock:result");
             }
         };

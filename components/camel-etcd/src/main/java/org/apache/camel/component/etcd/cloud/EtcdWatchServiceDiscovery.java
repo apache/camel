@@ -53,7 +53,7 @@ public class EtcdWatchServiceDiscovery
     }
 
     @Override
-    public List<ServiceDefinition> getUpdatedListOfServices(String name) {
+    public List<ServiceDefinition> getServices(String name) {
         List<ServiceDefinition> servers = serversRef.get();
         if (servers == null) {
             serversRef.set(getServices());

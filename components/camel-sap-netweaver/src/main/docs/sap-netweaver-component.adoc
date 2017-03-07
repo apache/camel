@@ -1,6 +1,6 @@
 ## SAP NetWeaver Component
 
-*Available as of Camel 2.12*
+*Available as of Camel version 2.12*
 
 The *sap-netweaver* integrates with the
 http://scn.sap.com/community/developer-center/netweaver-gateway[SAP
@@ -53,13 +53,25 @@ The SAP NetWeaver component has no options.
 
 
 // endpoint options: START
-The SAP NetWeaver component supports 7 endpoint options which are listed below:
+The SAP NetWeaver endpoint is configured using URI syntax:
 
-{% raw %}
+    sap-netweaver:url
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| url |  | String | *Required* Url to the SAP net-weaver gateway server.
+|=======================================================================
+
+#### Query Parameters (6 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| url | producer |  | String | *Required* Url to the SAP net-weaver gateway server.
 | flatternMap | producer | true | boolean | If the JSON Map contains only a single entry then flattern by storing that single entry value as the message body.
 | json | producer | true | boolean | Whether to return data in JSON format. If this option is false then XML is returned in Atom format.
 | jsonAsMap | producer | true | boolean | To transform the JSON from a String to a Map in the message body.
@@ -67,7 +79,6 @@ The SAP NetWeaver component supports 7 endpoint options which are listed below:
 | username | producer |  | String | *Required* Username for account.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

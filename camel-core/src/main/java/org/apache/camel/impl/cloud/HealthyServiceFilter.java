@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.impl.cloud;
 
 import java.util.List;
@@ -27,7 +26,7 @@ public class HealthyServiceFilter implements ServiceFilter {
     public static final ServiceFilter INSTANCE = new HealthyServiceFilter();
 
     @Override
-    public <T extends ServiceDefinition> List<T> apply(List<T> services) {
+    public List<ServiceDefinition> apply(List<ServiceDefinition> services) {
         return services.stream().filter(s -> s.getHealth().isHealthy()).collect(Collectors.toList());
     }
 }

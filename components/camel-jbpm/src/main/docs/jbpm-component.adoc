@@ -1,6 +1,6 @@
 ## JBPM Component
 
-*Available as of Camel 2.16*
+*Available as of Camel version 2.6*
 
 The *jbpm* component provides integration with Business Process
 Management (BPM) Suit http://www.jbpm.org/[jBPM]. It uses
@@ -38,13 +38,25 @@ The JBPM component has no options.
 
 
 // endpoint options: START
-The JBPM component supports 26 endpoint options which are listed below:
+The JBPM endpoint is configured using URI syntax:
 
-{% raw %}
+    jbpm:connectionURL
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| connectionURL |  | URL | *Required* The URL to the jBPM server.
+|=======================================================================
+
+#### Query Parameters (25 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| connectionURL | producer |  | URL | *Required* The URL to the jBPM server.
 | attachmentId | producer |  | Long | attachId to use when retrieving attachments
 | contentId | producer |  | Long | contentId to use when retrieving attachments
 | deploymentId | producer |  | String | *Required* The id of the deployment
@@ -71,7 +83,6 @@ The JBPM component supports 26 endpoint options which are listed below:
 | password | security |  | String | Password for authentication
 | userName | security |  | String | Username for authentication
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

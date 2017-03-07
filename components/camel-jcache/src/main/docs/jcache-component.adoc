@@ -1,18 +1,36 @@
 ## JCache Component
 
+*Available as of Camel version 2.17*
+
 
 
 
 
 
 // endpoint options: START
-The JCache component supports 23 endpoint options which are listed below:
+The JCache endpoint is configured using URI syntax:
 
-{% raw %}
+    jcache:cacheName
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| cacheName |  | String | *Required* The name of the cache
+|=======================================================================
+
+#### Query Parameters (22 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| cacheName | common |  | String | *Required* the cache name
+| cacheConfiguration | common |  | Configuration | A Configuration for the Cache
+| cacheConfigurationProperties | common |  | Properties | The Properties for the javax.cache.spi.CachingProvider to create the CacheManager
+| cachingProvider | common |  | String | The fully qualified class name of the javax.cache.spi.CachingProvider
+| configurationUri | common |  | String | An implementation specific URI for the CacheManager
 | managementEnabled | common | false | boolean | Whether management gathering is enabled
 | readThrough | common | false | boolean | If read-through caching should be used
 | statisticsEnabled | common | false | boolean | Whether statistics gathering is enabled
@@ -26,17 +44,12 @@ The JCache component supports 23 endpoint options which are listed below:
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | action | producer |  | String | To configure using a cache operation by default. If an operation in the message header then the operation from the header takes precedence.
-| cacheConfiguration | advanced |  | Configuration | A Configuration for the Cache
-| cacheConfigurationProperties | advanced |  | Properties | The Properties for the javax.cache.spi.CachingProvider to create the CacheManager
 | cacheLoaderFactory | advanced |  | CacheLoader> | The CacheLoader factory
 | cacheWriterFactory | advanced |  | CacheWriter> | The CacheWriter factory
-| cachingProvider | advanced |  | String | *Required* The fully qualified class name of the javax.cache.spi.CachingProvider
-| configurationUri | advanced |  | String | An implementation specific URI for the CacheManager
 | createCacheIfNotExists | advanced | true | boolean | Configure if a cache need to be created if it does exist or can't be pre-configured.
 | expiryPolicyFactory | advanced |  | ExpiryPolicy> | The ExpiryPolicy factory
 | lookupProviders | advanced | false | boolean | Configure if a camel-cache should try to find implementations of jcache api in runtimes like OSGi.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 
@@ -47,5 +60,17 @@ The JCache component supports 23 endpoint options which are listed below:
 
 
 // component options: START
-The JCache component has no options.
+The JCache component supports 5 options which are listed below.
+
+
+
+[width="100%",cols="2,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| cachingProvider | common |  | String | The fully qualified class name of the javax.cache.spi.CachingProvider
+| cacheConfiguration | common |  | Configuration | A Configuration for the Cache
+| cacheConfigurationProperties | common |  | Properties | The Properties for the javax.cache.spi.CachingProvider to create the CacheManager
+| configurationUri | common |  | String | An implementation specific URI for the CacheManager
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+|=======================================================================
 // component options: END

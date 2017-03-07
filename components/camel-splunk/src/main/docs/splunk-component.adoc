@@ -1,6 +1,6 @@
 ## Splunk Component
 
-*Available as of Camel 2.13*
+*Available as of Camel version 2.13*
 
 The Splunk component provides access to
 http://docs.splunk.com/Documentation/Splunk/latest[Splunk] using the
@@ -86,30 +86,41 @@ SplunkEvent in the body.
 
 
 // component options: START
-The Splunk component supports 1 options which are listed below.
+The Splunk component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | splunkConfigurationFactory | advanced |  | SplunkConfigurationFactory | To use the SplunkConfigurationFactory
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 
 
 // endpoint options: START
-The Splunk component supports 43 endpoint options which are listed below:
+The Splunk endpoint is configured using URI syntax:
 
-{% raw %}
+    splunk:name
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| name |  | String | *Required* Name has no purpose
+|=======================================================================
+
+#### Query Parameters (42 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| name | common |  | String | *Required* Name has no purpose
 | app | common |  | String | Splunk app
 | connectionTimeout | common | 5000 | int | Timeout in MS when connecting to Splunk server
 | host | common | localhost | String | Splunk host.
@@ -153,7 +164,6 @@ The Splunk component supports 43 endpoint options which are listed below:
 | username | security |  | String | Username for Splunk
 | useSunHttpsHandler | security | false | boolean | Use sun.net.www.protocol.https.Handler Https handler to establish the Splunk Connection. Can be useful when running in application servers to avoid app. server https handling.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

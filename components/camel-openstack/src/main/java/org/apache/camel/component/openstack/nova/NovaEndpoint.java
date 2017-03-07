@@ -30,7 +30,7 @@ import org.openstack4j.core.transport.Config;
 /**
  * The openstack-nova component allows messages to be sent to an OpenStack compute services.
  */
-@UriEndpoint(scheme = "openstack-nova", title = "OpenStack Nova", syntax = "openstack-nova:host", label = "cloud,paas", producerOnly = true)
+@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-nova", title = "OpenStack Nova", syntax = "openstack-nova:host", label = "cloud,paas", producerOnly = true)
 public class NovaEndpoint extends AbstractOpenstackEndpoint {
 
     @UriParam(enums = "flavors,servers,keypairs")

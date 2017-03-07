@@ -48,9 +48,6 @@
             <execution>
               <id>bundle-jar</id>
               <phase>package</phase>
-              <goals>
-                <goal>jar</goal>
-              </goals>
             </execution>
           </executions>
           <configuration>

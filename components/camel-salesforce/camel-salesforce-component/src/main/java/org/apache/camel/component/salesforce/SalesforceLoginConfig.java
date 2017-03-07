@@ -26,6 +26,7 @@ public class SalesforceLoginConfig {
     private String loginUrl;
     private String clientId;
     private String clientSecret;
+    private String refreshToken;
     private String userName;
     private String password;
     // allow lazy login into Salesforce
@@ -45,6 +46,16 @@ public class SalesforceLoginConfig {
         this.clientSecret = clientSecret;
         this.userName = userName;
         this.password = password;
+        this.lazyLogin = lazyLogin;
+    }
+
+    public SalesforceLoginConfig(String loginUrl,
+            String clientId, String clientSecret,
+            String refreshToken, boolean lazyLogin) {
+        this.loginUrl = loginUrl;
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
+        this.refreshToken = refreshToken;
         this.lazyLogin = lazyLogin;
     }
 
@@ -81,6 +92,18 @@ public class SalesforceLoginConfig {
         this.clientSecret = clientSecret;
     }
 
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    /**
+     * Salesforce connected application Consumer token
+     */
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
     public String getUserName() {
         return userName;
     }
@@ -114,4 +137,15 @@ public class SalesforceLoginConfig {
         this.lazyLogin = lazyLogin;
     }
 
+    @Override
+    public String toString() {
+        return "SalesforceLoginConfig["
+            + "loginUrl='" + loginUrl + '\''
+            + ", clientId='" + clientId + '\''
+            + ", clientSecret='********'"
+            + ", refreshToken='" + refreshToken + '\''
+            + ", userName='" + userName + '\''
+            + ", password=********'" + password + '\''
+            + ", lazyLogin=" + lazyLogin + ']';
+    }
 }

@@ -1,6 +1,6 @@
 ## GitHub Component
 
-*Available as of Camel 2.15*
+*Available as of Camel version 2.15*
 
 The GitHub component interacts with the GitHub API by
 encapsulating http://org.eclipse.egit.github.core[egit-github]. It
@@ -51,14 +51,26 @@ The GitHub component has no options.
 
 
 // endpoint options: START
-The GitHub component supports 14 endpoint options which are listed below:
+The GitHub endpoint is configured using URI syntax:
 
-{% raw %}
+    github:type/branchName
+
+  with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| type |  | GitHubType | *Required* What git operation to execute
+| branchName |  | String | Name of branch
+|=======================================================================
+
+#### Query Parameters (12 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| type | common |  | GitHubType | *Required* What git operation to execute
-| branchName | consumer |  | String | Name of branch
 | oauthToken | common |  | String | GitHub OAuth token required unless username & password are provided
 | password | common |  | String | GitHub password required unless oauthToken is provided
 | repoName | common |  | String | *Required* GitHub repository name
@@ -72,7 +84,6 @@ The GitHub component supports 14 endpoint options which are listed below:
 | targetUrl | producer |  | String | To set git commit status target url
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

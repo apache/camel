@@ -1,5 +1,7 @@
 ## CXF-RS Component
 
+*Available as of Camel version 2.0*
+
 The *cxfrs:* component provides integration with
 http://cxf.apache.org[Apache CXF] for connecting to JAX-RS 1.1 and 2.0
 services hosted in CXF.
@@ -52,31 +54,42 @@ cxfrs:bean:cxfEndpoint?resourceClasses=org.apache.camel.rs.Example
 
 
 // component options: START
-The CXF-RS component supports 1 options which are listed below.
+The CXF-RS component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 
 
 // endpoint options: START
-The CXF-RS component supports 31 endpoint options which are listed below:
+The CXF-RS endpoint is configured using URI syntax:
 
-{% raw %}
+    cxfrs:beanId:address
+
+  with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| beanId |  | String | To lookup an existing configured CxfRsEndpoint. Must used bean: as prefix.
+| address |  | String | The service publish address.
+|=======================================================================
+
+#### Query Parameters (29 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| beanId | common |  | String | To lookup an existing configured CxfRsEndpoint. Must used bean: as prefix.
-| address | common |  | String | The service publish address.
 | features | common |  | List | Set the feature list to the CxfRs endpoint.
 | loggingFeatureEnabled | common | false | boolean | This option enables CXF Logging Feature which writes inbound and outbound REST messages to log.
 | loggingSizeLimit | common |  | int | To limit the total size of number of bytes the logger will output when logging feature has been enabled.
@@ -107,7 +120,6 @@ The CXF-RS component supports 31 endpoint options which are listed below:
 | propagateContexts | advanced | false | boolean | When the option is true JAXRS UriInfo HttpHeaders Request and SecurityContext contexts will be available to custom CXFRS processors as typed Camel exchange properties. These contexts can be used to analyze the current requests using JAX-RS API.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

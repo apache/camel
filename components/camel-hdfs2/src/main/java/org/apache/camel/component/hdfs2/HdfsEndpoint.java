@@ -30,7 +30,7 @@ import org.apache.camel.spi.UriParam;
 /**
  * For reading/writing from/to an HDFS filesystem using Hadoop 2.x.
  */
-@UriEndpoint(scheme = "hdfs2", title = "HDFS2", syntax = "hdfs2:hostName:port/path", consumerClass = HdfsConsumer.class, label = "hadoop,file")
+@UriEndpoint(firstVersion = "2.14.0", scheme = "hdfs2", title = "HDFS2", syntax = "hdfs2:hostName:port/path", consumerClass = HdfsConsumer.class, label = "hadoop,file")
 public class HdfsEndpoint extends ScheduledPollEndpoint {
 
     @UriParam
@@ -41,6 +41,7 @@ public class HdfsEndpoint extends ScheduledPollEndpoint {
         super(endpointUri, context);
         this.config = new HdfsConfiguration();
         this.config.parseURI(new URI(endpointUri));
+        setInitialDelay(HdfsConsumer.DEFAULT_CONSUMER_INITIAL_DELAY);
     }
 
     @Override

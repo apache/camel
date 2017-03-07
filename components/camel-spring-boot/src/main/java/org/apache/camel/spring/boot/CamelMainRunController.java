@@ -16,6 +16,9 @@
  */
 package org.apache.camel.spring.boot;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.CamelContext;
 import org.springframework.context.ApplicationContext;
 
@@ -34,6 +37,14 @@ public class CamelMainRunController {
 
     public void start() {
         daemon.start();
+    }
+
+    public CountDownLatch getLatch() {
+        return controller.getLatch();
+    }
+
+    public AtomicBoolean getCompleted() {
+        return controller.getCompleted();
     }
 
     private final class DaemonTask implements Runnable {

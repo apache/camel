@@ -28,9 +28,13 @@
   <artifactId>camel-test-spring</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: Test :: Spring 4.1+</name>
-  <description>Camel Testing Library using JUnit and Spring 4.1+</description>
+  <description>Camel unit testing with Spring</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.10.0</firstVersion>
+    <label>testing,java,spring</label>
+
     <camel.osgi.export.pkg>org.apache.camel.test.spring.*</camel.osgi.export.pkg>
     <spring-version>${spring4-version}</spring-version>
   </properties>

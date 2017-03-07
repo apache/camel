@@ -77,6 +77,7 @@ public class CorePackageScanClassResolver implements PackageScanClassResolver {
         converters.add(GenericFileConverter.class);
         converters.add(DurationConverter.class);
         converters.add(AttachmentConverter.class);
+        converters.add(UriTypeConverter.class);
     }
 
     @Override

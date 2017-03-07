@@ -19,6 +19,8 @@ package org.apache.camel.maven.packaging.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.apache.camel.maven.packaging.StringHelper.cutLastZeroDigit;
+
 public class LanguageModel {
 
     private String kind;
@@ -26,6 +28,7 @@ public class LanguageModel {
     private String modelName;
     private String title;
     private String description;
+    private String firstVersion;
     private String label;
     private String deprecated;
     private String javaType;
@@ -72,6 +75,14 @@ public class LanguageModel {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getFirstVersion() {
+        return firstVersion;
+    }
+
+    public void setFirstVersion(String firstVersion) {
+        this.firstVersion = firstVersion;
     }
 
     public String getLabel() {
@@ -152,6 +163,10 @@ public class LanguageModel {
         } else {
             return artifactId + "/src/main/docs";
         }
+    }
+
+    public String getFirstVersionShort() {
+        return cutLastZeroDigit(firstVersion);
     }
 
 }

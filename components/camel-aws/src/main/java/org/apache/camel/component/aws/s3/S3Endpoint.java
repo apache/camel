@@ -43,6 +43,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ObjectHelper;
 
 import org.slf4j.Logger;
@@ -51,7 +52,8 @@ import org.slf4j.LoggerFactory;
 /**
  * The aws-s3 component is used for storing and retrieving objecct from Amazon S3 Storage Service.
  */
-@UriEndpoint(scheme = "aws-s3", title = "AWS S3 Storage Service", syntax = "aws-s3:bucketNameOrArn", consumerClass = S3Consumer.class, label = "cloud,file")
+@UriEndpoint(firstVersion = "2.8.0", scheme = "aws-s3", title = "AWS S3 Storage Service", syntax = "aws-s3:bucketNameOrArn",
+    consumerClass = S3Consumer.class, label = "cloud,file")
 public class S3Endpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(S3Endpoint.class);
@@ -193,6 +195,18 @@ public class S3Endpoint extends ScheduledPollEndpoint {
                 s3Object.close();
             } catch (IOException e) {
             }
+        } else {
+            if (configuration.isAutocloseBody()) {
+                exchange.addOnCompletion(new SynchronizationAdapter() {
+                    @Override
+                    public void onDone(Exchange exchange) {
+                        try {
+                            s3Object.close();
+                        } catch (IOException e) {
+                        }
+                    }
+                });
+            }
         }
 
         return exchange;
@@ -218,8 +232,30 @@ public class S3Endpoint extends ScheduledPollEndpoint {
      * Provide the possibility to override this method for an mock implementation
      */
     AmazonS3 createS3Client() {
-        AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
-        AmazonS3Client client = configuration.hasProxyConfiguration() ? createClientWithProxy(credentials) : new AmazonS3Client(credentials);
+    
+        AmazonS3Client client = null;
+        ClientConfiguration clientConfiguration = null;
+        boolean isClientConfigFound = false;
+        if (configuration.hasProxyConfiguration()) {
+            clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyHost(configuration.getProxyHost());
+            clientConfiguration.setProxyPort(configuration.getProxyPort());
+            isClientConfigFound = true;
+        }
+        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+            AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+            if (isClientConfigFound) {
+                client = new AmazonS3Client(credentials, clientConfiguration);
+            } else {
+                client = new AmazonS3Client(credentials);
+            }
+        } else {
+            if (isClientConfigFound) {
+                client = new AmazonS3Client();
+            } else {
+                client = new AmazonS3Client(clientConfiguration);
+            }
+        }
 
         S3ClientOptions clientOptions = S3ClientOptions.builder()
             .setPathStyleAccess(configuration.isPathStyleAccess())
@@ -228,12 +264,6 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         return client;
     }
 
-    private AmazonS3Client createClientWithProxy(final AWSCredentials credentials) {
-        ClientConfiguration clientConfiguration = new ClientConfiguration();
-        clientConfiguration.setProxyHost(configuration.getProxyHost());
-        clientConfiguration.setProxyPort(configuration.getProxyPort());
-        return new AmazonS3Client(credentials, clientConfiguration);
-    }
 
     public int getMaxMessagesPerPoll() {
         return maxMessagesPerPoll;

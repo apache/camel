@@ -49,7 +49,7 @@ import static org.fusesource.stomp.client.Constants.UNSUBSCRIBE;
 /**
  * The stomp component is used for communicating with Stomp compliant message brokers.
  */
-@UriEndpoint(scheme = "stomp", title = "Stomp", syntax = "stomp:destination", consumerClass = StompConsumer.class, label = "messaging")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "stomp", title = "Stomp", syntax = "stomp:destination", consumerClass = StompConsumer.class, label = "messaging")
 public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     @UriPath(description = "Name of the queue") @Metadata(required = "true")

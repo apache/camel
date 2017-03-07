@@ -28,7 +28,7 @@ public interface HttpClientConfigurer {
     /**
      * Configure the HttpClient such as setting the authentication or proxying details
      *
-     * @param client the client
+     * @param clientBuilder the client
      */
     void configureHttpClient(HttpClientBuilder clientBuilder);
 }

@@ -34,7 +34,7 @@ public class ServiceNowTest extends ServiceNowTestSupport {
             template().sendBodyAndHeaders(
                 "direct:servicenow",
                 null,
-                new KVBuilder()
+                kvBuilder()
                     .put(ServiceNowConstants.RESOURCE, "table")
                     .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
                     .put(ServiceNowParams.SYSPARM_QUERY, "number=" + UUID.randomUUID().toString())
@@ -55,7 +55,7 @@ public class ServiceNowTest extends ServiceNowTestSupport {
             template().sendBodyAndHeaders(
                 "direct:servicenow",
                 null,
-                new KVBuilder()
+                kvBuilder()
                     .put(ServiceNowConstants.RESOURCE, "table")
                     .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
                     .put(ServiceNowParams.SYSPARM_QUERY, "number=" + UUID.randomUUID().toString())
@@ -78,7 +78,7 @@ public class ServiceNowTest extends ServiceNowTestSupport {
             template().sendBodyAndHeaders(
                 "direct:servicenow",
                 "NotAnIncidentObject",
-                new KVBuilder()
+                kvBuilder()
                     .put(ServiceNowConstants.RESOURCE, "table")
                     .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
                     .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
@@ -107,7 +107,7 @@ public class ServiceNowTest extends ServiceNowTestSupport {
         template().sendBodyAndHeaders(
             "direct:servicenow",
             incident,
-            new KVBuilder()
+            kvBuilder()
                 .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_TABLE)
                 .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
                 .put(ServiceNowConstants.REQUEST_MODEL, Incident.class)
@@ -139,7 +139,7 @@ public class ServiceNowTest extends ServiceNowTestSupport {
         template().sendBodyAndHeaders(
             "direct:servicenow",
             incident,
-            new KVBuilder()
+            kvBuilder()
                 .put(ServiceNowConstants.RESOURCE, ServiceNowConstants.RESOURCE_TABLE)
                 .put(ServiceNowConstants.API_VERSION, "v1")
                 .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_CREATE)
@@ -165,9 +165,7 @@ public class ServiceNowTest extends ServiceNowTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:servicenow")
-                    .to("servicenow:{{env:SERVICENOW_INSTANCE}}"
-                        + "?userName={{env:SERVICENOW_USERNAME}}"
-                        + "&password={{env:SERVICENOW_PASSWORD}}")
+                    .to("servicenow:{{env:SERVICENOW_INSTANCE}}")
                     .to("log:org.apache.camel.component.servicenow?level=INFO&showAll=true")
                     .to("mock:servicenow");
             }

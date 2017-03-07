@@ -1,6 +1,6 @@
 ## AWS Kinesis Component
 
-*Available as of Camel 2.17*
+*Available as of Camel version 2.17*
 
 The Kinesis component supports receiving messages from and sending messages to Amazon Kinesis
 service.
@@ -36,13 +36,25 @@ The AWS Kinesis component has no options.
 
 
 // endpoint options: START
-The AWS Kinesis component supports 25 endpoint options which are listed below:
+The AWS Kinesis endpoint is configured using URI syntax:
 
-{% raw %}
+    aws-kinesis:streamName
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| streamName |  | String | *Required* Name of the stream
+|=======================================================================
+
+#### Query Parameters (24 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| streamName | common |  | String | *Required* Name of the stream
 | amazonKinesisClient | common |  | AmazonKinesis | *Required* Amazon Kinesis client to use for all requests for this endpoint
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | iteratorType | consumer | TRIM_HORIZON | ShardIteratorType | Defines where in the Kinesis stream to start getting records
@@ -68,7 +80,6 @@ The AWS Kinesis component supports 25 endpoint options which are listed below:
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

@@ -40,7 +40,7 @@ public class GsonDataFormatConfiguration {
     /**
      * Which json library to use.
      */
-    private JsonLibrary library = JsonLibrary.Gson;
+    private JsonLibrary library = JsonLibrary.XStream;
     /**
      * Class name of the java type to use when unarmshalling
      */

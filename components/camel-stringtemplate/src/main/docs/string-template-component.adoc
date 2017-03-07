@@ -1,5 +1,7 @@
 ## String Template Component
 
+*Available as of Camel version 1.2*
+
 The *string-template:* component allows you to process a message using a
 http://www.stringtemplate.org/[String Template]. This can be ideal when
 using link:templating.html[Templating] to generate responses for
@@ -41,19 +43,30 @@ The String Template component has no options.
 
 
 // endpoint options: START
-The String Template component supports 5 endpoint options which are listed below:
+The String Template endpoint is configured using URI syntax:
 
-{% raw %}
+    string-template:resourceUri
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| resourceUri |  | String | *Required* Path to the resource. You can prefix with: classpath file http ref or bean. classpath file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot eg bean:myBean.myMethod.
+|=======================================================================
+
+#### Query Parameters (4 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| resourceUri | producer |  | String | *Required* Path to the resource or a reference to lookup a bean in the Registry to use as the resource
 | contentCache | producer | false | boolean | Sets whether to use resource content cache or not
 | delimiterStart | producer | < | char | The variable start delimiter
 | delimiterStop | producer | > | char | The variable end delimiter
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

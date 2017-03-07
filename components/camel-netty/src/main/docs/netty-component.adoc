@@ -1,6 +1,6 @@
 ## Netty Component
 
-*Available as of Camel 2.3*
+*Available as of Camel version 2.3*
 
 WARNING: This component is deprecated. You should use link:netty4.html[Netty4].
 
@@ -56,18 +56,17 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Netty component supports 2 options which are listed below.
+The Netty component supports 3 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | configuration | advanced |  | NettyConfiguration | To use the NettyConfiguration as configuration when creating endpoints.
 | maximumPoolSize | advanced | 16 | int | The core pool size for the ordered thread pool if its in use. The default value is 16.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -78,15 +77,27 @@ The Netty component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Netty component supports 70 endpoint options which are listed below:
+The Netty endpoint is configured using URI syntax:
 
-{% raw %}
+    netty:protocol:host:port
+
+  with the following path and query parameters:
+
+#### Path Parameters (3 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| protocol |  | String | *Required* The protocol to use which can be tcp or udp.
+| host |  | String | *Required* The hostname. For the consumer the hostname is localhost or 0.0.0.0 For the producer the hostname is the remote host to connect to
+| port |  | int | *Required* The host port number
+|=======================================================================
+
+#### Query Parameters (67 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| protocol | common |  | String | *Required* The protocol to use which can be tcp or udp.
-| host | common |  | String | *Required* The hostname. For the consumer the hostname is localhost or 0.0.0.0 For the producer the hostname is the remote host to connect to
-| port | common |  | int | *Required* The host port number
 | disconnect | common | false | boolean | Whether or not to disconnect(close) from Netty Channel right after use. Can be used for both consumer and producer.
 | keepAlive | common | true | boolean | Setting to ensure socket is not closed due to inactivity
 | reuseAddress | common | true | boolean | Setting to facilitate socket multiplexing
@@ -118,7 +129,7 @@ The Netty component supports 70 endpoint options which are listed below:
 | clientPipelineFactory | producer (advanced) |  | ClientPipelineFactory | To use a custom ClientPipelineFactory
 | lazyChannelCreation | producer (advanced) | true | boolean | Channels can be lazily created to avoid exceptions if the remote server is not up and running when the Camel producer is started.
 | producerPoolEnabled | producer (advanced) | true | boolean | Whether producer pool is enabled or not. Important: Do not turn this off as the pooling is needed for handling concurrency and reliable request/reply.
-| producerPoolMaxActive | producer (advanced) | -1 | int | Sets the cap on the number of objects that can be allocated by the pool (checked out to clients or idle awaiting checkout) at a given time. Use a negative value for no limit.
+| producerPoolMaxActive | producer (advanced) | 1 | int | Sets the cap on the number of objects that can be allocated by the pool (checked out to clients or idle awaiting checkout) at a given time. Use a negative value for no limit.
 | producerPoolMaxIdle | producer (advanced) | 100 | int | Sets the cap on the number of idle instances in the pool.
 | producerPoolMinEvictableIdle | producer (advanced) | 300000 | long | Sets the minimum amount of time (value in millis) an object may sit idle in the pool before it is eligible for eviction by the idle object evictor.
 | producerPoolMinIdle | producer (advanced) |  | int | Sets the minimum number of instances allowed in the producer pool before the evictor thread (if active) spawns new objects.
@@ -155,7 +166,6 @@ The Netty component supports 70 endpoint options which are listed below:
 | trustStoreFile | security |  | File | Server side certificate keystore to be used for encryption
 | trustStoreResource | security |  | String | Server side certificate keystore to be used for encryption. Is loaded by default from classpath but you can prefix with classpath: file: or http: to load the resource from different systems.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

@@ -1,6 +1,6 @@
 ## REST API Component
 
-*Available as of Camel 2.14*
+*Available as of Camel version 2.16*
 
 Apache Camel offers a REST styled DSL which can be used with Java or
 XML. The intention is to allow end users to define REST services using a
@@ -471,14 +471,26 @@ The REST API component has no options.
 
 
 // endpoint options: START
-The REST API component supports 8 endpoint options which are listed below:
+The REST API endpoint is configured using URI syntax:
 
-{% raw %}
+    rest-api:path/contextIdPattern
+
+  with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| path |  | String | *Required* The base path
+| contextIdPattern |  | String | Optional CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern.
+|=======================================================================
+
+#### Query Parameters (6 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| path | consumer |  | String | *Required* The base path
-| contextIdPattern | consumer |  | String | Optional CamelContext id pattern to only allow Rest APIs from rest services within CamelContext's which name matches the pattern.
 | apiComponentName | consumer |  | String | The Camel Rest API component to use for generating the API of the REST services such as swagger.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | componentName | consumer |  | String | The Camel Rest component to use for the REST transport such as restlet spark-rest. If no component has been explicit configured then Camel will lookup if there is a Camel component that integrates with the Rest DSL or if a org.apache.camel.spi.RestConsumerFactory is registered in the registry. If either one is found then that is being used.
@@ -486,7 +498,6 @@ The REST API component supports 8 endpoint options which are listed below:
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the default exchange pattern when creating an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

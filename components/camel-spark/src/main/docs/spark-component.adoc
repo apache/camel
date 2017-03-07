@@ -1,6 +1,6 @@
 ## Apache Spark Component
 
-INFO: Apache Spark component is available starting from Camel *2.17*.
+*Available as of Camel version 2.17*
 
 This documentation page covers the http://spark.apache.org/[Apache
 Spark] component for the Apache Camel. The main purpose of the Spark
@@ -51,31 +51,42 @@ spark:{rdd|dataframe|hive}
 
 
 // component options: START
-The Apache Spark component supports 2 options which are listed below.
+The Apache Spark component supports 3 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | rdd | producer |  | JavaRDDLike | RDD to compute against.
 | rddCallback | producer |  | RddCallback | Function performing action against an RDD.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 
 
 // endpoint options: START
-The Apache Spark component supports 7 endpoint options which are listed below:
+The Apache Spark endpoint is configured using URI syntax:
 
-{% raw %}
+    spark:endpointType
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| endpointType |  | EndpointType | *Required* Type of the endpoint (rdd dataframe hive).
+|=======================================================================
+
+#### Query Parameters (6 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| endpointType | producer |  | EndpointType | *Required* Type of the endpoint (rdd dataframe hive).
 | collect | producer | true | boolean | Indicates if results should be collected or counted.
 | dataFrame | producer |  | DataFrame | DataFrame to compute against.
 | dataFrameCallback | producer |  | DataFrameCallback | Function performing action against an DataFrame.
@@ -83,7 +94,6 @@ The Apache Spark component supports 7 endpoint options which are listed below:
 | rddCallback | producer |  | RddCallback | Function performing action against an RDD.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
  

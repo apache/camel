@@ -1,6 +1,6 @@
 ## MongoDB Component
 
-*Available as of Camel 2.19*
+*Available as of Camel version 2.19*
 
 Note: Camel MongoDB3 component Use the Mongo Driver for Java 3.4. If your are looking for previews versions look the Camel MongoDB component
 
@@ -62,13 +62,25 @@ The MongoDB component has no options.
 
 
 // endpoint options: START
-The MongoDB component supports 20 endpoint options which are listed below:
+The MongoDB endpoint is configured using URI syntax:
 
-{% raw %}
+    mongodb3:connectionBean
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| connectionBean |  | String | *Required* Name of com.mongodb.Mongo to use.
+|=======================================================================
+
+#### Query Parameters (19 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| connectionBean | common |  | String | *Required* Name of com.mongodb.Mongo to use.
 | collection | common |  | String | Sets the name of the MongoDB collection to bind to this endpoint
 | collectionIndex | common |  | String | Sets the collection index (JSON FORMAT : field1 : order1 field2 : order2)
 | createCollection | common | true | boolean | Create collection during initialisation if it doesn't exist. Default is true.
@@ -89,7 +101,6 @@ The MongoDB component supports 20 endpoint options which are listed below:
 | tailTrackField | tail |  | String | Field where the last tracked value will be placed. If not specified link MongoDbTailTrackingConfigDEFAULT_FIELD will be used by default.
 | tailTrackIncreasingField | tail |  | String | Correlation field in the incoming record which is of increasing nature and will be used to position the tailing cursor every time it is generated. The cursor will be (re)created with a query of type: tailTrackIncreasingField lastValue (possibly recovered from persistent tail tracking). Can be of type Integer Date String etc. NOTE: No support for dot notation at the current time so the field should be at the top level of the document.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 Note on options of MoongoDB component 

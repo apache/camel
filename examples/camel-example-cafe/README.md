@@ -1,9 +1,11 @@
 # Cafe Example
 
-
 ### Introduction
 
 This example shows how to work with splitter and aggregator to implement a Cafe demo.
+
+First It uses the splitter to dispatch the order, then sends the orders to barista by checking 
+if the coffee is hot or cold. When the coffee is ready, we use a aggregate to gather the drinks for waiter to deliver.
 
 ### Build
 
@@ -22,11 +24,6 @@ You can see the routing rules by looking at the java code in the
 `src/main/resources/META-INF/spring`
 
 To stop the example hit <kbd>ctrl</kbd>+<kbd>c</kbd>
-
-### Documentation
-
-This example is documented at
-  [http://camel.apache.org/cafe-example.html](http://camel.apache.org/cafe-example.html)
 
 ### Forum, Help, etc
 

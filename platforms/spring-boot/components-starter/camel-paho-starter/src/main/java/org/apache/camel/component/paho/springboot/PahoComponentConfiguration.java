@@ -42,6 +42,12 @@ public class PahoComponentConfiguration {
      */
     @NestedConfigurationProperty
     private MqttConnectOptions connectOptions;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public String getBrokerUrl() {
         return brokerUrl;
@@ -65,5 +71,14 @@ public class PahoComponentConfiguration {
 
     public void setConnectOptions(MqttConnectOptions connectOptions) {
         this.connectOptions = connectOptions;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

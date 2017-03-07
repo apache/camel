@@ -19,6 +19,7 @@ package org.apache.camel.component.undertow.handlers;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
 import io.undertow.util.PathTemplate;
+import io.undertow.util.URLUtils;
 
 /**
  * Custom root handler to enable hot swapping individual handlers assigned for each path template and/or HTTP method.
@@ -165,8 +166,8 @@ public class CamelRootHandler implements HttpHandler {
 
     private String getBasePath(String path) {
         if (path.contains("{")) {
-            return PathTemplate.create(path).getBase();
+            path = PathTemplate.create(path).getBase();
         }
-        return path;
+        return URLUtils.normalizeSlashes(path);
     }
 }

@@ -1,5 +1,7 @@
 ## CXF Component
 
+*Available as of Camel version 1.0*
+
 NOTE:When using CXF as a consumer, the link:cxf-bean-component.html[CXF Bean
 Component] allows you to factor out how message payloads are received
 from their processing as a RESTful or SOAP web service. This has the
@@ -110,18 +112,17 @@ cxf:bean:cxfEndpoint?wsdlURL=wsdl/hello_world.wsdl&dataFormat=PAYLOAD
 
 
 // component options: START
-The CXF component supports 2 options which are listed below.
+The CXF component supports 3 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | allowStreaming | advanced |  | Boolean | This option controls whether the CXF component when running in PAYLOAD mode will DOM parse the incoming messages into DOM Elements or keep the payload as a javax.xml.transform.Source object that would allow streaming in some cases.
 | headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -129,14 +130,26 @@ The CXF component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The CXF component supports 36 endpoint options which are listed below:
+The CXF endpoint is configured using URI syntax:
 
-{% raw %}
+    cxf:beanId:address
+
+  with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| beanId |  | String | To lookup an existing configured CxfEndpoint. Must used bean: as prefix.
+| address |  | String | The service publish address.
+|=======================================================================
+
+#### Query Parameters (34 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| beanId | common |  | String | To lookup an existing configured CxfEndpoint. Must used bean: as prefix.
-| address | service |  | String | The service publish address.
 | dataFormat | common | POJO | DataFormat | The data type messages supported by the CXF endpoint.
 | wrappedStyle | common |  | Boolean | The WSDL style that describes how parameters are represented in the SOAP body. If the value is false CXF will chose the document-literal unwrapped style If the value is true CXF will chose the document-literal wrapped style
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
@@ -172,7 +185,6 @@ The CXF component supports 36 endpoint options which are listed below:
 | serviceName | service |  | String | The service name this service is implementing it maps to the wsdl:servicename.
 | wsdlURL | service |  | String | The location of the WSDL. Can be on the classpath file system or be hosted remotely.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

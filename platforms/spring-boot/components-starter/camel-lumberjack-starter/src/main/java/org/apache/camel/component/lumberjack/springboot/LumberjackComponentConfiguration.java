@@ -35,6 +35,12 @@ public class LumberjackComponentConfiguration {
      */
     @NestedConfigurationProperty
     private SSLContextParameters sslContextParameters;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public SSLContextParameters getSslContextParameters() {
         return sslContextParameters;
@@ -43,5 +49,14 @@ public class LumberjackComponentConfiguration {
     public void setSslContextParameters(
             SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

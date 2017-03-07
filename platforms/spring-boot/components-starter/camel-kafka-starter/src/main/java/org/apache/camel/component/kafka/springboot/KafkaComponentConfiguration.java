@@ -29,6 +29,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class KafkaComponentConfiguration {
 
     /**
+     * URL of the Kafka brokers to use. The format is host1:port1host2:port2 and
+     * the list can be a subset of brokers or a VIP pointing to a subset of
+     * brokers. This option is known as bootstrap.servers in the Kafka
+     * documentation.
+     */
+    private String brokers;
+    /**
      * To use a shared custom worker pool for continue routing Exchange after
      * kafka server has acknowledge the message that was sent to it from
      * KafkaProducer using asynchronous non-blocking processing. If using this
@@ -36,6 +43,20 @@ public class KafkaComponentConfiguration {
      * pool down when no longer needed.
      */
     private ExecutorService workerPool;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
+
+    public String getBrokers() {
+        return brokers;
+    }
+
+    public void setBrokers(String brokers) {
+        this.brokers = brokers;
+    }
 
     public ExecutorService getWorkerPool() {
         return workerPool;
@@ -43,5 +64,14 @@ public class KafkaComponentConfiguration {
 
     public void setWorkerPool(ExecutorService workerPool) {
         this.workerPool = workerPool;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

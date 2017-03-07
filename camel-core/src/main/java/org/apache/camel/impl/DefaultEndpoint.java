@@ -206,6 +206,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      *
      * @param endpointConfiguration a custom endpoint configuration to be used.
      */
+    @Deprecated
     public void setEndpointConfiguration(EndpointConfiguration endpointConfiguration) {
         this.endpointConfiguration = endpointConfiguration;
     }
@@ -429,6 +430,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     /**
      * A factory method to lazily create the endpoint configuration if none is specified
      */
+    @Deprecated
     protected EndpointConfiguration createEndpointConfiguration(String uri) {
         // using this factory method to be backwards compatible with the old code
         if (getComponent() != null) {

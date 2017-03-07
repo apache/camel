@@ -21,11 +21,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.cloud.LoadBalancer;
 import org.apache.camel.cloud.LoadBalancerFunction;
+import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 
 public class CamelCloudLoadBalancer extends ServiceSupport implements CamelContextAware, LoadBalancer {
@@ -53,8 +55,7 @@ public class CamelCloudLoadBalancer extends ServiceSupport implements CamelConte
         ObjectHelper.notNull(camelContext, "camelContext");
         ObjectHelper.notNull(loadBalancerClient, "loadBalancerClient");
 
-        LOGGER.info("ServiceCall is using cloud load balancer of type: {}",
-            loadBalancerClient.getClass());
+        LOGGER.info("ServiceCall is using cloud load balancer of type: {}", loadBalancerClient.getClass());
     }
 
     @Override
@@ -63,9 +64,22 @@ public class CamelCloudLoadBalancer extends ServiceSupport implements CamelConte
 
     @Override
     public <T> T process(String serviceName, LoadBalancerFunction<T> function) throws Exception {
+
+
         return loadBalancerClient.execute(
-            serviceName,
-            i -> function.apply(new DefaultServiceDefinition(i.getServiceId(), i.getHost(), i.getPort(), i.getMetadata()))
+            serviceName,  i -> function.apply(instanceToDefinition(i)));
+    }
+
+    // *******************************
+    // Helpers
+    // *******************************
+
+    private ServiceDefinition instanceToDefinition(ServiceInstance instance) {
+        return new DefaultServiceDefinition(
+            instance.getServiceId(),
+            instance.getHost(),
+            instance.getPort(),
+            instance.getMetadata()
         );
     }
 }

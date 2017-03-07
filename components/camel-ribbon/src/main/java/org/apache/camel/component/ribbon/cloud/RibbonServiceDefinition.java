@@ -30,15 +30,35 @@ import org.apache.camel.util.ObjectHelper;
 public class RibbonServiceDefinition extends Server implements ServiceDefinition {
     private String name;
     private ServiceHealth health;
+    private Map<String, String> metaData;
 
     public RibbonServiceDefinition(String name, String host, int port) {
-        this(name, host, port, DefaultServiceHealth.INSTANCE);
+        this(name, host, port, null, DefaultServiceHealth.INSTANCE);
     }
 
     public RibbonServiceDefinition(String name, String host, int port, ServiceHealth healt) {
+        this(name, host, port, null, healt);
+    }
+
+    public RibbonServiceDefinition(String name, String host, int port,  Map<String, String> meta) {
+        this(name, host, port, meta, DefaultServiceHealth.INSTANCE);
+    }
+
+    public RibbonServiceDefinition(String name, String host, int port, Map<String, String> meta, ServiceHealth healt) {
         super(host, port);
         this.name = name;
+        this.metaData = meta;
         this.health = healt;
+    }
+
+    public RibbonServiceDefinition(ServiceDefinition definition) {
+        this(
+            definition.getName(),
+            definition.getHost(),
+            definition.getPort(),
+            definition.getMetadata(),
+            definition.getHealth()
+        );
     }
 
     @Override
@@ -63,7 +83,7 @@ public class RibbonServiceDefinition extends Server implements ServiceDefinition
 
     @Override
     public Map<String, String> getMetadata() {
-        Map<String, String> meta = new HashMap<>();
+        Map<String, String> meta = metaData != null ? new HashMap<>(metaData) : new HashMap<>();
         ObjectHelper.ifNotEmpty(super.getId(), val -> meta.put("id", val));
         ObjectHelper.ifNotEmpty(super.getZone(), val -> meta.put("zone", val));
         ObjectHelper.ifNotEmpty(super.isAlive(), val -> meta.put("is_alive", Boolean.toString(val)));

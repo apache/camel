@@ -38,8 +38,24 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
 public @interface EndpointInject {
+
+    /**
+     * The uri of the endpoint
+     */
     String uri() default "";
+
+    /**
+     * Reference to endpoint
+     */
     String ref() default "";
+
+    /**
+     * Use the field or getter on the bean to provide the uri of the endpoint
+     */
     String property() default "";
+
+    /**
+     * Id of {@link CamelContext} to use
+     */
     String context() default "";
 }

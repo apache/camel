@@ -1,6 +1,6 @@
 ## Jetty Websocket Component
 
-*Available as of Camel 2.10*
+*Available as of Camel version 2.10*
 
 The *websocket* component provides websocket
 link:endpoint.html[endpoints] for communicating with clients using
@@ -32,11 +32,10 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Jetty Websocket component supports 12 options which are listed below.
+The Jetty Websocket component supports 13 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -52,8 +51,8 @@ The Jetty Websocket component supports 12 options which are listed below.
 | threadPool | advanced |  | ThreadPool | To use a custom thread pool for the server. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9.
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
 | socketFactory | common |  | Map | To configure a map which contains custom WebSocketFactory for sub protocols. The key in the map is the sub protocol. The default key is reserved for the default implementation.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -66,16 +65,28 @@ The Jetty Websocket component supports 12 options which are listed below.
 
 
 // endpoint options: START
-The Jetty Websocket component supports 21 endpoint options which are listed below:
+The Jetty Websocket endpoint is configured using URI syntax:
 
-{% raw %}
+    websocket:host:port/resourceUri
+
+  with the following path and query parameters:
+
+#### Path Parameters (3 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| host | 0.0.0.0 | String | The hostname. The default value is 0.0.0.0. Setting this option on the component will use the component configured value as default.
+| port | 9292 | Integer | The port number. The default value is 9292. Setting this option on the component will use the component configured value as default.
+| resourceUri |  | String | *Required* Name of the websocket channel to use
+|=======================================================================
+
+#### Query Parameters (18 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | common | 0.0.0.0 | String | The hostname. The default value is 0.0.0.0. Setting this option on the component will use the component configured value as default.
-| port | common | 9292 | Integer | The port number. The default value is 9292. Setting this option on the component will use the component configured value as default.
-| resourceUri | common |  | String | *Required* Name of the websocket channel to use
-| maxBinaryMessageSize | common | -1 | Integer | Can be used to set the size in bytes that the websocket created by the websocketServlet may be accept before closing. (Default is -1 - or unlimited)
+| maxBinaryMessageSize | common | 1 | Integer | Can be used to set the size in bytes that the websocket created by the websocketServlet may be accept before closing. (Default is -1 - or unlimited)
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | sessionSupport | consumer | false | boolean | Whether to enable session support which enables HttpSession for each http request.
 | staticResources | consumer |  | String | Set a resource path for static resources (such as .html files etc). The resources can be loaded from classpath if you prefix with classpath: otherwise the resources is loaded from file system or from JAR files. For example to load from root classpath use classpath:. or classpath:WEB-INF/static If not configured (eg null) then no static resource is in use.
@@ -94,7 +105,6 @@ The Jetty Websocket component supports 21 endpoint options which are listed belo
 | enableJmx | monitoring | false | boolean | If this option is true Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details.
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

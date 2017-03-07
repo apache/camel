@@ -1,6 +1,6 @@
 ## ServiceNow Component
 
-*Available as of Camel 2.18*
+*Available as of Camel version 2.18*
 
 The ServiceNow component provides access to ServiceNow platform through their REST API.
 
@@ -30,11 +30,10 @@ for this component:
 
 
 // component options: START
-The ServiceNow component supports 7 options which are listed below.
+The ServiceNow component supports 8 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -45,19 +44,31 @@ The ServiceNow component supports 7 options which are listed below.
 | oauthClientId | security |  | String | OAuth2 ClientID
 | oauthClientSecret | security |  | String | OAuth2 ClientSecret
 | oauthTokenUrl | security |  | String | OAuth token Url
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 // endpoint options: START
-The ServiceNow component supports 41 endpoint options which are listed below:
+The ServiceNow endpoint is configured using URI syntax:
 
-{% raw %}
+    servicenow:instanceName
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| instanceName |  | String | *Required* The ServiceNow instance name
+|=======================================================================
+
+#### Query Parameters (40 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| instanceName | producer |  | String | *Required* The ServiceNow instance name
 | display | producer | true | String | Set this parameter to true to return only scorecards where the indicator Display field is selected. Set this parameter to all to return scorecards with any Display field value. This parameter is true by default.
 | displayValue | producer | false | String | Return the display value (true) actual value (false) or both (all) for reference fields (default: false)
 | excludeReferenceLink | producer |  | Boolean | True to exclude Table API links for reference fields (default: false)
@@ -99,7 +110,6 @@ The ServiceNow component supports 41 endpoint options which are listed below:
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters. See http://camel.apache.org/camel-configuration-utilities.html
 | userName | security |  | String | ServiceNow user account name MUST be provided
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

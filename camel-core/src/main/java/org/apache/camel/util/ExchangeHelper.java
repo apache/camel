@@ -130,6 +130,24 @@ public final class ExchangeHelper {
     }
 
     /**
+     * Gets an header or property of the correct type
+     *
+     * @param exchange      the exchange
+     * @param name          the name of the header or the property
+     * @param type          the type
+     * @return the header or property value
+     * @throws TypeConversionException is thrown if error during type conversion
+     * @throws NoSuchHeaderException is thrown if no headers exists
+     */
+    public static <T> T getHeaderOrProperty(Exchange exchange, String name, Class<T> type) throws TypeConversionException {
+        T answer = exchange.getIn().getHeader(name, type);
+        if (answer == null) {
+            answer = exchange.getProperty(name, type);
+        }
+        return answer;
+    }
+
+    /**
      * Returns the mandatory inbound message body of the correct type or throws
      * an exception if it is not present
      *

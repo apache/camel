@@ -27,11 +27,13 @@ import java.lang.annotation.Target;
  * to be applicable. e.g. this annotation could be used on a JAXB converter which only applies to objects with a
  * JAXB annotation on them
  *
- * @version 
+ * @version
+ * @deprecated not in use, will be removed in next Camel release.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Target({ElementType.PARAMETER })
+@Deprecated
 public @interface HasAnnotation {
 
     Class<?> value();

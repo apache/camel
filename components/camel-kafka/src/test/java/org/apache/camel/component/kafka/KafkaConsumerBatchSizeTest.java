@@ -26,14 +26,15 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class KafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
 
     public static final String TOPIC = "test";
 
-    @EndpointInject(uri = "kafka:localhost:{{kafkaPort}}?topic=" + TOPIC
-            + "&groupId=group1"
+    @EndpointInject(uri = "kafka:" + TOPIC
+            + "?groupId=group1"
             + "&autoOffsetReset=earliest"
             + "&autoCommitEnable=false"
             + "&consumerStreams=10"
@@ -47,14 +48,7 @@ public class KafkaConsumerBatchSizeTest extends BaseEmbeddedKafkaTest {
 
     @Before
     public void before() {
-        Properties props = new Properties();
-
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:" + getKafkaPort());
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
-        props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_PARTITIONER);
-        props.put(ProducerConfig.ACKS_CONFIG, "1");
-
+        Properties props = getDefaultProperties();
         producer = new org.apache.kafka.clients.producer.KafkaProducer<String, String>(props);
     }
 

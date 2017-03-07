@@ -36,6 +36,7 @@ import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 
@@ -198,11 +199,12 @@ public class RestProducer extends DefaultAsyncProducer {
             basePath = FileUtil.stripLeadingSeparator(basePath);
             resolvedUriTemplate = FileUtil.stripLeadingSeparator(resolvedUriTemplate);
             // if so us a header for the dynamic uri template so we reuse same endpoint but the header overrides the actual url to use
-            String overrideUri;
-            if (basePath != null) {
-                overrideUri = String.format("%s/%s/%s", host, basePath, resolvedUriTemplate);
-            } else {
-                overrideUri = String.format("%s/%s", host, resolvedUriTemplate);
+            String overrideUri = host;
+            if (!ObjectHelper.isEmpty(basePath)) {
+                overrideUri += "/" + basePath;
+            }
+            if (!ObjectHelper.isEmpty(resolvedUriTemplate)) {
+                overrideUri += "/" + resolvedUriTemplate;
             }
             // the http uri for the rest call to be used
             exchange.getIn().setHeader(Exchange.REST_HTTP_URI, overrideUri);

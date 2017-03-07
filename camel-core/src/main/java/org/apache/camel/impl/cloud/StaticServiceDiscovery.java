@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.impl.cloud;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -25,21 +25,21 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.camel.cloud.ServiceDefinition;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
  * A static list of known servers Camel Service Call EIP.
  */
 public class StaticServiceDiscovery extends DefaultServiceDiscovery {
-
-    private final List<ServiceDefinition> servers;
+    private final List<ServiceDefinition> services;
 
     public StaticServiceDiscovery() {
-        this.servers = new ArrayList<>();
+        this.services = new ArrayList<>();
     }
 
     public StaticServiceDiscovery(List<ServiceDefinition> servers) {
-        this.servers = new ArrayList<>(servers);
+        this.services = new ArrayList<>(servers);
     }
 
     /**
@@ -48,8 +48,19 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
      * @param servers server in the format: [service@]host:port.
      */
     public void setServers(List<String> servers) {
-        this.servers.clear();
+        this.services.clear();
         servers.forEach(this::addServer);
+    }
+
+    public void addServers(String serviceName, List<String> servers) {
+        for (String server : servers) {
+            String host = StringHelper.before(server, ":");
+            String port = StringHelper.after(server, ":");
+
+            if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
+                addServer(serviceName, host, Integer.valueOf(port));
+            }
+        }
     }
 
     /**
@@ -58,7 +69,7 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
      * @param servers servers separated by comma in the format: [service@]host:port,[service@]host2:port,[service@]host3:port and so on.
      */
     public void setServers(String servers) {
-        this.servers.clear();
+        this.services.clear();
         addServer(servers);
     }
 
@@ -66,7 +77,7 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
      * Add a server to the known list of servers.
      */
     public void addServer(ServiceDefinition server) {
-        servers.add(server);
+        services.add(server);
     }
 
     /**
@@ -83,7 +94,9 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
             String host = StringHelper.before(part, ":");
             String port = StringHelper.after(part, ":");
 
-            addServer(service, host, Integer.valueOf(port));
+            if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
+                addServer(service, host, Integer.valueOf(port));
+            }
         }
     }
 
@@ -105,14 +118,14 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
      * Add a server to the known list of servers.
      */
     public void addServer(String name, String host, int port, Map<String, String> meta) {
-        servers.add(new DefaultServiceDefinition(name, host, port, meta));
+        services.add(new DefaultServiceDefinition(name, host, port, meta));
     }
 
     /**
      * Remove an existing server from the list of known servers.
      */
     public void removeServer(String host, int port) {
-        servers.removeIf(
+        services.removeIf(
             s -> Objects.equals(host, s.getHost()) && port == s.getPort()
         );
     }
@@ -121,17 +134,39 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
      * Remove an existing server from the list of known servers.
      */
     public void removeServer(String name, String host, int port) {
-        servers.removeIf(
+        services.removeIf(
             s -> Objects.equals(name, s.getName()) && Objects.equals(host, s.getHost()) && port == s.getPort()
         );
     }
 
     @Override
-    public List<ServiceDefinition> getUpdatedListOfServices(String name) {
+    public List<ServiceDefinition> getServices(String name) {
         return Collections.unmodifiableList(
-            servers.stream()
+            services.stream()
                 .filter(s -> Objects.isNull(s.getName()) || Objects.equals(name, s.getName()))
                 .collect(Collectors.toList())
         );
+    }
+
+    // *************************************************************************
+    // Helpers
+    // *************************************************************************
+
+    public static StaticServiceDiscovery forServices(Collection<ServiceDefinition> definitions) {
+        StaticServiceDiscovery discovery = new StaticServiceDiscovery();
+        for (ServiceDefinition definition: definitions) {
+            discovery.addServer(definition);
+        }
+
+        return discovery;
+    }
+
+    public static StaticServiceDiscovery forServices(ServiceDefinition... definitions) {
+        StaticServiceDiscovery discovery = new StaticServiceDiscovery();
+        for (ServiceDefinition definition: definitions) {
+            discovery.addServer(definition);
+        }
+
+        return discovery;
     }
 }

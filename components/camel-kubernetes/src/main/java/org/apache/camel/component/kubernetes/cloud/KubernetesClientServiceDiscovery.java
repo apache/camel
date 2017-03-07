@@ -46,7 +46,7 @@ public class KubernetesClientServiceDiscovery extends KubernetesServiceDiscovery
     }
 
     @Override
-    public List<ServiceDefinition> getUpdatedListOfServices(String name) {
+    public List<ServiceDefinition> getServices(String name) {
         LOG.debug("Discovering endpoints from namespace: {} with name: {}", getNamespace(), name);
         Endpoints endpoints = client.endpoints().inNamespace(getNamespace()).withName(name).get();
         List<ServiceDefinition> result = new ArrayList<>();

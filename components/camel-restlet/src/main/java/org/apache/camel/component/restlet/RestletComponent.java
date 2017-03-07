@@ -279,8 +279,14 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     }
 
     protected Server createServer(RestletEndpoint endpoint) {
-        return new Server(component.getContext().createChildContext(), Protocol.valueOf(endpoint.getProtocol()), endpoint.getPort());
+        // Consider hostname if provided. This is useful when loopback interface is required for security reasons.
+        if (endpoint.getHost() != null) {
+            return new Server(component.getContext().createChildContext(), Protocol.valueOf(endpoint.getProtocol()), endpoint.getHost(), endpoint.getPort(), null);
+        } else {
+            return new Server(component.getContext().createChildContext(), Protocol.valueOf(endpoint.getProtocol()), endpoint.getPort());
+        }
     }
+
 
     protected String stringArrayToString(String[] strings) {
         StringBuffer result = new StringBuffer();
@@ -810,6 +816,9 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         RestletEndpoint endpoint = camelContext.getEndpoint(url, RestletEndpoint.class);
         setProperties(camelContext, endpoint, parameters);
 
+        // the endpoint must be started before creating the consumer
+        ServiceHelper.startService(endpoint);
+
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
         if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
@@ -839,12 +848,14 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         String restletMethod = verb.toUpperCase(Locale.US);
 
         // get the endpoint
-        String url;
-        if (uriTemplate != null) {
-            url = String.format("restlet:%s/%s/%s?restletMethods=%s", host, basePath, uriTemplate, restletMethod);
-        } else {
-            url = String.format("restlet:%s/%s?restletMethods=%s", host, basePath, restletMethod);
+        String url = "restlet:" + host;
+        if (!ObjectHelper.isEmpty(basePath)) {
+            url += "/" + basePath;
         }
+        if (!ObjectHelper.isEmpty(uriTemplate)) {
+            url += "/" + uriTemplate;
+        }
+        url += "?restletMethod=" + restletMethod;
 
         RestletEndpoint endpoint = camelContext.getEndpoint(url, RestletEndpoint.class);
         if (parameters != null && !parameters.isEmpty()) {

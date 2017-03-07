@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The aws-ddb component is used for storing and retrieving data from Amazon's DynamoDB service.
  */
-@UriEndpoint(scheme = "aws-ddb", title = "AWS DynamoDB", syntax = "aws-ddb:tableName", producerOnly = true, label = "cloud,database,nosql")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "aws-ddb", title = "AWS DynamoDB", syntax = "aws-ddb:tableName", producerOnly = true, label = "cloud,database,nosql")
 public class DdbEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(DdbEndpoint.class);
@@ -135,14 +135,27 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
 
     AmazonDynamoDB createDdbClient() {
         AmazonDynamoDB client = null;
-        AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+        ClientConfiguration clientConfiguration = null;
+        boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-            ClientConfiguration clientConfiguration = new ClientConfiguration();
+            clientConfiguration = new ClientConfiguration();
             clientConfiguration.setProxyHost(configuration.getProxyHost());
             clientConfiguration.setProxyPort(configuration.getProxyPort());
-            client = new AmazonDynamoDBClient(credentials, clientConfiguration);
+            isClientConfigFound = true;
+        }
+        if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
+            AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
+            if (isClientConfigFound) {
+                client = new AmazonDynamoDBClient(credentials, clientConfiguration);
+            } else {
+                client = new AmazonDynamoDBClient(credentials);
+            }
         } else {
-            client = new AmazonDynamoDBClient(credentials);
+            if (isClientConfigFound) {
+                client = new AmazonDynamoDBClient();
+            } else {
+                client = new AmazonDynamoDBClient(clientConfiguration);
+            }
         }
         return client;
     }

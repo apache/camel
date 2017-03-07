@@ -28,11 +28,11 @@ import org.apache.camel.language.tokenizer.XMLTokenizeLanguage;
 import org.apache.camel.spi.Metadata;
 
 /**
- * For expressions and predicates using a body or header tokenizer
+ * For expressions and predicates using a body or header XML tokenizer
  *
  * @see XMLTokenizeLanguage
  */
-@Metadata(label = "language,core,xml", title = "XML Tokenize")
+@Metadata(firstVersion = "2.14.0", label = "language,core,xml", title = "XML Tokenize")
 @XmlRootElement(name = "xtokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLTokenizerExpression extends NamespaceAwareExpression {

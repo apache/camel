@@ -20,6 +20,7 @@ import java.io.Closeable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
+import javax.net.ssl.HostnameVerifier;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
@@ -37,6 +38,7 @@ import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.HttpContext;
@@ -46,7 +48,8 @@ import org.slf4j.LoggerFactory;
 /**
  * For calling out to external HTTP servers using Apache HTTP Client 4.x.
  */
-@UriEndpoint(scheme = "http4,http4s", title = "HTTP4,HTTP4S", syntax = "http4:httpUri", producerOnly = true, label = "http", lenientProperties = true)
+@UriEndpoint(firstVersion = "2.3.0", scheme = "http4,http4s", title = "HTTP4,HTTP4S", syntax = "http4:httpUri",
+    producerOnly = true, label = "http", lenientProperties = true)
 public class HttpEndpoint extends HttpCommonEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
@@ -72,6 +75,15 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     private boolean authenticationPreemptive;
     @UriParam(label = "producer", defaultValue = "true")
     private boolean clearExpiredCookies = true;
+    @UriParam(label = "producer")
+    private boolean deleteWithBody;
+
+    @UriParam(label = "advanced", defaultValue = "200")
+    private int maxTotalConnections;
+    @UriParam(label = "advanced", defaultValue = "20")
+    private int connectionsPerRoute;
+    @UriParam(label = "security")
+    private HostnameVerifier x509HostnameVerifier;
 
     public HttpEndpoint() {
     }
@@ -261,6 +273,20 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         this.clearExpiredCookies = clearExpiredCookies;
     }
 
+    public boolean isDeleteWithBody() {
+        return deleteWithBody;
+    }
+
+    /**
+     * Whether the HTTP DELETE should include the message body or not.
+     * <p/>
+     * By default HTTP DELETE do not include any HTTP message. However in some rare cases users may need to be able to include the
+     * message body.
+     */
+    public void setDeleteWithBody(boolean deleteWithBody) {
+        this.deleteWithBody = deleteWithBody;
+    }
+
     public CookieStore getCookieStore() {
         return cookieStore;
     }
@@ -314,5 +340,39 @@ public class HttpEndpoint extends HttpCommonEndpoint {
      */
     public void setUseSystemProperties(boolean useSystemProperties) {
         this.useSystemProperties = useSystemProperties;
+    }
+
+    public int getMaxTotalConnections() {
+        return maxTotalConnections;
+    }
+
+    /**
+     * The maximum number of connections.
+     */
+    public void setMaxTotalConnections(int maxTotalConnections) {
+        this.maxTotalConnections = maxTotalConnections;
+    }
+
+    public int getConnectionsPerRoute() {
+        return connectionsPerRoute;
+    }
+
+    /**
+     * The maximum number of connections per route.
+     */
+    public void setConnectionsPerRoute(int connectionsPerRoute) {
+        this.connectionsPerRoute = connectionsPerRoute;
+    }
+
+    public HostnameVerifier getX509HostnameVerifier() {
+        return x509HostnameVerifier;
+    }
+
+    /**
+     * To use a custom X509HostnameVerifier such as {@link DefaultHostnameVerifier}
+     * or {@link org.apache.http.conn.ssl.NoopHostnameVerifier}.
+     */
+    public void setX509HostnameVerifier(HostnameVerifier x509HostnameVerifier) {
+        this.x509HostnameVerifier = x509HostnameVerifier;
     }
 }

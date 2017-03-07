@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.impl.cloud;
 
 import java.util.List;
@@ -23,8 +22,9 @@ import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceFilter;
 
 public class DefaultServiceFilter implements ServiceFilter {
+
     @Override
-    public <T extends ServiceDefinition> List<T> apply(List<T> services) {
+    public List<ServiceDefinition> apply(List<ServiceDefinition> services) {
         return services;
     }
 }

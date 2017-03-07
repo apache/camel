@@ -115,6 +115,12 @@ public class PropertiesComponentConfiguration {
      * Sets the system property mode.
      */
     private Integer systemPropertiesMode = 2;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public List<PropertiesLocation> getLocations() {
         return locations;
@@ -243,5 +249,14 @@ public class PropertiesComponentConfiguration {
 
     public void setSystemPropertiesMode(Integer systemPropertiesMode) {
         this.systemPropertiesMode = systemPropertiesMode;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

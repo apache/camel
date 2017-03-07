@@ -1,6 +1,6 @@
 ## Spring Redis Component
 
-*Available as of Camel 2.11*
+*Available as of Camel version 2.11*
 
 This component allows sending and receiving messages from
 http://http//redis.io/[Redis]. Redis is advanced key-value store where
@@ -35,14 +35,26 @@ The Spring Redis component has no options.
 
 
 // endpoint options: START
-The Spring Redis component supports 12 endpoint options which are listed below:
+The Spring Redis endpoint is configured using URI syntax:
 
-{% raw %}
+    spring-redis:host:port
+
+  with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| host |  | String | *Required* The host where Redis server is running.
+| port |  | Integer | *Required* Redis server port number
+|=======================================================================
+
+#### Query Parameters (10 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | common |  | String | *Required* The host where Redis server is running.
-| port | common |  | Integer | *Required* Redis server port number
 | channels | common |  | String | List of topic names or name patterns to subscribe to. Multiple names can be separated by comma.
 | command | common | SET | Command | Default command which can be overridden by message header. Notice the consumer only supports the following commands: PSUBSCRIBE and SUBSCRIBE
 | connectionFactory | common |  | RedisConnectionFactory | Reference to a pre-configured RedisConnectionFactory instance to use.
@@ -54,7 +66,6 @@ The Spring Redis component supports 12 endpoint options which are listed below:
 | listenerContainer | consumer (advanced) |  | RedisMessageListenerContainer | Reference to a pre-configured RedisMessageListenerContainer instance to use.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

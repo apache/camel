@@ -1,6 +1,6 @@
 ## Scheduler Component
 
-*Available as of Camel 2.15*
+*Available as of Camel version 2.15*
 
 The *scheduler:* component is used to generate message exchanges when a
 scheduler fires. This component is similar to the
@@ -31,28 +31,39 @@ You can append query options to the URI in the following format,
 ### Options
 
 // component options: START
-The Scheduler component supports 1 options which are listed below.
+The Scheduler component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | concurrentTasks | scheduler | 1 | int | Number of threads used by the scheduling thread pool. Is by default using a single thread
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 // endpoint options: START
-The Scheduler component supports 21 endpoint options which are listed below:
+The Scheduler endpoint is configured using URI syntax:
 
-{% raw %}
+    scheduler:name
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| name |  | String | *Required* The name of the scheduler
+|=======================================================================
+
+#### Query Parameters (20 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| name | consumer |  | String | *Required* The name of the scheduler
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
@@ -74,7 +85,6 @@ The Scheduler component supports 21 endpoint options which are listed below:
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

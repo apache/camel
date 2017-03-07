@@ -1,6 +1,6 @@
 ## OpenShift Component
 
-*Available as of Camel 2.14*
+*Available as of Camel version 2.14*
 
 The *openshift* component is a component for managing your
 https://www.openshift.com/[OpenShift] applications. 
@@ -33,11 +33,10 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The OpenShift component supports 4 options which are listed below.
+The OpenShift component supports 5 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -45,21 +44,33 @@ The OpenShift component supports 4 options which are listed below.
 | password | security |  | String | The password for login to openshift server.
 | domain | common |  | String | Domain name. If not specified then the default domain is used.
 | server | common |  | String | Url to the openshift server. If not specified then the default value from the local openshift configuration file /.openshift/express.conf is used. And if that fails as well then openshift.redhat.com is used.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 
 
 // endpoint options: START
-The OpenShift component supports 27 endpoint options which are listed below:
+The OpenShift endpoint is configured using URI syntax:
 
-{% raw %}
+    openshift:clientId
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| clientId |  | String | *Required* The client id
+|=======================================================================
+
+#### Query Parameters (26 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| clientId | common |  | String | *Required* The client id
 | domain | common |  | String | Domain name. If not specified then the default domain is used.
 | password | common |  | String | *Required* The password for login to openshift server.
 | server | common |  | String | Url to the openshift server. If not specified then the default value from the local openshift configuration file /.openshift/express.conf is used. And if that fails as well then openshift.redhat.com is used.
@@ -87,7 +98,6 @@ The OpenShift component supports 27 endpoint options which are listed below:
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

@@ -20,8 +20,6 @@ import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -34,52 +32,78 @@ import com.orbitz.consul.model.ConsulResponse;
 import com.orbitz.consul.model.kv.Value;
 import com.orbitz.consul.model.session.ImmutableSession;
 import com.orbitz.consul.option.QueryOptions;
-import org.apache.camel.NonManagedService;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Route;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.component.consul.ConsulConfiguration;
+import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedService {
+@ManagedResource(description = "Route policy using Consul as clustered lock")
+public final class ConsulRoutePolicy extends RoutePolicySupport implements CamelContextAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConsulRoutePolicy.class);
 
-    private final Object lock;
-    private final Consul consul;
-    private final SessionClient sessionClient;
-    private final KeyValueClient keyValueClient;
-    private final AtomicBoolean leader;
-    private final Set<Route> suspendedRoutes;
-    private final AtomicReference<BigInteger> index;
+    private final Object lock = new Object();
+    private final AtomicBoolean leader = new AtomicBoolean(false);
+    private final Set<Route> suspendedRoutes = new HashSet<>();
+    private final AtomicReference<BigInteger> index = new AtomicReference<>(BigInteger.valueOf(0));
 
+    private Route route;
+    private CamelContext camelContext;
     private String serviceName;
     private String servicePath;
-    private int ttl;
-    private int lockDelay;
     private ExecutorService executorService;
-    private boolean shouldStopConsumer;
+
+    private int ttl = 60;
+    private int lockDelay = 10;
+    private boolean shouldStopConsumer = true;
+    private String consulUrl = ConsulConstants.CONSUL_DEFAULT_URL;
+
+    private Consul consul;
+    private SessionClient sessionClient;
+    private KeyValueClient keyValueClient;
 
     private String sessionId;
 
     public ConsulRoutePolicy() {
-        this(Consul.builder().build());
     }
 
-    public ConsulRoutePolicy(Consul consul) {
-        this.consul = consul;
-        this.sessionClient = consul.sessionClient();
-        this.keyValueClient = consul.keyValueClient();
-        this.suspendedRoutes =  new HashSet<>();
-        this.leader = new AtomicBoolean(false);
-        this.lock = new Object();
-        this.index = new AtomicReference<>(BigInteger.valueOf(0));
-        this.serviceName = null;
-        this.servicePath = null;
-        this.ttl = 60;
-        this.lockDelay = 10;
-        this.executorService = null;
-        this.shouldStopConsumer = true;
-        this.sessionId = null;
+    public ConsulRoutePolicy(String consulUrl) {
+        this.consulUrl = consulUrl;
+    }
+
+    public ConsulRoutePolicy(ConsulConfiguration configuration) throws Exception {
+        this.consulUrl = configuration.getUrl();
+        this.consul = configuration.createConsulClient();
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    public String getConsulUrl() {
+        return consulUrl;
+    }
+
+    public void setConsulUrl(String consulUrl) {
+        this.consulUrl = consulUrl;
+    }
+
+    @Override
+    public void onInit(Route route) {
+        super.onInit(route);
+        this.route = route;
     }
 
     @Override
@@ -105,6 +129,26 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedS
 
     @Override
     protected void doStart() throws Exception {
+        ObjectHelper.notNull(camelContext, "camelContext");
+        ObjectHelper.notNull(serviceName, "serviceName");
+        ObjectHelper.notNull(servicePath, "servicePath");
+
+        if (consul == null) {
+            Consul.Builder builder = Consul.builder();
+            if (consulUrl != null) {
+                builder.withUrl(consulUrl);
+            }
+
+            consul = builder.build();
+        }
+
+        if (sessionClient == null) {
+            sessionClient = consul.sessionClient();
+        }
+        if (keyValueClient == null) {
+            keyValueClient = consul.keyValueClient();
+        }
+
         if (sessionId == null) {
             sessionId = sessionClient.createSession(
                 ImmutableSession.builder()
@@ -116,7 +160,7 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedS
 
             LOGGER.debug("SessionID = {}", sessionId);
             if (executorService == null) {
-                executorService = Executors.newSingleThreadExecutor();
+                executorService = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "ConsulRoutePolicy");
             }
 
             setLeader(keyValueClient.acquireLock(servicePath, sessionId));
@@ -134,11 +178,10 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedS
         if (sessionId != null) {
             sessionClient.destroySession(sessionId);
             sessionId = null;
+        }
 
-            if (executorService != null) {
-                executorService.shutdown();
-                executorService.awaitTermination(ttl / 3, TimeUnit.SECONDS);
-            }
+        if (executorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
         }
     }
 
@@ -203,10 +246,27 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedS
     // Getter/Setters
     // *************************************************************************
 
+    @ManagedAttribute(description = "The route id")
+    public String getRouteId() {
+        if (route != null) {
+            return route.getId();
+        }
+        return null;
+    }
+
+    @ManagedAttribute(description = "The consumer endpoint", mask = true)
+    public String getEndpointUrl() {
+        if (route != null && route.getConsumer() != null && route.getConsumer().getEndpoint() != null) {
+            return route.getConsumer().getEndpoint().toString();
+        }
+        return null;
+    }
+
     public Consul getConsul() {
         return consul;
     }
 
+    @ManagedAttribute(description = "The consul service name")
     public String getServiceName() {
         return serviceName;
     }
@@ -216,6 +276,7 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedS
         this.servicePath = String.format("/service/%s/leader", serviceName);
     }
 
+    @ManagedAttribute(description = "The time to live (seconds)")
     public int getTtl() {
         return ttl;
     }
@@ -224,6 +285,7 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedS
         this.ttl = ttl > 10 ? ttl : 10;
     }
 
+    @ManagedAttribute(description = "The lock delay (seconds)")
     public int getLockDelay() {
         return lockDelay;
     }
@@ -232,20 +294,18 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedS
         this.lockDelay = lockDelay > 10 ? lockDelay : 10;
     }
 
-    public ExecutorService getExecutorService() {
-        return executorService;
-    }
-
-    public void setExecutorService(ExecutorService executorService) {
-        this.executorService = executorService;
-    }
-
+    @ManagedAttribute(description = "Whether to stop consumer when starting up and failed to become master")
     public boolean isShouldStopConsumer() {
         return shouldStopConsumer;
     }
 
     public void setShouldStopConsumer(boolean shouldStopConsumer) {
         this.shouldStopConsumer = shouldStopConsumer;
+    }
+
+    @ManagedAttribute(description = "Is this route the master or a slave")
+    public boolean isLeader() {
+        return leader.get();
     }
 
     // *************************************************************************
@@ -257,10 +317,10 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedS
         @Override
         public void onComplete(ConsulResponse<Optional<Value>> consulResponse) {
             if (isRunAllowed()) {
-                Value response = consulResponse.getResponse().orNull();
-                if (response != null) {
-                    String sid = response.getSession().orNull();
-                    if (ObjectHelper.isEmpty(sid)) {
+                Optional<Value> value = consulResponse.getResponse();
+                if (value.isPresent()) {
+                    Optional<String> sid = value.get().getSession();
+                    if (sid.isPresent() && ObjectHelper.isNotEmpty(sid.get())) {
                         // If the key is not held by any session, try acquire a
                         // lock (become leader)
                         LOGGER.debug("Try to take leadership ...");
@@ -290,7 +350,8 @@ public class ConsulRoutePolicy extends RoutePolicySupport implements NonManagedS
                 keyValueClient.getValue(
                     servicePath,
                     QueryOptions.blockSeconds(ttl / 3, index.get()).build(),
-                    this);
+                    this
+                );
             }
         }
     }

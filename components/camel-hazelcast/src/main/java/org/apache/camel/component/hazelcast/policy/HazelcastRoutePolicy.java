@@ -19,28 +19,34 @@ package org.apache.camel.component.hazelcast.policy;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
-import org.apache.camel.NonManagedService;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Route;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.hazelcast.HazelcastUtil;
 import org.apache.camel.support.RoutePolicySupport;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HazelcastRoutePolicy extends RoutePolicySupport implements NonManagedService {
+@ManagedResource(description = "Route policy using Hazelcast as clustered lock")
+public class HazelcastRoutePolicy extends RoutePolicySupport implements CamelContextAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastRoutePolicy.class);
 
     private final boolean managedInstance;
     private final AtomicBoolean leader;
     private final Set<Route> suspendedRoutes;
-    private final ExecutorService executorService;
 
+    private Route route;
+    private CamelContext camelContext;
+    private ExecutorService executorService;
     private HazelcastInstance instance;
     private String lockMapName;
     private String lockKey;
@@ -67,17 +73,27 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements NonManag
         this.lockMapName = null;
         this.lockKey = null;
         this.lockValue = null;
-        this.tryLockTimeout = Long.MAX_VALUE;
+        this.tryLockTimeout = 10 * 1000;
         this.tryLockTimeoutUnit = TimeUnit.MILLISECONDS;
         this.locks = null;
         this.future = null;
         this.shouldStopConsumer = true;
+    }
 
-        this.executorService =  Executors.newSingleThreadExecutor(r -> {
-            Thread thread = new Thread(r, "Camel RoutePolicy");
-            thread.setDaemon(true);
-            return thread;
-        });
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
+    public void onInit(Route route) {
+        super.onInit(route);
+        this.route = route;
     }
 
     @Override
@@ -99,6 +115,13 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements NonManag
 
     @Override
     protected void doStart() throws Exception {
+        // validate
+        StringHelper.notEmpty(lockMapName, "lockMapName", this);
+        StringHelper.notEmpty(lockKey, "lockKey", this);
+        StringHelper.notEmpty(lockValue, "lockValue", this);
+
+        executorService = getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "HazelcastRoutePolicy");
+
         locks = instance.getMap(lockMapName);
         future = executorService.submit(this::acquireLeadership);
 
@@ -115,6 +138,8 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements NonManag
         if (managedInstance) {
             instance.shutdown();
         }
+
+        getCamelContext().getExecutorServiceManager().shutdownGraceful(executorService);
 
         super.doStop();
     }
@@ -180,6 +205,23 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements NonManag
     // Getter/Setters
     // *************************************************************************
 
+    @ManagedAttribute(description = "The route id")
+    public String getRouteId() {
+        if (route != null) {
+            return route.getId();
+        }
+        return null;
+    }
+
+    @ManagedAttribute(description = "The consumer endpoint", mask = true)
+    public String getEndpointUrl() {
+        if (route != null && route.getConsumer() != null && route.getConsumer().getEndpoint() != null) {
+            return route.getConsumer().getEndpoint().toString();
+        }
+        return null;
+    }
+
+    @ManagedAttribute(description = "The lock map name")
     public String getLockMapName() {
         return lockMapName;
     }
@@ -188,6 +230,7 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements NonManag
         this.lockMapName = lockMapName;
     }
 
+    @ManagedAttribute(description = "Whether to stop consumer when starting up and failed to become master")
     public boolean isShouldStopConsumer() {
         return shouldStopConsumer;
     }
@@ -196,6 +239,7 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements NonManag
         this.shouldStopConsumer = shouldStopConsumer;
     }
 
+    @ManagedAttribute(description = "The lock key")
     public String getLockKey() {
         return lockKey;
     }
@@ -204,6 +248,7 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements NonManag
         this.lockKey = lockKey;
     }
 
+    @ManagedAttribute(description = "The lock value")
     public String getLockValue() {
         return lockValue;
     }
@@ -212,6 +257,7 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements NonManag
         this.lockValue = lockValue;
     }
 
+    @ManagedAttribute(description = "Timeout used by slaves to try to obtain the lock to become new master")
     public long getTryLockTimeout() {
         return tryLockTimeout;
     }
@@ -225,6 +271,7 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements NonManag
         this.tryLockTimeoutUnit = tryLockTimeoutUnit;
     }
 
+    @ManagedAttribute(description = "Timeout unit")
     public TimeUnit getTryLockTimeoutUnit() {
         return tryLockTimeoutUnit;
     }
@@ -233,6 +280,7 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements NonManag
         this.tryLockTimeoutUnit = tryLockTimeoutUnit;
     }
 
+    @ManagedAttribute(description = "Is this route the master or a slave")
     public boolean isLeader() {
         return leader.get();
     }
@@ -262,13 +310,9 @@ public class HazelcastRoutePolicy extends RoutePolicySupport implements NonManag
                     );
                 }
             } catch (InterruptedException e) {
-                if (isRunAllowed()) {
-                    LOGGER.warn("Interrupted Exception caught", e);
-                } else {
-                    LOGGER.debug("Interrupted Exception caught", e);
-                }
+                // ignore
             } catch (Exception e) {
-                LOGGER.warn("Exception caught", e);
+                getExceptionHandler().handleException(e);
             } finally {
                 if (locked) {
                     locks.remove(lockKey);

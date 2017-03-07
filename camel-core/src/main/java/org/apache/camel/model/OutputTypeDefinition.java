@@ -23,21 +23,25 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.Metadata;
 
 /**
- * Sets data type of the output message.
+ * Set the expected data type of the output message. If the actual message type is different at runtime,
+ * camel look for a required {@link Transformer} and apply if exists. If validate attribute is true
+ * then camel applies {@link Validator} as well.
  * Type name consists of two parts, 'scheme' and 'name' connected with ':'. For Java type 'name'
  * is a fully qualified class name. For example {@code java:java.lang.String}, {@code json:ABCOrder}.
  * It's also possible to specify only scheme part, so that it works like a wildcard. If only 'xml'
  * is specified, all the XML message matches. It's handy to add only one transformer/validator
  * for all the XML-Java transformation.
  * 
- * {@see InputTypeDefinition}
+ * @see {@link InputTypeDefinition} {@link Transformer} {@link Validator}
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "outputType")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OutputTypeDefinition extends OptionalIdentifiedDefinition<OutputTypeDefinition> {
-    @XmlAttribute(required = true)
+    @XmlAttribute @Metadata(required = "true")
     private String urn;
+    @XmlAttribute  @Metadata(defaultValue = "false")
+    private Boolean validate = false;
 
     public OutputTypeDefinition() {
     }
@@ -65,6 +69,22 @@ public class OutputTypeDefinition extends OptionalIdentifiedDefinition<OutputTyp
      */
     public void setJavaClass(Class<?> clazz) {
         this.urn = "java:" + clazz.getName();
+    }
+
+    /**
+     * Get if validation is required for this output type.
+     * @return true if validate
+     */
+    public boolean isValidate() {
+        return this.validate;
+    }
+
+    /**
+     * Set if validation is required for this output type.
+     * @param validate true if validate
+     */
+    public void setValidate(boolean validate) {
+        this.validate = validate;
     }
 
     @Override

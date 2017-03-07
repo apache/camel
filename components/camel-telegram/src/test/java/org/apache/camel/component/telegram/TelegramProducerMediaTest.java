@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
+import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
 import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
@@ -126,6 +127,28 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
         assertEquals(video, captor.getValue().getVideo());
         assertEquals("video.mp4", captor.getValue().getFilenameWithExtension());
         assertEquals("Video", captor.getValue().getCaption());
+    }
+
+    @Test
+    public void testRouteWithDocument() throws Exception {
+
+        TelegramService service = mockTelegramService();
+
+        Exchange ex = endpoint.createExchange();
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TITLE_CAPTION, "Document");
+        ex.getIn().setHeader(TelegramConstants.TELEGRAM_MEDIA_TYPE, TelegramMediaType.DOCUMENT.name());
+        byte[] document = TelegramTestUtil.createSampleDocument();
+        ex.getIn().setBody(document);
+
+        context().createProducerTemplate().send(endpoint, ex);
+
+        ArgumentCaptor<OutgoingDocumentMessage> captor = ArgumentCaptor.forClass(OutgoingDocumentMessage.class);
+
+        Mockito.verify(service).sendMessage(eq("mock-token"), captor.capture());
+        assertEquals("my-id", captor.getValue().getChatId());
+        assertEquals(document, captor.getValue().getDocument());
+        assertEquals("file", captor.getValue().getFilenameWithExtension());
+        assertEquals("Document", captor.getValue().getCaption());
     }
 
     @Override

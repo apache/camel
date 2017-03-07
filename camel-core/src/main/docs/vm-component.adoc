@@ -1,5 +1,7 @@
 ## VM Component
 
+*Available as of Camel version 1.1*
+
 The *vm:* component provides asynchronous
 http://www.eecs.harvard.edu/~mdw/proj/seda/[SEDA] behavior, exchanging
 messages on a
@@ -59,30 +61,41 @@ from("vm:bar?concurrentConsumers=5").to("file://output");
 ### Options
 
 // component options: START
-The VM component supports 3 options which are listed below.
+The VM component supports 4 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | queueSize | advanced |  | int | Sets the default maximum capacity of the SEDA queue (i.e. the number of messages it can hold).
 | concurrentConsumers | consumer | 1 | int | Sets the default number of concurrent threads processing exchanges.
 | defaultQueueFactory | advanced |  | Exchange> | Sets the default queue factory.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 // endpoint options: START
-The VM component supports 17 endpoint options which are listed below:
+The VM endpoint is configured using URI syntax:
 
-{% raw %}
+    vm:name
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| name |  | String | *Required* Name of queue
+|=======================================================================
+
+#### Query Parameters (16 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| name | common |  | String | *Required* Name of queue
 | size | common | 2147483647 | int | The maximum capacity of the SEDA queue (i.e. the number of messages it can hold).
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | concurrentConsumers | consumer | 1 | int | Number of concurrent threads processing exchanges.
@@ -100,7 +113,6 @@ The VM component supports 17 endpoint options which are listed below:
 | queue | advanced |  | BlockingQueue | Define the queue instance which will be used by the endpoint. This option is only for rare use-cases where you want to use a custom queue instance.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

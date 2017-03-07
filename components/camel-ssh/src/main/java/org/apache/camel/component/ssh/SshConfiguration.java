@@ -72,11 +72,13 @@ public class SshConfiguration implements Cloneable {
             setPassword(pw);
         }
 
-        setHost(uri.getHost());
+        if (getHost() == null && uri.getHost() != null) {
+            setHost(uri.getHost());
+        }
 
         // URI.getPort returns -1 if port not defined, else use default port
         int uriPort = uri.getPort();
-        if (uriPort != -1) {
+        if (getPort() == DEFAULT_SSH_PORT && uriPort != -1) {
             setPort(uriPort);
         }
     }

@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * MIME Multipart data format
  */
-@Metadata(label = "dataformat,transformation", title = "MIME Multipart")
+@Metadata(firstVersion = "2.17.0", label = "dataformat,transformation", title = "MIME Multipart")
 @XmlRootElement(name = "mime-multipart")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class MimeMultipartDataFormat extends DataFormatDefinition {

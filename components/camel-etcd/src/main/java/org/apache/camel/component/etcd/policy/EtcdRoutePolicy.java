@@ -28,33 +28,50 @@ import mousio.etcd4j.EtcdClient;
 import mousio.etcd4j.responses.EtcdErrorCode;
 import mousio.etcd4j.responses.EtcdException;
 import mousio.etcd4j.responses.EtcdKeysResponse;
-import org.apache.camel.NonManagedService;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.component.etcd.EtcdConfiguration;
+import org.apache.camel.component.etcd.EtcdConstants;
 import org.apache.camel.component.etcd.EtcdHelper;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class EtcdRoutePolicy extends RoutePolicySupport implements ResponsePromise.IsSimplePromiseResponseHandler<EtcdKeysResponse>, NonManagedService {
+@ManagedResource(description = "Route policy using Etcd as clustered lock")
+public class EtcdRoutePolicy extends RoutePolicySupport implements ResponsePromise.IsSimplePromiseResponseHandler<EtcdKeysResponse>, CamelContextAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(EtcdRoutePolicy.class);
 
-    private final Object lock;
-    private final EtcdClient client;
-    private final boolean managedClient;
-    private final AtomicBoolean leader;
-    private final Set<Route> suspendedRoutes;
-    private final AtomicLong index;
+    private final Object lock = new Object();
+    private final AtomicBoolean leader = new AtomicBoolean(false);
+    private final Set<Route> suspendedRoutes = new HashSet<>();
+    private final AtomicLong index = new AtomicLong(0);
+
+    private int ttl = 60;
+    private int watchTimeout = 60 / 3;
+    private boolean shouldStopConsumer = true;
+
+    private Route route;
+    private CamelContext camelContext;
 
     private String serviceName;
     private String servicePath;
-    private int ttl;
-    private int watchTimeout;
-    private boolean shouldStopConsumer;
+    private EtcdClient client;
+    private boolean managedClient;
+    private String clientUris = EtcdConstants.ETCD_DEFAULT_URIS;
 
     public EtcdRoutePolicy() {
-        this(new EtcdClient(), true);
+        this.client = null;
+        this.managedClient = false;
+    }
+
+    public EtcdRoutePolicy(EtcdConfiguration configuration) throws Exception {
+        this.client = configuration.createClient();
+        this.managedClient = true;
     }
 
     public EtcdRoutePolicy(EtcdClient client) {
@@ -64,15 +81,26 @@ public class EtcdRoutePolicy extends RoutePolicySupport implements ResponsePromi
     public EtcdRoutePolicy(EtcdClient client, boolean managedClient) {
         this.client = client;
         this.managedClient = managedClient;
-        this.suspendedRoutes =  new HashSet<>();
-        this.leader = new AtomicBoolean(false);
-        this.lock = new Object();
-        this.index = new AtomicLong(0);
-        this.serviceName = null;
-        this.servicePath = null;
-        this.ttl = 60;
-        this.watchTimeout = ttl / 3;
-        this.shouldStopConsumer = true;
+    }
+
+    public EtcdRoutePolicy(String clientUris) {
+        this.clientUris = clientUris;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
+    public void onInit(Route route) {
+        super.onInit(route);
+        this.route = route;
     }
 
     @Override
@@ -98,6 +126,14 @@ public class EtcdRoutePolicy extends RoutePolicySupport implements ResponsePromi
 
     @Override
     protected void doStart() throws Exception {
+        ObjectHelper.notNull(camelContext, "camelContext");
+        ObjectHelper.notNull(clientUris, "clientUris");
+
+        if (client == null) {
+            client = new EtcdClient(EtcdHelper.resolveURIs(camelContext, clientUris));
+            managedClient = true;
+        }
+
         setLeader(tryTakeLeadership());
         watch();
 
@@ -178,14 +214,32 @@ public class EtcdRoutePolicy extends RoutePolicySupport implements ResponsePromi
         return client;
     }
 
+    @ManagedAttribute(description = "The route id")
+    public String getRouteId() {
+        if (route != null) {
+            return route.getId();
+        }
+        return null;
+    }
+
+    @ManagedAttribute(description = "The consumer endpoint", mask = true)
+    public String getEndpointUrl() {
+        if (route != null && route.getConsumer() != null && route.getConsumer().getEndpoint() != null) {
+            return route.getConsumer().getEndpoint().toString();
+        }
+        return null;
+    }
+
     public String getServiceName() {
         return serviceName;
     }
 
+    @ManagedAttribute(description = "The etcd service name")
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
     }
 
+    @ManagedAttribute(description = "The etcd service path")
     public String getServicePath() {
         return servicePath;
     }
@@ -194,6 +248,7 @@ public class EtcdRoutePolicy extends RoutePolicySupport implements ResponsePromi
         this.servicePath = servicePath;
     }
 
+    @ManagedAttribute(description = "The time to live (seconds)")
     public int getTtl() {
         return ttl;
     }
@@ -202,6 +257,7 @@ public class EtcdRoutePolicy extends RoutePolicySupport implements ResponsePromi
         this.ttl = ttl;
     }
 
+    @ManagedAttribute(description = "The watch timeout (seconds)")
     public int getWatchTimeout() {
         return watchTimeout;
     }
@@ -210,12 +266,27 @@ public class EtcdRoutePolicy extends RoutePolicySupport implements ResponsePromi
         this.watchTimeout = watchTimeout;
     }
 
+    @ManagedAttribute(description = "Whether to stop consumer when starting up and failed to become master")
     public boolean isShouldStopConsumer() {
         return shouldStopConsumer;
     }
 
     public void setShouldStopConsumer(boolean shouldStopConsumer) {
         this.shouldStopConsumer = shouldStopConsumer;
+    }
+
+    @ManagedAttribute(description = "Is this route the master or a slave")
+    public boolean isLeader() {
+        return leader.get();
+    }
+
+    @ManagedAttribute(description = "Etcd endpoints")
+    public String getClientUris() {
+        return clientUris;
+    }
+
+    public void setClientUris(String clientUris) {
+        this.clientUris = clientUris;
     }
 
     // *************************************************************************
@@ -279,7 +350,7 @@ public class EtcdRoutePolicy extends RoutePolicySupport implements ResponsePromi
 
             client.get(servicePath)
                 .waitForChange(index.get())
-                .timeout(ttl / 3, TimeUnit.SECONDS)
+                .timeout(watchTimeout, TimeUnit.SECONDS)
                 .send()
                 .addListener(this);
         } catch (Exception e) {

@@ -36,6 +36,12 @@ public class LuceneComponentConfiguration {
      * To use a shared lucene configuration
      */
     private LuceneConfigurationNestedConfiguration config;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public LuceneConfigurationNestedConfiguration getConfig() {
         return config;
@@ -43,6 +49,15 @@ public class LuceneComponentConfiguration {
 
     public void setConfig(LuceneConfigurationNestedConfiguration config) {
         this.config = config;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class LuceneConfigurationNestedConfiguration {

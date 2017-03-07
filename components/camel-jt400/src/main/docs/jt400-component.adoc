@@ -1,5 +1,7 @@
 ## JT400 Component
 
+*Available as of Camel version 1.5*
+
 The *`jt400`* component allows you to exchanges messages with an AS/400
 system using data queues.
 
@@ -36,32 +38,43 @@ You can append query options to the URI in the following format,
 ### JT400 options
 
 // component options: START
-The JT400 component supports 1 options which are listed below.
+The JT400 component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | connectionPool | advanced |  | AS400ConnectionPool | Returns the default connection pool used by this component.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 // endpoint options: START
-The JT400 component supports 34 endpoint options which are listed below:
+The JT400 endpoint is configured using URI syntax:
 
-{% raw %}
+    jt400:userID:password/systemName/objectPath.type
+
+  with the following path and query parameters:
+
+#### Path Parameters (5 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| userID |  | String | *Required* Returns the ID of the AS/400 user.
+| password |  | String | *Required* Returns the password of the AS/400 user.
+| systemName |  | String | *Required* Returns the name of the AS/400 system.
+| objectPath |  | String | *Required* Returns the fully qualified integrated file system path name of the target object of this endpoint.
+| type |  | Jt400Type | *Required* Whether to work with data queues or remote program call
+|=======================================================================
+
+#### Query Parameters (29 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| userID | common |  | String | *Required* Returns the ID of the AS/400 user.
-| password | common |  | String | *Required* Returns the password of the AS/400 user.
-| systemName | common |  | String | *Required* Returns the name of the AS/400 system.
-| objectPath | common |  | String | *Required* Returns the fully qualified integrated file system path name of the target object of this endpoint.
-| type | common |  | Jt400Type | *Required* Whether to work with data queues or remote program call
 | ccsid | common |  | int | Sets the CCSID to use for the connection with the AS/400 system.
 | format | common | text | Format | Sets the data format for sending messages.
 | guiAvailable | common | false | boolean | Sets whether AS/400 prompting is enabled in the environment running Camel.
@@ -92,7 +105,6 @@ The JT400 component supports 34 endpoint options which are listed below:
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 | secured | security | false | boolean | Whether connections to AS/400 are secured with SSL.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

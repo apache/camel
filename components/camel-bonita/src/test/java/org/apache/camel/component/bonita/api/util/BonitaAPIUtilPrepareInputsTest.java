@@ -55,7 +55,7 @@ public class BonitaAPIUtilPrepareInputsTest {
     }
 
     @Test
-    public void testPrepareInputsEmpty() {
+    public void testPrepareInputsEmpty() throws Exception {
         Map<String, Serializable> rawInputs = new HashMap<String, Serializable>();
         Map<String, Serializable> inputs =
                 bonitaApiUtil.prepareInputs(processDefinition, rawInputs);
@@ -63,7 +63,7 @@ public class BonitaAPIUtilPrepareInputsTest {
     }
 
     @Test
-    public void testPrepareInputsNoFiles() {
+    public void testPrepareInputsNoFiles() throws Exception {
         Map<String, Serializable> rawInputs = new HashMap<String, Serializable>();
         rawInputs.put("myVariable", 1);
         Map<String, Serializable> inputs =
@@ -72,7 +72,7 @@ public class BonitaAPIUtilPrepareInputsTest {
     }
 
     @Test
-    public void testPrepareInputsOneFile() {
+    public void testPrepareInputsOneFile() throws Exception {
 
         Map<String, Serializable> rawInputs = new HashMap<String, Serializable>();
         FileInput file = new FileInput("filename", "String".getBytes());
@@ -89,7 +89,7 @@ public class BonitaAPIUtilPrepareInputsTest {
     }
 
     @Test
-    public void testPrepareInputsFileType() {
+    public void testPrepareInputsFileType() throws Exception {
 
         Map<String, Serializable> rawInputs = new HashMap<String, Serializable>();
         FileInput file = new FileInput("filename", "String".getBytes());
@@ -105,7 +105,7 @@ public class BonitaAPIUtilPrepareInputsTest {
     }
 
     @Test
-    public void testPrepareInputsTempFilePath() {
+    public void testPrepareInputsTempFilePath() throws Exception {
 
         Map<String, Serializable> rawInputs = new HashMap<String, Serializable>();
         FileInput file = new FileInput("filename", "String".getBytes());
