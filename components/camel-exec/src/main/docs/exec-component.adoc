@@ -1,6 +1,6 @@
 ## Exec Component
 
-*Available in Camel 2.3*
+*Available as of Camel version 2.3*
 
 The `exec` component can be used to execute system commands.
 
@@ -38,13 +38,25 @@ The Exec component has no options.
 // component options: END
 
 // endpoint options: START
-The Exec component supports 9 endpoint options which are listed below:
+The Exec endpoint is configured using URI syntax:
 
-{% raw %}
+    exec:executable
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| executable |  | String | *Required* Sets the executable to be executed. The executable must not be empty or null.
+|=======================================================================
+
+#### Query Parameters (8 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| executable | producer |  | String | *Required* Sets the executable to be executed. The executable must not be empty or null.
 | args | producer |  | String | The arguments may be one or many whitespace-separated tokens.
 | binding | producer |  | ExecBinding | A reference to a org.apache.commons.exec.ExecBinding in the Registry.
 | commandExecutor | producer |  | ExecCommandExecutor | A reference to a org.apache.commons.exec.ExecCommandExecutor in the Registry that customizes the command execution. The default command executor utilizes the commons-exec library which adds a shutdown hook for every executed command.
@@ -54,7 +66,6 @@ The Exec component supports 9 endpoint options which are listed below:
 | workingDir | producer |  | String | The directory in which the command should be executed. If null the working directory of the current process will be used.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 ### Message headers

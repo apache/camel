@@ -22,6 +22,7 @@ package org.apache.camel.example.etl;
  * @version 
  */
 public class Main extends org.apache.camel.spring.Main {
+
     public static void main(String... args) throws Exception {
         new Main().run(args);
     }

@@ -44,13 +44,6 @@ To stop the example run from Karaf/ServiceMix shell:
 eg if the bundle id is 99 then type:
   stop 99
 
-### Documentation
-We have described this in more details at the Camel twitter documentation: <http://camel.apache.org/twitter>
-
-This example is documented at <http://camel.apache.org/twitter-websocket-blueprint-example.html>
-
-There is a regular (non OSGi Blueprint) example as well documented at: <http://camel.apache.org/twitter-websocket-example.html>
-
 ### Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums

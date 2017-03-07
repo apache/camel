@@ -39,7 +39,7 @@ public class ServiceNowBlueprintEndpointAuthTest extends CamelBlueprintTestSuppo
         template().sendBodyAndHeaders(
             "direct:servicenow",
             null,
-            new ServiceNowTestSupport.KVBuilder()
+            ServiceNowTestSupport.kvBuilder()
                 .put(ServiceNowConstants.RESOURCE, "table")
                 .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
                 .put(ServiceNowParams.SYSPARM_LIMIT, 10)

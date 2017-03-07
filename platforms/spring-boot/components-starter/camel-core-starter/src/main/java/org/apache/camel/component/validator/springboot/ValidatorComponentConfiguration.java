@@ -34,6 +34,12 @@ public class ValidatorComponentConfiguration {
      */
     @NestedConfigurationProperty
     private ValidatorResourceResolverFactory resourceResolverFactory;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public ValidatorResourceResolverFactory getResourceResolverFactory() {
         return resourceResolverFactory;
@@ -42,5 +48,14 @@ public class ValidatorComponentConfiguration {
     public void setResourceResolverFactory(
             ValidatorResourceResolverFactory resourceResolverFactory) {
         this.resourceResolverFactory = resourceResolverFactory;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

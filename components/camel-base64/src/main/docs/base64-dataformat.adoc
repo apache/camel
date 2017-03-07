@@ -1,6 +1,7 @@
 ## Base64 DataFormat
 
-*Available as of Camel 2.11* +
+*Available as of Camel version 2.11*
+
  The Base64 link:data-format.html[Data Format] is a data format for
 http://en.wikipedia.org/wiki/Base64[base64 encoding and decoding].
 
@@ -11,7 +12,6 @@ The Base64 dataformat supports 4 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -20,7 +20,6 @@ The Base64 dataformat supports 4 options which are listed below.
 | urlSafe | false | Boolean | Instead of emitting '' and '/' we emit '-' and '_' respectively. urlSafe is only applied to encode operations. Decoding seamlessly handles both modes. Is by default false.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
-{% endraw %}
 // dataformat options: END
 
 In Spring DSL, you configure the data format using this tag:

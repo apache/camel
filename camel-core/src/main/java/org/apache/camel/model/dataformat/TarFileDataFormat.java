@@ -29,7 +29,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * TAR file data format
  */
-@Metadata(label = "dataformat,transformation,file", title = "Tar File")
+@Metadata(firstVersion = "2.16.0", label = "dataformat,transformation,file", title = "Tar File")
 @XmlRootElement(name = "tarfile")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TarFileDataFormat extends DataFormatDefinition {

@@ -1,6 +1,6 @@
 ## AWS Simple Email Service Component
 
-*Available as of Camel 2.8.4*
+*Available as of Camel version 2.9*
 
 The ses component supports sending emails with
 http://aws.amazon.com/ses[Amazon's SES] service.
@@ -32,13 +32,25 @@ The AWS Simple Email Service component has no options.
 
 
 // endpoint options: START
-The AWS Simple Email Service component supports 12 endpoint options which are listed below:
+The AWS Simple Email Service endpoint is configured using URI syntax:
 
-{% raw %}
+    aws-ses:from
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| from |  | String | *Required* The sender's email address.
+|=======================================================================
+
+#### Query Parameters (11 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| from | producer |  | String | *Required* The sender's email address.
 | accessKey | producer |  | String | Amazon AWS Access Key
 | amazonSESClient | producer |  | AmazonSimpleEmailService | To use the AmazonSimpleEmailService as the client
 | amazonSESEndpoint | producer |  | String | The region with which the AWS-SES client wants to work with.
@@ -51,7 +63,6 @@ The AWS Simple Email Service component supports 12 endpoint options which are li
 | to | producer |  | List | List of destination email address. Can be overriden with 'CamelAwsSesTo' header.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

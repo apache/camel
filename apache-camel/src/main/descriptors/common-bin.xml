@@ -32,6 +32,7 @@
         <include>org.apache.camel:camel-atmosphere-websocket</include>
         <include>org.apache.camel:camel-atom</include>
         <include>org.apache.camel:camel-aws</include>
+        <include>org.apache.camel:camel-azure</include>
         <include>org.apache.camel:camel-avro</include>
         <include>org.apache.camel:camel-bam</include>
         <include>org.apache.camel:camel-barcode</include>
@@ -44,6 +45,7 @@
         <include>org.apache.camel:camel-bonita</include>
         <include>org.apache.camel:camel-boon</include>
         <include>org.apache.camel:camel-box</include>
+        <include>org.apache.camel:camel-box-api</include>
         <include>org.apache.camel:camel-braintree</include>
         <include>org.apache.camel:camel-cache</include>
         <include>org.apache.camel:camel-cassandraql</include>
@@ -75,6 +77,7 @@
         <include>org.apache.camel:camel-ehcache</include>
         <include>org.apache.camel:camel-ejb</include>
         <include>org.apache.camel:camel-elasticsearch</include>
+        <include>org.apache.camel:camel-elasticsearch5</include>
         <include>org.apache.camel:camel-elsql</include>
         <include>org.apache.camel:camel-etcd</include>
         <include>org.apache.camel:camel-eventadmin</include>
@@ -95,6 +98,7 @@
         <include>org.apache.camel:camel-google-pubsub</include>
         <include>org.apache.camel:camel-gora</include>
         <include>org.apache.camel:camel-groovy</include>
+        <include>org.apache.camel:camel-groovy-dsl</include>
         <include>org.apache.camel:camel-guava-eventbus</include>
         <include>org.apache.camel:camel-guice</include>
         <include>org.apache.camel:camel-gson</include>
@@ -179,6 +183,7 @@
         <include>org.apache.camel:camel-olingo2</include>
         <include>org.apache.camel:camel-openshift</include>
         <include>org.apache.camel:camel-openstack</include>
+        <include>org.apache.camel:camel-opentracing</include>
         <include>org.apache.camel:camel-optaplanner</include>
         <include>org.apache.camel:camel-paho</include>
         <include>org.apache.camel:camel-paxlogging</include>
@@ -190,6 +195,7 @@
         <include>org.apache.camel:camel-quartz2</include>
         <include>org.apache.camel:camel-quickfix</include>
         <include>org.apache.camel:camel-rabbitmq</include>
+        <include>org.apache.camel:camel-reactive-streams</include>
         <include>org.apache.camel:camel-restlet</include>
         <include>org.apache.camel:camel-ribbon</include>
         <include>org.apache.camel:camel-rmi</include>
@@ -225,6 +231,8 @@
         <include>org.apache.camel:camel-spring-boot-starter</include>
         <include>org.apache.camel:camel-spring-cloud</include>
         <include>org.apache.camel:camel-spring-cloud-starter</include>
+        <include>org.apache.camel:camel-spring-cloud-netflix</include>
+        <include>org.apache.camel:camel-spring-cloud-netflix-starter</include>
         <include>org.apache.camel:camel-spring-dm</include>
         <include>org.apache.camel:camel-spring-integration</include>
         <include>org.apache.camel:camel-spring-javaconfig</include>
@@ -250,6 +258,7 @@
         <include>org.apache.camel:camel-test-karaf</include>
         <include>org.apache.camel:camel-test-spring</include>
         <include>org.apache.camel:camel-testng</include>
+        <include>org.apache.camel:camel-tika</include>
         <include>org.apache.camel:camel-twitter</include>
         <include>org.apache.camel:camel-undertow</include>
         <include>org.apache.camel:camel-univocity-parsers</include>
@@ -278,8 +287,10 @@
       <scope>runtime</scope>
       <includes>
         <include>org.apache.camel:camel-catalog</include>
+        <include>org.apache.camel:camel-catalog-connector</include>
         <include>org.apache.camel:camel-catalog-lucene</include>
         <include>org.apache.camel:camel-catalog-maven</include>
+        <include>org.apache.camel:camel-catalog-nexus</include>
         <include>org.apache.camel:camel-catalog-provider-karaf</include>
         <include>org.apache.camel:camel-catalog-provider-springboot</include>
         <include>org.apache.camel:camel-catalog-rest</include>
@@ -446,6 +457,7 @@
         <include>org.apache.camel:camel-olingo2-starter</include>
         <include>org.apache.camel:camel-openshift-starter</include>
         <include>org.apache.camel:camel-openstack-starter</include>
+        <include>org.apache.camel:camel-opentracing-starter</include>
         <include>org.apache.camel:camel-optaplanner-starter</include>
         <include>org.apache.camel:camel-paho-starter</include>
         <include>org.apache.camel:camel-pdf-starter</include>
@@ -455,6 +467,7 @@
         <include>org.apache.camel:camel-quartz2-starter</include>
         <include>org.apache.camel:camel-quickfix-starter</include>
         <include>org.apache.camel:camel-rabbitmq-starter</include>
+        <include>org.apache.camel:camel-reactive-streams-starter</include>
         <include>org.apache.camel:camel-restlet-starter</include>
         <include>org.apache.camel:camel-ribbon-starter</include>
         <include>org.apache.camel:camel-rmi-starter</include>

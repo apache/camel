@@ -452,10 +452,9 @@
             <id>generate-test-sources</id>
             <phase>generate-sources</phase>
             <configuration>
+              <fork>${cxf.codegenplugin.forkmode}</fork>
+              <additionalJvmArgs>-Dlog4j.configurationFile=${project.basedir}/src/test/resources/log4j2.properties ${cxf.codegen.jvmArgs}</additionalJvmArgs>
               <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
-              <additionalJvmArgs>
-                -Dlog4j.configurationFile=${project.basedir}/src/test/resources/log4j2.properties
-              </additionalJvmArgs>
               <wsdlOptions>
                 <wsdlOption>
                   <frontEnd>jaxws21</frontEnd>

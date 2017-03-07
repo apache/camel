@@ -30,9 +30,13 @@
     <artifactId>camel-kura</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: Kura</name>
-    <description>Camel Kura support</description>
+    <description>Using Camel with Eclipse Kura (OSGi)</description>
 
     <properties>
+        <!-- use by camel-catalog -->
+        <firstVersion>2.15.0</firstVersion>
+        <label>iot,osgi</label>
+
         <camel.osgi.export.pkg>org.apache.camel.component.kura</camel.osgi.export.pkg>
 
         <kura-slf4j.version>1.6.4</kura-slf4j.version>

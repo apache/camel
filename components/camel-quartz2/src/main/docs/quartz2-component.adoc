@@ -1,6 +1,6 @@
 ## Quartz2 Component
 
-*Available as of Camel 2.12.0*
+*Available as of Camel version 2.12*
 
 The *quartz2:* component provides a scheduled delivery of messages using
 the http://www.quartz-scheduler.org/[Quartz Scheduler 2.x].  +
@@ -47,11 +47,10 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Quartz2 component supports 9 options which are listed below.
+The Quartz2 component supports 11 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -62,24 +61,37 @@ The Quartz2 component supports 9 options which are listed below.
 | properties | consumer |  | Properties | Properties to configure the Quartz scheduler.
 | propertiesFile | consumer |  | String | File name of the properties to load from the classpath
 | prefixInstanceName | consumer | true | boolean | Whether to prefix the Quartz Scheduler instance name with the CamelContext name. This is enabled by default to let each CamelContext use its own Quartz scheduler instance by default. You can set this option to false to reuse Quartz scheduler instances between multiple CamelContext's.
+| interruptJobsOnShutdown | scheduler | false | boolean | Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any running jobs. If this is enabled then any running jobs can fail due to being interrupted.
 | schedulerFactory | advanced |  | SchedulerFactory | To use the custom SchedulerFactory which is used to create the Scheduler.
 | scheduler | advanced |  | Scheduler | To use the custom configured Quartz scheduler instead of creating a new Scheduler.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 
 
 // endpoint options: START
-The Quartz2 component supports 21 endpoint options which are listed below:
+The Quartz2 endpoint is configured using URI syntax:
 
-{% raw %}
+    quartz2:groupName/triggerName
+
+  with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| groupName | Camel | String | The quartz group name to use. The combination of group name and timer name should be unique.
+| triggerName |  | String | *Required* The quartz timer name to use. The combination of group name and timer name should be unique.
+|=======================================================================
+
+#### Query Parameters (19 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| groupName | consumer | Camel | String | The quartz group name to use. The combination of group name and timer name should be unique.
-| triggerName | consumer |  | String | *Required* The quartz timer name to use. The combination of group name and timer name should be unique.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | cron | consumer |  | String | Specifies a cron expression to define when to trigger.
 | deleteJob | consumer | true | boolean | If set to true then the trigger automatically delete when route stop. Else if set to false it will remain in scheduler. When set to false it will also mean user may reuse pre-configured trigger with camel Uri. Just ensure the names match. Notice you cannot have both deleteJob and pauseJob set to true.
@@ -100,7 +112,6 @@ The Quartz2 component supports 21 endpoint options which are listed below:
 | startDelayedSeconds | scheduler |  | int | Seconds to wait before starting the quartz scheduler.
 | triggerStartDelay | scheduler | 500 | long | In case of scheduler has already started we want the trigger start slightly after current time to ensure endpoint is fully started before the job kicks in.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

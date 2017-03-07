@@ -1,6 +1,6 @@
 ## AWS Simple Workflow Component
 
-*Available as of Camel 2.13*
+*Available as of Camel version 2.13*
 
 The Simple Workflow component supports managing workflows from
 http://aws.amazon.com/swf/[Amazon's Simple Workflow] service.
@@ -32,13 +32,25 @@ The AWS Simple Workflow component has no options.
 
 
 // endpoint options: START
-The AWS Simple Workflow component supports 30 endpoint options which are listed below:
+The AWS Simple Workflow endpoint is configured using URI syntax:
 
-{% raw %}
+    aws-swf:type
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| type |  | String | *Required* Activity or workflow
+|=======================================================================
+
+#### Query Parameters (29 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| type | common |  | String | *Required* Activity or workflow
 | accessKey | common |  | String | Amazon AWS Access Key.
 | amazonSWClient | common |  | AmazonSimpleWorkflowClient | To use the given AmazonSimpleWorkflowClient as client
 | dataConverter | common |  | DataConverter | An instance of com.amazonaws.services.simpleworkflow.flow.DataConverter to use for serializing/deserializing the data.
@@ -69,7 +81,6 @@ The AWS Simple Workflow component supports 30 endpoint options which are listed 
 | workflowList | workflow |  | String | The list name to consume workflows from.
 | workflowTypeRegistrationOptions | workflow |  | WorkflowTypeRegistrationOptions | Workflow registration options
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

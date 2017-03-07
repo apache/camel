@@ -1,5 +1,10 @@
-Camel Router with Kotlin Project
-================================
+# Camel Router with Kotlin Project
+
+A simple example that uses Kotlin programming language to define a little Camel route.
+
+The Camel route listen on HTTP port 8080 and return back a constant response.
+
+### How to run
 
 To build this project use
 
@@ -9,7 +14,16 @@ To run this project
 
     mvn exec:java
     
-For more help see the Apache Camel documentation
+You can then open the following url from a web browser: <http://localhost:8080>
 
-    http://camel.apache.org/
 
+### Forum, Help, etc
+
+If you hit an problems please let us know on the Camel Forums
+	<http://camel.apache.org/discussion-forums.html>
+
+Please help us make Apache Camel better - we appreciate any feedback you may
+have.  Enjoy!
+
+
+The Camel riders!

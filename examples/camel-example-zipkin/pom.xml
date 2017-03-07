@@ -31,6 +31,10 @@
   <name>Camel :: Example :: Zipkin</name>
   <description>An example showing how to trace incoming and outgoing messages from Camel with Zipkin</description>
 
+  <properties>
+    <category>Management and Monitoring</category>
+  </properties>
+
   <modules>
     <module>client</module>
     <module>service1</module>

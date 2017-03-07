@@ -144,7 +144,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         if (endpoint instanceof FtpEndpoint) {
             FtpEndpoint<?> ftpEndpoint = (FtpEndpoint<?>) endpoint;
             if (ftpEndpoint.getSoTimeout() > 0) {
-                log.trace("Using SoTimeout=" + ftpEndpoint.getSoTimeout());
+                log.trace("Using SoTimeout={}", ftpEndpoint.getSoTimeout());
                 try {
                     client.setSoTimeout(ftpEndpoint.getSoTimeout());
                 } catch (IOException e) {
@@ -157,10 +157,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             boolean login;
             if (username != null) {
                 if (account != null) {
-                    log.trace("Attempting to login user: {} using password: {} and account: {}", new Object[]{username, configuration.getPassword(), account});
+                    log.trace("Attempting to login user: {} using password: ******** and account: {}", new Object[]{username, account});
                     login = client.login(username, configuration.getPassword(), account);
                 } else {
-                    log.trace("Attempting to login user: {} using password: {}", username, configuration.getPassword());
+                    log.trace("Attempting to login user: {} using password: ********", username);
                     login = client.login(username, configuration.getPassword());
                 }
             } else {

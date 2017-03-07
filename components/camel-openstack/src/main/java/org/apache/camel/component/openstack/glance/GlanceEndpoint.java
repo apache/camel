@@ -27,7 +27,7 @@ import org.openstack4j.core.transport.Config;
 /**
  * The openstack-glance component allows messages to be sent to an OpenStack image services.
  */
-@UriEndpoint(scheme = "openstack-glance", title = "OpenStack Glance", syntax = "openstack-glance:host", label = "cloud,paas", producerOnly = true)
+@UriEndpoint(firstVersion = "2.19.0", scheme = "openstack-glance", title = "OpenStack Glance", syntax = "openstack-glance:host", label = "cloud,paas", producerOnly = true)
 public class GlanceEndpoint extends AbstractOpenstackEndpoint {
 
     @UriPath

@@ -30,7 +30,13 @@ import org.apache.camel.spi.UriPath;
 /**
  * The camel chronicle-engine component let you leverage the power of OpenHFT's <a href="https://github.com/OpenHFT/Chronicle-Engine">Chronicle-Engine</a>.
  */
-@UriEndpoint(scheme = "chronicle-engine", title = "Chronicle Engine", syntax = "chronicle-engine:addresses/path", consumerClass = ChronicleEngineConsumer.class, label = "datagrid,cache")
+@UriEndpoint(
+    firstVersion = "2.18.0", 
+    scheme = "chronicle-engine",
+    title = "Chronicle Engine",
+    syntax = "chronicle-engine:addresses/path", 
+    consumerClass = ChronicleEngineConsumer.class, 
+    label = "datagrid,cache")
 public class ChronicleEngineEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Engine addresses. Multiple addresses can be separated by comman.")

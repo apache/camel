@@ -23,19 +23,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.jar.AbstractJarMojo;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.plugins.jar.AbstractJarMojo;
 
 @Mojo(name = "jar", defaultPhase = LifecyclePhase.PREPARE_PACKAGE, requiresProject = true, threadSafe = true,
         requiresDependencyResolution = ResolutionScope.RUNTIME)
@@ -46,6 +49,13 @@ public class ConnectorMojo extends AbstractJarMojo {
      */
     @Parameter(defaultValue = "${project.build.outputDirectory}", required = true)
     private File classesDirectory;
+
+    /**
+     * Whether to generate JSon schema files to the sources directory (<tt>src/main/resources</tt>) which allows the files to be stored together with the source code.
+     * If this options is <tt>false</tt> the JSon schema files are generated into <tt>target/classes</tt> and only included in the built JAR.
+     */
+    @Parameter(defaultValue = "true")
+    private boolean generateToSources;
 
     /**
      * Whether to include the git url for the git repository of the source code for the Camel connector
@@ -71,6 +81,9 @@ public class ConnectorMojo extends AbstractJarMojo {
 
     @Override
     public File createArchive() throws MojoExecutionException {
+
+        // project root folder
+        File root = classesDirectory.getParentFile().getParentFile();
 
         String gitUrl = null;
 
@@ -103,7 +116,6 @@ public class ConnectorMojo extends AbstractJarMojo {
                         // update file
                         mapper.writerWithDefaultPrettyPrinter().writeValue(file, dto);
                         // update source file also
-                        File root = classesDirectory.getParentFile().getParentFile();
                         file = new File(root, "src/main/resources/camel-connector.json");
                         if (file.exists()) {
                             getLog().info("Updating gitUrl to " + file);
@@ -121,8 +133,6 @@ public class ConnectorMojo extends AbstractJarMojo {
                     getLog().debug(header);
 
                     rows = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
-                    // we do not offer editing component properties (yet) so clear the rows
-                    rows.clear();
                     String componentOptions = buildComponentOptionsSchema(rows, dto);
                     getLog().debug(componentOptions);
 
@@ -157,10 +167,17 @@ public class ConnectorMojo extends AbstractJarMojo {
                     fos.close();
 
                     // also write the file in the root folder so its easier to find that for tooling
-                    out = new File(classesDirectory,"camel-connector-schema.json");
+                    out = new File(classesDirectory, "camel-connector-schema.json");
                     fos = new FileOutputStream(out, false);
                     fos.write(newJson.getBytes());
                     fos.close();
+
+                    if (generateToSources) {
+                        // copy the file into the sources as well
+                        File from = new File(classesDirectory, "camel-connector-schema.json");
+                        File to = new File(root, "src/main/resources/camel-connector-schema.json");
+                        FileHelper.copyFile(from, to);
+                    }
                 }
 
                 // build json schema for component that only has the selectable options
@@ -192,24 +209,53 @@ public class ConnectorMojo extends AbstractJarMojo {
     }
 
     private String buildComponentOptionsSchema(List<Map<String, String>> rows, Map dto) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
+        // find the endpoint options
+        List options = (List) dto.get("componentOptions");
+        Map values = (Map) dto.get("componentValues");
+        Map overrides = (Map) dto.get("componentOverrides");
 
         StringBuilder sb = new StringBuilder();
         sb.append("  \"componentProperties\": {\n");
 
+        boolean first = true;
         for (int i = 0; i < rows.size(); i++) {
             Map<String, String> row = rows.get(i);
             String key = row.get("name");
-            row.remove("name");
-            String line = mapper.writeValueAsString(row);
 
-            sb.append("    \"" + key + "\": ");
-            sb.append(line);
-            if (i < rows.size() - 1) {
-                sb.append(",\n");
-            } else {
-                sb.append("\n");
+            if (options == null || !options.contains(key)) {
+                continue;
             }
+
+            // do we have a new default value for this row?
+            if (values != null && values.containsKey(key)) {
+                // the value may be an integer so we need to use Object and toString when putting back in row
+                Object newDefaultValue = values.get(key);
+                if (newDefaultValue != null) {
+                    row.put("defaultValue", newDefaultValue.toString());
+                }
+            }
+
+            // is there any overrides for this row?
+            if (overrides != null && overrides.containsKey(key)) {
+                Map over = (Map) overrides.get(key);
+                if (over != null) {
+                    row.putAll(over);
+                }
+            }
+
+            // we should build the json as one-line which is how Camel does it today
+            // which makes its internal json parser support loading our generated schema file
+            String line = buildJSonLineFromRow(row);
+
+            if (!first) {
+                sb.append(",\n");
+            }
+            sb.append("    ").append(line);
+
+            first = false;
+        }
+        if (!first) {
+            sb.append("\n");
         }
 
         sb.append("  },\n");
@@ -231,7 +277,6 @@ public class ConnectorMojo extends AbstractJarMojo {
         for (int i = 0; i < rows.size(); i++) {
             Map<String, String> row = rows.get(i);
             String key = row.get("name");
-            row.remove("name");
 
             if (options == null || !options.contains(key)) {
                 continue;
@@ -239,9 +284,10 @@ public class ConnectorMojo extends AbstractJarMojo {
 
             // do we have a new default value for this row?
             if (values != null && values.containsKey(key)) {
-                String newDefaultValue = (String) values.get(key);
+                // the value may be an integer so we need to use Object and toString when putting back in row
+                Object newDefaultValue = values.get(key);
                 if (newDefaultValue != null) {
-                    row.put("defaultValue", newDefaultValue);
+                    row.put("defaultValue", newDefaultValue.toString());
                 }
             }
 
@@ -255,13 +301,12 @@ public class ConnectorMojo extends AbstractJarMojo {
 
             // we should build the json as one-line which is how Camel does it today
             // which makes its internal json parser support loading our generated schema file
-            String line = mapper.writeValueAsString(row);
+            String line = buildJSonLineFromRow(row);
 
             if (!first) {
                 sb.append(",\n");
             }
-            sb.append("    \"" + key + "\": ");
-            sb.append(line);
+            sb.append("    ").append(line);
 
             first = false;
         }
@@ -276,7 +321,10 @@ public class ConnectorMojo extends AbstractJarMojo {
     private String buildComponentHeaderSchema(List<Map<String, String>> rows, Map dto, String gitUrl) throws Exception {
         String baseScheme = (String) dto.get("baseScheme");
         String title = (String) dto.get("name");
-        String scheme = StringHelper.camelCaseToDash(title);
+        String scheme = (String) dto.get("scheme");
+        if (scheme == null || scheme.isEmpty()) {
+            scheme = StringHelper.camelCaseToDash(title);
+        }
         String baseSyntax = getOption(rows, "syntax");
         String syntax = baseSyntax.replaceFirst(baseScheme, scheme);
 
@@ -292,6 +340,7 @@ public class ConnectorMojo extends AbstractJarMojo {
         String producerOnly = "To".equalsIgnoreCase(pattern) ? "true" : null;
         String consumerOnly = "From".equalsIgnoreCase(pattern) ? "true" : null;
         String lenientProperties = getOption(rows, "lenientProperties");
+        String deprecated = getOption(rows, "deprecated");
         String javaType = extractJavaType(scheme);
         String groupId = getProject().getGroupId();
         String artifactId = getProject().getArtifactId();
@@ -308,22 +357,26 @@ public class ConnectorMojo extends AbstractJarMojo {
         sb.append("    \"syntax\": \"" + syntax + "\",\n");
         sb.append("    \"title\": \"" + title + "\",\n");
         if (description != null) {
-            sb.append("    \"description\": \"" + description + "\",\n");
+            // ensure description is sanitized
+            String text = JSonSchemaHelper.sanitizeDescription(description, false);
+            sb.append("    \"description\": \"" + text + "\",\n");
         }
         if (label != null) {
             sb.append("    \"label\": \"" + label + "\",\n");
         }
-        sb.append("    \"deprecated\": \"false\",\n");
+        if (deprecated != null) {
+            sb.append("    \"deprecated\": " + deprecated + ",\n");
+        }
         if (async != null) {
-            sb.append("    \"async\": \"" + async + "\",\n");
+            sb.append("    \"async\": " + async + ",\n");
         }
         if (producerOnly != null) {
-            sb.append("    \"producerOnly\": \"" + producerOnly + "\",\n");
+            sb.append("    \"producerOnly\": " + producerOnly + ",\n");
         } else if (consumerOnly != null) {
-            sb.append("    \"consumerOnly\": \"" + consumerOnly + "\",\n");
+            sb.append("    \"consumerOnly\": " + consumerOnly + ",\n");
         }
         if (lenientProperties != null) {
-            sb.append("    \"lenientProperties\": \"" + lenientProperties + "\",\n");
+            sb.append("    \"lenientProperties\": " + lenientProperties + ",\n");
         }
         sb.append("    \"javaType\": \"" + javaType + "\",\n");
         sb.append("    \"groupId\": \"" + groupId + "\",\n");
@@ -354,7 +407,8 @@ public class ConnectorMojo extends AbstractJarMojo {
                 for (Object obj : getProject().getDependencyArtifacts()) {
                     Artifact artifact = (Artifact) obj;
                     if ("jar".equals(artifact.getType())) {
-                        if (groupId.equals(artifact.getGroupId()) && artifactId.equals(artifact.getArtifactId()) && version.equals(artifact.getVersion())) {
+                        // use baseVersion so we can support SNAPSHOT versions that are based on a base version
+                        if (groupId.equals(artifact.getGroupId()) && artifactId.equals(artifact.getArtifactId()) && version.equals(artifact.getBaseVersion())) {
                             // load the component file inside the file
                             URL url = new URL("file:" + artifact.getFile());
                             URLClassLoader child = new URLClassLoader(new URL[]{url}, this.getClass().getClassLoader());
@@ -400,7 +454,65 @@ public class ConnectorMojo extends AbstractJarMojo {
         return null;
     }
 
-    private String extractClass(List<String> lines) {
+    /**
+     * Builds a JSon line of the given row
+     */
+    private static String buildJSonLineFromRow(Map<String, String> row) {
+        String name = row.get("name");
+        String displayName = row.get("displayName");
+        String kind = row.get("kind");
+        boolean required = false;
+        Object value = row.getOrDefault("required", "false");
+        if (value instanceof Boolean) {
+            required = (Boolean) value;
+        } else if (value != null) {
+            required = Boolean.valueOf(value.toString());
+        }
+        String javaType = row.get("javaType");
+        String defaultValue = row.get("defaultValue");
+        String description = row.get("description");
+        boolean deprecated = false;
+        value = row.getOrDefault("deprecated", "false");
+        if (value instanceof Boolean) {
+            deprecated = (Boolean) value;
+        } else if (value != null) {
+            deprecated = Boolean.valueOf(value.toString());
+        }
+        boolean secret = false;
+        value = row.getOrDefault("secret", "false");
+        if (value instanceof Boolean) {
+            secret = (Boolean) value;
+        } else if (value != null) {
+            secret = Boolean.valueOf(value.toString());
+        }
+        String group = row.get("group");
+        String label = row.get("label");
+        // for enum we need to build it back as a set
+        Set<String> enums = null;
+        // the enum can either be a List or String
+        value = row.get("enum");
+        if (value != null && value instanceof List) {
+            enums = new LinkedHashSet<String>((List)value);
+        } else if (value != null && value instanceof String) {
+            String[] array = value.toString().split(",");
+            enums = Arrays.stream(array).collect(Collectors.toSet());
+        }
+        boolean enumType = enums != null;
+        String optionalPrefix = row.get("optionalPrefix");
+        String prefix = row.get("prefix");
+        boolean multiValue = false;
+        value = row.getOrDefault("multiValue", "false");
+        if (value instanceof Boolean) {
+            multiValue = (Boolean) value;
+        } else if (value != null) {
+            multiValue = Boolean.valueOf(value.toString());
+        }
+
+        return JSonSchemaHelper.toJson(name, displayName, kind, required, javaType, defaultValue, description, deprecated, secret, group, label,
+            enumType, enums, false, null, false, optionalPrefix, prefix, multiValue);
+    }
+
+    private static String extractClass(List<String> lines) {
         for (String line : lines) {
             line = line.trim();
             if (line.startsWith("class=")) {
@@ -410,19 +522,19 @@ public class ConnectorMojo extends AbstractJarMojo {
         return null;
     }
 
-    private String extractScheme(Map map) {
+    private static String extractScheme(Map map) {
         return (String) map.get("baseScheme");
     }
 
-    private String extractGroupId(Map map) {
+    private static String extractGroupId(Map map) {
         return (String) map.get("baseGroupId");
     }
 
-    private String extractArtifactId(Map map) {
+    private static String extractArtifactId(Map map) {
         return (String) map.get("baseArtifactId");
     }
 
-    private String extractVersion(Map map) {
+    private static String extractVersion(Map map) {
         return (String) map.get("baseVersion");
     }
 

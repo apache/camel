@@ -31,6 +31,12 @@ public class TelegramComponentConfiguration {
      * is not provided in the endpoints.
      */
     private String authorizationToken;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public String getAuthorizationToken() {
         return authorizationToken;
@@ -38,5 +44,14 @@ public class TelegramComponentConfiguration {
 
     public void setAuthorizationToken(String authorizationToken) {
         this.authorizationToken = authorizationToken;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

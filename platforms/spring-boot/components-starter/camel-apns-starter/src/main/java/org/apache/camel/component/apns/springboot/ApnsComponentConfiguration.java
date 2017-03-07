@@ -35,6 +35,12 @@ public class ApnsComponentConfiguration {
      */
     @NestedConfigurationProperty
     private ApnsService apnsService;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public ApnsService getApnsService() {
         return apnsService;
@@ -42,5 +48,14 @@ public class ApnsComponentConfiguration {
 
     public void setApnsService(ApnsService apnsService) {
         this.apnsService = apnsService;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

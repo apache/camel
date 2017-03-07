@@ -231,20 +231,16 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
         try {
             lock.lock();
             startConsumer(route.getConsumer());
-            this.reset();
+            failures.set(0);
+            lastFailure = 0;
+            openedAt = 0;
+            state.set(STATE_CLOSED);
             logState();
         } catch (Exception e) {
             handleException(e);
         } finally {
             lock.unlock();
         }
-    }
-    
-    private void reset() {
-        failures.set(0);
-        lastFailure = 0;
-        openedAt = 0;
-        state.set(STATE_CLOSED);
     }
     
     private void logState() {
@@ -255,11 +251,11 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     
     public String dumpState() {
         int num = state.get();
-        String state = stateAsString(num);
+        String routeState = stateAsString(num);
         if (failures.get() > 0) {
-            return String.format("State %s, failures %d, last failure %d ms ago", state, failures.get(), System.currentTimeMillis() - lastFailure);
+            return String.format("State %s, failures %d, last failure %d ms ago", routeState, failures.get(), System.currentTimeMillis() - lastFailure);
         } else {
-            return String.format("State %s, failures %d", state, failures.get());
+            return String.format("State %s, failures %d", routeState, failures.get());
         }
     }
     
@@ -293,6 +289,42 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
 
     public void setHalfOpenHandler(ThrottlingExceptionHalfOpenHandler halfOpenHandler) {
         this.halfOpenHandler = halfOpenHandler;
+    }
+
+    public int getFailureThreshold() {
+        return failureThreshold;
+    }
+
+    public void setFailureThreshold(int failureThreshold) {
+        this.failureThreshold = failureThreshold;
+    }
+
+    public long getFailureWindow() {
+        return failureWindow;
+    }
+
+    public void setFailureWindow(long failureWindow) {
+        this.failureWindow = failureWindow;
+    }
+
+    public long getHalfOpenAfter() {
+        return halfOpenAfter;
+    }
+
+    public void setHalfOpenAfter(long halfOpenAfter) {
+        this.halfOpenAfter = halfOpenAfter;
+    }
+
+    public int getFailures() {
+        return failures.get();
+    }
+
+    public long getLastFailure() {
+        return lastFailure;
+    }
+
+    public long getOpenedAt() {
+        return openedAt;
     }
 
 }

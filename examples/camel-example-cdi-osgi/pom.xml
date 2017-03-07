@@ -31,6 +31,11 @@
   <description>PAX CDI example</description>
   <packaging>jar</packaging>
 
+  <properties>
+    <category>OSGi</category>
+    <title>CDI OSGi</title>
+  </properties>
+
   <dependencies>
 
     <!-- CDI API -->

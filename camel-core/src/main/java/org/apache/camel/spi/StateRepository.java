@@ -27,6 +27,7 @@ import org.apache.camel.Service;
  * @param <V> Value type
  */
 public interface StateRepository<K, V> extends Service {
+
     /**
      * Sets the state value for the given key.
      *

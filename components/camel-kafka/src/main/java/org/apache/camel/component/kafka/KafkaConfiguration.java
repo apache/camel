@@ -45,10 +45,8 @@ import org.apache.kafka.common.config.SslConfigs;
 public class KafkaConfiguration {
 
     @UriPath @Metadata(required = "true")
-    private String brokers;
-
-    @UriParam @Metadata(required = "true")
     private String topic;
+
     @UriParam
     private String groupId;
     @UriParam(defaultValue = KafkaConstants.KAFKA_DEFAULT_PARTITIONER)
@@ -59,8 +57,14 @@ public class KafkaConfiguration {
     private int consumersCount = 1;
 
     //Common configuration properties
+    @UriParam(label = "common")
+    private String brokers;
     @UriParam
     private String clientId;
+
+    //interceptor.classes
+    @UriParam(label = "common,monitoring")
+    private String interceptorClasses;
 
     //key.deserializer
     @UriParam(label = "consumer", defaultValue = KafkaConstants.KAFKA_DEFAULT_DESERIALIZER)
@@ -102,14 +106,16 @@ public class KafkaConfiguration {
     //fetch.max.wait.ms
     @UriParam(label = "consumer", defaultValue = "500")
     private Integer fetchWaitMaxMs = 500;
-    @UriParam(label = "consumer")
-    private boolean seekToBeginning;
+    @UriParam(label = "consumer", enums = "beginning,end")
+    private String seekTo;
 
     //Consumer configuration properties
     @UriParam(label = "consumer")
     private String consumerId;
     @UriParam(label = "consumer", defaultValue = "true")
     private Boolean autoCommitEnable = true;
+    @UriParam(label = "consumer", defaultValue = "sync", enums = "sync,async,none")
+    private String autoCommitOnStop = "sync";
     @UriParam(label = "consumer")
     private StateRepository<String, String> offsetRepository;
 
@@ -127,11 +133,15 @@ public class KafkaConfiguration {
     //Async producer config
     @UriParam(label = "producer", defaultValue = "10000")
     private Integer queueBufferingMaxMessages = 10000;
-    @UriParam(label = "producer")
-    private String serializerClass;
-    @UriParam(label = "producer")
-    private String keySerializerClass;
+    @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_SERIALIZER)
+    private String serializerClass = KafkaConstants.KAFKA_DEFAULT_SERIALIZER;
+    @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_SERIALIZER)
+    private String keySerializerClass = KafkaConstants.KAFKA_DEFAULT_SERIALIZER;
 
+    @UriParam(label = "producer")
+    private String key;
+    @UriParam(label = "producer")
+    private Integer partitionKey;
     @UriParam(label = "producer", enums = "-1,0,1,all", defaultValue = "1")
     private String requestRequiredAcks = "1";
     //buffer.memory
@@ -274,6 +284,7 @@ public class KafkaConfiguration {
         addPropertyIfNotNull(props, ProducerConfig.BUFFER_MEMORY_CONFIG, getBufferMemorySize());
         addPropertyIfNotNull(props, ProducerConfig.COMPRESSION_TYPE_CONFIG, getCompressionCodec());
         addPropertyIfNotNull(props, ProducerConfig.RETRIES_CONFIG, getRetries());
+        addPropertyIfNotNull(props, ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, getInterceptorClasses());
         // SSL
         applySslConfiguration(props, getSslContextParameters());
         addPropertyIfNotNull(props, SslConfigs.SSL_KEY_PASSWORD_CONFIG, getSslKeyPassword());
@@ -333,6 +344,7 @@ public class KafkaConfiguration {
         addPropertyIfNotNull(props, ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, getMaxPartitionFetchBytes());
         addPropertyIfNotNull(props, ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, getSessionTimeoutMs());
         addPropertyIfNotNull(props, ConsumerConfig.MAX_POLL_RECORDS_CONFIG, getMaxPollRecords());
+        addPropertyIfNotNull(props, ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG, getInterceptorClasses());
         // SSL
         applySslConfiguration(props, getSslContextParameters());
         addPropertyIfNotNull(props, SslConfigs.SSL_KEY_PASSWORD_CONFIG, getSslKeyPassword());
@@ -602,16 +614,28 @@ public class KafkaConfiguration {
         this.autoOffsetReset = autoOffsetReset;
     }
 
+    public String getAutoCommitOnStop() {
+        return autoCommitOnStop;
+    }
+
+    /**
+     * Whether to perform an explicit auto commit when the consumer stops to ensure the broker
+     * has a commit from the last consumed message. This requires the option autoCommitEnable is turned on.
+     * The possible values are: sync, async, or none. And sync is the default value.
+     */
+    public void setAutoCommitOnStop(String autoCommitOnStop) {
+        this.autoCommitOnStop = autoCommitOnStop;
+    }
+
     public String getBrokers() {
         return brokers;
     }
 
     /**
-     * This is for bootstrapping and the producer will only use it for getting metadata (topics, partitions and replicas).
-     * The socket connections for sending the actual data will be established based on the broker information returned in the metadata.
+     * URL of the Kafka brokers to use.
      * The format is host1:port1,host2:port2, and the list can be a subset of brokers or a VIP pointing to a subset of brokers.
      * <p/>
-     * This option is known as <tt>metadata.broker.list</tt> in the Kafka documentation.
+     * This option is known as <tt>bootstrap.servers</tt> in the Kafka documentation.
      */
     public void setBrokers(String brokers) {
         this.brokers = brokers;
@@ -675,24 +699,17 @@ public class KafkaConfiguration {
     }
 
     public String getSerializerClass() {
-        if (serializerClass == null) {
-            return KafkaConstants.KAFKA_DEFAULT_SERIALIZER;
-        }
         return serializerClass;
     }
 
     /**
-     * The serializer class for messages. The default encoder takes a byte[] and returns the same byte[].
-     * The default class is kafka.serializer.DefaultEncoder
+     * The serializer class for messages.
      */
     public void setSerializerClass(String serializerClass) {
         this.serializerClass = serializerClass;
     }
 
     public String getKeySerializerClass() {
-        if (keySerializerClass == null) {
-            return KafkaConstants.KAFKA_DEFAULT_SERIALIZER;
-        }
         return keySerializerClass;
     }
 
@@ -987,6 +1004,30 @@ public class KafkaConfiguration {
      */
     public void setBufferMemorySize(Integer bufferMemorySize) {
         this.bufferMemorySize = bufferMemorySize;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    /**
+     * The record key (or null if no key is specified).
+     * If this option has been configured then it take precedence over header {@link KafkaConstants#KEY}
+     */
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public Integer getPartitionKey() {
+        return partitionKey;
+    }
+
+    /**
+     * The partition to which the record will be sent (or null if no partition was specified).
+     * If this option has been configured then it take precedence over header {@link KafkaConstants#PARTITION_KEY}
+     */
+    public void setPartitionKey(Integer partitionKey) {
+        this.partitionKey = partitionKey;
     }
 
     public String getRequestRequiredAcks() {
@@ -1300,15 +1341,19 @@ public class KafkaConfiguration {
         this.valueDeserializer = valueDeserializer;
     }
 
-    public boolean isSeekToBeginning() {
-        return seekToBeginning;
+    public String getSeekTo() {
+        return seekTo;
     }
 
     /**
-     * If the option is true, then KafkaConsumer will read from beginning on startup.
+     * Set if KafkaConsumer will read from beginning or end on startup:
+     * beginning : read from beginning
+     * end : read from end
+     * 
+     * This is replacing the earlier property seekToBeginning
      */
-    public void setSeekToBeginning(boolean seekToBeginning) {
-        this.seekToBeginning = seekToBeginning;
+    public void setSeekTo(String seekTo) {
+        this.seekTo = seekTo;
     }
 
     public ExecutorService getWorkerPool() {
@@ -1359,5 +1404,19 @@ public class KafkaConfiguration {
      */
     public void setRecordMetadata(boolean recordMetadata) {
         this.recordMetadata = recordMetadata;
+    }
+
+
+    public String getInterceptorClasses() {
+        return interceptorClasses;
+    }
+    /**
+     * Sets interceptors for producer or consumers.
+     * Producer interceptors have to be classes implementing {@link org.apache.kafka.clients.producer.ProducerInterceptor}
+     * Consumer interceptors have to be classes implementing {@link org.apache.kafka.clients.consumer.ConsumerInterceptor}
+     * Note that if you use Producer interceptor on a consumer it will throw a class cast exception in runtime
+     */
+    public void setInterceptorClasses(String interceptorClasses) {
+        this.interceptorClasses = interceptorClasses;
     }
 }

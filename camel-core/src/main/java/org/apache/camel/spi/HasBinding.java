@@ -22,6 +22,7 @@ package org.apache.camel.spi;
  *
  * For example bean or cxf endpoints can expose the internal binding metadata at runtime
  */
+@Deprecated
 public interface HasBinding {
 
     /**

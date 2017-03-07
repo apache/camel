@@ -1,6 +1,6 @@
 ## InfluxDB Component
 
-*Available as of Camel 2.18.0*
+*Available as of Camel version 2.18*
 
 This component allows you to interact with InfluxDB
 https://influxdata.com/time-series-platform/influxdb/ a time series database. The native body type for this component is
@@ -48,13 +48,25 @@ The InfluxDB component has no options.
 
 
 // endpoint options: START
-The InfluxDB component supports 7 endpoint options which are listed below:
+The InfluxDB endpoint is configured using URI syntax:
 
-{% raw %}
+    influxdb:connectionBean
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| connectionBean |  | String | *Required* Connection to the influx database of class InfluxDB.class
+|=======================================================================
+
+#### Query Parameters (6 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| connectionBean | producer |  | String | *Required* Connection to the influx database of class InfluxDB.class
 | batch | producer | false | boolean | Define if this operation is a batch operation or not
 | databaseName | producer |  | String | The name of the database where the time series will be stored
 | operation | producer | insert | String | Define if this operation is an insert or a query
@@ -62,7 +74,6 @@ The InfluxDB component supports 7 endpoint options which are listed below:
 | retentionPolicy | producer | default | String | The string that defines the retention policy to the data created by the endpoint
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

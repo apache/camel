@@ -2,8 +2,8 @@
   "properties": [
     {
       "defaultValue": true,
-      "name": "camel.component.gridfs.enabled",
-      "description": "Enable gridfs component",
+      "name": "camel.component.mongodb-gridfs.enabled",
+      "description": "Enable mongodb-gridfs component",
       "type": "java.lang.Boolean"
     }
   ]

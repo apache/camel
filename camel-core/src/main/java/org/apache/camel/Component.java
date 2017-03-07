@@ -59,6 +59,7 @@ public interface Component extends CamelContextAware {
      *
      * @since Camel 2.9.0
      */
+    @Deprecated
     EndpointConfiguration createConfiguration(String uri) throws Exception;
 
     /**
@@ -70,5 +71,6 @@ public interface Component extends CamelContextAware {
      * configure an endpoint yet; but rather there are a number of parameters to configure
      * to then build up a new URI or directly create an Endpoint from the parameter values.
      */
+    @Deprecated
     ComponentConfiguration createComponentConfiguration();
 }

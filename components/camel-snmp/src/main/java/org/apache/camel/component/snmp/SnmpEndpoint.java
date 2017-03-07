@@ -37,7 +37,7 @@ import org.snmp4j.security.SecurityLevel;
 /**
  * The snmp component gives you the ability to poll SNMP capable devices or receiving traps.
  */
-@UriEndpoint(scheme = "snmp", title = "SNMP", syntax = "snmp:host:port", consumerOnly = true, label = "monitoring")
+@UriEndpoint(firstVersion = "2.1.0", scheme = "snmp", title = "SNMP", syntax = "snmp:host:port", consumerOnly = true, label = "monitoring")
 public class SnmpEndpoint extends DefaultPollingEndpoint {
 
     public static final String DEFAULT_COMMUNITY = "public";
@@ -111,7 +111,11 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new SnmpProducer(this);
+        if (this.type == SnmpActionType.TRAP) {
+            return new SnmpTrapProducer(this);
+        } else {
+            return new SnmpProducer(this);
+        }
     }
 
     public boolean isSingleton() {

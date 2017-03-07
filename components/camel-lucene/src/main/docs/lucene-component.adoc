@@ -1,6 +1,6 @@
 ## Lucene Component
 
-*Available as of Camel 2.2*
+*Available as of Camel version 2.2*
 
 The *lucene* component is based on the Apache Lucene project. Apache
 Lucene is a powerful high-performance, full-featured text search engine
@@ -51,17 +51,16 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Lucene component supports 1 options which are listed below.
+The Lucene component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | config | advanced |  | LuceneConfiguration | To use a shared lucene configuration
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -71,21 +70,32 @@ The Lucene component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The Lucene component supports 7 endpoint options which are listed below:
+The Lucene endpoint is configured using URI syntax:
 
-{% raw %}
+    lucene:host:operation
+
+  with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| host |  | String | *Required* The URL to the lucene server
+| operation |  | LuceneOperation | *Required* Operation to do such as insert or query.
+|=======================================================================
+
+#### Query Parameters (5 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | producer |  | String | *Required* The URL to the lucene server
-| operation | producer |  | LuceneOperation | *Required* Operation to do such as insert or query.
 | analyzer | producer |  | Analyzer | An Analyzer builds TokenStreams which analyze text. It thus represents a policy for extracting index terms from text. The value for analyzer can be any class that extends the abstract class org.apache.lucene.analysis.Analyzer. Lucene also offers a rich set of analyzers out of the box
 | indexDir | producer |  | File | A file system directory in which index files are created upon analysis of the document by the specified analyzer
 | maxHits | producer |  | int | An integer value that limits the result set of the search operation
 | srcDir | producer |  | File | An optional directory containing files to be used to be analyzed and added to the index at producer startup.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

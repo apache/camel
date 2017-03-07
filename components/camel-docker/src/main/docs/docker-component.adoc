@@ -1,6 +1,6 @@
 ## Docker Component
 
-*Available as of Camel 2.15*
+*Available as of Camel version 2.15*
 
 Camel component for communicating with Docker.
 
@@ -22,28 +22,39 @@ Where *operation* is the specific action to perform on Docker.
 ### General Options
 
 // component options: START
-The Docker component supports 1 options which are listed below.
+The Docker component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | configuration | advanced |  | DockerConfiguration | To use the shared docker configuration
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 // endpoint options: START
-The Docker component supports 20 endpoint options which are listed below:
+The Docker endpoint is configured using URI syntax:
 
-{% raw %}
+    docker:operation
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| operation |  | DockerOperation | *Required* Which operation to use
+|=======================================================================
+
+#### Query Parameters (19 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| operation | common |  | DockerOperation | *Required* Which operation to use
 | email | common |  | String | Email address associated with the user
 | host | common | localhost | String | *Required* Docker host
 | port | common | 2375 | Integer | *Required* Docker port
@@ -64,7 +75,6 @@ The Docker component supports 20 endpoint options which are listed below:
 | tlsVerify | security | false | boolean | Check TLS
 | username | security |  | String | User name to authenticate with
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 ### Header Strategy

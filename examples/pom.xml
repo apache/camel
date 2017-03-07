@@ -37,6 +37,7 @@
     <module>camel-example-box-osgi</module>
     <module>camel-example-cafe</module>
     <module>camel-example-cdi</module>
+    <module>camel-example-cdi-aws-s3</module>
     <module>camel-example-cdi-cassandraql</module>
     <module>camel-example-cdi-kubernetes</module>
     <module>camel-example-cdi-metrics</module>
@@ -61,13 +62,17 @@
     <module>camel-example-jdbc</module>
     <module>camel-example-jmx</module>
     <module>camel-example-jms-file</module>
+	  <module>camel-example-kafka</module>
     <module>camel-example-loadbalancing</module>
-    <module>camel-example-loan-broker</module>
+    <module>camel-example-loan-broker-cxf</module>
+    <module>camel-example-loan-broker-jms</module>
     <module>camel-example-management</module>
     <module>camel-example-mybatis</module>
     <module>camel-example-netty-http</module>
+    <module>camel-example-opentracing</module>
     <module>camel-example-osgi-rmi</module>
     <module>camel-example-pojo-messaging</module>
+    <module>camel-example-reactive-streams</module>
     <module>camel-example-reload</module>
     <module>camel-example-reportincident</module>
     <module>camel-example-reportincident-wssecurity</module>
@@ -85,7 +90,7 @@
     <module>camel-example-spring-boot-live-reload</module>
     <module>camel-example-spring-boot-metrics</module>
     <module>camel-example-spring-boot-rest-jpa</module>
-    <module>camel-example-spring-boot-starter</module>
+    <module>camel-example-spring-boot-rest-swagger</module>
     <module>camel-example-spring-dm</module>
     <module>camel-example-spring-javaconfig</module>
     <module>camel-example-spring-jms</module>
@@ -103,8 +108,10 @@
     <module>camel-example-transformer-blueprint</module>
     <module>camel-example-transformer-cdi</module>
     <module>camel-example-transformer-demo</module>
+    <module>camel-example-twitter-salesforce</module>
     <module>camel-example-twitter-websocket</module>
     <module>camel-example-twitter-websocket-blueprint</module>
+    <module>camel-example-validator-spring-boot</module>
     <module>camel-example-widget-gadget-cdi</module>
     <module>camel-example-widget-gadget-java</module>
     <module>camel-example-widget-gadget-xml</module>
@@ -136,6 +143,21 @@
             <goals>
               <goal>resources</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- update readme file -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-example</goal>
+            </goals>
+            <phase>process-resources</phase>
           </execution>
         </executions>
       </plugin>

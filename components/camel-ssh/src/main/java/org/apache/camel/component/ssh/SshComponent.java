@@ -29,7 +29,7 @@ import org.apache.sshd.common.KeyPairProvider;
  */
 public class SshComponent extends UriEndpointComponent {
     @Metadata(label = "advanced")
-    private SshConfiguration configuration;
+    private SshConfiguration configuration = new SshConfiguration();
 
     public SshComponent() {
         super(SshEndpoint.class);
@@ -37,13 +37,9 @@ public class SshComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        SshConfiguration newConfig;
-
-        if (configuration == null) {
-            newConfig = new SshConfiguration(new URI(uri));
-        } else {
-            newConfig = configuration.copy();
-        }
+        URI u = new URI(uri);
+        SshConfiguration newConfig = configuration.copy();
+        newConfig.configure(u);
 
         SshEndpoint endpoint = new SshEndpoint(uri, this, newConfig);
         setProperties(endpoint.getConfiguration(), parameters);
@@ -51,9 +47,6 @@ public class SshComponent extends UriEndpointComponent {
     }
 
     public SshConfiguration getConfiguration() {
-        if (configuration == null) {
-            configuration = new SshConfiguration();
-        }
         return configuration;
     }
 

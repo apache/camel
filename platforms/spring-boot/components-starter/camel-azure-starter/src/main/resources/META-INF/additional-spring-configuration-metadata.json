@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.azure-blob.enabled",
+      "description": "Enable azure-blob component",
+      "type": "java.lang.Boolean"
+    },
+    {
+      "defaultValue": true,
+      "name": "camel.component.azure-queue.enabled",
+      "description": "Enable azure-queue component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

@@ -27,7 +27,7 @@
 
   <artifactId>camel-connector</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Connectors :: Connector Component</name>
+  <name>Camel :: Connectors :: Camel Connector Component</name>
   <description>Camel Connector Component</description>
 
   <properties>

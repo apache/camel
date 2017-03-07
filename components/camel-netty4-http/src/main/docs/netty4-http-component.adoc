@@ -1,6 +1,6 @@
 ## Netty4 HTTP Component
 
-*Available as of Camel 2.14*
+*Available as of Camel version 2.14*
 
 The *netty4-http* component is an extension to link:netty4.html[Netty4]
 component to facilitiate HTTP transport with link:netty4.html[Netty4].
@@ -75,11 +75,10 @@ related to UDP transport.
 
 
 // component options: START
-The Netty4 HTTP component supports 6 options which are listed below.
+The Netty4 HTTP component supports 7 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -89,8 +88,8 @@ The Netty4 HTTP component supports 6 options which are listed below.
 | securityConfiguration | security |  | NettyHttpSecurityConfiguration | Refers to a org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration for configuring secure web resources.
 | maximumPoolSize | advanced | 16 | int | The thread pool size for the EventExecutorGroup if its in use. The default value is 16.
 | executorService | advanced |  | EventExecutorGroup | To use the given EventExecutorGroup
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -103,16 +102,28 @@ The Netty4 HTTP component supports 6 options which are listed below.
 
 
 // endpoint options: START
-The Netty4 HTTP component supports 83 endpoint options which are listed below:
+The Netty4 HTTP endpoint is configured using URI syntax:
 
-{% raw %}
+    netty4-http:protocol:host:port/path
+
+  with the following path and query parameters:
+
+#### Path Parameters (4 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| protocol |  | String | *Required* The protocol to use which is either http or https
+| host |  | String | *Required* The local hostname such as localhost or 0.0.0.0 when being a consumer. The remote HTTP server hostname when using producer.
+| port |  | int | The host port number
+| path |  | String | Resource path
+|=======================================================================
+
+#### Query Parameters (79 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| protocol | common |  | String | *Required* The protocol to use which is either http or https
-| host | common |  | String | *Required* The local hostname such as localhost or 0.0.0.0 when being a consumer. The remote HTTP server hostname when using producer.
-| port | common |  | int | The host port number
-| path | common |  | String | Resource path
 | bridgeEndpoint | common | false | boolean | If the option is true the producer will ignore the Exchange.HTTP_URI header and use the endpoint's URI for request. You may also set the throwExceptionOnFailure to be false to let the producer send all the fault response back. The consumer working in the bridge mode will skip the gzip compression and WWW URL form encoding (by adding the Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED headers to the consumed exchange).
 | disconnect | common | false | boolean | Whether or not to disconnect(close) from Netty Channel right after use. Can be used for both consumer and producer.
 | keepAlive | common | true | boolean | Setting to ensure socket is not closed due to inactivity
@@ -151,7 +162,7 @@ The Netty4 HTTP component supports 83 endpoint options which are listed below:
 | lazyChannelCreation | producer (advanced) | true | boolean | Channels can be lazily created to avoid exceptions if the remote server is not up and running when the Camel producer is started.
 | okStatusCodeRange | producer (advanced) | 200-299 | String | The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included. The default range is 200-299
 | producerPoolEnabled | producer (advanced) | true | boolean | Whether producer pool is enabled or not. Important: Do not turn this off as the pooling is needed for handling concurrency and reliable request/reply.
-| producerPoolMaxActive | producer (advanced) | -1 | int | Sets the cap on the number of objects that can be allocated by the pool (checked out to clients or idle awaiting checkout) at a given time. Use a negative value for no limit.
+| producerPoolMaxActive | producer (advanced) | 1 | int | Sets the cap on the number of objects that can be allocated by the pool (checked out to clients or idle awaiting checkout) at a given time. Use a negative value for no limit.
 | producerPoolMaxIdle | producer (advanced) | 100 | int | Sets the cap on the number of idle instances in the pool.
 | producerPoolMinEvictableIdle | producer (advanced) | 300000 | long | Sets the minimum amount of time (value in millis) an object may sit idle in the pool before it is eligible for eviction by the idle object evictor.
 | producerPoolMinIdle | producer (advanced) |  | int | Sets the minimum number of instances allowed in the producer pool before the evictor thread (if active) spawns new objects.
@@ -193,7 +204,6 @@ The Netty4 HTTP component supports 83 endpoint options which are listed below:
 | trustStoreFile | security |  | File | Server side certificate keystore to be used for encryption
 | trustStoreResource | security |  | String | Server side certificate keystore to be used for encryption. Is loaded by default from classpath but you can prefix with classpath: file: or http: to load the resource from different systems.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

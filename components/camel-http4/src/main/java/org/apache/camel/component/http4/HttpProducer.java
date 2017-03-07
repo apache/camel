@@ -456,6 +456,11 @@ public class HttpProducer extends DefaultProducer {
         HttpMethods methodToUse = HttpMethodHelper.createMethod(exchange, getEndpoint(), requestEntity != null);
         HttpRequestBase method = methodToUse.createMethod(url);
 
+        // special for HTTP DELETE if the message body should be included
+        if (getEndpoint().isDeleteWithBody() && "DELETE".equals(method.getMethod())) {
+            method = new HttpDeleteWithBodyMethod(url, requestEntity);
+        }
+
         LOG.trace("Using URL: {} with method: {}", url, method);
 
         if (methodToUse.isEntityEnclosing()) {

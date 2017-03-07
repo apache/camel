@@ -1,6 +1,6 @@
 ## Git Component
 
-*Available as of Camel 2.16*
+*Available as of Camel version 2.16*
 
 The *git:* component allows you to work with a generic Git repository. 
 
@@ -36,13 +36,25 @@ The Git component has no options.
 
 
 // endpoint options: START
-The Git component supports 14 endpoint options which are listed below:
+The Git endpoint is configured using URI syntax:
 
-{% raw %}
+    git:localPath
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| localPath |  | String | *Required* Local repository path
+|=======================================================================
+
+#### Query Parameters (13 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| localPath | common |  | String | *Required* Local repository path
 | branchName | common |  | String | The branch name to work on
 | password | common |  | String | Remote repository password
 | remoteName | common |  | String | The remote repository name to use in particular operation like pull
@@ -57,7 +69,6 @@ The Git component supports 14 endpoint options which are listed below:
 | operation | producer |  | String | The operation to do on the repository
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

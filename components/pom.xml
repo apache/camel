@@ -45,6 +45,7 @@
     <module>camel-spring-dm</module>
     <module>camel-bam</module>
     <module>camel-groovy</module>
+    <module>camel-groovy-dsl</module>
     <module>camel-scala</module>
     <module>camel-http-common</module>
     <module>camel-http</module>
@@ -71,6 +72,7 @@
     <module>camel-atom</module>
     <module>camel-avro</module>
     <module>camel-aws</module>
+    <module>camel-azure</module>
     <module>camel-base64</module>
     <module>camel-beanio</module>
     <module>camel-beanstalk</module>
@@ -107,6 +109,7 @@
     <module>camel-ehcache</module>
     <module>camel-ejb</module>
     <module>camel-elasticsearch</module>
+    <module>camel-elasticsearch5</module>
     <module>camel-elsql</module>
     <module>camel-etcd</module>
     <module>camel-eventadmin</module>
@@ -204,6 +207,7 @@
     <module>camel-olingo2</module>
     <module>camel-openshift</module>
     <module>camel-openstack</module>
+    <module>camel-opentracing</module>
     <module>camel-optaplanner</module>
     <module>camel-paho</module>
     <module>camel-paxlogging</module>
@@ -215,6 +219,7 @@
     <module>camel-quartz2</module>
     <module>camel-quickfix</module>
     <module>camel-rabbitmq</module>
+    <module>camel-reactive-streams</module>
     <module>camel-restlet</module>
     <module>camel-rmi</module>
     <module>camel-routebox</module>
@@ -245,6 +250,7 @@
     <module>camel-spring-batch</module>
     <module>camel-spring-boot</module>
     <module>camel-spring-cloud</module>
+    <module>camel-spring-cloud-netflix</module>
     <module>camel-spring-javaconfig</module>
     <module>camel-spring-integration</module>
     <module>camel-spring-ldap</module>
@@ -263,6 +269,7 @@
     <module>camel-tagsoup</module>
     <module>camel-tarfile</module>
     <module>camel-telegram</module>
+    <module>camel-tika</module>
     <module>camel-twitter</module>
     <module>camel-undertow</module>
     <module>camel-univocity-parsers</module>

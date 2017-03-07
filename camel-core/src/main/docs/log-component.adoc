@@ -1,5 +1,7 @@
 ## Log Component
 
+*Available as of Camel version 1.1*
+
 The *log:* component logs message exchanges to the underlying logging
 mechanism.
 
@@ -54,30 +56,41 @@ link:logeip.html[LogEIP].
 
 
 // component options: START
-The Log component supports 1 options which are listed below.
+The Log component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | exchangeFormatter | advanced |  | ExchangeFormatter | Sets a custom ExchangeFormatter to convert the Exchange to a String suitable for logging. If not specified we default to DefaultExchangeFormatter.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 
 
 // endpoint options: START
-The Log component supports 26 endpoint options which are listed below:
+The Log endpoint is configured using URI syntax:
 
-{% raw %}
+    log:loggerName
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| loggerName |  | String | *Required* The logger name to use
+|=======================================================================
+
+#### Query Parameters (25 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| loggerName | producer |  | String | *Required* The logger name to use
 | groupActiveOnly | producer | true | Boolean | If true will hide stats when no new messages have been received for a time interval if false show stats regardless of message traffic.
 | groupDelay | producer |  | Long | Set the initial delay for stats (in millis)
 | groupInterval | producer |  | Long | If specified will group message stats by this time interval (in millis)
@@ -104,7 +117,6 @@ The Log component supports 26 endpoint options which are listed below:
 | skipBodyLineSeparator | formatting | true | boolean | Whether to skip line separators when logging the message body. This allows to log the message body in one line setting this option to false will preserve any line separators from the body which then will log the body as is.
 | style | formatting | Default | OutputStyle | Sets the outputs style to use.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

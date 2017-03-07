@@ -25,7 +25,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * For expressions and predicates using a constant
  */
-@Metadata(label = "language,core", title = "Constant")
+@Metadata(firstVersion = "1.5.0", label = "language,core", title = "Constant")
 @XmlRootElement(name = "constant")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ConstantExpression extends ExpressionDefinition {

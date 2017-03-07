@@ -1,5 +1,7 @@
 ## FTP Component
 
+*Available as of Camel version 1.1*
+
 This component provides access to remote file systems over the FTP and
 SFTP protocols.
 
@@ -77,17 +79,29 @@ The FTP component has no options.
 
 
 // endpoint options: START
-The FTP component supports 105 endpoint options which are listed below:
+The FTP endpoint is configured using URI syntax:
 
-{% raw %}
+    ftp:host:port/directoryName
+
+  with the following path and query parameters:
+
+#### Path Parameters (3 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| host |  | String | *Required* Hostname of the FTP server
+| port |  | int | Port of the FTP server
+| directoryName |  | String | The starting directory
+|=======================================================================
+
+#### Query Parameters (102 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | common |  | String | *Required* Hostname of the FTP server
-| port | common |  | int | Port of the FTP server
-| directoryName | common |  | String | The starting directory
 | binary | common | false | boolean | Specifies the file transfer mode BINARY or ASCII. Default is ASCII (false).
-| charset | common |  | String | This option is used to specify the encoding of the file. You can use this on the consumer to specify the encodings of the files which allow Camel to know the charset it should load the file content in case the file content is being accessed. Likewise when writing a file you can use this option to specify which charset to write the file as well.
+| charset | common |  | String | This option is used to specify the encoding of the file. You can use this on the consumer to specify the encodings of the files which allow Camel to know the charset it should load the file content in case the file content is being accessed. Likewise when writing a file you can use this option to specify which charset to write the file as well. Do mind that when writing the file Camel may have to read the message content into memory to be able to convert the data into the configured charset so do not use this if you have big messages.
 | disconnect | common | false | boolean | Whether or not to disconnect from remote FTP server right after use. Disconnect will only disconnect the current connection to the FTP server. If you have a consumer which you want to stop then you need to stop the consumer/route instead.
 | doneFileName | common |  | String | Producer: If provided then Camel will write a 2nd done file when the original file has been written. The done file will be empty. This option configures what file name to use. Either you can specify a fixed name. Or you can use dynamic placeholders. The done file will always be written in the same folder as the original file. Consumer: If provided Camel will only consume files if a done file exists. This option configures what file name to use. Either you can specify a fixed name. Or you can use dynamic placeholders.The done file is always expected in the same folder as the original file. Only $file.name and $file.name.noext is supported as dynamic placeholders.
 | fileName | common |  | String | Use Expression such as File Language to dynamically set the filename. For consumers it's used as a filename filter. For producers it's used to evaluate the filename to write. If an expression is set it take precedence over the CamelFileName header. (Note: The header itself can also be an Expression). The expression options support both String and Expression types. If the expression is a String type it is always evaluated using the File Language. If the expression is an Expression type the specified Expression type is used - this allows you for instance to use OGNL expressions. For the consumer you can use it to filter filenames so you can for instance consume today's file using the File Language syntax: mydata-$date:now:yyyyMMdd.txt. The producers support the CamelOverruleFileName header which takes precedence over any existing CamelFileName header; the CamelOverruleFileName is a header that is used only once and makes it easier as this avoids to temporary store CamelFileName and have to restore it afterwards.
@@ -189,7 +203,6 @@ The FTP component supports 105 endpoint options which are listed below:
 | password | security |  | String | Password to use for login
 | username | security |  | String | Username to use for login
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

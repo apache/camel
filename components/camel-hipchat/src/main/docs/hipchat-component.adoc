@@ -1,6 +1,6 @@
 ## Hipchat Component
 
-*Available as of Camel 2.15.0*
+*Available as of Camel version 2.15*
 
 The Hipchat component supports producing and consuming messages from/to
 https://www.hipchat.com[Hipchat] service.
@@ -35,15 +35,27 @@ The Hipchat component has no options.
 
 
 // endpoint options: START
-The Hipchat component supports 24 endpoint options which are listed below:
+The Hipchat endpoint is configured using URI syntax:
 
-{% raw %}
+    hipchat:protocol:host:port
+
+  with the following path and query parameters:
+
+#### Path Parameters (3 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| protocol |  | String | *Required* The protocol for the hipchat server such as http.
+| host |  | String | *Required* The host for the hipchat server such as api.hipchat.com
+| port | 80 | Integer | The port for the hipchat server. Is by default 80.
+|=======================================================================
+
+#### Query Parameters (21 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| protocol | common |  | String | *Required* The protocol for the hipchat server such as http.
-| host | common |  | String | *Required* The host for the hipchat server such as api.hipchat.com
-| port | common | 80 | Integer | The port for the hipchat server. Is by default 80.
 | authToken | common |  | String | OAuth 2 auth token
 | consumeUsers | common |  | String | Username(s) when consuming messages from the hiptchat server. Multiple user names can be separated by comma.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
@@ -66,7 +78,6 @@ The Hipchat component supports 24 endpoint options which are listed below:
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

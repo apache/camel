@@ -20,6 +20,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.salesforce.internal.OperationName;
+import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.UriEndpoint;
@@ -32,7 +33,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The salesforce component is used for integrating Camel with the massive Salesforce API.
  */
-@UriEndpoint(scheme = "salesforce", title = "Salesforce", syntax = "salesforce:operationName:topicName", label = "api,cloud,crm", consumerClass = SalesforceConsumer.class)
+@UriEndpoint(firstVersion = "2.12.0", scheme = "salesforce", title = "Salesforce", syntax = "salesforce:operationName:topicName", label = "api,cloud,crm", consumerClass = SalesforceConsumer.class)
 public class SalesforceEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceEndpoint.class);
@@ -43,6 +44,9 @@ public class SalesforceEndpoint extends DefaultEndpoint {
     private final String topicName;
     @UriParam
     private final SalesforceEndpointConfig config;
+
+    @UriParam(label = "consumer", description = "The replayId value to use when subscribing")
+    private Long replayId;
 
     public SalesforceEndpoint(String uri, SalesforceComponent salesforceComponent,
                               SalesforceEndpointConfig config, OperationName operationName, String topicName) {
@@ -74,8 +78,8 @@ public class SalesforceEndpoint extends DefaultEndpoint {
                     operationName.value()));
         }
 
-        final SalesforceConsumer consumer = new SalesforceConsumer(this, processor,
-            getComponent().getSubscriptionHelper(topicName));
+        final SubscriptionHelper subscriptionHelper = getComponent().getSubscriptionHelper();
+        final SalesforceConsumer consumer = new SalesforceConsumer(this, processor, subscriptionHelper);
         configureConsumer(consumer);
         return consumer;
     }
@@ -101,6 +105,14 @@ public class SalesforceEndpoint extends DefaultEndpoint {
 
     public String getTopicName() {
         return topicName;
+    }
+
+    public void setReplayId(final Long replayId) {
+        this.replayId = replayId;
+    }
+
+    public Long getReplayId() {
+        return replayId;
     }
 
     @Override

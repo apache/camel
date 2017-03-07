@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.cloud;
 
 import org.apache.camel.CamelContext;
@@ -26,6 +25,7 @@ import org.apache.camel.Expression;
  * @see Expression
  */
 public interface ServiceExpressionFactory {
+
     /**
      * Creates an instance of a ServiceChooser.
      */

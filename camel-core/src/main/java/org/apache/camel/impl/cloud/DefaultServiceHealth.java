@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.impl.cloud;
 
 import java.util.Collections;
@@ -32,6 +31,7 @@ public class DefaultServiceHealth implements ServiceHealth {
     public DefaultServiceHealth() {
         this(true, null);
     }
+
     public DefaultServiceHealth(boolean healthy) {
         this(healthy, null);
     }

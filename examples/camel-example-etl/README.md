@@ -2,7 +2,10 @@
 
 ### Introduction
 
-This example shows how to use Camel as an ETL tool
+This example shows how to use Camel as an ETL tool.
+
+The ETL (Extract, Transform, Load) example shows how to load data into a database using Camel.
+In this example we will poll for files, transform them and then store them in the database via the JPA component.
 
 ### Build
 
@@ -47,13 +50,6 @@ this example's bundle gets removed and you don't see the logs anymore written in
 e.g. in case of Karaf start it again using:
 
 	karaf clean
-
-### Documentation
-
-For a full description of this example please see
-  <http://camel.apache.org/etl-example.html>
-
-<http://camel.apache.org/etl.html>
 
 ### Forum, Help, etc
 

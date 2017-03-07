@@ -1,6 +1,6 @@
 ## Properties Component
 
-*Available as of Camel 2.3*
+*Available as of Camel version 2.3*
 
 ### URI format
 
@@ -14,11 +14,10 @@ Where *key* is the key for the property to lookup
 ### Options
 
 // component options: START
-The Properties component supports 16 options which are listed below.
+The Properties component supports 17 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -38,19 +37,31 @@ The Properties component supports 16 options which are listed below.
 | initialProperties | common |  | Properties | Sets initial properties which will be used before any locations are resolved.
 | overrideProperties | common |  | Properties | Sets a special list of override properties that take precedence and will use first if a property exist.
 | systemPropertiesMode | common | 2 | int | Sets the system property mode.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 // endpoint options: START
-The Properties component supports 7 endpoint options which are listed below:
+The Properties endpoint is configured using URI syntax:
 
-{% raw %}
+    properties:key
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| key |  | String | *Required* Property key to use as placeholder
+|=======================================================================
+
+#### Query Parameters (6 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| key | common |  | String | *Required* Property key to use as placeholder
 | ignoreMissingLocation | common | false | boolean | Whether to silently ignore if a location cannot be located such as a properties file not found.
 | locations | common |  | String | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
@@ -58,7 +69,6 @@ The Properties component supports 7 endpoint options which are listed below:
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the default exchange pattern when creating an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

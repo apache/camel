@@ -40,7 +40,7 @@ import org.apache.camel.utils.cassandra.CassandraSessionHolder;
  *
  * It's based on Cassandra Java Driver provided by DataStax.
  */
-@UriEndpoint(scheme = "cql", title = "Cassandra CQL", syntax = "cql:beanRef:hosts:port/keyspace", consumerClass = CassandraConsumer.class, label = "database,nosql")
+@UriEndpoint(firstVersion = "2.15.0", scheme = "cql", title = "Cassandra CQL", syntax = "cql:beanRef:hosts:port/keyspace", consumerClass = CassandraConsumer.class, label = "database,nosql")
 public class CassandraEndpoint extends DefaultEndpoint {
 
     private volatile CassandraSessionHolder sessionHolder;

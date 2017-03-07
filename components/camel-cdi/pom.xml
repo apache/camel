@@ -27,9 +27,14 @@
   <artifactId>camel-cdi</artifactId>
   <packaging>jar</packaging>
   <name>Camel :: CDI</name>
-  <description>Camel Contexts and Dependency Injection Support</description>
+  <description>Using Camel with CDI</description>
 
   <properties>
+    <!-- use by camel-catalog -->
+    <firstVersion>2.10.0</firstVersion>
+    <label>java</label>
+    <title>CDI</title>
+
     <camel.osgi.import>
       !org.apache.camel.cdi.*,
       !org.apache.deltaspike.cdise.api.*,

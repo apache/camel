@@ -29,6 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 
+@Deprecated
 public class CircuitBreakerLoadBalancer extends LoadBalancerSupport implements Traceable, CamelContextAware {
     private static final int STATE_CLOSED = 0;
     private static final int STATE_HALF_OPEN = 1;

@@ -23,9 +23,6 @@ Then you can use the script in the client directory to send the request and chec
 or use browser to access upper urls with the user/password
 (`jim/jimspassword` with the admin and user role  or `bob/bobspassword` with user role).
 
-### Documentation
-This example is documented at <http://camel.apache.org/spring-security-example.html>
-
 ### Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums

@@ -25,11 +25,6 @@ The servlet is located at
 	http://localhost:8080/camel-example-servlet-tomcat/camel/hello
 <http://localhost:8080/camel-example-servlet-tomcat/camel/hello>
 
-### Documentation
-
-This example is documented at
-  <http://camel.apache.org/servlet-tomcat-example.html>
-
 ### Forum, Help, etc
 
 If you hit an problems please let us know on the Camel Forums

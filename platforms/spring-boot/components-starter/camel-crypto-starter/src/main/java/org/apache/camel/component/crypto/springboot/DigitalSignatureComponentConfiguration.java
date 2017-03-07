@@ -40,6 +40,12 @@ public class DigitalSignatureComponentConfiguration {
      * To use the shared DigitalSignatureConfiguration as configuration
      */
     private DigitalSignatureConfigurationNestedConfiguration configuration;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public DigitalSignatureConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -48,6 +54,15 @@ public class DigitalSignatureComponentConfiguration {
     public void setConfiguration(
             DigitalSignatureConfigurationNestedConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class DigitalSignatureConfigurationNestedConfiguration {

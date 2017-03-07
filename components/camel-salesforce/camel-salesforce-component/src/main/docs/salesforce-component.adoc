@@ -1,6 +1,6 @@
 ## Salesforce Component
 
-*Available as of Camel 2.12*
+*Available as of Camel version 2.12*
 
 This component supports producer and consumer endpoints to communicate
 with Salesforce using Java DTOs.  +
@@ -423,16 +423,22 @@ link:salesforce.html[Salesforce].
 
 
 // component options: START
-The Salesforce component supports 16 options which are listed below.
+The Salesforce component supports 24 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | loginConfig | security |  | SalesforceLoginConfig | To use the shared SalesforceLoginConfig as login configuration
-| config | advanced |  | SalesforceEndpointConfig | To use the shared SalesforceLoginConfig as configuration
+| loginUrl | security | https://login.salesforce.com | String | Salesforce login URL defaults to https://login.salesforce.com
+| clientId | security |  | String | Salesforce connected application Consumer Key
+| clientSecret | security |  | String | Salesforce connected application Consumer Secret
+| refreshToken | security |  | String | Salesforce connected application Consumer token
+| userName | security |  | String | Salesforce account user name
+| password | security |  | String | Salesforce account password
+| lazyLogin | security | false | boolean | Flag to enable/disable lazy OAuth default is false. When enabled OAuth token retrieval or generation is not done until the first API call
+| config | advanced |  | SalesforceEndpointConfig | To use the shared SalesforceEndpointConfig as endpoint configuration
 | httpClientProperties | advanced |  | Map | Used for configuring HTTP client properties as key/value pairs
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters
 | httpProxyHost | proxy |  | String | To configure HTTP proxy host
@@ -447,8 +453,8 @@ The Salesforce component supports 16 options which are listed below.
 | httpProxyRealm | security |  | String | HTTP proxy authentication realm
 | httpProxyUseDigestAuth | security | false | boolean | Use HTTP proxy Digest authentication false by default
 | packages | common |  | String[] | Package names to scan for DTO classes (multiple packages can be separated by comma).
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -461,14 +467,26 @@ The Salesforce component supports 16 options which are listed below.
 
 
 // endpoint options: START
-The Salesforce component supports 42 endpoint options which are listed below:
+The Salesforce endpoint is configured using URI syntax:
 
-{% raw %}
+    salesforce:operationName:topicName
+
+  with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| operationName |  | OperationName | The operation to use
+| topicName |  | String | The name of the topic to use
+|=======================================================================
+
+#### Query Parameters (41 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| operationName | producer |  | OperationName | The operation to use
-| topicName | consumer |  | String | The name of the topic to use
 | apexMethod | common |  | String | APEX method name
 | apexQueryParams | common |  | Map | Query params for APEX method
 | apexUrl | common |  | String | APEX method URL
@@ -476,7 +494,7 @@ The Salesforce component supports 42 endpoint options which are listed below:
 | backoffIncrement | common |  | long | Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect.
 | batchId | common |  | String | Bulk API Batch ID
 | contentType | common |  | ContentType | Bulk API content type one of XML CSV ZIP_XML ZIP_CSV
-| defaultReplayId | common |  | Integer | Default replayId setting if no value is found in link initialReplayIdMap
+| defaultReplayId | common |  | Long | Default replayId setting if no value is found in link initialReplayIdMap
 | format | common |  | PayloadFormat | Payload format to use for Salesforce API calls either JSON or XML defaults to JSON
 | httpClient | common |  | SalesforceHttpClient | Custom Jetty Http Client to use to connect to Salesforce.
 | includeDetails | common |  | Boolean | Include details in Salesforce1 Analytics report defaults to false.
@@ -506,11 +524,11 @@ The Salesforce component supports 42 endpoint options which are listed below:
 | sObjectSearch | common |  | String | Salesforce SOSL search string
 | updateTopic | common | false | boolean | Whether to update an existing Push Topic when using the Streaming API defaults to false
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| replayId | consumer |  | Long | The replayId value to use when subscribing
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

@@ -1,6 +1,6 @@
 ## Bonita Component
 
-*Available as of Camel 2.19*
+*Available as of Camel version 2.19*
 
 This Camel component allow you to communicate with a remote Bonita engine.
 
@@ -21,13 +21,25 @@ The Bonita component has no options.
 
 
 // endpoint options: START
-The Bonita component supports 10 endpoint options which are listed below:
+The Bonita endpoint is configured using URI syntax:
 
-{% raw %}
+    bonita:operation
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| operation |  | BonitaOperation | *Required* Operation to use
+|=======================================================================
+
+#### Query Parameters (9 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| operation | consumer |  | BonitaOperation | *Required* Operation to use
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | hostname | consumer | localhost | String | Hostname where Bonita engine runs
 | port | consumer | 8080 | String | Port of the server hosting Bonita engine
@@ -38,7 +50,6 @@ The Bonita component supports 10 endpoint options which are listed below:
 | password | security |  | String | Password to authenticate to Bonita engine.
 | username | security |  | String | Username to authenticate to Bonita engine.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 ### Body content

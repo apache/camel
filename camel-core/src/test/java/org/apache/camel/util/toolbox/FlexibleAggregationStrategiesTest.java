@@ -17,8 +17,11 @@
 package org.apache.camel.util.toolbox;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -26,6 +29,8 @@ import org.w3c.dom.Node;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.toolbox.FlexibleAggregationStrategy.CompletionAwareMixin;
@@ -200,7 +205,30 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
         assertEquals("ok", list.get(0).getTextContent());
         assertEquals("error", list.get(1).getTextContent());
     }
-    
+
+    @Test
+    public void testLinkedList() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).and().whenExactlyFailed(0).create();
+
+        template.sendBody("direct:linkedlist", Arrays.asList("FIRST", "SECOND"));
+
+        assertTrue(notify.matches(10, TimeUnit.SECONDS));
+    }
+
+    @Test
+    public void testHashSet() throws Exception {
+        HashSet<String> r = new HashSet<>();
+        r.add("FIRST");
+        r.add("SECOND");
+
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).and().whenExactlyFailed(0).create();
+
+        Set result = template.requestBody("direct:hashset", Arrays.asList("FIRST", "SECOND"), Set.class);
+
+        assertTrue(notify.matches(10, TimeUnit.SECONDS));
+        assertEquals(r, result);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -274,7 +302,28 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
                             .accumulateInCollection(ArrayList.class))
                         .constant(true).completionSize(3)
                     .to("mock:result.xpath1");
-                
+
+                from("direct:linkedlist")
+                    .log(LoggingLevel.INFO, "Before the first split the body is ${body} and has class ${body.getClass()}")
+                        .split(body(), AggregationStrategies.flexible().pick(body()).accumulateInCollection(LinkedList.class))
+                    .log(LoggingLevel.INFO, "During the first split the body is ${body} and has class ${body.getClass()}")
+                    .end()
+                    .log(LoggingLevel.INFO, "Before the second split the body is ${body} and has class ${body.getClass()}")
+                        .split(body(), AggregationStrategies.flexible().pick(body()).accumulateInCollection(LinkedList.class))
+                    .log(LoggingLevel.INFO, "During the second split the body is ${body} and has class ${body.getClass()}")
+                    .end()
+                    .log(LoggingLevel.INFO, "After the second split the body is ${body} and has class ${body.getClass()}");
+
+                from("direct:hashset")
+                    .log(LoggingLevel.INFO, "Before the first split the body is ${body} and has class ${body.getClass()}")
+                        .split(body(), AggregationStrategies.flexible().pick(body()).accumulateInCollection(HashSet.class))
+                    .log(LoggingLevel.INFO, "During the first split the body is ${body} and has class ${body.getClass()}")
+                    .end()
+                    .log(LoggingLevel.INFO, "Before the second split the body is ${body} and has class ${body.getClass()}")
+                        .split(body(), AggregationStrategies.flexible().pick(body()).accumulateInCollection(HashSet.class))
+                    .log(LoggingLevel.INFO, "During the second split the body is ${body} and has class ${body.getClass()}")
+                    .end()
+                    .log(LoggingLevel.INFO, "After the second split the body is ${body} and has class ${body.getClass()}");
             }
         };
     }

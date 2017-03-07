@@ -1,8 +1,6 @@
 ## Simple JMS Batch Component
-[[ConfluenceContent]]
-### SJMS Batch Component
 
-*Available as of Camel 2.16*
+*Available as of Camel version 2.16*
 
 SJMS Batch is a specialized component for highly performant,
 transactional batch consumption from a JMS queue. It can be thought of
@@ -76,7 +74,7 @@ for this component:
 </dependency>
 ----
 
-#### URI format
+### URI format
 
 [source]
 ----
@@ -112,11 +110,10 @@ link:aggregator2.html[aggregator] in this scenario.
 
 
 // component options: START
-The Simple JMS Batch component supports 4 options which are listed below.
+The Simple JMS Batch component supports 5 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -124,8 +121,8 @@ The Simple JMS Batch component supports 4 options which are listed below.
 | asyncStartListener | advanced | false | boolean | Whether to startup the consumer message listener asynchronously when starting a route. For example if a JmsConsumer cannot get a connection to a remote JMS broker then it may block while retrying and/or failover. This will cause Camel to block while starting routes. By setting this option to true you will let routes startup while the JmsConsumer connects to the JMS broker using a dedicated thread in asynchronous mode. If this option is used then beware that if the connection could not be established then an exception is logged at WARN level and the consumer will not be able to receive messages; You can then restart the route to retry.
 | recoveryInterval | advanced | 5000 | int | Specifies the interval between recovery attempts i.e. when a connection is being refreshed in milliseconds. The default is 5000 ms that is 5 seconds.
 | headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -137,13 +134,25 @@ The Simple JMS Batch component supports 4 options which are listed below.
 
 
 // endpoint options: START
-The Simple JMS Batch component supports 23 endpoint options which are listed below:
+The Simple JMS Batch endpoint is configured using URI syntax:
 
-{% raw %}
+    sjms-batch:destinationName
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| destinationName |  | String | *Required* The destination name. Only queues are supported names may be prefixed by 'queue:'.
+|=======================================================================
+
+#### Query Parameters (22 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| destinationName | consumer |  | String | *Required* The destination name. Only queues are supported names may be prefixed by 'queue:'.
 | aggregationStrategy | consumer |  | AggregationStrategy | *Required* The aggregation strategy to use which merges all the batched messages into a single message
 | allowNullBody | consumer | true | boolean | Whether to allow sending messages with no body. If this option is false and the message body is null then an JMSException is thrown.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
@@ -167,7 +176,6 @@ The Simple JMS Batch component supports 23 endpoint options which are listed bel
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 | timeoutCheckerExecutorService | advanced |  | ScheduledExecutorService | If using the completionInterval option a background thread is created to trigger the completion interval. Set this option to provide a custom thread pool to be used rather than creating a new thread for every consumer.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

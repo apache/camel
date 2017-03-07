@@ -17,12 +17,16 @@
 package org.apache.camel.maven.connector;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,4 +104,37 @@ public final class FileHelper {
 
         return lines;
     }
+
+    public static void copyFile(File from, File to) throws IOException {
+        FileChannel in = null;
+        FileChannel out = null;
+        try {
+            in = new FileInputStream(from).getChannel();
+            out = new FileOutputStream(to).getChannel();
+
+            long size = in.size();
+            long position = 0;
+            while (position < size) {
+                position += in.transferTo(position, 4096, out);
+            }
+        } finally {
+            close(in);
+            close(out);
+        }
+    }
+
+    /**
+     * Closes the given resource if it is available, logging any closing exceptions to the given log.
+     */
+    public static void close(Closeable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (IOException e) {
+                // ignore
+            }
+        }
+    }
+
+
 }

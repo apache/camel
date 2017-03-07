@@ -376,4 +376,13 @@ public interface CamelController {
      * @throws java.lang.Exception can be thrown
      */
     List<Map<String, String>> getTransformers(String camelContextName) throws Exception;
+
+    /**
+     * Return the validators
+     *
+     * @param camelContextName the Camel context.
+     * @return a list of key/value pairs with validator information
+     * @throws java.lang.Exception can be thrown
+     */
+    List<Map<String, String>> getValidators(String camelContextName) throws Exception;
 }

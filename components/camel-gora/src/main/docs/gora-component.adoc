@@ -1,10 +1,10 @@
 ## Gora Component
 
+*Available as of Camel version 2.14*
+
 *Camel-Gora* is an http://camel.apache.org/[Apache Camel] component that
 allows you to work with NoSQL databases using the
 http://gora.apache.org/[Apache Gora] framework.
-
-*Available as of Camel 2.14*
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -83,13 +83,25 @@ The Gora component has no options.
 
 
 // endpoint options: START
-The Gora component supports 22 endpoint options which are listed below:
+The Gora endpoint is configured using URI syntax:
 
-{% raw %}
+    gora:name
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| name |  | String | *Required* Instance name
+|=======================================================================
+
+#### Query Parameters (21 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| name | common |  | String | *Required* Instance name
 | dataStoreClass | common |  | String | The type of the dataStore
 | keyClass | common |  | String | The type class of the key
 | valueClass | common |  | String | The type of the value
@@ -112,7 +124,6 @@ The Gora component supports 22 endpoint options which are listed below:
 | hadoopConfiguration | advanced |  | Configuration | Hadoop Configuration
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

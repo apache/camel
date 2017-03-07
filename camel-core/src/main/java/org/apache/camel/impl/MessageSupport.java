@@ -20,6 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.DataType;
+import org.apache.camel.spi.DataTypeAware;
 
 /**
  * A base class for implementation inheritance providing the core
@@ -31,10 +33,11 @@ import org.apache.camel.TypeConverter;
  *
  * @version 
  */
-public abstract class MessageSupport implements Message {
+public abstract class MessageSupport implements Message, DataTypeAware {
     private Exchange exchange;
     private Object body;
     private String messageId;
+    private DataType dataType;
 
     @Override
     public String toString() {
@@ -112,6 +115,7 @@ public abstract class MessageSupport implements Message {
 
     public void setBody(Object body) {
         this.body = body;
+        this.dataType = body != null ? new DataType(body.getClass()) : null;
     }
 
     public <T> void setBody(Object value, Class<T> type) {
@@ -123,6 +127,25 @@ public abstract class MessageSupport implements Message {
             }
         }
         setBody(value);
+    }
+
+    @Override
+    public void setBody(Object body, DataType type) {
+        this.body = body;
+        this.dataType = type;
+    }
+
+    @Override
+    public DataType getDataType() {
+        if (this.dataType == null) {
+            this.dataType = body != null ? new DataType(body.getClass()) : null;
+        }
+        return this.dataType;
+    }
+
+    @Override
+    public void setDataType(DataType type) {
+        this.dataType = type;
     }
 
     public Message copy() {
@@ -137,6 +160,9 @@ public abstract class MessageSupport implements Message {
             return;
         }
         copyFromWithNewBody(that, that.getBody());
+        if (that instanceof DataTypeAware) {
+            setDataType(((DataTypeAware)that).getDataType());
+        }
     }
 
     public void copyFromWithNewBody(Message that, Object newBody) {

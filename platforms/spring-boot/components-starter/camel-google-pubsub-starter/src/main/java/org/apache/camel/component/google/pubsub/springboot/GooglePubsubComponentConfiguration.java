@@ -33,6 +33,12 @@ public class GooglePubsubComponentConfiguration {
      * Account Key / Email pair
      */
     private GooglePubsubConnectionFactoryNestedConfiguration connectionFactory;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public GooglePubsubConnectionFactoryNestedConfiguration getConnectionFactory() {
         return connectionFactory;
@@ -41,6 +47,15 @@ public class GooglePubsubComponentConfiguration {
     public void setConnectionFactory(
             GooglePubsubConnectionFactoryNestedConfiguration connectionFactory) {
         this.connectionFactory = connectionFactory;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class GooglePubsubConnectionFactoryNestedConfiguration {

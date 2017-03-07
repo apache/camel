@@ -1,6 +1,6 @@
 ## XML RPC Component
 
-*Available as of Camel 2.11*
+*Available as of Camel version 2.11*
 
 This component provides a dataformat for xml, which allows serialization
 and deserialization of request messages and response message using
@@ -101,13 +101,25 @@ The XML RPC component has no options.
 
 
 // endpoint options: START
-The XML RPC component supports 19 endpoint options which are listed below:
+The XML RPC endpoint is configured using URI syntax:
 
-{% raw %}
+    xmlrpc:address
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| address |  | String | *Required* The server url
+|=======================================================================
+
+#### Query Parameters (18 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| address | producer |  | String | *Required* The server url
 | basicEncoding | producer |  | String | Sets the encoding for basic authentication null means UTF-8 is chosen.
 | connectionTimeout | producer |  | int | Set the connection timeout in milliseconds 0 is to disable it
 | contentLengthOptional | producer | false | boolean | Whether a Content-Length header may be omitted. The XML-RPC specification demands that such a header be present.
@@ -127,7 +139,6 @@ The XML RPC component supports 19 endpoint options which are listed below:
 | basicPassword | security |  | String | The password for basic authentication.
 | basicUserName | security |  | String | The user name for basic authentication.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

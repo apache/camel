@@ -1,6 +1,6 @@
 ## XML Security Component
 
-*Available as of Camel 2.12.0*
+*Available as of Camel version 2.12*
 
 With this Apache Camel component, you can generate and validate XML
 signatures as described in the W3C standard
@@ -225,18 +225,17 @@ Signatures as Siblings of the Signed Elements".
 
 
 // component options: START
-The XML Security component supports 2 options which are listed below.
+The XML Security component supports 3 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | signerConfiguration | advanced |  | XmlSignerConfiguration | To use a shared XmlSignerConfiguration configuration to use as base for configuring endpoints.
 | verifierConfiguration | advanced |  | XmlVerifierConfiguration | To use a shared XmlVerifierConfiguration configuration to use as base for configuring endpoints.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -248,14 +247,26 @@ The XML Security component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The XML Security component supports 37 endpoint options which are listed below:
+The XML Security endpoint is configured using URI syntax:
 
-{% raw %}
+    xmlsecurity:command:name
+
+  with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| command |  | XmlCommand | *Required* Whether to sign or verify.
+| name |  | String | *Required* The name part in the URI can be chosen by the user to distinguish between different signer/verifier endpoints within the camel context.
+|=======================================================================
+
+#### Query Parameters (35 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| command | producer |  | XmlCommand | *Required* Whether to sign or verify.
-| name | producer |  | String | *Required* The name part in the URI can be chosen by the user to distinguish between different signer/verifier endpoints within the camel context.
 | baseUri | common |  | String | You can set a base URI which is used in the URI dereferencing. Relative URIs are then concatenated with the base URI.
 | clearHeaders | common | true | Boolean | Determines if the XML signature specific headers be cleared after signing and verification. Defaults to true.
 | cryptoContextProperties | common |  | Map | Sets the crypto context properties. See link XMLCryptoContextsetProperty(String Object). Possible properties are defined in XMLSignContext an XMLValidateContext (see Supported Properties). The following properties are set by default to the value link BooleanTRUE for the XML validation. If you want to switch these features off you must set the property value to link BooleanFALSE. org.jcp.xml.dsig.validateManifests javax.xml.crypto.dsig.cacheReference
@@ -292,7 +303,6 @@ The XML Security component supports 37 endpoint options which are listed below:
 | xmlSignature2Message | verify |  | XmlSignature2Message | Bean which maps the XML signature to the output-message after the validation. How this mapping should be done can be configured by the options outputNodeSearchType outputNodeSearch and removeSignatureElements. The default implementation offers three possibilities which are related to the three output node search types Default ElementName and XPath. The default implementation determines a node which is then serialized and set to the body of the output message If the search type is ElementName then the output node (which must be in this case an element) is determined by the local name and namespace defined in the search value (see option outputNodeSearch). If the search type is XPath then the output node is determined by the XPath specified in the search value (in this case the output node can be of type Element TextNode or Document). If the output node search type is Default then the following rules apply: In the enveloped XML signature case (there is a reference with URI= and transform http://www.w3.org/2000/09/xmldsigenveloped-signature) the incoming XML document without the Signature element is set to the output message body. In the non-enveloped XML signature case the message body is determined from a referenced Object; this is explained in more detail in chapter Output Node Determination in Enveloping XML Signature Case.
 | xmlSignatureChecker | verify |  | XmlSignatureChecker | This interface allows the application to check the XML signature before the validation is executed. This step is recommended in http://www.w3.org/TR/xmldsig-bestpractices/check-what-is-signed
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

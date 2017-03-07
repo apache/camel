@@ -24,9 +24,8 @@ import org.apache.camel.PollingConsumer;
  * <p/>
  * For instance camel-jms leverages this to allow a pool of pollingConsumers so we
  * can support concurrent pollingConsumer in a thread safe manner.
- * 
  */
-
+@Deprecated
 public class DefaultPollingConsumerServicePool extends DefaultServicePool<Endpoint, PollingConsumer> {
     
     public DefaultPollingConsumerServicePool() {

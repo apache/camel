@@ -1,6 +1,6 @@
 ## AWS DynamoDB Streams Component
 
-*Available as of Camel 2.7*
+*Available as of Camel version 2.17*
 
 The DynamoDB Stream component supports receiving messages from
 Amazon DynamoDB Stream service.
@@ -35,13 +35,25 @@ The AWS DynamoDB Streams component has no options.
 
 
 // endpoint options: START
-The AWS DynamoDB Streams component supports 24 endpoint options which are listed below:
+The AWS DynamoDB Streams endpoint is configured using URI syntax:
 
-{% raw %}
+    aws-ddbstream:tableName
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| tableName |  | String | *Required* Name of the dynamodb table
+|=======================================================================
+
+#### Query Parameters (23 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| tableName | consumer |  | String | *Required* Name of the dynamodb table
 | amazonDynamoDbStreamsClient | consumer |  | AmazonDynamoDBStreams | *Required* Amazon DynamoDB client to use for all requests for this endpoint
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | iteratorType | consumer | LATEST | ShardIteratorType | Defines where in the DynaboDB stream to start getting records. Note that using TRIM_HORIZON can cause a significant delay before the stream has caught up to real-time. if ATAFTER_SEQUENCE_NUMBER are used then a sequenceNumberProvider MUST be supplied.
@@ -66,7 +78,6 @@ The AWS DynamoDB Streams component supports 24 endpoint options which are listed
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

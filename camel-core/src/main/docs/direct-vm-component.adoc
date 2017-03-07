@@ -1,6 +1,6 @@
 ## Direct VM Component
 
-*Available as of Camel 2.10*
+*Available as of Camel version 2.10*
 
 The *direct-vm:* component provides direct, synchronous invocation of
 any consumers in the JVM when a producer sends a message exchange. +
@@ -40,11 +40,10 @@ Where *someName* can be any string to uniquely identify the endpoint
 
 
 // component options: START
-The Direct VM component supports 4 options which are listed below.
+The Direct VM component supports 5 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -52,21 +51,33 @@ The Direct VM component supports 4 options which are listed below.
 | timeout | producer | 30000 | long | The timeout value to use if block is enabled.
 | headerFilterStrategy | common |  | HeaderFilterStrategy | Sets a HeaderFilterStrategy that will only be applied on producer endpoints (on both directions: request and response). Default value: none.
 | propagateProperties | advanced | true | boolean | Whether to propagate or not properties from the producer side to the consumer side and vice versa. Default value: true.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 
 
 // endpoint options: START
-The Direct VM component supports 10 endpoint options which are listed below:
+The Direct VM endpoint is configured using URI syntax:
 
-{% raw %}
+    direct-vm:name
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| name |  | String | *Required* Name of direct-vm endpoint
+|=======================================================================
+
+#### Query Parameters (9 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| name | common |  | String | *Required* Name of direct-vm endpoint
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the default exchange pattern when creating an exchange.
@@ -77,7 +88,6 @@ The Direct VM component supports 10 endpoint options which are listed below:
 | propagateProperties | advanced | true | boolean | Whether to propagate or not properties from the producer side to the consumer side and vice versa. Default value: true.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

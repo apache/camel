@@ -32,6 +32,7 @@
   <description>A Camel route using Kotlin</description>
 
   <properties>
+    <category>Other Languages</category>
     <kotlin.version>1.0.6</kotlin.version>
   </properties>
 

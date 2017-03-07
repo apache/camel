@@ -146,6 +146,8 @@
               <goal>wadl2java</goal>
             </goals>
             <configuration>
+              <fork>${cxf.codegenplugin.forkmode}</fork>
+              <additionalJvmArgs>${cxf.codegen.jvmArgs}</additionalJvmArgs>
               <sourceRoot>${project.build.directory}/generated-sources/cxf</sourceRoot>
               <wadlOptions>
                 <wadlOption>

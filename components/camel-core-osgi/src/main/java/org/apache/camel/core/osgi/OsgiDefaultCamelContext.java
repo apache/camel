@@ -53,11 +53,6 @@ public class OsgiDefaultCamelContext extends DefaultCamelContext {
     }
 
     @Override
-    public String getComponentDocumentation(String componentName) throws IOException {
-        return BundleContextUtils.getComponentDocumentation(bundleContext, this, componentName);
-    }
-
-    @Override
     protected Registry createRegistry() {
         if (registry != null) {
             return OsgiCamelContextHelper.wrapRegistry(this, registry, bundleContext);

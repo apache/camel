@@ -30,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The exec component can be used to execute OS system commands.
  */
-@UriEndpoint(scheme = "exec", title = "Exec", syntax = "exec:executable", producerOnly = true, label = "system")
+@UriEndpoint(firstVersion = "2.3.0", scheme = "exec", title = "Exec", syntax = "exec:executable", producerOnly = true, label = "system")
 public class ExecEndpoint extends DefaultEndpoint {
 
     /**

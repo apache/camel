@@ -29,7 +29,6 @@ import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
-
 /**
  * A helper class for working with predicates
  *

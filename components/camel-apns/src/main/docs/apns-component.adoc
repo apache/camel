@@ -1,6 +1,6 @@
 ## APNS Component
 
-*Available as of Camel 2.8*
+*Available as of Camel version 2.8*
 
 The *apns* component is used for sending notifications to iOS devices.
 The apns components use https://github.com/notnoop/java-apns[javapns]
@@ -51,30 +51,41 @@ apns:consumer[?options]
 
 
 // component options: START
-The APNS component supports 1 options which are listed below.
+The APNS component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | apnsService | common |  | ApnsService | *Required* The ApnsService to use. The org.apache.camel.component.apns.factory.ApnsServiceFactory can be used to build a ApnsService
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 
 
 // endpoint options: START
-The APNS component supports 21 endpoint options which are listed below:
+The APNS endpoint is configured using URI syntax:
 
-{% raw %}
+    apns:name
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| name |  | String | Name of the endpoint
+|=======================================================================
+
+#### Query Parameters (20 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| name | common |  | String | Name of the endpoint
 | tokens | common |  | String | Configure this property in case you want to statically declare tokens related to devices you want to notify. Tokens are separated by comma.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
@@ -96,7 +107,6 @@ The APNS component supports 21 endpoint options which are listed below:
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

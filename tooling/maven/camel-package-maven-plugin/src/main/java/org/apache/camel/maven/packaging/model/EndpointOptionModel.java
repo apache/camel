@@ -19,6 +19,7 @@ package org.apache.camel.maven.packaging.model;
 public class EndpointOptionModel {
 
     private String name;
+    private String displayName;
     private String kind;
     private String group;
     private String required;
@@ -39,6 +40,14 @@ public class EndpointOptionModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public String getKind() {

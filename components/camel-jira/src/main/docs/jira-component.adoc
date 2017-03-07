@@ -1,6 +1,6 @@
 ## JIRA Component
 
-*Available as of Camel 2.15*
+*Available as of Camel version 2.15*
 
 The JIRA component interacts with the JIRA API by encapsulating
 Atlassian's https://marketplace.atlassian.com/plugins/com.atlassian.jira.jira-rest-java-client[REST
@@ -49,13 +49,25 @@ The JIRA component has no options.
 
 
 // endpoint options: START
-The JIRA component supports 10 endpoint options which are listed below:
+The JIRA endpoint is configured using URI syntax:
 
-{% raw %}
+    jira:type
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| type |  | JIRAType | *Required* Operation to perform such as create a new issue or a new comment
+|=======================================================================
+
+#### Query Parameters (9 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| type | common |  | JIRAType | *Required* Operation to perform such as create a new issue or a new comment
 | password | common |  | String | Password for login
 | serverUrl | common |  | String | *Required* URL to the JIRA server
 | username | common |  | String | Username for login
@@ -66,7 +78,6 @@ The JIRA component supports 10 endpoint options which are listed below:
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

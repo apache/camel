@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 /**
  * For calling out to external HTTP servers using Apache HTTP Client 3.x.
  */
-@UriEndpoint(scheme = "http,https", title = "HTTP,HTTPS", syntax = "http:httpUri", producerOnly = true, label = "http", lenientProperties = true)
+@UriEndpoint(firstVersion = "1.0.0", scheme = "http,https", title = "HTTP,HTTPS", syntax = "http:httpUri", producerOnly = true, label = "http", lenientProperties = true)
 public class HttpEndpoint extends HttpCommonEndpoint {
 
     // Note: all options must be documented with description in annotations so extended components can access the documentation

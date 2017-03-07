@@ -1,5 +1,7 @@
 ## Binding Component
 
+*Available as of Camel version 2.11*
+
 In Camel terms a _binding_ is a way of wrapping an
 link:endpoint.html[Endpoint] in a contract; such as a
 link:data-format.html[Data Format], a link:content-enricher.html[Content
@@ -24,20 +26,31 @@ The Binding component has no options.
 
 
 // endpoint options: START
-The Binding component supports 6 endpoint options which are listed below:
+The Binding endpoint is configured using URI syntax:
 
-{% raw %}
+    binding:bindingName:delegateUri
+
+  with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| bindingName |  | String | *Required* Name of the binding to lookup in the Camel registry.
+| delegateUri |  | String | *Required* Uri of the delegate endpoint.
+|=======================================================================
+
+#### Query Parameters (4 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| bindingName | common |  | String | *Required* Name of the binding to lookup in the Camel registry.
-| delegateUri | common |  | String | *Required* Uri of the delegate endpoint.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the default exchange pattern when creating an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

@@ -23,8 +23,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.ObjectHelper;
 
 public class KafkaComponent extends UriEndpointComponent {
+    
+    @Metadata(label = "common")
+    private String brokers;
 
     @Metadata(label = "advanced")
     private ExecutorService workerPool;
@@ -40,17 +44,33 @@ public class KafkaComponent extends UriEndpointComponent {
     @Override
     protected KafkaEndpoint createEndpoint(String uri, String remaining, Map<String, Object> params) throws Exception {
         KafkaEndpoint endpoint = new KafkaEndpoint(uri, this);
-        String brokers = remaining.split("\\?")[0];
-        if (brokers != null) {
-            endpoint.getConfiguration().setBrokers(brokers);
-        }
 
-        // configure component options before endpoint properties which can override from params
-        endpoint.getConfiguration().setWorkerPool(workerPool);
+        if (ObjectHelper.isEmpty(remaining)) {
+            throw new IllegalArgumentException("Topic must be configured on endpoint using syntax kafka:topic");
+        }
+        endpoint.getConfiguration().setTopic(remaining);
+        endpoint.getConfiguration().setWorkerPool(getWorkerPool());
+
+        // brokers can be configured on either component or endpoint level
+        // and the consumer and produce is aware of this and act accordingly
 
         setProperties(endpoint.getConfiguration(), params);
         setProperties(endpoint, params);
         return endpoint;
+    }
+
+    public String getBrokers() {
+        return brokers;
+    }
+
+    /**
+     * URL of the Kafka brokers to use.
+     * The format is host1:port1,host2:port2, and the list can be a subset of brokers or a VIP pointing to a subset of brokers.
+     * <p/>
+     * This option is known as <tt>bootstrap.servers</tt> in the Kafka documentation.
+     */
+    public void setBrokers(String brokers) {
+        this.brokers = brokers;
     }
 
     public ExecutorService getWorkerPool() {

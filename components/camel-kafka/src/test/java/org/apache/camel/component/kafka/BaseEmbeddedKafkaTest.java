@@ -16,55 +16,52 @@
  */
 package org.apache.camel.component.kafka;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.kafka.embedded.EmbeddedKafkaCluster;
+import org.apache.camel.component.kafka.embedded.EmbeddedKafkaBroker;
 import org.apache.camel.component.kafka.embedded.EmbeddedZookeeper;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class BaseEmbeddedKafkaTest extends CamelTestSupport {
 
-    static EmbeddedZookeeper embeddedZookeeper;
-    static EmbeddedKafkaCluster embeddedKafkaCluster;
+    @ClassRule
+    public static EmbeddedZookeeper zookeeper = new EmbeddedZookeeper(
+            AvailablePortFinder.getNextAvailable(23000));
 
-    private static volatile int zookeeperPort;
+    @ClassRule
+    public static EmbeddedKafkaBroker kafkaBroker =
+            new EmbeddedKafkaBroker(0,
+                    AvailablePortFinder.getNextAvailable(24000),
+                    zookeeper.getConnection(),
+                    new Properties());
 
-    private static volatile int kafkaPort;
+    private static final Logger LOG = LoggerFactory.getLogger(BaseEmbeddedKafkaTest.class);
 
     @BeforeClass
     public static void beforeClass() {
-        // start from somewhere in the 23xxx range
-        zookeeperPort = AvailablePortFinder.getNextAvailable(23000);
-        // find another ports for proxy route test
-        kafkaPort = AvailablePortFinder.getNextAvailable(24000);
-
-        embeddedZookeeper = new EmbeddedZookeeper(zookeeperPort);
-        // -1 for any available port
-        List<Integer> kafkaPorts = Collections.singletonList(kafkaPort);
-        embeddedKafkaCluster = new EmbeddedKafkaCluster(embeddedZookeeper.getConnection(), new Properties(), kafkaPorts);
-        try {
-            embeddedZookeeper.startup();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("### Embedded Zookeeper connection: " + embeddedZookeeper.getConnection());
-        embeddedKafkaCluster.startup();
-        System.out.println("### Embedded Kafka cluster broker list: " + embeddedKafkaCluster.getBrokerList());
+        LOG.info("### Embedded Zookeeper connection: " + zookeeper.getConnection());
+        LOG.info("### Embedded Kafka cluster broker list: " + kafkaBroker.getBrokerList());
     }
 
-    @AfterClass
-    public static void afterClass() {
-        embeddedKafkaCluster.shutdown();
-        embeddedZookeeper.shutdown();
+    protected Properties getDefaultProperties() {
+        Properties props = new Properties();
+        LOG.info("Connecting to Kafka port {}", kafkaBroker.getPort());
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBroker.getBrokerList());
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_SERIALIZER);
+        props.put(ProducerConfig.PARTITIONER_CLASS_CONFIG, KafkaConstants.KAFKA_DEFAULT_PARTITIONER);
+        props.put(ProducerConfig.ACKS_CONFIG, "1");
+        return props;
     }
 
     @Override
@@ -82,15 +79,20 @@ public class BaseEmbeddedKafkaTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.addComponent("properties", new PropertiesComponent("ref:prop"));
+
+        KafkaComponent kafka = new KafkaComponent();
+        kafka.setBrokers("localhost:" + getKafkaPort());
+        context.addComponent("kafka", kafka);
+
         return context;
     }
 
     protected static int getZookeeperPort() {
-        return zookeeperPort;
+        return zookeeper.getPort();
     }
 
     protected static int getKafkaPort() {
-        return kafkaPort;
+        return kafkaBroker.getPort();
     }
 
 }

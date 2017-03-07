@@ -507,6 +507,12 @@ public class PropertiesComponent extends UriEndpointComponent {
     }
 
     @Override
+    public boolean isResolvePropertyPlaceholders() {
+        // its chicken and egg, we cannot resolve placeholders on ourselves
+        return false;
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
 

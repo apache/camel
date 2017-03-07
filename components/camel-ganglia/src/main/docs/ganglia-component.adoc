@@ -1,6 +1,6 @@
 ## Ganglia Component
 
-*Available as of Camel 2.15.0*
+*Available as of Camel version 2.15*
 
 Provides a mechanism to send a value (the message body) as a metric to
 the http://ganglia.info[Ganglia] monitoring system.  Uses the gmetric4j
@@ -50,17 +50,16 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Ganglia component supports 1 options which are listed below.
+The Ganglia component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | configuration | advanced |  | GangliaConfiguration | To use the shared configuration
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -69,14 +68,26 @@ The Ganglia component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The Ganglia component supports 15 endpoint options which are listed below:
+The Ganglia endpoint is configured using URI syntax:
 
-{% raw %}
+    ganglia:host:port
+
+  with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| host | 239.2.11.71 | String | Host name for Ganglia server
+| port | 8649 | int | Port for Ganglia server
+|=======================================================================
+
+#### Query Parameters (13 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | producer | 239.2.11.71 | String | Host name for Ganglia server
-| port | producer | 8649 | int | Port for Ganglia server
 | dmax | producer | 0 | int | Minumum time in seconds before Ganglia will purge the metric value if it expires. Set to 0 and the value will remain in Ganglia indefinitely until a gmond agent restart.
 | groupName | producer | java | String | The group that the metric belongs to.
 | metricName | producer | metric | String | The name to use for the metric.
@@ -91,7 +102,6 @@ The Ganglia component supports 15 endpoint options which are listed below:
 | wireFormat31x | producer | true | boolean | Use the wire format of Ganglia 3.1.0 and later versions. Set this to false to use Ganglia 3.0.x or earlier.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

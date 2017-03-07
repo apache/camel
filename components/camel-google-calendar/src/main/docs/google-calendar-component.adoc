@@ -1,6 +1,6 @@
 ## Google Calendar Component
 
-*Available as of Camel 2.15*
+*Available as of Camel version 2.15*
 
 ### Component Description
 
@@ -37,18 +37,17 @@ for this component:
 
 
 // component options: START
-The Google Calendar component supports 2 options which are listed below.
+The Google Calendar component supports 3 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | configuration | common |  | GoogleCalendarConfiguration | To use the shared configuration
 | clientFactory | advanced |  | GoogleCalendarClientFactory | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleCalendarClientFactory
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -59,14 +58,26 @@ The Google Calendar component supports 2 options which are listed below.
 
 
 // endpoint options: START
-The Google Calendar component supports 16 endpoint options which are listed below:
+The Google Calendar endpoint is configured using URI syntax:
 
-{% raw %}
+    google-calendar:apiName/methodName
+
+  with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| apiName |  | GoogleCalendarApiName | *Required* What kind of operation to perform
+| methodName |  | String | *Required* What sub operation to use for the selected operation
+|=======================================================================
+
+#### Query Parameters (14 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| apiName | common |  | GoogleCalendarApiName | *Required* What kind of operation to perform
-| methodName | common |  | String | *Required* What sub operation to use for the selected operation
 | accessToken | common |  | String | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage.
 | applicationName | common |  | String | Google calendar application name. Example would be camel-google-calendar/1.0
 | clientId | common |  | String | Client ID of the calendar application
@@ -82,7 +93,6 @@ The Google Calendar component supports 16 endpoint options which are listed belo
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

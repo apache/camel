@@ -1,5 +1,7 @@
 ## iBatis Component
 
+*Available as of Camel version 1.2*
+
 The *ibatis:* component allows you to query, poll, insert, update and
 delete data in a relational database using
 http://ibatis.apache.org/[Apache iBATIS].
@@ -54,19 +56,18 @@ the root of the classpath and expected named as `SqlMapConfig.xml`. +
 
 
 // component options: START
-The iBatis component supports 3 options which are listed below.
+The iBatis component supports 4 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | sqlMapClient | advanced |  | SqlMapClient | To use the given com.ibatis.sqlmap.client.SqlMapClient
 | sqlMapConfig | common | classpath:SqlMapConfig.xml | String | Location of iBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath
 | useTransactions | common | true | boolean | Whether to use transactions. This option is by default true.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -77,13 +78,25 @@ The iBatis component supports 3 options which are listed below.
 
 
 // endpoint options: START
-The iBatis component supports 28 endpoint options which are listed below:
+The iBatis endpoint is configured using URI syntax:
 
-{% raw %}
+    ibatis:statement
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| statement |  | String | *Required* The statement name in the iBatis XML mapping file which maps to the query insert update or delete operation you wish to evaluate.
+|=======================================================================
+
+#### Query Parameters (27 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| statement | common |  | String | *Required* The statement name in the iBatis XML mapping file which maps to the query insert update or delete operation you wish to evaluate.
 | isolation | common | TRANSACTION_REPEATABLE_READ | String | Transaction isolation level
 | useTransactions | common | true | boolean | Whether to use transactions. This option is by default true.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
@@ -112,7 +125,6 @@ The iBatis component supports 28 endpoint options which are listed below:
 | timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
 | useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * instead of a BlockingQueue utilized by the standard SEDA.
  */
 @ManagedResource(description = "Managed Disruptor Endpoint")
-@UriEndpoint(scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM", syntax = "disruptor:name", consumerClass = DisruptorConsumer.class, label = "endpoint")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "disruptor,disruptor-vm", title = "Disruptor,Disruptor VM", syntax = "disruptor:name", consumerClass = DisruptorConsumer.class, label = "endpoint")
 public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint, MultipleConsumersSupport {
     public static final String DISRUPTOR_IGNORE_EXCHANGE = "disruptor.ignoreExchange";
     private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorEndpoint.class);

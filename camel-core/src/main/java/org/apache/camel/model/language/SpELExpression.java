@@ -27,7 +27,7 @@ import org.apache.camel.spi.Metadata;
  *
  * @version 
  */
-@Metadata(label = "language,spring", title = "SpEL")
+@Metadata(firstVersion = "2.7.0", label = "language,spring", title = "SpEL")
 @XmlRootElement(name = "spel")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SpELExpression extends ExpressionDefinition {

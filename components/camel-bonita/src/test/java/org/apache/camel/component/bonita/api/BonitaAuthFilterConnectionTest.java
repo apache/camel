@@ -43,7 +43,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore("javax.net.ssl.*")
+@PowerMockIgnore({"javax.net.ssl.*", "javax.management.*"})
 public class BonitaAuthFilterConnectionTest {
 
     @Rule
@@ -69,6 +69,19 @@ public class BonitaAuthFilterConnectionTest {
         BonitaAuthFilter bonitaAuthFilter = new BonitaAuthFilter(bonitaApiConfig);
         bonitaAuthFilter.filter(requestContext);
         assertEquals(1, requestContext.getHeaders().size());
+    }
+    
+    @Test
+    public void testConnectionSupportCSRF() throws Exception {
+        String port = wireMockRule.port() + "";
+        stubFor(post(urlEqualTo("/bonita/loginservice"))
+                .willReturn(aResponse().withHeader("Set-Cookie", "JSESSIONID=something", "X-Bonita-API-Token=something")));
+
+        BonitaAPIConfig bonitaApiConfig =
+                new BonitaAPIConfig("localhost", port, "username", "password");
+        BonitaAuthFilter bonitaAuthFilter = new BonitaAuthFilter(bonitaApiConfig);
+        bonitaAuthFilter.filter(requestContext);
+        assertEquals(2, requestContext.getHeaders().size());
     }
 
 }

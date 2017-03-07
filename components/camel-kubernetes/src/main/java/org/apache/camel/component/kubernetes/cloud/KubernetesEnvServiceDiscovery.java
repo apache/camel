@@ -32,7 +32,7 @@ public class KubernetesEnvServiceDiscovery extends KubernetesServiceDiscovery {
     }
 
     @Override
-    public List<ServiceDefinition> getUpdatedListOfServices(String name) {
+    public List<ServiceDefinition> getServices(String name) {
         try {
             final CamelContext ctx = getCamelContext();
             final String host = ctx.resolvePropertyPlaceholders("{{service.host:" + name + "}}");

@@ -31,7 +31,7 @@ import org.apache.camel.util.CamelContextHelper;
 /**
  * The ref component is used for lookup of existing endpoints bound in the Registry.
  */
-@UriEndpoint(scheme = "ref", title = "Ref", syntax = "ref:name", label = "core,endpoint")
+@UriEndpoint(firstVersion = "1.2.0", scheme = "ref", title = "Ref", syntax = "ref:name", label = "core,endpoint")
 public class RefEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private volatile Endpoint endpoint;

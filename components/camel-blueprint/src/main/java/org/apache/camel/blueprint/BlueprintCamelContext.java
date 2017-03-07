@@ -137,11 +137,6 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
     }
 
     @Override
-    public String getComponentDocumentation(String componentName) throws IOException {
-        return BundleContextUtils.getComponentDocumentation(bundleContext, this, componentName);
-    }
-
-    @Override
     public void blueprintEvent(BlueprintEvent event) {
         if (LOG.isDebugEnabled()) {
             String eventTypeString;

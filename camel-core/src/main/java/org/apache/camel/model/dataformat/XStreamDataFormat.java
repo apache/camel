@@ -46,7 +46,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-@Metadata(label = "dataformat,transformation,xml,json", title = "XStream")
+@Metadata(firstVersion = "1.3.0", label = "dataformat,transformation,xml,json", title = "XStream")
 @XmlRootElement(name = "xstream")
 @XmlAccessorType(XmlAccessType.NONE)
 public class XStreamDataFormat extends DataFormatDefinition {

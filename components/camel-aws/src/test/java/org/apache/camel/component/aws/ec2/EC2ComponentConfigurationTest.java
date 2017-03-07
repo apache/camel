@@ -16,20 +16,26 @@
  */
 package org.apache.camel.component.aws.ec2;
 
+import com.amazonaws.services.ec2.AmazonEC2Client;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
+import static org.mockito.Mockito.*;
+
+
+
 public class EC2ComponentConfigurationTest extends CamelTestSupport {
-    
+    AmazonEC2Client amazonEc2Client = mock(AmazonEC2Client.class);
     @Test
     public void createEndpointWithMinimalConfiguration() throws Exception {
         EC2Component component = new EC2Component(context);
         EC2Endpoint endpoint = (EC2Endpoint) component.createEndpoint(
-                "aws-ec2://TestDomain?accessKey=xxx&secretKey=yyy");
+                "aws-ec2://TestDomain?amazonEc2Client=#amazonEc2Client&accessKey=xxx&secretKey=yyy");
         
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
-        assertNull(endpoint.getConfiguration().getAmazonEc2Client());
+        assertNotNull(endpoint.getConfiguration().getAmazonEc2Client());
     }
     
     @Test(expected = IllegalArgumentException.class)
@@ -54,5 +60,18 @@ public class EC2ComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
         EC2Component component = new EC2Component(context);
         component.createEndpoint("aws-ec2://TestDomain?accessKey=xxx");
+    }
+    
+    @Test
+    public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
+        EC2Component component = new EC2Component(context);
+        component.createEndpoint("aws-ec2://TestDomain?amazonEc2Client=#amazonEc2Client");
+    }
+    
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry registry = super.createRegistry();
+        registry.bind("amazonEc2Client", amazonEc2Client);
+        return registry;
     }
 }

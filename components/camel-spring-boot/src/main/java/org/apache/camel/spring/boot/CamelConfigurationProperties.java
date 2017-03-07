@@ -16,7 +16,6 @@
  */
 package org.apache.camel.spring.boot;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -127,6 +126,24 @@ public class CamelConfigurationProperties {
      * If you run Spring-Boot with spring-boot-starter-web then the web container keeps the JVM running.
      */
     private boolean mainRunController;
+
+    /**
+     * To specify for how long time in seconds to keep running the JVM before automatic terminating the JVM.
+     * You can use this to run Spring Boot for a short while.
+     */
+    private int durationMaxSeconds;
+
+    /**
+     * To specify for how long time in seconds Camel can be idle before automatic terminating the JVM.
+     * You can use this to run Spring Boot for a short while.
+     */
+    private int durationMaxIdleSeconds;
+
+    /**
+     * To specify how many messages to process by Camel before automatic terminating the JVM.
+     * You can use this to run Spring Boot for a short while.
+     */
+    private int durationMaxMessages;
 
     /**
      * Whether to include non-singleton beans (prototypes) when scanning for RouteBuilder instances.
@@ -480,6 +497,30 @@ public class CamelConfigurationProperties {
 
     public void setMainRunController(boolean mainRunController) {
         this.mainRunController = mainRunController;
+    }
+
+    public int getDurationMaxSeconds() {
+        return durationMaxSeconds;
+    }
+
+    public void setDurationMaxSeconds(int durationMaxSeconds) {
+        this.durationMaxSeconds = durationMaxSeconds;
+    }
+
+    public int getDurationMaxIdleSeconds() {
+        return durationMaxIdleSeconds;
+    }
+
+    public void setDurationMaxIdleSeconds(int durationMaxIdleSeconds) {
+        this.durationMaxIdleSeconds = durationMaxIdleSeconds;
+    }
+
+    public int getDurationMaxMessages() {
+        return durationMaxMessages;
+    }
+
+    public void setDurationMaxMessages(int durationMaxMessages) {
+        this.durationMaxMessages = durationMaxMessages;
     }
 
     public int getLogDebugMaxChars() {

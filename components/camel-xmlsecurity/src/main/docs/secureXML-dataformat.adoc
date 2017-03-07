@@ -1,5 +1,7 @@
 ## XML Security DataFormat
 
+*Available as of Camel version 2.0*
+
 The XMLSecurity Data Format facilitates encryption and decryption of XML
 payloads at the Document, Element, and Element Content levels (including
 simultaneous multi-node encryption/decryption using XPath). To sign
@@ -40,7 +42,6 @@ The XML Security dataformat supports 12 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -57,7 +58,6 @@ The XML Security dataformat supports 12 options which are listed below.
 | addKeyValueForEncryptedKey | true | Boolean | Whether to add the public key used to encrypt the session key as a KeyValue in the EncryptedKey structure or not.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
-{% endraw %}
 // dataformat options: END
 
 

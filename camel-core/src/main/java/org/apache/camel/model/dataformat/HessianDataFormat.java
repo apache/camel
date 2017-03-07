@@ -26,7 +26,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Hessian data format
  */
-@Metadata(label = "dataformat,transformation", title = "Hessian")
+@Metadata(firstVersion = "2.17.0", label = "dataformat,transformation", title = "Hessian")
 @XmlRootElement(name = "hessian")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HessianDataFormat extends DataFormatDefinition {

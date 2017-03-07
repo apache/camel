@@ -32,7 +32,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * The jdbc component enables you to access databases through JDBC, where SQL queries are sent in the message body.
  */
-@UriEndpoint(scheme = "jdbc", title = "JDBC", syntax = "jdbc:dataSourceName", producerOnly = true, label = "database,sql")
+@UriEndpoint(firstVersion = "1.2.0", scheme = "jdbc", title = "JDBC", syntax = "jdbc:dataSourceName", producerOnly = true, label = "database,sql")
 public class JdbcEndpoint extends DefaultEndpoint {
 
     private DataSource dataSource;

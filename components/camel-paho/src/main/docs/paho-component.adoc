@@ -1,6 +1,6 @@
 ## Paho Component
 
-INFO: Available as of Camel 2.16 
+*Available as of Camel version 2.16*
 
 Paho component provides connector for the MQTT messaging protocol using
 the https://eclipse.org/paho/[Eclipse Paho] library. Paho is one of the
@@ -117,32 +117,43 @@ producerTemplate.sendBody("paho:topic", payload);
 
 
 // component options: START
-The Paho component supports 3 options which are listed below.
+The Paho component supports 4 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | brokerUrl | common |  | String | The URL of the MQTT broker.
 | clientId | common |  | String | MQTT client identifier.
 | connectOptions | advanced |  | MqttConnectOptions | Client connection options
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
 
 
 // endpoint options: START
-The Paho component supports 12 endpoint options which are listed below:
+The Paho endpoint is configured using URI syntax:
 
-{% raw %}
+    paho:topic
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| topic |  | String | *Required* Name of the topic
+|=======================================================================
+
+#### Query Parameters (11 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| topic | common |  | String | *Required* Name of the topic
 | brokerUrl | common | tcp://localhost:1883 | String | The URL of the MQTT broker.
 | clientId | common |  | String | MQTT client identifier.
 | connectOptions | common |  | MqttConnectOptions | Client connection options
@@ -155,7 +166,6 @@ The Paho component supports 12 endpoint options which are listed below:
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

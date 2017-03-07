@@ -1,11 +1,11 @@
 ## Protobuf DataFormat
 [[Protobuf-Protobuf-ProtocolBuffers]]
+*Available as of Camel version 2.2.0*
+
 Protobuf - Protocol Buffers
 ---------------------------
 
 "Protocol Buffers - Google's data interchange format"
-
-INFO: Available from Camel 2.2
 
 Camel provides a link:data-format.html[Data Format] to serialse between
 Java and the Protocol Buffer protocol. The project's site details why
@@ -28,14 +28,12 @@ The Protobuf dataformat supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | instanceClass |  | String | Name of class to use when unarmshalling
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
-{% endraw %}
 // dataformat options: END
 
 ### Protobuf overview

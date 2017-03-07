@@ -1,6 +1,6 @@
 ## Printer Component
 
-*Available as of Camel 2.1*
+*Available as of Camel version 2.1*
 
 The *printer* component provides a way to direct payloads on a route to
 a printer. Obviously the payload has to be a formatted piece of payload
@@ -52,15 +52,27 @@ The Printer component has no options.
 
 
 // endpoint options: START
-The Printer component supports 14 endpoint options which are listed below:
+The Printer endpoint is configured using URI syntax:
 
-{% raw %}
+    lpr:hostname:port/printername
+
+  with the following path and query parameters:
+
+#### Path Parameters (3 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| hostname |  | String | *Required* Hostname of the printer
+| port |  | int | Port number of the printer
+| printername |  | String | Name of the printer
+|=======================================================================
+
+#### Query Parameters (11 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| hostname | producer |  | String | *Required* Hostname of the printer
-| port | producer |  | int | Port number of the printer
-| printername | producer |  | String | Name of the printer
 | copies | producer | 1 | int | Number of copies to print
 | docFlavor | producer |  | DocFlavor | Sets DocFlavor to use.
 | flavor | producer |  | String | Sets DocFlavor to use.
@@ -73,7 +85,6 @@ The Printer component supports 14 endpoint options which are listed below:
 | sides | producer | one-sided | String | Sets one sided or two sided printing based on the javax.print.attribute.standard.Sides API
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

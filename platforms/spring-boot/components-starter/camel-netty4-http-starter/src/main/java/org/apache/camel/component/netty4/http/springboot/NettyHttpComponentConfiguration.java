@@ -65,6 +65,12 @@ public class NettyHttpComponentConfiguration {
      */
     @NestedConfigurationProperty
     private EventExecutorGroup executorService;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public NettyHttpBinding getNettyHttpBinding() {
         return nettyHttpBinding;
@@ -115,6 +121,15 @@ public class NettyHttpComponentConfiguration {
 
     public void setExecutorService(EventExecutorGroup executorService) {
         this.executorService = executorService;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class NettyHttpConfigurationNestedConfiguration {

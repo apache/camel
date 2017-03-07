@@ -16,6 +16,9 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
+
 /**
  * A Contract which represents the input type and/or output type of the {@link Endpoint} or {@link Processor}.
  */
@@ -23,6 +26,8 @@ public class Contract {
 
     private DataType inputType;
     private DataType outputType;
+    private boolean validateInput;
+    private boolean validateOutput;
     private String contractString;
     
     public DataType getInputType() {
@@ -31,6 +36,7 @@ public class Contract {
     
     /**
      * Set the input data type.
+     *
      * @param inputType input data type
      */
     public void setInputType(String inputType) {
@@ -40,6 +46,7 @@ public class Contract {
     
     /**
      * Set the input data type with Java class.
+     *
      * @param clazz Java class which represents input data type
      */
     public void setInputType(Class<?> clazz) {
@@ -53,6 +60,7 @@ public class Contract {
     
    /**
     * Set the output data type.
+    *
     * @param outputType output data type
     */
     public void setOutputType(String outputType) {
@@ -62,11 +70,34 @@ public class Contract {
     
     /**
      * Set the output data type with Java class.
+     *
      * @param clazz Java class which represents output data type
      */
     public void setOutputType(Class<?> clazz) {
         this.outputType = new DataType(clazz);
         this.contractString = null;
+    }
+    
+    public boolean isValidateInput() {
+        return validateInput;
+    }
+
+    /**
+     * Whether to validate the input
+     */
+    public void setValidateInput(boolean validate) {
+        this.validateInput = validate;
+    }
+    
+    public boolean isValidateOutput() {
+        return validateOutput;
+    }
+
+    /**
+     * Whether to validate the output
+     */
+    public void setValidateOutput(boolean validate) {
+        this.validateOutput = validate;
     }
     
     @Override

@@ -33,6 +33,7 @@ public class OriginalMessageProcessor implements Processor {
         } else {
             exchange.getIn().setHeader("HasOriginal", "true");
             exchange.getIn().setHeader("OriginalBody", original.getBody());
+            exchange.getIn().setHeader("OriginalExchangeId", original.getExchange().getExchangeId());
         }
     }
 

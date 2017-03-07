@@ -1,6 +1,6 @@
 ## Asterisk Component
 
-*Available as of Camel 2.18*
+*Available as of Camel version 2.18*
 
 The *asterisk:* component allows you to work easily with an Asterisk PBX Server http://www.asterisk.org/ using https://asterisk-java.org/[asterisk-java]
 
@@ -33,13 +33,25 @@ The Asterisk component has no options.
 // component options: END
 
 // endpoint options: START
-The Asterisk component supports 9 endpoint options which are listed below:
+The Asterisk endpoint is configured using URI syntax:
 
-{% raw %}
+    asterisk:name
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| name |  | String | *Required* Logical name
+|=======================================================================
+
+#### Query Parameters (8 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| name | common |  | String | *Required* Logical name
 | hostname | common |  | String | The hostname of the asterix server
 | password | common |  | String | Login password
 | username | common |  | String | Login username
@@ -49,7 +61,6 @@ The Asterisk component supports 9 endpoint options which are listed below:
 | action | producer |  | AsteriskActionEnum | What action to perform such as getting queue status sip peers or extension state.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 ### Action

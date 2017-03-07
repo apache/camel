@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
  * @see LoadBalancer
  */
 public interface LoadBalancerFactory {
+
     /**
      * Creates an instance of a LoadBalancer.
      */

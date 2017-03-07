@@ -736,7 +736,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                 }
             }
 
-            route.getOutputs().add(0, binding);
+            route.setRestBindingDefinition(binding);
 
             // create the from endpoint uri which is using the rest component
             String from = "rest:" + verb.asVerb() + ":" + buildUri(verb);

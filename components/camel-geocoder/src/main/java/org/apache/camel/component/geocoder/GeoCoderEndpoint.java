@@ -39,7 +39,7 @@ import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 /**
  * The geocoder component is used for looking up geocodes (latitude and longitude) for a given address, or reverse lookup.
  */
-@UriEndpoint(scheme = "geocoder", title = "Geocoder", syntax = "geocoder:address:latlng", producerOnly = true, label = "api,location")
+@UriEndpoint(firstVersion = "2.12.0", scheme = "geocoder", title = "Geocoder", syntax = "geocoder:address:latlng", producerOnly = true, label = "api,location")
 public class GeoCoderEndpoint extends DefaultEndpoint {
 
     @UriPath

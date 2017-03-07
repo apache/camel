@@ -1,6 +1,6 @@
 ## SNMP Component
 
-*Available as of Camel 2.1*
+*Available as of Camel version 2.1*
 
 The *snmp:* component gives you the ability to poll SNMP capable devices
 or receiving traps
@@ -49,14 +49,26 @@ The SNMP component has no options.
 
 
 // endpoint options: START
-The SNMP component supports 36 endpoint options which are listed below:
+The SNMP endpoint is configured using URI syntax:
 
-{% raw %}
+    snmp:host:port
+
+  with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| host |  | String | *Required* Hostname of the SNMP enabled device
+| port |  | Integer | *Required* Port number of the SNMP enabled device
+|=======================================================================
+
+#### Query Parameters (34 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | consumer |  | String | *Required* Hostname of the SNMP enabled device
-| port | consumer |  | Integer | *Required* Port number of the SNMP enabled device
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | delay | consumer | 60000 | long | Sets update rate in seconds
 | oids | consumer |  | String | Defines which values you are interested in. Please have a look at the Wikipedia to get a better understanding. You may provide a single OID or a coma separated list of OIDs. Example: oids=1.3.6.1.2.1.1.3.01.3.6.1.2.1.25.3.2.1.5.11.3.6.1.2.1.25.3.5.1.1.11.3.6.1.2.1.43.5.1.1.11.1
@@ -92,7 +104,6 @@ The SNMP component supports 36 endpoint options which are listed below:
 | securityLevel | security | 3 | int | Sets the security level for this target. The supplied security level must be supported by the security model dependent information associated with the security name set for this target. The value 1 means: No authentication and no encryption. Anyone can create and read messages with this security level The value 2 means: Authentication and no encryption. Only the one with the right authentication key can create messages with this security level but anyone can read the contents of the message. The value 3 means: Authentication and encryption. Only the one with the right authentication key can create messages with this security level and only the one with the right encryption/decryption key can read the contents of the message.
 | securityName | security |  | String | Sets the security name to be used with this target.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 ### The result of a poll

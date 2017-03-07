@@ -19,6 +19,7 @@ package org.apache.camel.impl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.DataFormatFactory;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.util.ResolverHelper;
@@ -29,38 +30,65 @@ import org.apache.camel.util.ResolverHelper;
  * @version
  */
 public class DefaultDataFormatResolver implements DataFormatResolver {
-
     public static final String DATAFORMAT_RESOURCE_PATH = "META-INF/services/org/apache/camel/dataformat/";
 
-    protected FactoryFinder dataformatFactory;
+    private FactoryFinder dataformatFactory;
 
+    @Override
     public DataFormat resolveDataFormat(String name, CamelContext context) {
         // lookup in registry first
         DataFormat dataFormat = ResolverHelper.lookupDataFormatInRegistryWithFallback(context, name);
 
         if (dataFormat == null) {
-            Class<?> type = null;
-            try {
-                if (dataformatFactory == null) {
-                    dataformatFactory = context.getFactoryFinder(DATAFORMAT_RESOURCE_PATH);
-                }
-                type = dataformatFactory.findClass(name);
-            } catch (NoFactoryAvailableException e) {
-                // ignore
-            } catch (Exception e) {
-                throw new IllegalArgumentException("Invalid URI, no DataFormat registered for scheme: " + name, e);
-            }
+            // If not found in the registry, try to create a new instance using
+            // a DataFormatFactory or from resources
+            dataFormat = createDataFormat(name, context);
+        }
 
-            if (type == null) {
-                type = context.getClassResolver().resolveClass(name);
-            }
+        return dataFormat;
+    }
 
-            if (type != null) {
-                if (DataFormat.class.isAssignableFrom(type)) {
-                    dataFormat = (DataFormat) context.getInjector().newInstance(type);
-                } else {
-                    throw new IllegalArgumentException("Resolving dataformat: " + name + " detected type conflict: Not a DataFormat implementation. Found: " + type.getName());
-                }
+    @Override
+    public DataFormat createDataFormat(String name, CamelContext context) {
+        DataFormat dataFormat = null;
+
+        // lookup in registry first
+        DataFormatFactory dataFormatFactory = ResolverHelper.lookupDataFormatFactoryInRegistryWithFallback(context, name);
+        if (dataFormatFactory != null) {
+            dataFormat = dataFormatFactory.newInstance();
+        }
+
+        if (dataFormat == null) {
+            dataFormat = createDataFormatFromResource(name, context);
+        }
+
+        return dataFormat;
+    }
+
+    private DataFormat createDataFormatFromResource(String name, CamelContext context) {
+        DataFormat dataFormat = null;
+
+        Class<?> type = null;
+        try {
+            if (dataformatFactory == null) {
+                dataformatFactory = context.getFactoryFinder(DATAFORMAT_RESOURCE_PATH);
+            }
+            type = dataformatFactory.findClass(name);
+        } catch (NoFactoryAvailableException e) {
+            // ignore
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid URI, no DataFormat registered for scheme: " + name, e);
+        }
+
+        if (type == null) {
+            type = context.getClassResolver().resolveClass(name);
+        }
+
+        if (type != null) {
+            if (DataFormat.class.isAssignableFrom(type)) {
+                dataFormat = (DataFormat) context.getInjector().newInstance(type);
+            } else {
+                throw new IllegalArgumentException("Resolving dataformat: " + name + " detected type conflict: Not a DataFormat implementation. Found: " + type.getName());
             }
         }
 

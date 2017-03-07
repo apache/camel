@@ -1,7 +1,6 @@
 ## Couchbase Component
-## Couchbase Component
 
-*Available as of Camel 2.19*
+*Available as of Camel version 2.19*
 
 The *couchbase:* component allows you to treat
 https://www.couchbase.com/[CouchBase] instances as a producer or consumer
@@ -34,14 +33,26 @@ The Couchbase component has no options.
 // component options: END
 
 // endpoint options: START
-The Couchbase component supports 50 endpoint options which are listed below:
+The Couchbase endpoint is configured using URI syntax:
 
-{% raw %}
+    couchbase:url
+
+  with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| protocol |  | String | *Required* The protocol to use
+| hostname |  | String | *Required* The hostname to use
+|=======================================================================
+
+#### Query Parameters (48 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| protocol | common |  | String | *Required* The protocol to use
-| hostname | common |  | String | *Required* The hostname to use
 | bucket | common |  | String | The bucket to use
 | key | common |  | String | The key to use
 | port | common | 8091 | int | The port number to use
@@ -49,11 +60,11 @@ The Couchbase component supports 50 endpoint options which are listed below:
 | consumerProcessedStrategy | consumer | none | String | Define the consumer Processed strategy to use
 | descending | consumer | false | boolean | Define if this operation is descending or not
 | designDocumentName | consumer | beer | String | The design document name to use
-| limit | consumer | -1 | int | The output limit to use
+| limit | consumer | 1 | int | The output limit to use
 | rangeEndKey | consumer |  | String | Define a range for the end key
 | rangeStartKey | consumer |  | String | Define a range for the start key
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-| skip | consumer | -1 | int | Define the skip to use
+| skip | consumer | 1 | int | Define the skip to use
 | viewName | consumer | brewery_beers | String | The view name to use
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
@@ -68,7 +79,7 @@ The Couchbase component supports 50 endpoint options which are listed below:
 | additionalHosts | advanced |  | String | The additional hosts
 | maxReconnectDelay | advanced | 30000 | long | Define the max delay during a reconnection
 | obsPollInterval | advanced | 400 | long | Define the observation polling interval
-| obsTimeout | advanced | -1 | long | Define the observation timeout
+| obsTimeout | advanced | 1 | long | Define the observation timeout
 | opQueueMaxBlockTime | advanced | 10000 | long | Define the max time an operation can be in queue blocked
 | opTimeOut | advanced | 2500 | long | Define the operation timeout
 | readBufferSize | advanced | 16384 | int | Define the buffer size
@@ -91,5 +102,4 @@ The Couchbase component supports 50 endpoint options which are listed below:
 | password | security |  | String | The password to use
 | username | security |  | String | The username to use
 |=======================================================================
-{% endraw %}
 // endpoint options: END

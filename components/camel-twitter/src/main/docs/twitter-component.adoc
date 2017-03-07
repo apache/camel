@@ -1,16 +1,6 @@
 ## Twitter Component
-ifdef::env-github[]
-:caution-caption: :boom:
-:important-caption: :exclamation:
-:note-caption: :information_source:
-:tip-caption: :bulb:
-:warning-caption: :warning:
-endif::[]
 
-[[ConfluenceContent]]
-### Twitter
-
-*Available as of Camel 2.10*
+*Available as of Camel version 2.10*
 
 The Twitter component enables the most useful features of the Twitter
 API by encapsulating http://twitter4j.org/[Twitter4J]. It allows direct,
@@ -53,11 +43,10 @@ settings which is mandatory to configure before using.
 
 
 // component options: START
-The Twitter component supports 8 options which are listed below.
+The Twitter component supports 9 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -69,8 +58,8 @@ The Twitter component supports 8 options which are listed below.
 | httpProxyUser | proxy |  | String | The http proxy user which can be used for the camel-twitter.
 | httpProxyPassword | proxy |  | String | The http proxy password which can be used for the camel-twitter.
 | httpProxyPort | proxy |  | int | The http proxy port which can be used for the camel-twitter.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -141,17 +130,29 @@ Removed from Camel 2.11 onwards.*
 
 
 // endpoint options: START
-The Twitter component supports 43 endpoint options which are listed below:
+The Twitter endpoint is configured using URI syntax:
 
-{% raw %}
+    twitter:kind
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| kind |  | String | *Required* What polling mode to use direct polling or event based. The event mode is only supported when the endpoint kind is event based.
+|=======================================================================
+
+#### Query Parameters (42 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| kind | common |  | String | *Required* What polling mode to use direct polling or event based. The event mode is only supported when the endpoint kind is event based.
 | user | common |  | String | Username used for user timeline consumption direct message production etc.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-| type | consumer | direct | EndpointType | Endpoint type to use. Only streaming supports event type.
+| type | consumer | polling | EndpointType | Endpoint type to use. Only streaming supports event type.
 | distanceMetric | consumer (advanced) | km | String | Used by the non-stream geography search to search by radius using the configured metrics. The unit can either be mi for miles or km for kilometers. You need to configure all the following options: longitude latitude radius and distanceMetric.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
@@ -191,7 +192,6 @@ The Twitter component supports 43 endpoint options which are listed below:
 | consumerKey | security |  | String | The consumer key. Can also be configured on the TwitterComponent level instead.
 | consumerSecret | security |  | String | The consumer secret. Can also be configured on the TwitterComponent level instead.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 
@@ -249,11 +249,11 @@ from("twitter://timeline/home?type=polling&delay=60&consumerKey=[s]&consumerSecr
   .to("bean:blah");
 ----
 
-#### To search for all statuses with the keyword 'camel':
+#### To search for all statuses with the keyword 'camel' only once:
 
 [source,java]
 ----
-from("twitter://search?type=direct&keywords=camel&consumerKey=[s]&consumerSecret=[s]&accessToken=[s]&accessTokenSecret=[s]")
+from("twitter://search?type=polling&keywords=camel&consumerKey=[s]&consumerSecret=[s]&accessToken=[s]&accessTokenSecret=[s]")
   .to("bean:blah");
 ----
 

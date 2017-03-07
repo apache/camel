@@ -1,5 +1,7 @@
 ## Flatpack DataFormat
 
+*Available as of Camel version 2.1*
+
 The link:flatpack.html[Flatpack] component ships with the Flatpack data
 format that can be used to format between fixed width or delimited text
 messages to a `List` of rows as `Map`.
@@ -23,7 +25,6 @@ The Flatpack dataformat supports 9 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
@@ -37,7 +38,6 @@ The Flatpack dataformat supports 9 options which are listed below.
 | ignoreExtraColumns | false | Boolean | Allows for lines to be longer than expected and ignores the extra characters.
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
-{% endraw %}
 // dataformat options: END
 
 ### Usage

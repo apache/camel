@@ -246,7 +246,7 @@ public class AMQPComponentConfiguration {
      * value to eg 100 to control how fast the consumers will shrink when less
      * work is required.
      */
-    private Integer maxMessagesPerTask = -1;
+    private Integer maxMessagesPerTask = 1;
     /**
      * To use a custom Spring
      * org.springframework.jms.support.converter.MessageConverter so you can be
@@ -323,7 +323,7 @@ public class AMQPComponentConfiguration {
      * When sending messages specifies the time-to-live of the message (in
      * milliseconds).
      */
-    private Long timeToLive = -1L;
+    private Long timeToLive = 1L;
     /**
      * Specifies whether to use transacted mode
      */
@@ -346,7 +346,7 @@ public class AMQPComponentConfiguration {
      * The timeout value of the transaction (in seconds) if using transacted
      * mode.
      */
-    private Integer transactionTimeout = -1;
+    private Integer transactionTimeout = 1;
     /**
      * Specifies whether to test the connection on startup. This ensures that
      * when Camel starts that all the JMS consumers have a valid connection to
@@ -554,11 +554,26 @@ public class AMQPComponentConfiguration {
      */
     private Long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime = 100L;
     /**
+     * Use this JMS property to correlate messages in InOut exchange pattern
+     * (request-reply) instead of JMSCorrelationID property. This allows you to
+     * exchange messages with systems that do not correlate messages using
+     * JMSCorrelationID JMS property. If used JMSCorrelationID will not be used
+     * or set by Camel. The value of here named property will be generated if
+     * not supplied in the header of the message under the same name.
+     */
+    private String correlationProperty;
+    /**
      * To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter
      * header to and from Camel message.
      */
     @NestedConfigurationProperty
     private HeaderFilterStrategy headerFilterStrategy;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public JmsConfiguration getConfiguration() {
         return configuration;
@@ -1160,6 +1175,14 @@ public class AMQPComponentConfiguration {
         this.waitForProvisionCorrelationToBeUpdatedThreadSleepingTime = waitForProvisionCorrelationToBeUpdatedThreadSleepingTime;
     }
 
+    public String getCorrelationProperty() {
+        return correlationProperty;
+    }
+
+    public void setCorrelationProperty(String correlationProperty) {
+        this.correlationProperty = correlationProperty;
+    }
+
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -1167,5 +1190,14 @@ public class AMQPComponentConfiguration {
     public void setHeaderFilterStrategy(
             HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

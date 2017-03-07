@@ -38,6 +38,13 @@ public @interface UriParam {
     String name() default "";
 
     /**
+     * A human display name of the parameter.
+     * <p/>
+     * This is used for documentation and tooling only.
+     */
+    String displayName() default "";
+
+    /**
      * The default value of the parameter.
      * <p/>
      * Note that this attribute is only for documentation purpose. The default value in use at runtime is the value the Java field was assigned.

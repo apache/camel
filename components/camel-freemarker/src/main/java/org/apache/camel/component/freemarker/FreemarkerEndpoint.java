@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Transforms the message using a FreeMarker template.
  */
-@UriEndpoint(scheme = "freemarker", title = "Freemarker", syntax = "freemarker:resourceUri", producerOnly = true, label = "transformation")
+@UriEndpoint(firstVersion = "2.10.0", scheme = "freemarker", title = "Freemarker", syntax = "freemarker:resourceUri", producerOnly = true, label = "transformation")
 public class FreemarkerEndpoint extends ResourceEndpoint {
 
     @UriParam

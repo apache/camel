@@ -530,11 +530,30 @@ public abstract class TestSupport extends TestCase {
      * <p/>
      * Uses <tt>java.version</tt> from the system properties to determine the version.
      *
-     * @param version such as 1.6
+     * @param version such as 1.6 or 6 
      * @return <tt>true</tt> if its that vendor.
      */
     public static boolean isJavaVersion(String version) {
-        String javaVersion = System.getProperty("java.version");
-        return javaVersion.contains(version.toLowerCase(Locale.ENGLISH));
+        if (version.contains(".")) { //before jdk 9
+            return Integer.parseInt(version.split("\\.")[1]) == getJavaMajorVersion();
+        } else {
+            return Integer.parseInt(version) == getJavaMajorVersion();
+        }
+    }
+
+    /**
+     * Returns the current major Java version e.g 8.
+     * <p/>
+     * Uses <tt>java.specification.version</tt> from the system properties to determine the major version.
+
+     * @return the current major Java version.
+     */
+    public static int getJavaMajorVersion() {
+        String javaSpecVersion = System.getProperty("java.specification.version");
+        if (javaSpecVersion.contains(".")) { //before jdk 9
+            return Integer.parseInt(javaSpecVersion.split("\\.")[1]);
+        } else {
+            return Integer.parseInt(javaSpecVersion);
+        }
     }
 }

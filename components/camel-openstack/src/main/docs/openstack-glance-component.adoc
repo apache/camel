@@ -1,6 +1,6 @@
 ## OpenStack Glance Component
 
-*Available as of Camel 2.19*
+*Available as of Camel version 2.19*
 
 The openstack-glance component allows messages to be sent to an OpenStack image services.
 
@@ -39,13 +39,25 @@ The OpenStack Glance component has no options.
 // component options: END
 
 // endpoint options: START
-The OpenStack Glance component supports 9 endpoint options which are listed below:
+The OpenStack Glance endpoint is configured using URI syntax:
 
-{% raw %}
+    openstack-glance:host
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| host |  | String | *Required* OpenStack host url
+|=======================================================================
+
+#### Query Parameters (8 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| host | producer |  | String | *Required* OpenStack host url
 | apiVersion | producer | V3 | String | OpenStack API version
 | config | producer |  | Config | OpenStack configuration
 | domain | producer | default | String | Authentication domain
@@ -55,7 +67,6 @@ The OpenStack Glance component supports 9 endpoint options which are listed belo
 | username | producer |  | String | *Required* OpenStack username
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

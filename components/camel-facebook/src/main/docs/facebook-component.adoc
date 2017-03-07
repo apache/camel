@@ -1,6 +1,6 @@
 ## Facebook Component
 
-*Available as of Camel 2.12*
+*Available as of Camel version 2.14*
 
 The Facebook component provides access to all of the Facebook APIs
 accessible using http://facebook4j.org/en/index.html[Facebook4J]. It
@@ -52,17 +52,16 @@ to application APIs.
 
 
 // component options: START
-The Facebook component supports 1 options which are listed below.
+The Facebook component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | configuration | advanced |  | FacebookConfiguration | To use the shared configuration
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -70,13 +69,25 @@ The Facebook component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The Facebook component supports 103 endpoint options which are listed below:
+The Facebook endpoint is configured using URI syntax:
 
-{% raw %}
+    facebook:methodName
+
+  with the following path and query parameters:
+
+#### Path Parameters (1 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| methodName |  | String | *Required* What operation to perform
+|=======================================================================
+
+#### Query Parameters (102 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| methodName | common |  | String | *Required* What operation to perform
 | achievementURL | common |  | URL | The unique URL of the achievement
 | albumId | common |  | String | The album ID
 | albumUpdate | common |  | AlbumUpdate | The facebook Album to be created or updated
@@ -180,7 +191,6 @@ The Facebook component supports 103 endpoint options which are listed below:
 | oAuthAuthorizationURL | security | https://www.facebook.com/dialog/oauth | String | OAuth authorization URL
 | oAuthPermissions | security |  | String | Default OAuth permissions. Comma separated permission names. See https://developers.facebook.com/docs/reference/login/permissions for the detail
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 

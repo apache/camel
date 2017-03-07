@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
  * @see ServiceFilter
  */
 public interface ServiceFilterFactory {
+
     /**
      * Creates an instance of a ServiceFilter.
      */

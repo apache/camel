@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.impl.cloud;
-
 
 public interface ServiceCallConstants {
     String SERVICE_CALL_SCHEME = "CamelServiceCallScheme";

@@ -33,11 +33,13 @@ public class FromRestDefaultValueTest extends ContextTestSupport {
     public void testDefaultValue() throws Exception {
         // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory
         getMockEndpoint("mock:bye").expectedHeaderReceived("kind", "customer");
-        getMockEndpoint("mock:bye").expectedHeaderReceived("kind", "admin");
-
         template.sendBody("seda:get-say-bye", "Hello World");
-        template.sendBodyAndHeader("seda:get-say-bye", "Bye World", "kind", "admin");
+        assertMockEndpointsSatisfied();
 
+        resetMocks();
+
+        getMockEndpoint("mock:bye").expectedHeaderReceived("kind", "admin");
+        template.sendBodyAndHeader("seda:get-say-bye", "Bye World", "kind", "admin");
         assertMockEndpointsSatisfied();
     }
 

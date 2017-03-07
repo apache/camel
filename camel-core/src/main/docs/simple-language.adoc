@@ -1,5 +1,7 @@
 ## Simple Language
 
+*Available as of Camel version 1.1*
+
 The Simple Expression Language was a really simple language when it was
 created, but has since grown more powerful. It is primarily intended for
 being a really small and simple language for evaluating
@@ -83,14 +85,12 @@ The Simple language supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | resultType |  | String | Sets the class name of the result type (type from output)
 | trim | true | Boolean | Whether to trim the value to remove leading and trailing whitespaces and line breaks
 |=======================================================================
-{% endraw %}
 // language options: END
 
 ### Variables

@@ -28,12 +28,12 @@
 
   <artifactId>camel-example-spring-boot-rest-jpa</artifactId>
   <name>Camel :: Example :: Spring Boot REST / JPA</name>
-  <description>
-    An example demonstrating how to use Camel REST DSL with JPA
-    to expose a RESTful API that performs CRUD operations on a database
-  </description>
+  <description>An example demonstrating how to use Camel REST DSL with JPA to expose a RESTful API that performs CRUD operations on a database</description>
 
   <properties>
+    <category>Database</category>
+    <title>Spring Boot REST JPA</title>
+
     <spring.boot-version>${spring-boot-version}</spring.boot-version>
     <!-- Spring Boot default profile in order to use an embedded database -->
     <run.profiles>dev</run.profiles>

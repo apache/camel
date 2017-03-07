@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 
@@ -42,15 +43,19 @@ public class RestComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        String restConfigurationName = getAndRemoveParameter(parameters, "componentName", String.class, componentName);
+
         RestEndpoint answer = new RestEndpoint(uri, this);
-        answer.setComponentName(componentName);
+        answer.setComponentName(restConfigurationName);
         answer.setApiDoc(apiDoc);
+
+        RestConfiguration config = getCamelContext().getRestConfiguration(restConfigurationName, true);
 
         // if no explicit host was given, then fallback and use default configured host
         String h = resolveAndRemoveReferenceParameter(parameters, "host", String.class, host);
-        if (h == null && getCamelContext().getRestConfiguration() != null) {
-            h = getCamelContext().getRestConfiguration().getHost();
-            int port = getCamelContext().getRestConfiguration().getPort();
+        if (h == null && config != null) {
+            h = config.getHost();
+            int port = config.getPort();
             // is there a custom port number
             if (port > 0 && port != 80 && port != 443) {
                 h += ":" + port;
@@ -96,17 +101,17 @@ public class RestComponent extends UriEndpointComponent {
         answer.setUriTemplate(uriTemplate);
 
         // if no explicit component name was given, then fallback and use default configured component name
-        if (answer.getComponentName() == null && getCamelContext().getRestConfiguration() != null) {
-            String name = getCamelContext().getRestConfiguration().getProducerComponent();
+        if (answer.getComponentName() == null && config != null) {
+            String name = config.getProducerComponent();
             if (name == null) {
                 // fallback and use the consumer name
-                name = getCamelContext().getRestConfiguration().getComponent();
+                name = config.getComponent();
             }
             answer.setComponentName(name);
         }
         // if no explicit producer api was given, then fallback and use default configured
-        if (answer.getApiDoc() == null && getCamelContext().getRestConfiguration() != null) {
-            answer.setApiDoc(getCamelContext().getRestConfiguration().getProducerApiDoc());
+        if (answer.getApiDoc() == null && config != null) {
+            answer.setApiDoc(config.getProducerApiDoc());
         }
 
         return answer;

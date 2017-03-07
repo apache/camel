@@ -49,6 +49,7 @@ public class BonitaAuthFilter implements ClientRequestFilter {
         if (requestContext.getCookies().get("JSESSIONID") == null) {
             String username = bonitaApiConfig.getUsername();
             String password = bonitaApiConfig.getPassword();
+            String bonitaApiToken = null;
             if (ObjectHelper.isEmpty(username)) {
                 throw new IllegalArgumentException("Username provided is null or empty.");
             }
@@ -68,9 +69,14 @@ public class BonitaAuthFilter implements ClientRequestFilter {
             Map<String, NewCookie> cr = response.getCookies();
             ArrayList<Object> cookies = new ArrayList<>();
             for (NewCookie cookie : cr.values()) {
+                if ("X-Bonita-API-Token".equals(cookie.getName())) {
+                    bonitaApiToken = cookie.getValue();
+                    requestContext.getHeaders().add("X-Bonita-API-Token", bonitaApiToken);
+                }
                 cookies.add(cookie.toCookie());
             }
             requestContext.getHeaders().put("Cookie", cookies);
+
         }
     }
 

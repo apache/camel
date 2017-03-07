@@ -28,7 +28,7 @@ import org.apache.camel.spi.UriPath;
 /**
  * To lookup domain information and run DNS queries using DNSJava.
  */
-@UriEndpoint(scheme = "dns", title = "DNS", syntax = "dns:dnsType", producerOnly = true, label = "networking")
+@UriEndpoint(firstVersion = "2.7.0", scheme = "dns", title = "DNS", syntax = "dns:dnsType", producerOnly = true, label = "networking")
 public class DnsEndpoint extends DefaultEndpoint {
 
     @UriPath @Metadata(required = "true")

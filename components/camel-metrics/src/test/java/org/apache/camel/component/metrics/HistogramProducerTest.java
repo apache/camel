@@ -88,13 +88,14 @@ public class HistogramProducerTest {
 
     @Test
     public void testProcessValueNotSet() throws Exception {
+        Object action = null;
         when(endpoint.getValue()).thenReturn(null);
         when(in.getHeader(HEADER_HISTOGRAM_VALUE, null, Long.class)).thenReturn(null);
         producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(registry, times(1)).histogram(METRICS_NAME);
         inOrder.verify(endpoint, times(1)).getValue();
-        inOrder.verify(in, times(1)).getHeader(HEADER_HISTOGRAM_VALUE, null, Long.class);
+        inOrder.verify(in, times(1)).getHeader(HEADER_HISTOGRAM_VALUE, action, Long.class);
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -111,16 +112,4 @@ public class HistogramProducerTest {
         inOrder.verifyNoMoreInteractions();
     }
 
-    @Test
-    public void testProcessOverrideUriValueNotSet() throws Exception {
-        when(endpoint.getValue()).thenReturn(null);
-        when(in.getHeader(HEADER_HISTOGRAM_VALUE, null, Long.class)).thenReturn(VALUE + 2);
-        producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(registry, times(1)).histogram(METRICS_NAME);
-        inOrder.verify(endpoint, times(1)).getValue();
-        inOrder.verify(in, times(1)).getHeader(HEADER_HISTOGRAM_VALUE, null, Long.class);
-        inOrder.verify(histogram, times(1)).update(VALUE + 2);
-        inOrder.verifyNoMoreInteractions();
-    }
 }

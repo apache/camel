@@ -402,13 +402,13 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         uriTemplate = FileUtil.stripLeadingSeparator(uriTemplate);
 
         // get the endpoint
-        String url;
-        if (uriTemplate != null) {
-            url = String.format("netty4-http:%s/%s/%s", host, basePath, uriTemplate);
-        } else {
-            url = String.format("netty4-http:%s/%s", host, basePath);
+        String url = "netty4-http:" + host;
+        if (!ObjectHelper.isEmpty(basePath)) {
+            url += "/" + basePath;
         }
-
+        if (!ObjectHelper.isEmpty(uriTemplate)) {
+            url += "/" + uriTemplate;
+        }
 
         NettyHttpEndpoint endpoint = camelContext.getEndpoint(url, NettyHttpEndpoint.class);
         if (parameters != null && !parameters.isEmpty()) {

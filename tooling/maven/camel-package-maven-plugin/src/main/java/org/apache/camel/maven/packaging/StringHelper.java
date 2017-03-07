@@ -58,4 +58,43 @@ public final class StringHelper {
         return sb.toString();
     }
 
+    /**
+     * Converts the value to use title style instead of dash cased
+     */
+    public static String camelDashToTitle(String value) {
+        StringBuilder sb = new StringBuilder(value.length());
+        boolean dash = false;
+
+        for (char c : value.toCharArray()) {
+            if ('-' == c) {
+                dash = true;
+                continue;
+            }
+
+            if (dash) {
+                sb.append(' ');
+                sb.append(Character.toUpperCase(c));
+            } else {
+                // upper case first
+                if (sb.length() == 0) {
+                    sb.append(Character.toUpperCase(c));
+                } else {
+                    sb.append(c);
+                }
+            }
+            dash = false;
+        }
+        return sb.toString();
+    }
+
+    public static String cutLastZeroDigit(String version) {
+        String answer = version;
+        // cut last digit so its not 2.18.0 but 2.18
+        String[] parts = version.split("\\.");
+        if (parts.length == 3 && parts[2].equals("0")) {
+            answer = parts[0] + "." + parts[1];
+        }
+        return answer;
+    }
+
 }

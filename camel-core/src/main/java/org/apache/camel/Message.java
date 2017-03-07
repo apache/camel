@@ -18,7 +18,7 @@ package org.apache.camel;
 
 import java.util.Map;
 import java.util.Set;
-
+import java.util.function.Supplier;
 import javax.activation.DataHandler;
 
 /**
@@ -88,6 +88,13 @@ public interface Message {
     Object getHeader(String name, Object defaultValue);
 
     /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     */
+    Object getHeader(String name, Supplier<Object> defaultValueSupplier);
+
+    /**
      * Returns a header associated with this message by name and specifying the
      * type required
      *
@@ -110,6 +117,13 @@ public interface Message {
      *         the given name or <tt>null</tt> if it cannot be converted to the given type
      */
     <T> T getHeader(String name, Object defaultValue, Class<T> type);
+
+    /**
+     * TODO: document
+     * Note: this is experimental and subject to changes in future releases.
+     *
+     */
+    <T> T getHeader(String name, Supplier<Object> defaultValueSupplier, Class<T> type);
 
     /**
      * Sets a header on the message
@@ -178,7 +192,11 @@ public interface Message {
     /**
      * Returns the body of the message as a POJO
      * <p/>
-     * The body can be <tt>null</tt> if no body is set
+     * The body can be <tt>null</tt> if no body is set.
+     * <p/>
+     * Notice if the message body is stream based then calling this method multiple times may lead to the stream not being able to be re-read again.
+     * You can enable stream caching and call the {@link StreamCache#reset()} method to reset the stream to be able to re-read again (if possible).
+     * See more details about <a href="http://camel.apache.org/stream-caching.html">stream caching</a>.
      *
      * @return the body, can be <tt>null</tt>
      */
@@ -186,6 +204,9 @@ public interface Message {
 
     /**
      * Returns the body of the message as a POJO
+     * <p/>
+     * Notice if the message body is stream based then calling this method multiple times may lead to the stream not being able to be re-read again.
+     * See more details about <a href="http://camel.apache.org/stream-caching.html">stream caching</a>.
      *
      * @return the body, is never <tt>null</tt>
      * @throws InvalidPayloadException Is thrown if the body being <tt>null</tt> or wrong class type
@@ -194,6 +215,10 @@ public interface Message {
 
     /**
      * Returns the body as the specified type
+     * <p/>
+     * Notice if the message body is stream based then calling this method multiple times may lead to the stream not being able to be re-read again.
+     * You can enable stream caching and call the {@link StreamCache#reset()} method to reset the stream to be able to re-read again (if possible).
+     * See more details about <a href="http://camel.apache.org/stream-caching.html">stream caching</a>.
      *
      * @param type the type that the body
      * @return the body of the message as the specified type, or <tt>null</tt> if no body exists
@@ -203,6 +228,10 @@ public interface Message {
 
     /**
      * Returns the mandatory body as the specified type
+     * <p/>
+     * Notice if the message body is stream based then calling this method multiple times may lead to the stream not being able to be re-read again.
+     * You can enable stream caching and call the {@link StreamCache#reset()} method to reset the stream to be able to re-read again (if possible).
+     * See more details about <a href="http://camel.apache.org/stream-caching.html">stream caching</a>.
      *
      * @param type the type that the body
      * @return the body of the message as the specified type, is never <tt>null</tt>.

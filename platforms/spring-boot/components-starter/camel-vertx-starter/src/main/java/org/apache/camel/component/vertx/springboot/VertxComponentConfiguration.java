@@ -60,6 +60,12 @@ public class VertxComponentConfiguration {
      * default value is 60.
      */
     private Integer timeout = 60;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public VertxFactory getVertxFactory() {
         return vertxFactory;
@@ -107,5 +113,14 @@ public class VertxComponentConfiguration {
 
     public void setTimeout(Integer timeout) {
         this.timeout = timeout;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 }

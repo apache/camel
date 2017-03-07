@@ -31,6 +31,11 @@
   <description>An example using Camel CXF (code first) with Apache Tomcat</description>
   <packaging>war</packaging>
 
+  <properties>
+    <category>WebService</category>
+    <title>CXF Tomcat</title>
+  </properties>
+
   <build>
     <plugins>
       <plugin>

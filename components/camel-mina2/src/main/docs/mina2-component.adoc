@@ -1,6 +1,6 @@
 ## Mina2 Component
 
-*Available as of Camel 2.10*
+*Available as of Camel version 2.10*
 
 The *mina2:* component is a transport for working with
 http://mina.apache.org/[Apache MINA 2.x]
@@ -63,17 +63,16 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Mina2 component supports 1 options which are listed below.
+The Mina2 component supports 2 options which are listed below.
 
 
 
-{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | configuration | advanced |  | Mina2Configuration | To use the shared mina configuration.
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
-{% endraw %}
 // component options: END
 
 
@@ -84,15 +83,27 @@ The Mina2 component supports 1 options which are listed below.
 
 
 // endpoint options: START
-The Mina2 component supports 29 endpoint options which are listed below:
+The Mina2 endpoint is configured using URI syntax:
 
-{% raw %}
+    mina2:protocol:host:port
+
+  with the following path and query parameters:
+
+#### Path Parameters (3 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| protocol |  | String | *Required* Protocol to use
+| host |  | String | *Required* Hostname to use. Use localhost or 0.0.0.0 for local server as consumer. For producer use the hostname or ip address of the remote server.
+| port |  | int | *Required* Port number
+|=======================================================================
+
+#### Query Parameters (26 parameters):
+
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
-| protocol | common |  | String | *Required* Protocol to use
-| host | common |  | String | *Required* Hostname to use. Use localhost or 0.0.0.0 for local server as consumer. For producer use the hostname or ip address of the remote server.
-| port | common |  | int | *Required* Port number
 | disconnect | common | false | boolean | Whether or not to disconnect(close) from Mina session right after use. Can be used for both consumer and producer.
 | minaLogger | common | false | boolean | You can enable the Apache MINA logging filter. Apache MINA uses slf4j logging at INFO level to log all input and output.
 | sync | common | true | boolean | Setting to set endpoint as one-way or request-response.
@@ -112,7 +123,7 @@ The Mina2 component supports 29 endpoint options which are listed below:
 | allowDefaultCodec | codec | true | boolean | The mina component installs a default codec if both codec is null and textline is false. Setting allowDefaultCodec to false prevents the mina component from installing a default codec as the first element in the filter chain. This is useful in scenarios where another filter must be the first in the filter chain like the SSL filter.
 | codec | codec |  | ProtocolCodecFactory | To use a custom minda codec implementation.
 | decoderMaxLineLength | codec | 1024 | int | To set the textline protocol decoder max line length. By default the default value of Mina itself is used which are 1024.
-| encoderMaxLineLength | codec | -1 | int | To set the textline protocol encoder max line length. By default the default value of Mina itself is used which are Integer.MAX_VALUE.
+| encoderMaxLineLength | codec | 1 | int | To set the textline protocol encoder max line length. By default the default value of Mina itself is used which are Integer.MAX_VALUE.
 | encoding | codec |  | String | You can configure the encoding (a charset name) to use for the TCP textline codec and the UDP protocol. If not provided Camel will use the JVM default Charset
 | filters | codec |  | List | You can set a list of Mina IoFilters to use.
 | textline | codec | false | boolean | Only used for TCP. If no codec is specified you can use this flag to indicate a text line based codec; if not specified or the value is false then Object Serialization is assumed over TCP.
@@ -120,7 +131,6 @@ The Mina2 component supports 29 endpoint options which are listed below:
 | autoStartTls | security | true | boolean | Whether to auto start SSL handshake.
 | sslContextParameters | security |  | SSLContextParameters | To configure SSL security.
 |=======================================================================
-{% endraw %}
 // endpoint options: END
 
 
