@@ -38,11 +38,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import org.apache.camel.maven.packaging.model.ComponentModel;
 import org.apache.camel.maven.packaging.model.ComponentOptionModel;
 import org.apache.camel.maven.packaging.model.DataFormatModel;
@@ -129,6 +131,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         PRIMITIVEMAP.put("double", "java.lang.Double");
         PRIMITIVEMAP.put("float", "java.lang.Float");
     }
+
+    private static final List<String> JAVA_LANG_TYPES = Arrays.asList("Boolean", "Byte", "Character", "Class", "Double", "Float", "Integer", "Long", "Object", "Short", "String");
 
     /**
      * The maven project.
@@ -453,16 +457,20 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 }
 
                 String defaultValue = null;
+                String defaultValueLiteral = null;
                 if (sourceProp.hasAnnotation(UriParam.class)) {
                     defaultValue = sourceProp.getAnnotation(UriParam.class).getStringValue("defaultValue");
+                    defaultValueLiteral = sourceProp.getAnnotation(UriParam.class).getLiteralValue("defaultValue");
                 } else if (sourceProp.hasAnnotation(UriPath.class)) {
                     defaultValue = sourceProp.getAnnotation(UriPath.class).getStringValue("defaultValue");
+                    defaultValueLiteral = sourceProp.getAnnotation(UriPath.class).getLiteralValue("defaultValue");
                 }
+
+                defaultValueLiteral = makeFQ(nestedType, defaultValueLiteral);
+
                 if (!Strings.isBlank(defaultValue)) {
-                    if ("java.lang.String".equals(optionType)) {
-                        prop.getField().setStringInitializer(defaultValue);
-                    } else if ("integer".equals(optionType) || "boolean".equals(optionType)) {
-                        prop.getField().setLiteralInitializer(defaultValue);
+                    if ("integer".equals(optionType) || "boolean".equals(optionType) || "java.lang.String".equals(optionType)) {
+                        prop.getField().setLiteralInitializer(defaultValueLiteral);
                     } else if (anEnum) {
                         String enumShortName = optionClass.getSimpleName();
                         prop.getField().setLiteralInitializer(enumShortName + "." + defaultValue);
@@ -477,6 +485,59 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
 
         writeSourceIfChanged(javaClass, fileName);
+    }
+
+    private String makeFQ(JavaClassSource source, String literal) {
+        if (literal == null) {
+            return null;
+        }
+
+        if (Pattern.matches("[A-Z][A-Z0-9_]*", literal)) {
+            return source.getQualifiedName() + "." + literal;
+        }
+
+        Map<String, String> fq = new HashMap<>();
+        List<String> classes = extractClasses(literal);
+        for (String cl : classes) {
+
+            boolean found = false;
+            for (Import im : source.getImports()) {
+                if (cl.equals(im.getSimpleName())) {
+                    fq.put(cl, im.getQualifiedName());
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                // if it's not a java.lang object, then it's in the same package
+                if (!JAVA_LANG_TYPES.contains(cl)) {
+                    fq.put(cl, source.getPackage() + "." + cl);
+                }
+            }
+        }
+
+        if (fq.size() > 0) {
+            String res = literal;
+            for (Map.Entry<String, String> fqn : fq.entrySet()) {
+                res = res.replace(fqn.getKey(), fqn.getValue());
+            }
+            return res;
+        }
+        return literal;
+    }
+
+    private List<String> extractClasses(String literal) {
+        if (literal.startsWith("\"") && literal.endsWith("\"")) {
+            return Collections.emptyList();
+        }
+        List<String> classes = new LinkedList<>();
+        Pattern regex = Pattern.compile("[^A-Za-z0-9_.]*([A-Z][A-Za-z0-9]*)[.][A-Za-z0-9_.-]+");
+        Matcher m = regex.matcher(literal);
+        while (m.find()) {
+            classes.add(m.group(1));
+        }
+        return classes;
     }
 
     // resolved property type name and property source, Roaster doesn't resolve inner classes correctly
@@ -851,7 +912,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         String configurationName = name.replace("DataFormatAutoConfiguration", "DataFormatConfiguration");
         AnnotationSource<JavaClassSource> ann = javaClass.addAnnotation(EnableConfigurationProperties.class);
         ann.setLiteralValue("value", configurationName + ".class");
-        
+
         javaClass.addAnnotation(Conditional.class).setLiteralValue(name + ".Condition.class");
 
         // add method for auto configure
