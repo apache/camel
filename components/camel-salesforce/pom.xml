@@ -35,6 +35,10 @@
         <module>camel-salesforce-maven-plugin</module>
     </modules>
 
+    <properties>
+      <salesforce.component.root>${project.basedir}</salesforce.component.root>
+    </properties>
+
  <build>
     <plugins>
       <plugin>
@@ -75,7 +79,7 @@
               <artifactId>maven-enforcer-plugin</artifactId>
               <executions>
                 <execution>
-                  <id>test-salesforce-login-properties-exists</id>
+                  <id>salesforce-integration-test-prerequisites</id>
                   <goals>
                     <goal>enforce</goal>
                   </goals>
@@ -83,31 +87,52 @@
                     <rules>
                       <requireFilesExist>
                         <files>
-                         <file>../test-salesforce-login.properties</file>
+                          <file>${salesforce.component.root}/it/resources/migration-tool/ant-salesforce.jar</file>
                         </files>
+                        <message><![CDATA[Salesforce Migration Tool required
+
+You need to download the Salesforce Migration Tool (ZIP file) and 
+extract the `ant-salesforce.jar` out of it to:
+
+${salesforce.component.root}/it/resources/migration-tool/ant-salesforce.jar
+
+It's needed by the integration tests to setup the Salesforce instance
+with custom sObjects/fields that are required by the tests.
+
+Have a look at:
+
+${salesforce.component.root}/it/resources/salesforce
+
+To see what will be done.
+
+For information and download of the Salesforce Migration Tool consult:
+
+https://developer.salesforce.com/page/Force.com_Migration_Tool]]></message>
+                      </requireFilesExist>
+                      <requireFilesExist>
+                        <files>
+                          <file>${salesforce.component.root}/test-salesforce-login.properties</file>
+                        </files>
+                        <message><![CDATA[Salesforce Authentication information needed
+
+You need to create a Java properties file at:
+
+${salesforce.component.root}/test-salesforce-login.properties
+
+With authentication information to access a Salesforce instance.
+You can use:
+
+${salesforce.component.root}/test-salesforce-login.properties.sample
+
+as reference. A free Salesforce developer account can be obtained at:
+
+https://developer.salesforce.com]]></message>
                       </requireFilesExist>
                     </rules>
                     <fail>true</fail>
                   </configuration>
                 </execution>
               </executions>
-            </plugin>
-            <plugin>
-              <artifactId>maven-surefire-plugin</artifactId>
-              <configuration>
-                <childDelegation>false</childDelegation>
-                <useFile>true</useFile>
-                <forkCount>1</forkCount>
-                <reuseForks>true</reuseForks>
-                <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                <excludes>
-                  <exclude>**/*XXXTest.java</exclude>
-                </excludes>
-                <includes>
-                  <include>**/*Test.java</include>
-                </includes>
-                <trimStackTrace>false</trimStackTrace>
-              </configuration>
             </plugin>
           </plugins>
         </build>

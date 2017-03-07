@@ -25,12 +25,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 public abstract class AbstractSalesforceTestBase extends CamelTestSupport {
 
     @Override
-    public boolean isCreateCamelContextPerClass() {
-        // only create the context once for this class
-        return true;
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         // create the test component
         createComponent();

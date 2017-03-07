@@ -15,7 +15,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -37,6 +38,7 @@
     </camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=salesforce</camel.osgi.export.service>
     <camel.osgi.private.pkg>org.apache.camel.component.salesforce.internal.*</camel.osgi.private.pkg>
+    <salesforce.component.root>..</salesforce.component.root>
   </properties>
 
   <dependencies>
@@ -113,7 +115,7 @@
       <artifactId>slf4j-api</artifactId>
     </dependency>
 
-    <!-- testing -->  
+    <!-- testing -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
@@ -162,6 +164,12 @@
       <artifactId>mockito-core</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.googlecode.junit-toolbox</groupId>
+      <artifactId>junit-toolbox</artifactId>
+      <version>2.2</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -181,4 +189,79 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>integration</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>setup-salesforce-instance</id>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <phase>pre-integration-test</phase>
+                <configuration>
+                  <target>
+                    <taskdef resource="com/salesforce/antlib.xml" uri="antlib:com.salesforce">
+                      <classpath>
+                        <pathelement location="${salesforce.component.root}/it/resources/migration-tool/ant-salesforce.jar" />
+                      </classpath>
+                    </taskdef>
+
+                    <property file="${salesforce.component.root}/test-salesforce-login.properties" />
+
+                    <sf:deploy xmlns:sf="antlib:com.salesforce" username="${userName}" password="${password}"
+                      deployRoot="${salesforce.component.root}/it/resources/salesforce" rollbackOnError="true" />
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-failsafe-plugin</artifactId>
+            <executions>
+              <execution>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>integration-test</goal>
+                </goals>
+                <configuration>
+                  <childDelegation>false</childDelegation>
+                  <useFile>true</useFile>
+                  <forkCount>3</forkCount>
+                  <runOrder>random</runOrder>
+                  <reuseForks>true</reuseForks>
+                  <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+                  <includes>
+                    <include>**/*IntegrationTest.java</include>
+                  </includes>
+                  <excludedGroups>org.apache.camel.component.salesforce.Standalone</excludedGroups>
+                </configuration>
+              </execution>
+              <execution>
+                <id>standalone-integration-tests</id>
+                <phase>integration-test</phase>
+                <goals>
+                  <goal>integration-test</goal>
+                </goals>
+                <configuration>
+                  <childDelegation>false</childDelegation>
+                  <useFile>true</useFile>
+                  <includes>
+                    <include>**/*IntegrationTest.java</include>
+                  </includes>
+                  <groups>org.apache.camel.component.salesforce.Standalone</groups>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

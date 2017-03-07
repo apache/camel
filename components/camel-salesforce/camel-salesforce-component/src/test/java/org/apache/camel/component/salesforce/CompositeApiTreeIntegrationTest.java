@@ -18,6 +18,8 @@ package org.apache.camel.component.salesforce;
 
 import java.util.Arrays;
 
+import com.googlecode.junittoolbox.ParallelParameterized;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTree;
 import org.apache.camel.component.salesforce.dto.generated.Account;
@@ -26,21 +28,15 @@ import org.apache.camel.component.salesforce.dto.generated.Asset;
 import org.apache.camel.component.salesforce.dto.generated.Contact;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-@RunWith(Parameterized.class)
+@RunWith(ParallelParameterized.class)
 public class CompositeApiTreeIntegrationTest extends AbstractSalesforceTestBase {
 
     private final String format;
 
     public CompositeApiTreeIntegrationTest(final String format) {
         this.format = format;
-    }
-
-    @Parameters(name = "format = {0}")
-    public static Iterable<String> formats() {
-        return Arrays.asList("JSON", "XML");
     }
 
     @Test
@@ -113,5 +109,10 @@ public class CompositeApiTreeIntegrationTest extends AbstractSalesforceTestBase 
             public void configure() throws Exception {
             }
         };
+    }
+
+    @Parameters(name = "format = {0}")
+    public static Iterable<String> formats() {
+        return Arrays.asList("JSON", "XML");
     }
 }

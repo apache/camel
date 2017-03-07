@@ -30,29 +30,29 @@ import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
+@Category(Standalone.class)
 public class BulkApiIntegrationTest extends AbstractBulkApiTestBase {
 
     @Test
     public void testRetry() throws Exception {
-        SalesforceComponent sf = context().getComponent("salesforce", SalesforceComponent.class);
-        String accessToken = sf.getSession().getAccessToken();
+        final SalesforceComponent sf = context().getComponent("salesforce", SalesforceComponent.class);
+        final String accessToken = sf.getSession().getAccessToken();
 
-        SslContextFactory sslContextFactory = new SslContextFactory();
+        final SslContextFactory sslContextFactory = new SslContextFactory();
         sslContextFactory.setSslContext(new SSLContextParameters().createSSLContext(context));
-        HttpClient httpClient = new HttpClient(sslContextFactory);
+        final HttpClient httpClient = new HttpClient(sslContextFactory);
         httpClient.setConnectTimeout(60000);
         httpClient.start();
 
-        String uri = sf.getLoginConfig().getLoginUrl() + "/services/oauth2/revoke?token=" + accessToken;
-        Request logoutGet = httpClient.newRequest(uri)
-            .method(HttpMethod.GET)
-            .timeout(1, TimeUnit.MINUTES);
+        final String uri = sf.getLoginConfig().getLoginUrl() + "/services/oauth2/revoke?token=" + accessToken;
+        final Request logoutGet = httpClient.newRequest(uri).method(HttpMethod.GET).timeout(1, TimeUnit.MINUTES);
 
-        ContentResponse response = logoutGet.send();
+        final ContentResponse response = logoutGet.send();
         assertEquals(HttpStatus.OK_200, response.getStatus());
 
-        JobInfo jobInfo = new JobInfo();
+        final JobInfo jobInfo = new JobInfo();
         jobInfo.setOperation(OperationEnum.INSERT);
         jobInfo.setContentType(ContentType.CSV);
         jobInfo.setObject(Merchandise__c.class.getSimpleName());
