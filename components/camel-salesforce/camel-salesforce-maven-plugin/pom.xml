@@ -32,6 +32,10 @@
   <name>Camel :: Salesforce :: Maven plugin</name>
   <description>Camel Salesforce Maven plugin</description>
 
+  <properties>
+    <salesforce.component.root>..</salesforce.component.root>
+  </properties>
+
   <dependencyManagement>
     <dependencies>
       <dependency>

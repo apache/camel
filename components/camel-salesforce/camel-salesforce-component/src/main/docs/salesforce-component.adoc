@@ -20,6 +20,10 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
+NOTE: Developers wishing to contribute to the component are instructed
+to look at the README.md file on instructions on how to get started and
+setup your environment for running integration tests.
+
 ### URI format
 
 The URI scheme for a salesforce component is as follows
@@ -427,6 +431,7 @@ The Salesforce component supports 24 options which are listed below.
 
 
 
+{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -455,6 +460,7 @@ The Salesforce component supports 24 options which are listed below.
 | packages | common |  | String[] | Package names to scan for DTO classes (multiple packages can be separated by comma).
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
+{% endraw %}
 // component options: END
 
 
@@ -467,23 +473,24 @@ The Salesforce component supports 24 options which are listed below.
 
 
 // endpoint options: START
-The Salesforce endpoint is configured using URI syntax:
+The Salesforce component is configured using the URI syntax with the following path and query parameters:
 
     salesforce:operationName:topicName
 
-  with the following path and query parameters:
+#### 2 path parameters:
 
-#### Path Parameters (2 parameters):
-
+{% raw %}
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 | operationName |  | OperationName | The operation to use
 | topicName |  | String | The name of the topic to use
 |=======================================================================
+{% endraw %}
 
-#### Query Parameters (41 parameters):
+#### 41 query parameters:
 
+{% raw %}
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
@@ -529,6 +536,7 @@ The Salesforce endpoint is configured using URI syntax:
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
+{% endraw %}
 // endpoint options: END
 
 
