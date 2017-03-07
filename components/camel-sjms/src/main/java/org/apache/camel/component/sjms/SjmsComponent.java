@@ -55,6 +55,16 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
     private DestinationCreationStrategy destinationCreationStrategy;
     @Metadata(label = "advanced")
     private MessageCreatedStrategy messageCreatedStrategy;
+    @Metadata(label = "advanced", defaultValue = "true")
+    private boolean connectionTestOnBorrow = true;
+    @Metadata(label = "security", secret = true)
+    private String connectionUsername;
+    @Metadata(label = "security", secret = true)
+    private String connectionPassword;
+    @Metadata(label = "advanced")
+    private String connectionClientId;
+    @Metadata(label = "advanced", defaultValue = "5000")
+    private long connectionMaxWait = 5000;
 
     public SjmsComponent() {
         super(SjmsEndpoint.class);
@@ -235,4 +245,60 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
         this.messageCreatedStrategy = messageCreatedStrategy;
     }
 
+    public boolean isConnectionTestOnBorrow() {
+        return connectionTestOnBorrow;
+    }
+
+    /**
+     * When using the default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource} then should each {@link javax.jms.Connection}
+     * be tested (calling start) before returned from the pool.
+     */
+    public void setConnectionTestOnBorrow(boolean connectionTestOnBorrow) {
+        this.connectionTestOnBorrow = connectionTestOnBorrow;
+    }
+
+    public String getConnectionUsername() {
+        return connectionUsername;
+    }
+
+    /**
+     * The username to use when creating {@link javax.jms.Connection} when using the default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}.
+     */
+    public void setConnectionUsername(String connectionUsername) {
+        this.connectionUsername = connectionUsername;
+    }
+
+    public String getConnectionPassword() {
+        return connectionPassword;
+    }
+
+    /**
+     * The password to use when creating {@link javax.jms.Connection} when using the default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}.
+     */
+    public void setConnectionPassword(String connectionPassword) {
+        this.connectionPassword = connectionPassword;
+    }
+
+    public String getConnectionClientId() {
+        return connectionClientId;
+    }
+
+    /**
+     * The client ID to use when creating {@link javax.jms.Connection} when using the default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}.
+     */
+    public void setConnectionClientId(String connectionClientId) {
+        this.connectionClientId = connectionClientId;
+    }
+
+    public long getConnectionMaxWait() {
+        return connectionMaxWait;
+    }
+
+    /**
+     * The max wait time in millis to block and wait on free connection when the pool is exhausted
+     * when using the default {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource}.
+     */
+    public void setConnectionMaxWait(long connectionMaxWait) {
+        this.connectionMaxWait = connectionMaxWait;
+    }
 }
