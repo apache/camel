@@ -22,6 +22,7 @@ import org.apache.camel.util.IOHelper;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.quartz.CronTrigger;
 import org.quartz.Scheduler;
@@ -31,6 +32,7 @@ import org.quartz.Trigger;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+@Ignore("Flaky on CI server due DB issue")
 public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest extends TestSupport {
 
     private static AbstractXmlApplicationContext db;
@@ -56,9 +58,7 @@ public class SpringQuartzPersistentStoreRestartAppChangeOptionsTest extends Test
         // the second app before the first one so that the quartz scheduler running
         // inside it can be properly shutdown
         IOHelper.close(app3, app2, app);
-        
     }
-
 
     @Test
     public void testRestartAppChangeCronExpression() throws Exception {
