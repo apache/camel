@@ -34,17 +34,6 @@
 
   <properties>
     <camel.osgi.export.pkg>
-      !org.apache.camel.component.direct.springboot,
-      !org.apache.camel.component.directvm.springboot,
-      !org.apache.camel.component.log.springboot,
-      !org.apache.camel.component.properties.springboot,
-      !org.apache.camel.component.scheduler.springboot,
-      !org.apache.camel.component.seda.springboot,
-      !org.apache.camel.component.stub.springboot,
-      !org.apache.camel.component.validator.springboot,
-      !org.apache.camel.component.vm.springboot,
-      !org.apache.camel.component.xslt.springboot,
-      !org.apache.camel.impl.springboot,
       !org.apache.camel.tools.*,
       org.apache.camel.*;-noimport:=true
     </camel.osgi.export.pkg>
