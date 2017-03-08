@@ -274,6 +274,7 @@ public interface CamelController {
      * @return a list of key/value pairs with model information
      * @throws java.lang.Exception can be thrown
      */
+    @Deprecated
     List<Map<String, String>> listEipsCatalog(String filter) throws Exception;
 
     /**
@@ -282,6 +283,7 @@ public interface CamelController {
      * @return a map which key is the label, and the set is the models names that has the given label
      * @throws java.lang.Exception can be thrown
      */
+    @Deprecated
     Map<String, Set<String>> listEipsLabelCatalog() throws Exception;
 
     /**
@@ -291,6 +293,7 @@ public interface CamelController {
      * @return a map of key/value pairs with component information
      * @throws java.lang.Exception can be thrown
      */
+    @Deprecated
     Map<String, Object> componentInfo(String name) throws Exception;
 
     /**
@@ -300,6 +303,7 @@ public interface CamelController {
      * @return a list of key/value pairs with component information
      * @throws java.lang.Exception can be thrown
      */
+    @Deprecated
     List<Map<String, String>> listComponentsCatalog(String filter) throws Exception;
 
     /**
@@ -308,6 +312,7 @@ public interface CamelController {
      * @return a map which key is the label, and the set is the component names that has the given label
      * @throws java.lang.Exception can be thrown
      */
+    @Deprecated
     Map<String, Set<String>> listComponentsLabelCatalog() throws Exception;
 
     /**
@@ -317,6 +322,7 @@ public interface CamelController {
      * @return a list of key/value pairs with data format information
      * @throws java.lang.Exception can be thrown
      */
+    @Deprecated
     List<Map<String, String>> listDataFormatsCatalog(String filter) throws Exception;
 
     /**
@@ -325,6 +331,7 @@ public interface CamelController {
      * @return a map which key is the label, and the set is the data format names that has the given label
      * @throws java.lang.Exception can be thrown
      */
+    @Deprecated
     Map<String, Set<String>> listDataFormatsLabelCatalog() throws Exception;
 
     /**
@@ -334,6 +341,7 @@ public interface CamelController {
      * @return a list of key/value pairs with language information
      * @throws java.lang.Exception can be thrown
      */
+    @Deprecated
     List<Map<String, String>> listLanguagesCatalog(String filter) throws Exception;
 
     /**
@@ -342,6 +350,7 @@ public interface CamelController {
      * @return a map which key is the label, and the set is the language names that has the given label
      * @throws java.lang.Exception can be thrown
      */
+    @Deprecated
     Map<String, Set<String>> listLanguagesLabelCatalog() throws Exception;
 
     /**
@@ -350,6 +359,7 @@ public interface CamelController {
      * @param name the name of the component
      * @throws java.lang.Exception can be thrown
      */
+    @Deprecated
     String catalogComponentAsciiDoc(String name) throws Exception;
 
     /**
@@ -358,6 +368,7 @@ public interface CamelController {
      * @param name the name of the data format
      * @throws java.lang.Exception can be thrown
      */
+    @Deprecated
     String catalogDataFormatAsciiDoc(String name) throws Exception;
 
     /**
@@ -366,6 +377,7 @@ public interface CamelController {
      * @param name the name of the language
      * @throws java.lang.Exception can be thrown
      */
+    @Deprecated
     String catalogLanguageAsciiDoc(String name) throws Exception;
 
     /**

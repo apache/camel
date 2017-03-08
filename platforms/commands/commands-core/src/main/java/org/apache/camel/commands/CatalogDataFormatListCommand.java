@@ -24,6 +24,7 @@ import java.util.Map;
 /**
  * From the Camel catalog lists all the data formats.
  */
+@Deprecated
 public class CatalogDataFormatListCommand extends AbstractCamelCommand {
 
     private static final String TITLE_COLUMN_LABEL = "Title";

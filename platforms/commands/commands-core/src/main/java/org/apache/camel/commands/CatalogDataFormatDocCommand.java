@@ -21,6 +21,7 @@ import java.io.PrintStream;
 /**
  * Shows documentation of a data format from Catalog
  */
+@Deprecated
 public class CatalogDataFormatDocCommand extends AbstractCamelCommand {
 
     private final String name;

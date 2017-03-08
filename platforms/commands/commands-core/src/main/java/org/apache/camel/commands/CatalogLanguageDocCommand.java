@@ -21,6 +21,7 @@ import java.io.PrintStream;
 /**
  * Shows documentation of a language from Catalog
  */
+@Deprecated
 public class CatalogLanguageDocCommand extends AbstractCamelCommand {
 
     private final String name;

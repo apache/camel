@@ -21,6 +21,7 @@ import java.io.PrintStream;
 /**
  * Shows documentation of a component from Catalog
  */
+@Deprecated
 public class CatalogComponentDocCommand extends AbstractCamelCommand {
 
     private final String name;
