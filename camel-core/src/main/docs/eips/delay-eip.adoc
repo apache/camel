@@ -21,7 +21,7 @@ See this ticket: link:https://issues.apache.org/jira/browse/CAMEL-2654[https://i
 // eip options: START
 The Delay EIP supports 3 options which are listed below:
 
-{% raw %}
+
 [width="100%",cols="3,1m,6",options="header"]
 |=======================================================================
 | Name | Java Type | Description
@@ -29,7 +29,6 @@ The Delay EIP supports 3 options which are listed below:
 | asyncDelayed | Boolean | Enables asynchronous delay which means the thread will noy block while delaying.
 | callerRunsWhenRejected | Boolean | Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true
 |=======================================================================
-{% endraw %}
 // eip options: END
 
 *Using the Fluent Builders*

@@ -5,7 +5,7 @@ When the circuit breaker is closed, it will throw a `java.util.concurrent.Reject
 // eip options: START
 The Circuit Breaker EIP supports 3 options which are listed below:
 
-{% raw %}
+
 [width="100%",cols="3,1m,6",options="header"]
 |=======================================================================
 | Name | Java Type | Description
@@ -13,7 +13,6 @@ The Circuit Breaker EIP supports 3 options which are listed below:
 | halfOpenAfter | Long | The timeout in millis to use as threshold to move state from closed to half-open or open state
 | threshold | Integer | Number of previous failed messages to use as threshold to move state from closed to half-open or open state
 |=======================================================================
-{% endraw %}
 // eip options: END
 
 

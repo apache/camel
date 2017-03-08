@@ -20,14 +20,13 @@ Maven users will need to add the following dependency to their pom.xml to use th
 // eip options: START
 The Hystrix EIP supports 2 options which are listed below:
 
-{% raw %}
+
 [width="100%",cols="3,1m,6",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | hystrixConfiguration | HystrixConfigurationDefinition | Configures the Hystrix EIP Use end when configuration is complete to return back to the Hystrix EIP.
 | hystrixConfigurationRef | String | Refers to a Hystrix configuration to use for configuring the Hystrix EIP.
 |=======================================================================
-{% endraw %}
 // eip options: END
 
 ### Example

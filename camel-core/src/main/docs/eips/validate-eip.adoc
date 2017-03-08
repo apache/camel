@@ -7,13 +7,6 @@ You can use the validate DSL with all kind of Predicates and Expressions. Valida
 
 // eip options: START
 The Validate EIP supports 0 options which are listed below:
-
-{% raw %}
-[width="100%",cols="3,1m,6",options="header"]
-|=======================================================================
-| Name | Java Type | Description
-|=======================================================================
-{% endraw %}
 // eip options: END
 
 ### Using from Java DSL

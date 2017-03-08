@@ -4,7 +4,7 @@
 // eip options: START
 The Hystrix Configuration EIP supports 31 options which are listed below:
 
-{% raw %}
+
 [width="100%",cols="3,1m,6",options="header"]
 |=======================================================================
 | Name | Java Type | Description
@@ -40,5 +40,4 @@ The Hystrix Configuration EIP supports 31 options which are listed below:
 | threadPoolRollingNumberStatisticalWindowBuckets | Integer | Number of buckets the rolling statistical window is broken into. This is passed into HystrixRollingNumber inside each HystrixThreadPoolMetrics instance.
 | allowMaximumSizeToDivergeFromCoreSize | Boolean | Allows the configuration for maximumSize to take effect. That value can then be equal to or higher than coreSize
 |=======================================================================
-{% endraw %}
 // eip options: END

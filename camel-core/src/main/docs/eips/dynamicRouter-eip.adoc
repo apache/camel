@@ -16,7 +16,7 @@ You must ensure the expression used for the `dynamicRouter` such as a bean, will
 // eip options: START
 The Dynamic Router EIP supports 3 options which are listed below:
 
-{% raw %}
+
 [width="100%",cols="3,1m,6",options="header"]
 |=======================================================================
 | Name | Java Type | Description
@@ -24,7 +24,6 @@ The Dynamic Router EIP supports 3 options which are listed below:
 | ignoreInvalidEndpoints | Boolean | Ignore the invalidate endpoint exception when try to create a producer with that endpoint
 | cacheSize | Integer | Sets the maximum size used by the org.apache.camel.impl.ProducerCache which is used to cache and reuse producers when using this recipient list when uris are reused.
 |=======================================================================
-{% endraw %}
 // eip options: END
 
 ## Dynamic Router in Camel 2.5 onwards

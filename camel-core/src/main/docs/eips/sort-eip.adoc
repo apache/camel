@@ -8,13 +8,12 @@ Sort will by default sort the body using a default comparator that handles numer
 // eip options: START
 The Sort EIP supports 1 options which are listed below:
 
-{% raw %}
+
 [width="100%",cols="3,1m,6",options="header"]
 |=======================================================================
 | Name | Java Type | Description
 | comparatorRef | String | Sets a reference to lookup for the comparator to use for sorting
 |=======================================================================
-{% endraw %}
 // eip options: END
 
 
