@@ -70,11 +70,19 @@ public class DefaultCamelConnectorCatalog implements CamelConnectorCatalog {
 
     @Override
     public String connectorJSon(String groupId, String artifactId, String version) {
-        return null;
+        ConnectorDto dto = new ConnectorDto();
+        dto.setGroupId(groupId);
+        dto.setArtifactId(artifactId);
+        dto.setVersion(version);
+        return dataStore.connectorJSon(dto);
     }
 
     @Override
     public String connectorSchemaJSon(String groupId, String artifactId, String version) {
-        return null;
+        ConnectorDto dto = new ConnectorDto();
+        dto.setGroupId(groupId);
+        dto.setArtifactId(artifactId);
+        dto.setVersion(version);
+        return dataStore.connectorSchemaJSon(dto);
     }
 }

@@ -53,6 +53,28 @@ public class CamelConnectorCatalogTest {
     }
 
     @Test
+    public void testConnectorJson() throws Exception {
+        CamelConnectorCatalog catalog = new DefaultCamelConnectorCatalog();
+
+        catalog.addConnector("org.apache.camel", "myfoo-connector", "2.19.0",
+            "MyFoo", "Something cool", "foo,timer", "foo", "bar");
+
+        String json = catalog.connectorJSon("org.apache.camel", "myfoo-connector", "2.19.0");
+        assertEquals("foo", json);
+    }
+
+    @Test
+    public void testConnectorSchemaJson() throws Exception {
+        CamelConnectorCatalog catalog = new DefaultCamelConnectorCatalog();
+
+        catalog.addConnector("org.apache.camel", "myfoo-connector", "2.19.0",
+            "MyFoo", "Something cool", "foo,timer", "foo", "bar");
+
+        String json = catalog.connectorSchemaJSon("org.apache.camel", "myfoo-connector", "2.19.0");
+        assertEquals("bar", json);
+    }
+
+    @Test
     public void testRemoveConnector() throws Exception {
         CamelConnectorCatalog catalog = new DefaultCamelConnectorCatalog();
 
