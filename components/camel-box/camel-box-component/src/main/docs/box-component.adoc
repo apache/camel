@@ -1,6 +1,6 @@
 ## Box Component
 
-*Available as of Camel version *
+*Available as of Camel version 2.14*
 
 The Box component provides access to all of the Box.com APIs accessible
 using https://github.com/box/box-java-sdk/[box-java-sdk]. It
