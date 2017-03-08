@@ -54,7 +54,7 @@ public class KinesisFirehoseProducer extends DefaultProducer {
         record.setData(body);
 
         PutRecordRequest putRecordRequest = new PutRecordRequest();
-        putRecordRequest.setDeliveryStreamName(getEndpoint().getEndpointKey());
+        putRecordRequest.setDeliveryStreamName(getEndpoint().getStreamName());
         putRecordRequest.setRecord(record);
         return putRecordRequest;
     }
