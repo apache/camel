@@ -140,6 +140,7 @@
 	* [AWS DynamoDB Streams](aws-ddbstream-component.adoc)
 	* [AWS EC2](aws-ec2-component.adoc)
 	* [AWS Kinesis](aws-kinesis-component.adoc)
+	* [AWS Kinesis Firehose](aws-kinesis-firehose-component.adoc)
 	* [AWS S3 Storage Service](aws-s3-component.adoc)
 	* [AWS Simple Email Service](aws-ses-component.adoc)
 	* [AWS Simple Notification System](aws-sns-component.adoc)

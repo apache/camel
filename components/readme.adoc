@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 219 in 174 JAR artifacts (13 deprecated)
+Number of Components: 220 in 174 JAR artifacts (13 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -55,6 +55,9 @@ Number of Components: 219 in 174 JAR artifacts (13 deprecated)
 
 | link:camel-aws/src/main/docs/aws-kinesis-component.adoc[AWS Kinesis] (camel-aws) +
 `aws-kinesis:streamName` | 2.17 | The aws-kinesis component is for consuming records from Amazon Kinesis Streams.
+
+| link:camel-aws/src/main/docs/aws-kinesis-firehose-component.adoc[AWS Kinesis Firehose] (camel-aws) +
+`aws-kinesis-firehose:streamName` | 2.19 | A Camel Amazon Web Services Components
 
 | link:camel-aws/src/main/docs/aws-s3-component.adoc[AWS S3 Storage Service] (camel-aws) +
 `aws-s3:bucketNameOrArn` | 2.8 | The aws-s3 component is used for storing and retrieving objecct from Amazon S3 Storage Service.
