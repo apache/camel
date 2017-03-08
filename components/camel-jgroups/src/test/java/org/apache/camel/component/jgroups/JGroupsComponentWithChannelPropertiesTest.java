@@ -23,7 +23,7 @@ import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.junit.Test;
 
-public class JGroupsComponentTest extends CamelTestSupport {
+public class JGroupsComponentWithChannelPropertiesTest extends CamelTestSupport {
 
     // Constants
 
@@ -35,7 +35,7 @@ public class JGroupsComponentTest extends CamelTestSupport {
 
     static final String SAMPLE_CHANNEL_PROPERTIES = String.format("UDP(%s)", SAMPLE_CHANNEL_PROPERTY);
 
-    static final String CONFIGURED_ENDPOINT_URI = String.format("jgroups:%s", CLUSTER_NAME);
+    static final String CONFIGURED_ENDPOINT_URI = String.format("jgroups:%s?channelProperties=%s", CLUSTER_NAME, "udp.xml");
 
     // Fixtures
 
@@ -113,3 +113,4 @@ public class JGroupsComponentTest extends CamelTestSupport {
     }
 
 }
+
