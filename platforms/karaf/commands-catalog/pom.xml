@@ -28,7 +28,7 @@
   <groupId>org.apache.camel.karaf</groupId>
   <artifactId>camel-karaf-commands-catalog</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Platforms :: Apache Karaf :: Commands :: Catalog</name>
+  <name>Camel :: Platforms :: Apache Karaf :: Commands :: Catalog (deprecated)</name>
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.karaf.commands.catalog.*</camel.osgi.export.pkg>

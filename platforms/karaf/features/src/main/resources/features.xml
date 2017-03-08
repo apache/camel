@@ -49,14 +49,6 @@
       * = *
     </config>
   </feature>
-  <feature name='camel-catalog' version='${project.version}' resolver='(obr)' start-level='50'>
-    <details>Install the camel catalog commands</details>
-    <feature version='${project.version}'>camel-core</feature>
-    <conditional>
-      <condition>shell</condition>
-      <bundle>mvn:org.apache.camel.karaf/camel-karaf-commands-catalog/${project.version}</bundle>
-    </conditional>
-  </feature>
   <feature name='camel-blueprint' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-blueprint/${project.version}</bundle>
