@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jgroups.springboot;
 
-import org.jgroups.Channel;
+import org.jgroups.JChannel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -33,7 +33,7 @@ public class JGroupsComponentConfiguration {
      * Channel to use
      */
     @NestedConfigurationProperty
-    private Channel channel;
+    private JChannel channel;
     /**
      * Specifies configuration properties of the JChannel used by the endpoint.
      */
@@ -51,11 +51,11 @@ public class JGroupsComponentConfiguration {
      */
     private Boolean resolvePropertyPlaceholders = true;
 
-    public Channel getChannel() {
+    public JChannel getChannel() {
         return channel;
     }
 
-    public void setChannel(Channel channel) {
+    public void setChannel(JChannel channel) {
         this.channel = channel;
     }
 
