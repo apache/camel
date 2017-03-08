@@ -16,20 +16,15 @@
  */
 package org.apache.camel.catalog;
 
-import java.io.FileInputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.catalog.CatalogHelper.loadText;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -44,6 +39,12 @@ public class RuntimeCamelCatalogTest {
     @BeforeClass
     public static void createCamelCatalog() {
         catalog = new DefaultRuntimeCamelCatalog(new DefaultCamelContext());
+    }
+
+    @Test
+    public void testFromCamelContext() throws Exception {
+        String schema = new DefaultCamelContext().getRuntimeCamelCatalog().modelJSonSchema("choice");
+        assertNotNull(schema);
     }
 
     @Test

@@ -29,6 +29,7 @@ import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.api.management.mbean.ManagedProcessorMBean;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -1926,5 +1927,10 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Sets a custom {@link ReloadStrategy} to be used
      */
     void setReloadStrategy(ReloadStrategy reloadStrategy);
+
+    /**
+     * Gets the associated {@link RuntimeCamelCatalog} for this CamelContext.
+     */
+    RuntimeCamelCatalog getRuntimeCamelCatalog();
 
 }

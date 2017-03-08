@@ -86,6 +86,8 @@ import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.DefaultFluentProducerTemplate;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderSupport;
+import org.apache.camel.catalog.DefaultRuntimeCamelCatalog;
+import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.converter.BaseTypeConverterRegistry;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
@@ -292,6 +294,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private List<ValidatorDefinition> validators = new ArrayList<>();
     private ValidatorRegistry<ValidatorKey> validatorRegistry;
     private ReloadStrategy reloadStrategy;
+    private final RuntimeCamelCatalog runtimeCamelCatalog = new DefaultRuntimeCamelCatalog(this, true);
 
     /**
      * Creates the {@link CamelContext} using {@link JndiRegistry} as registry,
@@ -4356,6 +4359,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     @Override
     public ValidatorRegistry getValidatorRegistry() {
         return validatorRegistry;
+    }
+
+    @Override
+    public RuntimeCamelCatalog getRuntimeCamelCatalog() {
+        return runtimeCamelCatalog;
     }
 
     protected Map<String, RouteService> getRouteServices() {
