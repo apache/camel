@@ -27,8 +27,11 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
-@UriEndpoint(firstVersion = "2.19.0", scheme = "aws-kinesis-firehose", title = "AWS Kinesis Firehose", syntax = "aws-kinesis-firehose:streamName", producerOnly = true,
-        consumerClass = KinesisConsumer.class, label = "cloud,messaging")
+/**
+ * The aws-kinesis-firehose component is used for producing Amazon's Kinesis Firehose streams.
+ */
+@UriEndpoint(firstVersion = "2.19.0", scheme = "aws-kinesis-firehose", title = "AWS Kinesis Firehose", syntax = "aws-kinesis-firehose:streamName",
+    producerOnly = true, label = "cloud,messaging")
 public class KinesisFirehoseEndpoint extends DefaultEndpoint {
 
     @UriPath(description = "Name of the stream")

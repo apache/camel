@@ -54,10 +54,10 @@ Number of Components: 220 in 174 JAR artifacts (13 deprecated)
 `aws-ec2:label` | 2.16 | The aws-ec2 is used for managing Amazon EC2 instances.
 
 | link:camel-aws/src/main/docs/aws-kinesis-component.adoc[AWS Kinesis] (camel-aws) +
-`aws-kinesis:streamName` | 2.17 | The aws-kinesis component is for consuming records from Amazon Kinesis Streams.
+`aws-kinesis:streamName` | 2.17 | The aws-kinesis component is for consuming and producing records from Amazon Kinesis Streams.
 
 | link:camel-aws/src/main/docs/aws-kinesis-firehose-component.adoc[AWS Kinesis Firehose] (camel-aws) +
-`aws-kinesis-firehose:streamName` | 2.19 | A Camel Amazon Web Services Components
+`aws-kinesis-firehose:streamName` | 2.19 | The aws-kinesis-firehose component is used for producing Amazon's Kinesis Firehose streams.
 
 | link:camel-aws/src/main/docs/aws-s3-component.adoc[AWS S3 Storage Service] (camel-aws) +
 `aws-s3:bucketNameOrArn` | 2.8 | The aws-s3 component is used for storing and retrieving objecct from Amazon S3 Storage Service.
