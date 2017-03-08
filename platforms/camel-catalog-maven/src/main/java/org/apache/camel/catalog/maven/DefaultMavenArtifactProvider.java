@@ -124,6 +124,7 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
                     ObjectMapper mapper = new ObjectMapper();
                     JsonNode tree = mapper.readTree(json[0]);
                     String name = tree.get("name").textValue();
+                    String scheme = tree.get("scheme").textValue();
                     String description = tree.get("description").textValue();
                     Iterator<JsonNode> it = tree.withArray("labels").iterator();
 
@@ -133,8 +134,9 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
                         csb.append(text);
                     }
 
+                    LOG.debug("Adding connector: {} with scheme: {}", name, scheme);
                     camelConnectorCatalog.addConnector(groupId, artifactId, version,
-                        name, description, csb.toString(), json[0], json[1]);
+                        name, scheme, description, csb.toString(), json[0], json[1]);
 
                     names.add(name);
                 } catch (Throwable e) {

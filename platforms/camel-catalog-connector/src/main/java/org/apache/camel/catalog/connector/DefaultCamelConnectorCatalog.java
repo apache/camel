@@ -37,13 +37,14 @@ public class DefaultCamelConnectorCatalog implements CamelConnectorCatalog {
     }
 
     @Override
-    public void addConnector(String groupId, String artifactId, String version, String name, String description, String labels,
+    public void addConnector(String groupId, String artifactId, String version, String name, String scheme, String description, String labels,
                              String connectorJson, String connectorSchemaJson) {
         ConnectorDto dto = new ConnectorDto();
         dto.setGroupId(groupId);
         dto.setArtifactId(artifactId);
         dto.setVersion(version);
         dto.setName(name);
+        dto.setScheme(scheme);
         dto.setDescription(description);
         dto.setLabels(labels);
         dataStore.addConnector(dto, connectorJson, connectorSchemaJson);
