@@ -39,7 +39,7 @@ import org.apache.camel.spi.UriPath;
     label = "datagrid,cache")
 public class ChronicleEngineEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "Engine addresses. Multiple addresses can be separated by comman.")
+    @UriPath(description = "Engine addresses. Multiple addresses can be separated by comma.")
     @Metadata(required = "true")
     private String addresses;
     @UriPath(description = "Engine path")

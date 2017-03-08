@@ -2,6 +2,19 @@
 
 *Available as of Camel version 2.18*
 
+The camel chronicle-engine component let you leverage the power of OpenHFT's Chronicle-Engine
+
+### URI Format
+
+[source,java]
+----------------------------
+chronicle-engine:addresses/path[?options]
+----------------------------
+
+
+### URI Options
+
+
 // component options: START
 The Chronicle Engine component has no options.
 // component options: END
@@ -20,7 +33,7 @@ The Chronicle Engine endpoint is configured using URI syntax:
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
-| addresses |  | String | *Required* Engine addresses. Multiple addresses can be separated by comman.
+| addresses |  | String | *Required* Engine addresses. Multiple addresses can be separated by comma.
 | path |  | String | *Required* Engine path
 |=======================================================================
 
