@@ -24,6 +24,7 @@ import java.util.Map;
 /**
  * From the Camel catalog lists all the EIPs.
  */
+@Deprecated
 public class CatalogEipListCommand extends AbstractCamelCommand {
 
     private static final String NAME_COLUMN_LABEL = "Name";

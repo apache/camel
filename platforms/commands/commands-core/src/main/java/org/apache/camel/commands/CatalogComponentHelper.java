@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.camel.util.ObjectHelper;
 
+@Deprecated
 public final class CatalogComponentHelper {
     private CatalogComponentHelper() {
     }

@@ -26,6 +26,7 @@ import org.apache.camel.commands.internal.RegexUtil;
 /**
  * Shows properties of a component from Catalog
  */
+@Deprecated
 public class CatalogComponentInfoCommand extends AbstractCamelCommand {
     private static final String[][] COMPONENT_PROPERTIES = new String[][] {
         {"Property", "Description"},
