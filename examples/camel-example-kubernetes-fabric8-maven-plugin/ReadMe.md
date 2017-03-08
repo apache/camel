@@ -1,0 +1,81 @@
+# Camel Cassandraql route on Kubernetes cluster
+
+This quickstart run in a Java standalone container, using Spring with Apache Camel (Cassandraql component).
+
+This example is based on:
+
+- Minikube (Kubernetes version >= 1.5)
+- Fabric8 Maven Plugin (version >= 3.2)
+
+First thing you'll need to do is preparing the environment.
+
+Once your Minikube node is up and running you'll need to run the following command.
+In your src/main/resource/fabric8/ folder you'll find two yaml file. Run the following command using them:
+
+```
+kubectl create -f src/main/resource/fabric8/cassandra-service.yaml
+kubectl create -f src/main/resource/fabric8/cassandra-statefulset.yaml
+```
+
+To check the correct startup of the cluster run the following command:
+
+```
+kubectl get statefulsets
+NAME        DESIRED   CURRENT   AGE
+cassandra   2         2         2h
+```
+
+and check the status of the pods
+
+```
+kubectl get pods
+NAME                                       READY     STATUS    RESTARTS   AGE
+cassandra-0                                1/1       Running   0          2h
+cassandra-1                                1/1       Running   0          2h
+```
+
+### Building and running
+
+Navigate to the project folder and the example can be built with
+
+    mvn clean -Pkubernetes-install fabric8:deploy
+
+When the example runs in fabric8, you can use the Kubectl command tool to inspect the status
+
+To list all the running pods:
+
+    kubectl get pods
+
+Then find the name of the pod that runs this quickstart, and output the logs from the running pods with:
+
+    kubectl logs <name of pod>
+
+and you should see something like this:
+
+
+```
+2017-03-08 15:13:38.954:INFO:ifasjipjsoejs.Server:jetty-8.y.z-SNAPSHOT
+2017-03-08 15:13:39.060:INFO:ifasjipjsoejs.AbstractConnector:Started SelectChannelConnector@0.0.0.0:9779
+2017-03-08 15:13:39,361 [main           ] INFO  ClassPathXmlApplicationContext - Refreshing org.springframework.context.support.ClassPathXmlApplicationContext@45afc369: startup date [Wed Mar 08 15:13:39 GMT 2017]; root of context hierarchy
+2017-03-08 15:13:39,426 [main           ] INFO  XmlBeanDefinitionReader        - Loading XML bean definitions from class path resource [META-INF/spring/camel-context.xml]
+2017-03-08 15:13:41,143 [main           ] INFO  ClockFactory                   - Using native clock to generate timestamps.
+2017-03-08 15:13:41,232 [main           ] INFO  NettyUtil                      - Did not find Netty's native epoll transport in the classpath, defaulting to NIO.
+2017-03-08 15:13:41,962 [main           ] INFO  DCAwareRoundRobinPolicy        - Using data-center name 'DC1-K8Demo' for DCAwareRoundRobinPolicy (if this is incorrect, please provide the correct datacenter name with DCAwareRoundRobinPolicy constructor)
+2017-03-08 15:13:41,963 [main           ] INFO  Cluster                        - New Cassandra host cassandra/172.17.0.4:9042 added
+2017-03-08 15:13:41,963 [main           ] INFO  Cluster                        - New Cassandra host cassandra/172.17.0.6:9042 added
+2017-03-08 15:13:44,994 [main           ] INFO  SpringCamelContext             - Apache Camel 2.19.0-SNAPSHOT (CamelContext: camel-1) is starting
+2017-03-08 15:13:44,995 [main           ] INFO  ManagedManagementStrategy      - JMX is enabled
+2017-03-08 15:13:45,113 [main           ] INFO  DefaultTypeConverter           - Loaded 192 type converters
+2017-03-08 15:13:45,134 [main           ] INFO  DefaultRuntimeEndpointRegistry - Runtime endpoint registry is in extended mode gathering usage statistics of all incoming and outgoing endpoints (cache limit: 1000)
+2017-03-08 15:13:45,368 [main           ] INFO  SpringCamelContext             - StreamCaching is not in use. If using streams then its recommended to enable stream caching. See more details at http://camel.apache.org/stream-caching.html
+2017-03-08 15:13:45,371 [main           ] INFO  ClockFactory                   - Using native clock to generate timestamps.
+2017-03-08 15:13:45,546 [main           ] INFO  DCAwareRoundRobinPolicy        - Using data-center name 'DC1-K8Demo' for DCAwareRoundRobinPolicy (if this is incorrect, please provide the correct datacenter name with DCAwareRoundRobinPolicy constructor)
+2017-03-08 15:13:45,549 [main           ] INFO  Cluster                        - New Cassandra host cassandra/172.17.0.4:9042 added
+2017-03-08 15:13:45,549 [main           ] INFO  Cluster                        - New Cassandra host cassandra/172.17.0.6:9042 added
+2017-03-08 15:13:45,804 [main           ] INFO  SpringCamelContext             - Route: cassandra-route started and consuming from: timer://foo?period=5000
+2017-03-08 15:13:45,805 [main           ] INFO  SpringCamelContext             - Total 1 routes, of which 1 are started.
+2017-03-08 15:13:45,806 [main           ] INFO  SpringCamelContext             - Apache Camel 2.19.0-SNAPSHOT (CamelContext: camel-1) started in 0.812 seconds
+2017-03-08 15:13:46,894 [0 - timer://foo] INFO  cassandra-route                - Query result set [Row[1, oscerd]]
+2017-03-08 15:13:51,896 [0 - timer://foo] INFO  cassandra-route                - Query result set [Row[1, oscerd]]
+2017-03-08 15:13:56,887 [0 - timer://foo] INFO  cassandra-route                - Query result set [Row[1, oscerd]]
+```
