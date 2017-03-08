@@ -478,7 +478,6 @@
         <include>org.apache.camel:camel-salesforce-starter</include>
         <include>org.apache.camel:camel-sap-netweaver-starter</include>
         <include>org.apache.camel:camel-saxon-starter</include>
-        <include>org.apache.camel:camel-scala-starter</include>
         <include>org.apache.camel:camel-schematron-starter</include>
         <include>org.apache.camel:camel-script-starter</include>
         <include>org.apache.camel:camel-scr-starter</include>
