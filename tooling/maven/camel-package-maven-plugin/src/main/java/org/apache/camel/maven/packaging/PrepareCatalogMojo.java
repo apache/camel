@@ -59,7 +59,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     private static final String[] EXCLUDE_DOC_FILES = {"camel-core-osgi", "camel-core-xml", "camel-hystrix",
         "camel-http-common", "camel-jetty", "camel-jetty-common", "camel-jetty8", 
-        "camel-linkedin", "camel-olingo2", "camel-ribbon", "camel-salesforce", "camel-spring-boot-starter",  
+        "camel-box", "camel-linkedin", "camel-olingo2", "camel-ribbon", "camel-salesforce", "camel-spring-boot-starter",
         "camel-spring-dm", "camel-test-karaf", "camel-test-spring", "camel-testng", "camel-test-spring3", 
         "camel-test-spring40", "camel-zipkin-starter"};
 
@@ -355,6 +355,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             target = new File(dir, "camel-linkedin-component/target/classes");
                         } else if ("camel-olingo2".equals(dir.getName())) {
                             target = new File(dir, "camel-olingo2-component/target/classes");
+                        } else if ("camel-box".equals(dir.getName())) {
+                            target = new File(dir, "camel-box-component/target/classes");
                         }
 
                         int before = componentFiles.size();
@@ -793,6 +795,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     // (camel-jetty is a placeholder, as camel-jetty9 is the actual component)
                     if ("camel-core-osgi".equals(dir.getName())
                         || "camel-core-xml".equals(dir.getName())
+                        || "camel-box".equals(dir.getName())
                         || "camel-http-common".equals(dir.getName())
                         || "camel-jetty".equals(dir.getName())
                         || "camel-jetty-common".equals(dir.getName())
