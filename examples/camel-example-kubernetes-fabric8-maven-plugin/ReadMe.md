@@ -34,6 +34,19 @@ cassandra-0                                1/1       Running   0          2h
 cassandra-1                                1/1       Running   0          2h
 ```
 
+You can also verify the healt of your cluster by running
+
+```
+kubectl exec <pod_name> -it nodetool status
+Datacenter: DC1-K8Demo
+======================
+Status=Up/Down
+|/ State=Normal/Leaving/Joining/Moving
+--  Address     Load       Tokens       Owns (effective)  Host ID                               Rack
+UN  172.17.0.4  212.14 KiB  32           53.1%             9bf81ccd-4aa1-451b-b56e-c16c5ee04836  Rack1-K8Demo
+UN  172.17.0.6  170.08 KiB  32           46.9%             69cc6f60-9ccf-439d-a298-b79b643c1586  Rack1-K8Demo
+```
+
 ### Building and running
 
 Navigate to the project folder and the example can be built with
