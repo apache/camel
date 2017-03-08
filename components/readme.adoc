@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 220 in 174 JAR artifacts (13 deprecated)
+Number of Components: 221 in 175 JAR artifacts (13 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -97,6 +97,9 @@ Number of Components: 220 in 174 JAR artifacts (13 deprecated)
 
 | link:camel-bonita/src/main/docs/bonita-component.adoc[Bonita] (camel-bonita) +
 `bonita:operation` | 2.19 | Camel Bonita support
+
+| link:camel-box/src/main/docs/box-component.adoc[Box] (camel-box) +
+`box:apiName/methodName` | 2.14 | For uploading downloading and managing files folders groups collaborations etc on box DOT com.
 
 | link:camel-braintree/src/main/docs/braintree-component.adoc[Braintree] (camel-braintree) +
 `braintree:apiName/methodName` | 2.17 | The braintree component is used for integrating with the Braintree Payment System.
@@ -840,7 +843,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 37 in 37 JAR artifacts (12 deprecated)
+Number of Miscellaneous Components: 36 in 36 JAR artifacts (12 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -849,8 +852,6 @@ Number of Miscellaneous Components: 37 in 37 JAR artifacts (12 deprecated)
 | link:camel-bam/src/main/docs/bam.adoc[BAM] (camel-bam) | 1.0 | *deprecated* Business Activity Monitoring
 
 | link:camel-blueprint/src/main/docs/blueprint.adoc[Blueprint] (camel-blueprint) | 2.4 | Using Camel with OSGi Blueprint
-
-| link:camel-box-parent/src/main/docs/box-parent.adoc[Box Parent] (camel-box-parent) |  | Camel Box parent
 
 | link:camel-cdi/src/main/docs/cdi.adoc[CDI] (camel-cdi) | 2.10 | Using Camel with CDI
 

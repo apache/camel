@@ -425,6 +425,7 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
                     // (camel-jetty is a placeholder, as camel-jetty9 is the actual component)
                     if ("camel-core-osgi".equals(dir.getName())
                         || "camel-core-xml".equals(dir.getName())
+                        || "camel-box".equals(dir.getName())
                         || "camel-http-common".equals(dir.getName())
                         || "camel-jetty".equals(dir.getName())
                         || "camel-jetty-common".equals(dir.getName())
