@@ -57,11 +57,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     public static final int BUFFER_SIZE = 128 * 1024;
 
-    private static final String[] EXCLUDE_DOC_FILES = {"camel-core-osgi", "camel-core-xml", "camel-hystrix",
-        "camel-http-common", "camel-jetty", "camel-jetty-common", "camel-jetty8", 
-        "camel-box", "camel-linkedin", "camel-olingo2", "camel-ribbon", "camel-salesforce", "camel-spring-boot-starter",
-        "camel-spring-dm", "camel-test-karaf", "camel-test-spring", "camel-testng", "camel-test-spring3", 
-        "camel-test-spring40", "camel-zipkin-starter"};
+    private static final String[] EXCLUDE_DOC_FILES = {
+        "camel-core-osgi", "camel-core-xml",
+        "camel-spring-dm",
+        "camel-http-common", "camel-jetty", "camel-jetty-common", "camel-jetty8",
+        "camel-test-karaf", "camel-test-spring", "camel-testng", "camel-test-spring3", "camel-test-spring40", "camel-zipkin-starter"
+    };
 
     private static final Pattern LABEL_PATTERN = Pattern.compile("\\\"label\\\":\\s\\\"([\\w,]+)\\\"");
 
@@ -964,6 +965,17 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 for (File dir : componentFiles) {
                     if (dir.isDirectory() && !"target".equals(dir.getName()) && !dir.getName().startsWith(".") && !excludeDocumentDir(dir.getName())) {
                         File target = new File(dir, "src/main/docs");
+
+                        // special for these as they are in sub dir
+                        if ("camel-salesforce".equals(dir.getName())) {
+                            target = new File(dir, "camel-salesforce-component/src/main/docs");
+                        } else if ("camel-linkedin".equals(dir.getName())) {
+                            target = new File(dir, "camel-linkedin-component/src/main/docs");
+                        } else if ("camel-olingo2".equals(dir.getName())) {
+                            target = new File(dir, "camel-olingo2-component/src/main/docs");
+                        } else if ("camel-box".equals(dir.getName())) {
+                            target = new File(dir, "camel-box-component/src/main/docs");
+                        }
 
                         int before = adocFiles.size();
                         findAsciiDocFilesRecursive(target, adocFiles, new CamelAsciiDocFileFilter());
