@@ -18,7 +18,6 @@ package org.apache.camel.component.jgroups;
 
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.jgroups.Channel;
 import org.jgroups.JChannel;
 
 /**
