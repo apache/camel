@@ -22,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class ConnectorDto {
 
     private String name;
+    private String scheme;
     private String description;
     private String labels;
 
@@ -39,6 +40,14 @@ public class ConnectorDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getScheme() {
+        return scheme;
+    }
+
+    public void setScheme(String scheme) {
+        this.scheme = scheme;
     }
 
     public String getDescription() {
@@ -113,6 +122,7 @@ public class ConnectorDto {
     public String toString() {
         return "ConnectorDto["
             + "name='" + name + '\''
+            + ", scheme='" + scheme + '\''
             + ", groupId='" + groupId + '\''
             + ", artifactId='" + artifactId + '\''
             + ", version='" + version + '\''

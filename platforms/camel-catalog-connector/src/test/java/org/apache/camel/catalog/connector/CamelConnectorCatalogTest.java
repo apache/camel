@@ -31,7 +31,7 @@ public class CamelConnectorCatalogTest {
         assertEquals(0, catalog.findConnector(false).size());
 
         catalog.addConnector("org.apache.camel", "myfoo-connector", "2.19.0",
-            "MyFoo", "Something cool", "foo,timer", null, null);
+            "MyFoo", "my-foo","Something cool", "foo,timer", null, null);
 
         assertEquals(1, catalog.findConnector(false).size());
     }
@@ -45,7 +45,7 @@ public class CamelConnectorCatalogTest {
         assertFalse(catalog.hasConnector("org.apache.camel", "myfoo-connector", "2.19.0"));
 
         catalog.addConnector("org.apache.camel", "myfoo-connector", "2.19.0",
-            "MyFoo", "Something cool", "foo,timer", null, null);
+            "MyFoo", "my-foo", "Something cool", "foo,timer", null, null);
 
         assertEquals(1, catalog.findConnector(false).size());
 
@@ -57,7 +57,7 @@ public class CamelConnectorCatalogTest {
         CamelConnectorCatalog catalog = new DefaultCamelConnectorCatalog();
 
         catalog.addConnector("org.apache.camel", "myfoo-connector", "2.19.0",
-            "MyFoo", "Something cool", "foo,timer", "foo", "bar");
+            "MyFoo", "my-foo", "Something cool", "foo,timer", "foo", "bar");
 
         String json = catalog.connectorJSon("org.apache.camel", "myfoo-connector", "2.19.0");
         assertEquals("foo", json);
@@ -68,7 +68,7 @@ public class CamelConnectorCatalogTest {
         CamelConnectorCatalog catalog = new DefaultCamelConnectorCatalog();
 
         catalog.addConnector("org.apache.camel", "myfoo-connector", "2.19.0",
-            "MyFoo", "Something cool", "foo,timer", "foo", "bar");
+            "MyFoo", "my-foo", "Something cool", "foo,timer", "foo", "bar");
 
         String json = catalog.connectorSchemaJSon("org.apache.camel", "myfoo-connector", "2.19.0");
         assertEquals("bar", json);
@@ -81,7 +81,7 @@ public class CamelConnectorCatalogTest {
         assertEquals(0, catalog.findConnector(false).size());
 
         catalog.addConnector("org.apache.camel", "myfoo-connector", "2.19.0",
-            "MyFoo", "Something cool", "foo,timer", null, null);
+            "MyFoo", "my-foo", "Something cool", "foo,timer", null, null);
 
         assertEquals(1, catalog.findConnector(false).size());
 
@@ -97,7 +97,7 @@ public class CamelConnectorCatalogTest {
         assertEquals(0, catalog.findConnector(false).size());
 
         catalog.addConnector("org.apache.camel", "myfoo-connector", "2.19.0",
-            "MyFoo", "Something cool", "foo,timer", null, null);
+            "MyFoo", "my-foo", "Something cool", "foo,timer", null, null);
 
         assertEquals(1, catalog.findConnector("foo", false).size());
         assertEquals(0, catalog.findConnector("bar", false).size());
@@ -110,10 +110,10 @@ public class CamelConnectorCatalogTest {
         assertEquals(0, catalog.findConnector(false).size());
 
         catalog.addConnector("org.apache.camel", "myfoo-connector", "2.19.0",
-            "MyFoo", "Something cool", "foo,timer", null, null);
+            "MyFoo", "my-foo", "Something cool", "foo,timer", null, null);
 
         catalog.addConnector("org.apache.camel", "myfoo-connector", "2.19.1",
-            "MyFoo", "Something more cool", "foo,timer", null, null);
+            "MyFoo", "my-foo", "Something more cool", "foo,timer", null, null);
 
         assertEquals(1, catalog.findConnector("foo", true).size());
         assertEquals(0, catalog.findConnector("bar", true).size());
@@ -129,10 +129,10 @@ public class CamelConnectorCatalogTest {
         assertEquals(0, catalog.findConnector(false).size());
 
         catalog.addConnector("org.apache.camel", "myfoo-connector", "2.19.0",
-            "MyFoo", "Something cool", "foo,timer", null, null);
+            "MyFoo", "my-foo", "Something cool", "foo,timer", null, null);
 
         catalog.addConnector("org.apache.camel", "myfoo-connector", "2.19.1",
-            "MyFoo", "Something more cool", "foo,timer", null, null);
+            "MyFoo", "my-foo", "Something more cool", "foo,timer", null, null);
 
         assertEquals(2, catalog.findConnector("foo", false).size());
         assertEquals(0, catalog.findConnector("bar", false).size());
