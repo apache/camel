@@ -21,7 +21,7 @@ single correlation key into a single message exchange.
 // eip options: START
 The Aggregate EIP supports 25 options which are listed below:
 
-{% raw %}
+
 [width="100%",cols="3,1m,6",options="header"]
 |=======================================================================
 | Name | Java Type | Description
@@ -51,7 +51,6 @@ The Aggregate EIP supports 25 options which are listed below:
 | completeAllOnStop | Boolean | Indicates to wait to complete all current and partial (pending) aggregated exchanges when the context is stopped. This also means that we will wait for all pending exchanges which are stored in the aggregation repository to complete so the repository is empty before we can stop. You may want to enable this when using the memory based aggregation repository that is memory based only and do not store data on disk. When this option is enabled then the aggregator is waiting to complete all those exchanges before its stopped when stopping CamelContext or the route using it.
 | aggregateControllerRef | String | To use a org.apache.camel.processor.aggregate.AggregateController to allow external sources to control this aggregator.
 |=======================================================================
-{% endraw %}
 // eip options: END
 
 ### About AggregationStrategy

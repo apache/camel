@@ -6,7 +6,7 @@ The Throttler Pattern allows you to ensure that a specific endpoint does not get
 // eip options: START
 The Throttle EIP supports 5 options which are listed below:
 
-{% raw %}
+
 [width="100%",cols="3,1m,6",options="header"]
 |=======================================================================
 | Name | Java Type | Description
@@ -16,7 +16,6 @@ The Throttle EIP supports 5 options which are listed below:
 | callerRunsWhenRejected | Boolean | Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true
 | rejectExecution | Boolean | Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit Is by default false
 |=======================================================================
-{% endraw %}
 // eip options: END
 
 ### Examples

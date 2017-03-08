@@ -9,7 +9,7 @@ Will by default use a sample period of 1 seconds.
 // eip options: START
 The Sample EIP supports 3 options which are listed below:
 
-{% raw %}
+
 [width="100%",cols="3,1m,6",options="header"]
 |=======================================================================
 | Name | Java Type | Description
@@ -17,7 +17,6 @@ The Sample EIP supports 3 options which are listed below:
 | messageFrequency | Long | Sets the sample message count which only a single Exchange will pass through after this many received.
 | units | TimeUnit | Sets the time units for the sample period defaulting to seconds.
 |=======================================================================
-{% endraw %}
 // eip options: END
 
 

@@ -9,7 +9,7 @@ You need to specify a Splitter as `split()`. In earlier versions of Camel, you n
 // eip options: START
 The Split EIP supports 12 options which are listed below:
 
-{% raw %}
+
 [width="100%",cols="3,1m,6",options="header"]
 |=======================================================================
 | Name | Java Type | Description
@@ -26,7 +26,6 @@ The Split EIP supports 12 options which are listed below:
 | parallelAggregate | Boolean | If enabled then the aggregate method on AggregationStrategy can be called concurrently. Notice that this would require the implementation of AggregationStrategy to be implemented as thread-safe. By default this is false meaning that Camel synchronizes the call to the aggregate method. Though in some use-cases this can be used to archive higher performance when the AggregationStrategy is implemented as thread-safe.
 | stopOnAggregateException | Boolean | If enabled unwind exceptions occurring at aggregation time to the error handler when parallelProcessing is used. Currently aggregation time exceptions do not stop the route processing when parallelProcessing is used. Enabling this option allows to work around this behavior. The default value is false for the sake of backward compatibility.
 |=======================================================================
-{% endraw %}
 // eip options: END
 
 ### Exchange properties

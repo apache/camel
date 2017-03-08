@@ -250,7 +250,7 @@ The `pollEnrich` works just as the `enrich` however as it uses a Polling Consume
 // eip options: START
 The Enrich EIP supports 7 options which are listed below:
 
-{% raw %}
+
 [width="100%",cols="3,1m,6",options="header"]
 |=======================================================================
 | Name | Java Type | Description
@@ -262,7 +262,6 @@ The Enrich EIP supports 7 options which are listed below:
 | cacheSize | Integer | Sets the maximum size used by the org.apache.camel.impl.ProducerCache which is used to cache and reuse producer when uris are reused.
 | ignoreInvalidEndpoint | Boolean | Ignore the invalidate endpoint exception when try to create a producer with that endpoint
 |=======================================================================
-{% endraw %}
 // eip options: END
 
 [NOTE]
