@@ -255,6 +255,7 @@
     <module>camel-shiro-starter</module>
     <module>camel-sip-starter</module>
     <module>camel-sjms-starter</module>
+    <module>camel-sjms2-starter</module>
     <module>camel-slack-starter</module>
     <module>camel-smpp-starter</module>
     <module>camel-snakeyaml-starter</module>

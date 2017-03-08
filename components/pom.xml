@@ -242,6 +242,7 @@
     <module>camel-snakeyaml</module>
     <module>camel-snmp</module>
     <module>camel-sjms</module>
+    <module>camel-sjms2</module>
     <module>camel-slack</module>
     <module>camel-soap</module>
     <module>camel-solr</module>
