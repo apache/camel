@@ -221,6 +221,7 @@
     <geronimo-jcdi-1.0-spec-version>1.0</geronimo-jcdi-1.0-spec-version>
     <geronimo-jcdi-1.1-spec-version>1.0</geronimo-jcdi-1.1-spec-version>
     <geronimo-jms-spec-version>1.1.1</geronimo-jms-spec-version>
+    <geronimo-jms2-spec-version>1.0-alpha-2</geronimo-jms2-spec-version>
     <geronimo-jpa2-spec-version>1.1</geronimo-jpa2-spec-version>
     <geronimo-jsp-spec-version>1.1</geronimo-jsp-spec-version>
     <geronimo-json-spec-version>1.0-alpha-1</geronimo-json-spec-version>
@@ -1747,6 +1748,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-sjms</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-sjms2</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3706,6 +3712,11 @@
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jms_1.1_spec</artifactId>
         <version>${geronimo-jms-spec-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-jms_2.0_spec</artifactId>
+        <version>${geronimo-jms2-spec-version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
