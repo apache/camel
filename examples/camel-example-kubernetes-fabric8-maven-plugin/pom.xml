@@ -11,7 +11,7 @@
 
   <artifactId>camel-example-kubernetes-fabric8-maven-plugin</artifactId>
   <name>Camel :: Example :: Kubernetes :: Fabric8 Maven Plugin</name>
-  <description>Kubernetes Kubernetes Fabric8 Maven Plugin example</description>
+  <description>Kubernetes Fabric8 Maven Plugin example</description>
   <packaging>jar</packaging>
 
   <properties>
