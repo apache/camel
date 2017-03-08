@@ -123,45 +123,6 @@ Endpoint prefix can be one of:
 * tasks
 * users
 
-### BoxComponent
-
-The Box Component can be configured with the options below. These
-options can be provided using the component's bean
-property *`configuration`* of
-type *`org.apache.camel.component.box.BoxConfiguration`*. These options
-can also be specified in the endpoint URI. 
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================  custom access token cachecom.box.sdk
-|Option |Type |Description
-
-|accessTokenCache |com.box.sdk.IAccessTokenCache |A custom access token cache. For production applications it is recommended to use a distributed cache like Memcached or Redis, and to implement this interface to store and retrieve access tokens appropriately for your environment; when not set an internal access token cache is used; ONLY used when using App Enterprise or User authentication.
-
-|clientId |String |Box application client ID
-
-|clientSecret |String |Box application client secret
-
-|encryptionAlgorithm |com.box.sdk.EncryptionAlgorithm |Algorithm used by OAuth 2.0 with JWT; MUST be provided when using App Enterprise and User authentication
-
-|enterpriseId |String |The enterprise ID to use for requesting access token; MUST be provided when using App Enterprise authentication
-
-|httpParams |java.util.Map |Custom HTTP params for settings like proxy host
-
-|maxCacheEntries |Integer |The maximum number of access tokens in cache; ONLY used when internal access token cache is used
-
-|privateKeyFile |String |Path to file containing private key used to generate signature in OAuth 2.0 with JWT; MUST be provided when using App Enterprise and User authentication
-
-|privateKeyPassword |String |Password for private key; only used for App Enterprise and User authentication; MUST be provided when using App Enterprise and User authentication
-
-|publicKeyId |String |The ID of public key used to generate signature in OAuth 2.0 with JWT; MUST be provided when using App Enterprise and User authentication 
-
-|userId |String |The user ID to use for an App user Authentication; MUST be provided when using App User authentication
-
-|userName |String |Box user name for a Managed user; MUST be provided when using Standard Authentication
-
-|userPassword |String |Box user password, MUST be provided when using Standard Authentication and if authSecureStorage is not set, or
-returns null on first call
-|=======================================================================
 
 ### Producer Endpoints:
 
@@ -203,7 +164,7 @@ follows:
     box://collaborations/endpoint?[options]
 -------------------------------------------
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
+[width="100%",cols="10%,10%,10%,70%",options="header"]
 |=======================================================================
 |Endpoint |Shorthand Alias |Options |Result Body Type
 
@@ -226,7 +187,7 @@ follows:
 URI Options for _collaborations_
 
 
-[width="100%",cols="10%,90%",options="header",]
+[width="100%",cols="10%,90%",options="header"]
 |=======================================================================
 |Name |Type
 
@@ -255,7 +216,7 @@ follows:
     box://comments/endpoint?[options]
 -------------------------------------------
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
+[width="100%",cols="10%,10%,10%,70%",options="header"]
 |=======================================================================
 |Endpoint |Shorthand Alias |Options |Result Body Type
 
@@ -276,7 +237,7 @@ follows:
 URI Options for _collaborations_
 
 
-[width="100%",cols="10%,90%",options="header",]
+[width="100%",cols="10%,90%",options="header"]
 |=======================================================================
 |Name |Type
 
@@ -299,7 +260,7 @@ The following endpoints can be invoked with the prefix *`events`* as follows:
   box://event-logs/endpoint?[options]
 ---------------------------------
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
+[width="100%",cols="10%,10%,10%,70%",options="header"]
 |=======================================================================
 |Endpoint |Shorthand Alias |Options |Result Body Type
 
@@ -309,7 +270,7 @@ The following endpoints can be invoked with the prefix *`events`* as follows:
 [[Box-URIOptionsforevent-logs]]
 URI Options for _event-logs_
 
-[width="100%",cols="10%,90%",options="header",]
+[width="100%",cols="10%,90%",options="header"]
 |=======================================================================
 |Name |Type
 
@@ -334,7 +295,7 @@ prefix *`files`* as follows.
    box://files/endpoint?[options]
 ----------------------------------------
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
+[width="100%",cols="10%,10%,10%,70%",options="header"]
 |=======================================================================
 |Endpoint |Shorthand Alias |Options |Result Body Type
 
@@ -384,7 +345,7 @@ prefix *`files`* as follows.
 [[Box-URIOptionsforfiles]]
 URI Options for _files_
 
-[width="100%",cols="10%,90%",options="header",]
+[width="100%",cols="10%,90%",options="header"]
 |=======================================================================
 |Name |Type
 
@@ -455,7 +416,7 @@ The following endpoints can be invoked with the prefix
     box://folders/endpoint?[options]
 -------------------------------------------
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
+[width="100%",cols="10%,10%,10%,70%",options="header"]
 |=======================================================================
 |Endpoint |Shorthand Alias |Options |Result Body Type
 
@@ -485,7 +446,7 @@ The following endpoints can be invoked with the prefix
 [[Box-URIOptionsforfolders]]
 URI Options for _folders_
 
-[width="100%",cols="10%,90%",options="header",]
+[width="100%",cols="10%,90%",options="header"]
 |=======================================================================
 |Name |Type
 
@@ -530,7 +491,7 @@ follows:
     box://groups/endpoint?[options]
 -----------------------------------
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
+[width="100%",cols="10%,10%,10%,70%",options="header"]
 |=======================================================================
 |Endpoint |Shorthand Alias |Options |Result Body Type
 
@@ -558,7 +519,7 @@ follows:
 [[Box-URIOptionsforgroups]]
 URI Options for _groups_
 
-[width="100%",cols="10%,90%",options="header",]
+[width="100%",cols="10%,90%",options="header"]
 |=======================================================================
 |Name |Type
 
@@ -588,7 +549,7 @@ follows:
     box://search/endpoint?[options]
 -----------------------------------
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
+[width="100%",cols="10%,10%,10%,70%",options="header"]
 |=======================================================================
 |Endpoint |Shorthand Alias |Options |Result Body Type
 
@@ -598,7 +559,7 @@ follows:
 [[Box-URIOptionsforsearch]]
 URI Options for _search_
 
-[width="100%",cols="10%,90%",options="header",]
+[width="100%",cols="10%,90%",options="header"]
 |=======================================================================
 |Name |Type
 
@@ -619,7 +580,7 @@ follows:
     box://tasks/endpoint?[options]
 ----------------------------------
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
+[width="100%",cols="10%,10%,10%,70%",options="header"]
 |=======================================================================
 |Endpoint |Shorthand Alias |Options |Result Body Type
 
@@ -645,7 +606,7 @@ follows:
 [[Box-URIOptionsfortasks]]
 URI Options for _tasks_
 
-[width="100%",cols="10%,90%",options="header",]
+[width="100%",cols="10%,90%",options="header"]
 |=======================================================================
 |Name |Type
 
@@ -678,7 +639,7 @@ follows:
     box://users/endpoint?[options]
 ----------------------------------
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
+[width="100%",cols="10%,10%,10%,70%",options="header"]
 |=======================================================================
 |Endpoint |Shorthand Alias |Options |Result Body Type
 
@@ -704,7 +665,7 @@ follows:
 [[Box-URIOptionsforusers]]
 URI Options for _users_
 
-[width="100%",cols="10%,90%",options="header",]
+[width="100%",cols="10%,90%",options="header"]
 |=======================================================================
 |Name |Type
 
@@ -741,7 +702,7 @@ shown in the example next.
     box://events/endpoint?[options]
 ----------------------------------------
 
-[width="100%",cols="10%,10%,10%,70%",options="header",]
+[width="100%",cols="10%,10%,10%,70%",options="header"]
 |=======================================================================
 |Endpoint |Shorthand Alias |Options |Result Body Type
 
