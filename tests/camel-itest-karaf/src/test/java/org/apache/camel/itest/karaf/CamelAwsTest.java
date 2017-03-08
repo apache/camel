@@ -29,6 +29,9 @@ public class CamelAwsTest extends BaseKarafTest {
     public void test() throws Exception {
         testComponent(COMPONENT, "aws-cw");
         testComponent(COMPONENT, "aws-ddb");
+        testComponent(COMPONENT, "aws-ec2");
+        testComponent(COMPONENT, "aws-kinesis");
+        testComponent(COMPONENT, "aws-kinesis-firehose");
         testComponent(COMPONENT, "aws-s3");
         testComponent(COMPONENT, "aws-sdb");
         testComponent(COMPONENT, "aws-ses");
