@@ -158,7 +158,8 @@ public abstract class AbstractFeatureTest {
 
     protected void overridePropertiesWithConfigAdmin(String pid, Properties props) throws IOException {
         ConfigurationAdmin configAdmin = getOsgiService(bundleContext, ConfigurationAdmin.class);
-        Configuration config = configAdmin.getConfiguration(pid);
+        // passing null as second argument ties the configuration to correct bundle.
+        Configuration config = configAdmin.getConfiguration(pid, null);
         if (config == null) {
             throw new IllegalArgumentException("Cannot find configuration with pid " + pid + " in OSGi ConfigurationAdmin service.");
         }
