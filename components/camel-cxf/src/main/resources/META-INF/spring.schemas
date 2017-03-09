@@ -99,4 +99,5 @@ http\://camel.apache.org/schema/cxf/camel-cxf-2.17.2.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-2.17.3.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-2.17.4.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-2.17.5.xsd=schema/cxfEndpoint.xsd
+http\://camel.apache.org/schema/cxf/camel-cxf-2.17.6.xsd=schema/cxfEndpoint.xsd
 http\://camel.apache.org/schema/cxf/camel-cxf-${project.version}.xsd=schema/cxfEndpoint.xsd
