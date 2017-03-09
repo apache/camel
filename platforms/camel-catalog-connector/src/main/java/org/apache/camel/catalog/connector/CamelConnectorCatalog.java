@@ -112,28 +112,6 @@ public interface CamelConnectorCatalog {
     String componentSchemaJSon(String groupId, String artifactId, String version);
 
     /**
-     * Creates an endpoint uri in Java style from the information in the json schema
-     *
-     * @param scheme the endpoint schema
-     * @param json the json schema with the endpoint properties
-     * @param encode whether to URL encode the returned uri or not
-     * @return the constructed endpoint uri
-     * @throws java.net.URISyntaxException is thrown if there is encoding error
-     */
-    String asEndpointUri(String scheme, String json, boolean encode) throws URISyntaxException;
-
-    /**
-     * Creates an endpoint uri in XML style (eg escape & as &ampl;) from the information in the json schema
-     *
-     * @param scheme the endpoint schema
-     * @param json the json schema with the endpoint properties
-     * @param encode whether to URL encode the returned uri or not
-     * @return the constructed endpoint uri
-     * @throws java.net.URISyntaxException is thrown if there is encoding error
-     */
-    String asEndpointUriXml(String scheme, String json, boolean encode) throws URISyntaxException;
-
-    /**
      * Creates an endpoint uri in Java style from the information from the properties
      *
      * @param scheme the endpoint schema
