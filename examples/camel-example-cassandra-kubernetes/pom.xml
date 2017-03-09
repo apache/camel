@@ -9,7 +9,7 @@
     <version>2.19.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-example-cassandra-kubernetes</artifactId>
+  <artifactId>camel-cassandra-kubernetes-example</artifactId>
   <name>Camel :: Example :: Cassandra :: Kubernetes</name>
   <description>Kubernetes Example Cassandra Kubernetes</description>
   <packaging>jar</packaging>
