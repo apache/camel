@@ -3138,6 +3138,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         addService(packageScanClassResolver, true, true);
         addService(restRegistry, true, true);
         addService(messageHistoryFactory, true, true);
+        addService(runtimeCamelCatalog, true, true);
         if (reloadStrategy != null) {
             log.info("Using ReloadStrategy: {}", reloadStrategy);
             addService(reloadStrategy, true, true);

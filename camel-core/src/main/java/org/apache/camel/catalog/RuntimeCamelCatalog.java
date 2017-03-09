@@ -19,10 +19,12 @@ package org.apache.camel.catalog;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import org.apache.camel.StaticService;
+
 /**
  * Runtime based CamelCatalog which are included in camel-core that can provided limit CamelCatalog capabilities
  */
-public interface RuntimeCamelCatalog {
+public interface RuntimeCamelCatalog extends StaticService {
 
     /**
      * Returns the component information as JSon format.
@@ -197,28 +199,6 @@ public interface RuntimeCamelCatalog {
      * @return the component name (aka scheme), or <tt>null</tt> if not possible to determine
      */
     String endpointComponentName(String uri);
-
-    /**
-     * Creates an endpoint uri in Java style from the information in the json schema
-     *
-     * @param scheme the endpoint schema
-     * @param json the json schema with the endpoint properties
-     * @param encode whether to URL encode the returned uri or not
-     * @return the constructed endpoint uri
-     * @throws java.net.URISyntaxException is thrown if there is encoding error
-     */
-    String asEndpointUri(String scheme, String json, boolean encode) throws URISyntaxException;
-
-    /**
-     * Creates an endpoint uri in XML style (eg escape & as &ampl;) from the information in the json schema
-     *
-     * @param scheme the endpoint schema
-     * @param json the json schema with the endpoint properties
-     * @param encode whether to URL encode the returned uri or not
-     * @return the constructed endpoint uri
-     * @throws java.net.URISyntaxException is thrown if there is encoding error
-     */
-    String asEndpointUriXml(String scheme, String json, boolean encode) throws URISyntaxException;
 
     /**
      * Creates an endpoint uri in Java style from the information from the properties

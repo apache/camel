@@ -51,6 +51,16 @@ public class DefaultRuntimeCamelCatalog extends AbstractCamelCatalog implements 
     }
 
     @Override
+    public void start() throws Exception {
+        // noop
+    }
+
+    @Override
+    public void stop() throws Exception {
+        cache.clear();
+    }
+
+    @Override
     public String modelJSonSchema(String name) {
         String answer = null;
         if (caching) {
