@@ -35,6 +35,7 @@ public class MavenArtifactProviderTest extends TestCase {
     public void testAddComponent() {
         CamelCatalog camelCatalog = new DefaultCamelCatalog();
         MavenArtifactProvider provider = new DefaultMavenArtifactProvider();
+        provider.setCacheDirectory("target/cache");
 
         int before = camelCatalog.findComponentNames().size();
 
@@ -51,6 +52,7 @@ public class MavenArtifactProviderTest extends TestCase {
         CamelCatalog camelCatalog = new DefaultCamelCatalog();
         CamelConnectorCatalog camelConnectorCatalog = new DefaultCamelConnectorCatalog();
         MavenArtifactProvider provider = new DefaultMavenArtifactProvider();
+        provider.setCacheDirectory("target/cache");
 
         int before = camelCatalog.findComponentNames().size();
         List<ConnectorDto> list = camelConnectorCatalog.findConnector("foo", false);

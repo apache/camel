@@ -102,6 +102,13 @@ public class CamelConnectorCatalogRest {
     }
 
     @POST
+    @Path("/mavenCacheDirectory/{name}")
+    @ApiOperation(value = "Configures the Maven cache directory to use when downloading artifacts")
+    public void mavenCacheDirectory(@ApiParam("The name of the cache directory") @PathParam("name") String name) {
+        maven.setCacheDirectory(name);
+    }
+
+    @POST
     @Path("/addMavenRepository/{name}/{url}")
     @ApiOperation(value = "Adds a third party Maven repository to use for downloading Maven artifacts")
     public void addMavenRepository(@ApiParam("The name of the Maven repository") @PathParam("name") String name,
