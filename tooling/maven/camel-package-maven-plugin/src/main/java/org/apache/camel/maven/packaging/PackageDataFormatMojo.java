@@ -185,6 +185,9 @@ public class PackageDataFormatMojo extends AbstractMojo {
                                 if (row.containsKey("label")) {
                                     dataFormatModel.setLabel(row.get("label"));
                                 }
+                                if (row.containsKey("deprecated")) {
+                                    dataFormatModel.setDeprecated(row.get("deprecated"));
+                                }
                                 if (row.containsKey("javaType")) {
                                     dataFormatModel.setModelJavaType(row.get("javaType"));
                                 }
@@ -441,6 +444,8 @@ public class PackageDataFormatMojo extends AbstractMojo {
         if (dataFormatModel.getDescription() != null) {
             buffer.append("\n    \"description\": \"").append(dataFormatModel.getDescription()).append("\",");
         }
+        boolean deprecated = "true".equals(dataFormatModel.getDeprecated());
+        buffer.append("\n    \"deprecated\": ").append(deprecated).append(",");
         if (dataFormatModel.getFirstVersion() != null) {
             buffer.append("\n    \"firstVersion\": \"").append(dataFormatModel.getFirstVersion()).append("\",");
         }
@@ -466,6 +471,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
         private String description;
         private String firstVersion;
         private String label;
+        private String deprecated;
         private String javaType;
         private String modelJavaType;
         private String groupId;
@@ -528,6 +534,14 @@ public class PackageDataFormatMojo extends AbstractMojo {
             this.label = label;
         }
 
+        public String getDeprecated() {
+            return deprecated;
+        }
+
+        public void setDeprecated(String deprecated) {
+            this.deprecated = deprecated;
+        }
+
         public String getJavaType() {
             return javaType;
         }
@@ -568,6 +582,7 @@ public class PackageDataFormatMojo extends AbstractMojo {
                     + ", modelName='" + modelName + '\''
                     + ", description='" + description + '\''
                     + ", label='" + label + '\''
+                    + ", deprecated='" + deprecated + '\''
                     + ", javaType='" + javaType + '\''
                     + ", modelJavaType='" + modelJavaType + '\''
                     + ", groupId='" + groupId + '\''

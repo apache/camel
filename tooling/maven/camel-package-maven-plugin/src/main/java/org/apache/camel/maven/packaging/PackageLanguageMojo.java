@@ -191,6 +191,9 @@ public class PackageLanguageMojo extends AbstractMojo {
                                 if (row.containsKey("label")) {
                                     languageModel.setLabel(row.get("label"));
                                 }
+                                if (row.containsKey("deprecated")) {
+                                    languageModel.setDeprecated(row.get("deprecated"));
+                                }
                                 if (row.containsKey("javaType")) {
                                     languageModel.setModelJavaType(row.get("javaType"));
                                 }
@@ -369,6 +372,8 @@ public class PackageLanguageMojo extends AbstractMojo {
         if (languageModel.getDescription() != null) {
             buffer.append("\n    \"description\": \"").append(languageModel.getDescription()).append("\",");
         }
+        boolean deprecated = "true".equals(languageModel.getDeprecated());
+        buffer.append("\n    \"deprecated\": ").append(deprecated).append(",");
         if (languageModel.getFirstVersion() != null) {
             buffer.append("\n    \"firstVersion\": \"").append(languageModel.getFirstVersion()).append("\",");
         }
@@ -394,6 +399,7 @@ public class PackageLanguageMojo extends AbstractMojo {
         private String description;
         private String firstVersion;
         private String label;
+        private String deprecated;
         private String javaType;
         private String modelJavaType;
         private String groupId;
@@ -454,6 +460,14 @@ public class PackageLanguageMojo extends AbstractMojo {
 
         public void setLabel(String label) {
             this.label = label;
+        }
+
+        public String getDeprecated() {
+            return deprecated;
+        }
+
+        public void setDeprecated(String deprecated) {
+            this.deprecated = deprecated;
         }
 
         public String getJavaType() {
