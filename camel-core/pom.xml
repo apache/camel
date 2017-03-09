@@ -572,13 +572,7 @@
           <artifactId>apt</artifactId>
           <scope>provided</scope>
         </dependency>
-        <!-- enable Spring Boot configuration APT processor -->
-        <dependency>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-configuration-processor</artifactId>
-          <version>${spring-boot-version}</version>
-          <scope>provided</scope>
-        </dependency>
+
       </dependencies>
     </profile>
 
@@ -642,13 +636,6 @@
         <dependency>
           <groupId>org.apache.camel</groupId>
           <artifactId>apt</artifactId>
-          <scope>provided</scope>
-        </dependency>
-        <!-- enable Spring Boot configuration APT processor -->
-        <dependency>
-          <groupId>org.springframework.boot</groupId>
-          <artifactId>spring-boot-configuration-processor</artifactId>
-          <version>${spring-boot-version}</version>
           <scope>provided</scope>
         </dependency>
         <!-- xmltokenizer using woodstox -->
