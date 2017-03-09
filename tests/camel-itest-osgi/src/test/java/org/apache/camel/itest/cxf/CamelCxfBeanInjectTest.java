@@ -44,7 +44,7 @@ import org.osgi.framework.Constants;
 @RunWith(PaxExam.class)
 public class CamelCxfBeanInjectTest extends AbstractFeatureTest {
 
-    private static final int PORT = AvailablePortFinder.getNextAvailable();
+    private static final int PORT = AvailablePortFinder.getNextAvailable(30000);
     private static final String ENDPOINT_ADDRESS = String.format(
         "http://localhost:%s/CamelCxfBeanInjectTest/router", PORT);
 
