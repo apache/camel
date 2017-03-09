@@ -24,7 +24,9 @@ import java.util.Set;
 public interface ComponentVerifier {
     // Todo: should be an enum ?
     String CODE_EXCEPTION = "exception";
+    String CODE_INTERNAL = "internal";
     String CODE_MISSING_OPTION = "missing-option";
+    String CODE_UNKNOWN_OPTION = "unknown-option";
     String CODE_ILLEGAL_OPTION = "illegal-option";
     String CODE_ILLEGAL_OPTION_VALUE = "illegal-option-value";
     String CODE_UNSUPPORTED = "unsupported";

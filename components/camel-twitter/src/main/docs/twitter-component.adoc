@@ -187,10 +187,10 @@ with the following path and query parameters:
 | httpProxyPassword | proxy |  | String | The http proxy password which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
 | httpProxyPort | proxy |  | Integer | The http proxy port which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
 | httpProxyUser | proxy |  | String | The http proxy user which can be used for the camel-twitter. Can also be configured on the TwitterComponent level instead.
-| accessToken | security |  | String | The access token. Can also be configured on the TwitterComponent level instead.
-| accessTokenSecret | security |  | String | The access secret. Can also be configured on the TwitterComponent level instead.
-| consumerKey | security |  | String | The consumer key. Can also be configured on the TwitterComponent level instead.
-| consumerSecret | security |  | String | The consumer secret. Can also be configured on the TwitterComponent level instead.
+| accessToken | security |  | String | *Required* The access token. Can also be configured on the TwitterComponent level instead.
+| accessTokenSecret | security |  | String | *Required* The access secret. Can also be configured on the TwitterComponent level instead.
+| consumerKey | security |  | String | *Required* The consumer key. Can also be configured on the TwitterComponent level instead.
+| consumerSecret | security |  | String | *Required* The consumer secret. Can also be configured on the TwitterComponent level instead.
 |=======================================================================
 // endpoint options: END
 

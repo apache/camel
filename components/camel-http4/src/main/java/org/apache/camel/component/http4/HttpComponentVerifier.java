@@ -37,8 +37,8 @@ final class HttpComponentVerifier extends DefaultComponentVerifier {
     private final HttpComponent component;
 
     HttpComponentVerifier(HttpComponent component) {
-        super(component.getCamelContext());
-
+        super("http", component.getCamelContext());
+        
         this.component = component;
     }
 
@@ -51,8 +51,8 @@ final class HttpComponentVerifier extends DefaultComponentVerifier {
         // The default is success
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS);
 
-        // The httpUri is mandatory
-        builder.error(ResultErrorHelper.requiresOption("httpUri", parameters));
+        // Validate using the catalog
+        super.verifyParametersAgainstCatalog(builder, parameters);
 
         return builder.build();
     }

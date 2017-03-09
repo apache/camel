@@ -710,6 +710,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
      * TODO: document
      */
     public ComponentVerifier getVerifier() {
-        return new SalesforceComponentVerifier(getCamelContext());
+        return new SalesforceComponentVerifier(this);
     }
 }

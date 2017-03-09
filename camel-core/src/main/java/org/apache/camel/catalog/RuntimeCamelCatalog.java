@@ -85,6 +85,15 @@ public interface RuntimeCamelCatalog extends StaticService {
     boolean validateTimePattern(String pattern);
 
     /**
+     * Validates the properties for the given scheme against component and endpoint
+     *
+     * @param scheme  the endpoint scheme
+     * @param properties  the endpoint properties
+     * @return validation result
+     */
+    EndpointValidationResult validateProperties(String scheme, Map<String, String> properties);
+
+    /**
      * Parses and validates the endpoint uri and constructs a key/value properties of each option.
      *
      * @param uri  the endpoint uri

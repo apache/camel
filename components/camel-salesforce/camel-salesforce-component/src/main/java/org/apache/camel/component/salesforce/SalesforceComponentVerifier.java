@@ -21,7 +21,6 @@ import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.NoSuchOptionException;
 import org.apache.camel.component.salesforce.api.SalesforceException;
@@ -41,8 +40,8 @@ import org.eclipse.jetty.client.util.DigestAuthentication;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 public class SalesforceComponentVerifier extends DefaultComponentVerifier {
-    SalesforceComponentVerifier(CamelContext camelContext) {
-        super(camelContext);
+    SalesforceComponentVerifier(SalesforceComponent component) {
+        super("salesforce", component.getCamelContext());
     }
 
     // *********************************
@@ -50,13 +49,19 @@ public class SalesforceComponentVerifier extends DefaultComponentVerifier {
     // *********************************
 
     @Override
-    protected ComponentVerifier.Result verifyParameters(Map<String, Object> parameters) {
-        return ResultBuilder.withStatusAndScope(ComponentVerifier.Result.Status.OK, ComponentVerifier.Scope.PARAMETERS)
+    protected Result verifyParameters(Map<String, Object> parameters) {
+        // Validate mandatory component options, needed to be done here as these
+        // options are not properly marked as mandatory in the catalog.
+        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
             .error(ResultErrorHelper.requiresOption("clientId", parameters))
             .error(ResultErrorHelper.requiresOption("clientSecret", parameters))
             .error(ResultErrorHelper.requiresOption("userName", parameters))
-            .error(ResultErrorHelper.requiresOption("password", parameters))
-            .build();
+            .error(ResultErrorHelper.requiresOption("password", parameters));
+
+        // Validate using the catalog
+        super.verifyParametersAgainstCatalog(builder, parameters);
+
+        return builder.build();
     }
 
     // *********************************
@@ -102,11 +107,11 @@ public class SalesforceComponentVerifier extends DefaultComponentVerifier {
 
             httpClient.stop();
             httpClient.destroy();
-        } catch(NoSuchOptionException e) {
+        } catch (NoSuchOptionException e) {
             builder.error(
                 ResultErrorBuilder.withMissingOption(e.getOptionName()).build()
             );
-        } catch(SalesforceException e) {
+        } catch (SalesforceException e) {
             processSalesforceException(builder, Optional.of(e));
         } catch (Exception e) {
             builder.error(

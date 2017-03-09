@@ -26,12 +26,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.apache.camel.catalog.CatalogHelper.after;
 import static org.apache.camel.catalog.JSonSchemaHelper.getNames;
@@ -96,6 +99,195 @@ public abstract class AbstractCamelCatalog {
 
     public EndpointValidationResult validateEndpointProperties(String uri, boolean ignoreLenientProperties) {
         return validateEndpointProperties(uri, ignoreLenientProperties, false, false);
+    }
+
+    public EndpointValidationResult validateProperties(String scheme, Map<String, String> properties) {
+        EndpointValidationResult result = new EndpointValidationResult(scheme);
+
+        String json = jsonSchemaResolver.getComponentJSonSchema(scheme);
+        List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
+        List<Map<String, String>> componentProps = JSonSchemaHelper.parseJsonSchema("componentProperties", json, true);
+
+        // endpoint options have higher priority so remove those from component
+        // that may clash
+        componentProps.stream()
+            .filter(c -> rows.stream().noneMatch(e -> Objects.equals(e.get("name"), c.get("name"))))
+            .forEach(rows::add);
+
+        boolean lenient = Boolean.getBoolean(properties.getOrDefault("lenient", "false"));
+
+        // the dataformat component refers to a data format so lets add the properties for the selected
+        // data format to the list of rows
+        if ("dataformat".equals(scheme)) {
+            String dfName = properties.get("name");
+            if (dfName != null) {
+                String dfJson = jsonSchemaResolver.getDataFormatJSonSchema(dfName);
+                List<Map<String, String>> dfRows = JSonSchemaHelper.parseJsonSchema("properties", dfJson, true);
+                if (dfRows != null && !dfRows.isEmpty()) {
+                    rows.addAll(dfRows);
+                }
+            }
+        }
+
+        for (Map.Entry<String, String> property : properties.entrySet()) {
+            String value = property.getValue();
+            String originalName = property.getKey();
+            String name = property.getKey();
+            // the name may be using an optional prefix, so lets strip that because the options
+            // in the schema are listed without the prefix
+            name = stripOptionalPrefixFromName(rows, name);
+            // the name may be using a prefix, so lets see if we can find the real property name
+            String propertyName = getPropertyNameFromNameWithPrefix(rows, name);
+            if (propertyName != null) {
+                name = propertyName;
+            }
+
+            String prefix = getPropertyPrefix(rows, name);
+            String kind = getPropertyKind(rows, name);
+            boolean namePlaceholder = name.startsWith("{{") && name.endsWith("}}");
+            boolean valuePlaceholder = value.startsWith("{{") || value.startsWith("${") || value.startsWith("$simple{");
+            boolean lookup = value.startsWith("#") && value.length() > 1;
+            // we cannot evaluate multi values as strict as the others, as we don't know their expected types
+            boolean multiValue = prefix != null && originalName.startsWith(prefix) && isPropertyMultiValue(rows, name);
+
+            Map<String, String> row = getRow(rows, name);
+            if (row == null) {
+                // unknown option
+
+                // only add as error if the component is not lenient properties, or not stub component
+                // and the name is not a property placeholder for one or more values
+                if (!namePlaceholder && !"stub".equals(scheme)) {
+                    if (lenient) {
+                        // as if we are lenient then the option is a dynamic extra option which we cannot validate
+                        result.addLenient(name);
+                    } else {
+                        // its unknown
+                        result.addUnknown(name);
+                        if (suggestionStrategy != null) {
+                            String[] suggestions = suggestionStrategy.suggestEndpointOptions(getNames(rows), name);
+                            if (suggestions != null) {
+                                result.addUnknownSuggestions(name, suggestions);
+                            }
+                        }
+                    }
+                }
+            } else {
+                /* TODO: we may need to add something in the properties to know if they are related to a producer or consumer
+                if ("parameter".equals(kind)) {
+                    // consumer only or producer only mode for parameters
+                    if (consumerOnly) {
+                        boolean producer = isPropertyProducerOnly(rows, name);
+                        if (producer) {
+                            // the option is only for producer so you cannot use it in consumer mode
+                            result.addNotConsumerOnly(name);
+                        }
+                    } else if (producerOnly) {
+                        boolean consumer = isPropertyConsumerOnly(rows, name);
+                        if (consumer) {
+                            // the option is only for consumer so you cannot use it in producer mode
+                            result.addNotProducerOnly(name);
+                        }
+                    }
+                }
+                */
+
+                // default value
+                String defaultValue = getPropertyDefaultValue(rows, name);
+                if (defaultValue != null) {
+                    result.addDefaultValue(name, defaultValue);
+                }
+
+                // is required but the value is empty
+                boolean required = isPropertyRequired(rows, name);
+                if (required && isEmpty(value)) {
+                    result.addRequired(name);
+                }
+
+                // is enum but the value is not within the enum range
+                // but we can only check if the value is not a placeholder
+                String enums = getPropertyEnum(rows, name);
+                if (!multiValue && !valuePlaceholder && !lookup && enums != null) {
+                    String[] choices = enums.split(",");
+                    boolean found = false;
+                    for (String s : choices) {
+                        if (value.equalsIgnoreCase(s)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        result.addInvalidEnum(name, value);
+                        result.addInvalidEnumChoices(name, choices);
+                        if (suggestionStrategy != null) {
+                            Set<String> names = new LinkedHashSet<>();
+                            names.addAll(Arrays.asList(choices));
+                            String[] suggestions = suggestionStrategy.suggestEndpointOptions(names, value);
+                            if (suggestions != null) {
+                                result.addInvalidEnumSuggestions(name, suggestions);
+                            }
+                        }
+
+                    }
+                }
+
+                // is reference lookup of bean (not applicable for @UriPath, enums, or multi-valued)
+                if (!multiValue && enums == null && !"path".equals(kind) && isPropertyObject(rows, name)) {
+                    // must start with # and be at least 2 characters
+                    if (!value.startsWith("#") || value.length() <= 1) {
+                        result.addInvalidReference(name, value);
+                    }
+                }
+
+                // is boolean
+                if (!multiValue && !valuePlaceholder && !lookup && isPropertyBoolean(rows, name)) {
+                    // value must be a boolean
+                    boolean bool = "true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value);
+                    if (!bool) {
+                        result.addInvalidBoolean(name, value);
+                    }
+                }
+
+                // is integer
+                if (!multiValue && !valuePlaceholder && !lookup && isPropertyInteger(rows, name)) {
+                    // value must be an integer
+                    boolean valid = validateInteger(value);
+                    if (!valid) {
+                        result.addInvalidInteger(name, value);
+                    }
+                }
+
+                // is number
+                if (!multiValue && !valuePlaceholder && !lookup && isPropertyNumber(rows, name)) {
+                    // value must be an number
+                    boolean valid = false;
+                    try {
+                        valid = !Double.valueOf(value).isNaN() || !Float.valueOf(value).isNaN();
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                    if (!valid) {
+                        result.addInvalidNumber(name, value);
+                    }
+                }
+            }
+        }
+
+        // now check if all required values are there, and that a default value does not exists
+        for (Map<String, String> row : rows) {
+            String name = row.get("name");
+            boolean required = isPropertyRequired(rows, name);
+            if (required) {
+                String value = properties.get(name);
+                if (isEmpty(value)) {
+                    value = getPropertyDefaultValue(rows, name);
+                }
+                if (isEmpty(value)) {
+                    result.addRequired(name);
+                }
+            }
+        }
+
+        return result;
     }
 
     public EndpointValidationResult validateEndpointProperties(String uri, boolean ignoreLenientProperties, boolean consumerOnly, boolean producerOnly) {

@@ -18,17 +18,15 @@ package org.apache.camel.component.twitter;
 
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.impl.verifier.DefaultComponentVerifier;
 import org.apache.camel.impl.verifier.ResultBuilder;
 import org.apache.camel.impl.verifier.ResultErrorBuilder;
-import org.apache.camel.impl.verifier.ResultErrorHelper;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
 final class TwitterComponentVerifier extends DefaultComponentVerifier {
-    TwitterComponentVerifier(CamelContext camelContext) {
-        super(camelContext);
+    TwitterComponentVerifier(TwitterComponent component) {
+        super("twitter", component.getCamelContext());
     }
 
     // *********************************
@@ -37,12 +35,12 @@ final class TwitterComponentVerifier extends DefaultComponentVerifier {
 
     @Override
     protected Result verifyParameters(Map<String, Object> parameters) {
-        return ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
-            .error(ResultErrorHelper.requiresOption("consumerKey", parameters))
-            .error(ResultErrorHelper.requiresOption("consumerSecret", parameters))
-            .error(ResultErrorHelper.requiresOption("accessToken", parameters))
-            .error(ResultErrorHelper.requiresOption("accessTokenSecret", parameters))
-            .build();
+        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS);
+
+        // Validate using the catalog
+        super.verifyParametersAgainstCatalog(builder, parameters);
+
+        return builder.build();
     }
 
     // *********************************
@@ -62,7 +60,7 @@ final class TwitterComponentVerifier extends DefaultComponentVerifier {
             Twitter twitter = configuration.getTwitter();
 
             twitter.verifyCredentials();
-        } catch(TwitterException e) {
+        } catch (TwitterException e) {
             // verifyCredentials throws TwitterException when Twitter service or
             // network is unavailable or if supplied credential is wrong
             ResultErrorBuilder errorBuilder = ResultErrorBuilder.withHttpCodeAndText(e.getStatusCode(), e.getErrorMessage())

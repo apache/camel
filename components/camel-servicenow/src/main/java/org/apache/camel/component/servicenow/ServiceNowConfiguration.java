@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
@@ -42,8 +43,10 @@ public class ServiceNowConfiguration implements Cloneable {
         );
 
     @UriParam(label = "security", secret = true)
+    @Metadata(required = "true")
     private String userName;
     @UriParam(label = "security", secret = true)
+    @Metadata(required = "true")
     private String password;
     @UriParam(label = "security", secret = true)
     private String oauthClientId;

@@ -104,11 +104,11 @@ with the following path and query parameters:
 | oauthClientId | security |  | String | OAuth2 ClientID
 | oauthClientSecret | security |  | String | OAuth2 ClientSecret
 | oauthTokenUrl | security |  | String | OAuth token Url
-| password | security |  | String | ServiceNow account password MUST be provided
+| password | security |  | String | *Required* ServiceNow account password MUST be provided
 | proxyPassword | security |  | String | Password for proxy authentication
 | proxyUserName | security |  | String | Username for proxy authentication
 | sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters. See http://camel.apache.org/camel-configuration-utilities.html
-| userName | security |  | String | ServiceNow user account name MUST be provided
+| userName | security |  | String | *Required* ServiceNow user account name MUST be provided
 |=======================================================================
 // endpoint options: END
 
