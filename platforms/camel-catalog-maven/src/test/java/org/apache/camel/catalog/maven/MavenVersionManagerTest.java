@@ -24,8 +24,10 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.CatalogHelper;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.springboot.SpringBootRuntimeProvider;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("Cannot run on CI servers so run manually")
 public class MavenVersionManagerTest extends TestCase {
 
     private static final String COMPONENTS_CATALOG = "org/apache/camel/catalog/components.properties";
