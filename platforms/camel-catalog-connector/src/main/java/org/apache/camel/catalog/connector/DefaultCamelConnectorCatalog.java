@@ -16,10 +16,17 @@
  */
 package org.apache.camel.catalog.connector;
 
+import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 
 public class DefaultCamelConnectorCatalog implements CamelConnectorCatalog {
 
+    private final CamelCatalog camelCatalog = new DefaultCamelCatalog(true);
     private ConnectorDataStore dataStore = new MemoryConnectorDataStore();
 
     @Override
@@ -37,17 +44,19 @@ public class DefaultCamelConnectorCatalog implements CamelConnectorCatalog {
     }
 
     @Override
-    public void addConnector(String groupId, String artifactId, String version, String name, String scheme, String description, String labels,
-                             String connectorJson, String connectorSchemaJson) {
+    public void addConnector(String groupId, String artifactId, String version, String name, String scheme,
+                             String javaType, String description, String labels,
+                             String connectorJson, String connectorSchemaJson, String componentSchemaJson) {
         ConnectorDto dto = new ConnectorDto();
         dto.setGroupId(groupId);
         dto.setArtifactId(artifactId);
         dto.setVersion(version);
         dto.setName(name);
         dto.setScheme(scheme);
+        dto.setJavaType(javaType);
         dto.setDescription(description);
         dto.setLabels(labels);
-        dataStore.addConnector(dto, connectorJson, connectorSchemaJson);
+        dataStore.addConnector(dto, connectorJson, connectorSchemaJson, componentSchemaJson);
     }
 
     @Override
@@ -86,4 +95,86 @@ public class DefaultCamelConnectorCatalog implements CamelConnectorCatalog {
         dto.setVersion(version);
         return dataStore.connectorSchemaJSon(dto);
     }
+
+    @Override
+    public String componentSchemaJSon(String groupId, String artifactId, String version) {
+        ConnectorDto dto = new ConnectorDto();
+        dto.setGroupId(groupId);
+        dto.setArtifactId(artifactId);
+        dto.setVersion(version);
+        return dataStore.componentSchemaJSon(dto);
+    }
+
+    @Override
+    public String asEndpointUri(String scheme, String json, boolean encode) throws URISyntaxException {
+        // delegate to use CamelCatalog
+        Optional<ConnectorDto> found = dataStore.findConnector(null, true).stream().filter(d -> d.getScheme().equals(scheme)).findAny();
+        if (found.isPresent()) {
+            ConnectorDto dto = found.get();
+
+            // need to add custom connector as component to the catalog before we can build the uri
+            String javaType = dto.getJavaType();
+            String componentJson = componentSchemaJSon(dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
+
+            camelCatalog.addComponent(scheme, javaType, componentJson);
+            return camelCatalog.asEndpointUri(scheme, json, encode);
+        }
+        // no connector with that scheme
+        return null;
+    }
+
+    @Override
+    public String asEndpointUriXml(String scheme, String json, boolean encode) throws URISyntaxException {
+        // delegate to use CamelCatalog
+        Optional<ConnectorDto> found = dataStore.findConnector(null, true).stream().filter(d -> d.getScheme().equals(scheme)).findAny();
+        if (found.isPresent()) {
+            ConnectorDto dto = found.get();
+
+            // need to add custom connector as component to the catalog before we can build the uri
+            String javaType = dto.getJavaType();
+            String componentJson = componentSchemaJSon(dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
+
+            camelCatalog.addComponent(scheme, javaType, componentJson);
+            return camelCatalog.asEndpointUriXml(scheme, json, encode);
+        }
+        // no connector with that scheme
+        return null;
+    }
+
+    @Override
+    public String asEndpointUri(String scheme, Map<String, String> properties, boolean encode) throws URISyntaxException {
+        // delegate to use CamelCatalog
+        Optional<ConnectorDto> found = dataStore.findConnector(null, true).stream().filter(d -> d.getScheme().equals(scheme)).findAny();
+        if (found.isPresent()) {
+            ConnectorDto dto = found.get();
+
+            // need to add custom connector as component to the catalog before we can build the uri
+            String javaType = dto.getJavaType();
+            String componentJson = componentSchemaJSon(dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
+
+            camelCatalog.addComponent(scheme, javaType, componentJson);
+            return camelCatalog.asEndpointUri(scheme, properties, encode);
+        }
+        // no connector with that scheme
+        return null;
+    }
+
+    @Override
+    public String asEndpointUriXml(String scheme, Map<String, String> properties, boolean encode) throws URISyntaxException {
+        // delegate to use CamelCatalog
+        Optional<ConnectorDto> found = dataStore.findConnector(null, true).stream().filter(d -> d.getScheme().equals(scheme)).findAny();
+        if (found.isPresent()) {
+            ConnectorDto dto = found.get();
+
+            // need to add custom connector as component to the catalog before we can build the uri
+            String javaType = dto.getJavaType();
+            String componentJson = componentSchemaJSon(dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
+
+            camelCatalog.addComponent(scheme, javaType, componentJson);
+            return camelCatalog.asEndpointUriXml(scheme, properties, encode);
+        }
+        // no connector with that scheme
+        return null;
+    }
+
 }

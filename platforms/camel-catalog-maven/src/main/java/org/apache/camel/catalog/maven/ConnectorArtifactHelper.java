@@ -30,8 +30,8 @@ public final class ConnectorArtifactHelper {
     private ConnectorArtifactHelper() {
     }
 
-    public static String[] loadConnectorJSonSchema(ClassLoader classLoader) {
-        String[] answer = new String[2];
+    public static String[] loadJSonSchemas(ClassLoader classLoader) {
+        String[] answer = new String[3];
 
         String path = "camel-connector.json";
         try {
@@ -48,6 +48,16 @@ public final class ConnectorArtifactHelper {
             InputStream is = classLoader.getResourceAsStream(path);
             if (is != null) {
                 answer[1] = loadText(is);
+            }
+        } catch (Throwable e) {
+            LOG.warn("Error loading " + path + " file", e);
+        }
+
+        path = "camel-component-schema.json";
+        try {
+            InputStream is = classLoader.getResourceAsStream(path);
+            if (is != null) {
+                answer[2] = loadText(is);
             }
         } catch (Throwable e) {
             LOG.warn("Error loading " + path + " file", e);

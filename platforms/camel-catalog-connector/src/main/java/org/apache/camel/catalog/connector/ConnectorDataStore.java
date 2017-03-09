@@ -29,8 +29,9 @@ public interface ConnectorDataStore {
      * @param dto                   the connector dto
      * @param connectorJson         the <tt>camel-connector</tt> json file
      * @param connectorSchemaJson   the <tt>camel-connector-schema</tt> json file
+     * @param componentSchemaJson   the <tt>camel-component-schema</tt> json file
      */
-    void addConnector(ConnectorDto dto, String connectorJson, String connectorSchemaJson);
+    void addConnector(ConnectorDto dto, String connectorJson, String connectorSchemaJson, String componentSchemaJson);
 
     /**
      * Is the connector already registered in the catalog
@@ -67,5 +68,12 @@ public interface ConnectorDataStore {
      * @param dto  the connector dto
      */
     String connectorSchemaJSon(ConnectorDto dto);
+
+    /**
+     * Returns the <tt>camel-component-schema</tt> json file for the given connector with the Maven coordinate
+     *
+     * @param dto  the connector dto
+     */
+    String componentSchemaJSon(ConnectorDto dto);
 
 }

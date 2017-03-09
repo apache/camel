@@ -73,7 +73,8 @@ public class CamelConnectorCatalogRestTest {
 
     @Test
     public void testFindConnectors() throws Exception {
-        catalog.getCatalog().addConnector("org.apache.camel", "myfoo-connector", "2.19.0", "MyFoo", "my-foo","Something cool", "foo,timer", null, null);
+        catalog.getCatalog().addConnector("org.apache.camel", "myfoo-connector", "2.19.0", "MyFoo", "my-foo", "org.myfoo.connector.MyFooComponent",
+            "Something cool", "foo,timer", null, null, null);
 
         given().
             baseUri("http://localhost:" + port).

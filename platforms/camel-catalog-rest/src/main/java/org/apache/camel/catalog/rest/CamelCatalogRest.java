@@ -17,13 +17,16 @@
 package org.apache.camel.catalog.rest;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -133,7 +136,7 @@ public class CamelCatalogRest {
     @Path("/componentJSonSchema/{name}")
     @Produces("application/json")
     @ApiOperation(value = "Returns the component information as JSon format")
-    public String componentJSonSchema(@ApiParam("The name of the component")
+    public String componentJSonSchema(@ApiParam(value = "The name of the component", required = true)
                                       @PathParam("name") String name) {
         return catalog.componentJSonSchema(name);
     }
@@ -142,7 +145,7 @@ public class CamelCatalogRest {
     @Path("/dataFormatJSonSchema/{name}")
     @Produces("application/json")
     @ApiOperation(value = "Returns the data format information as JSon format")
-    public String dataFormatJSonSchema(@ApiParam("The name of the data format")
+    public String dataFormatJSonSchema(@ApiParam(value = "The name of the data format", required = true)
                                        @PathParam("name") String name) {
         return catalog.dataFormatJSonSchema(name);
     }
@@ -151,7 +154,7 @@ public class CamelCatalogRest {
     @Path("/languageJSonSchema/{name}")
     @Produces("application/json")
     @ApiOperation(value = "Returns the language information as JSon format")
-    public String languageJSonSchema(@ApiParam("The name of the language")
+    public String languageJSonSchema(@ApiParam(value = "The name of the language", required = true)
                                      @PathParam("name") String name) {
         return catalog.languageJSonSchema(name);
     }
@@ -160,7 +163,7 @@ public class CamelCatalogRest {
     @Path("/modelJSonSchema/{name}")
     @Produces("application/json")
     @ApiOperation(value = "Returns the model (EIP) information as JSon format")
-    public String modelJSonSchema(@ApiParam("The name of the model (EIP)")
+    public String modelJSonSchema(@ApiParam(value = "The name of the model (EIP)", required = true)
                                   @PathParam("name") String name) {
         return catalog.modelJSonSchema(name);
     }
@@ -169,7 +172,7 @@ public class CamelCatalogRest {
     @Path("/componentAsciiDoc/{name}")
     @Produces("text/plain")
     @ApiOperation(value = "Returns the component documentation as Ascii doc format")
-    public String componentAsciiDoc(@ApiParam("The name of the component")
+    public String componentAsciiDoc(@ApiParam(value = "The name of the component", required = true)
                                     @PathParam("name") String name) {
         return catalog.componentAsciiDoc(name);
     }
@@ -178,7 +181,7 @@ public class CamelCatalogRest {
     @Path("/dataFormatAsciiDoc/{name}")
     @Produces("text/plain")
     @ApiOperation(value = "Returns the data format documentation as Ascii doc format")
-    public String dataFormatAsciiDoc(@ApiParam("The name of the data format")
+    public String dataFormatAsciiDoc(@ApiParam(value = "The name of the data format", required = true)
                                      @PathParam("name") String name) {
         return catalog.dataFormatAsciiDoc(name);
     }
@@ -187,7 +190,7 @@ public class CamelCatalogRest {
     @Path("/languageAsciiDoc/{name}")
     @Produces("text/plain")
     @ApiOperation(value = "Returns the language documentation as Ascii doc format")
-    public String languageAsciiDoc(@ApiParam("The name of the language")
+    public String languageAsciiDoc(@ApiParam(value = "The name of the language", required = true)
                                    @PathParam("name") String name) {
         return catalog.languageAsciiDoc(name);
     }
@@ -289,17 +292,33 @@ public class CamelCatalogRest {
     }
 
     @POST
+    @Path("/asEndpointUri/{scheme}")
+    @Consumes("application/json")
+    @Produces("text/plain")
+    @ApiOperation(value = "Creates an endpoint uri in Java style from the information in the json schema")
+    public String asEndpointUri(@ApiParam(value = "The component scheme", readOnly = true) @PathParam("scheme") String scheme,
+                                @ApiParam(value = "The options as a JSon map with key/value pairs", required = true) String json) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Map map = mapper.readValue(json, Map.class);
+            return catalog.asEndpointUri(scheme, map, true);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @POST
     @Path("/mavenCacheDirectory/{name}")
     @ApiOperation(value = "Configures the Maven cache directory to use when downloading artifacts")
-    public void mavenCacheDirectory(@ApiParam("The name of the cache directory") @PathParam("name") String name) {
+    public void mavenCacheDirectory(@ApiParam(value = "The name of the cache directory", required = true) @PathParam("name") String name) {
         maven.setCacheDirectory(name);
     }
 
     @POST
     @Path("/addMavenRepository/{name}/{url}")
     @ApiOperation(value = "Adds a third party Maven repository to use for downloading Maven artifacts")
-    public void addMavenRepository(@ApiParam("The name of the Maven repository") @PathParam("name") String name,
-                                   @ApiParam("The URL of the Maven repository") @PathParam("url") String url) {
+    public void addMavenRepository(@ApiParam(value = "The name of the Maven repository", required = true) @PathParam("name") String name,
+                                   @ApiParam(value = "The URL of the Maven repository", required = true) @PathParam("url") String url) {
         maven.addMavenRepository(name, url);
     }
 
@@ -307,9 +326,9 @@ public class CamelCatalogRest {
     @Path("/addComponentFromMavenArtifact/{groupId}/{artifactId}/{version}")
     @Produces("application/json")
     @ApiOperation(value = "Downloads the Maven artifact and scan for custom Camel components which will be added to the catalog and returns the names of the found components")
-    public Set<String> addComponentFromMavenArtifact(@ApiParam("The Maven groupId") @PathParam("groupId") String groupId,
-                                                     @ApiParam("The Maven artifactId") @PathParam("artifactId") String artifactId,
-                                                     @ApiParam("The Maven version") @PathParam("version") String version) {
+    public Set<String> addComponentFromMavenArtifact(@ApiParam(value = "The Maven groupId", required = true) @PathParam("groupId") String groupId,
+                                                     @ApiParam(value = "The Maven artifactId", required = true) @PathParam("artifactId") String artifactId,
+                                                     @ApiParam(value = "The Maven version", required = true) @PathParam("version") String version) {
         return maven.addArtifactToCatalog(catalog, null, groupId, artifactId, version);
     }
 

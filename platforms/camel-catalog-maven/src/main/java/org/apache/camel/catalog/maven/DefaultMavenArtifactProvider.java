@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.camel.catalog.maven.ComponentArtifactHelper.extractComponentJavaType;
 import static org.apache.camel.catalog.maven.ComponentArtifactHelper.loadComponentJSonSchema;
 import static org.apache.camel.catalog.maven.ComponentArtifactHelper.loadComponentProperties;
-import static org.apache.camel.catalog.maven.ConnectorArtifactHelper.loadConnectorJSonSchema;
+import static org.apache.camel.catalog.maven.ConnectorArtifactHelper.loadJSonSchemas;
 
 /**
  * Default {@link MavenArtifactProvider} which uses Groovy Grape to download the artifact.
@@ -129,7 +129,7 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
     protected void scanCamelConnectors(CamelConnectorCatalog camelConnectorCatalog, ClassLoader classLoader,
                                           String groupId, String artifactId, String version,
                                           Set<String> names) {
-        String[] json = loadConnectorJSonSchema(classLoader);
+        String[] json = loadJSonSchemas(classLoader);
         if (json != null) {
             if (!camelConnectorCatalog.hasConnector(groupId, artifactId, version)) {
                 try {
@@ -137,6 +137,7 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
                     JsonNode tree = mapper.readTree(json[0]);
                     String name = tree.get("name").textValue();
                     String scheme = tree.get("scheme").textValue();
+                    String javaType = tree.get("javaType").textValue();
                     String description = tree.get("description").textValue();
                     Iterator<JsonNode> it = tree.withArray("labels").iterator();
 
@@ -148,7 +149,7 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
 
                     LOG.debug("Adding connector: {} with scheme: {}", name, scheme);
                     camelConnectorCatalog.addConnector(groupId, artifactId, version,
-                        name, scheme, description, csb.toString(), json[0], json[1]);
+                        name, scheme, javaType, description, csb.toString(), json[0], json[1], json[2]);
 
                     names.add(name);
                 } catch (Throwable e) {
