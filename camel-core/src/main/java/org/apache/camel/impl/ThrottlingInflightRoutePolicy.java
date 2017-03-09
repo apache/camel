@@ -27,7 +27,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
-import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.support.EventNotifierSupport;
@@ -50,7 +49,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements CamelContextAware, NonManagedService {
+public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements CamelContextAware {
 
     public enum ThrottlingScope {
         Context, Route
