@@ -91,7 +91,6 @@ public class ConsumerToProducerHeadersTest extends BeanstalkMockTestSupport {
      
         assertEquals(((TestExchangeCopyProcessor)a).getExchangeCopy().getIn().getHeaders(),
                      ((TestExchangeCopyProcessor)b).getExchangeCopy().getIn().getHeaders());
-
     }
 
     @Override
@@ -103,9 +102,10 @@ public class ConsumerToProducerHeadersTest extends BeanstalkMockTestSupport {
                 b = new TestExchangeCopyProcessor();
                 
                 from("beanstalk:tube=A").routeId("foo")
-                .process(a)
-                .to("mock:result")
-                .to("beanstalk:tube=B").process(b);
+                    .process(a)
+                    .to("beanstalk:tube=B")
+                    .process(b)
+                    .to("mock:result");
             }
         };
     }
