@@ -126,6 +126,8 @@ public class ManagedThrottlingExceptionRoutePolicyTest  extends ManagementTestSu
         // the route has 1 failure
         val = proxy.getCurrentFailures();
         assertEquals(1, val.intValue());
+
+        Thread.sleep(200);
         
         // the route has 1 failure X mills ago
         lastFail = proxy.getLastFailure();
