@@ -38,12 +38,16 @@ public class TwitterConfiguration {
     @UriParam(label = "consumer", defaultValue = "polling", enums = "polling,direct,event")
     private EndpointType type = EndpointType.POLLING;
     @UriParam(label = "security", secret = true)
+    @Metadata(required = "true")
     private String accessToken;
     @UriParam(label = "security", secret = true)
+    @Metadata(required = "true")
     private String accessTokenSecret;
     @UriParam(label = "security", secret = true)
+    @Metadata(required = "true")
     private String consumerKey;
     @UriParam(label = "security", secret = true)
+    @Metadata(required = "true")
     private String consumerSecret;
     @UriParam
     private String user;

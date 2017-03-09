@@ -19,40 +19,42 @@ package org.apache.camel.impl.verifier;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.NoSuchOptionException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.catalog.EndpointValidationResult;
+import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
 
-public class DefaultComponentVerifier implements ComponentVerifier, CamelContextAware {
-    public static final ComponentVerifier INSTANCE = new DefaultComponentVerifier();
+import static org.apache.camel.util.StreamUtils.stream;
 
-    private CamelContext camelContext;
+public class DefaultComponentVerifier implements ComponentVerifier {
+    private final String defaultScheme;
+    private final CamelContext camelContext;
 
-    public DefaultComponentVerifier() {
-    }
-
-    public DefaultComponentVerifier(CamelContext camelContext) {
+    public DefaultComponentVerifier(String defaultScheme, CamelContext camelContext) {
+        this.defaultScheme = defaultScheme;
         this.camelContext = camelContext;
     }
 
-    @Override
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    @Override
-    public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext;
-    }
+    // *************************************
+    //
+    // *************************************
 
     @Override
     public Result verify(Scope scope, Map<String, Object> parameters) {
+        // Camel context is mandatory
+        if (this.camelContext == null) {
+            return ResultBuilder.withStatusAndScope(Result.Status.ERROR, scope)
+                .error(ResultErrorBuilder.withCodeAndDescription(ComponentVerifier.CODE_INTERNAL, "Missing camel-context").build())
+                .build();
+        }
+
         switch (scope) {
         case PARAMETERS:
             return verifyParameters(parameters);
@@ -63,21 +65,77 @@ public class DefaultComponentVerifier implements ComponentVerifier, CamelContext
         }
     }
 
-    // *************************************
-    // Implementation
-    // *************************************
-
-    protected Result verifyParameters(Map<String, Object> parameters) {
-        return new ResultBuilder().scope(Scope.PARAMETERS).build();
+    protected Result verifyConnectivity(Map<String, Object> parameters) {
+        return ResultBuilder.withStatusAndScope(Result.Status.UNSUPPORTED, Scope.CONNECTIVITY).build();
     }
 
-    protected Result verifyConnectivity(Map<String, Object> parameters) {
-        return new ResultBuilder().scope(Scope.CONNECTIVITY).build();
+    protected Result verifyParameters(Map<String, Object> parameters) {
+        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS);
+
+        // Validate against catalog
+        verifyParametersAgainstCatalog(builder, parameters);
+
+        return builder.build();
+    }
+
+    // *************************************
+    // Helpers :: Parameters validation
+    // *************************************
+
+    protected void verifyParametersAgainstCatalog(ResultBuilder builder, Map<String, Object> parameters) {
+        String scheme = defaultScheme;
+        if (parameters.containsKey("scheme")) {
+            scheme = parameters.get("scheme").toString();
+        }
+
+        // Grab the runtime catalog to check parameters
+        RuntimeCamelCatalog catalog = camelContext.getRuntimeCamelCatalog();
+
+        // Convert from Map<String, Object> to  Map<String, String> as required
+        // by the Camel Catalog
+        EndpointValidationResult result = catalog.validateProperties(
+            scheme,
+            parameters.entrySet().stream()
+                .collect(
+                    Collectors.toMap(
+                        Map.Entry::getKey,
+                        e -> camelContext.getTypeConverter().convertTo(String.class, e.getValue())
+                    )
+                )
+        );
+
+        if (!result.isSuccess()) {
+            stream(result.getUnknown())
+                .map(option -> ResultErrorBuilder.withUnknownOption(option).build())
+                .forEach(builder::error);
+            stream(result.getRequired())
+                .map(option -> ResultErrorBuilder.withMissingOption(option).build())
+                .forEach(builder::error);
+            stream(result.getInvalidBoolean())
+                .map(entry -> ResultErrorBuilder.withIllegalOption(entry.getKey(), entry.getValue()).build())
+                .forEach(builder::error);
+            stream(result.getInvalidInteger())
+                .map(entry -> ResultErrorBuilder.withIllegalOption(entry.getKey(), entry.getValue()).build())
+                .forEach(builder::error);
+            stream(result.getInvalidNumber())
+                .map(entry -> ResultErrorBuilder.withIllegalOption(entry.getKey(), entry.getValue()).build())
+                .forEach(builder::error);
+            stream(result.getInvalidEnum())
+                .map(entry ->
+                    ResultErrorBuilder.withIllegalOption(entry.getKey(), entry.getValue())
+                        .attribute("enum.values", result.getEnumChoices(entry.getKey()))
+                        .build())
+                .forEach(builder::error);
+        }
     }
 
     // *************************************
     // Helpers
     // *************************************
+
+    protected CamelContext getCamelContext() {
+        return camelContext;
+    }
 
     protected <T> T setProperties(T instance, Map<String, Object> properties) throws Exception {
         if (camelContext == null) {
@@ -85,8 +143,7 @@ public class DefaultComponentVerifier implements ComponentVerifier, CamelContext
         }
 
         if (!properties.isEmpty()) {
-            final CamelContext context = getCamelContext();
-            final TypeConverter converter = context.getTypeConverter();
+            final TypeConverter converter = camelContext.getTypeConverter();
 
             IntrospectionSupport.setProperties(converter, instance, properties);
 
@@ -94,7 +151,7 @@ public class DefaultComponentVerifier implements ComponentVerifier, CamelContext
                 if (entry.getValue() instanceof String) {
                     String value = (String)entry.getValue();
                     if (EndpointHelper.isReferenceParameter(value)) {
-                        IntrospectionSupport.setProperty(context, converter, instance, entry.getKey(), null, value, true);
+                        IntrospectionSupport.setProperty(camelContext, converter, instance, entry.getKey(), null, value, true);
                     }
                 }
             }
@@ -113,7 +170,7 @@ public class DefaultComponentVerifier implements ComponentVerifier, CamelContext
     protected <T> Optional<T> getOption(Map<String, Object> parameters, String key, Class<T> type) {
         Object value = parameters.get(key);
         if (value != null) {
-            return Optional.ofNullable(CamelContextHelper.convertTo(getCamelContext(), type, value));
+            return Optional.ofNullable(CamelContextHelper.convertTo(camelContext, type, value));
         }
 
         return Optional.empty();

@@ -18,8 +18,10 @@ package org.apache.camel.catalog;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,12 +56,20 @@ public class EndpointValidationResult implements Serializable {
     private Map<String, String> invalidNumber;
     private Map<String, String> defaultValues;
 
+    public EndpointValidationResult() {
+        this(null);
+    }
+
     public EndpointValidationResult(String uri) {
         this.uri = uri;
     }
 
     public String getUri() {
         return uri;
+    }
+
+    public boolean hasErrors() {
+        return errors > 0;
     }
 
     public int getNumberOfErrors() {
@@ -257,6 +267,17 @@ public class EndpointValidationResult implements Serializable {
         return invalidEnumChoices;
     }
 
+    public List<String> getEnumChoices(String optionName) {
+        if (invalidEnumChoices != null) {
+            String[] enums = invalidEnumChoices.get(optionName);
+            if (enums != null) {
+                return Arrays.asList(enums);
+            }
+        }
+
+        return Collections.emptyList();
+    }
+
     public Map<String, String> getInvalidReference() {
         return invalidReference;
     }
@@ -415,7 +436,11 @@ public class EndpointValidationResult implements Serializable {
             sb.append("---------------------------------------------------------------------------------------------------------------------------------------\n");
             sb.append("\n");
         }
-        sb.append("\t").append(uri).append("\n");
+        if (uri != null) {
+            sb.append("\t").append(uri).append("\n");
+        } else {
+            sb.append("\n");
+        }
         for (Map.Entry<String, String> option : options.entrySet()) {
             String out = String.format(format, option.getKey(), option.getValue());
             sb.append("\n\t").append(out);

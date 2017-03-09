@@ -17,6 +17,8 @@
 package org.apache.camel.component.twitter;
 
 import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.ComponentVerifier;
@@ -86,11 +88,20 @@ public class CamelComponentVerifierTest extends CamelTwitterTestSupport {
             ComponentVerifier.Result result = verifier.verify(ComponentVerifier.Scope.PARAMETERS, Collections.emptyMap());
 
             Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
-            Assert.assertEquals(4, result.getErrors().size());
-            Assert.assertTrue(result.getErrors().get(0).getParameters().contains("consumerKey"));
-            Assert.assertTrue(result.getErrors().get(1).getParameters().contains("consumerSecret"));
-            Assert.assertTrue(result.getErrors().get(2).getParameters().contains("accessToken"));
-            Assert.assertTrue(result.getErrors().get(3).getParameters().contains("accessTokenSecret"));
+            Assert.assertEquals(5, result.getErrors().size());
+
+            List<String> expected = new LinkedList<>();
+            expected.add("kind");
+            expected.add("consumerKey");
+            expected.add("consumerSecret");
+            expected.add("accessToken");
+            expected.add("accessTokenSecret");
+
+            for(ComponentVerifier.Error error : result.getErrors()) {
+                expected.removeAll(error.getParameters());
+            }
+
+            Assert.assertTrue("Missing expected params: " + expected.toString(), expected.isEmpty());
         }
 
         {

@@ -48,10 +48,10 @@ public class DefaultResult implements ComponentVerifier.Result {
 
     @Override
     public String toString() {
-        return "DefaultResult{" +
-            "scope=" + scope +
-            ", status=" + status +
-            ", errors=" + errors +
-            '}';
+        return "DefaultResult{"
+            + "scope=" + scope
+            + ", status=" + status
+            + ", errors=" + errors
+            + '}';
     }
 }

@@ -178,6 +178,6 @@ public class TwitterComponent extends UriEndpointComponent implements Verifiable
      * TODO: document
      */
     public ComponentVerifier getVerifier() {
-        return new TwitterComponentVerifier(getCamelContext());
+        return new TwitterComponentVerifier(this);
     }
 }

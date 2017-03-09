@@ -25,13 +25,12 @@ import org.apache.camel.NoSuchOptionException;
 import org.apache.camel.impl.verifier.DefaultComponentVerifier;
 import org.apache.camel.impl.verifier.ResultBuilder;
 import org.apache.camel.impl.verifier.ResultErrorBuilder;
-import org.apache.camel.impl.verifier.ResultErrorHelper;
 
 public class ServiceNowComponentVerifier extends DefaultComponentVerifier {
     private final ServiceNowComponent component;
 
     ServiceNowComponentVerifier(ServiceNowComponent component) {
-        super(component.getCamelContext());
+        super("servicenow", component.getCamelContext());
 
         this.component = component;
     }
@@ -42,11 +41,12 @@ public class ServiceNowComponentVerifier extends DefaultComponentVerifier {
 
     @Override
     protected Result verifyParameters(Map<String, Object> parameters) {
-        return ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
-            .error(ResultErrorHelper.requiresOption("instanceName", parameters))
-            .error(ResultErrorHelper.requiresOption("userName", parameters))
-            .error(ResultErrorHelper.requiresOption("password", parameters))
-            .build();
+        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS);
+
+        // Validate using the catalog
+        super.verifyParametersAgainstCatalog(builder, parameters);
+
+        return builder.build();
     }
 
     // *********************************
@@ -82,7 +82,7 @@ public class ServiceNowComponentVerifier extends DefaultComponentVerifier {
                 .path(tableName)
                 .query(ServiceNowParams.SYSPARM_LIMIT.getId(), 1L)
                 .invoke(HttpMethod.GET);
-        } catch(NoSuchOptionException e) {
+        } catch (NoSuchOptionException e) {
             builder.error(
                 ResultErrorBuilder.withMissingOption(e.getOptionName()).build()
             );

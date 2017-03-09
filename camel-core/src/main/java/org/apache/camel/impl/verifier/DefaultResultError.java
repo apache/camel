@@ -56,11 +56,11 @@ public class DefaultResultError implements ComponentVerifier.Error {
 
     @Override
     public String toString() {
-        return "DefaultResultError{" +
-            "code='" + code + '\'' +
-            ", description='" + description + '\'' +
-            ", parameters=" + parameters +
-            ", attributes=" + attributes +
-            '}';
+        return "DefaultResultError{"
+            + "code='" + code + '\''
+            + ", description='" + description + '\''
+            + ", parameters=" + parameters
+            + ", attributes=" + attributes
+            + '}';
     }
 }

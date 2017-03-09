@@ -146,6 +146,13 @@ public final class ResultErrorBuilder {
             .parameter(optionName);
     }
 
+    public static ResultErrorBuilder withUnknownOption(String optionName) {
+        return new ResultErrorBuilder()
+            .code(ComponentVerifier.CODE_UNKNOWN_OPTION)
+            .description("Unknown option " + optionName)
+            .parameter(optionName);
+    }
+
     public static ResultErrorBuilder withIllegalOption(String optionName) {
         return new ResultErrorBuilder()
             .code(ComponentVerifier.CODE_ILLEGAL_OPTION)

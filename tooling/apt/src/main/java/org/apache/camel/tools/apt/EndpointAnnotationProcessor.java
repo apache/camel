@@ -192,10 +192,11 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         }
         buffer.append("\n    \"groupId\": \"").append(componentModel.getGroupId()).append("\",");
         buffer.append("\n    \"artifactId\": \"").append(componentModel.getArtifactId()).append("\",");
-        buffer.append("\n    \"version\": \"").append(componentModel.getVersionId()).append("\"");
         if (componentModel.getVerifiers() != null) {
-            buffer.append("\n    \"verifiers\": \"").append(componentModel.getVerifiers()).append("\"");
+            buffer.append("\n    \"verifiers\": \"").append(componentModel.getVerifiers()).append("\",");
         }
+        buffer.append("\n    \"version\": \"").append(componentModel.getVersionId()).append("\"");
+
         buffer.append("\n  },");
 
         // and component properties

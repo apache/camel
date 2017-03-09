@@ -375,7 +375,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string or an empty collection.
+     * Tests whether the value is <b>not</b> <tt>null</tt>, an empty string or an empty collection/map.
      *
      * @param value  the value, if its a String it will be tested for text length as well
      * @return true if <b>not</b> empty
@@ -389,6 +389,8 @@ public final class ObjectHelper {
             return text.trim().length() > 0;
         } else if (value instanceof Collection) {
             return !((Collection<?>)value).isEmpty();
+        } else if (value instanceof Map) {
+            return !((Map<?, ?>)value).isEmpty();
         } else {
             return true;
         }
