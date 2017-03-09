@@ -1,0 +1,87 @@
+[[Azure-StorageQueueComponent]]
+Storage Queue Component
+~~~~~~~~~~~~~~~~~~~~~~~
+
+*Available as of Camel 2.18*
+
+The EC2 component supports create, run, start, stop and terminate
+https://aws.amazon.com/it/ec2/[AWS EC2] instances.
+
+Prerequisites
+
+You must have a valid Azure developer account, and be
+signed up to use Azure. More information are available at
+https://azure.microsoft.com[Azure].
+
+[[Azure-StorageQueue-URIFormat]]
+URI Format
+^^^^^^^^^^
+
+[source,java]
+-------------------------
+azure-storage-queue://name[?options]
+-------------------------
+
+You can append query options to the URI in the following format,
+?options=value&option2=value&...
+
+[[Azure-StorageQueue-URIOptions]]
+URI Options
+^^^^^^^^^^^
+
+// component options: START
+The Azure component has no options.
+// component options: END
+
+// endpoint options: START
+The Azure component supports 8 endpoint options which are listed below:
+
+[width="100%",cols="2s,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| resource | common |  | String | *Required* Azure Storage resource name
+| account | common |  | String | Azure Storage account name
+| key | common |  | String | Azure Storage primary or secondary key
+| protocol | common |  | Protocol | Protocol used for API calls to Azure Storage
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+| exchangePattern | advanced | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+|=======================================================================
+// endpoint options: END
+
+//Required EC2 component options
+//
+//You have to provide the amazonEc2Client in the
+//link:registry.html[Registry] or your accessKey and secretKey to access
+//the https://aws.amazon.com/it/ec2/[Amazon EC2] service.
+
+Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-azure</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `${camel-version`} must be replaced by the actual version of Camel
+(2.18 or higher).
+
+[[Azure-StorageQueue-SeeAlso]]
+See Also
+^^^^^^^^
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]
+
+* link:azure.html[Azure Component]
+
