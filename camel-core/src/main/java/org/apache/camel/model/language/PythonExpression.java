@@ -30,6 +30,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(firstVersion = "1.0.0", label = "language,script", title = "Python")
 @XmlRootElement(name = "python")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Deprecated
 public class PythonExpression extends ExpressionDefinition {
 
     public PythonExpression() {
