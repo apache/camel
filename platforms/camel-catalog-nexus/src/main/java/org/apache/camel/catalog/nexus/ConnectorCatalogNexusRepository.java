@@ -81,19 +81,20 @@ public class ConnectorCatalogNexusRepository extends BaseNexusRepository {
      *
      * @param dto                 the artifact
      * @param name                the name of connector
+     * @param scheme              the connector scheme
      * @param description         the description of connector
      * @param labels              the labels of connector
      * @param connectorJson       camel-connector JSon
      * @param connectorSchemaJson camel-connector-schema JSon
      */
-    protected void addConnector(NexusArtifactDto dto, String name, String description, String labels,
+    protected void addConnector(NexusArtifactDto dto, String name, String scheme, String description, String labels,
                                 String connectorJson, String connectorSchemaJson) {
 
         String groupId = dto.getGroupId();
         String artifactId = dto.getArtifactId();
         String version = dto.getVersion();
 
-        camelConnectorCatalog.addConnector(groupId, artifactId, version, name, description, labels, connectorJson, connectorSchemaJson);
+        camelConnectorCatalog.addConnector(groupId, artifactId, version, name, scheme, description, labels, connectorJson, connectorSchemaJson);
         log.info("Added connector: {}:{}:{}", dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
     }
 
@@ -108,6 +109,7 @@ public class ConnectorCatalogNexusRepository extends BaseNexusRepository {
                 ObjectMapper mapper = new ObjectMapper();
                 JsonNode tree = mapper.readTree(json[0]);
                 String name = tree.get("name").textValue();
+                String scheme = tree.get("scheme").textValue();
                 String description = tree.get("description").textValue();
                 Iterator<JsonNode> it = tree.withArray("labels").iterator();
 
@@ -117,7 +119,7 @@ public class ConnectorCatalogNexusRepository extends BaseNexusRepository {
                     csb.append(text);
                 }
 
-                addConnector(dto, name, description, csb.toString(), json[0], json[1]);
+                addConnector(dto, name, scheme, description, csb.toString(), json[0], json[1]);
             }
         } catch (IOException e) {
             log.warn("Error scanning JAR for custom Camel components", e);
