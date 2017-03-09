@@ -9,9 +9,9 @@
     <version>2.19.0-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-example-kubernetes-fabric8-maven-plugin</artifactId>
-  <name>Camel :: Example :: Kubernetes :: Fabric8 Maven Plugin</name>
-  <description>Kubernetes Fabric8 Maven Plugin example</description>
+  <artifactId>camel-example-cassandra-kubernetes</artifactId>
+  <name>Camel :: Example :: Cassandra :: Kubernetes</name>
+  <description>Kubernetes Example Cassandra Kubernetes</description>
   <packaging>jar</packaging>
 
   <properties>

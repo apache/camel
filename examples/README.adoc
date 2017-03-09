@@ -17,7 +17,7 @@ Number of Examples: 88 (7 deprecated)
 |=======================================================================
 | Example | Category | Description
 
-| link:camel-example-kubernetes-fabric8-maven-plugin/ReadMe.md[Kubernetes Fabric8 Maven Plugin] (camel-example-kubernetes-fabric8-maven-plugin) |  | Kubernetes Kubernetes Fabric8 Maven Plugin example
+| link:camel-example-cassandra-kubernetes/ReadMe.md[Cassandra Kubernetes] (camel-example-cassandra-kubernetes) |  | Kubernetes Example Cassandra Kubernetes
 
 | link:camel-example-cdi/README.md[CDI] (camel-example-cdi) | Beginner | An example showing how to work with Camel and CDI for dependency injection
 
