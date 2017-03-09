@@ -76,7 +76,7 @@ The Quartz2 endpoint is configured using URI syntax:
 
     quartz2:groupName/triggerName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

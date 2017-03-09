@@ -138,7 +138,7 @@ The Simple JMS Batch endpoint is configured using URI syntax:
 
     sjms-batch:destinationName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

@@ -35,7 +35,7 @@ The CoAP endpoint is configured using URI syntax:
 
     coap:uri
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

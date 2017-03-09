@@ -82,7 +82,7 @@ The Netty4 endpoint is configured using URI syntax:
 
     netty4:protocol:host:port
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

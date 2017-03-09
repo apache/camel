@@ -75,7 +75,7 @@ The CometD endpoint is configured using URI syntax:
 
     cometd:host:port/channelName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

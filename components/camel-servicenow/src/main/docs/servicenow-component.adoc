@@ -54,7 +54,7 @@ The ServiceNow endpoint is configured using URI syntax:
 
     servicenow:instanceName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

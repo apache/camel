@@ -39,7 +39,7 @@ The AWS DynamoDB Streams endpoint is configured using URI syntax:
 
     aws-ddbstream:tableName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

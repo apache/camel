@@ -120,7 +120,7 @@ The Simple JMS endpoint is configured using URI syntax:
 
     sjms:destinationType:destinationName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

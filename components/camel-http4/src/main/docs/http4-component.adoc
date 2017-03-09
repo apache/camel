@@ -89,7 +89,7 @@ The HTTP4 endpoint is configured using URI syntax:
 
     http4:httpUri
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

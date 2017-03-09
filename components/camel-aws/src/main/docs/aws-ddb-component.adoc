@@ -36,7 +36,7 @@ The AWS DynamoDB endpoint is configured using URI syntax:
 
     aws-ddb:tableName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

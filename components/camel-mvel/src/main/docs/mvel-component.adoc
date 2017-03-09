@@ -48,7 +48,7 @@ The MVEL endpoint is configured using URI syntax:
 
     mvel:resourceUri
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

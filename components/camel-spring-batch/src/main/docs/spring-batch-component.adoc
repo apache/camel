@@ -65,7 +65,7 @@ The Spring Batch endpoint is configured using URI syntax:
 
     spring-batch:jobName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

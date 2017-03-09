@@ -37,7 +37,7 @@ The Couchbase endpoint is configured using URI syntax:
 
     couchbase:url
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

@@ -37,7 +37,7 @@ The MongoDB GridFS endpoint is configured using URI syntax:
 
     mongodb-gridfs:connectionBean
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

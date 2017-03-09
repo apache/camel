@@ -39,7 +39,7 @@ The AWS Kinesis Firehose endpoint is configured using URI syntax:
 
     aws-kinesis-firehose:streamName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

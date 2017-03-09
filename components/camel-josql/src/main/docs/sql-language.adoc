@@ -1,4 +1,4 @@
-## SQL Language
+## SQL Language (deprecated)
 
 *Available as of Camel version 1.0*
 

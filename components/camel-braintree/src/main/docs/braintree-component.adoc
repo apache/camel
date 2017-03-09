@@ -56,7 +56,7 @@ The Braintree endpoint is configured using URI syntax:
 
     braintree:apiName/methodName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

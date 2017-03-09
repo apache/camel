@@ -54,7 +54,7 @@ The Bean Validator endpoint is configured using URI syntax:
 
     bean-validator:label
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

@@ -37,7 +37,7 @@ The REST endpoint is configured using URI syntax:
 
     rest:method:path:uriTemplate
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

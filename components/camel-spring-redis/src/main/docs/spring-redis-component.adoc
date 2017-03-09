@@ -39,7 +39,7 @@ The Spring Redis endpoint is configured using URI syntax:
 
     spring-redis:host:port
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

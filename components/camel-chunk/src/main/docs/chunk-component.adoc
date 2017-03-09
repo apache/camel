@@ -46,7 +46,7 @@ The Chunk endpoint is configured using URI syntax:
 
     chunk:resourceUri
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

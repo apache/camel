@@ -56,7 +56,7 @@ The Printer endpoint is configured using URI syntax:
 
     lpr:hostname:port/printername
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

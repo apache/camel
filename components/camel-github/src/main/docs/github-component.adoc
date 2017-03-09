@@ -55,7 +55,7 @@ The GitHub endpoint is configured using URI syntax:
 
     github:type/branchName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

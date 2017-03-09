@@ -56,7 +56,7 @@ The JT400 endpoint is configured using URI syntax:
 
     jt400:userID:password/systemName/objectPath.type
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (5 parameters):
 

@@ -72,7 +72,7 @@ The Control Bus endpoint is configured using URI syntax:
 
     controlbus:command:language
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

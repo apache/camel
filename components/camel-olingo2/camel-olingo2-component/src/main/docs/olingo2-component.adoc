@@ -65,7 +65,7 @@ The Olingo2 endpoint is configured using URI syntax:
 
     olingo2:apiName/methodName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

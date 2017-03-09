@@ -43,7 +43,7 @@ The Geocoder endpoint is configured using URI syntax:
 
     geocoder:address:latlng
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

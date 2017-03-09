@@ -22,7 +22,7 @@ The etcd endpoint is configured using URI syntax:
 
     etcd:namespace/path
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

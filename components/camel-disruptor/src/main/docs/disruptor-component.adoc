@@ -120,7 +120,7 @@ The Disruptor endpoint is configured using URI syntax:
 
     disruptor:name
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

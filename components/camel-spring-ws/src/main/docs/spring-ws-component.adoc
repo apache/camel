@@ -91,7 +91,7 @@ The Spring WebService endpoint is configured using URI syntax:
 
     spring-ws:type:lookupKey:webServiceEndpointUri
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

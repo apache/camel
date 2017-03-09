@@ -1,4 +1,4 @@
-## PHP Language
+## PHP Language (deprecated)
 
 *Available as of Camel version 1.0*
 

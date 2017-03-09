@@ -52,7 +52,7 @@ The Azure Storage Blob Service endpoint is configured using URI syntax:
 
     azure-blob:containerOrBlobUri
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

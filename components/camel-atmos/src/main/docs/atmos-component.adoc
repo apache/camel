@@ -25,7 +25,7 @@ The Atmos endpoint is configured using URI syntax:
 
     atmos:name/operation
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

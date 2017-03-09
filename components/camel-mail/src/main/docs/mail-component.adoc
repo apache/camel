@@ -100,7 +100,7 @@ The Mail endpoint is configured using URI syntax:
 
     imap:host:port
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

@@ -144,7 +144,7 @@ The HTTP endpoint is configured using URI syntax:
 
     http:httpUri
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

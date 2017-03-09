@@ -62,7 +62,7 @@ The Spark Rest endpoint is configured using URI syntax:
 
     spark-rest:verb:path
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

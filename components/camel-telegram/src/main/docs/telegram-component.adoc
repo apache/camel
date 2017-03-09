@@ -62,7 +62,7 @@ The Telegram endpoint is configured using URI syntax:
 
     telegram:type/authorizationToken
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

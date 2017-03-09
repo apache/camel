@@ -53,7 +53,7 @@ The SNMP endpoint is configured using URI syntax:
 
     snmp:host:port
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

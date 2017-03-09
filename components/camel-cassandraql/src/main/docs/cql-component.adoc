@@ -64,7 +64,7 @@ The Cassandra CQL endpoint is configured using URI syntax:
 
     cql:beanRef:hosts:port/keyspace
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (4 parameters):
 

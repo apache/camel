@@ -34,7 +34,7 @@ The FTPS endpoint is configured using URI syntax:
 
     ftps:host:port/directoryName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

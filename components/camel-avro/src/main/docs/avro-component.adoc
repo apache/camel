@@ -193,7 +193,7 @@ The Avro endpoint is configured using URI syntax:
 
     avro:transport:host:port/messageName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (4 parameters):
 

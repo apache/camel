@@ -101,7 +101,7 @@ The Restlet endpoint is configured using URI syntax:
 
     restlet:protocol:host:port/uriPattern
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (4 parameters):
 

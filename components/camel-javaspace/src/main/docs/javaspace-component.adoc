@@ -1,4 +1,4 @@
-## JavaSpace Component
+## JavaSpace Component (deprecated)
 
 *Available as of Camel version 2.1*
 
@@ -59,7 +59,7 @@ The JavaSpace endpoint is configured using URI syntax:
 
     javaspace:url
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

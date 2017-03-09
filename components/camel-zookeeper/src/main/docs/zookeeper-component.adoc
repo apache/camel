@@ -58,7 +58,7 @@ The ZooKeeper endpoint is configured using URI syntax:
 
     zookeeper:serverUrls/path
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

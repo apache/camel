@@ -141,10 +141,15 @@ public class UpdateReadmeMojo extends AbstractMojo {
                         }
                     }
 
+                    String docTitle = model.getTitle() + " Component";
+                    boolean deprecated = "true".equals(model.getDeprecated());
+                    if (deprecated) {
+                        docTitle += " (deprecated)";
+                    }
+
                     boolean exists = file.exists();
                     boolean updated;
-
-                    updated = updateTitles(file, model.getTitle() + " Component");
+                    updated = updateTitles(file, docTitle);
                     updated |= updateAvailableFrom(file, model.getFirstVersion());
 
                     // resolvePropertyPlaceholders is an option which only make sense to use if the component has other options
@@ -196,10 +201,15 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     String title = asDataFormatTitle(model.getName(), model.getTitle());
                     model.setTitle(title);
 
+                    String docTitle = model.getTitle() + " DataFormat";
+                    boolean deprecated = "true".equals(model.getDeprecated());
+                    if (deprecated) {
+                        docTitle += " (deprecated)";
+                    }
+
                     boolean exists = file.exists();
                     boolean updated;
-
-                    updated = updateTitles(file, model.getTitle() + " DataFormat");
+                    updated = updateTitles(file, docTitle);
                     updated |= updateAvailableFrom(file, model.getFirstVersion());
 
                     String options = templateDataFormatOptions(model);
@@ -246,10 +256,15 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
                     LanguageModel model = generateLanguageModel(languageName, json);
 
+                    String docTitle = model.getTitle() + " Language";
+                    boolean deprecated = "true".equals(model.getDeprecated());
+                    if (deprecated) {
+                        docTitle += " (deprecated)";
+                    }
+
                     boolean exists = file.exists();
                     boolean updated;
-
-                    updated = updateTitles(file, model.getTitle() + " Language");
+                    updated = updateTitles(file, docTitle);
                     updated |= updateAvailableFrom(file, model.getFirstVersion());
 
                     String options = templateLanguageOptions(model);
@@ -305,10 +320,15 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
                     File file = new File(eipDocDir, eipName + "-eip.adoc");
 
+                    String docTitle = model.getTitle() + " EIP";
+                    boolean deprecated = model.isDeprecated();
+                    if (deprecated) {
+                        docTitle += " (deprecated)";
+                    }
+
                     boolean exists = file.exists();
                     boolean updated;
-
-                    updated = updateTitles(file, model.getTitle() + " EIP");
+                    updated = updateTitles(file, docTitle);
 
                     String options = templateEipOptions(model);
                     updated |= updateEipOptions(file, options);
