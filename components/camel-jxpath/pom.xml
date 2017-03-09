@@ -26,7 +26,7 @@
 
   <artifactId>camel-jxpath</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: JXPath</name>
+  <name>Camel :: JXPath (deprecated)</name>
   <description>Camel JXPath support</description>
 
   <properties>

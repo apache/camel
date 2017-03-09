@@ -782,7 +782,7 @@ Expression Languages
 ^^^^^^^^^^^^^^^^^^^^
 
 // languages: START
-Number of Languages: 24 in 12 JAR artifacts (0 deprecated)
+Number of Languages: 24 in 12 JAR artifacts (6 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -792,7 +792,7 @@ Number of Languages: 24 in 12 JAR artifacts (0 deprecated)
 
 | link:src/main/docs/constant-language.adoc[Constant] (camel-core) | 1.5 | For expressions and predicates using a constant
 
-| link:camel-juel/src/main/docs/el-language.adoc[EL] (camel-juel) | 1.1 | For EL expressions and predicates
+| link:camel-juel/src/main/docs/el-language.adoc[EL] (camel-juel) | 1.1 | *deprecated* For EL expressions and predicates
 
 | link:src/main/docs/exchangeProperty-language.adoc[ExchangeProperty] (camel-core) | 2.0 | An expression which extracts the named exchange property
 
@@ -808,25 +808,25 @@ Number of Languages: 24 in 12 JAR artifacts (0 deprecated)
 
 | link:camel-jsonpath/src/main/docs/jsonpath-language.adoc[JSonPath] (camel-jsonpath) | 2.13 | For JSonPath expressions and predicates
 
-| link:camel-jxpath/src/main/docs/jxpath-language.adoc[JXPath] (camel-jxpath) | 1.3 | For JXPath expressions and predicates
+| link:camel-jxpath/src/main/docs/jxpath-language.adoc[JXPath] (camel-jxpath) | 1.3 | *deprecated* For JXPath expressions and predicates
 
 | link:camel-mvel/src/main/docs/mvel-language.adoc[MVEL] (camel-mvel) | 2.0 | For MVEL expressions and predicates
 
 | link:camel-ognl/src/main/docs/ognl-language.adoc[OGNL] (camel-ognl) | 1.1 | For OGNL expressions and predicates
 
-| link:camel-script/src/main/docs/php-language.adoc[PHP] (camel-script) | 1.0 | For PHP expressions and predicates
+| link:camel-script/src/main/docs/php-language.adoc[PHP] (camel-script) | 1.0 | *deprecated* For PHP expressions and predicates
 
-| link:camel-script/src/main/docs/python-language.adoc[Python] (camel-script) | 1.0 | For Python expressions and predicates
+| link:camel-script/src/main/docs/python-language.adoc[Python] (camel-script) | 1.0 | *deprecated* For Python expressions and predicates
 
 | link:src/main/docs/ref-language.adoc[Ref] (camel-core) | 2.8 | For using a custom expression or predicate
 
-| link:camel-script/src/main/docs/ruby-language.adoc[Ruby] (camel-script) | 1.0 | For Ruby expressions and predicates
+| link:camel-script/src/main/docs/ruby-language.adoc[Ruby] (camel-script) | 1.0 | *deprecated* For Ruby expressions and predicates
 
 | link:src/main/docs/simple-language.adoc[Simple] (camel-core) | 1.1 | For expressions and predicates using the simple language
 
 | link:camel-spring/src/main/docs/spel-language.adoc[SpEL] (camel-spring) | 2.7 | For Spring Expression Language (SpEL) expressions and predicates
 
-| link:camel-josql/src/main/docs/sql-language.adoc[SQL] (camel-josql) | 1.0 | For SQL expressions and predicates
+| link:camel-josql/src/main/docs/sql-language.adoc[SQL] (camel-josql) | 1.0 | *deprecated* For SQL expressions and predicates
 
 | link:src/main/docs/tokenize-language.adoc[Tokenize] (camel-core) | 2.0 | For expressions and predicates using a body or header tokenizer
 

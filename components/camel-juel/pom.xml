@@ -26,7 +26,7 @@
 
   <artifactId>camel-juel</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: JUEL</name>
+  <name>Camel :: JUEL (deprecated)</name>
   <description>Camel JUEL support</description>
 
   <properties>
