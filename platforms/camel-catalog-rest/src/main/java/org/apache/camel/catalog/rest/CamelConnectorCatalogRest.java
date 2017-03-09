@@ -17,7 +17,9 @@
 package org.apache.camel.catalog.rest;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -25,6 +27,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -101,6 +104,38 @@ public class CamelConnectorCatalogRest {
                                       @ApiParam(value = "Maven version of the connector", required = true)
                                       @PathParam("version") String version) {
         return catalog.connectorSchemaJSon(groupId, artifactId, version);
+    }
+
+    @POST
+    @Path("/asEndpointUri/{scheme}")
+    @Consumes("application/json")
+    @Produces("text/plain")
+    @ApiOperation(value = "Creates an endpoint uri in Java style configured using the provided options in the JSon body")
+    public String asEndpointUri(@ApiParam(value = "The component scheme", readOnly = true) @PathParam("scheme") String scheme,
+                                @ApiParam(value = "The options as a JSon map with key/value pairs", required = true) String json) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Map map = mapper.readValue(json, Map.class);
+            return catalog.asEndpointUri(scheme, map, true);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @POST
+    @Path("/asEndpointUriXml/{scheme}")
+    @Consumes("application/json")
+    @Produces("text/plain")
+    @ApiOperation(value = "Creates an endpoint uri in XML style configured using the provided options in the JSon body")
+    public String asEndpointUriXml(@ApiParam(value = "The component scheme", readOnly = true) @PathParam("scheme") String scheme,
+                                   @ApiParam(value = "The options as a JSon map with key/value pairs", required = true) String json) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            Map map = mapper.readValue(json, Map.class);
+            return catalog.asEndpointUriXml(scheme, map, true);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @POST

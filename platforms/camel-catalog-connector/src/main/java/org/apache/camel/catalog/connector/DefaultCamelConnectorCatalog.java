@@ -106,42 +106,6 @@ public class DefaultCamelConnectorCatalog implements CamelConnectorCatalog {
     }
 
     @Override
-    public String asEndpointUri(String scheme, String json, boolean encode) throws URISyntaxException {
-        // delegate to use CamelCatalog
-        Optional<ConnectorDto> found = dataStore.findConnector(null, true).stream().filter(d -> d.getScheme().equals(scheme)).findAny();
-        if (found.isPresent()) {
-            ConnectorDto dto = found.get();
-
-            // need to add custom connector as component to the catalog before we can build the uri
-            String javaType = dto.getJavaType();
-            String componentJson = componentSchemaJSon(dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
-
-            camelCatalog.addComponent(scheme, javaType, componentJson);
-            return camelCatalog.asEndpointUri(scheme, json, encode);
-        }
-        // no connector with that scheme
-        return null;
-    }
-
-    @Override
-    public String asEndpointUriXml(String scheme, String json, boolean encode) throws URISyntaxException {
-        // delegate to use CamelCatalog
-        Optional<ConnectorDto> found = dataStore.findConnector(null, true).stream().filter(d -> d.getScheme().equals(scheme)).findAny();
-        if (found.isPresent()) {
-            ConnectorDto dto = found.get();
-
-            // need to add custom connector as component to the catalog before we can build the uri
-            String javaType = dto.getJavaType();
-            String componentJson = componentSchemaJSon(dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
-
-            camelCatalog.addComponent(scheme, javaType, componentJson);
-            return camelCatalog.asEndpointUriXml(scheme, json, encode);
-        }
-        // no connector with that scheme
-        return null;
-    }
-
-    @Override
     public String asEndpointUri(String scheme, Map<String, String> properties, boolean encode) throws URISyntaxException {
         // delegate to use CamelCatalog
         Optional<ConnectorDto> found = dataStore.findConnector(null, true).stream().filter(d -> d.getScheme().equals(scheme)).findAny();
