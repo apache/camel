@@ -38,6 +38,18 @@ public class MavenVersionManager implements VersionManager {
     private final ClassLoader classLoader = new GroovyClassLoader();
     private String version;
     private String runtimeProviderVersion;
+    private String cacheDirectory;
+
+    /**
+     * Configures the directory for the download cache.
+     * <p/>
+     * The default folder is <tt>USER_HOME/.groovy/grape</tt>
+     *
+     * @param directory the directory.
+     */
+    public void setCacheDirectory(String directory) {
+        this.cacheDirectory = directory;
+    }
 
     /**
      * To add a 3rd party Maven repository.
@@ -60,6 +72,10 @@ public class MavenVersionManager implements VersionManager {
     @Override
     public boolean loadVersion(String version) {
         try {
+            if (cacheDirectory != null) {
+                System.setProperty("grape.root", cacheDirectory);
+            }
+
             Grape.setEnableAutoDownload(true);
 
             Map<String, Object> param = new HashMap<>();

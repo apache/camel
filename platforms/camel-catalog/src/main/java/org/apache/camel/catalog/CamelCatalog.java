@@ -509,6 +509,7 @@ public interface CamelCatalog {
      * @return the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
+    @Deprecated
     String asEndpointUri(String scheme, String json, boolean encode) throws URISyntaxException;
 
     /**
@@ -520,6 +521,7 @@ public interface CamelCatalog {
      * @return the constructed endpoint uri
      * @throws java.net.URISyntaxException is thrown if there is encoding error
      */
+    @Deprecated
     String asEndpointUriXml(String scheme, String json, boolean encode) throws URISyntaxException;
 
     /**

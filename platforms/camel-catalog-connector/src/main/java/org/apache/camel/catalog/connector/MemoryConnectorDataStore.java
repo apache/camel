@@ -31,8 +31,8 @@ public class MemoryConnectorDataStore implements ConnectorDataStore {
     private Set<ConnectorDetails> store = new CopyOnWriteArraySet<>();
 
     @Override
-    public void addConnector(ConnectorDto dto, String connectorJson, String connectorSchemaJson) {
-        ConnectorDetails entry = new ConnectorDetails(dto, connectorJson, connectorSchemaJson);
+    public void addConnector(ConnectorDto dto, String connectorJson, String connectorSchemaJson, String componentSchemaJson) {
+        ConnectorDetails entry = new ConnectorDetails(dto, connectorJson, connectorSchemaJson, componentSchemaJson);
 
         // remove in case we are updating the connector
         store.remove(entry);
@@ -41,12 +41,12 @@ public class MemoryConnectorDataStore implements ConnectorDataStore {
 
     @Override
     public boolean hasConnector(ConnectorDto dto) {
-        return store.contains(new ConnectorDetails(dto, null, null));
+        return store.contains(new ConnectorDetails(dto, null, null, null));
     }
 
     @Override
     public void removeConnector(ConnectorDto dto) {
-        store.remove(new ConnectorDetails(dto, null, null));
+        store.remove(new ConnectorDetails(dto, null, null, null));
     }
 
     @Override
@@ -127,6 +127,11 @@ public class MemoryConnectorDataStore implements ConnectorDataStore {
         return store.stream().filter(d -> d.getDto().equals(dto)).findFirst().orElse(null).getConnectorSchemaJson();
     }
 
+    @Override
+    public String componentSchemaJSon(ConnectorDto dto) {
+        return store.stream().filter(d -> d.getDto().equals(dto)).findFirst().orElse(null).getComponentSchemaJson();
+    }
+
     /**
      * Entry holding the connector details
      */
@@ -135,11 +140,13 @@ public class MemoryConnectorDataStore implements ConnectorDataStore {
         private ConnectorDto dto;
         private String connectorJson;
         private String connectorSchemaJson;
+        private String componentSchemaJson;
 
-        ConnectorDetails(ConnectorDto dto, String connectorJson, String connectorSchemaJson) {
+        ConnectorDetails(ConnectorDto dto, String connectorJson, String connectorSchemaJson, String componentSchemaJson) {
             this.dto = dto;
             this.connectorJson = connectorJson;
             this.connectorSchemaJson = connectorSchemaJson;
+            this.componentSchemaJson = componentSchemaJson;
         }
 
         ConnectorDto getDto() {
@@ -152,6 +159,10 @@ public class MemoryConnectorDataStore implements ConnectorDataStore {
 
         String getConnectorSchemaJson() {
             return connectorSchemaJson;
+        }
+
+        String getComponentSchemaJson() {
+            return componentSchemaJson;
         }
 
         @Override
