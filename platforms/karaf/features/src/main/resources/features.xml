@@ -37,11 +37,9 @@
   <feature name='camel-core' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${servicemix-specs-version}'>xml-specs-api</feature>
     <bundle>mvn:org.apache.camel/camel-core/${project.version}</bundle>
-    <!-- the camel commands requires the camel-catalog to be installed -->
-    <bundle>mvn:org.apache.camel/camel-catalog/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-commands-core/${project.version}</bundle>
     <conditional>
       <condition>shell</condition>
+      <bundle>mvn:org.apache.camel/camel-commands-core/${project.version}</bundle>
       <bundle>mvn:org.apache.camel.karaf/camel-karaf-commands/${project.version}</bundle>
     </conditional>
     <!-- allow camel to access its own mbeans for karaf commands and other needs -->
