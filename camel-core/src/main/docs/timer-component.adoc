@@ -44,7 +44,7 @@ The Timer endpoint is configured using URI syntax:
 
     timer:timerName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

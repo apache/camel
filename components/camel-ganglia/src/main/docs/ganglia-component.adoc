@@ -72,7 +72,7 @@ The Ganglia endpoint is configured using URI syntax:
 
     ganglia:host:port
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

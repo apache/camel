@@ -48,7 +48,7 @@ The Stub endpoint is configured using URI syntax:
 
     stub:name
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

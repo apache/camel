@@ -72,7 +72,7 @@ The Google Pubsub endpoint is configured using URI syntax:
 
     google-pubsub:projectId:destinationName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

@@ -83,7 +83,7 @@ The FTP endpoint is configured using URI syntax:
 
     ftp:host:port/directoryName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

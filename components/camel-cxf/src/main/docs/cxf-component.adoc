@@ -134,7 +134,7 @@ The CXF endpoint is configured using URI syntax:
 
     cxf:beanId:address
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

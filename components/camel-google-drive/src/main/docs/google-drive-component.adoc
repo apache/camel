@@ -87,7 +87,7 @@ The Google Drive endpoint is configured using URI syntax:
 
     google-drive:apiName/methodName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

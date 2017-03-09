@@ -76,7 +76,7 @@ The Log endpoint is configured using URI syntax:
 
     log:loggerName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

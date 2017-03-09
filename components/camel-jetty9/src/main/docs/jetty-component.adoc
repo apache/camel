@@ -105,7 +105,7 @@ The Jetty 9 endpoint is configured using URI syntax:
 
     jetty:httpUri
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

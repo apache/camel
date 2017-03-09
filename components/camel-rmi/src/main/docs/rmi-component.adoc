@@ -57,7 +57,7 @@ The RMI endpoint is configured using URI syntax:
 
     rmi:hostname:port/name
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

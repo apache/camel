@@ -59,7 +59,7 @@ The Stomp endpoint is configured using URI syntax:
 
     stomp:destination
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

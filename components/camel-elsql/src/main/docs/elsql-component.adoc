@@ -69,7 +69,7 @@ The ElSQL endpoint is configured using URI syntax:
 
     elsql:elsqlName:resourceUri
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

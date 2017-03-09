@@ -34,7 +34,7 @@ The SFTP endpoint is configured using URI syntax:
 
     sftp:host:port/directoryName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

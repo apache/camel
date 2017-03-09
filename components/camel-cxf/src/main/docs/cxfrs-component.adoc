@@ -74,7 +74,7 @@ The CXF-RS endpoint is configured using URI syntax:
 
     cxfrs:beanId:address
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

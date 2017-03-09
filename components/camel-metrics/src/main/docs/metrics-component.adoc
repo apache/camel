@@ -62,7 +62,7 @@ The Metrics endpoint is configured using URI syntax:
 
     metrics:metricsType:metricsName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

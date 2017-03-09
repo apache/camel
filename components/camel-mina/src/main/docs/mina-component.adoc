@@ -1,4 +1,4 @@
-## Mina Component
+## Mina Component (deprecated)
 
 *Available as of Camel version 1.0*
 
@@ -88,7 +88,7 @@ The Mina endpoint is configured using URI syntax:
 
     mina:protocol:host:port
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

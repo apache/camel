@@ -57,7 +57,7 @@ The SAP NetWeaver endpoint is configured using URI syntax:
 
     sap-netweaver:url
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

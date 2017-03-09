@@ -496,7 +496,7 @@ public class MailConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the <tt>To</tt> email address. Separate multiple email addresses with comma.
+     * Sets the To email address. Separate multiple email addresses with comma.
      */
     public void setTo(String address) {
         this.to = to;
@@ -508,7 +508,7 @@ public class MailConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the <tt>CC</tt> email address. Separate multiple email addresses with comma.
+     * Sets the CC email address. Separate multiple email addresses with comma.
      */
     public void setCc(String address) {
         this.cc = address;
@@ -520,7 +520,7 @@ public class MailConfiguration implements Cloneable {
     }
 
     /**
-     * Sets the <tt>BCC</tt> email address. Separate multiple email addresses with comma.
+     * Sets the BCC email address. Separate multiple email addresses with comma.
      */
     public void setBcc(String address) {
         this.bcc = address;

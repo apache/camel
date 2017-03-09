@@ -79,7 +79,7 @@ The SIP endpoint is configured using URI syntax:
 
     sip:uri
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

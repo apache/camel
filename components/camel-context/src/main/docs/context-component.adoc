@@ -1,4 +1,4 @@
-## Camel Context Component
+## Camel Context Component (deprecated)
 
 *Available as of Camel version 2.7*
 
@@ -52,7 +52,7 @@ The Camel Context endpoint is configured using URI syntax:
 
     context:contextId:localEndpointUrl
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

@@ -52,7 +52,7 @@ The Elasticsearch endpoint is configured using URI syntax:
 
     elasticsearch:clusterName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

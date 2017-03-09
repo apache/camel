@@ -41,7 +41,7 @@ The CM SMS Gateway endpoint is configured using URI syntax:
 
     cm-sms:host
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

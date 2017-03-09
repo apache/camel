@@ -48,7 +48,7 @@ The AHC endpoint is configured using URI syntax:
 
     ahc:httpUri
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

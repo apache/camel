@@ -106,7 +106,7 @@ The Netty4 HTTP endpoint is configured using URI syntax:
 
     netty4-http:protocol:host:port/path
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (4 parameters):
 

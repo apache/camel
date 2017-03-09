@@ -98,7 +98,7 @@ The QuickFix endpoint is configured using URI syntax:
 
     quickfix:configurationName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

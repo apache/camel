@@ -60,7 +60,7 @@ The Atmosphere Websocket endpoint is configured using URI syntax:
 
     atmosphere-websocket:servicePath
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

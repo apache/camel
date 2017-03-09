@@ -475,7 +475,7 @@ The REST API endpoint is configured using URI syntax:
 
     rest-api:path/contextIdPattern
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

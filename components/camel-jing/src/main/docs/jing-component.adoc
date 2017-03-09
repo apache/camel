@@ -51,7 +51,7 @@ The Jing endpoint is configured using URI syntax:
 
     jing:resourceUri
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

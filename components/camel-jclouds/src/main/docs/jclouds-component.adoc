@@ -125,7 +125,7 @@ The JClouds endpoint is configured using URI syntax:
 
     jclouds:command:providerId
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

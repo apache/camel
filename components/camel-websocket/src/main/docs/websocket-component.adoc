@@ -69,7 +69,7 @@ The Jetty Websocket endpoint is configured using URI syntax:
 
     websocket:host:port/resourceUri
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

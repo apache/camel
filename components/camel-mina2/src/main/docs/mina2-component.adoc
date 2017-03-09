@@ -87,7 +87,7 @@ The Mina2 endpoint is configured using URI syntax:
 
     mina2:protocol:host:port
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

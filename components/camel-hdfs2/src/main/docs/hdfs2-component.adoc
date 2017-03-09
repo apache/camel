@@ -75,7 +75,7 @@ The HDFS2 endpoint is configured using URI syntax:
 
     hdfs2:hostName:port/path
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

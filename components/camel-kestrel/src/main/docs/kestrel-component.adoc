@@ -1,4 +1,4 @@
-## Kestrel Component
+## Kestrel Component (deprecated)
 
 *Available as of Camel version 2.6*
 
@@ -89,7 +89,7 @@ The Kestrel endpoint is configured using URI syntax:
 
     kestrel:addresses/queue
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

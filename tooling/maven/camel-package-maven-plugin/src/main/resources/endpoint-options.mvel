@@ -2,7 +2,7 @@ The @{title} endpoint is configured using URI syntax:
 
     @{syntax}
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (@{endpointPathOptions.size()} parameters):
 

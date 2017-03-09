@@ -46,7 +46,7 @@ The Language endpoint is configured using URI syntax:
 
     language:languageName:resourceUri
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

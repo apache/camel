@@ -42,7 +42,7 @@ The JBPM endpoint is configured using URI syntax:
 
     jbpm:connectionURL
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

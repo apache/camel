@@ -53,7 +53,7 @@ The AWS S3 Storage Service endpoint is configured using URI syntax:
 
     aws-s3:bucketNameOrArn
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

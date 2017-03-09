@@ -64,7 +64,7 @@ The JDBC endpoint is configured using URI syntax:
 
     jdbc:dataSourceName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

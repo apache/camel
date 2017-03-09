@@ -43,7 +43,7 @@ The Elasticsearch5 endpoint is configured using URI syntax:
 
     elasticsearch5:clusterName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

@@ -475,7 +475,7 @@ The Salesforce endpoint is configured using URI syntax:
 
     salesforce:operationName:topicName
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

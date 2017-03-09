@@ -60,7 +60,7 @@ The Lumberjack endpoint is configured using URI syntax:
 
     lumberjack:host:port
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

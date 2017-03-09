@@ -56,7 +56,7 @@ The DNS endpoint is configured using URI syntax:
 
     dns:dnsType
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

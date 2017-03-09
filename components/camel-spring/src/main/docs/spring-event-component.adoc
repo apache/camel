@@ -45,7 +45,7 @@ The Spring Event endpoint is configured using URI syntax:
 
     spring-event:name
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 

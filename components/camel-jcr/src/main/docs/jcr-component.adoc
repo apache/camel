@@ -52,7 +52,7 @@ The JCR endpoint is configured using URI syntax:
 
     jcr:host/base
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

@@ -52,7 +52,7 @@ The CouchDB endpoint is configured using URI syntax:
 
     couchdb:protocol:hostname:port/database
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (4 parameters):
 

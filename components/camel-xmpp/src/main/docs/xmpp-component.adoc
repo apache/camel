@@ -47,7 +47,7 @@ The XMPP endpoint is configured using URI syntax:
 
     xmpp:host:port/participant
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (3 parameters):
 

@@ -1,4 +1,4 @@
-## Binding Component
+## Binding Component (deprecated)
 
 *Available as of Camel version 2.11*
 
@@ -30,7 +30,7 @@ The Binding endpoint is configured using URI syntax:
 
     binding:bindingName:delegateUri
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 

@@ -97,7 +97,7 @@ The Mock endpoint is configured using URI syntax:
 
     mock:name
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
