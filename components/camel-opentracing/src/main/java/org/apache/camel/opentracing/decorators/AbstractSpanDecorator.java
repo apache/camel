@@ -25,6 +25,7 @@ import io.opentracing.tag.Tags;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.opentracing.SpanDecorator;
+import org.apache.camel.util.URISupport;
 
 /**
  * An abstract base implementation of the {@link SpanDecorator} interface.
@@ -66,7 +67,7 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
 
         // Including the endpoint URI provides access to any options that may have been provided, for
         // subsequent analysis
-        span.setTag("camel.uri", endpoint.getEndpointUri());
+        span.setTag("camel.uri", URISupport.sanitizeUri(endpoint.getEndpointUri()));
     }
 
     @Override
