@@ -76,4 +76,20 @@ public interface SpanDecorator {
      */
     void post(Span span, Exchange exchange, Endpoint endpoint);
 
+    /**
+     * This method returns the 'span.kind' value for use when the component
+     * is initiating a communication.
+     *
+     * @return The kind
+     */
+    String getInitiatorSpanKind();
+
+    /**
+     * This method returns the 'span.kind' value for use when the component
+     * is receiving a communication.
+     *
+     * @return The kind
+     */
+    String getReceiverSpanKind();
+
 }
