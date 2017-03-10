@@ -139,6 +139,19 @@ public final class CamelContextHelper {
     }
 
     /**
+     * Look up a bean of the give type in the {@link org.apache.camel.spi.Registry} on the
+     * {@link CamelContext} returning an instance if only one bean is present,
+     */
+    public static <T> T findByType(CamelContext camelContext, Class<T> type) {
+        Set<T> set = camelContext.getRegistry().findByType(type);
+        if (set.size() == 1) {
+            return set.iterator().next();
+        }
+
+        return null;
+    }
+
+    /**
      * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the
      * {@link CamelContext} or throws {@link NoSuchBeanException} if not found.
      */

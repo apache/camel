@@ -40,4 +40,17 @@ public final class Suppliers {
             return supplied;
         };
     }
+
+    public static <T> T firstNotNull(ThrowingSupplier<T, Exception>... suppliers) throws Exception {
+        T answer = null;
+
+        for (int i = 0; i < suppliers.length; i++) {
+            answer = suppliers[i].get();
+            if (answer != null) {
+                break;
+            }
+        }
+
+        return answer;
+    }
 }

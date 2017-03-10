@@ -97,7 +97,8 @@ public class ConsulDefaultServiceCallRouteTest extends ConsulTestSupport {
                     .serviceCall()
                         .name(SERVICE_NAME)
                         .defaultLoadBalancer()
-                        .end()
+                        .consulServiceDiscovery()
+                        .endParent()
                     .to("log:org.apache.camel.component.consul.cloud?level=INFO&showAll=true&multiline=true")
                     .to("mock:result");
 

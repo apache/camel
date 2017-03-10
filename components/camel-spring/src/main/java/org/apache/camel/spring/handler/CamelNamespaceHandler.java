@@ -403,6 +403,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("threadPoolProfiles", factoryBean.getThreadPoolProfiles());
                 builder.addPropertyValue("beansFactory", factoryBean.getBeansFactory());
                 builder.addPropertyValue("beans", factoryBean.getBeans());
+                builder.addPropertyValue("defaultServiceCallConfiguration", factoryBean.getDefaultServiceCallConfiguration());
                 builder.addPropertyValue("serviceCallConfigurations", factoryBean.getServiceCallConfigurations());
                 builder.addPropertyValue("hystrixConfigurations", factoryBean.getHystrixConfigurations());
                 // add any depends-on

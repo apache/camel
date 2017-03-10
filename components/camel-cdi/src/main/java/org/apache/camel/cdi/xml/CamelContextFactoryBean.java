@@ -173,6 +173,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
     @XmlTransient
     private List<?> beans;
 
+    @XmlElement(name = "defaultServiceCallConfiguration")
+    private ServiceCallConfigurationDefinition defaultServiceCallConfiguration;
+
     @XmlElement(name = "serviceCallConfiguration", type = ServiceCallConfigurationDefinition.class)
     private List<ServiceCallConfigurationDefinition> serviceCallConfigurations;
 
@@ -338,6 +341,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Def
 
     public void setBeans(List<?> beans) {
         this.beans = beans;
+    }
+
+    @Override
+    public ServiceCallConfigurationDefinition getDefaultServiceCallConfiguration() {
+        return defaultServiceCallConfiguration;
+    }
+
+    public void setDefaultServiceCallConfiguration(ServiceCallConfigurationDefinition defaultServiceCallConfiguration) {
+        this.defaultServiceCallConfiguration = defaultServiceCallConfiguration;
     }
 
     @Override
