@@ -16,6 +16,7 @@
  */
 package org.apache.camel.blueprint.handler;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -988,9 +989,9 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             CamelContextFactoryBean ccfb = (CamelContextFactoryBean) blueprintContainer.getComponentInstance(".camelBlueprint.factory." + camelContextName);
             CamelContext camelContext = ccfb.getContext();
 
-            Set<String> components = new HashSet<String>();
-            Set<String> languages = new HashSet<String>();
-            Set<String> dataformats = new HashSet<String>();
+            Set<String> components = new HashSet<>();
+            Set<String> languages = new HashSet<>();
+            Set<String> dataformats = new HashSet<>();
 
             // regular camel routes
             for (RouteDefinition rd : camelContext.getRouteDefinitions()) {
@@ -1152,16 +1153,20 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
         private void findUriComponent(String uri, Set<String> components) {
             // if the uri is a placeholder then skip it
-            if (uri != null && uri.startsWith(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
+            if (uri == null || uri.startsWith(PropertiesComponent.DEFAULT_PREFIX_TOKEN)) {
                 return;
             }
 
-            if (uri != null) {
-                String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 2);
-                if (splitURI[1] != null) {
-                    String scheme = splitURI[0];
-                    components.add(scheme);
-                }
+            // validate uri here up-front so a meaningful error can be logged for blueprint
+            // it will also speed up tests in case of failure
+            if (!validateUri(uri)) {
+                return;
+            }
+
+            String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 2);
+            if (splitURI[1] != null) {
+                String scheme = splitURI[0];
+                components.add(scheme);
             }
         }
 
@@ -1187,11 +1192,21 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                         }
                     }
                 } catch (URISyntaxException e) {
-                    // ignore
+                    // ignore as uri should be already validated at findUriComponent method
                 }
             }
         }
 
+        private static boolean validateUri(String uri) {
+            try {
+                // the same validation as done in DefaultCamelContext#normalizeEndpointUri(String)
+                URISupport.normalizeUri(uri);
+            } catch (URISyntaxException | UnsupportedEncodingException e) {
+                LOG.error("Endpoint URI '" + uri + "' is not valid due to: " + e.getMessage(), e);
+                return false;
+            }
+            return true;
+        }
     }
 
 }
