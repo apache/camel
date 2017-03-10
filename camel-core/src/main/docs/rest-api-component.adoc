@@ -408,6 +408,25 @@ rest("/users/")
         .to("direct:newUser");
 -----------------------------------------------------------------------------------------------------------
 
+To specify input and/or output using an array, append `[]` to the end
+of the canonical class name, or you can alternatively use the Java DSL only
+continence `typeList` and `outTypeList` where you just specify the array element type.
+Both approaches are shown in the following Java DSL:
+
+[source,java]
+-----------------------------------------------------------------------------------------------------------
+// configure to use restlet on localhost with the given port
+// and enable auto binding mode
+restConfiguration().component("restlet").host("localhost").port(portNum).bindingMode(RestBindingMode.auto);
+
+// use the rest DSL to define the rest services
+rest("/users/")
+    .post().type(UserPojo[].class).outType(CountryPojo[].class)
+        .to("direct:newUser")
+    .put().typeList(UserPojo.class).outTypeList(CountryPojo.class)
+        .to("direct:updateUser");
+-----------------------------------------------------------------------------------------------------------
+
 The `UserPojo` is just a plain pojo with getter/setter as shown:
 
 [source,java]
@@ -660,7 +679,7 @@ onException(JsonParseException.class)
 
  
 
-### Parameter default Values
+### Query Parameter default Values
 
 You can specify default values for parameters in the rest-dsl, such as
 the verbose parameter below:

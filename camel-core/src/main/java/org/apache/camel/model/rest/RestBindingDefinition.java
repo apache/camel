@@ -244,8 +244,8 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     /**
      * Adds a default value for the query parameter
      *
-     * @param paramName   query parameter name
-     * @param defaultValue the default value
+     * @param paramName    query parameter name.
+     * @param defaultValue the default value.
      */
     public void addDefaultValue(String paramName, String defaultValue) {
         if (defaultValues == null) {
@@ -253,7 +253,6 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
         }
         defaultValues.put(paramName, defaultValue);
     }
-
 
     /**
      * Gets the registered default values for query parameters
@@ -263,7 +262,7 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     }
 
     /**
-     * Sets the component name that this definition will apply to  
+     * @param component name of the component that this definition will apply to.
      */
     public void setComponent(String component) {
         this.component = component;
@@ -274,7 +273,7 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     }
 
     /**
-     * To define the content type what the REST service consumes (accept as input), such as application/xml or application/json
+     * @param consumes the HTTP Content Type of the input data, such as {@code application/xml} or {@code application/json}.
      */
     public void setConsumes(String consumes) {
         this.consumes = consumes;
@@ -285,7 +284,7 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     }
 
     /**
-     * To define the content type what the REST service produces (uses for output), such as application/xml or application/json
+     * @param produces the HTTP Content Type of the output data, such as {@code application/xml} or {@code application/json}.
      */
     public void setProduces(String produces) {
         this.produces = produces;
@@ -296,9 +295,9 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     }
 
     /**
-     * Sets the binding mode to use.
-     * <p/>
-     * The default value is off
+     * @param bindingMode the binding mode to use. The default value is {@code RestBindingMode.off}.
+     *
+     * @see RestBindingMode
      */
     public void setBindingMode(RestBindingMode bindingMode) {
         this.bindingMode = bindingMode;
@@ -310,6 +309,9 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
 
     /**
      * Sets the class name to use for binding from input to POJO for the incoming data
+     *
+     * @param type the canonical name of the class of the input data. Append a {@code []} to the end
+     *             of the canonical name if you want the input to be an array of {@code type}.
      */
     public void setType(String type) {
         this.type = type;
@@ -321,6 +323,9 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
 
     /**
      * Sets the class name to use for binding from POJO to output for the outgoing data
+     *
+     * @param outType the canonical name of the class of the output data. Append a {@code []} to the end
+     *                of the canonical name if you want the output to be an array of {@code outType}.
      */
     public void setOutType(String outType) {
         this.outType = outType;
@@ -331,8 +336,11 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     }
 
     /**
-     * Whether to skip binding on output if there is a custom HTTP error code header.
-     * This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.
+     * @param skipBindingOnErrorCode set to {@code true} to ignore the specified binding mode on output if there
+     *                               is a custom HTTP error code header. This allows to build custom error messages
+     *                               that do not bind to json / xml etc, as success messages otherwise will do.
+     *
+     * @see VerbDefinition#setBindingMode(RestBindingMode)
      */
     public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
@@ -343,9 +351,7 @@ public class RestBindingDefinition extends OptionalIdentifiedDefinition<RestBind
     }
 
     /**
-     * Whether to enable CORS headers in the HTTP response.
-     * <p/>
-     * The default value is false.
+     * @param enableCORS set to {@code true} to enable CORS headers in the HTTP response. The default value is {@code false}.
      */
     public void setEnableCORS(Boolean enableCORS) {
         this.enableCORS = enableCORS;

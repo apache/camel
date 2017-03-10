@@ -129,7 +129,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * Sets swagger operation response messages
+     * Sets swagger operation response messages.
      */
     public void setResponseMsgs(List<RestOperationResponseMsgDefinition> params) {
         this.responseMsgs = responseMsgs;
@@ -140,7 +140,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * The HTTP verb such as GET or POST
+     * @param method the HTTP verb name such as {@code get, post, put, patch, delete, head}.
      */
     public void setMethod(String method) {
         this.method = method;
@@ -151,7 +151,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * Uri template of this REST service such as /{id}.
+     * @param uri the query path for this REST service, such as {@code /&#123;id&#125;}.
      */
     public void setUri(String uri) {
         this.uri = uri;
@@ -162,8 +162,8 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * To define the content type what the REST service consumes (accept as input), such as application/xml or application/json.
-     * This option will override what may be configured on a parent level
+     * @param consumes the HTTP Content Type of the input data, such as {@code application/xml} or {@code application/json}.
+     *                 This option will override what may be configured on a parent level.
      */
     public void setConsumes(String consumes) {
         this.consumes = consumes;
@@ -174,8 +174,8 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * To define the content type what the REST service produces (uses for output), such as application/xml or application/json
-     * This option will override what may be configured on a parent level
+     * @param produces the HTTP Content Type of the output data, such as {@code application/xml} or {@code application/json}.
+     *                 This option will override what may be configured on a parent level.
      */
     public void setProduces(String produces) {
         this.produces = produces;
@@ -186,10 +186,10 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * Sets the binding mode to use.
-     * This option will override what may be configured on a parent level
-     * <p/>
-     * The default value is auto
+     * @param bindingMode the binding mode to use. The default value is {@code RestBindingMode.auto}.
+     *                    This option will override what may be configured on a parent level.
+     *
+     * @see RestBindingMode
      */
     public void setBindingMode(RestBindingMode bindingMode) {
         this.bindingMode = bindingMode;
@@ -200,9 +200,12 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * Whether to skip binding on output if there is a custom HTTP error code header.
-     * This allows to build custom error messages that do not bind to json / xml etc, as success messages otherwise will do.
-     * This option will override what may be configured on a parent level
+     * @param skipBindingOnErrorCode set to {@code true} to ignore the specified binding mode on output if there
+     *                               is a custom HTTP error code header. This allows to build custom error messages
+     *                               that do not bind to json / xml etc, as success messages otherwise will do.
+     *                               This option will override what may be configured on a parent level.
+     *
+     * @see VerbDefinition#setBindingMode(RestBindingMode)
      */
     public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
@@ -213,10 +216,8 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * Whether to enable CORS headers in the HTTP response.
-     * This option will override what may be configured on a parent level
-     * <p/>
-     * The default value is false.
+     * @param enableCORS set to {@code true} to enable CORS headers in the HTTP response. The default value is {@code false}.
+     *                   This option will override what may be configured on a parent level.
      */
     public void setEnableCORS(Boolean enableCORS) {
         this.enableCORS = enableCORS;
@@ -228,7 +229,10 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
 
     /**
      * Sets the class name to use for binding from input to POJO for the incoming data
-     * This option will override what may be configured on a parent level
+     * This option will override what may be configured on a parent level.
+     *
+     * @param type the canonical name of the class of the input data. Append a {@code []} to the end
+     *             of the canonical name if you want the input to be an array of {@code type}.
      */
     public void setType(String type) {
         this.type = type;
@@ -240,7 +244,10 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
 
     /**
      * Sets the class name to use for binding from POJO to output for the outgoing data
-     * This option will override what may be configured on a parent level
+     * This option will override what may be configured on a parent level.
+     *
+     * @param outType the canonical name of the class of the output data. Append a {@code []} to the end
+     *                of the canonical name if you want the output to be an array of {@code outType}.
      */
     public void setOutType(String outType) {
         this.outType = outType;
@@ -251,7 +258,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * The route id this rest-dsl is using (read-only)
+     * @param routeId the route id this rest-dsl is using (read-only).
      */
     public void setRouteId(String routeId) {
         this.routeId = routeId;
@@ -262,9 +269,8 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
     }
 
     /**
-     * Whether to include or exclude the VerbDefinition in API documentation.
-     * <p/>
-     * The default value is true.
+     * @param apiDocs set to {@code true} to include or exclude the VerbDefinition in API documentation.
+     *                The default value is true.
      */
     public void setApiDocs(Boolean apiDocs) {
         this.apiDocs = apiDocs;
@@ -389,7 +395,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
 
     public String asVerb() {
         // we do not want the jaxb model to repeat itself, by outputting <get method="get">
-        // so we defer the verb from the instance type
+        // so we infer the verb from the instance type
         if (this instanceof GetVerbDefinition) {
             return "get";
         } else if (this instanceof PostVerbDefinition) {
