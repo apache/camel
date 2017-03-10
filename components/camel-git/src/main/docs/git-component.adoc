@@ -40,7 +40,7 @@ The Git endpoint is configured using URI syntax:
 
     git:localPath
 
-  with the following path and query parameters:
+with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
