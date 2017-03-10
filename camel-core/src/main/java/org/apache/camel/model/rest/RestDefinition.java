@@ -412,6 +412,13 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    /**
+     * @param classType the canonical class name for the array passed as input
+     *
+     * @deprecated as of 2.19.0. Replaced wtih {@link #type(Class)} with {@code []} appended to canonical class name
+     * , e.g. {@code type(MyClass[].class}
+     */
+    @Deprecated
     public RestDefinition typeList(Class<?> classType) {
         // add to last verb
         if (getVerbs().isEmpty()) {
@@ -435,6 +442,13 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
+    /**
+     * @param classType the canonical class name for the array passed as output
+     *
+     * @deprecated as of 2.19.0. Replaced wtih {@link #outType(Class)} with {@code []} appended to canonical class name
+     * , e.g. {@code outType(MyClass[].class}
+     */
+    @Deprecated
     public RestDefinition outTypeList(Class<?> classType) {
         // add to last verb
         if (getVerbs().isEmpty()) {

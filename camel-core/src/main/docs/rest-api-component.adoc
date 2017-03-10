@@ -409,9 +409,7 @@ rest("/users/")
 -----------------------------------------------------------------------------------------------------------
 
 To specify input and/or output using an array, append `[]` to the end
-of the canonical class name, or you can alternatively use the Java DSL only
-continence `typeList` and `outTypeList` where you just specify the array element type.
-Both approaches are shown in the following Java DSL:
+of the canonical class name as shown in the following Java DSL:
 
 [source,java]
 -----------------------------------------------------------------------------------------------------------
@@ -422,9 +420,7 @@ restConfiguration().component("restlet").host("localhost").port(portNum).binding
 // use the rest DSL to define the rest services
 rest("/users/")
     .post().type(UserPojo[].class).outType(CountryPojo[].class)
-        .to("direct:newUser")
-    .put().typeList(UserPojo.class).outTypeList(CountryPojo.class)
-        .to("direct:updateUser");
+        .to("direct:newUser");
 -----------------------------------------------------------------------------------------------------------
 
 The `UserPojo` is just a plain pojo with getter/setter as shown:
