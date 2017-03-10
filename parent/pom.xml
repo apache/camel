@@ -274,8 +274,7 @@
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
     <ical4j-version>1.0.7</ical4j-version>
-    <ignite-version>1.8.0</ignite-version>
-    <ignite-version-range>[1.5.0-b1,1.6)</ignite-version-range>
+    <ignite-version>1.9.0</ignite-version>
     <infinispan-version>8.2.6.Final</infinispan-version>
     <influx-java-driver-version>2.5</influx-java-driver-version>
     <influx-java-driver-bundle-version>2.5_1</influx-java-driver-bundle-version>

@@ -875,7 +875,7 @@
         Please refer to the component page (https://camel.apache.org/ignite.html) and to the Ignite docs (https://apacheignite.readme.io/docs/osgi-installation-in-karaf#preparatory-steps) for more information.]]>
     </details>
     <feature version='${project.version}'>camel-core</feature>
-    <feature version='${ignite-version-range}'>ignite-core</feature>
+    <feature version='${ignite-version}'>ignite-core</feature>
     <bundle>mvn:org.apache.camel/camel-ignite/${project.version}</bundle>
   </feature>
   <feature name='camel-infinispan' version='${project.version}' resolver='(obr)' start-level='50'>
