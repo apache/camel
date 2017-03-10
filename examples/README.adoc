@@ -11,13 +11,15 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 88 (7 deprecated)
+Number of Examples: 89 (7 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |=======================================================================
 | Example | Category | Description
 
 | link:camel-example-cassandra-kubernetes/ReadMe.md[Cassandra Kubernetes] (camel-example-cassandra-kubernetes) |  | Kubernetes Example Cassandra Kubernetes
+
+| link:camel-example-hazelcast-kubernetes/ReadMe.md[Hazelcast Kubernetes] (camel-example-hazelcast-kubernetes) |  | Kubernetes Example Hazelcast Kubernetes
 
 | link:camel-example-cdi/README.md[CDI] (camel-example-cdi) | Beginner | An example showing how to work with Camel and CDI for dependency injection
 
