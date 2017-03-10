@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,15 +40,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.apache.camel.component.zookeepermaster.group.Group;
 import org.apache.camel.component.zookeepermaster.group.GroupListener;
 import org.apache.camel.component.zookeepermaster.group.NodeState;
@@ -85,7 +82,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
     private final EnsurePath ensurePath;
     private final BlockingQueue<Operation> operations = new LinkedBlockingQueue<Operation>();
     private final ListenerContainer<GroupListener<T>> listeners = new ListenerContainer<GroupListener<T>>();
-    private final ConcurrentMap<String, ChildData<T>> currentData = Maps.newConcurrentMap();
+    private final ConcurrentMap<String, ChildData<T>> currentData = new ConcurrentHashMap<>();
     private final AtomicBoolean started = new AtomicBoolean();
     private final AtomicBoolean connected = new AtomicBoolean();
     private final SequenceComparator sequenceComparator = new SequenceComparator();
@@ -166,7 +163,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
      * Start the cache. The cache is not started automatically. You must call this method.
      */
     public void start() {
-        LOG.info("Starting ZK Group for path \"" + path + "\"");
+        LOG.info("Starting ZK Group for path: {}", path);
         if (started.compareAndSet(false, true)) {
             connected.set(client.getZookeeperClient().isConnected());
 
@@ -406,7 +403,9 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
      * @return list of children and data
      */
     public List<ChildData> getCurrentData() {
-        return ImmutableList.copyOf(Sets.<ChildData>newTreeSet(currentData.values()));
+        List<ChildData> answer = new ArrayList<>();
+        answer.addAll(currentData.values());
+        return answer;
     }
 
     /**
@@ -484,17 +483,14 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
     }
 
     void callListeners(final GroupListener.GroupEvent event) {
-        listeners.forEach(new Function<GroupListener<T>, Void>() {
-                @Override
-                public Void apply(GroupListener<T> listener) {
-                    try {
-                        listener.groupEvent(ZooKeeperGroup.this, event);
-                    } catch (Exception e) {
-                        handleException(e);
-                    }
-                    return null;
-                }
+        listeners.forEach(listener -> {
+            try {
+                listener.groupEvent(ZooKeeperGroup.this, event);
+            } catch (Exception e) {
+                handleException(e);
             }
+            return null;
+        }
         );
     }
 
@@ -517,22 +513,10 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
         }
     }
 
-    @VisibleForTesting
     protected void remove(String fullPath) {
         ChildData data = currentData.remove(fullPath);
         if (data != null) {
             offerOperation(new EventOperation(this, GroupListener.GroupEvent.CHANGED));
-        }
-    }
-
-    private void internalRebuildNode(String fullPath) throws Exception {
-        try {
-            Stat stat = new Stat();
-            byte[] bytes = client.getData().storingStatIn(stat).forPath(fullPath);
-            currentData.put(fullPath, new ChildData<T>(fullPath, stat, bytes, decode(bytes)));
-        } catch (KeeperException.NoNodeException ignore) {
-            // node no longer exists - remove it
-            currentData.remove(fullPath);
         }
     }
 
@@ -563,16 +547,9 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
     }
 
     private void processChildren(List<String> children, RefreshMode mode) throws Exception {
-        List<String> fullPaths = Lists.newArrayList(Lists.transform(
-            children,
-                new Function<String, String>() {
-                    @Override
-                    public String apply(String child) {
-                        return ZKPaths.makePath(path, child);
-                    }
-                }
-            ));
-        Set<String> removedNodes = Sets.newHashSet(currentData.keySet());
+        List<String> fullPaths = children.stream().map(c -> ZKPaths.makePath(path, c)).collect(Collectors.toList());
+
+        Set<String> removedNodes = new HashSet<>(currentData.keySet());
         removedNodes.removeAll(fullPaths);
 
         for (String fullPath : removedNodes) {
@@ -637,7 +614,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
         if (!operations.contains(operation)) {
             operations.offer(operation);
         }
-//        operations.remove(operation);   // avoids herding for refresh operations
+        // operations.remove(operation);   // avoids herding for refresh operations
     }
 
     public static <T> Map<String, T> members(ObjectMapper mapper, CuratorFramework curator, String path, Class<T> clazz) throws Exception {
@@ -655,14 +632,12 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
         return id;
     }
 
-    @VisibleForTesting
     void setId(String id) {
         this.id = id;
     }
 
     /**
      * Returns an indication that the sequential, ephemeral node may be registered more than once for this group
-     * @return
      */
     public boolean isUnstable() {
         return unstable.get();
