@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.opentracing.Span;
+import io.opentracing.tag.Tags;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
@@ -45,14 +47,14 @@ public class MongoDBSpanDecorator extends AbstractSpanDecorator {
     public void pre(Span span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
 
-        span.setTag("db.type", getComponent());
+        span.setTag(Tags.DB_TYPE.getKey(), getComponent());
 
         Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
         String database = queryParameters.get("database");
         if (database != null) {
-            span.setTag("db.instance", database);
+            span.setTag(Tags.DB_INSTANCE.getKey(), database);
         }
-        span.setTag("db.statement", queryParameters.toString());
+        span.setTag(Tags.DB_STATEMENT.getKey(), queryParameters.toString());
     }
 
     public static Map<String, String> toQueryParameters(String uri) {

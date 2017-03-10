@@ -70,7 +70,16 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
     private CamelContext camelContext;
 
     static {
-        ServiceLoader.load(SpanDecorator.class).forEach(d -> decorators.put(d.getComponent(), d));
+        ServiceLoader.load(SpanDecorator.class).forEach(d -> {
+            SpanDecorator existing = decorators.get(d.getComponent());
+            // Add span decorator if no existing decorator for the component,
+            // or if derived from the existing decorator's class, allowing
+            // custom decorators to be added if they extend the standard
+            // decorators
+            if (existing == null || existing.getClass().isInstance(d)) {
+                decorators.put(d.getComponent(), d);
+            }
+        });
     }
 
     public OpenTracingTracer() {

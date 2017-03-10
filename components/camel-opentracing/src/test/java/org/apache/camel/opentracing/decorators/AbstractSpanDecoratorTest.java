@@ -44,7 +44,9 @@ public class AbstractSpanDecoratorTest {
             }
         };
 
-        assertEquals(TEST_URI, decorator.getOperationName(null, endpoint));
+        // Operation name is scheme, as no specific span decorator to
+        // identify an appropriate name
+        assertEquals("test", decorator.getOperationName(null, endpoint));
     }
 
     @Test
@@ -94,6 +96,33 @@ public class AbstractSpanDecoratorTest {
         assertEquals("error", span.logEntries().get(0).fields().get("event"));
         assertEquals("Exception", span.logEntries().get(0).fields().get("error.kind"));
         assertEquals(e.getMessage(), span.logEntries().get(0).fields().get("message"));
+    }
+
+    @Test
+    public void testStripSchemeNoOptions() {
+        Endpoint endpoint = Mockito.mock(Endpoint.class);
+
+        Mockito.when(endpoint.getEndpointUri()).thenReturn("direct:hello");
+
+        assertEquals("hello", AbstractSpanDecorator.stripSchemeAndOptions(endpoint));
+    }
+
+    @Test
+    public void testStripSchemeNoOptionsWithSlashes() {
+        Endpoint endpoint = Mockito.mock(Endpoint.class);
+
+        Mockito.when(endpoint.getEndpointUri()).thenReturn("direct://hello");
+
+        assertEquals("hello", AbstractSpanDecorator.stripSchemeAndOptions(endpoint));
+    }
+
+    @Test
+    public void testStripSchemeAndOptions() {
+        Endpoint endpoint = Mockito.mock(Endpoint.class);
+
+        Mockito.when(endpoint.getEndpointUri()).thenReturn("direct:hello?world=true");
+
+        assertEquals("hello", AbstractSpanDecorator.stripSchemeAndOptions(endpoint));
     }
 
 }

@@ -18,6 +18,8 @@ package org.apache.camel.opentracing.decorators;
 
 import io.opentracing.mock.MockSpan;
 import io.opentracing.mock.MockTracer;
+import io.opentracing.tag.Tags;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -48,8 +50,8 @@ public class JdbcSpanDecoratorTest {
 
         decorator.pre(span, exchange, endpoint);
 
-        assertEquals("sql", span.tags().get("db.type"));
-        assertEquals(SQL_STATEMENT, span.tags().get("db.statement"));
+        assertEquals("sql", span.tags().get(Tags.DB_TYPE.getKey()));
+        assertEquals(SQL_STATEMENT, span.tags().get(Tags.DB_STATEMENT.getKey()));
     }
 
 }

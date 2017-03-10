@@ -16,31 +16,11 @@
  */
 package org.apache.camel.opentracing.decorators;
 
-import io.opentracing.Span;
-import io.opentracing.tag.Tags;
-
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-
-public class SqlSpanDecorator extends AbstractSpanDecorator {
-
-    public static final String CAMEL_SQL_QUERY = "CamelSqlQuery";
+public class SedaSpanDecorator extends AbstractInternalSpanDecorator {
 
     @Override
     public String getComponent() {
-        return "sql";
-    }
-
-    @Override
-    public void pre(Span span, Exchange exchange, Endpoint endpoint) {
-        super.pre(span, exchange, endpoint);
-
-        span.setTag(Tags.DB_TYPE.getKey(), "sql");
-
-        Object sqlquery = exchange.getIn().getHeader(CAMEL_SQL_QUERY);
-        if (sqlquery instanceof String) {
-            span.setTag(Tags.DB_STATEMENT.getKey(), (String) sqlquery);
-        }
+        return "seda";
     }
 
 }
