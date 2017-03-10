@@ -45,8 +45,10 @@ public class LocalFileConnectorNexusRepository extends ConnectorCatalogNexusRepo
     }
 
     @Override
-    protected void addConnector(NexusArtifactDto dto, String name, String scheme, String description, String labels, String connectorJson, String connectorSchemaJson) {
-        super.addConnector(dto, name, scheme, description, labels, connectorJson, connectorSchemaJson);
+    protected void addConnector(NexusArtifactDto dto, String name, String scheme, String javaType,
+                                String description, String labels,
+                                String connectorJson, String connectorSchemaJson, String componentSchemaJson) {
+        super.addConnector(dto, name, scheme, javaType, description, labels, connectorJson, connectorSchemaJson, componentSchemaJson);
 
         if (onAddConnector != null) {
             onAddConnector.run();
