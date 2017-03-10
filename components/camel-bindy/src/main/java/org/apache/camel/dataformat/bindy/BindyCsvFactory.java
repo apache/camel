@@ -658,7 +658,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         return maxpos;
     }
 
-	public boolean isAllowEmptyStream() {
-		return allowEmptyStream;
-	}
+    public boolean isAllowEmptyStream() {
+        return allowEmptyStream;
+    }
 }
