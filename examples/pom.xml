@@ -57,6 +57,7 @@
     <module>camel-example-ftp</module>
     <module>camel-example-guice-jms</module>
     <module>camel-example-groovy</module>
+    <module>camel-example-hazelcast-kubernetes</module>
     <module>camel-example-hystrix</module>
     <module>camel-example-java8</module>
     <module>camel-example-java8-rx</module>
