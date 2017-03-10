@@ -82,19 +82,21 @@ public class ConnectorCatalogNexusRepository extends BaseNexusRepository {
      * @param dto                 the artifact
      * @param name                the name of connector
      * @param scheme              the connector scheme
+     * @param javaType            the connector java type
      * @param description         the description of connector
      * @param labels              the labels of connector
      * @param connectorJson       camel-connector JSon
      * @param connectorSchemaJson camel-connector-schema JSon
+     * @param componentSchemaJson camel-component-schema JSon
      */
-    protected void addConnector(NexusArtifactDto dto, String name, String scheme, String description, String labels,
-                                String connectorJson, String connectorSchemaJson) {
+    protected void addConnector(NexusArtifactDto dto, String name, String scheme, String javaType, String description, String labels,
+                                String connectorJson, String connectorSchemaJson, String componentSchemaJson) {
 
         String groupId = dto.getGroupId();
         String artifactId = dto.getArtifactId();
         String version = dto.getVersion();
 
-        camelConnectorCatalog.addConnector(groupId, artifactId, version, name, scheme, description, labels, connectorJson, connectorSchemaJson);
+        camelConnectorCatalog.addConnector(groupId, artifactId, version, name, scheme, javaType, description, labels, connectorJson, connectorSchemaJson, componentSchemaJson);
         log.info("Added connector: {}:{}:{}", dto.getGroupId(), dto.getArtifactId(), dto.getVersion());
     }
 
@@ -110,6 +112,7 @@ public class ConnectorCatalogNexusRepository extends BaseNexusRepository {
                 JsonNode tree = mapper.readTree(json[0]);
                 String name = tree.get("name").textValue();
                 String scheme = tree.get("scheme").textValue();
+                String javaType = tree.get("javaType").textValue();
                 String description = tree.get("description").textValue();
                 Iterator<JsonNode> it = tree.withArray("labels").iterator();
 
@@ -119,15 +122,15 @@ public class ConnectorCatalogNexusRepository extends BaseNexusRepository {
                     csb.append(text);
                 }
 
-                addConnector(dto, name, scheme, description, csb.toString(), json[0], json[1]);
+                addConnector(dto, name, scheme, javaType, description, csb.toString(), json[0], json[1], json[2]);
             }
         } catch (IOException e) {
             log.warn("Error scanning JAR for custom Camel components", e);
         }
     }
 
-    private String[] loadConnectorJSonSchema(URLClassLoader classLoader) {
-        String[] answer = new String[2];
+    private String[] loadConnectorJSonSchema(ClassLoader classLoader) {
+        String[] answer = new String[3];
 
         String path = "camel-connector.json";
         try {
@@ -144,6 +147,16 @@ public class ConnectorCatalogNexusRepository extends BaseNexusRepository {
             InputStream is = classLoader.getResourceAsStream(path);
             if (is != null) {
                 answer[1] = loadText(is);
+            }
+        } catch (Throwable e) {
+            log.warn("Error loading " + path + " file", e);
+        }
+
+        path = "camel-component-schema.json";
+        try {
+            InputStream is = classLoader.getResourceAsStream(path);
+            if (is != null) {
+                answer[2] = loadText(is);
             }
         } catch (Throwable e) {
             log.warn("Error loading " + path + " file", e);
