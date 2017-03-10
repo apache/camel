@@ -135,7 +135,7 @@ public class $desc.Name extends AbstractDescribedSObjectBase {
 #foreach ( $p in $utility.propertiesOf($obj) )## PROPERTY LOOP
 #if ( $utility.notNull(${p.value}) )## VALUE DEFINED CONDITION
 #if ( ${p.value.class.name} == "java.lang.String" )## STRING CONDITION
-        ${utility.current()}.set${p.key}("${p.value}");
+        ${utility.current()}.set${p.key}("$esc.escapeJava(${p.value})");
 #elseif ( ${utility.isPrimitiveOrBoxed(${p.value})} )## PRIMITIVE OR BOXED CONDITION
         ${utility.current()}.set${p.key}(${p.value});
 #elseif ( ${p.value.class.name} == "java.util.ArrayList" )## LIST CONDITION
