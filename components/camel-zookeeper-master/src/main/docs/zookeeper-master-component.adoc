@@ -1,0 +1,86 @@
+## ZooKeeper Master Component
+
+*Available as of Camel version 2.19*
+
+The **zookeeper-master:** endpoint provides a way to ensure only a single consumer in a cluster consumes from a given endpoint;
+with automatic failover if that JVM dies.
+
+This can be very useful if you need to consume from some legacy back end which either doesn't support concurrent
+consumption or due to commercial or stability reasons you can only have a single connection at any point in time.
+
+### Using the master endpoint
+
+Just prefix any camel endpoint with **zookeeper-master:someName:** where _someName_ is a logical name and is
+used to acquire the master lock. e.g.
+
+```
+from("zookeeper-master:cheese:jms:foo").to("activemq:wine");
+```
+The above simulates the [Exclusive Consumers](http://activemq.apache.org/exclusive-consumer.html) type feature in
+ActiveMQ; but on any third party JMS provider which maybe doesn't support exclusive consumers.
+
+
+### URI format
+
+[source]
+----
+zookeeper-master:name:endpoint[?options]
+----
+
+Where endpoint is any Camel endpoint you want to run in master/slave mode.
+
+
+### Options
+
+// component options: START
+The ZooKeeper Master component supports 6 options which are listed below.
+
+
+
+[width="100%",cols="2,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| zkRoot | consumer | /camel/zookeepermaster/clusters/master | String | The root path to use in zookeeper where information is stored which nodes are master/slave etc. Will by default use: /camel/zookeepermaster/clusters/master
+| curator | advanced |  | CuratorFramework | To use a custom configured CuratorFramework as connection to zookeeper ensemble.
+| maximumConnectionTimeout | consumer | 10000 | int | Timeout in millis to use when connecting to the zookeeper ensemble
+| zooKeeperUrl | consumer | localhost:2181 | String | The url for the zookeeper ensemble
+| zooKeeperPassword | security |  | String | The password to use when connecting to the zookeeper ensemble
+| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+|=======================================================================
+// component options: END
+
+// endpoint options: START
+The ZooKeeper Master endpoint is configured using URI syntax:
+
+    zookeeper-master:name:endpoint
+
+with the following path and query parameters:
+
+#### Path Parameters (2 parameters):
+
+[width="100%",cols="2,1,1m,6",options="header"]
+|=======================================================================
+| Name | Default | Java Type | Description
+| name |  | String | *Required* The name of the cluster group to use
+| endpoint |  | String | *Required* The Camel endpoint to use in master/slave mode
+|=======================================================================
+
+#### Query Parameters (4 parameters):
+
+[width="100%",cols="2,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+|=======================================================================
+// endpoint options: END
+
+
+### See Also
+
+* link:configuring-camel.html[Configuring Camel]
+* link:component.html[Component]
+* link:endpoint.html[Endpoint]
+* link:getting-started.html[Getting Started]

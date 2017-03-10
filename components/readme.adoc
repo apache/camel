@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 221 in 175 JAR artifacts (13 deprecated)
+Number of Components: 222 in 176 JAR artifacts (13 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -632,7 +632,7 @@ Number of Components: 221 in 175 JAR artifacts (13 deprecated)
 | link:camel-twitter/src/main/docs/twitter-component.adoc[Twitter] (camel-twitter) +
 `twitter:kind` | 2.10 | This component integrates with Twitter to send tweets or search for tweets and more.
 
-| link:camel-undertow/src/main/docs/undertow-component.adoc[Undertow] (camel-undertow) +
+| link:null/src/main/docs/undertow-component.adoc[Undertow] (null) +
 `undertow:httpURI` | 2.16 | The undertow component provides HTTP-based endpoints for consuming and producing HTTP requests.
 
 | link:../camel-core/src/main/docs/validator-component.adoc[Validator] (camel-core) +
@@ -670,6 +670,9 @@ Number of Components: 221 in 175 JAR artifacts (13 deprecated)
 
 | link:camel-zookeeper/src/main/docs/zookeeper-component.adoc[ZooKeeper] (camel-zookeeper) +
 `zookeeper:serverUrls/path` | 2.9 | The zookeeper component allows interaction with a ZooKeeper cluster.
+
+| link:camel-zookeeper-master/src/main/docs/zookeeper-master-component.adoc[ZooKeeper Master] (camel-zookeeper-master) +
+`zookeeper-master:name:endpoint` | 2.19 | Represents an endpoint which only becomes active when it obtains the master lock
 
 |=======================================================================
 // components: END

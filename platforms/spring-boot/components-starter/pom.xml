@@ -304,6 +304,7 @@
     <module>camel-yammer-starter</module>
     <module>camel-zipfile-starter</module>
     <module>camel-zipkin-starter</module>
+    <module>camel-zookeeper-master-starter</module>
     <module>camel-zookeeper-starter</module>
   </modules>
 </project>
