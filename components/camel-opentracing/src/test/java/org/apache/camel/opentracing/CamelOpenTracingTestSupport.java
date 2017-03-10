@@ -76,15 +76,16 @@ public class CamelOpenTracingTestSupport extends CamelTestSupport {
             assertEquals(testdata[i].getLabel(),
                 SpanDecorator.CAMEL_COMPONENT + URI.create((String) testdata[i].getUri()).getScheme(),
                 component);
+            assertEquals(testdata[i].getLabel(), testdata[i].getUri(),
+                tracer.finishedSpans().get(i).tags().get("camel.uri"));
 
-            // If span associated with TestSEDASpanDecorator, check that 'testop' and pre/post tags have been defined
+            // If span associated with TestSEDASpanDecorator, check that pre/post tags have been defined
             if ("camel-seda".equals(component)) {
-                assertEquals("testop", tracer.finishedSpans().get(i).operationName());
                 assertTrue(tracer.finishedSpans().get(i).tags().containsKey("pre"));
                 assertTrue(tracer.finishedSpans().get(i).tags().containsKey("post"));
-            } else {
-                assertEquals(testdata[i].getLabel(), testdata[i].getUri(), tracer.finishedSpans().get(i).operationName());
             }
+
+            assertEquals(testdata[i].getLabel(), testdata[i].getOperation(), tracer.finishedSpans().get(i).operationName());
 
             assertEquals(testdata[i].getLabel(), testdata[i].getKind(),
                 tracer.finishedSpans().get(i).tags().get(Tags.SPAN_KIND.getKey()));

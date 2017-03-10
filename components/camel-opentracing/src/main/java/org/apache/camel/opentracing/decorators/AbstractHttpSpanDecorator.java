@@ -29,7 +29,10 @@ public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
     @Override
     public String getOperationName(Exchange exchange, Endpoint endpoint) {
         // Based on HTTP component documentation:
+        return getHttpMethod(exchange, endpoint);
+    }
 
+    public static String getHttpMethod(Exchange exchange, Endpoint endpoint) {
         // 1. Use method provided in header.
         Object method = exchange.getIn().getHeader(Exchange.HTTP_METHOD);
         if (method instanceof String) {
@@ -63,6 +66,8 @@ public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
         if (httpUrl != null) {
             span.setTag(Tags.HTTP_URL.getKey(), httpUrl);
         }
+
+        span.setTag(Tags.HTTP_METHOD.getKey(), getHttpMethod(exchange, endpoint));
     }
 
     protected String getHttpURL(Exchange exchange, Endpoint endpoint) {
