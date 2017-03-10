@@ -18,41 +18,29 @@ package org.apache.camel.opentracing.decorators;
 
 import java.util.Map;
 
-import io.opentracing.Span;
-import io.opentracing.tag.Tags;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
-public class MongoDBSpanDecorator extends AbstractSpanDecorator {
+public class MqttSpanDecorator extends AbstractMessagingSpanDecorator {
 
     @Override
     public String getComponent() {
-        return "mongodb";
+        return "mqtt";
     }
 
     @Override
     public String getOperationName(Exchange exchange, Endpoint endpoint) {
-        Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
-        String opName = queryParameters.get("operation");
-        if (opName != null) {
-            return opName;
-        }
-        return super.getOperationName(exchange, endpoint);
+        return stripSchemeAndOptions(endpoint);
     }
 
     @Override
-    public void pre(Span span, Exchange exchange, Endpoint endpoint) {
-        super.pre(span, exchange, endpoint);
-
-        span.setTag(Tags.DB_TYPE.getKey(), getComponent());
-
+    protected String getDestination(Exchange exchange, Endpoint endpoint) {
         Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
-        String database = queryParameters.get("database");
-        if (database != null) {
-            span.setTag(Tags.DB_INSTANCE.getKey(), database);
+        String destination = queryParameters.get("subscribeTopicNames");
+        if (destination == null) {
+            destination = queryParameters.get("publishTopicName");
         }
-        span.setTag(Tags.DB_STATEMENT.getKey(), queryParameters.toString());
+        return destination;
     }
 
 }
