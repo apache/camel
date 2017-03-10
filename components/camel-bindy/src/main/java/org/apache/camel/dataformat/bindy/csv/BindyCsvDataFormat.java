@@ -106,28 +106,30 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             outputStream.write(bytesCRLF);
         }
     }
-    
+
     /**
      * check emptyStream and if CVSRecord is allow to process emptyStreams
      * avoid IllegalArgumentException and return empty list when unmarshalling
      */
     private boolean checkEmptyStream(BindyCsvFactory factory, InputStream inputStream) throws IOException {
-    	boolean allowEmptyStream = factory.isAllowEmptyStream();
+        boolean allowEmptyStream = factory.isAllowEmptyStream();
         boolean isStreamEmpty = false;
         boolean canReturnEmptyListOfModels = false;
         
-        if(inputStream == null || inputStream.available() == 0)
-        	isStreamEmpty = true;
+        if (inputStream == null || inputStream.available() == 0) {
+            isStreamEmpty = true;
+        }
         
-        if(isStreamEmpty == true && allowEmptyStream == true)
-        	canReturnEmptyListOfModels = true;
+        if (isStreamEmpty && allowEmptyStream) {
+            canReturnEmptyListOfModels = true;
+        }
         
         return canReturnEmptyListOfModels;
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         BindyCsvFactory factory = (BindyCsvFactory)getFactory();
-        ObjectHelper.notNull(factory, "not instantiated");        	
+        ObjectHelper.notNull(factory, "not instantiated");
 
         // List of Pojos
         List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
@@ -137,9 +139,9 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         InputStreamReader in = null;
         Scanner scanner = null;
         try {
-
-            if (checkEmptyStream(factory,inputStream))
-            	return models;
+            if (checkEmptyStream(factory, inputStream)) {
+                return models;
+            }
     
             in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
     
@@ -214,10 +216,10 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             }
 
         } finally {
-            if(scanner != null) {
+            if (scanner != null) {
                 scanner.close();
             }
-            if(in != null) {
+            if (in != null) {
                 IOHelper.close(in, "in", LOG);
             }
         }

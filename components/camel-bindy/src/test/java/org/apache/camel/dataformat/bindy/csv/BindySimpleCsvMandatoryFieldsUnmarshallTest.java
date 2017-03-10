@@ -147,10 +147,10 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
     @DirtiesContext
     @Test
     public void testNonEmptyLineWithAllowEmptyStreamEqualsTrue() throws Exception {
-    	String record3 = "1,A1,Onder,Sezgin,MYC,BB123456789,,,,,"; // mandatory
-    	resultEndpoint3.expectedMessageCount(1);
-    	template3.sendBody(record3);
-    	resultEndpoint3.assertIsSatisfied();
+        String record3 = "1,A1,Onder,Sezgin,MYC,BB123456789,,,,,"; // mandatory
+        resultEndpoint3.expectedMessageCount(1);
+        template3.sendBody(record3);
+        resultEndpoint3.assertIsSatisfied();
     }
 
     @DirtiesContext
@@ -190,7 +190,7 @@ public class BindySimpleCsvMandatoryFieldsUnmarshallTest extends AbstractJUnit4S
     public static class ContextConfig extends RouteBuilder {
         BindyCsvDataFormat formatOptional = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
         BindyCsvDataFormat formatMandatory = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassmandatory.Order.class);
-        BindyCsvDataFormat formatEmptyStream= new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassemptystream.Order.class);
+        BindyCsvDataFormat formatEmptyStream = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassemptystream.Order.class);
 
         public void configure() {
             from("direct:start1").unmarshal(formatOptional).to("mock:result1");
