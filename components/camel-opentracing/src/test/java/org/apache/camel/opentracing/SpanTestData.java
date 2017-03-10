@@ -20,6 +20,7 @@ public class SpanTestData {
 
     private String label;
     private String uri;
+    private String operation;
     private String kind;
     private int parentId = -1;
 
@@ -38,6 +39,15 @@ public class SpanTestData {
 
     public SpanTestData setUri(String uri) {
         this.uri = uri;
+        return this;
+    }
+
+    public String getOperation() {
+        return operation;
+    }
+
+    public SpanTestData setOperation(String operation) {
+        this.operation = operation;
         return this;
     }
 

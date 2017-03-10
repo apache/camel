@@ -27,20 +27,21 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class AbstractHttpSpanDecoratorTest {
 
     private static final String TEST_URI = "http://localhost:8080/test";
 
     @Test
-    public void testGetOperationNameFromMethodHeader() {
+    public void testGetOperationName() {
         Exchange exchange = Mockito.mock(Exchange.class);
         Message message = Mockito.mock(Message.class);
 
         Mockito.when(exchange.getIn()).thenReturn(message);
         Mockito.when(message.getHeader(Exchange.HTTP_METHOD)).thenReturn("PUT");
 
-        SpanDecorator decorator = new AbstractHttpSpanDecorator() {
+        AbstractHttpSpanDecorator decorator = new AbstractHttpSpanDecorator() {
             @Override
             public String getComponent() {
                 return null;
@@ -51,26 +52,30 @@ public class AbstractHttpSpanDecoratorTest {
     }
 
     @Test
-    public void testGetOperationNameQueryStringHeader() {
+    public void testGetMethodFromMethodHeader() {
+        Exchange exchange = Mockito.mock(Exchange.class);
+        Message message = Mockito.mock(Message.class);
+
+        Mockito.when(exchange.getIn()).thenReturn(message);
+        Mockito.when(message.getHeader(Exchange.HTTP_METHOD)).thenReturn("PUT");
+
+        assertEquals("PUT", AbstractHttpSpanDecorator.getHttpMethod(exchange, null));
+    }
+
+    @Test
+    public void testGetMethodQueryStringHeader() {
         Exchange exchange = Mockito.mock(Exchange.class);
         Message message = Mockito.mock(Message.class);
 
         Mockito.when(exchange.getIn()).thenReturn(message);
         Mockito.when(message.getHeader(Exchange.HTTP_QUERY)).thenReturn("MyQuery");
 
-        SpanDecorator decorator = new AbstractHttpSpanDecorator() {
-            @Override
-            public String getComponent() {
-                return null;
-            }
-        };
-
         assertEquals(AbstractHttpSpanDecorator.GET_METHOD,
-                decorator.getOperationName(exchange, null));
+                AbstractHttpSpanDecorator.getHttpMethod(exchange, null));
     }
 
     @Test
-    public void testGetOperationNameQueryStringInEndpoint() {
+    public void testGetMethodQueryStringInEndpoint() {
         Endpoint endpoint = Mockito.mock(Endpoint.class);
         Exchange exchange = Mockito.mock(Exchange.class);
         Message message = Mockito.mock(Message.class);
@@ -79,19 +84,12 @@ public class AbstractHttpSpanDecoratorTest {
         Mockito.when(exchange.getIn()).thenReturn(message);
         Mockito.when(message.getHeader(Exchange.HTTP_URI)).thenReturn("http://localhost:8080/endpoint?query=hello");
 
-        SpanDecorator decorator = new AbstractHttpSpanDecorator() {
-            @Override
-            public String getComponent() {
-                return null;
-            }
-        };
-
         assertEquals(AbstractHttpSpanDecorator.GET_METHOD,
-                decorator.getOperationName(exchange, endpoint));
+                AbstractHttpSpanDecorator.getHttpMethod(exchange, endpoint));
     }
 
     @Test
-    public void testGetOperationNameBodyNotNull() {
+    public void testGetMethodBodyNotNull() {
         Endpoint endpoint = Mockito.mock(Endpoint.class);
         Exchange exchange = Mockito.mock(Exchange.class);
         Message message = Mockito.mock(Message.class);
@@ -101,19 +99,12 @@ public class AbstractHttpSpanDecoratorTest {
         Mockito.when(message.getHeader(Exchange.HTTP_URI)).thenReturn(TEST_URI);
         Mockito.when(message.getBody()).thenReturn("Message Body");
 
-        SpanDecorator decorator = new AbstractHttpSpanDecorator() {
-            @Override
-            public String getComponent() {
-                return null;
-            }
-        };
-
         assertEquals(AbstractHttpSpanDecorator.POST_METHOD,
-                decorator.getOperationName(exchange, endpoint));
+                AbstractHttpSpanDecorator.getHttpMethod(exchange, endpoint));
     }
 
     @Test
-    public void testGetOperationNameDefault() {
+    public void testGetMethodDefault() {
         Endpoint endpoint = Mockito.mock(Endpoint.class);
         Exchange exchange = Mockito.mock(Exchange.class);
         Message message = Mockito.mock(Message.class);
@@ -122,15 +113,8 @@ public class AbstractHttpSpanDecoratorTest {
         Mockito.when(exchange.getIn()).thenReturn(message);
         Mockito.when(message.getHeader(Exchange.HTTP_URI)).thenReturn(TEST_URI);
 
-        SpanDecorator decorator = new AbstractHttpSpanDecorator() {
-            @Override
-            public String getComponent() {
-                return null;
-            }
-        };
-
         assertEquals(AbstractHttpSpanDecorator.GET_METHOD,
-                decorator.getOperationName(exchange, endpoint));
+                AbstractHttpSpanDecorator.getHttpMethod(exchange, endpoint));
     }
 
     @Test
@@ -156,6 +140,7 @@ public class AbstractHttpSpanDecoratorTest {
         decorator.pre(span, exchange, endpoint);
 
         assertEquals(TEST_URI, span.tags().get(Tags.HTTP_URL.getKey()));
+        assertTrue(span.tags().containsKey(Tags.HTTP_METHOD.getKey()));
     }
 
     @Test

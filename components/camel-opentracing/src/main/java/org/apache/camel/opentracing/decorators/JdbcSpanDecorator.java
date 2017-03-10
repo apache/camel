@@ -17,6 +17,8 @@
 package org.apache.camel.opentracing.decorators;
 
 import io.opentracing.Span;
+import io.opentracing.tag.Tags;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
@@ -31,11 +33,11 @@ public class JdbcSpanDecorator extends AbstractSpanDecorator {
     public void pre(Span span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
 
-        span.setTag("db.type", "sql");
+        span.setTag(Tags.DB_TYPE.getKey(), "sql");
 
         Object body = exchange.getIn().getBody();
         if (body instanceof String) {
-            span.setTag("db.statement", (String)body);
+            span.setTag(Tags.DB_STATEMENT.getKey(), (String)body);
         }
     }
 

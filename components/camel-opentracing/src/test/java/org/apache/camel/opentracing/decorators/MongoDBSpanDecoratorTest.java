@@ -20,6 +20,8 @@ import java.util.Map;
 
 import io.opentracing.mock.MockSpan;
 import io.opentracing.mock.MockTracer;
+import io.opentracing.tag.Tags;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.opentracing.SpanDecorator;
 import org.junit.Test;
@@ -66,9 +68,9 @@ public class MongoDBSpanDecoratorTest {
 
         decorator.pre(span, null, endpoint);
 
-        assertEquals("mongodb", span.tags().get("db.type"));
-        assertEquals("flights", span.tags().get("db.instance"));
-        assertTrue(span.tags().containsKey("db.statement"));
+        assertEquals("mongodb", span.tags().get(Tags.DB_TYPE.getKey()));
+        assertEquals("flights", span.tags().get(Tags.DB_INSTANCE.getKey()));
+        assertTrue(span.tags().containsKey(Tags.DB_STATEMENT.getKey()));
     }
 
 }
