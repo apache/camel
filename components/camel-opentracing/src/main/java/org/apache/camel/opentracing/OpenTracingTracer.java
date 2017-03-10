@@ -167,7 +167,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 SpanManager.ManagedSpan parent = spanManager.current();
                 SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
                 SpanBuilder spanBuilder = tracer.buildSpan(sd.getOperationName(ese.getExchange(), ese.getEndpoint()))
-                    .withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_CLIENT);
+                    .withTag(Tags.SPAN_KIND.getKey(), sd.getInitiatorSpanKind());
                 // Temporary workaround to avoid adding 'null' span as a parent
                 if (parent != null && parent.getSpan() != null) {
                     spanBuilder.asChildOf(parent.getSpan());
@@ -216,7 +216,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
             Span span = tracer.buildSpan(sd.getOperationName(exchange, route.getEndpoint()))
                 .asChildOf(tracer.extract(Format.Builtin.TEXT_MAP,
                     new CamelHeadersExtractAdapter(exchange.getIn().getHeaders())))
-                .withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_SERVER)
+                .withTag(Tags.SPAN_KIND.getKey(), sd.getReceiverSpanKind())
                 .start();
             sd.pre(span, exchange, route.getEndpoint());
             spanManager.activate(span);
