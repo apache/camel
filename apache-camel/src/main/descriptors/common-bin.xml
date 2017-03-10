@@ -278,6 +278,7 @@
         <include>org.apache.camel:camel-zipkin</include>
         <include>org.apache.camel:camel-zipkin-starter</include>
         <include>org.apache.camel:camel-zookeeper</include>
+        <include>org.apache.camel:camel-zookeeper-master</include>
       </includes>
     </dependencySet>
 
