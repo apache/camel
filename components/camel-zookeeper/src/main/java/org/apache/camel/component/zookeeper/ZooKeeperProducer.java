@@ -64,6 +64,9 @@ public class ZooKeeperProducer extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
 
+        if (connection == null) {
+            connection = this.zkm.getConnection();
+        }
         ProductionContext context = new ProductionContext(connection, exchange);
 
         String operation = exchange.getIn().getHeader(ZooKeeperMessage.ZOOKEEPER_OPERATION, String.class);
