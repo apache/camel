@@ -493,6 +493,11 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     protected void configureConsumer(Consumer consumer) throws Exception {
+        // inject CamelContext
+        if (consumer instanceof CamelContextAware) {
+            ((CamelContextAware) consumer).setCamelContext(getCamelContext());
+        }
+
         if (consumerProperties != null) {
             // use a defensive copy of the consumer properties as the methods below will remove the used properties
             // and in case we restart routes, we need access to the original consumer properties again
