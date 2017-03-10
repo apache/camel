@@ -51,11 +51,6 @@ public class CamelMethodHandler implements HttpHandler {
     public synchronized void add(String[] methods, HttpHandler handler) {
         Map<String, HttpHandler> adding = new HashMap<String, HttpHandler>();
         for (String method : methods) {
-            HttpHandler existing = methodMap.get(method);
-            if (methodMap.get(method) != null) {
-                throw new IllegalArgumentException(String.format(
-                    "Duplicate handler for a method '%s': '%s', '%s'", method, existing, handler));
-            }
             adding.put(method, handler);
         }
         methodMap.putAll(adding);
