@@ -67,6 +67,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private String quote;
     private boolean quoting;
     private boolean autospanLine;
+    private boolean allowEmptyStream;
 
     public BindyCsvFactory(Class<?> type) throws Exception {
         super(type);
@@ -570,6 +571,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                     autospanLine = record.autospanLine();
                     LOG.debug("Autospan line in last record: {}", autospanLine);
+                    
+                    // Get skipFirstLine parameter
+                    allowEmptyStream = record.allowEmptyStream();
+                    LOG.debug("Allo empty stream parameter of the CSV: {}" + allowEmptyStream);
                 }
 
                 if (section != null) {
@@ -652,4 +657,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     public int getMaxpos() {
         return maxpos;
     }
+
+	public boolean isAllowEmptyStream() {
+		return allowEmptyStream;
+	}
 }
