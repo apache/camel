@@ -31,7 +31,15 @@
   <description>Camel Zookeeper Master Support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.zookeepermaster.*</camel.osgi.export.pkg>
+    <camel.osgi.import>
+      !com.google.common.base;,
+      !org.apache.camel.component.zookeepermaster.group,
+      *
+    </camel.osgi.import>
+    <camel.osgi.export.pkg>
+      org.apache.camel.component.zookeepermaster,
+      org.apache.camel.component.zookeepermaster.group
+    </camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=zookeeper-master</camel.osgi.export.service>
   </properties>
 
