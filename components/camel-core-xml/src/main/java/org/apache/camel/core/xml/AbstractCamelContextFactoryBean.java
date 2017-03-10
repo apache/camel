@@ -797,6 +797,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract List<HystrixConfigurationDefinition> getHystrixConfigurations();
 
+    public abstract ServiceCallConfigurationDefinition getDefaultServiceCallConfiguration();
+
     public abstract List<ServiceCallConfigurationDefinition> getServiceCallConfigurations();
 
     // Implementation methods
@@ -877,6 +879,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getRestConfiguration() != null) {
             ctx.setRestConfiguration(getRestConfiguration().asRestConfiguration(ctx));
+        }
+        if (getDefaultServiceCallConfiguration() != null) {
+            ctx.setServiceCallConfiguration(getDefaultServiceCallConfiguration());
         }
         if (getServiceCallConfigurations() != null) {
             for (ServiceCallConfigurationDefinition bean : getServiceCallConfigurations()) {

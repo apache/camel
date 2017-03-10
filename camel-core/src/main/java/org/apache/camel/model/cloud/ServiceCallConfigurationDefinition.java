@@ -530,11 +530,23 @@ public class ServiceCallConfigurationDefinition extends IdentifiedType {
         return conf;
     }
 
+    public ServiceCallConfigurationDefinition multiServiceDiscovery(ChainedServiceCallServiceDiscoveryConfiguration conf) {
+        setServiceDiscoveryConfiguration(conf);
+
+        return this;
+    }
+
     public StaticServiceCallServiceDiscoveryConfiguration staticServiceDiscovery() {
         StaticServiceCallServiceDiscoveryConfiguration conf = new StaticServiceCallServiceDiscoveryConfiguration();
         setServiceDiscoveryConfiguration(conf);
 
         return conf;
+    }
+
+    public ServiceCallConfigurationDefinition staticServiceDiscovery(StaticServiceCallServiceDiscoveryConfiguration conf) {
+        setServiceDiscoveryConfiguration(conf);
+
+        return this;
     }
 
     // *****************************

@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -47,7 +48,7 @@ public class ServiceCallServiceDiscoveryConfiguration extends IdentifiedType imp
     private static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/cloud/";
 
     @XmlTransient
-    private final ServiceCallDefinition parent;
+    private final Optional<ServiceCallDefinition> parent;
     @XmlTransient
     private final String factoryKey;
     @XmlElement(name = "properties") @Metadata(label = "advanced")
@@ -58,16 +59,22 @@ public class ServiceCallServiceDiscoveryConfiguration extends IdentifiedType imp
     }
 
     public ServiceCallServiceDiscoveryConfiguration(ServiceCallDefinition parent, String factoryKey) {
-        this.parent = parent;
+        this.parent = Optional.ofNullable(parent);
         this.factoryKey = factoryKey;
     }
 
     public ServiceCallDefinition end() {
-        return this.parent;
+        return this.parent.orElseThrow(
+            () -> new IllegalStateException("Parent definition is not set")
+        );
     }
 
     public ProcessorDefinition<?> endParent() {
-        return this.parent.end();
+        return this.parent.map(
+                ServiceCallDefinition::end
+            ).orElseThrow(
+                () -> new IllegalStateException("Parent definition is not set")
+            );
     }
 
     // *************************************************************************

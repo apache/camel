@@ -26,7 +26,9 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:start"/>
-      <serviceCall name="http-service"/>
+      <serviceCall name="http-service">
+        <etcdServiceDiscovery/>
+      </serviceCall>
       <to uri="mock:result"/>
     </route>
 

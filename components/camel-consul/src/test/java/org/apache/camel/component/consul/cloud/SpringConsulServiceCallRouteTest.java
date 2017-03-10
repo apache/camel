@@ -40,28 +40,40 @@ public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSu
         this.client = Consul.builder().build().agentClient();
         this.registrations = Arrays.asList(
             ImmutableRegistration.builder()
-                .id("service-1")
+                .id("service-1-1")
                 .name("http-service-1")
                 .address("127.0.0.1")
-                .port(9091)
+                .port(9011)
                 .build(),
             ImmutableRegistration.builder()
-                .id("service-2")
+                .id("service-1-2")
                 .name("http-service-1")
                 .address("127.0.0.1")
-                .port(9092)
+                .port(9012)
                 .build(),
             ImmutableRegistration.builder()
-                .id("service-3")
-                .name("http-service-2")
+                .id("service-1-3")
+                .name("http-service-1")
                 .address("127.0.0.1")
-                .port(9093)
+                .port(9013)
                 .build(),
             ImmutableRegistration.builder()
-                .id("service-4")
+                .id("service-2-1")
                 .name("http-service-2")
                 .address("127.0.0.1")
-                .port(9094)
+                .port(9021)
+                .build(),
+            ImmutableRegistration.builder()
+                .id("service-2-2")
+                .name("http-service-2")
+                .address("127.0.0.1")
+                .port(9022)
+                .build(),
+            ImmutableRegistration.builder()
+                .id("service-2-3")
+                .name("http-service-2")
+                .address("127.0.0.1")
+                .port(9023)
                 .build()
         );
 
@@ -82,9 +94,9 @@ public abstract class SpringConsulServiceCallRouteTest extends CamelSpringTestSu
     @Test
     public void testServiceCall() throws Exception {
         getMockEndpoint("mock:result-1").expectedMessageCount(2);
-        getMockEndpoint("mock:result-1").expectedBodiesReceivedInAnyOrder("service-1 9091", "service-1 9092");
+        getMockEndpoint("mock:result-1").expectedBodiesReceivedInAnyOrder("service-1 9012", "service-1 9013");
         getMockEndpoint("mock:result-2").expectedMessageCount(2);
-        getMockEndpoint("mock:result-2").expectedBodiesReceivedInAnyOrder("service-2 9093", "service-2 9094");
+        getMockEndpoint("mock:result-2").expectedBodiesReceivedInAnyOrder("service-2 9021", "service-2 9023");
 
         template.sendBody("direct:start", "service-1");
         template.sendBody("direct:start", "service-1");
