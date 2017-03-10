@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.undertow.rest;
 
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -26,8 +30,6 @@ import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.junit.Test;
-
-import java.util.*;
 
 public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
     private final ObjectMapper mapper = new ObjectMapper();
