@@ -470,6 +470,8 @@ public class KafkaConfiguration {
     /**
      * A string that uniquely identifies the group of consumer processes to which this consumer belongs.
      * By setting the same group id multiple processes indicate that they are all part of the same consumer group.
+     *
+     * This option is required for consumers.
      */
     public void setGroupId(String groupId) {
         this.groupId = groupId;
@@ -492,6 +494,9 @@ public class KafkaConfiguration {
 
     /**
      * Name of the topic to use.
+     *
+     * On the consumer you can use comma to separate multiple topics.
+     * A producer can only send a message to a single topic.
      */
     public void setTopic(String topic) {
         this.topic = topic;
