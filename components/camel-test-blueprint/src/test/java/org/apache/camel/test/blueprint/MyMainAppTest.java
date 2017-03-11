@@ -54,7 +54,7 @@ public class MyMainAppTest {
         main.setDescriptors("org/apache/camel/test/blueprint/xpath/*.xml");
 
         // run for 1 second and then stop automatic
-        main.setDuration(1000);
+        main.setDuration(1);
         main.run();
     }
 }
