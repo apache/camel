@@ -33,13 +33,14 @@ Where endpoint is any Camel endpoint you want to run in master/slave mode.
 ### Options
 
 // component options: START
-The ZooKeeper Master component supports 6 options which are listed below.
+The ZooKeeper Master component supports 7 options which are listed below.
 
 
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
+| containerIdFactory | consumer |  | ContainerIdFactory | To use a custom ContainerIdFactory for creating container ids.
 | zkRoot | consumer | /camel/zookeepermaster/clusters/master | String | The root path to use in zookeeper where information is stored which nodes are master/slave etc. Will by default use: /camel/zookeepermaster/clusters/master
 | curator | advanced |  | CuratorFramework | To use a custom configured CuratorFramework as connection to zookeeper ensemble.
 | maximumConnectionTimeout | consumer | 10000 | int | Timeout in millis to use when connecting to the zookeeper ensemble
@@ -52,7 +53,7 @@ The ZooKeeper Master component supports 6 options which are listed below.
 // endpoint options: START
 The ZooKeeper Master endpoint is configured using URI syntax:
 
-    zookeeper-master:name:endpoint
+    zookeeper-master:groupName:consumerEndpointUri
 
 with the following path and query parameters:
 
@@ -61,8 +62,8 @@ with the following path and query parameters:
 [width="100%",cols="2,1,1m,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
-| name |  | String | *Required* The name of the cluster group to use
-| endpoint |  | String | *Required* The Camel endpoint to use in master/slave mode
+| groupName |  | String | *Required* The name of the cluster group to use
+| consumerEndpointUri |  | String | *Required* The consumer endpoint to use in master/slave mode
 |=======================================================================
 
 #### Query Parameters (4 parameters):
@@ -76,6 +77,38 @@ with the following path and query parameters:
 | synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
+
+### Example
+
+You can protect a clustered Camel application to only consume files from one active node.
+
+
+[source,java]
+----
+        // the file endpoint we want to consume from
+        String url = "file:target/inbox?delete=true";
+
+        // use the zookeeper master component in the clustered group named myGroup
+        // to run a master/slave mode in the following Camel url
+        from("zookeeper-master:myGroup:" + url)
+            .log(name + " - Received file: ${file:name}")
+            .delay(delay)
+            .log(name + " - Done file:     ${file:name}")
+            .to("file:target/outbox");
+    }
+----
+
+ZooKeeper will by default connect to `localhost:2181`, but you can configure this on the component level.
+
+[source,java]
+----
+        MasterComponent master = new MasterComponent();
+        master.setZooKeeperUrl("myzookeeper:2181");
+----
+
+However you can also configure the url of the ZooKeeper ensemble using environment variables.
+
+    export ZOOKEEPER_URL = "myzookeeper:2181"
 
 
 ### See Also

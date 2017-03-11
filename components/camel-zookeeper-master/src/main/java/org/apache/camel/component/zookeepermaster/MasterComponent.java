@@ -28,10 +28,23 @@ import org.apache.camel.util.URISupport;
  * point in time with all other JVMs being hot standbys which wait until the master JVM dies before
  * taking over to provide high availability of a single consumer.
  */
-public class MasterComponent extends ZKComponentSupport {
+public class MasterComponent extends ZookeeperComponentSupport {
+
+    private ContainerIdFactory containerIdFactory = new DefaultContainerIdFactory();
 
     @Metadata(defaultValue = "/camel/zookeepermaster/clusters/master")
     private String zkRoot = "/camel/zookeepermaster/clusters/master";
+
+    public ContainerIdFactory getContainerIdFactory() {
+        return containerIdFactory;
+    }
+
+    /**
+     * To use a custom ContainerIdFactory for creating container ids.
+     */
+    public void setContainerIdFactory(ContainerIdFactory containerIdFactory) {
+        this.containerIdFactory = containerIdFactory;
+    }
 
     public String getZkRoot() {
         return zkRoot;

@@ -16,28 +16,12 @@
  */
 package org.apache.camel.component.zookeepermaster;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.camel.component.zookeepermaster.group.NodeState;
+import java.util.UUID;
 
-public class CamelNodeState extends NodeState {
+public class DefaultContainerIdFactory implements ContainerIdFactory {
 
-    @JsonProperty
-    String consumer;
-
-    @JsonProperty
-    boolean started;
-
-    public CamelNodeState() {
+    @Override
+    public String newContainerId() {
+        return System.getProperty("runtime.id", UUID.randomUUID().toString());
     }
-
-    public CamelNodeState(String id) {
-        super(id);
-    }
-
-    public CamelNodeState(String id, String container) {
-        super(id, container);
-    }
-
 }
