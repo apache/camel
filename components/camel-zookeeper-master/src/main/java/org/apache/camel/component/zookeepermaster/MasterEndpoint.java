@@ -21,6 +21,8 @@ import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
@@ -29,32 +31,46 @@ import org.apache.camel.spi.UriPath;
 /**
  * Represents an endpoint which only becomes active when it obtains the master lock
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "zookeeper-master", syntax = "zookeeper-master:name:endpoint", consumerClass = MasterConsumer.class, consumerOnly = true,
+@ManagedResource(description = "Managed ZooKeeper Master Endpoint")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "zookeeper-master", syntax = "zookeeper-master:groupName:consumerEndpointUri", consumerClass = MasterConsumer.class, consumerOnly = true,
     title = "ZooKeeper Master", lenientProperties = true, label = "clustering")
 public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     private final MasterComponent component;
+    private final Endpoint consumerEndpoint;
 
-    private final Endpoint childEndpoint;
-
-    @UriPath(name = "name", description = "The name of the cluster group to use")
+    @UriPath(description = "The name of the cluster group to use")
     @Metadata(required = "true")
-    private final String singletonId;
+    private final String groupName;
 
-    @UriPath(name = "endpoint", description = "The Camel endpoint to use in master/slave mode")
+    @UriPath(description = "The consumer endpoint to use in master/slave mode")
     @Metadata(required = "true")
-    private final String child;
+    private final String consumerEndpointUri;
 
-    public MasterEndpoint(String uri, MasterComponent component, String singletonId, String child) {
+    public MasterEndpoint(String uri, MasterComponent component, String groupName, String consumerEndpointUri) {
         super(uri, component);
         this.component = component;
-        this.singletonId = singletonId;
-        this.child = child;
-        this.childEndpoint = getCamelContext().getEndpoint(child);
+        this.groupName = groupName;
+        this.consumerEndpointUri = consumerEndpointUri;
+        this.consumerEndpoint = getCamelContext().getEndpoint(consumerEndpointUri);
     }
 
-    public String getSingletonId() {
-        return singletonId;
+    public Endpoint getEndpoint() {
+        return consumerEndpoint;
+    }
+
+    public Endpoint getConsumerEndpoint() {
+        return getEndpoint();
+    }
+
+    @ManagedAttribute(description = "The consumer endpoint url to use in master/slave mode", mask = true)
+    public String getConsumerEndpointUri() {
+        return consumerEndpointUri;
+    }
+
+    @ManagedAttribute(description = "The name of the cluster group to use")
+    public String getGroupName() {
+        return groupName;
     }
 
     @Override
@@ -76,23 +92,8 @@ public class MasterEndpoint extends DefaultEndpoint implements DelegateEndpoint 
         return true;
     }
 
-    // Properties
-    //-------------------------------------------------------------------------
     public MasterComponent getComponent() {
         return component;
     }
 
-    public String getChild() {
-        return child;
-    }
-
-    // Implementation methods
-    //-------------------------------------------------------------------------
-    Endpoint getChildEndpoint() {
-        return childEndpoint;
-    }
-
-    public Endpoint getEndpoint() {
-        return getChildEndpoint();
-    }
 }

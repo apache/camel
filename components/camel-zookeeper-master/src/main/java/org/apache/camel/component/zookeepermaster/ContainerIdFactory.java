@@ -16,28 +16,14 @@
  */
 package org.apache.camel.component.zookeepermaster;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.camel.component.zookeepermaster.group.NodeState;
+/**
+ * Factory to create container ids which are used in the ZooKeeper cluster group
+ * as unique ids among all the nodes that runs in the cluster.
+ * <p/>
+ * A custom factory can be used that uses hostname or some other unique way of identifying the container
+ */
+public interface ContainerIdFactory {
 
-public class CamelNodeState extends NodeState {
-
-    @JsonProperty
-    String consumer;
-
-    @JsonProperty
-    boolean started;
-
-    public CamelNodeState() {
-    }
-
-    public CamelNodeState(String id) {
-        super(id);
-    }
-
-    public CamelNodeState(String id, String container) {
-        super(id, container);
-    }
+    String newContainerId();
 
 }

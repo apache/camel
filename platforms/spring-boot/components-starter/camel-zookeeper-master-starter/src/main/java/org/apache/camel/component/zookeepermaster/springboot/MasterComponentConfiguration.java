@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.zookeepermaster.springboot;
 
+import org.apache.camel.component.zookeepermaster.ContainerIdFactory;
 import org.apache.curator.framework.CuratorFramework;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -29,6 +30,11 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @ConfigurationProperties(prefix = "camel.component.zookeeper-master")
 public class MasterComponentConfiguration {
 
+    /**
+     * To use a custom ContainerIdFactory for creating container ids.
+     */
+    @NestedConfigurationProperty
+    private ContainerIdFactory containerIdFactory;
     /**
      * The root path to use in zookeeper where information is stored which nodes
      * are master/slave etc. Will by default use:
@@ -59,6 +65,14 @@ public class MasterComponentConfiguration {
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
+
+    public ContainerIdFactory getContainerIdFactory() {
+        return containerIdFactory;
+    }
+
+    public void setContainerIdFactory(ContainerIdFactory containerIdFactory) {
+        this.containerIdFactory = containerIdFactory;
+    }
 
     public String getZkRoot() {
         return zkRoot;

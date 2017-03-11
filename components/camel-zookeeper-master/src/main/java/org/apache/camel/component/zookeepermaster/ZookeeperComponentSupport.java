@@ -31,8 +31,8 @@ import org.apache.curator.retry.RetryOneTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class ZKComponentSupport extends DefaultComponent implements Callable<CuratorFramework>, ConnectionStateListener {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ZKComponentSupport.class);
+public abstract class ZookeeperComponentSupport extends DefaultComponent implements Callable<CuratorFramework>, ConnectionStateListener {
+    private static final transient Logger LOG = LoggerFactory.getLogger(ZookeeperComponentSupport.class);
 
     private static final String ZOOKEEPER_URL = "zookeeper.url";
     private static final String ZOOKEEPER_PASSWORD = "zookeeper.password";
@@ -109,14 +109,14 @@ public abstract class ZKComponentSupport extends DefaultComponent implements Cal
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        // attempt to lookup curator framework from registry using the name curator
         if (curator == null) {
             try {
-                CuratorFramework aCurator = (CuratorFramework) getCamelContext().getRegistry().lookupByName("curator");
+                CuratorFramework aCurator = getCamelContext().getRegistry().lookupByNameAndType("curator", CuratorFramework.class);
                 if (aCurator != null) {
+                    LOG.debug("CuratorFramework found in CamelRegistry: {}", aCurator);
                     setCurator(aCurator);
-                }
-                if (curator != null) {
-                    LOG.debug("Zookeeper client found in camel registry. " + curator);
                 }
             } catch (Exception exception) {
                 // ignore
@@ -146,7 +146,7 @@ public abstract class ZKComponentSupport extends DefaultComponent implements Cal
         if (password == null) {
             System.getProperty(ZOOKEEPER_PASSWORD);
         }
-        LOG.debug("CuratorFramework not found in Camel registry, creating new with connection " + connectString);
+        LOG.info("Creating new CuratorFramework with connection: {}", connectString);
         CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
             .connectString(connectString)
             .retryPolicy(new RetryOneTime(1000))
@@ -157,7 +157,7 @@ public abstract class ZKComponentSupport extends DefaultComponent implements Cal
         }
 
         curator = builder.build();
-        LOG.debug("Starting curator " + curator);
+        LOG.debug("Starting CuratorFramework {}", curator);
         curator.start();
         return curator;
     }
@@ -173,7 +173,7 @@ public abstract class ZKComponentSupport extends DefaultComponent implements Cal
 
     @Override
     public void stateChanged(CuratorFramework client, ConnectionState newState) {
-        LOG.info("Curator Connection new state: " + newState);
+        LOG.debug("CuratorFramework state changed: {}", newState);
     }
 
     protected void registerAsListener() {
