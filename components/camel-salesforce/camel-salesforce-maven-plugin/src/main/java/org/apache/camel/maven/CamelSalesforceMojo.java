@@ -266,7 +266,8 @@ public class CamelSalesforceMojo extends AbstractMojo {
     @Parameter(property = "camelSalesforce.useStringsForPicklists", defaultValue = "false")
     protected Boolean useStringsForPicklists;
 
-    private VelocityEngine engine;
+    VelocityEngine engine;
+
     private long responseTimeout;
 
     /**
@@ -275,14 +276,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
      * @throws MojoExecutionException
      */
     public void execute() throws MojoExecutionException {
-        // initialize velocity to load resources from class loader and use Log4J
-        Properties velocityProperties = new Properties();
-        velocityProperties.setProperty(RuntimeConstants.RESOURCE_LOADER, "cloader");
-        velocityProperties.setProperty("cloader.resource.loader.class", ClasspathResourceLoader.class.getName());
-        velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, Log4JLogChute.class.getName());
-        velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM + ".log4j.logger", LOG.getName());
-        engine = new VelocityEngine(velocityProperties);
-        engine.init();
+        engine = createVelocityEngine();
 
         // make sure we can load both templates
         if (!engine.resourceExists(SOBJECT_POJO_VM)
@@ -424,6 +418,19 @@ public class CamelSalesforceMojo extends AbstractMojo {
             } catch (Exception ignore) {
             }
         }
+    }
+
+    static VelocityEngine createVelocityEngine() {
+        // initialize velocity to load resources from class loader and use Log4J
+        final Properties velocityProperties = new Properties();
+        velocityProperties.setProperty(RuntimeConstants.RESOURCE_LOADER, "cloader");
+        velocityProperties.setProperty("cloader.resource.loader.class", ClasspathResourceLoader.class.getName());
+        velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, Log4JLogChute.class.getName());
+        velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM + ".log4j.logger", LOG.getName());
+
+        final VelocityEngine engine = new VelocityEngine(velocityProperties);
+
+        return engine;
     }
 
     protected void filterObjectNames(Set<String> objectNames) throws MojoExecutionException {
@@ -574,7 +581,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
         return httpClient;
     }
 
-    private void processDescription(File pkgDir, SObjectDescription description, GeneratorUtility utility, String generatedDate) throws MojoExecutionException {
+    void processDescription(File pkgDir, SObjectDescription description, GeneratorUtility utility, String generatedDate) throws MojoExecutionException {
         // generate a source file for SObject
         String fileName = description.getName() + JAVA_EXT;
         BufferedWriter writer = null;

@@ -17,131 +17,84 @@
 package org.apache.camel.maven;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
-import java.lang.Exception;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Properties;
-
-import org.junit.Test;
-import org.junit.Assert;
-import org.junit.Before;
-
-import org.apache.maven.plugin.logging.SystemStreamLog;
+import java.util.Arrays;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
-
-import org.apache.log4j.Logger;
-
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.RuntimeConstants;
-import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
-import org.apache.velocity.runtime.log.Log4JLogChute;
-
+import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.commons.io.FileUtils;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameter;
+import org.junit.runners.Parameterized.Parameters;
 
-//import java.util.Scanner;
-
+@RunWith(Parameterized.class)
 public class CamelSalesforceMojoOutputTest {
     private static final String TEST_CASE_FILE = "case.json";
     private static final String TEST_CALCULATED_FORMULA_FILE = "complex_calculated_formula.json";
-    private static final String OUTPUT_FOLDER = "target/test-generated-sources";
-    private static final String generatedDate = "Thu Mar 09 16:15:49 ART 2017";
+    private static final String FIXED_DATE = "Thu Mar 09 16:15:49 ART 2017";
 
-    private CamelSalesforceMojoAccessor mojo;
-    private CamelSalesforceMojo.GeneratorUtility utility;
-    private File pkgDir;
+    private CamelSalesforceMojo mojo;
+    private CamelSalesforceMojo.GeneratorUtility utility = new CamelSalesforceMojo.GeneratorUtility(false);
 
-    private static class CamelSalesforceMojoAccessor extends CamelSalesforceMojo {
-        private static final Logger LOG = Logger.getLogger(CamelSalesforceMojoAccessor.class.getName());
+    @Rule
+    public TemporaryFolder temp = new TemporaryFolder();
 
-        public CamelSalesforceMojoAccessor() throws Exception {
-            // initialize velocity to load resources from class loader and use Log4J
-            Properties velocityProperties = new Properties();
-            velocityProperties.setProperty(RuntimeConstants.RESOURCE_LOADER, "cloader");
-            velocityProperties.setProperty("cloader.resource.loader.class", ClasspathResourceLoader.class.getName());
-            velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, Log4JLogChute.class.getName());
-            velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM + ".log4j.logger", LOG.getName());
-
-            VelocityEngine engine = new VelocityEngine(velocityProperties);
-            engine.init();
-
-            Field field = CamelSalesforceMojo.class.getDeclaredField("engine");
-            field.setAccessible(true);
-            field.set(this, engine);
-        }
-
-        // Expose processDescription in order to test it
-        public void processDescription(File pkgDir, SObjectDescription description, GeneratorUtility utility, String generatedDate) throws Exception {
-            Method method = CamelSalesforceMojo.class.getDeclaredMethod("processDescription", File.class, SObjectDescription.class, CamelSalesforceMojo.GeneratorUtility.class, String.class);
-            method.setAccessible(true);
-            method.invoke(this, pkgDir, description, utility, generatedDate);
-        }
+    @Parameters(name = "json = {0}, source = {2}")
+    public static Iterable<Object[]> parameters() throws IOException {
+        return Arrays.asList(pair(TEST_CASE_FILE, "Case.java"),
+            pair(TEST_CASE_FILE, "Case_PickListAccentMarkEnum.java"),
+            pair(TEST_CASE_FILE, "Case_PickListQuotationMarkEnum.java"),
+            pair(TEST_CASE_FILE, "Case_PickListSlashEnum.java"), pair(TEST_CASE_FILE, "QueryRecordsCase.java"),
+            pair(TEST_CALCULATED_FORMULA_FILE, "ComplexCalculatedFormula.java"),
+            pair(TEST_CALCULATED_FORMULA_FILE, "QueryRecordsComplexCalculatedFormula.java"));
     }
+
+    static Object[] pair(String json, String source) throws IOException {
+        return new Object[] {json, createSObjectDescription(json), source};
+    }
+
+    @Parameter(0)
+    public String json;
+
+    @Parameter(1)
+    public SObjectDescription description;
+
+    @Parameter(2)
+    public String source;
 
     @Before
     public void setUp() throws Exception {
-        mojo = createMojo();
-
-        pkgDir = new File(OUTPUT_FOLDER);
-        if (!pkgDir.exists()) {
-            if (!pkgDir.mkdirs()) {
-                throw new Exception("Unable to create " + pkgDir);
-            }
-        }
-
-        utility = createGeneratorUtility();
+        mojo = new CamelSalesforceMojo();
+        mojo.engine = CamelSalesforceMojo.createVelocityEngine();
     }
 
     @Test
     public void testProcessDescriptionPickLists() throws Exception {
-        SObjectDescription description = createSObjectDescription(TEST_CASE_FILE);
+        final File pkgDir = temp.newFolder();
 
-        mojo.processDescription(pkgDir, description, utility, generatedDate);
+        mojo.processDescription(pkgDir, description, utility, FIXED_DATE);
 
-        assertClassFile("Case.java");
-        assertClassFile("Case_PickListAccentMarkEnum.java");
-        assertClassFile("Case_PickListQuotationMarkEnum.java");
-        assertClassFile("Case_PickListSlashEnum.java");
-        assertClassFile("QueryRecordsCase.java");
+        File generatedFile = new File(pkgDir, source);
+        File expectedFile = FileUtils.toFile(CamelSalesforceMojoOutputTest.class.getResource("/generated/" + source));
+
+        Assert.assertTrue("Geberated source file in " + source + " must be equal to the one present in test/resources",
+            FileUtils.contentEquals(generatedFile, expectedFile));
     }
 
-    @Test
-    public void testProcessDescriptionCalculatedFormula() throws Exception {
-        SObjectDescription description = createSObjectDescription(TEST_CALCULATED_FORMULA_FILE);
-
-        mojo.processDescription(pkgDir, description, utility, generatedDate);
-
-        assertClassFile("ComplexCalculatedFormula.java");
-        assertClassFile("QueryRecordsComplexCalculatedFormula.java");
-    }
-
-    public void assertClassFile(String name) throws Exception {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        Assert.assertTrue("Class "+name+" must be equal to the target one", FileUtils.contentEquals(new File(OUTPUT_FOLDER, name), FileUtils.toFile(classLoader.getResource("generated/"+name))));
-    }
-
-    protected CamelSalesforceMojo.GeneratorUtility createGeneratorUtility() {
-        return new CamelSalesforceMojo.GeneratorUtility(false);
-    }
-
-    protected SObjectDescription createSObjectDescription(String name) throws Exception {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        InputStream inputStream = classLoader.getResourceAsStream(name);
+    static SObjectDescription createSObjectDescription(String name) throws IOException {
+        InputStream inputStream = CamelSalesforceMojoOutputTest.class.getResourceAsStream("/" + name);
         ObjectMapper mapper = JsonUtils.createObjectMapper();
-        SObjectDescription description = mapper.readValue(inputStream, SObjectDescription.class);
-        if (description == null)
-            throw new Exception("Couldn't Read description from file");
 
-        return description;
+        return mapper.readValue(inputStream, SObjectDescription.class);
     }
 
-    protected CamelSalesforceMojoAccessor createMojo() throws Exception {
-        CamelSalesforceMojoAccessor mojo = new CamelSalesforceMojoAccessor();
-        mojo.setLog(new SystemStreamLog());
-        return mojo;
-    }
 }
