@@ -25,8 +25,6 @@ import org.apache.camel.SuspendableService;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
-import org.apache.camel.component.zookeepermaster.group.Group;
-import org.apache.camel.component.zookeepermaster.group.GroupListener;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
@@ -36,34 +34,30 @@ import org.slf4j.LoggerFactory;
  * A consumer which is only really active while it holds the master lock
  */
 @ManagedResource(description = "Managed ZooKeeper Master Consumer")
-public class MasterConsumer extends DefaultConsumer implements GroupListener {
+public class MasterConsumer extends DefaultConsumer {
     private static final transient Logger LOG = LoggerFactory.getLogger(MasterConsumer.class);
 
+    private ZookeeperGroupListenerSupport groupListener;
     private final MasterEndpoint endpoint;
     private final Processor processor;
     private Consumer delegate;
     private SuspendableService delegateService;
-    private final Group<CamelNodeState> singleton;
     private volatile CamelNodeState thisNodeState;
 
     public MasterConsumer(MasterEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.processor = processor;
-        MasterComponent component = endpoint.getComponent();
-        String path = component.getCamelClusterPath(endpoint.getGroupName());
-        this.singleton = component.createGroup(path);
-        this.singleton.add(this);
     }
 
     @ManagedAttribute(description = "Are we connected to ZooKeeper")
     public boolean isConnected() {
-        return singleton.isConnected();
+        return groupListener.getGroup().isConnected();
     }
 
     @ManagedAttribute(description = "Are we the master")
     public boolean isMaster() {
-        return singleton.isMaster();
+        return groupListener.getGroup().isMaster();
     }
 
     @ManagedOperation(description = "Information about all the slaves")
@@ -72,7 +66,7 @@ public class MasterConsumer extends DefaultConsumer implements GroupListener {
             return new ObjectMapper()
                 .enable(SerializationFeature.INDENT_OUTPUT)
                 .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-                .writeValueAsString(singleton.slaves());
+                .writeValueAsString(groupListener.getGroup().slaves());
         } catch (Exception e) {
             return null;
         }
@@ -80,7 +74,7 @@ public class MasterConsumer extends DefaultConsumer implements GroupListener {
 
     @ManagedOperation(description = "Information about the last event in the cluster group")
     public String lastEvent() {
-        Object event = singleton.getLastState();
+        Object event = groupListener.getGroup().getLastState();
         return event != null ? event.toString() : null;
     }
 
@@ -92,10 +86,15 @@ public class MasterConsumer extends DefaultConsumer implements GroupListener {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        singleton.start();
+
+        String path = endpoint.getComponent().getCamelClusterPath(endpoint.getGroupName());
+        this.groupListener = new ZookeeperGroupListenerSupport(path, endpoint, onLockOwned(), onDisconnected());
+        this.groupListener.setCamelContext(endpoint.getCamelContext());
+        ServiceHelper.startService(groupListener);
+
         LOG.info("Attempting to become master for endpoint: " + endpoint + " in " + endpoint.getCamelContext() + " with singletonID: " + endpoint.getGroupName());
         thisNodeState = createNodeState();
-        singleton.update(thisNodeState);
+        groupListener.updateState(thisNodeState);
     }
 
     @Override
@@ -103,8 +102,9 @@ public class MasterConsumer extends DefaultConsumer implements GroupListener {
         try {
             stopConsumer();
         } finally {
-            singleton.close();
+            ServiceHelper.stopAndShutdownServices(groupListener);
         }
+        super.doStop();
     }
 
     private CamelNodeState createNodeState() {
@@ -114,7 +114,7 @@ public class MasterConsumer extends DefaultConsumer implements GroupListener {
         return state;
     }
 
-    protected void stopConsumer() throws Exception {
+    private void stopConsumer() throws Exception {
         ServiceHelper.stopAndShutdownServices(delegate);
         ServiceHelper.stopAndShutdownServices(endpoint.getConsumerEndpoint());
         delegate = null;
@@ -138,63 +138,43 @@ public class MasterConsumer extends DefaultConsumer implements GroupListener {
         super.doSuspend();
     }
 
-    @Override
-    public void groupEvent(Group group, GroupEvent event) {
-        switch (event) {
-        case CONNECTED:
-            break;
-        case CHANGED:
-            if (singleton.isConnected()) {
-                if (singleton.isMaster()) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Master/Standby endpoint is Master for:  " + endpoint + " in " + endpoint.getCamelContext());
+    protected Runnable onLockOwned() {
+        return () -> {
+            if (delegate == null) {
+                try {
+                    // ensure endpoint is also started
+                    LOG.info("Elected as master. Starting consumer: {}", endpoint.getConsumerEndpoint());
+                    ServiceHelper.startService(endpoint.getConsumerEndpoint());
+
+                    delegate = endpoint.getConsumerEndpoint().createConsumer(processor);
+                    delegateService = null;
+                    if (delegate instanceof SuspendableService) {
+                        delegateService = (SuspendableService) delegate;
                     }
-                    onLockOwned();
-                } else {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Master/Standby endpoint is Standby for: " + endpoint + " in " + endpoint.getCamelContext());
-                    }
+
+                    // Lets show we are starting the consumer.
+                    thisNodeState = createNodeState();
+                    thisNodeState.started = true;
+                    groupListener.updateState(thisNodeState);
+
+                    ServiceHelper.startService(delegate);
+                } catch (Exception e) {
+                    LOG.error("Failed to start master consumer for: " + endpoint, e);
                 }
+
+                LOG.info("Elected as master. Consumer started: {}", endpoint.getConsumerEndpoint());
             }
-            break;
-        case DISCONNECTED:
-            try {
-                LOG.info("Disconnecting as master. Stopping consumer: {}", endpoint.getConsumerEndpoint());
-                stopConsumer();
-            } catch (Exception e) {
-                LOG.warn("Failed to stop master consumer for: " + endpoint + ". This exception is ignored.", e);
-            }
-            break;
-        default:
-            // noop
-        }
+        };
     }
 
-    protected void onLockOwned() {
-        if (delegate == null) {
+    protected Runnable onDisconnected() {
+        return () -> {
             try {
-                // ensure endpoint is also started
-                LOG.info("Elected as master. Starting consumer: {}", endpoint.getConsumerEndpoint());
-                ServiceHelper.startService(endpoint.getConsumerEndpoint());
-
-                delegate = endpoint.getConsumerEndpoint().createConsumer(processor);
-                delegateService = null;
-                if (delegate instanceof SuspendableService) {
-                    delegateService = (SuspendableService) delegate;
-                }
-
-                // Lets show we are starting the consumer.
-                thisNodeState = createNodeState();
-                thisNodeState.started = true;
-                singleton.update(thisNodeState);
-
-                ServiceHelper.startService(delegate);
+                stopConsumer();
             } catch (Exception e) {
-                LOG.error("Failed to start master consumer for: " + endpoint, e);
+                LOG.warn("Failed to stop master consumer for: " + endpoint, e);
             }
-
-            LOG.info("Elected as master. Consumer started: {}", endpoint.getConsumerEndpoint());
-        }
+        };
     }
 
 }

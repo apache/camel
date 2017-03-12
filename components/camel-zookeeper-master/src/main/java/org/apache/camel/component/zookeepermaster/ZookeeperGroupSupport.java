@@ -25,6 +25,7 @@ import org.apache.camel.component.zookeepermaster.group.internal.ManagedGroupFac
 import org.apache.camel.component.zookeepermaster.group.internal.ManagedGroupFactoryBuilder;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.state.ConnectionState;
@@ -122,6 +123,7 @@ public class ZookeeperGroupSupport extends ServiceSupport implements CamelContex
 
     @Override
     protected void doStart() throws Exception {
+        ObjectHelper.notNull(camelContext, "CamelContext");
 
         // attempt to lookup curator framework from registry using the name curator
         if (curator == null) {
