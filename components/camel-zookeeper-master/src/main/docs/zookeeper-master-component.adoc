@@ -85,31 +85,59 @@ You can protect a clustered Camel application to only consume files from one act
 
 [source,java]
 ----
-        // the file endpoint we want to consume from
-        String url = "file:target/inbox?delete=true";
+    // the file endpoint we want to consume from
+    String url = "file:target/inbox?delete=true";
 
-        // use the zookeeper master component in the clustered group named myGroup
-        // to run a master/slave mode in the following Camel url
-        from("zookeeper-master:myGroup:" + url)
-            .log(name + " - Received file: ${file:name}")
-            .delay(delay)
-            .log(name + " - Done file:     ${file:name}")
-            .to("file:target/outbox");
-    }
+    // use the zookeeper master component in the clustered group named myGroup
+    // to run a master/slave mode in the following Camel url
+    from("zookeeper-master:myGroup:" + url)
+        .log(name + " - Received file: ${file:name}")
+        .delay(delay)
+        .log(name + " - Done file:     ${file:name}")
+        .to("file:target/outbox");
 ----
 
 ZooKeeper will by default connect to `localhost:2181`, but you can configure this on the component level.
 
 [source,java]
 ----
-        MasterComponent master = new MasterComponent();
-        master.setZooKeeperUrl("myzookeeper:2181");
+    MasterComponent master = new MasterComponent();
+    master.setZooKeeperUrl("myzookeeper:2181");
 ----
 
 However you can also configure the url of the ZooKeeper ensemble using environment variables.
 
     export ZOOKEEPER_URL = "myzookeeper:2181"
 
+## Master RoutePolicy
+
+You can also use a `RoutePolicy` to control routes in master/slave mode.
+
+When doing so you must configure the route policy with
+
+- url to zookeeper ensemble
+- name of cluster group
+- *important* and set the route to not auto startup
+
+A little example
+
+[source,java]
+----
+    MasterRoutePolicy master = new MasterRoutePolicy();
+    master.setZooKeeperUrl("localhost:2181");
+    master.setGroupName("myGroup");
+
+    // its import to set the route to not auto startup
+    // as we let the route policy start/stop the routes when it becomes a master/slave etc
+    from("file:target/inbox?delete=true").noAutoStartup()
+        // use the zookeeper master route policy in the clustered group
+        // to run this route in master/slave mode
+        .routePolicy(master)
+        .log(name + " - Received file: ${file:name}")
+        .delay(delay)
+        .log(name + " - Done file:     ${file:name}")
+        .to("file:target/outbox");
+----
 
 ### See Also
 

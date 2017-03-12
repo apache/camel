@@ -110,7 +110,7 @@ public class MasterConsumer extends DefaultConsumer {
     private CamelNodeState createNodeState() {
         String containerId = endpoint.getComponent().getContainerIdFactory().newContainerId();
         CamelNodeState state = new CamelNodeState(endpoint.getGroupName(), containerId);
-        state.consumer = endpoint.getConsumerEndpoint().getEndpointUri();
+        state.setConsumer(endpoint.getConsumerEndpoint().getEndpointUri());
         return state;
     }
 
@@ -154,7 +154,7 @@ public class MasterConsumer extends DefaultConsumer {
 
                     // Lets show we are starting the consumer.
                     thisNodeState = createNodeState();
-                    thisNodeState.started = true;
+                    thisNodeState.setStarted(true);
                     groupListener.updateState(thisNodeState);
 
                     ServiceHelper.startService(delegate);
