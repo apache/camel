@@ -23,6 +23,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.StateRepository;
 import org.apache.camel.spi.UriParam;
@@ -42,25 +43,22 @@ import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.config.SslConfigs;
 
 @UriParams
-public class KafkaConfiguration {
+public class KafkaConfiguration implements Cloneable {
 
-    @UriPath @Metadata(required = "true")
+    //Common configuration properties
+    @UriPath(label = "common") @Metadata(required = "true")
     private String topic;
+    @UriParam(label = "common")
+    private String brokers;
+    @UriParam(label = "common")
+    private String clientId;
 
-    @UriParam
+    @UriParam(label = "consumer")
     private String groupId;
-    @UriParam(defaultValue = KafkaConstants.KAFKA_DEFAULT_PARTITIONER)
-    private String partitioner = KafkaConstants.KAFKA_DEFAULT_PARTITIONER;
     @UriParam(label = "consumer", defaultValue = "10")
     private int consumerStreams = 10;
     @UriParam(label = "consumer", defaultValue = "1")
     private int consumersCount = 1;
-
-    //Common configuration properties
-    @UriParam(label = "common")
-    private String brokers;
-    @UriParam
-    private String clientId;
 
     //interceptor.classes
     @UriParam(label = "common,monitoring")
@@ -110,8 +108,6 @@ public class KafkaConfiguration {
     private String seekTo;
 
     //Consumer configuration properties
-    @UriParam(label = "consumer")
-    private String consumerId;
     @UriParam(label = "consumer", defaultValue = "true")
     private Boolean autoCommitEnable = true;
     @UriParam(label = "consumer", defaultValue = "sync", enums = "sync,async,none")
@@ -120,6 +116,8 @@ public class KafkaConfiguration {
     private StateRepository<String, String> offsetRepository;
 
     //Producer configuration properties
+    @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_PARTITIONER)
+    private String partitioner = KafkaConstants.KAFKA_DEFAULT_PARTITIONER;
     @UriParam(label = "producer", defaultValue = "100")
     private Integer retryBackoffMs = 100;
 
@@ -274,6 +272,18 @@ public class KafkaConfiguration {
     private String kerberosPrincipalToLocalRules;
 
     public KafkaConfiguration() {
+    }
+
+    /**
+     * Returns a copy of this configuration
+     */
+    public KafkaConfiguration copy() {
+        try {
+            KafkaConfiguration copy = (KafkaConfiguration) clone();
+            return copy;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 
     public Properties createProducerProperties() {
@@ -534,17 +544,6 @@ public class KafkaConfiguration {
      */
     public void setClientId(String clientId) {
         this.clientId = clientId;
-    }
-
-    public String getConsumerId() {
-        return consumerId;
-    }
-
-    /**
-     * Generated automatically if not set.
-     */
-    public void setConsumerId(String consumerId) {
-        this.consumerId = consumerId;
     }
 
     public Boolean isAutoCommitEnable() {
