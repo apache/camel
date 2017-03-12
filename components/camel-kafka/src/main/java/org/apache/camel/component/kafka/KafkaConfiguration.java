@@ -71,8 +71,11 @@ public class KafkaConfiguration implements Cloneable {
     @UriParam(label = "consumer", defaultValue = KafkaConstants.KAFKA_DEFAULT_DESERIALIZER)
     private String valueDeserializer = KafkaConstants.KAFKA_DEFAULT_DESERIALIZER;
     //fetch.min.bytes
-    @UriParam(label = "consumer", defaultValue = "1024")
-    private Integer fetchMinBytes = 1024;
+    @UriParam(label = "consumer", defaultValue = "1")
+    private Integer fetchMinBytes = 1;
+    //fetch.min.bytes
+    @UriParam(label = "consumer", defaultValue = "52428800")
+    private Integer fetchMaxBytes = 50 * 1024 * 1024;
     //heartbeat.interval.ms
     @UriParam(label = "consumer", defaultValue = "3000")
     private Integer heartbeatIntervalMs = 3000;
@@ -80,8 +83,8 @@ public class KafkaConfiguration implements Cloneable {
     @UriParam(label = "consumer", defaultValue = "1048576")
     private Integer maxPartitionFetchBytes = 1048576;
     //session.timeout.ms
-    @UriParam(label = "consumer", defaultValue = "30000")
-    private Integer sessionTimeoutMs = 30000;
+    @UriParam(label = "consumer", defaultValue = "10000")
+    private Integer sessionTimeoutMs = 10000;
     @UriParam(label = "consumer", defaultValue = "500")
     private Integer maxPollRecords;
     @UriParam(label = "consumer", defaultValue = "5000")
@@ -167,11 +170,11 @@ public class KafkaConfiguration implements Cloneable {
     @UriParam(label = "producer", defaultValue = "1048576")
     private Integer maxRequestSize = 1048576;
     //receive.buffer.bytes
-    @UriParam(label = "producer", defaultValue = "32768")
-    private Integer receiveBufferBytes = 32768;
+    @UriParam(label = "producer", defaultValue = "65536")
+    private Integer receiveBufferBytes = 65536;
     //request.timeout.ms
-    @UriParam(label = "producer", defaultValue = "30000")
-    private Integer requestTimeoutMs = 30000;
+    @UriParam(label = "producer", defaultValue = "305000")
+    private Integer requestTimeoutMs = 305000;
     //send.buffer.bytes
     @UriParam(label = "producer", defaultValue = "131072")
     private Integer sendBufferBytes = 131072;
@@ -350,6 +353,7 @@ public class KafkaConfiguration implements Cloneable {
         addPropertyIfNotNull(props, ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, getKeyDeserializer());
         addPropertyIfNotNull(props, ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, getValueDeserializer());
         addPropertyIfNotNull(props, ConsumerConfig.FETCH_MIN_BYTES_CONFIG, getFetchMinBytes());
+        addPropertyIfNotNull(props, ConsumerConfig.FETCH_MAX_BYTES_CONFIG, getFetchMaxBytes());
         addPropertyIfNotNull(props, ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, getHeartbeatIntervalMs());
         addPropertyIfNotNull(props, ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, getMaxPartitionFetchBytes());
         addPropertyIfNotNull(props, ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, getSessionTimeoutMs());
@@ -591,6 +595,21 @@ public class KafkaConfiguration implements Cloneable {
      */
     public void setFetchMinBytes(Integer fetchMinBytes) {
         this.fetchMinBytes = fetchMinBytes;
+    }
+
+    /**
+     * The maximum amount of data the server should return for a fetch request
+     * This is not an absolute maximum, if the first message in the first non-empty partition of the fetch is larger than
+     * this value, the message will still be returned to ensure that the consumer can make progress.
+     * The maximum message size accepted by the broker is defined via message.max.bytes (broker config) or
+     * max.message.bytes (topic config). Note that the consumer performs multiple fetches in parallel.
+     */
+    public Integer getFetchMaxBytes() {
+        return fetchMaxBytes;
+    }
+
+    public void setFetchMaxBytes(Integer fetchMaxBytes) {
+        this.fetchMaxBytes = fetchMaxBytes;
     }
 
     public Integer getFetchWaitMaxMs() {
