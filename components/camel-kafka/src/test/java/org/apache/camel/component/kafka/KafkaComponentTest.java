@@ -52,7 +52,7 @@ public class KafkaComponentTest {
         String uri = "kafka:mytopic?partitioner=com.class.Party";
 
         KafkaEndpoint endpoint = (KafkaEndpoint) kafka.createEndpoint(uri);
-        assertEquals(null, endpoint.getConfiguration().getBrokers());
+        assertEquals("broker1:12345,broker2:12566", endpoint.getConfiguration().getBrokers());
         assertEquals("broker1:12345,broker2:12566", endpoint.getComponent().getBrokers());
         assertEquals("mytopic", endpoint.getConfiguration().getTopic());
         assertEquals("com.class.Party", endpoint.getConfiguration().getPartitioner());
