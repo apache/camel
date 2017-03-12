@@ -150,6 +150,7 @@ public class KafkaComponentConfiguration {
          * that much data to accumulate before answering the request.
          */
         private Integer fetchMinBytes;
+        private Integer fetchMaxBytes;
         /**
          * The maximum amount of time the server will block before answering the
          * fetch request if there isn't sufficient data to immediately satisfy
@@ -685,6 +686,14 @@ public class KafkaComponentConfiguration {
 
         public void setFetchMinBytes(Integer fetchMinBytes) {
             this.fetchMinBytes = fetchMinBytes;
+        }
+
+        public Integer getFetchMaxBytes() {
+            return fetchMaxBytes;
+        }
+
+        public void setFetchMaxBytes(Integer fetchMaxBytes) {
+            this.fetchMaxBytes = fetchMaxBytes;
         }
 
         public Integer getFetchWaitMaxMs() {
