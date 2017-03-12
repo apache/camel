@@ -40,4 +40,19 @@ public class CamelNodeState extends NodeState {
         super(id, container);
     }
 
+    public String getConsumer() {
+        return consumer;
+    }
+
+    public void setConsumer(String consumer) {
+        this.consumer = consumer;
+    }
+
+    public boolean isStarted() {
+        return started;
+    }
+
+    public void setStarted(boolean started) {
+        this.started = started;
+    }
 }
