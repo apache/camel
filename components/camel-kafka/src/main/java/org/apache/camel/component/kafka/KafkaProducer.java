@@ -167,8 +167,9 @@ public class KafkaProducer extends DefaultAsyncProducer {
                         return new ProducerRecord(msgTopic, partitionKey, key, value);
                     } else if (hasMessageKey) {
                         return new ProducerRecord(msgTopic, key, value);
+                    } else {
+                        return new ProducerRecord(msgTopic, value);
                     }
-                    return new ProducerRecord(msgTopic, value);
                 }
 
                 @Override
@@ -187,7 +188,6 @@ public class KafkaProducer extends DefaultAsyncProducer {
         } else if (hasMessageKey) {
             record = new ProducerRecord(topic, key, value);
         } else {
-            log.warn("No message key or partition key set");
             record = new ProducerRecord(topic, value);
         }
         return Collections.singletonList(record).iterator();
