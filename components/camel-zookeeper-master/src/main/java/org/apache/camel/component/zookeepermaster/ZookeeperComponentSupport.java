@@ -16,32 +16,17 @@
  */
 package org.apache.camel.component.zookeepermaster;
 
-import java.util.concurrent.Callable;
-
 import org.apache.camel.component.zookeepermaster.group.Group;
-import org.apache.camel.component.zookeepermaster.group.internal.ManagedGroupFactory;
-import org.apache.camel.component.zookeepermaster.group.internal.ManagedGroupFactoryBuilder;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.framework.state.ConnectionState;
-import org.apache.curator.framework.state.ConnectionStateListener;
-import org.apache.curator.retry.RetryOneTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public abstract class ZookeeperComponentSupport extends DefaultComponent implements Callable<CuratorFramework>, ConnectionStateListener {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ZookeeperComponentSupport.class);
+public abstract class ZookeeperComponentSupport extends DefaultComponent {
 
-    private static final String ZOOKEEPER_URL = "zookeeper.url";
-    private static final String ZOOKEEPER_PASSWORD = "zookeeper.password";
-    private static final String ZOOKEEPER_URL_ENV = "ZOOKEEPER_URL";
-    private static final String ZOOKEEPER_HOST_ENV = "ZK_CLIENT_SERVICE_HOST";
-    private static final String ZOOKEEPER_PORT_ENV = "ZK_CLIENT_SERVICE_PORT";
+    private final ZookeeperGroupSupport zookeeperGroupSupport = new ZookeeperGroupSupport();
 
-    private ManagedGroupFactory managedGroupFactory;
-
+    // use for component documentation
     @Metadata(label = "advanced")
     private CuratorFramework curator;
     @Metadata(defaultValue = "10000")
@@ -51,135 +36,66 @@ public abstract class ZookeeperComponentSupport extends DefaultComponent impleme
     @Metadata(label = "security", secret = true)
     private String zooKeeperPassword;
 
-    public CuratorFramework getCurator() {
-        if (managedGroupFactory == null) {
-            throw new IllegalStateException("Component is not started");
-        }
-        return managedGroupFactory.getCurator();
+    public Group<CamelNodeState> createGroup(String path) {
+        return zookeeperGroupSupport.createGroup(path);
     }
 
-    public Group<CamelNodeState> createGroup(String path) {
-        if (managedGroupFactory == null) {
-            throw new IllegalStateException("Component is not started");
-        }
-        return managedGroupFactory.createGroup(path, CamelNodeState.class);
+    public CuratorFramework getCurator() {
+        return zookeeperGroupSupport.getCurator();
     }
 
     /**
      * To use a custom configured CuratorFramework as connection to zookeeper ensemble.
      */
     public void setCurator(CuratorFramework curator) {
-        this.curator = curator;
-        registerAsListener();
+        zookeeperGroupSupport.setCurator(curator);
     }
 
     public int getMaximumConnectionTimeout() {
-        return maximumConnectionTimeout;
+        return zookeeperGroupSupport.getMaximumConnectionTimeout();
     }
 
     /**
      * Timeout in millis to use when connecting to the zookeeper ensemble
      */
     public void setMaximumConnectionTimeout(int maximumConnectionTimeout) {
-        this.maximumConnectionTimeout = maximumConnectionTimeout;
+        zookeeperGroupSupport.setMaximumConnectionTimeout(maximumConnectionTimeout);
     }
 
     public String getZooKeeperUrl() {
-        return zooKeeperUrl;
+        return zookeeperGroupSupport.getZooKeeperUrl();
     }
 
     /**
      * The url for the zookeeper ensemble
      */
     public void setZooKeeperUrl(String zooKeeperUrl) {
-        this.zooKeeperUrl = zooKeeperUrl;
+        zookeeperGroupSupport.setZooKeeperUrl(zooKeeperUrl);
     }
 
     public String getZooKeeperPassword() {
-        return zooKeeperPassword;
+        return zookeeperGroupSupport.getZooKeeperPassword();
     }
 
     /**
      * The password to use when connecting to the zookeeper ensemble
      */
     public void setZooKeeperPassword(String zooKeeperPassword) {
-        this.zooKeeperPassword = zooKeeperPassword;
+        zookeeperGroupSupport.setZooKeeperPassword(zooKeeperPassword);
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
 
-        // attempt to lookup curator framework from registry using the name curator
-        if (curator == null) {
-            try {
-                CuratorFramework aCurator = getCamelContext().getRegistry().lookupByNameAndType("curator", CuratorFramework.class);
-                if (aCurator != null) {
-                    LOG.debug("CuratorFramework found in CamelRegistry: {}", aCurator);
-                    setCurator(aCurator);
-                }
-            } catch (Exception exception) {
-                // ignore
-            }
-        }
-
-        // will auto create curator if needed
-        managedGroupFactory = ManagedGroupFactoryBuilder.create(curator, getClass().getClassLoader(), getCamelContext().getClassResolver(), this);
-    }
-
-    public CuratorFramework call() throws Exception {
-        String connectString = getZooKeeperUrl();
-        if (connectString == null) {
-            connectString = System.getenv(ZOOKEEPER_URL_ENV);
-        }
-        if (connectString == null) {
-            String zkHost = System.getenv(ZOOKEEPER_HOST_ENV);
-            if (zkHost != null) {
-                String zkPort = System.getenv(ZOOKEEPER_PORT_ENV);
-                connectString = zkHost + ":" + (zkPort == null ? "2181" : zkPort);
-            }
-        }
-        if (connectString == null) {
-            connectString = System.getProperty(ZOOKEEPER_URL, "localhost:2181");
-        }
-        String password = getZooKeeperPassword();
-        if (password == null) {
-            System.getProperty(ZOOKEEPER_PASSWORD);
-        }
-        LOG.info("Creating new CuratorFramework with connection: {}", connectString);
-        CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
-            .connectString(connectString)
-            .retryPolicy(new RetryOneTime(1000))
-            .connectionTimeoutMs(getMaximumConnectionTimeout());
-
-        if (password != null && !password.isEmpty()) {
-            builder.authorization("digest", ("fabric:" + password).getBytes());
-        }
-
-        curator = builder.build();
-        LOG.debug("Starting CuratorFramework {}", curator);
-        curator.start();
-        return curator;
+        zookeeperGroupSupport.setCamelContext(getCamelContext());
+        ServiceHelper.startService(zookeeperGroupSupport);
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (managedGroupFactory != null) {
-            managedGroupFactory.close();
-            managedGroupFactory = null;
-        }
-    }
-
-    @Override
-    public void stateChanged(CuratorFramework client, ConnectionState newState) {
-        LOG.debug("CuratorFramework state changed: {}", newState);
-    }
-
-    protected void registerAsListener() {
-        if (curator != null) {
-            curator.getConnectionStateListenable().addListener(this);
-        }
+        ServiceHelper.stopAndShutdownServices(zookeeperGroupSupport);
     }
 
 }
