@@ -26,9 +26,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
 public class KafkaComponent extends UriEndpointComponent {
-    
-    @Metadata(label = "common")
-    private String brokers;
+
+    private KafkaConfiguration configuration;
 
     @Metadata(label = "advanced")
     private ExecutorService workerPool;
@@ -43,11 +42,17 @@ public class KafkaComponent extends UriEndpointComponent {
 
     @Override
     protected KafkaEndpoint createEndpoint(String uri, String remaining, Map<String, Object> params) throws Exception {
-        KafkaEndpoint endpoint = new KafkaEndpoint(uri, this);
-
         if (ObjectHelper.isEmpty(remaining)) {
             throw new IllegalArgumentException("Topic must be configured on endpoint using syntax kafka:topic");
         }
+
+        KafkaEndpoint endpoint = new KafkaEndpoint(uri, this);
+
+        if (configuration != null) {
+            KafkaConfiguration copy = configuration.copy();
+            endpoint.setConfiguration(copy);
+        }
+
         endpoint.getConfiguration().setTopic(remaining);
         endpoint.getConfiguration().setWorkerPool(getWorkerPool());
 
@@ -59,8 +64,19 @@ public class KafkaComponent extends UriEndpointComponent {
         return endpoint;
     }
 
+    public KafkaConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * Allows to pre-configure the Kafka component with common options that the endpoints will reuse.
+     */
+    public void setConfiguration(KafkaConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
     public String getBrokers() {
-        return brokers;
+        return configuration != null ? configuration.getBrokers() : null;
     }
 
     /**
@@ -70,8 +86,12 @@ public class KafkaComponent extends UriEndpointComponent {
      * This option is known as <tt>bootstrap.servers</tt> in the Kafka documentation.
      */
     public void setBrokers(String brokers) {
-        this.brokers = brokers;
+        if (configuration == null) {
+            configuration = new KafkaConfiguration();
+        }
+        configuration.setBrokers(brokers);
     }
+
 
     public ExecutorService getWorkerPool() {
         return workerPool;
