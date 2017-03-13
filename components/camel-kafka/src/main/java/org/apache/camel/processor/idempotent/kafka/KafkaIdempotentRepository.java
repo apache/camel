@@ -223,6 +223,11 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
      * The default value of this is {@link #DEFAULT_POLL_DURATION_MS}. If setting this value explicitly, be aware that
      * there is a tradeoff between the remote cache liveness and the volume of network traffic between this repository's
      * consumer and the Kafka brokers.
+     *
+     * The cache warmup process also depends on there being one poll that fetches nothing - this indicates that the
+     * stream has been consumed up to the current point. If the poll duration is excessively long for the rate at
+     * which messages are sent on the topic, there exists a possibility that the cache cannot be warmed up and will
+     * operate in an inconsistent state relative to its peers until it catches up.
      * @param pollDurationMs The poll duration in milliseconds.
      */
     public void setPollDurationMs(int pollDurationMs) {
