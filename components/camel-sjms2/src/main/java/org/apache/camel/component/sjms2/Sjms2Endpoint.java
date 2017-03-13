@@ -27,20 +27,18 @@ import org.apache.camel.spi.UriParam;
 /**
  * The sjms2 component (simple jms) allows messages to be sent to (or consumed from) a JMS Queue or Topic.
  *
- * This component uses plain JMS API where as the jms component uses Spring JMS.
+ * This component uses plain JMS 2.x API where as the jms component uses Spring JMS.
  */
 @UriEndpoint(firstVersion = "2.19.0", scheme = "sjms2", extendsScheme = "sjms", title = "Simple JMS2",
         syntax = "sjms2:destinationType:destinationName", consumerClass = SjmsConsumer.class, label = "messaging")
 public class Sjms2Endpoint extends SjmsEndpoint implements AsyncEndpoint {
 
-
     @UriParam(label = "consumer")
     private String subscriptionId;
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer")
     private boolean durable;
-    @UriParam(label = "consumer", defaultValue = "false")
+    @UriParam(label = "consumer")
     private boolean shared;
-
 
     public Sjms2Endpoint() {
     }
@@ -54,7 +52,6 @@ public class Sjms2Endpoint extends SjmsEndpoint implements AsyncEndpoint {
     public Sjms2Component getComponent() {
         return (Sjms2Component) super.getComponent();
     }
-
 
     /**
      * Sets the durable subscription Id required for durable topics.
@@ -99,7 +96,5 @@ public class Sjms2Endpoint extends SjmsEndpoint implements AsyncEndpoint {
     public void setShared(boolean shared) {
         this.shared = shared;
     }
-
-
 
 }
