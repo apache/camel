@@ -274,11 +274,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             log.trace("About to write [{}] to [{}] from exchange [{}]", new Object[]{fileName, getEndpoint(), exchange});
         }
 
-        // if filename indicates the current directory and the directory is created
-        // but no need to store a file under the directory like touch <dir>
-        // this is added due to considering to handle empty directories in zipfile 
-        boolean success = !fileName.substring(fileName.lastIndexOf(File.separator) + 1, fileName.length()).equals(".")
-                                            ? operations.storeFile(fileName, exchange) : true;
+        boolean success = operations.storeFile(fileName, exchange);
         if (!success) {
             throw new GenericFileOperationFailedException("Error writing file [" + fileName + "]");
         }
