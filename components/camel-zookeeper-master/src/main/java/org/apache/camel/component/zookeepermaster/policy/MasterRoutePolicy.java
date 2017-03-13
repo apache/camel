@@ -18,9 +18,15 @@ package org.apache.camel.component.zookeepermaster.policy;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Route;
+import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.component.zookeepermaster.CamelNodeState;
 import org.apache.camel.component.zookeepermaster.ContainerIdFactory;
 import org.apache.camel.component.zookeepermaster.DefaultContainerIdFactory;
@@ -37,6 +43,7 @@ import org.apache.curator.framework.CuratorFramework;
  * is controlled by this route policy which will start/stop the route accordingly to being
  * the master in the zookeeper cluster group.
  */
+@ManagedResource(description = "Managed MasterRoutePolicy")
 public class MasterRoutePolicy extends RoutePolicySupport implements CamelContextAware {
 
     private CuratorFramework curator;
@@ -77,6 +84,7 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
         this.zkRoot = zkRoot;
     }
 
+    @ManagedAttribute(description = "The name of the cluster group to use")
     public String getGroupName() {
         return groupName;
     }
@@ -110,6 +118,7 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
         this.curator = curator;
     }
 
+    @ManagedAttribute(description = "Timeout in millis to use when connecting to the zookeeper ensemble")
     public int getMaximumConnectionTimeout() {
         return maximumConnectionTimeout;
     }
@@ -121,6 +130,7 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
         this.maximumConnectionTimeout = maximumConnectionTimeout;
     }
 
+    @ManagedAttribute(description = "The url for the zookeeper ensemble")
     public String getZooKeeperUrl() {
         return zooKeeperUrl;
     }
@@ -141,6 +151,51 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
      */
     public void setZooKeeperPassword(String zooKeeperPassword) {
         this.zooKeeperPassword = zooKeeperPassword;
+    }
+
+    @ManagedAttribute(description = "Are we connected to ZooKeeper")
+    public boolean isConnected() {
+        if (groupListener == null) {
+            return false;
+        }
+        return groupListener.getGroup().isConnected();
+    }
+
+    @ManagedAttribute(description = "Are we the master")
+    public boolean isMaster() {
+        if (groupListener == null) {
+            return false;
+        }
+        return groupListener.getGroup().isMaster();
+    }
+
+    @ManagedOperation(description = "Information about all the slaves")
+    public String slaves() {
+        if (groupListener == null) {
+            return null;
+        }
+        try {
+            return new ObjectMapper()
+                .enable(SerializationFeature.INDENT_OUTPUT)
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .writeValueAsString(groupListener.getGroup().slaves());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @ManagedOperation(description = "Information about the last event in the cluster group")
+    public String lastEvent() {
+        if (groupListener == null) {
+            return null;
+        }
+        Object event = groupListener.getGroup().getLastState();
+        return event != null ? event.toString() : null;
+    }
+
+    @ManagedOperation(description = "Information about this node")
+    public String thisNode() {
+        return thisNodeState != null ? thisNodeState.toString() : null;
     }
 
     @Override
