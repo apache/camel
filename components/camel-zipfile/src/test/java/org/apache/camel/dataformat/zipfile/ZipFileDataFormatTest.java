@@ -115,6 +115,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         zip.setSupportEmptyDirectory(true);
         template.sendBody("direct:unzipWithEmptyDirectory", new File("src/test/resources/hello.odt"));
         assertTrue(Files.exists(Paths.get("hello_out/Configurations2")));
+        deleteDirectory(new File("hello_out"));
     }
     
     @Test
@@ -124,6 +125,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         zip.setSupportEmptyDirectory(false);
         template.sendBody("direct:unzipWithEmptyDirectory", new File("src/test/resources/hello.odt"));
         assertTrue(!Files.exists(Paths.get("hello_out/Configurations2")));
+        deleteDirectory(new File("hello_out"));
     }
 
     @Test
