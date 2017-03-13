@@ -34,6 +34,7 @@ import org.ops4j.pax.exam.ProbeBuilder;
 import org.ops4j.pax.exam.TestProbeBuilder;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.tinybundles.core.InnerClassStrategy;
+import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.osgi.framework.Constants;
 
 @RunWith(PaxExam.class)
@@ -45,7 +46,7 @@ public class CamelTypeConverterTest extends AbstractFeatureTest {
         URL blueprintUrl = ObjectHelper.loadResourceAsURL("org/apache/camel/itest/CamelTypeConverterTest.xml", CamelTypeConverterTest.class.getClassLoader());
         installBlueprintAsBundle("CamelTypeConverterTest", blueprintUrl, true, bundle -> {
             // install converter
-            bundle
+            ((TinyBundle) bundle)
                 .add("META-INF/services/org/apache/camel/TypeConverter", new ByteArrayInputStream("org.apache.camel.itest.typeconverter.MyConverter".getBytes()))
                 .add(MyConverter.class, InnerClassStrategy.NONE)
                 .set(Constants.DYNAMICIMPORT_PACKAGE, "*");

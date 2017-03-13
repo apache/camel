@@ -38,6 +38,7 @@ import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.tinybundles.core.InnerClassStrategy;
+import org.ops4j.pax.tinybundles.core.TinyBundle;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 
@@ -53,7 +54,8 @@ public class CamelCxfBeanInjectTest extends AbstractFeatureTest {
         // install the camel blueprint xml file we use in this test
         URL url = ObjectHelper.loadResourceAsURL("org/apache/camel/itest/cxf/CamelCxfBeanInjectTest.xml", CamelCxfBeanInjectTest.class.getClassLoader());
         Bundle bundle = installBlueprintAsBundle("CamelCxfBeanInjectTest", url, false, b -> {
-            b.add(BeanInjectRouteBuilder.class, InnerClassStrategy.NONE)
+            ((TinyBundle) b)
+                .add(BeanInjectRouteBuilder.class, InnerClassStrategy.NONE)
                 .add(SimpleService.class, InnerClassStrategy.NONE)
                 .add(SimpleBean.class, InnerClassStrategy.NONE)
                 .set(Constants.DYNAMICIMPORT_PACKAGE, "*");
