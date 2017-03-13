@@ -110,7 +110,8 @@ public abstract class AbstractFeatureTest {
         return installBlueprintAsBundle(name, url, start, bundle -> {});
     }
 
-    protected Bundle installBlueprintAsBundle(String name, URL url, boolean start, Consumer<TinyBundle> consumer) throws BundleException {
+    protected Bundle installBlueprintAsBundle(String name, URL url, boolean start, Consumer<Object> consumer) throws BundleException {
+        // TODO Type Consumer<TinyBundle> cannot be used for this method signature to avoid bundle dependency to pax tinybundles
         TinyBundle bundle = TinyBundles.bundle();
         bundle.add("OSGI-INF/blueprint/blueprint-" + name.toLowerCase(Locale.ENGLISH) + ".xml", url);
         bundle.set("Manifest-Version", "2")
@@ -130,7 +131,8 @@ public abstract class AbstractFeatureTest {
         return installSpringAsBundle(name, url, start, bundle -> {});
     }
 
-    protected Bundle installSpringAsBundle(String name, URL url, boolean start, Consumer<TinyBundle> consumer) throws BundleException {
+    protected Bundle installSpringAsBundle(String name, URL url, boolean start, Consumer<Object> consumer) throws BundleException {
+        // TODO Type Consumer<TinyBundle> cannot be used for this method signature to avoid bundle dependency to pax tinybundles
         TinyBundle bundle = TinyBundles.bundle();
         bundle.add("META-INF/spring/spring-" + name.toLowerCase(Locale.ENGLISH) + ".xml", url);
         bundle.set("Manifest-Version", "2")
