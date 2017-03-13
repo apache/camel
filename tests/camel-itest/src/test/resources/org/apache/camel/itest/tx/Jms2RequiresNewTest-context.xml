@@ -32,8 +32,8 @@
     </bean>
 
     <!-- Setup Narayana transaction manager and user transaction -->
-    <bean id="narayanaTransactionManager" class="com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple" />
-    <bean id="narayanaUserTransaction" class="com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple" />
+    <bean id="narayanaTransactionManager" class="com.arjuna.ats.jta.TransactionManager" factory-method="transactionManager" />
+    <bean id="narayanaUserTransaction" class="com.arjuna.ats.jta.UserTransaction" factory-method="userTransaction" />
 
     <!-- this is the Spring JtaTransactionManager which under the hood uses Narayana -->
     <bean id="jtaTransactionManager" class="org.springframework.transaction.jta.JtaTransactionManager" depends-on="my-broker">
