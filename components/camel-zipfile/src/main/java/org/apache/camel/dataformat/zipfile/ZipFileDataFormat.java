@@ -73,11 +73,7 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
 
     @Override
     public Object unmarshal(final Exchange exchange, final InputStream inputStream) throws Exception {
-        if (supportEmptyDirectory) {
-            exchange.getIn().setHeader("unzipEmptyDirectorySupported", true);
-        } else {
-            exchange.getIn().setHeader("unzipEmptyDirectorySupported", false);
-        }
+        exchange.getIn().setHeader("unzipEmptyDirectorySupported", isSupportEmptyDirectory());
         if (usingIterator) {
             return new ZipIterator(exchange.getIn());
         } else {

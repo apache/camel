@@ -133,7 +133,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
                 return entry;
             } else {
                 if (unzipEmptyDirectorySupported) {
-                    ZipEntry dirEntry = new ZipEntry(entry.getName() + ".");
+                    ZipEntry dirEntry = new ZipEntry(entry.getName());
                     return dirEntry;
                 }
             }
