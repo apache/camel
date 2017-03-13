@@ -196,6 +196,11 @@
       <version>${xml-resolver-version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.bazaarvoice.jolt</groupId>
+      <artifactId>jolt-core</artifactId>
+      <version>0.0.23</version>
+    </dependency>
 
   </dependencies>
 

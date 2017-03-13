@@ -171,6 +171,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private ServiceCallConfigurationDefinition defaultServiceCallConfiguration;
     @XmlElement(name = "serviceCallConfiguration", type = ServiceCallConfigurationDefinition.class)
     private List<ServiceCallConfigurationDefinition> serviceCallConfigurations;
+    @XmlElement(name = "defaultHystrixConfiguration")
+    private HystrixConfigurationDefinition defaultHystrixConfiguration;
     @XmlElement(name = "hystrixConfiguration", type = HystrixConfigurationDefinition.class)
     private List<HystrixConfigurationDefinition> hystrixConfigurations;
     @XmlElement(name = "routeBuilder")
@@ -978,6 +980,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @Override
     public List<HystrixConfigurationDefinition> getHystrixConfigurations() {
         return hystrixConfigurations;
+    }
+
+    @Override
+    public HystrixConfigurationDefinition getDefaultHystrixConfiguration() {
+        return defaultHystrixConfiguration;
+    }
+
+    public void setDefaultHystrixConfiguration(HystrixConfigurationDefinition defaultHystrixConfiguration) {
+        this.defaultHystrixConfiguration = defaultHystrixConfiguration;
     }
 
     /**
