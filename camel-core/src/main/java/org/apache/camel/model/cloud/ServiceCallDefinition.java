@@ -827,6 +827,11 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             () -> findByType(camelContext, ServiceDiscovery.class),
             // From registry
             () -> lookup(camelContext, ServiceCallConstants.DEFAULT_SERVICE_DISCOVERY_ID, ServiceDiscovery.class)
+        ).orElseGet(
+            // Default, that's s little ugly but a load balancer may live without
+            // (i.e. the Ribbon one) so let's delegate the null check to the actual
+            // impl.
+            () -> null
         );
     }
 
@@ -877,7 +882,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             // Check if there is a single instance in the registry
             () -> findByType(camelContext, ServiceFilter.class),
             // From registry
-            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_SERVICE_FILTER_ID, ServiceFilter.class),
+            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_SERVICE_FILTER_ID, ServiceFilter.class)
+        ).orElseGet(
             // Default
             () -> new HealthyServiceFilter()
         );
@@ -925,7 +931,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             // Check if there is a single instance in the registry
             () -> findByType(camelContext, ServiceChooser.class),
             // From registry
-            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_SERVICE_CHOOSER_ID, ServiceChooser.class),
+            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_SERVICE_CHOOSER_ID, ServiceChooser.class)
+        ).orElseGet(
             // Default
             () -> new RoundRobinServiceChooser()
         );
@@ -967,7 +974,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             // Check if there is a single instance in the registry
             () -> findByType(camelContext, LoadBalancer.class),
             // From registry
-            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_LOAD_BALANCER_ID, LoadBalancer.class),
+            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_LOAD_BALANCER_ID, LoadBalancer.class)
+        ).orElseGet(
             // Default
             () -> new DefaultLoadBalancer()
         );
@@ -1007,7 +1015,8 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             // Default configuration
             () -> retrieveExpression(camelContext, this::retrieveDefaultConfig),
             // From registry
-            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_SERVICE_CALL_EXPRESSION_ID, Expression.class),
+            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_SERVICE_CALL_EXPRESSION_ID, Expression.class)
+        ).orElseGet(
             // Default
             () -> new DefaultServiceCallExpression()
         );

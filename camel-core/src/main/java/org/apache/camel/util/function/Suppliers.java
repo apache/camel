@@ -17,6 +17,7 @@
 package org.apache.camel.util.function;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
@@ -41,7 +42,7 @@ public final class Suppliers {
         };
     }
 
-    public static <T> T firstNotNull(ThrowingSupplier<T, Exception>... suppliers) throws Exception {
+    public static <T> Optional<T> firstNotNull(ThrowingSupplier<T, Exception>... suppliers) throws Exception {
         T answer = null;
 
         for (int i = 0; i < suppliers.length; i++) {
@@ -51,6 +52,6 @@ public final class Suppliers {
             }
         }
 
-        return answer;
+        return Optional.ofNullable(answer);
     }
 }

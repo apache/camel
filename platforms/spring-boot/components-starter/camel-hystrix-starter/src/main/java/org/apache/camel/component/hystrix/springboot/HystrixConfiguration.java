@@ -14,16 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.hystrix.processor;
+package org.apache.camel.component.hystrix.springboot;
 
-public interface HystrixConstants {
-    String DEFAULT_HYSTRIX_CONFIGURATION_ID = "hystrix-configuration";
+import org.apache.camel.model.HystrixConfigurationCommon;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
-    // Hystrix EIP response properties
-    String HYSTRIX_RESPONSE_SUCCESSFUL_EXECUTION = "CamelHystrixSuccessfulExecution";
-    String HYSTRIX_RESPONSE_FROM_FALLBACK = "CamelHystrixResponseFromFallback";
-    String HYSTRIX_RESPONSE_SHORT_CIRCUITED = "CamelHystrixResponseShortCircuited";
-    String HYSTRIX_RESPONSE_TIMED_OUT = "CamelHystrixResponseTimedOut";
-    String HYSTRIX_RESPONSE_REJECTED = "CamelHystrixResponseRejected";
-
+/**
+ * Hystrix component.
+ */
+@ConfigurationProperties(prefix = "camel.hystrix")
+public class HystrixConfiguration extends HystrixConfigurationCommon {
 }
