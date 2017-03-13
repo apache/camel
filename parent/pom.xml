@@ -464,7 +464,7 @@
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <netty3-version>3.10.6.Final</netty3-version>
     <netty-version>4.1.9.Final</netty-version>
-    <netty40-version>4.0.44.Final</netty40-version>
+    <netty40-version>4.0.45.Final</netty40-version>
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
     <!-- should be in-sync with deltaspike -->
     <openwebbeans1-version>1.2.7</openwebbeans1-version>
