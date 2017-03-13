@@ -116,7 +116,7 @@ public class GoogleCalendarComponentConfiguration {
          * See https://developers.google.com/google-apps/calendar/auth for more
          * info.
          */
-        private String scopes = com.google.api.services.calendar.CalendarScopes.CALENDAR;
+        private String scopes = "https://www.googleapis.com/auth/calendar";
         /**
          * The name of the p12 file which has the private key to use with the
          * Google Service Account.

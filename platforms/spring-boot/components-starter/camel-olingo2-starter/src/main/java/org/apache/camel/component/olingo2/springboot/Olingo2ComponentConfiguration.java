@@ -91,11 +91,11 @@ public class Olingo2ComponentConfiguration {
          * HTTP connection creation timeout in milliseconds, defaults to 30,000
          * (30 seconds)
          */
-        private Integer connectTimeout;
+        private Integer connectTimeout = 30000;
         /**
          * HTTP request timeout in milliseconds, defaults to 30,000 (30 seconds)
          */
-        private Integer socketTimeout;
+        private Integer socketTimeout = 30000;
         /**
          * HTTP proxy server configuration
          */

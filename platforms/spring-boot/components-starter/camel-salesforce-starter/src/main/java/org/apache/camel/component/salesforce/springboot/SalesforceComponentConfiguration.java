@@ -518,7 +518,7 @@ public class SalesforceComponentConfiguration {
          * Whether to update an existing Push Topic when using the Streaming
          * API, defaults to false
          */
-        private Boolean updateTopic;
+        private Boolean updateTopic = false;
         /**
          * Notify for fields, options are ALL, REFERENCED, SELECT, WHERE
          */
