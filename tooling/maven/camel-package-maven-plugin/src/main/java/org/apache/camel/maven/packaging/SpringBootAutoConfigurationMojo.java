@@ -90,6 +90,9 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.type.AnnotatedTypeMetadata;
 
+import static org.apache.camel.maven.packaging.JSonSchemaHelper.getPropertyDefaultValue;
+import static org.apache.camel.maven.packaging.JSonSchemaHelper.getPropertyJavaType;
+import static org.apache.camel.maven.packaging.JSonSchemaHelper.getPropertyType;
 import static org.apache.camel.maven.packaging.JSonSchemaHelper.getSafeValue;
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 
@@ -101,6 +104,12 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
  */
 public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
+    /**
+     * The output directory for generated component schema file
+     *
+     * @parameter default-value="${project.build.directory}/classes"
+     */
+    protected File classesDir;
 
     /**
      * Useful to move configuration towards starters.
@@ -310,7 +319,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                 LanguageModel model = dfModels.get(0); // They should be equivalent
                 List<String> aliases = dfModels.stream().map(LanguageModel::getName).sorted().collect(Collectors.toList());
 
-
                 boolean hasOptions = !model.getLanguageOptions().isEmpty();
 
                 // use springboot as sub package name so the code is not in normal
@@ -467,25 +475,67 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
                     prop.getField().getJavaDoc().setFullText(description);
                 }
 
-                String defaultValue = null;
-                String defaultValueLiteral = null;
-                if (sourceProp.hasAnnotation(UriParam.class)) {
-                    defaultValue = sourceProp.getAnnotation(UriParam.class).getStringValue("defaultValue");
-                    defaultValueLiteral = sourceProp.getAnnotation(UriParam.class).getLiteralValue("defaultValue");
-                } else if (sourceProp.hasAnnotation(UriPath.class)) {
-                    defaultValue = sourceProp.getAnnotation(UriPath.class).getStringValue("defaultValue");
-                    defaultValueLiteral = sourceProp.getAnnotation(UriPath.class).getLiteralValue("defaultValue");
-                }
+                // try to see if the source is actually reusing a shared Camel configuration that that has @UriParam options
+                // if so we can fetch the default value from the json file as it holds the correct value vs the annotation
+                // as the annotation can refer to a constant field which we wont have accessible at this point
+                if (sourceProp.hasAnnotation(UriParam.class) || sourceProp.hasAnnotation(UriPath.class)) {
+                    String defaultValue = null;
+                    String javaType = null;
+                    String type = null;
 
-                defaultValueLiteral = makeFQ(nestedType, defaultValueLiteral);
+                    String fileName = model.getJavaType();
+                    fileName = fileName.substring(0, fileName.lastIndexOf("."));
+                    fileName = fileName.replace('.', '/');
+                    File jsonFile = new File(classesDir, fileName + "/" + model.getScheme() + ".json");
+                    if (jsonFile.isFile() && jsonFile.exists()) {
+                        try {
+                            String json = FileUtils.readFileToString(jsonFile);
+                            List<Map<String, String>> rows = JSonSchemaHelper.parseJsonSchema("properties", json, true);
 
-                if (!Strings.isBlank(defaultValue)) {
-                    if ("integer".equals(optionType) || "boolean".equals(optionType) || "java.lang.String".equals(optionType)) {
-                        prop.getField().setLiteralInitializer(defaultValueLiteral);
-                    } else if (anEnum) {
-                        String enumShortName = optionClass.getSimpleName();
-                        prop.getField().setLiteralInitializer(enumShortName + "." + defaultValue);
-                        javaClass.addImport(model.getJavaType());
+                            // grab name from annotation
+                            String optionName;
+                            if (sourceProp.hasAnnotation(UriParam.class)) {
+                                optionName = sourceProp.getAnnotation(UriParam.class).getStringValue("name");
+                            } else {
+                                optionName = sourceProp.getAnnotation(UriPath.class).getStringValue("name");
+                            }
+                            if (optionName == null) {
+                                optionName = sourceProp.hasField() ? sourceProp.getField().getName() : null;
+                            }
+
+                            if (optionName != null) {
+                                javaType = getPropertyJavaType(rows, optionName);
+                                type = getPropertyType(rows, optionName);
+                                defaultValue = getPropertyDefaultValue(rows, optionName);
+                            }
+                        } catch (IOException e) {
+                            // ignore
+                        }
+                    }
+
+                    if (!Strings.isBlank(defaultValue)) {
+
+                        // roaster can create the wrong type for some options so use the correct type we found in the json schema
+                        String wrapperType = getSimpleJavaType(javaType);
+                        if (wrapperType.startsWith("java.lang.")) {
+                            // skip java.lang. as prefix for wrapper type
+                            wrapperType = wrapperType.substring(10);
+                            prop.setType(wrapperType);
+                        }
+
+                        if ("long".equals(javaType) || "java.lang.Long".equals(javaType)) {
+                            // the value should be a Long number
+                            String value = defaultValue + "L";
+                            prop.getField().setLiteralInitializer(value);
+                        } else if ("integer".equals(type) || "boolean".equals(type)) {
+                            prop.getField().setLiteralInitializer(defaultValue);
+                        } else if ("string".equals(type)) {
+                            prop.getField().setStringInitializer(defaultValue);
+                        } else if (anEnum) {
+                            String enumShortName = optionClass.getSimpleName();
+                            prop.getField().setLiteralInitializer(enumShortName + "." + defaultValue);
+                            javaClass.addImport(model.getJavaType());
+                        }
                     }
                 }
             }
@@ -496,59 +546,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
 
         writeSourceIfChanged(javaClass, fileName);
-    }
-
-    private String makeFQ(JavaClassSource source, String literal) {
-        if (literal == null) {
-            return null;
-        }
-
-        if (Pattern.matches("[A-Z][A-Z0-9_]*", literal)) {
-            return source.getQualifiedName() + "." + literal;
-        }
-
-        Map<String, String> fq = new HashMap<>();
-        List<String> classes = extractClasses(literal);
-        for (String cl : classes) {
-
-            boolean found = false;
-            for (Import im : source.getImports()) {
-                if (cl.equals(im.getSimpleName())) {
-                    fq.put(cl, im.getQualifiedName());
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found) {
-                // if it's not a java.lang object, then it's in the same package
-                if (!JAVA_LANG_TYPES.contains(cl)) {
-                    fq.put(cl, source.getPackage() + "." + cl);
-                }
-            }
-        }
-
-        if (fq.size() > 0) {
-            String res = literal;
-            for (Map.Entry<String, String> fqn : fq.entrySet()) {
-                res = res.replace(fqn.getKey(), fqn.getValue());
-            }
-            return res;
-        }
-        return literal;
-    }
-
-    private List<String> extractClasses(String literal) {
-        if (literal.startsWith("\"") && literal.endsWith("\"")) {
-            return Collections.emptyList();
-        }
-        List<String> classes = new LinkedList<>();
-        Pattern regex = Pattern.compile("[^A-Za-z0-9_.]*([A-Z][A-Za-z0-9]*)[.][A-Za-z0-9_.-]+");
-        Matcher m = regex.matcher(literal);
-        while (m.find()) {
-            classes.add(m.group(1));
-        }
-        return classes;
     }
 
     // resolved property type name and property source, Roaster doesn't resolve inner classes correctly
@@ -736,6 +733,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             if (!Strings.isBlank(option.getDefaultValue())) {
                 if ("java.lang.String".equals(option.getType())) {
                     prop.getField().setStringInitializer(option.getDefaultValue());
+                } else if ("long".equals(option.getJavaType()) || "java.lang.Long".equals(option.getJavaType())) {
+                    // the value should be a Long number
+                    String value = option.getDefaultValue() + "L";
+                    prop.getField().setLiteralInitializer(value);
                 } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
                     prop.getField().setLiteralInitializer(option.getDefaultValue());
                 } else if (!Strings.isBlank(option.getEnumValues())) {
@@ -824,6 +825,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             if (!Strings.isBlank(option.getDefaultValue())) {
                 if ("java.lang.String".equals(option.getType())) {
                     prop.getField().setStringInitializer(option.getDefaultValue());
+                } else if ("long".equals(option.getJavaType()) || "java.lang.Long".equals(option.getJavaType())) {
+                    // the value should be a Long number
+                    String value = option.getDefaultValue() + "L";
+                    prop.getField().setLiteralInitializer(value);
                 } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
                     prop.getField().setLiteralInitializer(option.getDefaultValue());
                 } else if (!Strings.isBlank(option.getEnumValues())) {
