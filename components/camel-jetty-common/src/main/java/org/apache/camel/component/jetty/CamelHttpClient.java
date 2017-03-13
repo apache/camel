@@ -24,6 +24,7 @@ import org.eclipse.jetty.client.HttpClientTransport;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 
+@Deprecated
 public abstract class CamelHttpClient extends HttpClient {
     
     private boolean supportRedirect;

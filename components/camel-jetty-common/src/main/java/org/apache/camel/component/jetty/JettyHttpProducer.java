@@ -49,6 +49,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @version 
  */
+@Deprecated
 public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(JettyHttpProducer.class);
     private HttpClient client;

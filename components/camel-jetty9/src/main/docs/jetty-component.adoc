@@ -2,6 +2,8 @@
 
 *Available as of Camel version 1.2*
 
+WARNING: The producer is deprecated - do not use. We only recommend using jetty as consumer (eg from jetty)
+
 The *jetty* component provides HTTP-based link:endpoint.html[endpoints]
 for consuming and producing HTTP requests. That is, the Jetty component
 behaves as a simple Web server. +
@@ -205,6 +207,8 @@ Another option for producing to other HTTP endpoints, is to use the
 link:http.html[HTTP Component]
 
 ### Producer Example
+
+WARNING: The producer is deprecated - do not use. We only recommend using jetty as consumer (eg from jetty)
 
 The following is a basic example of how to send an HTTP request to an
 existing HTTP endpoint.
