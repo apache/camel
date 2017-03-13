@@ -303,7 +303,7 @@
     <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
     <jetty6-version>6.1.26</jetty6-version>
     <jetty8-version>8.1.17.v20150415</jetty8-version>
-    <jetty9-version>9.2.17.v20160517</jetty9-version>
+    <jetty9-version>9.2.21.v20170120</jetty9-version>
     <jetty-version>${jetty8-version}</jetty-version>
     <!-- jetty-plugin 8.1.7 does not exists -->
     <jetty-plugin-version>8.1.16.v20140903</jetty-plugin-version>
