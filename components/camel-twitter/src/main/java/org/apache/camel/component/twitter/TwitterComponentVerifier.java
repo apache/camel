@@ -21,6 +21,7 @@ import java.util.Map;
 import org.apache.camel.impl.verifier.DefaultComponentVerifier;
 import org.apache.camel.impl.verifier.ResultBuilder;
 import org.apache.camel.impl.verifier.ResultErrorBuilder;
+import org.apache.camel.impl.verifier.ResultErrorHelper;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
@@ -35,7 +36,11 @@ final class TwitterComponentVerifier extends DefaultComponentVerifier {
 
     @Override
     protected Result verifyParameters(Map<String, Object> parameters) {
-        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS);
+        ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
+            .error(ResultErrorHelper.requiresOption("accessToken", parameters))
+            .error(ResultErrorHelper.requiresOption("accessTokenSecret", parameters))
+            .error(ResultErrorHelper.requiresOption("consumerKey", parameters))
+            .error(ResultErrorHelper.requiresOption("consumerSecret", parameters));
 
         // Validate using the catalog
         super.verifyParametersAgainstCatalog(builder, parameters);
