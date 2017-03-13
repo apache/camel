@@ -65,11 +65,11 @@ public class GangliaComponentConfiguration {
         /**
          * Host name for Ganglia server
          */
-        private String host = org.apache.camel.component.ganglia.GangliaConfiguration.DEFAULT_DESTINATION;
+        private String host = "239.2.11.71";
         /**
          * Port for Ganglia server
          */
-        private Integer port;
+        private Integer port = 8649;
         /**
          * Send the UDP metric packets using MULTICAST or UNICAST
          */
@@ -77,12 +77,12 @@ public class GangliaComponentConfiguration {
         /**
          * If using multicast, set the TTL of the packets
          */
-        private Integer ttl;
+        private Integer ttl = 5;
         /**
          * Use the wire format of Ganglia 3.1.0 and later versions. Set this to
          * false to use Ganglia 3.0.x or earlier.
          */
-        private Boolean wireFormat31x;
+        private Boolean wireFormat31x = true;
         /**
          * Spoofing information IP:hostname
          */
@@ -117,13 +117,13 @@ public class GangliaComponentConfiguration {
          * Maximum time in seconds that the value can be considered current.
          * After this, Ganglia considers the value to have expired.
          */
-        private Integer tmax;
+        private Integer tmax = 60;
         /**
          * Minumum time in seconds before Ganglia will purge the metric value if
          * it expires. Set to 0 and the value will remain in Ganglia
          * indefinitely until a gmond agent restart.
          */
-        private Integer dmax;
+        private Integer dmax = 0;
 
         public String getHost() {
             return host;

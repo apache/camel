@@ -66,11 +66,11 @@ public class KestrelComponentConfiguration {
         /**
          * The wait time in milliseconds
          */
-        private Integer waitTimeMs;
+        private Integer waitTimeMs = 100;
         /**
          * The number of concurrent consumers
          */
-        private Integer concurrentConsumers;
+        private Integer concurrentConsumers = 1;
 
         public String[] getAddresses() {
             return addresses;

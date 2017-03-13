@@ -73,11 +73,11 @@ public class NagiosComponentConfiguration {
         /**
          * Connection timeout in millis.
          */
-        private Integer connectionTimeout;
+        private Integer connectionTimeout = 5000;
         /**
          * Sending timeout in millis.
          */
-        private Integer timeout;
+        private Integer timeout = 5000;
         /**
          * Password to be authenticated when sending checks to Nagios.
          */

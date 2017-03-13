@@ -95,12 +95,12 @@ public class AvroComponentConfiguration {
          * only with protocol parameter because for protocolClassName protocol
          * type will be auto detected
          */
-        private Boolean reflectionProtocol;
+        private Boolean reflectionProtocol = false;
         /**
          * If true, consumer parameter won't be wrapped into array. Will fail if
          * protocol specifies more then 1 parameter for the message
          */
-        private Boolean singleParameter;
+        private Boolean singleParameter = false;
 
         public String getHost() {
             return host;

@@ -151,13 +151,13 @@ public class NettyHttpComponentConfiguration {
          * Allow using gzip/deflate for compression on the Netty HTTP server if
          * the client supports it from the HTTP headers.
          */
-        private Boolean compression;
+        private Boolean compression = false;
         /**
          * Option to disable throwing the HttpOperationFailedException in case
          * of failed responses from the remote server. This allows you to get
          * all responses regardless of the HTTP status code.
          */
-        private Boolean throwExceptionOnFailure;
+        private Boolean throwExceptionOnFailure = true;
         /**
          * If enabled and an Exchange failed processing on the consumer side,
          * and if the caused Exception was send back serialized in the response
@@ -170,7 +170,7 @@ public class NettyHttpComponentConfiguration {
          * Java will deserialize the incoming data from the request to Java and
          * that can be a potential security risk.
          */
-        private Boolean transferException;
+        private Boolean transferException = false;
         /**
          * If this option is enabled, then during binding from Netty to Camel
          * Message then the header values will be URL decoded (eg %20 will be a
@@ -180,7 +180,7 @@ public class NettyHttpComponentConfiguration {
          * org.apache.camel.component.netty4.http.NettyHttpBinding then you
          * would need to decode the headers accordingly to this option.
          */
-        private Boolean urlDecodeHeaders;
+        private Boolean urlDecodeHeaders = false;
         /**
          * If this option is enabled, then during binding from Netty to Camel
          * Message then the headers will be mapped as well (eg added as header
@@ -190,12 +190,12 @@ public class NettyHttpComponentConfiguration {
          * the method getHttpRequest() that returns the Netty HTTP request
          * io.netty.handler.codec.http.HttpRequest instance.
          */
-        private Boolean mapHeaders;
+        private Boolean mapHeaders = true;
         /**
          * Whether or not Camel should try to find a target consumer by matching
          * the URI prefix if no exact match is found.
          */
-        private Boolean matchOnUriPrefix;
+        private Boolean matchOnUriPrefix = false;
         /**
          * If the option is true, the producer will ignore the Exchange.HTTP_URI
          * header, and use the endpoint's URI for request. You may also set the
@@ -205,7 +205,7 @@ public class NettyHttpComponentConfiguration {
          * Exchange.SKIP_GZIP_ENCODING and Exchange.SKIP_WWW_FORM_URLENCODED
          * headers to the consumed exchange).
          */
-        private Boolean bridgeEndpoint;
+        private Boolean bridgeEndpoint = false;
         /**
          * Resource path
          */
@@ -228,24 +228,24 @@ public class NettyHttpComponentConfiguration {
          * {@link org.apache.camel.Exchange} may not be able to read the Netty
          * stream, because Netty has closed it.
          */
-        private Boolean disableStreamCache;
+        private Boolean disableStreamCache = false;
         /**
          * Whether to send back HTTP status code 503 when the consumer has been
          * suspended. If the option is false then the Netty Acceptor is unbound
          * when the consumer is suspended, so clients cannot connect anymore.
          */
-        private Boolean send503whenSuspended;
+        private Boolean send503whenSuspended = true;
         /**
          * Value in bytes the max content length per chunked frame received on
          * the Netty HTTP server.
          */
-        private Integer chunkedMaxContentLength;
+        private Integer chunkedMaxContentLength = 1048576;
         /**
          * The maximum length of all headers. If the sum of the length of each
          * header exceeds this value, a
          * {@link io.netty.handler.codec.TooLongFrameException} will be raised.
          */
-        private Integer maxHeaderSize;
+        private Integer maxHeaderSize = 8192;
         private Boolean allowDefaultCodec;
         /**
          * The status codes which is considered a success response. The values
@@ -258,7 +258,7 @@ public class NettyHttpComponentConfiguration {
         /**
          * Sets whether to use a relative path in HTTP requests.
          */
-        private Boolean useRelativePath;
+        private Boolean useRelativePath = false;
 
         public String getProtocol() {
             return protocol;
