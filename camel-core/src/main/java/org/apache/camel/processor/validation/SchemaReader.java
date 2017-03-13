@@ -177,8 +177,7 @@ public class SchemaReader {
             try {
                 factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
             } catch (SAXException e) {
-                LOG.error(e.getMessage(), e);
-                throw new IllegalStateException(e);
+                LOG.warn(e.getMessage(), e);
             } 
         }
         return factory;
