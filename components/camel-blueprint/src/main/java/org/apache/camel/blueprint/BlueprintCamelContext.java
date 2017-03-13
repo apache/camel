@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.blueprint.handler.CamelNamespaceHandler;
 import org.apache.camel.core.osgi.OsgiCamelContextHelper;
@@ -243,8 +242,9 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
             // let's set a more suitable TCCL while starting the context
             Thread.currentThread().setContextClassLoader(getApplicationContextClassLoader());
             super.start();
-        } catch (FailedToCreateRouteException e) {
+        } catch (Exception e) {
             routeDefinitionValid.set(false);
+            throw e;
         } finally {
             Thread.currentThread().setContextClassLoader(original);
         }
