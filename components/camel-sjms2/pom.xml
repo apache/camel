@@ -33,11 +33,12 @@
   <properties>
     <camel.osgi.export.pkg>
       org.apache.camel.component.sjms2,
-      org.apache.camel.component.sjms2.jms,
+      org.apache.camel.component.sjms2.jms
     </camel.osgi.export.pkg>
     <camel.osgi.export.service>
-      org.apache.camel.spi.ComponentResolver;component=sjms2,
+      org.apache.camel.spi.ComponentResolver;component=sjms2
     </camel.osgi.export.service>
+    <camel.osgi.import.additional>javax.jms;version="[2,3)"</camel.osgi.import.additional>
   </properties>
 
   <dependencies>
@@ -65,14 +66,6 @@
       <artifactId>geronimo-annotation_1.0_spec</artifactId>
       <version>${geronimo-annotation-1.0-spec-version}</version>
       <scope>provided</scope>
-    </dependency>
-
-
-    <!-- support camel documentation -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>apt</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <!-- logging -->
@@ -123,25 +116,25 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>artemis-server</artifactId>
-      <version>1.5.3</version>
+      <version>${activemq-artemis-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>artemis-jms-server</artifactId>
-      <version>1.5.3</version>
+      <version>${activemq-artemis-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>artemis-jms-client</artifactId>
-      <version>1.5.3</version>
+      <version>${activemq-artemis-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>artemis-amqp-protocol</artifactId>
-      <version>1.5.3</version>
+      <version>${activemq-artemis-version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

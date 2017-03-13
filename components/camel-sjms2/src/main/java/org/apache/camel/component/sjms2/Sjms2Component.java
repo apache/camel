@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.sjms2;
 
-
 import org.apache.camel.component.sjms.SjmsComponent;
 import org.apache.camel.component.sjms.SjmsEndpoint;
 
