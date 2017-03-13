@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.google.calendar.springboot;
 
-import java.util.List;
 import org.apache.camel.component.google.calendar.GoogleCalendarClientFactory;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiName;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -113,11 +112,11 @@ public class GoogleCalendarComponentConfiguration {
         private String applicationName;
         /**
          * Specifies the level of permissions you want a calendar application to
-         * have to a user account. See
-         * https://developers.google.com/google-apps/calendar/auth for more
+         * have to a user account. You can separate multiple scopes by comma.
+         * See https://developers.google.com/google-apps/calendar/auth for more
          * info.
          */
-        private List scopes;
+        private String scopes = com.google.api.services.calendar.CalendarScopes.CALENDAR;
         /**
          * The name of the p12 file which has the private key to use with the
          * Google Service Account.
@@ -193,11 +192,11 @@ public class GoogleCalendarComponentConfiguration {
             this.applicationName = applicationName;
         }
 
-        public List getScopes() {
+        public String getScopes() {
             return scopes;
         }
 
-        public void setScopes(List scopes) {
+        public void setScopes(String scopes) {
             this.scopes = scopes;
         }
 

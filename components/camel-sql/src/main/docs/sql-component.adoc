@@ -152,7 +152,7 @@ with the following path and query parameters:
 | separator | common | , | char | The separator to use when parameter values is taken from message body (if the body is a String type) to be inserted at placeholders. Notice if you use named parameters then a Map type is used instead. The default value is comma.
 | breakBatchOnConsumeFail | consumer | false | boolean | Sets whether to break batch if onConsume failed.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| expectedUpdateCount | consumer | 1 | int | Sets an expected update count to validate when using onConsume.
+| expectedUpdateCount | consumer | -1 | int | Sets an expected update count to validate when using onConsume.
 | maxMessagesPerPoll | consumer |  | int | Sets the maximum number of messages to poll
 | onConsume | consumer |  | String | After processing each row then this query can be executed if the Exchange was processed successfully for example to mark the row as processed. The query can have parameter.
 | onConsumeBatchComplete | consumer |  | String | After processing the entire batch this query can be executed to bulk update rows etc. The query cannot have parameters.

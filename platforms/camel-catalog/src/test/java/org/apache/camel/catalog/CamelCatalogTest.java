@@ -245,6 +245,16 @@ public class CamelCatalogTest {
     }
 
     @Test
+    public void testAsEndpointDefaultValue() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("destinationName", "cheese");
+        map.put("maxMessagesPerTask", "-1");
+
+        String uri = catalog.asEndpointUri("jms", map, true);
+        assertEquals("jms:cheese?maxMessagesPerTask=-1", uri);
+    }
+
+    @Test
     public void testAsEndpointUriPropertiesPlaceholders() throws Exception {
         Map<String, String> map = new HashMap<String, String>();
         map.put("timerName", "foo");
@@ -1033,6 +1043,16 @@ public class CamelCatalogTest {
         uri = "twitter://search?{{%s}}";
         result = catalog.validateEndpointProperties(uri);
         assertTrue(result.isSuccess());
+    }
+
+    @Test
+    public void testValidateEndpointJmsDefault() throws Exception {
+        String uri = "jms:cheese?maxMessagesPerTask=-1";
+
+        EndpointValidationResult result = catalog.validateEndpointProperties(uri);
+        assertTrue(result.isSuccess());
+        assertEquals(1, result.getDefaultValues().size());
+        assertEquals("-1", result.getDefaultValues().get("maxMessagesPerTask"));
     }
 
     @Test

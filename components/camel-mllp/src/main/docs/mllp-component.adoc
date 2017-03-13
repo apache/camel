@@ -90,7 +90,7 @@ with the following path and query parameters:
 | bindRetryInterval | timeout | 5000 | int | TCP Server Only - The number of milliseconds to wait between bind attempts
 | bindTimeout | timeout | 30000 | int | TCP Server Only - The number of milliseconds to retry binding to a server port
 | connectTimeout | timeout | 30000 | int | Timeout (in milliseconds) for establishing for a TCP connection TCP Client only
-| maxReceiveTimeouts | timeout | 1 | int | The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset.
+| maxReceiveTimeouts | timeout | -1 | int | The maximum number of timeouts (specified by receiveTimeout) allowed before the TCP Connection will be reset.
 | readTimeout | timeout | 500 | int | The SO_TIMEOUT value (in milliseconds) used after the start of an MLLP frame has been received
 | receiveTimeout | timeout | 10000 | int | The SO_TIMEOUT value (in milliseconds) used when waiting for the start of an MLLP frame
 |=======================================================================
