@@ -20,15 +20,20 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -115,7 +120,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         zip.setSupportEmptyDirectory(true);
         template.sendBody("direct:unzipWithEmptyDirectory", new File("src/test/resources/hello.odt"));
         assertTrue(Files.exists(Paths.get("hello_out/Configurations2")));
-        deleteDirectory(new File("hello_out"));
+        //deleteDirectory(new File("hello_out"));
     }
     
     @Test
@@ -125,7 +130,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         zip.setSupportEmptyDirectory(false);
         template.sendBody("direct:unzipWithEmptyDirectory", new File("src/test/resources/hello.odt"));
         assertTrue(!Files.exists(Paths.get("hello_out/Configurations2")));
-        deleteDirectory(new File("hello_out"));
+        //deleteDirectory(new File("hello_out"));
     }
 
     @Test
@@ -212,6 +217,35 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         deleteDirectory(TEST_DIR);
         super.setUp();
     }
+    
+    private static void copy(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[1024];
+        while (true) {
+            int readCount = in.read(buffer);
+            if (readCount < 0) {
+                break;
+            }
+            out.write(buffer, 0, readCount);
+        }
+    }
+
+    private static void copy(File file, OutputStream out) throws IOException {
+        InputStream in = new FileInputStream(file);
+        try {
+            copy(in, out);
+        } finally {
+            in.close();
+        }
+    }
+
+    private static void copy(InputStream in, File file) throws IOException {
+        OutputStream out = new FileOutputStream(file);
+        try {
+            copy(in, out);
+        } finally {
+            out.close();
+        }
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -227,7 +261,26 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
                 from("direct:unzipWithEmptyDirectory").unmarshal(zip)
                                         .split(body(Iterator.class))
                                         .streaming()
-                                        .to("file:hello_out?autoCreate=true")
+                                        //.to("file:hello_out?autoCreate=true")
+                                        .process(new Processor() {
+                                            @Override
+                                            public void process(Exchange exchange) throws Exception {
+                                                ZipFile zfile = new ZipFile(new File("src/test/resources/hello.odt"));
+                                                ZipEntry entry = new ZipEntry((String)exchange.getIn().getHeader(Exchange.FILE_NAME));
+                                                File file = new File("hello_out", entry.getName());
+                                                if (entry.isDirectory()) {
+                                                    file.mkdirs();
+                                                } else {
+                                                    file.getParentFile().mkdirs();
+                                                    InputStream in = zfile.getInputStream(entry);
+                                                    try {
+                                                        copy(in, file);
+                                                    } finally {
+                                                        in.close();
+                                                    }
+                                                }
+                                            }
+                                        })
                                         .end();
                 from("direct:zipAndUnzip").marshal(zip).unmarshal(zip).to("mock:zipAndUnzip");
                 from("direct:zipToFile").marshal(zip).to("file:" + TEST_DIR.getPath()).to("mock:zipToFile");
