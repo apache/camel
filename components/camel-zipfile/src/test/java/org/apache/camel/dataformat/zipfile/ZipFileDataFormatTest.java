@@ -21,6 +21,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -53,6 +56,8 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         + "With horsemen riding royally.";
 
     private static final File TEST_DIR = new File("target/zip");
+    
+    private ZipFileDataFormat zip;
 
     @Test
     public void testZipAndStreamCaching() throws Exception {
@@ -101,6 +106,24 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         template.sendBody("direct:unzip", getZippedText("file"));
 
         assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testUnzipWithEmptyDirectorySupported() throws Exception {
+        deleteDirectory(new File("hello_out"));
+        zip.setUsingIterator(true);
+        zip.setSupportEmptyDirectory(true);
+        template.sendBody("direct:unzipWithEmptyDirectory", new File("src/test/resources/hello.odt"));
+        assertTrue(Files.exists(Paths.get("hello_out/Configurations2")));
+    }
+    
+    @Test
+    public void testUnzipWithEmptyDirectoryUnsupported() throws Exception {
+        deleteDirectory(new File("hello_out"));
+        zip.setUsingIterator(true);
+        zip.setSupportEmptyDirectory(false);
+        template.sendBody("direct:unzipWithEmptyDirectory", new File("src/test/resources/hello.odt"));
+        assertTrue(!Files.exists(Paths.get("hello_out/Configurations2")));
     }
 
     @Test
@@ -195,10 +218,15 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
             public void configure() throws Exception {
                 interceptSendToEndpoint("file:*").to("mock:intercepted");
 
-                ZipFileDataFormat zip = new ZipFileDataFormat();
+                zip = new ZipFileDataFormat();
 
                 from("direct:zip").marshal(zip).to("mock:zip");
                 from("direct:unzip").unmarshal(zip).to("mock:unzip");
+                from("direct:unzipWithEmptyDirectory").unmarshal(zip)
+                                        .split(body(Iterator.class))
+                                        .streaming()
+                                        .to("file:hello_out?autoCreate=true")
+                                        .end();
                 from("direct:zipAndUnzip").marshal(zip).unmarshal(zip).to("mock:zipAndUnzip");
                 from("direct:zipToFile").marshal(zip).to("file:" + TEST_DIR.getPath()).to("mock:zipToFile");
                 from("direct:dslZip").marshal().zipFile().to("mock:dslZip");
