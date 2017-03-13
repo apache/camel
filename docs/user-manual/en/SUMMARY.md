@@ -287,6 +287,7 @@
 	* [SFTP](sftp-component.adoc)
 	* [Simple JMS](sjms-component.adoc)
 	* [Simple JMS Batch](sjms-batch-component.adoc)
+	* [Simple JMS2](sjms2-component.adoc)
 	* [SIP](sip-component.adoc)
 	* [Slack](slack-component.adoc)
 	* [SMPP](smpp-component.adoc)

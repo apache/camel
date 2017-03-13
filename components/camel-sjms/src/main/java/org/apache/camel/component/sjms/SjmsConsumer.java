@@ -18,8 +18,8 @@ package org.apache.camel.component.sjms;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+
 import javax.jms.Connection;
-import javax.jms.Destination;
 import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 import javax.jms.Session;
@@ -31,7 +31,6 @@ import org.apache.camel.component.sjms.consumer.AbstractMessageHandler;
 import org.apache.camel.component.sjms.consumer.InOnlyMessageHandler;
 import org.apache.camel.component.sjms.consumer.InOutMessageHandler;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
-import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
 import org.apache.camel.component.sjms.tx.BatchTransactionCommitStrategy;
 import org.apache.camel.component.sjms.tx.DefaultTransactionCommitStrategy;
@@ -184,8 +183,7 @@ public class SjmsConsumer extends DefaultConsumer {
         Connection conn = connectionResource.borrowConnection();
         try {
             Session session = conn.createSession(isTransacted(), isTransacted() ? Session.SESSION_TRANSACTED : Session.AUTO_ACKNOWLEDGE);
-            Destination destination = getEndpoint().getDestinationCreationStrategy().createDestination(session, getDestinationName(), isTopic());
-            MessageConsumer messageConsumer = JmsObjectFactory.createMessageConsumer(session, destination, getMessageSelector(), isTopic(), getDurableSubscriptionId());
+            MessageConsumer messageConsumer = getEndpoint().getJmsObjectFactory().createMessageConsumer(session, getEndpoint());
             MessageListener handler = createMessageHandler(session);
             messageConsumer.setMessageListener(handler);
 

@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 222 in 176 JAR artifacts (13 deprecated)
+Number of Components: 223 in 177 JAR artifacts (13 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -553,6 +553,9 @@ Number of Components: 222 in 176 JAR artifacts (13 deprecated)
 
 | link:camel-sjms/src/main/docs/sjms-batch-component.adoc[Simple JMS Batch] (camel-sjms) +
 `sjms-batch:destinationName` | 2.16 | The sjms-batch component is a specialized for highly performant transactional batch consumption from a JMS queue.
+
+| link:camel-sjms2/src/main/docs/sjms2-component.adoc[Simple JMS2] (camel-sjms2) +
+`sjms2:destinationType:destinationName` | 2.19 | The sjms2 component (simple jms) allows messages to be sent to (or consumed from) a JMS Queue or Topic.
 
 | link:camel-sip/src/main/docs/sip-component.adoc[SIP] (camel-sip) +
 `sip:uri` | 2.5 | To send and receive messages using the SIP protocol (used in telco and mobile).
