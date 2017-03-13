@@ -672,7 +672,7 @@ Number of Components: 222 in 176 JAR artifacts (13 deprecated)
 `zookeeper:serverUrls/path` | 2.9 | The zookeeper component allows interaction with a ZooKeeper cluster.
 
 | link:camel-zookeeper-master/src/main/docs/zookeeper-master-component.adoc[ZooKeeper Master] (camel-zookeeper-master) +
-`zookeeper-master:name:endpoint` | 2.19 | Represents an endpoint which only becomes active when it obtains the master lock
+`zookeeper-master:groupName:consumerEndpointUri` | 2.19 | Represents an endpoint which only becomes active when it obtains the master lock
 
 |=======================================================================
 // components: END
