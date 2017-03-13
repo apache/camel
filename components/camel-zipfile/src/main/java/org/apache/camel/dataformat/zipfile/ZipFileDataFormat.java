@@ -39,6 +39,7 @@ import static org.apache.camel.Exchange.FILE_NAME;
  */
 public class ZipFileDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
     private boolean usingIterator;
+    private boolean supportEmptyDirectory;
 
     @Override
     public String getDataFormatName() {
@@ -72,6 +73,11 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
 
     @Override
     public Object unmarshal(final Exchange exchange, final InputStream inputStream) throws Exception {
+        if (supportEmptyDirectory) {
+            exchange.getIn().setHeader("unzipEmptyDirectorySupported", true);
+        } else {
+            exchange.getIn().setHeader("unzipEmptyDirectorySupported", false);
+        }
         if (usingIterator) {
             return new ZipIterator(exchange.getIn());
         } else {
@@ -103,6 +109,14 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
 
     public void setUsingIterator(boolean usingIterator) {
         this.usingIterator = usingIterator;
+    }
+    
+    public boolean isSupportEmptyDirectory() {
+        return supportEmptyDirectory;
+    }
+
+    public void setSupportEmptyDirectory(boolean supportEmptyDirectory) {
+        this.supportEmptyDirectory = supportEmptyDirectory;
     }
 
     @Override
