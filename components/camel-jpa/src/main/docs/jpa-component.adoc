@@ -36,6 +36,16 @@ If the body does not contain one of the previous listed types, put a
 link:message-translator.html[Message Translator] in front of the
 endpoint to perform the necessary conversion first.
 
+From *Camel 2.19* onwards you can use `query`, `namedQuery` or `nativeQuery`
+for the producer as well. Also in the value of the `parameters`, you can use
+Simple expression which allows you to retrieve parameter values from Message body, header
+and etc. Those query can be used for retrieving a set of data with using `SELECT`
+JPQL/SQL statement as well as executing bulk update/delete with using `UPDATE`/`DELETE`
+JPQL/SQL statement. Please note that you need to specify `useExecuteUpdate` to `true`
+if you execute `UPDATE`/`DELETE` with `namedQuery` as camel don't look into the
+named query unlike `query` and `nativeQuery`.
+
+
 ### Consuming from the endpoint
 
 Consuming messages from a JPA consumer endpoint removes (or updates)
@@ -121,27 +131,27 @@ with the following path and query parameters:
 | entityType |  | Class<?> | *Required* The JPA annotated class to use as entity.
 |=======================================================================
 
-#### Query Parameters (41 parameters):
+#### Query Parameters (42 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | joinTransaction | common | true | boolean | The camel-jpa component will join transaction by default. You can use this option to turn this off for example if you use LOCAL_RESOURCE and join transaction doesn't work with your JPA provider. This option can also be set globally on the JpaComponent instead of having to set it on all endpoints.
+| maximumResults | common | 1 | int | Set the maximum number of results to retrieve on the Query.
+| namedQuery | common |  | String | To use a named query.
+| nativeQuery | common |  | String | To use a custom native query. You may want to use the option resultClass also when using native queries.
+| parameters | common |  | Map | This key/value mapping is used for building the query parameters. It is expected to be of the generic type java.util.Map where the keys are the named parameters of a given JPA query and the values are their corresponding effective values you want to select for. When it's used for producer Simple expression can be used as a parameter value. It allows you to retrieve parameter values from the message body header and etc.
 | persistenceUnit | common | camel | String | *Required* The JPA persistence unit used by default.
+| query | common |  | String | To use a custom query.
+| resultClass | common |  | Class<?> | Defines the type of the returned payload (we will call entityManager.createNativeQuery(nativeQuery resultClass) instead of entityManager.createNativeQuery(nativeQuery)). Without this option we will return an object array. Only has an affect when using in conjunction with native query when consuming data.
 | sharedEntityManager | common | false | boolean | Whether to use Spring's SharedEntityManager for the consumer/producer. Note in most cases joinTransaction should be set to false as this is not an EXTENDED EntityManager.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | consumeDelete | consumer | true | boolean | If true the entity is deleted after it is consumed; if false the entity is not deleted.
 | consumeLockEntity | consumer | true | boolean | Specifies whether or not to set an exclusive lock on each entity bean while processing the results from polling.
 | deleteHandler | consumer |  | Object> | To use a custom DeleteHandler to delete the row after the consumer is done processing the exchange
 | lockModeType | consumer | PESSIMISTIC_WRITE | LockModeType | To configure the lock mode on the consumer.
-| maximumResults | consumer | -1 | int | Set the maximum number of results to retrieve on the Query.
 | maxMessagesPerPoll | consumer |  | int | An integer value to define the maximum number of messages to gather per poll. By default no maximum is set. Can be used to avoid polling many thousands of messages when starting up the server. Set a value of 0 or negative to disable.
-| namedQuery | consumer |  | String | To use a named query when consuming data.
-| nativeQuery | consumer |  | String | To use a custom native query when consuming data. You may want to use the option consumer.resultClass also when using native queries.
-| parameters | consumer |  | Map | This key/value mapping is used for building the query parameters. It's is expected to be of the generic type java.util.Map where the keys are the named parameters of a given JPA query and the values are their corresponding effective values you want to select for.
 | preDeleteHandler | consumer |  | Object> | To use a custom Pre-DeleteHandler to delete the row after the consumer has read the entity.
-| query | consumer |  | String | To use a custom query when consuming data.
-| resultClass | consumer |  | Class<?> | Defines the type of the returned payload (we will call entityManager.createNativeQuery(nativeQuery resultClass) instead of entityManager.createNativeQuery(nativeQuery)). Without this option we will return an object array. Only has an affect when using in conjunction with native query when consuming data.
 | sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
 | skipLockedEntity | consumer | false | boolean | To configure whether to use NOWAIT on lock and silently skip the entity.
 | transacted | consumer | false | boolean | Whether to run the consumer in transacted mode by which all messages will either commit or rollback when the entire batch has been processed. The default behavior (false) is to commit all the previously successfully processed messages and only rollback the last failed message.
@@ -150,6 +160,7 @@ with the following path and query parameters:
 | pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
 | flushOnSend | producer | true | boolean | Flushes the EntityManager after the entity bean has been persisted.
 | remove | producer | false | boolean | Indicates to use entityManager.remove(entity).
+| useExecuteUpdate | producer |  | Boolean | To configure whether to use executeUpdate() when producer executes a query. When you use INSERT UPDATE or DELETE statement as a named query you need to specify this option to 'true'.
 | usePassedInEntityManager | producer | false | boolean | If set to true then Camel will use the EntityManager from the header JpaConstants.ENTITYMANAGER instead of the configured entity manager on the component/endpoint. This allows end users to control which entity manager will be in use.
 | usePersist | producer | false | boolean | Indicates to use entityManager.persist(entity) instead of entityManager.merge(entity). Note: entityManager.persist(entity) doesn't work for detached entities (where the EntityManager has to execute an UPDATE instead of an INSERT query)!
 | entityManagerProperties | advanced |  | Map | Additional properties for the entity manager to use.
@@ -289,6 +300,59 @@ from("jpa://org.apache.camel.examples.MultiSteps?consumer.nativeQuery=select * f
 ---------------------------------------------------------------------------------------------------------------
 
 If you use the native query option, you will receive an object array in
+the message body.
+
+
+### Using a producer with a named query
+
+For retrieving selected entities or execute bulk update/delete, you can use the
+`namedQuery` URI query option. First, you have to define the
+named query in the JPA Entity class:
+
+[source,java]
+----------------------------------------------------------------------------------
+@Entity
+@NamedQuery(name = "step1", query = "select x from MultiSteps x where x.step = 1")
+public class MultiSteps {
+   ...
+}
+----------------------------------------------------------------------------------
+
+After that you can define a producer uri like this one:
+
+[source,java]
+----------------------------------------------------------------------------
+from("direct:namedQuery")
+.to("jpa://org.apache.camel.examples.MultiSteps?namedQuery=step1");
+----------------------------------------------------------------------------
+
+Note that you need to specify `useExecuteUpdate` option to `true` to execute `UPDATE`/`DELETE` statement
+as a named query.
+
+### Using a producer with a query
+
+For retrieving selected entities or execute bulk update/delete, you can use the `query`
+URI query option. You only have to define the query option:
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------------------------------
+from("direct:query")
+.to("jpa://org.apache.camel.examples.MultiSteps?query=select o from org.apache.camel.examples.MultiSteps o where o.step = 1");
+---------------------------------------------------------------------------------------------------------------------------------------
+
+### Using a producer with a native query
+
+For retrieving selected entities or execute bulk update/delete, you can use the
+`nativeQuery` URI query option. You only have to define the
+native query option:
+
+[source,java]
+---------------------------------------------------------------------------------------------------------------
+from("direct:nativeQuery")
+.to("jpa://org.apache.camel.examples.MultiSteps?resultClass=org.apache.camel.examples.MultiSteps&nativeQuery=select * from MultiSteps where step = 1");
+---------------------------------------------------------------------------------------------------------------
+
+If you use the native query option without specifying `resultClass`, you will receive an object array in
 the message body.
 
 ### Example
