@@ -29,7 +29,7 @@ public class WeatherModel {
     private int id;
     @DataField(pos = 2)
     private String date;
-    @DataField(pos = 3)
+    @DataField(pos = 3, defaultValue = "North Pole")
     private String place;
 
     public String getDate() {
