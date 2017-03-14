@@ -137,7 +137,7 @@ with the following path and query parameters:
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | joinTransaction | common | true | boolean | The camel-jpa component will join transaction by default. You can use this option to turn this off for example if you use LOCAL_RESOURCE and join transaction doesn't work with your JPA provider. This option can also be set globally on the JpaComponent instead of having to set it on all endpoints.
-| maximumResults | common | 1 | int | Set the maximum number of results to retrieve on the Query.
+| maximumResults | common | -1 | int | Set the maximum number of results to retrieve on the Query.
 | namedQuery | common |  | String | To use a named query.
 | nativeQuery | common |  | String | To use a custom native query. You may want to use the option resultClass also when using native queries.
 | parameters | common |  | Map | This key/value mapping is used for building the query parameters. It is expected to be of the generic type java.util.Map where the keys are the named parameters of a given JPA query and the values are their corresponding effective values you want to select for. When it's used for producer Simple expression can be used as a parameter value. It allows you to retrieve parameter values from the message body header and etc.
