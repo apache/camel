@@ -685,6 +685,14 @@ public class RestConfigurationDefinition {
         return this;
     }
 
+    /**
+     * Shortcut for setting the {@code Access-Control-Allow-Credentials} header.
+     */
+    public RestConfigurationDefinition corsAllowCredentials(boolean corsAllowCredentials) {
+        return corsHeaderProperty("Access-Control-Allow-Credentials", String.valueOf(corsAllowCredentials));
+    }
+
+
     // Implementation
     //-------------------------------------------------------------------------
 
