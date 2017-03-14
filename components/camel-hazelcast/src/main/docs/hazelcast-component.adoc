@@ -46,7 +46,7 @@ hazelcast:[ map | multimap | queue | topic | seda | set | atomicvalue | instance
 
 
 // component options: START
-The Hazelcast component supports 2 options which are listed below.
+The Hazelcast component supports 3 options which are listed below.
 
 
 
@@ -54,6 +54,7 @@ The Hazelcast component supports 2 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | hazelcastInstance | advanced |  | HazelcastInstance | The hazelcast instance reference which can be used for hazelcast endpoint. If you don't specify the instance reference camel use the default hazelcast instance from the camel-hazelcast instance.
+| hazelcastMode | advanced | node | String | The hazelcast mode reference which kind of instance should be used. If you don't specify the mode then the node mode will be the default.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END

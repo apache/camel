@@ -21,6 +21,9 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.hazelcast.client.HazelcastClient;
+import com.hazelcast.client.config.ClientConfig;
+import com.hazelcast.client.config.XmlClientConfigBuilder;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
@@ -48,6 +51,8 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_CONFIGU_PARAM;
 import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_CONFIGU_URI_PARAM;
+import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_CLIENT_CONFIGU_PARAM;
+import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_CLIENT_CONFIGU_URI_PARAM;
 import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_INSTANCE_NAME_PARAM;
 import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_INSTANCE_PARAM;
 import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
@@ -58,6 +63,8 @@ public class HazelcastComponent extends UriEndpointComponent {
     private final Set<HazelcastInstance> customHazelcastInstances;
     @Metadata(label = "advanced")
     private HazelcastInstance hazelcastInstance;
+    @Metadata(label = "advanced", defaultValue = "" + HazelcastConstants.HAZELCAST_NODE_MODE)
+    private String hazelcastMode = HazelcastConstants.HAZELCAST_NODE_MODE;
 
     public HazelcastComponent() {
         super(HazelcastDefaultEndpoint.class);
@@ -73,7 +80,12 @@ public class HazelcastComponent extends UriEndpointComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
         // use the given hazelcast Instance or create one if not given
-        HazelcastInstance hzInstance = getOrCreateHzInstance(getCamelContext(), parameters);
+    	HazelcastInstance hzInstance;
+    	if (ObjectHelper.equal(hazelcastMode, HazelcastConstants.HAZELCAST_NODE_MODE)) {
+            hzInstance = getOrCreateHzInstance(getCamelContext(), parameters);
+    	} else {
+    		hzInstance = getOrCreateHzClientInstance(getCamelContext(), parameters);
+    	}
 
         String defaultOperation = getAndRemoveOrResolveReferenceParameter(parameters, HazelcastConstants.OPERATION_PARAM, String.class);
         if (defaultOperation == null) {
@@ -205,7 +217,19 @@ public class HazelcastComponent extends UriEndpointComponent {
         this.hazelcastInstance = hazelcastInstance;
     }
 
-    private HazelcastInstance getOrCreateHzInstance(CamelContext context, Map<String, Object> parameters) throws Exception {
+    public String getHazelcastMode() {
+		return hazelcastMode;
+	}
+
+    /**
+     * The hazelcast mode reference which kind of instance should be used.
+     * If you don't specify the mode, then the node mode will be the default. 
+     */
+	public void setHazelcastMode(String hazelcastMode) {
+		this.hazelcastMode = hazelcastMode;
+	}
+
+	private HazelcastInstance getOrCreateHzInstance(CamelContext context, Map<String, Object> parameters) throws Exception {
         HazelcastInstance hzInstance = null;
         Config config = null;
 
@@ -245,6 +269,54 @@ public class HazelcastComponent extends UriEndpointComponent {
                 } else {
                     hzInstance = Hazelcast.newHazelcastInstance(config);
                 }
+            }
+
+            if (hzInstance != null) {
+                if (this.customHazelcastInstances.add(hzInstance)) {
+                    LOGGER.debug("Add managed HZ instance {}", hzInstance.getName());
+                }
+            }
+        }
+
+        return hzInstance == null ? hazelcastInstance : hzInstance;
+    }
+	
+	private HazelcastInstance getOrCreateHzClientInstance(CamelContext context, Map<String, Object> parameters) throws Exception {
+        HazelcastInstance hzInstance = null;
+        ClientConfig config = null;
+
+        // Query param named 'hazelcastInstance' (if exists) overrides the instance that was set
+        hzInstance = resolveAndRemoveReferenceParameter(parameters, HAZELCAST_INSTANCE_PARAM, HazelcastInstance.class);
+
+        // Check if an already created instance is given then just get instance by its name.
+        if (hzInstance == null && parameters.get(HAZELCAST_INSTANCE_NAME_PARAM) != null) {
+            hzInstance = Hazelcast.getHazelcastInstanceByName((String) parameters.get(HAZELCAST_INSTANCE_NAME_PARAM));
+        }
+
+        // If instance neither supplied nor found by name, try to lookup its config
+        // as reference or as xml configuration file.
+        if (hzInstance == null) {
+            config = resolveAndRemoveReferenceParameter(parameters, HAZELCAST_CLIENT_CONFIGU_PARAM, ClientConfig.class);
+            if (config == null) {
+                String configUri = getAndRemoveParameter(parameters, HAZELCAST_CLIENT_CONFIGU_URI_PARAM, String.class);
+                if (configUri != null) {
+                    configUri = getCamelContext().resolvePropertyPlaceholders(configUri);
+                }
+                if (configUri != null) {
+                    InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context, configUri);
+                    config = new XmlClientConfigBuilder(is).build();
+                }
+            }
+
+            if (hazelcastInstance == null && config == null) {
+                config = new XmlClientConfigBuilder().build();
+                // Disable the version check
+                config.getProperties().setProperty("hazelcast.version.check.enabled", "false");
+                config.getProperties().setProperty("hazelcast.phone.home.enabled", "false");
+
+                hzInstance = HazelcastClient.newHazelcastClient(config);
+            } else if (config != null) {
+                hzInstance = HazelcastClient.newHazelcastClient(config);
             }
 
             if (hzInstance != null) {
