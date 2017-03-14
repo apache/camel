@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.itest.karaf.issues;
+package org.apache.camel.itest;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -22,12 +22,14 @@ import java.io.InputStream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.blueprint.BlueprintCamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.itest.karaf.BaseKarafTest;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.test.karaf.AbstractFeatureTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 
 /**
@@ -35,7 +37,7 @@ import org.ops4j.pax.exam.junit.PaxExam;
  */
 
 @RunWith(PaxExam.class)
-public class DuplicateNamespacePrefixIssueTest extends BaseKarafTest {
+public class DuplicateNamespacePrefixIssueTest extends AbstractFeatureTest {
 
     @Test
     public void testRoutesNamespacePrefixesNotDuplicated() throws Exception {
@@ -66,5 +68,10 @@ public class DuplicateNamespacePrefixIssueTest extends BaseKarafTest {
         String modifiedRoutesElementXML = modifiedModelXML.split("\n")[1];
         String expectedRoutesElementXML = "<routes xmlns=\"http://camel.apache.org/schema/spring\">";
         Assert.assertEquals(expectedRoutesElementXML, modifiedRoutesElementXML);
+    }
+
+    @Configuration
+    public Option[] configure() {
+        return AbstractFeatureTest.configure();
     }
 }
