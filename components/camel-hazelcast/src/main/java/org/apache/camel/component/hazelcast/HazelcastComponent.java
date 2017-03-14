@@ -42,10 +42,11 @@ import org.apache.camel.component.hazelcast.seda.HazelcastSedaConfiguration;
 import org.apache.camel.component.hazelcast.seda.HazelcastSedaEndpoint;
 import org.apache.camel.component.hazelcast.set.HazelcastSetEndpoint;
 import org.apache.camel.component.hazelcast.topic.HazelcastTopicEndpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,9 +54,8 @@ import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_
 import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_CONFIGU_URI_PARAM;
 import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_INSTANCE_NAME_PARAM;
 import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_INSTANCE_PARAM;
-import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 
-public class HazelcastComponent extends UriEndpointComponent {
+public class HazelcastComponent extends DefaultComponent {
     private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastComponent.class);
 
     private final Set<HazelcastInstance> customHazelcastInstances;
@@ -65,12 +65,12 @@ public class HazelcastComponent extends UriEndpointComponent {
     private String hazelcastMode = HazelcastConstants.HAZELCAST_NODE_MODE;
 
     public HazelcastComponent() {
-        super(HazelcastDefaultEndpoint.class);
+        super();
         this.customHazelcastInstances = new LinkedHashSet<>();
     }
 
     public HazelcastComponent(final CamelContext context) {
-        super(context, HazelcastDefaultEndpoint.class);
+        super(context);
         this.customHazelcastInstances = new LinkedHashSet<>();
     }
 
@@ -95,49 +95,49 @@ public class HazelcastComponent extends UriEndpointComponent {
         // check type of endpoint
         if (remaining.startsWith(HazelcastConstants.MAP_PREFIX)) {
             // remaining is the cache name
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.MAP_PREFIX.length()), '/');
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.MAP_PREFIX.length()), '/');
             endpoint = new HazelcastMapEndpoint(hzInstance, uri, remaining, this);
             endpoint.setCommand(HazelcastCommand.map);
         }
 
         if (remaining.startsWith(HazelcastConstants.MULTIMAP_PREFIX)) {
             // remaining is the cache name
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.MULTIMAP_PREFIX.length()), '/');
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.MULTIMAP_PREFIX.length()), '/');
             endpoint = new HazelcastMultimapEndpoint(hzInstance, uri, remaining, this);
             endpoint.setCommand(HazelcastCommand.multimap);
         }
 
         if (remaining.startsWith(HazelcastConstants.ATOMICNUMBER_PREFIX)) {
             // remaining is the name of the atomic value
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.ATOMICNUMBER_PREFIX.length()), '/');
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.ATOMICNUMBER_PREFIX.length()), '/');
             endpoint = new HazelcastAtomicnumberEndpoint(hzInstance, uri, this, remaining);
             endpoint.setCommand(HazelcastCommand.atomicvalue);
         }
 
         if (remaining.startsWith(HazelcastConstants.INSTANCE_PREFIX)) {
             // remaining is anything (name it foo ;)
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.INSTANCE_PREFIX.length()), '/');
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.INSTANCE_PREFIX.length()), '/');
             endpoint = new HazelcastInstanceEndpoint(hzInstance, uri, this);
             endpoint.setCommand(HazelcastCommand.instance);
         }
 
         if (remaining.startsWith(HazelcastConstants.QUEUE_PREFIX)) {
             // remaining is anything (name it foo ;)
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.QUEUE_PREFIX.length()), '/');
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.QUEUE_PREFIX.length()), '/');
             endpoint = new HazelcastQueueEndpoint(hzInstance, uri, this, remaining);
             endpoint.setCommand(HazelcastCommand.queue);
         }
 
         if (remaining.startsWith(HazelcastConstants.TOPIC_PREFIX)) {
             // remaining is anything (name it foo ;)
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.TOPIC_PREFIX.length()), '/');
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.TOPIC_PREFIX.length()), '/');
             endpoint = new HazelcastTopicEndpoint(hzInstance, uri, this, remaining);
             endpoint.setCommand(HazelcastCommand.topic);
         }
 
         if (remaining.startsWith(HazelcastConstants.SEDA_PREFIX)) {
             // remaining is anything (name it foo ;)
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.SEDA_PREFIX.length()), '/');
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.SEDA_PREFIX.length()), '/');
             final HazelcastSedaConfiguration config = new HazelcastSedaConfiguration();
             setProperties(config, parameters);
             config.setQueueName(remaining);
@@ -148,21 +148,21 @@ public class HazelcastComponent extends UriEndpointComponent {
 
         if (remaining.startsWith(HazelcastConstants.LIST_PREFIX)) {
             // remaining is anything (name it foo ;)
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.LIST_PREFIX.length()), '/');
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.LIST_PREFIX.length()), '/');
             endpoint = new HazelcastListEndpoint(hzInstance, uri, this, remaining);
             endpoint.setCommand(HazelcastCommand.list);
         }
 
         if (remaining.startsWith(HazelcastConstants.REPLICATEDMAP_PREFIX)) {
             // remaining is anything (name it foo ;)
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.REPLICATEDMAP_PREFIX.length()), '/');
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.REPLICATEDMAP_PREFIX.length()), '/');
             endpoint = new HazelcastReplicatedmapEndpoint(hzInstance, uri, remaining, this);
             endpoint.setCommand(HazelcastCommand.replicatedmap);
         } 
         
         if (remaining.startsWith(HazelcastConstants.SET_PREFIX)) {
             // remaining is anything (name it foo ;)
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.SET_PREFIX.length()), '/');
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.SET_PREFIX.length()), '/');
             endpoint = new HazelcastSetEndpoint(hzInstance, uri, this, remaining);
             endpoint.setCommand(HazelcastCommand.set);
         } 
@@ -170,7 +170,7 @@ public class HazelcastComponent extends UriEndpointComponent {
         
         if (remaining.startsWith(HazelcastConstants.RINGBUFFER_PREFIX)) {
             // remaining is anything (name it foo ;)
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.RINGBUFFER_PREFIX.length()), '/');
+            remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.RINGBUFFER_PREFIX.length()), '/');
             endpoint = new HazelcastRingbufferEndpoint(hzInstance, uri, this, remaining);
             endpoint.setCommand(HazelcastCommand.ringbuffer);
         } 
