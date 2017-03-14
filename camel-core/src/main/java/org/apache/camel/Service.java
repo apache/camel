@@ -16,12 +16,15 @@
  */
 package org.apache.camel;
 
+import java.io.Closeable;
+import java.io.IOException;
+
 /**
  * Represents the core lifecycle API for POJOs which can be started and stopped
  * 
  * @version 
  */
-public interface Service {
+public interface Service extends Closeable {
 
     /**
      * Starts the service
@@ -36,4 +39,21 @@ public interface Service {
      * @throws Exception is thrown if stopping failed
      */
     void stop() throws Exception;
+
+    /**
+     * Delegates to {@link Service#stop()} so it can be used in
+     * try-with-resources expression.
+     * 
+     * @throws IOException per contract of {@link Closeable} if
+     *             {@link Service#stop()} fails
+     */
+    default void close() throws IOException {
+        try {
+            stop();
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+    }
 }
