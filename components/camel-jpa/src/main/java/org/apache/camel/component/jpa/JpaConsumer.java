@@ -371,7 +371,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
             if (resultClass != null) {
                 return QueryBuilder.nativeQuery(nativeQuery, resultClass);
             } else {
-                return QueryBuilder.nativeQuery(nativeQuery);                
+                return QueryBuilder.nativeQuery(nativeQuery);
             }
         } else {
             Class<?> entityType = getEndpoint().getEntityType();
