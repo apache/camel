@@ -13,6 +13,8 @@
   "description": "To order drinks from the bar",
   "labels": [ "bar" ],
   "pattern": "To",
+  "inputDataType": "*",
+  "outputDataType": "text",
   "endpointOptions": [ "drink", "amount", "celebrity" ],
   "endpointValues": {
     "amount": 2

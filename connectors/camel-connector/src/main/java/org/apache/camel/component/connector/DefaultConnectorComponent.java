@@ -63,10 +63,8 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         String delegateUri = createEndpointUri(scheme, options);
 
         log.debug("Connector resolved: {} -> {}", uri, delegateUri);
-
         Endpoint delegate = getCamelContext().getEndpoint(delegateUri);
-
-        return new DefaultConnectorEndpoint(uri, this, delegate);
+        return new DefaultConnectorEndpoint(uri, this, delegate, model.getInputDataType(), model.getOutputDataType());
     }
 
     @Override
@@ -143,6 +141,15 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
 
     @Override
     protected void doStart() throws Exception {
+        // lets enforce that every connector must have an input and output data type
+
+        if (model.getInputDataType() == null) {
+            throw new IllegalArgumentException("Camel connector must have inputDataType defined in camel-connector.json file");
+        }
+        if (model.getOutputDataType() == null) {
+            throw new IllegalArgumentException("Camel connector must have outputDataType defined in camel-connector.json file");
+        }
+
         // it may be a custom component so we need to register this in the camel catalog also
         String scheme = model.getBaseScheme();
         if (!catalog.findComponentNames().contains(scheme)) {
@@ -170,7 +177,6 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         }
 
         log.debug("Starting connector: {}", componentName);
-
         super.doStart();
     }
 

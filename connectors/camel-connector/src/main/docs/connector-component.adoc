@@ -47,6 +47,31 @@ You can also copy the existing examples from the `connectors` directory where th
 You can find an example using these connectors in the `foo-bar-wine-example` in the `connectors` directory.
 
 
+### Input and Output Data Type
+
+Every connector *must* define which input and output data type are in use.
+
+The following data types are in use:
+
+[width="100%",cols="2m,8",options="header"]
+|=========================================
+| Data Type | Description
+| none | No data
+| any | Supports any kind of data. You can also use `*` instead of `any`
+| java | Java data. An optional sub type can define the fully qualified class name such as `java:com.foo.MyCustomer`.
+| text | Text based data
+| xml | XML based data. An option sub type can define the XML namespace of the XML root element.
+| json | JSon based data. An option sub type can define the fully qualified class name of a Java POJO that maps to this JSon structure.
+|=========================================
+
+For example to accept any incoming data type and output Java as `com.foo.MyCustomer` you would
+configure the the `camel-connector.json` file:
+
+```
+  "inputDataType": "any",
+  "outputDataType": "java:com.foo.MyCustomer",
+```
+
 ### The connectors schema file
 
 A connector has a schema file `camel-connector.json` located in `src/main/resources` directory.
@@ -57,3 +82,4 @@ The options the connector can provide is a limited set of all the existing optio
 its based upon. Each option can then also be pre-configured with a default-value.
 
 To understand this schema file, its easier to study those existing connectors from the `connectors` directory.
+
