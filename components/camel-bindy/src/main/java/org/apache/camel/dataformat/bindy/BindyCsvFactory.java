@@ -398,6 +398,11 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     // Get field value
                     Object value = field.get(obj);
 
+                    // If the field value is empty, populate it with the default value
+                    if (ObjectHelper.isNotEmpty(datafield.defaultValue()) && ObjectHelper.isEmpty(value)) {
+                        value = datafield.defaultValue();
+                    }
+
                     result = formatString(format, value);
 
                     if (datafield.trim()) {
