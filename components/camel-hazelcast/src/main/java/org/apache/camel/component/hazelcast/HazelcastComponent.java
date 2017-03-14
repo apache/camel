@@ -49,8 +49,6 @@ import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_CLIENT_CONFIGU_PARAM;
-import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_CLIENT_CONFIGU_URI_PARAM;
 import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_CONFIGU_PARAM;
 import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_CONFIGU_URI_PARAM;
 import static org.apache.camel.component.hazelcast.HazelcastConstants.HAZELCAST_INSTANCE_NAME_PARAM;
@@ -296,9 +294,9 @@ public class HazelcastComponent extends UriEndpointComponent {
         // If instance neither supplied nor found by name, try to lookup its config
         // as reference or as xml configuration file.
         if (hzInstance == null) {
-            config = resolveAndRemoveReferenceParameter(parameters, HAZELCAST_CLIENT_CONFIGU_PARAM, ClientConfig.class);
+            config = resolveAndRemoveReferenceParameter(parameters, HAZELCAST_CONFIGU_PARAM, ClientConfig.class);
             if (config == null) {
-                String configUri = getAndRemoveParameter(parameters, HAZELCAST_CLIENT_CONFIGU_URI_PARAM, String.class);
+                String configUri = getAndRemoveParameter(parameters, HAZELCAST_CONFIGU_URI_PARAM, String.class);
                 if (configUri != null) {
                     configUri = getCamelContext().resolvePropertyPlaceholders(configUri);
                 }
