@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -84,10 +85,14 @@ public class CamelSalesforceMojoOutputTest {
         mojo.processDescription(pkgDir, description, utility, FIXED_DATE);
 
         File generatedFile = new File(pkgDir, source);
-        File expectedFile = FileUtils.toFile(CamelSalesforceMojoOutputTest.class.getResource("/generated/" + source));
+        String generatedContent = FileUtils.readFileToString(generatedFile);
 
-        Assert.assertTrue("Geberated source file in " + source + " must be equal to the one present in test/resources",
-            FileUtils.contentEquals(generatedFile, expectedFile));
+        String expectedContent = IOUtils
+            .toString(CamelSalesforceMojoOutputTest.class.getResource("/generated/" + source));
+
+        Assert.assertEquals(
+            "Geberated source file in " + source + " must be equal to the one present in test/resources",
+            generatedContent, expectedContent);
     }
 
     static SObjectDescription createSObjectDescription(String name) throws IOException {
