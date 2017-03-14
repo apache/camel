@@ -40,13 +40,13 @@ public class ZipIterator implements Iterator<Message>, Closeable {
     static final Logger LOGGER = LoggerFactory.getLogger(ZipIterator.class);
     
     private final Message inputMessage;
-    private final boolean unzipEmptyDirectorySupported;
+    private boolean supportIteratorForEmptyDirectory;
     private volatile ZipInputStream zipInputStream;
     private volatile Message parent;
     
     public ZipIterator(Message inputMessage) {
         this.inputMessage = inputMessage;
-        this.unzipEmptyDirectorySupported = (boolean)inputMessage.getHeader("unzipEmptyDirectorySupported");
+        this.supportIteratorForEmptyDirectory = false;
         InputStream inputStream = inputMessage.getBody(InputStream.class);
         if (inputStream instanceof ZipInputStream) {
             zipInputStream = (ZipInputStream)inputStream;
@@ -132,7 +132,7 @@ public class ZipIterator implements Iterator<Message>, Closeable {
             if (!entry.isDirectory()) {
                 return entry;
             } else {
-                if (unzipEmptyDirectorySupported) {
+                if (supportIteratorForEmptyDirectory) {
                     ZipEntry dirEntry = new ZipEntry(entry.getName());
                     return dirEntry;
                 }
@@ -151,5 +151,13 @@ public class ZipIterator implements Iterator<Message>, Closeable {
     public void close() throws IOException {
         IOHelper.close(zipInputStream);
         zipInputStream = null;
+    }
+    
+    public boolean isSupportIteratorForEmptyDirectory() {
+        return supportIteratorForEmptyDirectory;
+    }
+
+    public void setSupportIteratorForEmptyDirectory(boolean supportIteratorForEmptyDirectory) {
+        this.supportIteratorForEmptyDirectory = supportIteratorForEmptyDirectory;
     }
 }
