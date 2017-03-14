@@ -132,7 +132,13 @@ public final class HazelcastConstants {
     public static final String HAZELCAST_INSTANCE_NAME_PARAM = "hazelcastInstanceName";
     public static final String HAZELCAST_INSTANCE_PARAM = "hazelcastInstance";
     public static final String HAZELCAST_CONFIGU_PARAM = "hazelcastConfig";
+    public static final String HAZELCAST_CLIENT_CONFIGU_PARAM = "hazelcastClientConfig";
     public static final String HAZELCAST_CONFIGU_URI_PARAM = "hazelcastConfigUri";
+    public static final String HAZELCAST_CLIENT_CONFIGU_URI_PARAM = "hazelcastClientConfigUri";
+    
+    // Hazelcast mode
+    public static final String HAZELCAST_NODE_MODE = "node";
+    public static final String HAZELCAST_CLIENT_MODE = "client";
 
 
     private HazelcastConstants() {
