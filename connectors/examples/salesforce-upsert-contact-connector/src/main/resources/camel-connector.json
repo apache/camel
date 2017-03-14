@@ -12,6 +12,8 @@
   "description": "Create or update Salesforce Contact SObject",
   "labels": [ "salesforce" ],
   "pattern": "To",
+  "inputDataType": "java:org.foo.salesforce.upsert.contact.Contact",
+  "outputDataType": "java:org.apache.camel.component.salesforce.api.dto.CreateSObjectResult",
   "componentOptions" : [ "loginUrl", "clientId", "clientSecret", "refreshToken" ],
   "endpointValues" : {
     "operationName": "upsertSObject"

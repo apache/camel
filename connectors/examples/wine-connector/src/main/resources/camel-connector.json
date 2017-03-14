@@ -13,6 +13,8 @@
   "description": "To order wine from the bar",
   "labels": [ "bar" ],
   "pattern": "To",
+  "inputDataType": "*",
+  "outputDataType": "text",
   "endpointOptions": [ "drink", "amount" ],
   "endpointValues": {
     "drink": "Wine"
