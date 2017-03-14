@@ -36,6 +36,8 @@ import org.apache.camel.spi.Metadata;
 public class ZipFileDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private Boolean usingIterator;
+    @XmlAttribute
+    private Boolean allowEmptyDirectory;
 
     public ZipFileDataFormat() {
         super("zipfile");
@@ -46,10 +48,17 @@ public class ZipFileDataFormat extends DataFormatDefinition {
         if (usingIterator != null) {
             setProperty(camelContext, dataFormat, "usingIterator", usingIterator);
         }
+        if (allowEmptyDirectory != null) {
+            setProperty(camelContext, dataFormat, "allowEmptyDirectory", allowEmptyDirectory);
+        }
     }
 
     public Boolean getUsingIterator() {
         return usingIterator;
+    }
+    
+    public Boolean getAllowEmptyDirectory() {
+        return allowEmptyDirectory;
     }
 
     /**
@@ -58,6 +67,14 @@ public class ZipFileDataFormat extends DataFormatDefinition {
      */
     public void setUsingIterator(Boolean usingIterator) {
         this.usingIterator = usingIterator;
+    }
+    
+    /**
+     * If the zip file has more then one entry, setting this option to true, allows to get the iterator
+     * even if the directory is empty
+     */
+    public void setAllowEmptyDirectory(Boolean allowEmptyDirectory) {
+        this.allowEmptyDirectory = allowEmptyDirectory;
     }
 
 }
