@@ -120,7 +120,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         zip.setSupportEmptyDirectory(true);
         template.sendBody("direct:unzipWithEmptyDirectory", new File("src/test/resources/hello.odt"));
         assertTrue(Files.exists(Paths.get("hello_out/Configurations2")));
-        //deleteDirectory(new File("hello_out"));
+        deleteDirectory(new File("hello_out"));
     }
     
     @Test
@@ -130,7 +130,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         zip.setSupportEmptyDirectory(false);
         template.sendBody("direct:unzipWithEmptyDirectory", new File("src/test/resources/hello.odt"));
         assertTrue(!Files.exists(Paths.get("hello_out/Configurations2")));
-        //deleteDirectory(new File("hello_out"));
+        deleteDirectory(new File("hello_out"));
     }
 
     @Test
@@ -229,21 +229,15 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
         }
     }
 
-    private static void copy(File file, OutputStream out) throws IOException {
-        InputStream in = new FileInputStream(file);
-        try {
-            copy(in, out);
-        } finally {
-            in.close();
-        }
+    private static void copy(File file, OutputStream out) throws IOException { 
+        try (InputStream in = new FileInputStream(file)) {
+            copy(in, out); 
+        } 
     }
 
-    private static void copy(InputStream in, File file) throws IOException {
-        OutputStream out = new FileOutputStream(file);
-        try {
-            copy(in, out);
-        } finally {
-            out.close();
+    private static void copy(InputStream in, File file) throws IOException { 
+        try (OutputStream out = new FileOutputStream(file)) {
+            copy(in, out); 
         }
     }
 
