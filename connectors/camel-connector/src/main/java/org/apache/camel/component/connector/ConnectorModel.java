@@ -60,7 +60,7 @@ final class ConnectorModel {
     private Map<String, String> defaultComponentOptions;
     private Map<String, String> defaultEndpointOptions;
 
-    public ConnectorModel(String componentName, String className) {
+    ConnectorModel(String componentName, String className) {
         this.componentName = componentName;
         this.className = className;
         this.lines = Suppliers.memorize(() -> findCamelConnectorJSonSchema());
