@@ -323,6 +323,14 @@ public class ZipkinTracer extends ServiceSupport implements RoutePolicyFactory, 
             }
         }
 
+        if (spanCollector == null) {
+            // Try to lookup the span collector from the registry if only one instance is present
+            Set<SpanCollector> collectors = camelContext.getRegistry().findByType(SpanCollector.class);
+            if (collectors.size() == 1) {
+                spanCollector = collectors.iterator().next();
+            }
+        }
+
         ObjectHelper.notNull(spanCollector, "SpanCollector", this);
 
         if (clientServiceMappings.isEmpty() && serverServiceMappings.isEmpty()) {
