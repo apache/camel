@@ -188,7 +188,7 @@
     <!-- embedmongo 1.50.2 do not work -->
     <embedmongo-version>1.50.1</embedmongo-version>
     <etcd4j-version>2.13.0</etcd4j-version>
-    <exec-maven-plugin-version>1.5.0</exec-maven-plugin-version>
+    <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
     <facebook4j-core-version>2.4.8</facebook4j-core-version>
     <facebook4j-core-bundle-version>2.4.8_1</facebook4j-core-bundle-version>
