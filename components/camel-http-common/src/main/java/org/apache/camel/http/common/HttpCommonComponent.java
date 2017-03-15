@@ -24,11 +24,13 @@ import org.apache.camel.util.CamelContextHelper;
 
 public abstract class HttpCommonComponent extends HeaderFilterStrategyComponent {
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "To use a custom HttpBinding to control the mapping between Camel message and HttpClient.")
     protected HttpBinding httpBinding;
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "To use the shared HttpConfiguration as base configuration.")
     protected HttpConfiguration httpConfiguration;
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object."
+        + " This is by default turned off. "
+        + " If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.")
     protected boolean allowJavaSerializedObject;
 
     public HttpCommonComponent(Class<? extends HttpCommonEndpoint> endpointClass) {
