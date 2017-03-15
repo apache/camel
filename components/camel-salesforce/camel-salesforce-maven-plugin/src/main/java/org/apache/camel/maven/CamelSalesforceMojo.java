@@ -61,6 +61,7 @@ import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.client.SyncResponseCallback;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
@@ -576,7 +577,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
         }
 
         // set session before calling start()
-        final SalesforceSession session = new SalesforceSession(httpClient,
+        final SalesforceSession session = new SalesforceSession(new DefaultCamelContext(), httpClient,
             httpClient.getTimeout(),
             new SalesforceLoginConfig(loginUrl, clientId, clientSecret, userName, password, false));
         httpClient.setSession(session);

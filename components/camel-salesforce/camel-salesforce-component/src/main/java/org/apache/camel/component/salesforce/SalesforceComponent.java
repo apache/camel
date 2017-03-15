@@ -46,6 +46,7 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpProxy;
 import org.eclipse.jetty.client.Origin;
@@ -88,6 +89,8 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
     private String userName;
     @Metadata(label = "security", secret = true)
     private String password;
+    @Metadata(label = "security", secret = true)
+    private KeyStoreParameters keystore;
     @Metadata(label = "security")
     private boolean lazyLogin;
 
@@ -220,26 +223,18 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
     @Override
     protected void doStart() throws Exception {
         if (loginConfig == null) {
-            loginConfig = new SalesforceLoginConfig();
-            if (loginUrl != null) {
-                loginConfig.setLoginUrl(loginUrl);
+            if (ObjectHelper.isNotEmpty(password)) {
+                loginConfig = new SalesforceLoginConfig(loginUrl, clientId, clientSecret, userName, password, lazyLogin);
+            } else if (ObjectHelper.isNotEmpty(refreshToken)) {
+                loginConfig = new SalesforceLoginConfig(loginUrl, clientId, clientSecret, refreshToken, lazyLogin);
+            } else if (ObjectHelper.isNotEmpty(keystore)) {
+                loginConfig = new SalesforceLoginConfig(loginUrl, clientId, userName, keystore, lazyLogin);
+            } else {
+                throw new IllegalArgumentException("Cannot define a login configuration, the component configuration"
+                    + " does not contain `password`, `refreshToken` or `keystore` parameters. Specifying one of those"
+                    + " determines the type of authentication performed.");
             }
-            if (refreshToken != null) {
-                loginConfig.setRefreshToken(refreshToken);
-            }
-            if (clientId != null) {
-                loginConfig.setClientId(clientId);
-            }
-            if (clientSecret != null) {
-                loginConfig.setClientSecret(clientSecret);
-            }
-            if (userName != null) {
-                loginConfig.setUserName(userName);
-            }
-            if (password != null) {
-                loginConfig.setPassword(password);
-            }
-            loginConfig.setLazyLogin(lazyLogin);
+
             LOG.debug("Created login configuration: {}", loginConfig);
         } else {
             LOG.debug("Using shared login configuration: {}", loginConfig);
@@ -303,7 +298,7 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
 
         // support restarts
         if (this.session == null) {
-            this.session = new SalesforceSession(httpClient, httpClient.getTimeout(), loginConfig);
+            this.session = new SalesforceSession(getCamelContext(), httpClient, httpClient.getTimeout(), loginConfig);
         }
         // set session before calling start()
         httpClient.setSession(this.session);
@@ -470,6 +465,7 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
 
     public String getClientSecret() {
         return clientSecret;
+
     }
 
     /**
@@ -477,6 +473,17 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
      */
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
+    }
+
+    /**
+     * {@link KeyStoreParameters} to use in OAuth 2.0 JWT Bearer Token Flow.
+     */
+    public void setKeystore(final KeyStoreParameters keystore) {
+        this.keystore = keystore;
+    }
+
+    public KeyStoreParameters getKeystore() {
+        return keystore;
     }
 
     public String getRefreshToken() {
