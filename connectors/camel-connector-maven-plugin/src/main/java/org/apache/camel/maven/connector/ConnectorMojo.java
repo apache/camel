@@ -268,8 +268,6 @@ public class ConnectorMojo extends AbstractJarMojo {
         Map values = (Map) dto.get("endpointValues");
         Map overrides = (Map) dto.get("endpointOverrides");
 
-        ObjectMapper mapper = new ObjectMapper();
-
         StringBuilder sb = new StringBuilder();
         sb.append("  \"properties\": {\n");
 
