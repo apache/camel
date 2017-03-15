@@ -29,7 +29,7 @@
 
   <groupId>org.apache.camel.archetypes</groupId>
   <artifactId>camel-archetype-activemq</artifactId>
-  <name>Camel :: Archetypes :: Camel Router with ActiveMQ</name>
+  <name>Camel :: Archetypes :: Camel Router with ActiveMQ (deprecated)</name>
   <description>Creates a new Camel project that configures and interacts with ActiveMQ.</description>
   <packaging>maven-archetype</packaging>
 
