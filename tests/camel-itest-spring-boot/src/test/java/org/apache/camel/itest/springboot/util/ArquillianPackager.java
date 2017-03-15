@@ -311,6 +311,7 @@ public final class ArquillianPackager {
         ignore.add("org.apache.parquet");
         ignore.add("org.apache.velocity");
         ignore.add("org.apache.qpid:qpid-jms-client");
+        ignore.add("org.opensaml");
         ignore.add("org.ow2.asm"); // No problem
         ignore.add("org.codehaus.plexus");
         ignore.add("org.jboss.arquillian.container");
