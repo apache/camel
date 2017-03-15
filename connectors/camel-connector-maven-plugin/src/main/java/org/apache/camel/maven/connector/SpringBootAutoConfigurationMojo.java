@@ -28,6 +28,7 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.maven.connector.model.ComponentModel;
 import org.apache.camel.maven.connector.model.ComponentOptionModel;
+import org.apache.camel.maven.connector.util.JSonSchemaHelper;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -52,8 +53,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static org.apache.camel.maven.connector.FileHelper.loadText;
-import static org.apache.camel.maven.connector.StringHelper.getSafeValue;
+import static org.apache.camel.maven.connector.util.FileHelper.loadText;
+import static org.apache.camel.maven.connector.util.StringHelper.getSafeValue;
+import static org.apache.camel.maven.connector.util.StringHelper.getShortJavaType;
 
 /**
  * Generate Spring Boot auto configuration files for Camel connectors.
@@ -65,9 +67,6 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project.build.outputDirectory}", required = true)
     private File classesDirectory;
-
-    @Parameter(defaultValue = "${basedir}", required = true)
-    private File baseDir;
 
     @Parameter(defaultValue = "true")
     private boolean includeLicenseHeader;
@@ -114,16 +113,16 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             if (hasOptions) {
                 createConnectorConfigurationSource(pkg, model, javaType, connectorScheme);
             }
-            createConnectorAutoConfigurationSource(pkg, model, hasOptions, javaType, connectorScheme);
-            createConnectorSpringFactorySource(pkg, model);
+            createConnectorAutoConfigurationSource(pkg, hasOptions, javaType, connectorScheme);
+            createConnectorSpringFactorySource(pkg, javaType);
         } else {
             getLog().warn("Cannot generate Spring Boot AutoConfiguration as camel-component-schema.json file missing");
         }
     }
 
-    private void createConnectorSpringFactorySource(String packageName, ComponentModel model) throws MojoFailureException {
-        int pos = model.getJavaType().lastIndexOf(".");
-        String name = model.getJavaType().substring(pos + 1);
+    private void createConnectorSpringFactorySource(String packageName, String javaType) throws MojoFailureException {
+        int pos = javaType.lastIndexOf(".");
+        String name = javaType.substring(pos + 1);
         name = name.replace("Component", "ConnectorAutoConfiguration");
 
         writeComponentSpringFactorySource(packageName, name);
@@ -136,8 +135,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         String lineToAdd = packageName + "." + name + "\n";
         sb.append(lineToAdd);
 
+        // project root folder
+        File root = classesDirectory.getParentFile().getParentFile();
         String fileName = "src/main/resources/META-INF/spring.factories";
-        File target = new File(baseDir, fileName);
+        File target = new File(root, fileName);
 
         // create new file
         try {
@@ -177,7 +178,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
         String prefix = "camel.connector." + model.getScheme();
         // make sure prefix is in lower case
-        prefix = connectorScheme.toLowerCase(Locale.US);
+        prefix = "camel.connector." + connectorScheme.toLowerCase(Locale.US);
         javaClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", prefix);
 
         for (ComponentOptionModel option : model.getComponentOptions()) {
@@ -217,11 +218,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         sortImports(javaClass);
 
         String fileName = packageName.replaceAll("\\.", "\\/") + "/" + name + ".java";
-
         writeSourceIfChanged(javaClass, fileName);
     }
 
-    private void createConnectorAutoConfigurationSource(String packageName, ComponentModel model, boolean hasOptions,
+    private void createConnectorAutoConfigurationSource(String packageName, boolean hasOptions,
                                                         String javaType, String connectorScheme) throws MojoFailureException {
 
         final JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
@@ -249,18 +249,19 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             javaClass.addImport("org.apache.camel.util.IntrospectionSupport");
         }
 
-        javaClass.addImport(model.getJavaType());
+        javaClass.addImport(javaType);
         javaClass.addImport("org.apache.camel.CamelContext");
 
         // add method for auto configure
-        String body = createComponentBody(model.getShortJavaType(), hasOptions);
-        String methodName = "configure" + model.getShortJavaType();
+        String shortJavaType = getShortJavaType(javaType);
+        String body = createComponentBody(shortJavaType, hasOptions);
+        String methodName = "configure" + shortJavaType;
 
         MethodSource<JavaClassSource> method = javaClass.addMethod()
             .setName(methodName)
             .setPublic()
             .setBody(body)
-            .setReturnType(model.getShortJavaType())
+            .setReturnType(shortJavaType)
             .addThrows(Exception.class);
 
         method.addParameter("CamelContext", "camelContext");
@@ -271,7 +272,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
         method.addAnnotation(Bean.class).setStringValue("name", connectorScheme.toLowerCase(Locale.US) + "-connector");
         method.addAnnotation(ConditionalOnClass.class).setLiteralValue("value", "CamelContext.class");
-        method.addAnnotation(ConditionalOnMissingBean.class).setLiteralValue("value", model.getShortJavaType() + ".class");
+        method.addAnnotation(ConditionalOnMissingBean.class).setLiteralValue("value", javaType + ".class");
 
         sortImports(javaClass);
 
@@ -280,7 +281,9 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     }
 
     private void writeSourceIfChanged(JavaClassSource source, String fileName) throws MojoFailureException {
-        File target = new File(".", "src/main/java/" + fileName);
+        // project root folder
+        File root = classesDirectory.getParentFile().getParentFile();
+        File target = new File(root, "src/main/java/" + fileName);
 
         try {
             String header = "";

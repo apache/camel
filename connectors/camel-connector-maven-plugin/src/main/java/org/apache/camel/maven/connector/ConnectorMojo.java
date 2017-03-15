@@ -32,6 +32,10 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.maven.connector.util.FileHelper;
+import org.apache.camel.maven.connector.util.GitHelper;
+import org.apache.camel.maven.connector.util.JSonSchemaHelper;
+import org.apache.camel.maven.connector.util.StringHelper;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
