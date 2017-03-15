@@ -22,7 +22,6 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.Component;
 import org.apache.camel.ComponentVerifier;
@@ -81,7 +80,7 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
                     IntrospectionSupport.setProperties(getCamelContext(), getCamelContext().getTypeConverter(), base, copy);
 
                     if (base instanceof Component) {
-                        Component old = getCamelContext().removeComponent(scheme);
+                        getCamelContext().removeComponent(scheme);
                         // ensure component is started and stopped when Camel shutdown
                         getCamelContext().addService(base, true, true);
                         getCamelContext().addComponent(scheme, (Component) base);
