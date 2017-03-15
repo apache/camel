@@ -119,11 +119,11 @@ public final class ArquillianPackager {
         }
 
         if (config.getUseCustomLog()) {
-            ark = ark.addAsResource("spring-logback.xml", "/spring-logback.xml");
+            ark = ark.addAsResource("spring-logback.xml", CLASSES_FOLDER + "/spring-logback.xml");
         }
 
         for (Map.Entry<String, String> res : config.getResources().entrySet()) {
-            ark = ark.addAsResource(res.getKey(), "/" + res.getValue());
+            ark = ark.addAsResource(res.getKey(), CLASSES_FOLDER + "/" + res.getValue());
         }
 
         String version = System.getProperty("version_org.apache.camel:camel-core");
