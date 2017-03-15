@@ -105,13 +105,6 @@ import static org.apache.camel.maven.packaging.PackageHelper.loadText;
 public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
     /**
-     * The output directory for generated component schema file
-     *
-     * @parameter default-value="${project.build.directory}/classes"
-     */
-    protected File classesDir;
-
-    /**
      * Useful to move configuration towards starters.
      * Warning: the spring.factories files sometimes are used also on the main artifacts.
      * Make sure it is not the case before enabling this property.
@@ -146,6 +139,13 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     private static final List<String> JAVA_LANG_TYPES = Arrays.asList("Boolean", "Byte", "Character", "Class", "Double", "Float", "Integer", "Long", "Object", "Short", "String");
 
     private static final String[] IGNORE_MODULES = {/* Non-standard -> */ "camel-grape", "camel-connector"};
+
+    /**
+     * The output directory for generated component schema file
+     *
+     * @parameter default-value="${project.build.directory}/classes"
+     */
+    protected File classesDir;
 
     /**
      * The maven project.
