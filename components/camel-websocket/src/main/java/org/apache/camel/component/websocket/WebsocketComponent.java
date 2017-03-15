@@ -38,11 +38,9 @@ import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.SessionManager;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.handler.HandlerWrapper;
-import org.eclipse.jetty.server.session.HashSessionManager;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -391,8 +389,7 @@ public class WebsocketComponent extends UriEndpointComponent {
 
         context.setContextPath("/");
 
-        SessionManager sm = new HashSessionManager();
-        SessionHandler sh = new SessionHandler(sm);
+        SessionHandler sh = new SessionHandler();
         context.setSessionHandler(sh);
 
         if (home != null) {
