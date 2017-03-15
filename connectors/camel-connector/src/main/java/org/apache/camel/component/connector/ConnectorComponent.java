@@ -66,4 +66,14 @@ public interface ConnectorComponent extends Component {
      */
     String getCamelConnectorJSon();
 
+    /**
+     * A set of additional component options to use for the base component when creating connector endpoints.
+     */
+    Map<String, Object> getComponentOptions();
+
+    /**
+     * A set of additional component options to use for the base component when creating connector endpoints.
+     */
+    void setComponentOptions(Map<String, Object> baseComponentOptions);
+
 }
