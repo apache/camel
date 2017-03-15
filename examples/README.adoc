@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 89 (7 deprecated)
+Number of Examples: 89 (9 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |=======================================================================
@@ -152,11 +152,11 @@ Number of Examples: 89 (7 deprecated)
 
 | link:camel-example-swagger-osgi/README.md[Swagger OSGi] (camel-example-swagger-osgi) | OSGi | An example using REST DSL in XML and Swagger API
 
-| link:camel-example-groovy/ReadMe.md[Groovy] (camel-example-groovy) | Other Languages | A Camel route using Groovy
+| link:camel-example-groovy/ReadMe.md[Groovy] (camel-example-groovy) | Other Languages | *deprecated* A Camel route using Groovy DSL
 
 | link:camel-example-kotlin/ReadMe.md[Kotlin] (camel-example-kotlin) | Other Languages | A Camel route using Kotlin
 
-| link:camel-example-scala/ReadMe.md[Scala] (camel-example-scala) | Other Languages | A Camel route using Scala
+| link:camel-example-scala/ReadMe.md[Scala] (camel-example-scala) | Other Languages | *deprecated* A Camel route using Scala
 
 | link:camel-example-java8-rx/readme.adoc[Java8 RX] (camel-example-java8-rx) | Reactive | An example for showing Camel RX for Java 8
 
