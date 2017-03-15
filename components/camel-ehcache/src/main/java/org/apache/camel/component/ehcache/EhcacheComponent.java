@@ -20,19 +20,18 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
- * Represents the component that manages {@link EhcacheEndpoint}.
+ * Represents the component that manages {@link DefaultComponent}.
  */
-public class EhcacheComponent extends UriEndpointComponent {
+public class EhcacheComponent extends DefaultComponent {
     
     public EhcacheComponent() {
-        super(EhcacheEndpoint.class);
     }
 
     public EhcacheComponent(CamelContext context) {
-        super(context, EhcacheEndpoint.class);
+        super(context);
     }
 
     @Override

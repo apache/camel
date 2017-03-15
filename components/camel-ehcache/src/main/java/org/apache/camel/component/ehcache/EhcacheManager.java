@@ -17,11 +17,16 @@
 package org.apache.camel.component.ehcache;
 
 import java.io.IOException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.Service;
 import org.apache.camel.util.ObjectHelper;
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
+import org.ehcache.UserManagedCache;
+import org.ehcache.config.CacheConfiguration;
+import org.ehcache.config.builders.UserManagedCacheBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +35,8 @@ public class EhcacheManager implements Service {
 
     private final EhcacheConfiguration configuration;
     private final CacheManager cacheManager;
+    private final ConcurrentMap<String, UserManagedCache<?, ?>> userCaches;
+
     private final boolean managed;
 
     public EhcacheManager(EhcacheConfiguration configuration) throws IOException {
@@ -46,6 +53,7 @@ public class EhcacheManager implements Service {
 
     private EhcacheManager(CacheManager cacheManager, boolean managed, EhcacheConfiguration configuration) {
         this.cacheManager = cacheManager;
+        this.userCaches = new ConcurrentHashMap<>();
         this.managed = managed;
         this.configuration = configuration;
 
@@ -53,23 +61,38 @@ public class EhcacheManager implements Service {
     }
 
     @Override
-    public void start() throws Exception {
+    public synchronized void start() throws Exception {
         if (managed) {
             cacheManager.init();
         }
     }
 
     @Override
-    public void stop() throws Exception {
+    public synchronized void stop() throws Exception {
         if (managed) {
             cacheManager.close();
         }
+
+        // Clean up any User managed cache
+        userCaches.values().forEach(UserManagedCache::close);
     }
 
+    @SuppressWarnings("unchecked")
     public <K, V> Cache<K, V> getCache(String name, Class<K> keyType, Class<V> valueType) throws Exception {
         Cache<K, V> cache = cacheManager.getCache(name, keyType, valueType);
         if (cache == null && configuration != null && configuration.isCreateCacheIfNotExist()) {
-            cache = cacheManager.createCache(name, configuration.getMandatoryConfiguration());
+            CacheConfiguration<K, V> cacheConfiguration = configuration.getConfiguration();
+
+            if (cacheConfiguration != null) {
+                cache = cacheManager.createCache(name, cacheConfiguration);
+            } else {
+                // If a cache configuration is not provided, create a User Managed
+                // Cache
+                cache = (Cache<K, V>)userCaches.computeIfAbsent(
+                    name,
+                    key -> UserManagedCacheBuilder.newUserManagedCacheBuilder(keyType, valueType).build(true)
+                );
+            }
         }
 
         return cache;

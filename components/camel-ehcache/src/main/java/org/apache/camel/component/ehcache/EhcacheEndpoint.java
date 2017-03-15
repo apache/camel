@@ -84,5 +84,4 @@ public class EhcacheEndpoint extends DefaultEndpoint {
     EhcacheConfiguration getConfiguration() {
         return configuration;
     }
-
 }
