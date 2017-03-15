@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.maven.connector;
+package org.apache.camel.maven.connector.util;
 
 /**
  * A little helper class for converting a collection of values to a (usually comma separated) string.

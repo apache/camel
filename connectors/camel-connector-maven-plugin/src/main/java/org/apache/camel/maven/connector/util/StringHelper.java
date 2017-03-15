@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.maven.connector;
+package org.apache.camel.maven.connector.util;
 
 import java.util.List;
 import java.util.Map;
@@ -198,5 +198,22 @@ public final class StringHelper {
         }
         return "";
     }
+
+    public static String getShortJavaType(String javaType) {
+        if (javaType.startsWith("java.util.Map")) {
+            return "Map";
+        } else if (javaType.startsWith("java.util.Set")) {
+            return "Set";
+        } else if (javaType.startsWith("java.util.List")) {
+            return "List";
+        }
+        int pos = javaType.lastIndexOf(".");
+        if (pos != -1) {
+            return javaType.substring(pos + 1);
+        } else {
+            return javaType;
+        }
+    }
+
 
 }
