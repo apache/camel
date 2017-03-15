@@ -52,6 +52,7 @@ import org.springframework.boot.context.properties.DeprecatedConfigurationProper
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 import static org.apache.camel.maven.connector.util.FileHelper.loadText;
 import static org.apache.camel.maven.connector.util.StringHelper.getSafeValue;
@@ -108,15 +109,14 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             int pos = javaType.lastIndexOf(".");
             String pkg = javaType.substring(0, pos) + ".springboot";
 
-            getLog().info("Generating Spring Boot AutoConfiguration for Connector: " + model.getScheme());
-
+            // we only create spring boot auto configuration if there is options to configure
             if (hasOptions) {
+                getLog().info("Generating Spring Boot AutoConfiguration for Connector: " + model.getScheme());
+
                 createConnectorConfigurationSource(pkg, model, javaType, connectorScheme);
+                createConnectorAutoConfigurationSource(pkg, hasOptions, javaType, connectorScheme);
+                createConnectorSpringFactorySource(pkg, javaType);
             }
-            createConnectorAutoConfigurationSource(pkg, hasOptions, javaType, connectorScheme);
-            createConnectorSpringFactorySource(pkg, javaType);
-        } else {
-            getLog().warn("Cannot generate Spring Boot AutoConfiguration as camel-component-schema.json file missing");
         }
     }
 
@@ -270,7 +270,10 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             method.addParameter(configurationName, "configuration");
         }
 
-        method.addAnnotation(Bean.class).setStringValue("name", connectorScheme.toLowerCase(Locale.US) + "-connector");
+        // must be named -component because camel-spring-boot uses that to lookup components
+        String beanName = connectorScheme + "-component";
+        method.addAnnotation(Lazy.class);
+        method.addAnnotation(Bean.class).setStringValue("name", beanName);
         method.addAnnotation(ConditionalOnClass.class).setLiteralValue("value", "CamelContext.class");
         method.addAnnotation(ConditionalOnMissingBean.class).setLiteralValue("value", javaType + ".class");
 
@@ -321,6 +324,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             sb.append("Map<String, Object> parameters = new HashMap<>();\n");
             sb.append("IntrospectionSupport.getProperties(configuration, parameters, null, false);\n");
             sb.append("IntrospectionSupport.setProperties(camelContext, camelContext.getTypeConverter(), connector, parameters);\n");
+            sb.append("connector.setComponentOptions(parameters);\n");
         }
         sb.append("\n");
         sb.append("return connector;");

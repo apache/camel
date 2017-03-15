@@ -16,9 +16,13 @@
  */
 package org.apache.camel.component.connector;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.Component;
 import org.apache.camel.ComponentVerifier;
@@ -42,6 +46,7 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
 
     private final String componentName;
     private final ConnectorModel model;
+    private Map<String, Object> componentOptions;
 
     protected DefaultConnectorComponent(String componentName, String className) {
         this.componentName = componentName;
@@ -60,11 +65,45 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
         parameters.clear();
         
         String scheme = model.getBaseScheme();
+
+        // if we have component options then we need to create a new instance of the component
+        // which we then configure before it create the endpoint
+        if (componentOptions != null && !componentOptions.isEmpty()) {
+            String baseClassName = model.getBaseJavaType();
+            if (baseClassName != null) {
+                Class<?> type = Class.forName(baseClassName);
+                Constructor ctr = getPublicDefaultConstructor(type);
+                if (ctr != null) {
+                    // call default no-arg constructor
+                    Object base = ctr.newInstance();
+                    // configure component with extra options
+                    Map<String, Object> copy = new HashMap<>(componentOptions);
+                    IntrospectionSupport.setProperties(getCamelContext(), getCamelContext().getTypeConverter(), base, copy);
+
+                    if (base instanceof Component) {
+                        Component old = getCamelContext().removeComponent(scheme);
+                        // ensure component is started and stopped when Camel shutdown
+                        getCamelContext().addService(base, true, true);
+                        getCamelContext().addComponent(scheme, (Component) base);
+                    }
+                }
+            }
+        }
+
         String delegateUri = createEndpointUri(scheme, options);
 
         log.debug("Connector resolved: {} -> {}", uri, delegateUri);
         Endpoint delegate = getCamelContext().getEndpoint(delegateUri);
         return new DefaultConnectorEndpoint(uri, this, delegate, model.getInputDataType(), model.getOutputDataType());
+    }
+
+    private static Constructor getPublicDefaultConstructor(Class<?> clazz) {
+        for (Constructor ctr : clazz.getConstructors()) {
+            if (Modifier.isPublic(ctr.getModifiers()) && ctr.getParameterCount() == 0) {
+                return ctr;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -97,6 +136,14 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
     @Override
     public String getComponentName() {
         return componentName;
+    }
+
+    public Map<String, Object> getComponentOptions() {
+        return componentOptions;
+    }
+
+    public void setComponentOptions(Map<String, Object> baseComponentOptions) {
+        this.componentOptions = baseComponentOptions;
     }
 
     @SuppressWarnings("unchecked")
