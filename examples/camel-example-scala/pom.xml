@@ -28,7 +28,7 @@
 
   <artifactId>camel-example-scala</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Example :: Scala</name>
+  <name>Camel :: Example :: Scala (deprecated)</name>
   <description>A Camel route using Scala</description>
 
   <properties>

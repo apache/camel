@@ -28,8 +28,8 @@
 
   <artifactId>camel-example-groovy</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Example :: Groovy</name>
-  <description>A Camel route using Groovy</description>
+  <name>Camel :: Example :: Groovy (deprecated)</name>
+  <description>A Camel route using Groovy DSL</description>
 
   <properties>
     <category>Other Languages</category>
