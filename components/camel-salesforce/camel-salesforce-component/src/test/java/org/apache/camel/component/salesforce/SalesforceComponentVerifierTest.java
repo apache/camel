@@ -28,17 +28,17 @@ import org.junit.Assume;
 import org.junit.Test;
 
 public class SalesforceComponentVerifierTest extends CamelTestSupport {
-    private static final String clientId = getSystemPropertyOrEnvVar("salesforce.clientid");
-    private static final String clientSecret = getSystemPropertyOrEnvVar("salesforce.clientsecret");
-    private static final String userName = getSystemPropertyOrEnvVar("salesforce.userName");
-    private static final String password = getSystemPropertyOrEnvVar("salesforce.password");
+    private static final String CLIENT_ID = getSystemPropertyOrEnvVar("salesforce.clientid");
+    private static final String CLIENT_SECRET = getSystemPropertyOrEnvVar("salesforce.clientsecret");
+    private static final String USERNAME = getSystemPropertyOrEnvVar("salesforce.userName");
+    private static final String PASSWORD = getSystemPropertyOrEnvVar("salesforce.password");
 
     @Override
     protected void doPreSetup() throws Exception {
-        Assume.assumeNotNull(clientId);
-        Assume.assumeNotNull(clientSecret);
-        Assume.assumeNotNull(userName);
-        Assume.assumeNotNull(password);
+        Assume.assumeNotNull(CLIENT_ID);
+        Assume.assumeNotNull(CLIENT_SECRET);
+        Assume.assumeNotNull(USERNAME);
+        Assume.assumeNotNull(PASSWORD);
     }
 
     @Override
@@ -52,10 +52,10 @@ public class SalesforceComponentVerifierTest extends CamelTestSupport {
 
     protected Map<String, Object> getParameters() {
         HashMap<String, Object> parameters = new HashMap<>();
-        parameters.put("clientId", clientId);
-        parameters.put("clientSecret", clientSecret);
-        parameters.put("userName", userName);
-        parameters.put("password", password);
+        parameters.put("clientId", CLIENT_ID);
+        parameters.put("clientSecret", CLIENT_SECRET);
+        parameters.put("userName", USERNAME);
+        parameters.put("password", PASSWORD);
 
         return parameters;
     }

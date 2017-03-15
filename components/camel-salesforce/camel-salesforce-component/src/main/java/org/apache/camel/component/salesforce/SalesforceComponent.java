@@ -69,9 +69,9 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
 
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceComponent.class);
 
-    static final int CONNECTION_TIMEOUT = 60000;
-    static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
-    static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
+    private static final int CONNECTION_TIMEOUT = 60000;
+    private static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
+    private static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
 
     @Metadata(label = "security")
     private SalesforceLoginConfig loginConfig;
