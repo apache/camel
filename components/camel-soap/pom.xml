@@ -290,6 +290,14 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>--add-modules java.xml.bind,java.xml.ws --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+                            <!--https://issues.apache.org/jira/browse/SUREFIRE-1265 -->
+                            <reuseForks>true</reuseForks>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
