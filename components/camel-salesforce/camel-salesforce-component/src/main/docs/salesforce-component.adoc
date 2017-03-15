@@ -427,7 +427,7 @@ link:salesforce.html[Salesforce].
 
 
 // component options: START
-The Salesforce component supports 24 options which are listed below.
+The Salesforce component supports 25 options which are listed below.
 
 
 
@@ -438,6 +438,7 @@ The Salesforce component supports 24 options which are listed below.
 | loginUrl | security | https://login.salesforce.com | String | Salesforce login URL defaults to https://login.salesforce.com
 | clientId | security |  | String | Salesforce connected application Consumer Key
 | clientSecret | security |  | String | Salesforce connected application Consumer Secret
+| keystore | security |  | KeyStoreParameters | KeyStoreParameters to use in OAuth 2.0 JWT Bearer Token Flow.
 | refreshToken | security |  | String | Salesforce connected application Consumer token
 | userName | security |  | String | Salesforce account user name
 | password | security |  | String | Salesforce account password

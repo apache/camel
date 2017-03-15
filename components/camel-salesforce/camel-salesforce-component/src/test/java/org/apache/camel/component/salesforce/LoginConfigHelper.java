@@ -23,65 +23,74 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.junit.Assert;
 
 public class LoginConfigHelper extends Assert {
 
     protected static final String TEST_LOGIN_PROPERTIES = "../test-salesforce-login.properties";
 
-    public static SalesforceLoginConfig getLoginConfig() throws IOException {
+    private static final LoginConfigHelper INSTANCE;
 
-        // load test-salesforce-login properties
-        Properties properties = new Properties();
-        InputStream stream = null;
+    static {
         try {
-            final SalesforceLoginConfig config;
-            stream = new FileInputStream(TEST_LOGIN_PROPERTIES);
-            properties.load(stream);
-
-            if (ObjectHelper.isEmpty(properties.getProperty("refreshToken"))) {
-                config = new SalesforceLoginConfig(
-                        properties.getProperty("loginUrl", SalesforceLoginConfig.DEFAULT_LOGIN_URL),
-                        properties.getProperty("clientId"),
-                        properties.getProperty("clientSecret"),
-                        properties.getProperty("userName"),
-                        properties.getProperty("password"),
-                        Boolean.parseBoolean(properties.getProperty("lazyLogin", "false")));
-            } else {
-                config = new SalesforceLoginConfig(
-                        properties.getProperty("loginUrl", SalesforceLoginConfig.DEFAULT_LOGIN_URL),
-                        properties.getProperty("clientId"), //
-                        properties.getProperty("clientSecret"), //
-                        properties.getProperty("refreshToken"), //
-                        Boolean.parseBoolean(properties.getProperty("lazyLogin", "false")));
-            }
-
-
-            assertNotNull("Null loginUrl", config.getLoginUrl());
-            assertNotNull("Null clientId", config.getClientId());
-            assertNotNull("Null clientSecret", config.getClientSecret());
-            if (ObjectHelper.isEmpty(properties.getProperty("refreshToken"))) {
-                assertNotNull("Null userName", config.getUserName());
-                assertNotNull("Null password", config.getPassword());
-            } else {
-                assertNotNull("Null refreshToken", config.getRefreshToken());
-            }
-
-
-            return config;
-
-        } catch (FileNotFoundException e) {
-            throw new FileNotFoundException("Create a properties file named "
-                + TEST_LOGIN_PROPERTIES + " with clientId, clientSecret, userName, and password or with clientId, clientSecret and refreshToken"
-                + " for a Salesforce account with Merchandise and Invoice objects from Salesforce Guides.");
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException ignore) {
-                }
-            }
+            INSTANCE = new LoginConfigHelper();
+        } catch (final IOException e) {
+            throw new ExceptionInInitializerError(e);
         }
+    }
+
+    private SalesforceLoginConfig config;
+
+    private final Properties properties;
+
+    public LoginConfigHelper() throws IOException {
+        // load test-salesforce-login properties
+        try (InputStream stream = new FileInputStream(TEST_LOGIN_PROPERTIES);) {
+            properties = new Properties();
+            properties.load(stream);
+        } catch (final FileNotFoundException ignored) {
+            throw new FileNotFoundException("Create a properties file named " + TEST_LOGIN_PROPERTIES
+                + " with clientId, clientSecret, userName, and password or with clientId, clientSecret and refreshToken"
+                + " for a Salesforce account with Merchandise and Invoice objects from Salesforce Guides.");
+        }
+
+        final boolean hasPassword = ObjectHelper.isNotEmpty(properties.getProperty("password"));
+        final boolean hasRefreshToken = ObjectHelper.isNotEmpty(properties.getProperty("refreshToken"));
+        final boolean hasKeystore = ObjectHelper.isNotEmpty(properties.getProperty("keystore.resource"));
+
+        final boolean lazyLogin = Boolean.parseBoolean(properties.getProperty("lazyLogin", "false"));
+        final String loginUrl = properties.getProperty("loginUrl", SalesforceLoginConfig.DEFAULT_LOGIN_URL);
+        final String clientId = properties.getProperty("clientId");
+        final String clientSecret = properties.getProperty("clientSecret");
+        final String username = properties.getProperty("userName");
+
+        if (hasPassword) {
+            config = new SalesforceLoginConfig(loginUrl, clientId, clientSecret, username,
+                properties.getProperty("password"), lazyLogin);
+        } else if (hasRefreshToken) {
+            config = new SalesforceLoginConfig(loginUrl, clientId, //
+                clientSecret, //
+                properties.getProperty("refreshToken"), //
+                lazyLogin);
+        } else if (hasKeystore) {
+            final KeyStoreParameters keystore = new KeyStoreParameters();
+            keystore.setResource(properties.getProperty("keystore.resource"));
+            keystore.setType(properties.getProperty("keystore.type"));
+            keystore.setPassword(properties.getProperty("keystore.password"));
+            config = new SalesforceLoginConfig(loginUrl, clientId, username, keystore, lazyLogin);
+        } else {
+            throw new IllegalArgumentException("Must specifiy parameters in " + TEST_LOGIN_PROPERTIES);
+        }
+
+    }
+
+    public static SalesforceLoginConfig getLoginConfig() {
+        return INSTANCE.config;
+    }
+
+    public static Properties testLoginProperties() {
+        return INSTANCE.properties;
     }
 
 }
