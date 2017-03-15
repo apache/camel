@@ -185,7 +185,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             String type = option.getJavaType();
             PropertySource<JavaClassSource> prop = javaClass.addProperty(type, option.getName());
 
-            // TODO: only include the component options so we can configure them
+            // TODO: only include the component options the connector has defined
 
             if ("true".equals(option.getDeprecated())) {
                 prop.getField().addAnnotation(Deprecated.class);
