@@ -35,6 +35,8 @@
   </properties>
 
   <dependencies>
+
+    <!-- camel -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
@@ -43,6 +45,19 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-catalog</artifactId>
     </dependency>
+
+    <!-- to support spring-boot auto configuration in the connectors -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot</artifactId>
+      <version>${spring-boot-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-autoconfigure</artifactId>
+      <version>${spring-boot-version}</version>
+    </dependency>
+
   </dependencies>
 
 </project>
