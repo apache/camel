@@ -19,6 +19,7 @@ package org.apache.camel.maven;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -85,21 +86,22 @@ public class CamelSalesforceMojoOutputTest {
         mojo.processDescription(pkgDir, description, utility, FIXED_DATE);
 
         File generatedFile = new File(pkgDir, source);
-        String generatedContent = FileUtils.readFileToString(generatedFile);
+        String generatedContent = FileUtils.readFileToString(generatedFile, StandardCharsets.UTF_8);
 
         String expectedContent = IOUtils
-            .toString(CamelSalesforceMojoOutputTest.class.getResource("/generated/" + source));
+            .toString(CamelSalesforceMojoOutputTest.class.getResource("/generated/" + source), StandardCharsets.UTF_8);
 
         Assert.assertEquals(
-            "Geberated source file in " + source + " must be equal to the one present in test/resources",
+            "Generated source file in " + source + " must be equal to the one present in test/resources",
             generatedContent, expectedContent);
     }
 
     static SObjectDescription createSObjectDescription(String name) throws IOException {
-        InputStream inputStream = CamelSalesforceMojoOutputTest.class.getResourceAsStream("/" + name);
-        ObjectMapper mapper = JsonUtils.createObjectMapper();
+        try (InputStream inputStream = CamelSalesforceMojoOutputTest.class.getResourceAsStream("/" + name)) {
+            ObjectMapper mapper = JsonUtils.createObjectMapper();
 
-        return mapper.readValue(inputStream, SObjectDescription.class);
+            return mapper.readValue(inputStream, SObjectDescription.class);
+        }
     }
 
 }

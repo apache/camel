@@ -16,12 +16,14 @@
  */
 package org.apache.camel.maven;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.lang.reflect.Field;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -90,6 +92,8 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
  */
 @Mojo(name = "generate", requiresProject = false, defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class CamelSalesforceMojo extends AbstractMojo {
+
+    private static final String UTF_8 = "UTF-8";
 
     // default connect and call timeout
     protected static final int DEFAULT_TIMEOUT = 60000;
@@ -395,7 +399,11 @@ public class CamelSalesforceMojo extends AbstractMojo {
             // should we provide a flag to control timestamp generation?
             final String generatedDate = new Date().toString();
             for (SObjectDescription description : descriptions) {
-                processDescription(pkgDir, description, utility, generatedDate);
+                try {
+                    processDescription(pkgDir, description, utility, generatedDate);
+                } catch (IOException e) {
+                    throw new MojoExecutionException("Unable to generate source files for: " + description.getName(), e);
+                }
             }
             getLog().info(String.format("Successfully generated %s Java Classes", descriptions.size() * 2));
 
@@ -581,104 +589,64 @@ public class CamelSalesforceMojo extends AbstractMojo {
         return httpClient;
     }
 
-    void processDescription(File pkgDir, SObjectDescription description, GeneratorUtility utility, String generatedDate) throws MojoExecutionException {
+    void processDescription(File pkgDir, SObjectDescription description, GeneratorUtility utility, String generatedDate) throws IOException {
         // generate a source file for SObject
-        String fileName = description.getName() + JAVA_EXT;
-        BufferedWriter writer = null;
-        try {
-            File pojoFile = new File(pkgDir, fileName);
-            writer = new BufferedWriter(new FileWriter(pojoFile));
+        final VelocityContext context = new VelocityContext();
+        context.put("packageName", packageName);
+        context.put("utility", utility);
+        context.put("esc", StringEscapeUtils.class);
+        context.put("desc", description);
+        context.put("generatedDate", generatedDate);
+        context.put("useStringsForPicklists", useStringsForPicklists);
 
-            VelocityContext context = new VelocityContext();
-            context.put("packageName", packageName);
-            context.put("utility", utility);
-            context.put("esc", StringEscapeUtils.class);
-            context.put("desc", description);
-            context.put("generatedDate", generatedDate);
-            context.put("useStringsForPicklists", useStringsForPicklists);
-
-            Template pojoTemplate;
-            pojoTemplate = engine.getTemplate(SOBJECT_POJO_VM);
+        final String pojoFileName = description.getName() + JAVA_EXT;
+        final File pojoFile = new File(pkgDir, pojoFileName);
+        try (final Writer writer = new OutputStreamWriter(new FileOutputStream(pojoFile), StandardCharsets.UTF_8)) {
+            final Template pojoTemplate = engine.getTemplate(SOBJECT_POJO_VM, UTF_8);
             pojoTemplate.merge(context, writer);
-            // close pojoFile
-            writer.close();
+        }
 
-            if (useOptionals) {
-                fileName = description.getName() + "Optional" + JAVA_EXT;
-                pojoTemplate = engine.getTemplate(SOBJECT_POJO_OPTIONAL_VM);
-                pojoFile = new File(pkgDir, fileName);
-                writer = new BufferedWriter(new FileWriter(pojoFile));
-                pojoTemplate.merge(context, writer);
-                // close pojoFile
-                writer.close();
+        if (useOptionals) {
+            final String optionalFileName = description.getName() + "Optional" + JAVA_EXT;
+            final File optionalFile = new File(pkgDir, optionalFileName);
+            try (final Writer writer = new OutputStreamWriter(new FileOutputStream(optionalFile), StandardCharsets.UTF_8)) {
+                final Template optionalTemplate = engine.getTemplate(SOBJECT_POJO_OPTIONAL_VM, UTF_8);
+                optionalTemplate.merge(context, writer);
             }
-            // write required Enumerations for any picklists
-            for (SObjectField field : description.getFields()) {
-                if (utility.isPicklist(field) || utility.isMultiSelectPicklist(field)) {
-                    String enumName = description.getName() + "_" + utility.enumTypeName(field.getName());
-                    fileName = enumName + JAVA_EXT;
-                    File enumFile = new File(pkgDir, fileName);
-                    writer = new BufferedWriter(new FileWriter(enumFile));
+        }
 
-                    context = new VelocityContext();
-                    context.put("packageName", packageName);
-                    context.put("utility", utility);
-                    context.put("esc", StringEscapeUtils.class);
-                    context.put("field", field);
-                    context.put("enumName", enumName);
-                    context.put("generatedDate", generatedDate);
+        // write required Enumerations for any picklists
+        for (SObjectField field : description.getFields()) {
+            if (utility.isPicklist(field) || utility.isMultiSelectPicklist(field)) {
+                final String enumName = description.getName() + "_" + utility.enumTypeName(field.getName());
+                final String enumFileName = enumName + JAVA_EXT;
+                final File enumFile = new File(pkgDir, enumFileName);
 
-                    Template queryTemplate = engine.getTemplate(SOBJECT_PICKLIST_VM);
-                    queryTemplate.merge(context, writer);
+                context.put("field", field);
+                context.put("enumName", enumName);
+                final Template enumTemplate = engine.getTemplate(SOBJECT_PICKLIST_VM, UTF_8);
 
-                    // close Enum file
-                    writer.close();
+                try (final Writer writer = new OutputStreamWriter(new FileOutputStream(enumFile), StandardCharsets.UTF_8)) {
+                    enumTemplate.merge(context, writer);
                 }
             }
+        }
 
-            // write the QueryRecords class
-            fileName = "QueryRecords" + description.getName() + JAVA_EXT;
-            File queryFile = new File(pkgDir, fileName);
-            writer = new BufferedWriter(new FileWriter(queryFile));
-
-            context = new VelocityContext();
-            context.put("packageName", packageName);
-            context.put("desc", description);
-            context.put("generatedDate", generatedDate);
-
-            Template queryTemplate = engine.getTemplate(SOBJECT_QUERY_RECORDS_VM);
+        // write the QueryRecords class
+        final String queryRecordsFileName = "QueryRecords" + description.getName() + JAVA_EXT;
+        final File queryRecordsFile = new File(pkgDir, queryRecordsFileName);
+        final Template queryTemplate = engine.getTemplate(SOBJECT_QUERY_RECORDS_VM, UTF_8);
+        try (final Writer writer = new OutputStreamWriter(new FileOutputStream(queryRecordsFile), StandardCharsets.UTF_8)) {
             queryTemplate.merge(context, writer);
+        }
 
-            // close QueryRecords file
-            writer.close();
-
-            if (useOptionals) {
-                // write the QueryRecords Optional class
-                fileName = "QueryRecords" + description.getName() + "Optional" + JAVA_EXT;
-                queryFile = new File(pkgDir, fileName);
-                writer = new BufferedWriter(new FileWriter(queryFile));
-
-                context = new VelocityContext();
-                context.put("packageName", packageName);
-                context.put("desc", description);
-                context.put("generatedDate", generatedDate);
-
-                queryTemplate = engine.getTemplate(SOBJECT_QUERY_RECORDS_OPTIONAL_VM);
-                queryTemplate.merge(context, writer);
-
-                // close QueryRecords file
-                writer.close();
-            }
-
-        } catch (Exception e) {
-            String msg = "Error creating " + fileName + ": " + e.getMessage();
-            throw new MojoExecutionException(msg, e);
-        } finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException ignore) {
-                }
+        if (useOptionals) {
+            // write the QueryRecords Optional class
+            final String queryRecordsOptionalFileName = "QueryRecords" + description.getName() + "Optional" + JAVA_EXT;
+            final File queryRecordsOptionalFile = new File(pkgDir, queryRecordsOptionalFileName);
+            final Template queryRecordsOptionalTemplate = engine.getTemplate(SOBJECT_QUERY_RECORDS_OPTIONAL_VM, UTF_8);
+            try (final Writer writer = new OutputStreamWriter(new FileOutputStream(queryRecordsOptionalFile), StandardCharsets.UTF_8)) {
+                queryRecordsOptionalTemplate.merge(context, writer);
             }
         }
     }
