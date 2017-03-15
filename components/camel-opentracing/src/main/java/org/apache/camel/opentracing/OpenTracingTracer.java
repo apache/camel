@@ -21,6 +21,7 @@ import java.util.EventObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 import io.opentracing.Span;
 import io.opentracing.Tracer;
@@ -66,7 +67,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
 
     private final OpenTracingEventNotifier eventNotifier = new OpenTracingEventNotifier();
     private final SpanManager spanManager = DefaultSpanManager.getInstance();
-    private Tracer tracer = GlobalTracer.get();
+    private Tracer tracer;
     private CamelContext camelContext;
 
     static {
@@ -134,6 +135,14 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
         }
 
         if (tracer == null) {
+            Set<Tracer> tracers = camelContext.getRegistry().findByType(Tracer.class);
+            if (tracers.size() == 1) {
+                tracer = tracers.iterator().next();
+            }
+        }
+
+        if (tracer == null) {
+            // fallback to the global tracer if no tracers are configured
             tracer = GlobalTracer.get();
         }
 

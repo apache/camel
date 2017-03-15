@@ -24,9 +24,10 @@ To enable camel-opentracing you need to configure first
 [source,java]
 --------------------------------------------------------------------------------------------------
 OpenTracingTracer ottracer = new OpenTracingTracer();
-// by default uses the Global Tracer, but can override with specific OpenTracing implementation
+// By default it uses the Global Tracer, but you can override it with a specific OpenTracing implementation.
+// As an alternative, you can also set a tracer in the registry and it it will be looked up.
 ottracer.setTracer(...);
-// and then set the CamelContext
+// And then set the CamelContext
 ottracer.setCamelContext(camelContext);
 --------------------------------------------------------------------------------------------------
 
