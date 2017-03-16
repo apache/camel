@@ -16,27 +16,27 @@
  */
 package org.apache.camel.component.hazelcast.topic;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.ITopic;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
-import org.apache.camel.component.hazelcast.HazelcastDefaultConsumer;
-import org.apache.camel.component.hazelcast.listener.CamelMessageListener;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 
 /**
- *
+ * Hazelcast Topic Component configuration.
  */
-public class HazelcastTopicConsumer extends HazelcastDefaultConsumer {
+@UriParams
+public class HazelcastTopicConfiguration {
+	
+	@UriParam(label = "common", defaultValue = "false")
+    private boolean reliable = false;
+	
+    /**
+     * Define if the endpoint will use a reliable Topic struct or not.
+     */
+	public boolean isReliable() {
+		return reliable;
+	}
 
-    public HazelcastTopicConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName, boolean reliable) {
-        super(hazelcastInstance, endpoint, processor, cacheName);
-        ITopic<Object> topic;
-        if (!reliable) {
-            topic = hazelcastInstance.getTopic(cacheName);
-        } else {
-        	topic = hazelcastInstance.getReliableTopic(cacheName);
-        }
-        topic.addMessageListener(new CamelMessageListener(this, cacheName));
-    }
+	public void setReliable(boolean reliable) {
+		this.reliable = reliable;
+	}
 
 }

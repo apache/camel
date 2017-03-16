@@ -80,7 +80,7 @@ with the following path and query parameters:
 | cacheName |  | String | *Required* The name of the cache
 |=======================================================================
 
-#### Query Parameters (11 parameters):
+#### Query Parameters (12 parameters):
 
 [width="100%",cols="2,1,1m,1m,5",options="header"]
 |=======================================================================
@@ -88,6 +88,7 @@ with the following path and query parameters:
 | defaultOperation | common |  | String | To specify a default operation to use if no operation header has been provided.
 | hazelcastInstance | common |  | HazelcastInstance | The hazelcast instance reference which can be used for hazelcast endpoint.
 | hazelcastInstanceName | common |  | String | The hazelcast instance reference name which can be used for hazelcast endpoint. If you don't specify the instance reference camel use the default hazelcast instance from the camel-hazelcast instance.
+| reliable | common | false | boolean | Define if the endpoint will use a reliable Topic struct or not.
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
 | exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
