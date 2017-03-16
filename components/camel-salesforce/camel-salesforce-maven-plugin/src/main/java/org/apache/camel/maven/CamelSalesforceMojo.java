@@ -93,11 +93,10 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
  */
 @Mojo(name = "generate", requiresProject = false, defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class CamelSalesforceMojo extends AbstractMojo {
-
-    private static final String UTF_8 = "UTF-8";
-
     // default connect and call timeout
     protected static final int DEFAULT_TIMEOUT = 60000;
+
+    private static final String UTF_8 = "UTF-8";
 
     private static final String JAVA_EXT = ".java";
     private static final String PACKAGE_NAME_PATTERN = "(\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*\\.)+\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
