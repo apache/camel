@@ -72,12 +72,12 @@ public class KubernetesNodesConsumer extends DefaultConsumer {
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
                 if (nodesWatcher != null) {
-                	nodesWatcher.getWatch().close();
+                    nodesWatcher.getWatch().close();
                 }
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             } else {
                 if (nodesWatcher != null) {
-                	nodesWatcher.getWatch().close();
+                    nodesWatcher.getWatch().close();
                 }
                 executor.shutdownNow();
             }
