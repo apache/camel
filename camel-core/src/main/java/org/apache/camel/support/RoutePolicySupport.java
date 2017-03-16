@@ -107,14 +107,39 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
         route.getRouteContext().getCamelContext().suspendRoute(route.getId(), timeout, timeUnit);
     }
 
+    /**
+     * @see #stopRouteAsync(Route)
+     */
     public void stopRoute(Route route) throws Exception {
         route.getRouteContext().getCamelContext().stopRoute(route.getId());
     }
 
+    /**
+     * @see #stopRouteAsync(Route)
+     */
     public void stopRoute(Route route, long timeout, TimeUnit timeUnit) throws Exception {
         route.getRouteContext().getCamelContext().stopRoute(route.getId(), timeout, timeUnit);
     }
-    
+
+    /**
+     * Allows to stop a route asynchronously using a separate background thread which can allow any current in-flight exchange
+     * to complete while the route is being shutdown.
+     * You may attempt to stop a route from processing an exchange which would be in-flight and therefore attempting to stop
+     * the route will defer due there is an inflight exchange in-progress. By stopping the route independently using a separate
+     * thread ensures the exchange can continue process and complete and the route can be stopped.
+     */
+    public void stopRouteAsync(final Route route) {
+        String threadId = route.getRouteContext().getCamelContext().getExecutorServiceManager().resolveThreadName("StopRouteAsync");
+        Runnable task = () -> {
+            try {
+                route.getRouteContext().getCamelContext().stopRoute(route.getId());
+            } catch (Exception e) {
+                handleException(e);
+            }
+        };
+        new Thread(task, threadId).start();
+    }
+
     /**
      * Handles the given exception using the {@link #getExceptionHandler()}
      *
