@@ -73,6 +73,11 @@ public class FileConsumer extends GenericFileConsumer<File> {
         File[] dirFiles = directory.listFiles();
         if (dirFiles == null || dirFiles.length == 0) {
             // no files in this directory to poll
+            if (endpoint.isAllowEmptyDirectory()) {
+                File emptyDirectory = new File(directory + File.separator + ".");
+                GenericFile<File> gf = asGenericFile(endpointPath, emptyDirectory, getEndpoint().getCharset(), getEndpoint().isProbeContentType());
+                fileList.add(gf);
+            }
             if (log.isTraceEnabled()) {
                 log.trace("No files found in directory: {}", directory.getPath());
             }

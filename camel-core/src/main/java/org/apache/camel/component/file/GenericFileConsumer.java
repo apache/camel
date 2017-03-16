@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Stack;
 import java.util.regex.Pattern;
 
 import org.apache.camel.AsyncCallback;
@@ -50,8 +52,11 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     protected Processor customProcessor;
     protected boolean eagerLimitMaxMessagesPerPoll = true;
     protected volatile boolean prepareOnStartup;
+    protected Stack<GenericFile<T>> remoteFilesStack;
+    protected List<GenericFile<T>>  emptyFolders;
     private final Pattern includePattern;
     private final Pattern excludePattern;
+
 
     public GenericFileConsumer(GenericFileEndpoint<T> endpoint, Processor processor, GenericFileOperations<T> operations) {
         super(endpoint, processor);
@@ -99,7 +104,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             endpoint.getGenericFileProcessStrategy().prepareOnStartup(operations, endpoint);
             prepareOnStartup = true;
         }
-
+        if (endpoint.isAllowEmptyDirectory()) {
+            remoteFilesStack  = new Stack<GenericFile<T>>();
+            emptyFolders = new ArrayList<GenericFile<T>>();
+        }
         // must reset for each poll
         fileExpressionResult = null;
         shutdownRunningTask = null;
@@ -143,7 +151,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         if (endpoint.getSorter() != null) {
             files.sort(endpoint.getSorter());
         }
-
+        
         // sort using build in sorters so we can use expressions
         // use a linked list so we can dequeue the exchanges
         LinkedList<Exchange> exchanges = new LinkedList<Exchange>();
@@ -153,6 +161,21 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             endpoint.configureMessage(file, exchange.getIn());
             exchanges.add(exchange);
         }
+        
+        for (GenericFile<T> emptyFolder : emptyFolders) {
+            Exchange exchange = endpoint.createExchange(emptyFolder);
+            endpoint.configureExchange(exchange);
+            endpoint.configureMessage(emptyFolder, exchange.getIn());
+            String currentFolderName = (String)exchange.getIn().getHeader(Exchange.FILE_NAME);
+            exchange.getIn().setHeader(Exchange.FILE_NAME, currentFolderName + File.separator + ".");
+            exchanges.add(exchange);
+        }
+        
+        if (endpoint.isAllowEmptyDirectory()) {
+            remoteFilesStack.clear();
+            emptyFolders.clear();
+        }
+
         // sort files using exchange comparator if provided
         if (endpoint.getSortBy() != null) {
             exchanges.sort(endpoint.getSortBy());
@@ -398,38 +421,46 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         try {
             
             if (isRetrieveFile()) {
-                // retrieve the file using the stream
-                log.trace("Retrieving file: {} from: {}", name, endpoint);
+                boolean doNotRetrieve = false;
+                if (endpoint.isAllowEmptyDirectory() && (name.endsWith(File.separator + ".") || name.endsWith(File.separator))) {
+                    doNotRetrieve = true;
+                } 
+                if (!doNotRetrieve) {
+                    // retrieve the file using the stream
+                    log.trace("Retrieving file: {} from: {}", name, endpoint);
     
-                // retrieve the file and check it was a success
-                boolean retrieved;
-                Exception cause = null;
-                try {
-                    retrieved = operations.retrieveFile(name, exchange);
-                } catch (Exception e) {
-                    retrieved = false;
-                    cause = e;
-                }
+                    // retrieve the file and check it was a success
+                    boolean retrieved;
+                    Exception cause = null;
+                    try {
+                        retrieved = operations.retrieveFile(name, exchange);
+                    } catch (Exception e) {
+                        retrieved = false;
+                        cause = e;
+                    }
 
-                if (!retrieved) {
-                    if (ignoreCannotRetrieveFile(name, exchange, cause)) {
-                        log.trace("Cannot retrieve file {} maybe it does not exists. Ignoring.", name);
-                        // remove file from the in progress list as we could not retrieve it, but should ignore
-                        endpoint.getInProgressRepository().remove(absoluteFileName);
-                        return false;
-                    } else {
-                        // throw exception to handle the problem with retrieving the file
-                        // then if the method return false or throws an exception is handled the same in here
-                        // as in both cases an exception is being thrown
-                        if (cause != null && cause instanceof GenericFileOperationFailedException) {
-                            throw cause;
+                    if (!retrieved) {
+                        if (ignoreCannotRetrieveFile(name, exchange, cause)) {
+                            log.trace("Cannot retrieve file {} maybe it does not exists. Ignoring.", name);
+                            // remove file from the in progress list as we could not retrieve it, but should ignore
+                            endpoint.getInProgressRepository().remove(absoluteFileName);
+                            return false;
                         } else {
-                            throw new GenericFileOperationFailedException("Cannot retrieve file: " + file + " from: " + endpoint, cause);
+                            // throw exception to handle the problem with retrieving the file
+                            // then if the method return false or throws an exception is handled the same in here
+                            // as in both cases an exception is being thrown
+                            if (cause != null && cause instanceof GenericFileOperationFailedException) {
+                                throw cause;
+                            } else {
+                                throw new GenericFileOperationFailedException("Cannot retrieve file: " + file + " from: " + endpoint, cause);
+                            }
                         }
                     }
-                }
     
-                log.trace("Retrieved file: {} from: {}", name, endpoint);                
+                    log.trace("Retrieved file: {} from: {}", name, endpoint);    
+                } else {
+                    log.trace("Retrieval for {} is not attempted: {}", name, endpoint);
+                }
             } else {
                 log.trace("Skipped retrieval of file: {} from: {}", name, endpoint);
                 exchange.getIn().setBody(null);

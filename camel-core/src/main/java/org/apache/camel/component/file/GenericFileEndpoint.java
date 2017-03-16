@@ -108,6 +108,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected boolean noop;
     @UriParam(label = "consumer")
     protected boolean recursive;
+    @UriParam(label = "allowEmptyDirectory")
+    protected boolean allowEmptyDirectory;
     @UriParam(label = "consumer")
     protected boolean delete;
     @UriParam(label = "consumer,filter")
@@ -333,6 +335,17 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setRecursive(boolean recursive) {
         this.recursive = recursive;
+    }
+    
+    public boolean isAllowEmptyDirectory() {
+        return allowEmptyDirectory;
+    }
+
+    /**
+     * If a directory empty, process it
+     */
+    public void setAllowEmptyDirectory(boolean allowEmptyDirectory) {
+        this.allowEmptyDirectory = allowEmptyDirectory;
     }
 
     public String getInclude() {

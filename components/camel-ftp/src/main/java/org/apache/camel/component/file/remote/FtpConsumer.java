@@ -137,6 +137,13 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
         if (files == null || files.isEmpty()) {
             // no files in this directory to poll
+            if (endpoint.isAllowEmptyDirectory()) {
+                FTPFile file = new FTPFile();
+                file.setType(FTPFile.FILE_TYPE);
+                file.setName(".");
+                RemoteFile<FTPFile> remote = asRemoteFile(absolutePath, file, getEndpoint().getCharset());
+                fileList.add(remote);
+            }
             log.trace("No files found in directory: {}", dir);
             return true;
         } else {
