@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.hystrix.springboot;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.model.HystrixConfigurationCommon;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -24,4 +27,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @ConfigurationProperties(prefix = "camel.hystrix")
 public class HystrixConfiguration extends HystrixConfigurationCommon {
+    private Map<String, HystrixConfigurationCommon> configurations = new HashMap<>();
+
+    public Map<String, HystrixConfigurationCommon> getConfigurations() {
+        return configurations;
+    }
 }
