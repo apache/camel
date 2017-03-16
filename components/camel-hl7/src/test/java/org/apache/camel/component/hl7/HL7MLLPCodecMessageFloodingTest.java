@@ -16,13 +16,6 @@
  */
 package org.apache.camel.component.hl7;
 
-import ca.uhn.hl7v2.model.Message;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -31,6 +24,13 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import ca.uhn.hl7v2.model.Message;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.JndiRegistry;
+import org.junit.Test;
 
 /**
  * Unit test for the HL7MLLP Codec.
@@ -103,8 +103,8 @@ public class HL7MLLPCodecMessageFloodingTest extends HL7TestSupport {
         });
         t.start();
 
-        String in = "MSH|^~\\&|MYSENDER|MYRECEIVER|MYAPPLICATION||200612211200||QRY^A19|X%dX|P|2.4\r" +
-                "QRD|200612211200|R|I|GetPatient|||1^RD|0101701234|DEM||";
+        String in = "MSH|^~\\&|MYSENDER|MYRECEIVER|MYAPPLICATION||200612211200||QRY^A19|X%dX|P|2.4\r"
+                + "QRD|200612211200|R|I|GetPatient|||1^RD|0101701234|DEM||";
         for (int i = 0; i < messageCount; i++) {
             String msg = String.format(in, i);
             outputStream.write(11);
