@@ -70,7 +70,7 @@ public class RabbitMQMessagePublisher {
             LOG.debug("Removing the {} header", RabbitMQEndpoint.SERIALIZE_HEADER);
             message.getHeaders().remove(RabbitMQEndpoint.SERIALIZE_HEADER);
         }
-        if (routingKey.startsWith("amq.rabbitmq.reply-to")) {
+        if (routingKey != null && routingKey.startsWith("amq.rabbitmq.reply-to")) {
             message.setHeader(RabbitMQConstants.EXCHANGE_NAME, ""); // use default exchange for reply-to messages
         }
 
