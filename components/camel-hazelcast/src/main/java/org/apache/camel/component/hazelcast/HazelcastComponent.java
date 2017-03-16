@@ -41,6 +41,7 @@ import org.apache.camel.component.hazelcast.ringbuffer.HazelcastRingbufferEndpoi
 import org.apache.camel.component.hazelcast.seda.HazelcastSedaConfiguration;
 import org.apache.camel.component.hazelcast.seda.HazelcastSedaEndpoint;
 import org.apache.camel.component.hazelcast.set.HazelcastSetEndpoint;
+import org.apache.camel.component.hazelcast.topic.HazelcastTopicConfiguration;
 import org.apache.camel.component.hazelcast.topic.HazelcastTopicEndpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
@@ -131,7 +132,9 @@ public class HazelcastComponent extends DefaultComponent {
         if (remaining.startsWith(HazelcastConstants.TOPIC_PREFIX)) {
             // remaining is anything (name it foo ;)
             remaining = StringHelper.removeStartingCharacters(remaining.substring(HazelcastConstants.TOPIC_PREFIX.length()), '/');
-            endpoint = new HazelcastTopicEndpoint(hzInstance, uri, this, remaining);
+            final HazelcastTopicConfiguration config = new HazelcastTopicConfiguration();
+            setProperties(config, parameters);
+            endpoint = new HazelcastTopicEndpoint(hzInstance, uri, this, remaining, config);
             endpoint.setCommand(HazelcastCommand.topic);
         }
 
