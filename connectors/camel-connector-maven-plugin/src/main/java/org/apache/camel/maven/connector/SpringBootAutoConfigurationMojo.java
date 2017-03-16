@@ -81,10 +81,12 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void executeConnector() throws Exception {
 
         String javaType = null;
         String connectorScheme = null;
+        List<String> componentOptions = null;
 
         File file = new File(classesDirectory, "camel-connector.json");
         if (file.exists()) {
@@ -93,6 +95,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
 
             javaType = (String) dto.get("javaType");
             connectorScheme = (String) dto.get("scheme");
+            componentOptions = (List) dto.get("componentOptions");
         }
 
         // find the component dependency and get its .json file
@@ -113,7 +116,7 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
             if (hasOptions) {
                 getLog().info("Generating Spring Boot AutoConfiguration for Connector: " + model.getScheme());
 
-                createConnectorConfigurationSource(pkg, model, javaType, connectorScheme);
+                createConnectorConfigurationSource(pkg, model, javaType, connectorScheme, componentOptions);
                 createConnectorAutoConfigurationSource(pkg, hasOptions, javaType, connectorScheme);
                 createConnectorSpringFactorySource(pkg, javaType);
             }
@@ -159,7 +162,8 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         }
     }
 
-    private void createConnectorConfigurationSource(String packageName, ComponentModel model, String javaType, String connectorScheme) throws MojoFailureException {
+    private void createConnectorConfigurationSource(String packageName, ComponentModel model, String javaType,
+                                                    String connectorScheme, List<String> componentOptions) throws MojoFailureException {
         final JavaClassSource javaClass = Roaster.create(JavaClassSource.class);
 
         int pos = javaType.lastIndexOf(".");
@@ -182,34 +186,41 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         javaClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", prefix);
 
         for (ComponentOptionModel option : model.getComponentOptions()) {
-            String type = option.getJavaType();
-            PropertySource<JavaClassSource> prop = javaClass.addProperty(type, option.getName());
 
-            // TODO: only include the component options the connector has defined
+            // only include the options that has been explicit configured in the camel-connector.json file
+            boolean accepted = false;
+            if (componentOptions != null) {
+                accepted = componentOptions.stream().anyMatch(o -> o.equals(option.getName()));
+            }
 
-            if ("true".equals(option.getDeprecated())) {
-                prop.getField().addAnnotation(Deprecated.class);
-                prop.getAccessor().addAnnotation(Deprecated.class);
-                prop.getMutator().addAnnotation(Deprecated.class);
-                // DeprecatedConfigurationProperty must be on getter when deprecated
-                prop.getAccessor().addAnnotation(DeprecatedConfigurationProperty.class);
-            }
-            if (!Strings.isBlank(option.getDescription())) {
-                prop.getField().getJavaDoc().setFullText(option.getDescription());
-            }
-            if (!Strings.isBlank(option.getDefaultValue())) {
-                if ("java.lang.String".equals(option.getJavaType())) {
-                    prop.getField().setStringInitializer(option.getDefaultValue());
-                } else if ("long".equals(option.getJavaType()) || "java.lang.Long".equals(option.getJavaType())) {
-                    // the value should be a Long number
-                    String value = option.getDefaultValue() + "L";
-                    prop.getField().setLiteralInitializer(value);
-                } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
-                    prop.getField().setLiteralInitializer(option.getDefaultValue());
-                } else if (!Strings.isBlank(option.getEnums())) {
-                    String enumShortName = type.substring(type.lastIndexOf(".") + 1);
-                    prop.getField().setLiteralInitializer(enumShortName + "." + option.getDefaultValue());
-                    javaClass.addImport(model.getJavaType());
+            if (accepted) {
+                String type = option.getJavaType();
+                PropertySource<JavaClassSource> prop = javaClass.addProperty(type, option.getName());
+
+                if ("true".equals(option.getDeprecated())) {
+                    prop.getField().addAnnotation(Deprecated.class);
+                    prop.getAccessor().addAnnotation(Deprecated.class);
+                    prop.getMutator().addAnnotation(Deprecated.class);
+                    // DeprecatedConfigurationProperty must be on getter when deprecated
+                    prop.getAccessor().addAnnotation(DeprecatedConfigurationProperty.class);
+                }
+                if (!Strings.isBlank(option.getDescription())) {
+                    prop.getField().getJavaDoc().setFullText(option.getDescription());
+                }
+                if (!Strings.isBlank(option.getDefaultValue())) {
+                    if ("java.lang.String".equals(option.getJavaType())) {
+                        prop.getField().setStringInitializer(option.getDefaultValue());
+                    } else if ("long".equals(option.getJavaType()) || "java.lang.Long".equals(option.getJavaType())) {
+                        // the value should be a Long number
+                        String value = option.getDefaultValue() + "L";
+                        prop.getField().setLiteralInitializer(value);
+                    } else if ("integer".equals(option.getType()) || "boolean".equals(option.getType())) {
+                        prop.getField().setLiteralInitializer(option.getDefaultValue());
+                    } else if (!Strings.isBlank(option.getEnums())) {
+                        String enumShortName = type.substring(type.lastIndexOf(".") + 1);
+                        prop.getField().setLiteralInitializer(enumShortName + "." + option.getDefaultValue());
+                        javaClass.addImport(model.getJavaType());
+                    }
                 }
             }
         }
