@@ -12,7 +12,6 @@ A Camel connector is a simplified setup of any existing Camel component. The ide
 The existing Camel components are generic and have many options. Therefore to use any of these components you
    need to understand how to use and setup all these options.
 
-
 ### How it works
 
 The connector is based on one of the existing Camel components (or 3rd party component) by which you can specify
@@ -47,6 +46,94 @@ You can also copy the existing examples from the `connectors` directory where th
 You can find an example using these connectors in the `foo-bar-wine-example` in the `connectors` directory.
 
 
+### Setting up connector in Maven
+
+To build a connector you need to at least include the following dependencies in the Maven pom.xml file
+
+[source,xml]
+------------
+    <!-- camel-connector -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-connector</artifactId>
+    </dependency>
+
+    <!-- camel and spring boot compiler plugins -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>apt</artifactId>
+    </dependency>
+------------
+
+And then the `camel-connector-maven-plugin` plugin as well:
+
+[source,xml]
+------------
+    <!-- generate connector -->
+    <plugin>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-connector-maven-plugin</artifactId>
+      <version>${camel.version}</version>
+      <executions>
+        <execution>
+          <id>connector</id>
+          <goals>
+            <goal>jar</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+------------
+
+
+### Spring Boot compliant
+
+A Camel connector works great with Spring Boot. If a connector has been configured to allow configuration
+  on the component level which is done in the `camel-connector.json` file, such as
+
+      "componentOptions" : [ "loginUrl", "clientId", "clientSecret", "refreshToken" ],
+
+Then the `camel-connector-maven-plugin` will be able to generate Spring Boot auto configuration for these options.
+This allows users to essily configure these options if using Spring Boot with the connector.
+
+To enable Spring Boot generation you need to enable this in the `camel-connector-maven-plugin` as follows:
+
+[source,xml]
+------------
+    <!-- generate connector -->
+    <plugin>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-connector-maven-plugin</artifactId>
+      <version>${camel.version}</version>
+      <executions>
+        <execution>
+          <id>boot</id>
+          <goals>
+            <goal>prepare-spring-boot-auto-configuration</goal>
+          </goals>
+        </execution>
+        <execution>
+          <id>connector</id>
+          <goals>
+            <goal>jar</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+------------
+
+You will also need to add the `spring-boot-configuration-processor` in the Maven pom.xml file
+
+[source,xml]
+------------
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <version>${spring-boot.version}</version>
+    </dependency>
+------------
+
+
 ### Input and Output Data Type
 
 Every connector *must* define which input and output data type are in use.
@@ -67,10 +154,9 @@ The following data types are in use:
 For example to accept any incoming data type and output Java as `com.foo.MyCustomer` you would
 configure the the `camel-connector.json` file:
 
-```
-  "inputDataType": "any",
-  "outputDataType": "java:com.foo.MyCustomer",
-```
+    "inputDataType": "any",
+    "outputDataType": "java:com.foo.MyCustomer",
+
 
 ### The connectors schema file
 
