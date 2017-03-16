@@ -29,13 +29,19 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
+@DirtiesContext
 @RunWith(SpringRunner.class)
 @EnableAutoConfiguration
-@SpringBootTest(classes = {CamelAnnotationsTest.class, CamelAnnotationsTestConfig.class})
+@SpringBootTest(
+    classes = {
+        CamelAnnotationsTest.class,
+        CamelAnnotationsTest.TestConfig.class
+    }
+)
 public class CamelAnnotationsTest extends Assert {
-
     @Autowired
     ProducerTemplate producerTemplate;
 
@@ -49,19 +55,17 @@ public class CamelAnnotationsTest extends Assert {
         mockEndpoint.assertIsSatisfied();
     }
 
-}
+    @Configuration
+    public static class TestConfig {
 
-@Configuration
-class CamelAnnotationsTestConfig {
-
-    @Bean
-    RoutesBuilder route() {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:test").to("mock:test");
-            }
-        };
+        @Bean
+        RoutesBuilder route() {
+            return new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:test").to("mock:test");
+                }
+            };
+        }
     }
-
 }

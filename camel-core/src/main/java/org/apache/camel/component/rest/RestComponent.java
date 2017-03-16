@@ -16,19 +16,27 @@
  */
 package org.apache.camel.component.rest;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.model.rest.RestConstants;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Rest component.
  */
-public class RestComponent extends UriEndpointComponent {
+public class RestComponent extends DefaultComponent {
 
     @Metadata(label = "common")
     private String componentName;
@@ -36,10 +44,6 @@ public class RestComponent extends UriEndpointComponent {
     private String apiDoc;
     @Metadata(label = "producer")
     private String host;
-
-    public RestComponent() {
-        super(RestEndpoint.class);
-    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -49,7 +53,9 @@ public class RestComponent extends UriEndpointComponent {
         answer.setComponentName(restConfigurationName);
         answer.setApiDoc(apiDoc);
 
-        RestConfiguration config = getCamelContext().getRestConfiguration(restConfigurationName, true);
+        RestConfiguration config = new RestConfiguration();
+        mergeConfigurations(config, findGlobalRestConfiguration());
+        mergeConfigurations(config, getCamelContext().getRestConfiguration(restConfigurationName, true));
 
         // if no explicit host was given, then fallback and use default configured host
         String h = resolveAndRemoveReferenceParameter(parameters, "host", String.class, host);
@@ -153,6 +159,66 @@ public class RestComponent extends UriEndpointComponent {
      */
     public void setHost(String host) {
         this.host = host;
+    }
+
+    // ****************************************
+    // Helpers
+    // ****************************************
+
+    private RestConfiguration findGlobalRestConfiguration() {
+        CamelContext context = getCamelContext();
+
+        RestConfiguration conf = CamelContextHelper.lookup(context, RestConstants.DEFAULT_REST_CONFIGURATION_ID, RestConfiguration.class);
+        if (conf == null) {
+            conf = CamelContextHelper.findByType(getCamelContext(), RestConfiguration.class);
+        }
+
+        return conf;
+    }
+
+    private RestConfiguration mergeConfigurations(RestConfiguration conf, RestConfiguration from) throws Exception {
+        if (from != null) {
+            Map<String, Object> map = IntrospectionSupport.getNonNullProperties(from);
+
+            // Remove properties as they need to be manually managed
+            Iterator<Map.Entry<String, Object>> it = map.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, Object> entry = it.next();
+                if (entry.getValue() instanceof Map) {
+                    it.remove();
+                }
+            }
+
+            // Copy common options, will override those in conf
+            IntrospectionSupport.setProperties(getCamelContext(), getCamelContext().getTypeConverter(), conf, map);
+
+            // Merge properties
+            mergeProperties(conf::getComponentProperties, from::getComponentProperties, conf::setComponentProperties);
+            mergeProperties(conf::getEndpointProperties, from::getEndpointProperties, conf::setEndpointProperties);
+            mergeProperties(conf::getConsumerProperties, from::getConsumerProperties, conf::setConsumerProperties);
+            mergeProperties(conf::getDataFormatProperties, from::getDataFormatProperties, conf::setDataFormatProperties);
+            mergeProperties(conf::getApiProperties, from::getApiProperties, conf::setApiProperties);
+            mergeProperties(conf::getCorsHeaders, from::getCorsHeaders, conf::setCorsHeaders);
+        }
+
+        return conf;
+    }
+
+    private <T> void mergeProperties(Supplier<Map<String, T>> base, Supplier<Map<String, T>> addons, Consumer<Map<String, T>> consumer) {
+        Map<String, T> baseMap = base.get();
+        Map<String, T> addonsMap = addons.get();
+
+        if (baseMap != null || addonsMap != null) {
+            HashMap<String, T> result = new HashMap<>();
+            if (baseMap != null) {
+                result.putAll(baseMap);
+            }
+            if (addonsMap != null) {
+                result.putAll(addonsMap);
+            }
+
+            consumer.accept(result);
+        }
     }
 
 }
