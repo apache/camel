@@ -54,7 +54,6 @@
       <artifactId>camel-twitter</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!-- add spring-boot support -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-twitter-starter</artifactId>
@@ -68,11 +67,15 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!-- support camel documentation -->
+    <!-- camel and spring boot compiler plugins -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>apt</artifactId>
-      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <version>${spring-boot-version}</version>
     </dependency>
     
     <!-- logging -->
@@ -166,6 +169,12 @@
         <artifactId>camel-connector-maven-plugin</artifactId>
         <version>${project.version}</version>
         <executions>
+          <execution>
+            <id>boot</id>
+            <goals>
+              <goal>prepare-spring-boot-auto-configuration</goal>
+            </goals>
+          </execution>
           <execution>
             <id>connector</id>
             <goals>
