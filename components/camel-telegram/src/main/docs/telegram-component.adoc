@@ -124,6 +124,8 @@ belonging to the `org.apache.camel.component.telegram.TelegramMediaType` enumera
 |`CamelTelegramMediaTitleCaption` |This header is used to provide a caption or title
 for outgoing binary messages.
 
+|`CamelTelegramParseMode` |This header is used to format text messages using HTML or Markdown (see `org.apache.camel.component.telegram.TelegramParseMode`).
+
 |=======================================================================
 
 ### Usage

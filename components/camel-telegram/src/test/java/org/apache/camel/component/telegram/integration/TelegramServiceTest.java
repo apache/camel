@@ -18,6 +18,7 @@ package org.apache.camel.component.telegram.integration;
 
 import java.io.IOException;
 
+import org.apache.camel.component.telegram.TelegramParseMode;
 import org.apache.camel.component.telegram.TelegramService;
 import org.apache.camel.component.telegram.TelegramServiceProvider;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
@@ -63,6 +64,30 @@ public class TelegramServiceTest {
         OutgoingTextMessage msg = new OutgoingTextMessage();
         msg.setChatId(chatId);
         msg.setText("This is an auto-generated message from the Bot");
+
+        service.sendMessage(authorizationToken, msg);
+    }
+
+    @Test
+    public void testSendMessageHtml() {
+        TelegramService service = TelegramServiceProvider.get().getService();
+
+        OutgoingTextMessage msg = new OutgoingTextMessage();
+        msg.setChatId(chatId);
+        msg.setText("This is a <b>HTML</b> <i>auto-generated</i> message from the Bot");
+        msg.setParseMode(TelegramParseMode.HTML.getCode());
+
+        service.sendMessage(authorizationToken, msg);
+    }
+
+    @Test
+    public void testSendMessageMarkdown() {
+        TelegramService service = TelegramServiceProvider.get().getService();
+
+        OutgoingTextMessage msg = new OutgoingTextMessage();
+        msg.setChatId(chatId);
+        msg.setText("This is a *Markdown* _auto-generated_ message from the Bot");
+        msg.setParseMode(TelegramParseMode.MARKDOWN.getCode());
 
         service.sendMessage(authorizationToken, msg);
     }
