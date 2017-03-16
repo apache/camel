@@ -42,10 +42,10 @@ public class HL7MLLPConfig {
 
     private boolean produceString = true;
 
-	private CodingErrorAction malformedInputErrorAction = CodingErrorAction.REPORT;
-	
+    private CodingErrorAction malformedInputErrorAction = CodingErrorAction.REPORT;
+
     private CodingErrorAction unmappableCharacterErrorAction = CodingErrorAction.REPORT;
-	
+
     public Charset getCharset() {
         return charset;
     }
@@ -118,20 +118,20 @@ public class HL7MLLPConfig {
     public void setProduceString(boolean produceString) {
         this.produceString = produceString;
     }
-	
+
     public CodingErrorAction getMalformedInputErrorAction() {
         return malformedInputErrorAction;
     }
 
-	public void setMalformedInputErrorAction(CodingErrorAction malformedInputErrorAction) {
+    public void setMalformedInputErrorAction(CodingErrorAction malformedInputErrorAction) {
         this.malformedInputErrorAction = malformedInputErrorAction;
     }
-	
+
     public CodingErrorAction getUnmappableCharacterErrorAction() {
         return unmappableCharacterErrorAction;
     }
 
     public void setUnmappableCharacterErrorAction(CodingErrorAction unmappableCharacterErrorAction) {
         this.unmappableCharacterErrorAction = unmappableCharacterErrorAction;
-    }	
+    }
 }
