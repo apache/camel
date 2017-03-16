@@ -308,7 +308,6 @@
     <module>camel-zookeeper-master-starter</module>
     <module>camel-zookeeper-starter</module>
   </modules>
-
   <profiles>
     <profile>
       <id>jdk9-build</id>
