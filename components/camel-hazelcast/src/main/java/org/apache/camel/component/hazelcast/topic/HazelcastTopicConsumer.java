@@ -34,7 +34,7 @@ public class HazelcastTopicConsumer extends HazelcastDefaultConsumer {
         if (!reliable) {
             topic = hazelcastInstance.getTopic(cacheName);
         } else {
-        	topic = hazelcastInstance.getReliableTopic(cacheName);
+            topic = hazelcastInstance.getReliableTopic(cacheName);
         }
         topic.addMessageListener(new CamelMessageListener(this, cacheName));
     }
