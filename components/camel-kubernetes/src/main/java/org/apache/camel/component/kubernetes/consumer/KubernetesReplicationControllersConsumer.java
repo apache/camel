@@ -25,6 +25,7 @@ import io.fabric8.kubernetes.api.model.PodList;
 import io.fabric8.kubernetes.api.model.ReplicationController;
 import io.fabric8.kubernetes.api.model.ReplicationControllerList;
 import io.fabric8.kubernetes.client.KubernetesClientException;
+import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.ClientMixedOperation;
 import io.fabric8.kubernetes.client.dsl.ClientPodResource;
@@ -46,6 +47,7 @@ public class KubernetesReplicationControllersConsumer extends DefaultConsumer {
 
     private final Processor processor;
     private ExecutorService executor;
+    private ReplicationControllersConsumerTask rcWatcher;
 
     public KubernetesReplicationControllersConsumer(KubernetesEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -62,8 +64,8 @@ public class KubernetesReplicationControllersConsumer extends DefaultConsumer {
         super.doStart();
 
         executor = getEndpoint().createExecutor();
-
-        executor.submit(new ReplicationControllersConsumerTask());       
+        rcWatcher = new ReplicationControllersConsumerTask();
+        executor.submit(rcWatcher);       
     }
 
     @Override
@@ -73,8 +75,14 @@ public class KubernetesReplicationControllersConsumer extends DefaultConsumer {
         LOG.debug("Stopping Kubernetes Replication Controllers Consumer");
         if (executor != null) {
             if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
+                if (rcWatcher != null) {
+                    rcWatcher.getWatch().close();
+                }
                 getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             } else {
+                if (rcWatcher != null) {
+                    rcWatcher.getWatch().close();
+                }
                 executor.shutdownNow();
             }
         }
@@ -82,7 +90,9 @@ public class KubernetesReplicationControllersConsumer extends DefaultConsumer {
     }
     
     class ReplicationControllersConsumerTask implements Runnable {
-         
+        
+        private Watch watch;
+        
         @Override
         public void run() {
             ClientMixedOperation<ReplicationController, ReplicationControllerList, DoneableReplicationController, 
@@ -97,7 +107,7 @@ public class KubernetesReplicationControllersConsumer extends DefaultConsumer {
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getResourceName())) {
                 w.withName(getEndpoint().getKubernetesConfiguration().getResourceName());
             }
-            w.watch(new Watcher<ReplicationController>() {
+            watch = w.watch(new Watcher<ReplicationController>() {
 
                 @Override
                 public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action,
@@ -124,5 +134,13 @@ public class KubernetesReplicationControllersConsumer extends DefaultConsumer {
 
             });
         }
+        
+        public Watch getWatch() {
+            return watch;
+        }
+
+        public void setWatch(Watch watch) {
+            this.watch = watch;
+        } 
     }
 }
