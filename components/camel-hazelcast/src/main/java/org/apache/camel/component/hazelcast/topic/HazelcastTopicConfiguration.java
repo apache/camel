@@ -24,19 +24,18 @@ import org.apache.camel.spi.UriParams;
  */
 @UriParams
 public class HazelcastTopicConfiguration {
-	
-	@UriParam(label = "common", defaultValue = "false")
-    private boolean reliable = false;
-	
+
+    @UriParam(label = "common", defaultValue = "false")
+    private boolean reliable;
+
     /**
      * Define if the endpoint will use a reliable Topic struct or not.
      */
-	public boolean isReliable() {
-		return reliable;
-	}
+    public boolean isReliable() {
+        return reliable;
+    }
 
-	public void setReliable(boolean reliable) {
-		this.reliable = reliable;
-	}
-
+    public void setReliable(boolean reliable) {
+        this.reliable = reliable;
+    }
 }

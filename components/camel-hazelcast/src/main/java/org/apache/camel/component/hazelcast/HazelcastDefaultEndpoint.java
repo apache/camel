@@ -114,7 +114,7 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
         this.hazelcastInstanceName = hazelcastInstanceName;
     }
 
-	/**
+    /**
      * To specify a default operation to use, if no operation header has been provided.
      */
     public void setDefaultOperation(String defaultOperation) {
