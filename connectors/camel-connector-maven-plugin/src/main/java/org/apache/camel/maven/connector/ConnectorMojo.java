@@ -401,6 +401,7 @@ public class ConnectorMojo extends AbstractJarMojo {
             String groupId = extractGroupId(dto);
             String artifactId = extractArtifactId(dto);
             String version = extractVersion(dto);
+            String baseVersion = null;
 
             // find the artifact on the classpath that has the Camel component this connector is using
             // then we want to grab its json schema file to embed in this JAR so we have all files together
@@ -410,10 +411,12 @@ public class ConnectorMojo extends AbstractJarMojo {
                     Artifact artifact = (Artifact) obj;
                     if ("jar".equals(artifact.getType())) {
                         // use baseVersion so we can support SNAPSHOT versions that are based on a base version
-                        if (groupId.equals(artifact.getGroupId()) && artifactId.equals(artifact.getArtifactId()) && version.equals(artifact.getBaseVersion())) {
+                        if (groupId.equals(artifact.getGroupId()) && artifactId.equals(artifact.getArtifactId())) {
                             // load the component file inside the file
                             URL url = new URL("file:" + artifact.getFile());
                             URLClassLoader child = new URLClassLoader(new URL[]{url}, this.getClass().getClassLoader());
+
+                            baseVersion = artifact.getVersion();
 
                             InputStream is = child.getResourceAsStream("META-INF/services/org/apache/camel/component/" + scheme);
                             if (is != null) {
@@ -441,6 +444,9 @@ public class ConnectorMojo extends AbstractJarMojo {
 
                                     getLog().info("Embedded camel-component-schema.json file for Camel component " + scheme);
 
+                                    // updating to use correct base version in camel-connector.json
+                                    updateBaseVersionInCamelConnectorJSon(baseVersion);
+
                                     return out;
                                 }
                             }
@@ -454,6 +460,37 @@ public class ConnectorMojo extends AbstractJarMojo {
         }
 
         return null;
+    }
+
+    private void updateBaseVersionInCamelConnectorJSon(String baseVersion) throws MojoExecutionException {
+        File file = new File(classesDirectory, "camel-connector.json");
+        if (file.exists()) {
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                Map dto = mapper.readValue(file, Map.class);
+
+                // find the component dependency and get its .json file
+                file = new File(classesDirectory, "camel-connector.json");
+                if (baseVersion != null) {
+                    String existingBaseVersion = (String) dto.get("baseVersion");
+                    if (existingBaseVersion == null || !existingBaseVersion.equals(baseVersion)) {
+                        dto.put("baseVersion", baseVersion);
+                        // update file
+                        mapper.writerWithDefaultPrettyPrinter().writeValue(file, dto);
+                        // project root folder
+                        File root = classesDirectory.getParentFile().getParentFile();
+                        // update source file also
+                        file = new File(root, "src/main/resources/camel-connector.json");
+                        if (file.exists()) {
+                            getLog().info("Updating baseVersion to " + baseVersion + " in " + file);
+                            mapper.writerWithDefaultPrettyPrinter().writeValue(file, dto);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                throw new MojoExecutionException("Error in camel-connector-maven-plugin", e);
+            }
+        }
     }
 
     /**
