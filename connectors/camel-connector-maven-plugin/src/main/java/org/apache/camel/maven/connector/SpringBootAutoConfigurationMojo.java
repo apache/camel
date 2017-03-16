@@ -72,6 +72,9 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
     @Parameter(defaultValue = "true")
     private boolean includeLicenseHeader;
 
+    @Parameter(defaultValue = "camel.connector")
+    private String configurationPrefix;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
@@ -180,9 +183,17 @@ public class SpringBootAutoConfigurationMojo extends AbstractMojo {
         doc = doc.replaceAll("component", "connector");
         javaClass.getJavaDoc().setFullText(doc);
 
-        String prefix = "camel.connector." + model.getScheme();
-        // make sure prefix is in lower case
-        prefix = "camel.connector." + connectorScheme.toLowerCase(Locale.US);
+        // compute the configuration prefix to use with spring boot configuration
+        String prefix = "";
+        if (!"false".equalsIgnoreCase(configurationPrefix)) {
+            // make sure prefix is in lower case
+            prefix = configurationPrefix.toLowerCase(Locale.US);
+            if (!prefix.endsWith(".")) {
+                prefix += ".";
+            }
+        }
+        prefix += connectorScheme.toLowerCase(Locale.US);
+
         javaClass.addAnnotation("org.springframework.boot.context.properties.ConfigurationProperties").setStringValue("prefix", prefix);
 
         for (ComponentOptionModel option : model.getComponentOptions()) {
