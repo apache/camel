@@ -17,19 +17,19 @@
 package org.apache.camel.component.telegram;
 
 /**
- * Useful constants for the Telegram component.
+ * A collection of supported parse modes for text messages.
  */
-public final class TelegramConstants {
+public enum TelegramParseMode {
 
-    public static final String TELEGRAM_CHAT_ID = "CamelTelegramChatId";
+    HTML("HTML"), MARKDOWN("Markdown");
 
-    public static final String TELEGRAM_MEDIA_TYPE = "CamelTelegramMediaType";
+    private String code;
 
-    public static final String TELEGRAM_MEDIA_TITLE_CAPTION = "CamelTelegramMediaTitleCaption";
-
-    public static final String TELEGRAM_PARSE_MODE = "CamelTelegramParseMode";
-
-    private TelegramConstants() {
+    TelegramParseMode(String code) {
+        this.code = code;
     }
 
+    public String getCode() {
+        return code;
+    }
 }
