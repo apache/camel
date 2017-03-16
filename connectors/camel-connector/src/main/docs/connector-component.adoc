@@ -65,24 +65,47 @@ To build a connector you need to at least include the following dependencies in 
     </dependency>
 ------------
 
-And then the `camel-connector-maven-plugin` plugin as well:
+And these following Maven plugins:
 
 [source,xml]
 ------------
-    <!-- generate connector -->
-    <plugin>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-connector-maven-plugin</artifactId>
-      <version>${camel.version}</version>
-      <executions>
-        <execution>
-          <id>connector</id>
-          <goals>
-            <goal>jar</goal>
-          </goals>
-        </execution>
-      </executions>
-    </plugin>
+      <!-- generate components meta-data and validate component includes documentation etc -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-package-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>prepare</id>
+            <goals>
+              <goal>prepare-components</goal>
+            </goals>
+            <phase>generate-resources</phase>
+          </execution>
+          <execution>
+            <id>validate</id>
+            <goals>
+              <goal>validate-components</goal>
+            </goals>
+            <phase>prepare-package</phase>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- generate connector -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-connector-maven-plugin</artifactId>
+        <version>${camel.version}</version>
+        <executions>
+          <execution>
+            <id>connector</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
 ------------
 
 
@@ -96,7 +119,8 @@ A Camel connector works great with Spring Boot. If a connector has been configur
 Then the `camel-connector-maven-plugin` will be able to generate Spring Boot auto configuration for these options.
 This allows users to essily configure these options if using Spring Boot with the connector.
 
-To enable Spring Boot generation you need to enable this in the `camel-connector-maven-plugin` as follows:
+To enable Spring Boot generation you need to enable this in the `camel-connector-maven-plugin` by adding
+an `<execution>` with the `prepare-spring-boot-auto-configuration` goal:
 
 [source,xml]
 ------------
