@@ -62,6 +62,7 @@
     <asciidoctorj-version>1.5.4.1</asciidoctorj-version>
     <asm-version>5.0.4</asm-version>
     <aspectj-version>1.8.10</aspectj-version>
+    <assertj-version>3.6.2</assertj-version>
     <asterisk-java-version>1.0.0-final</asterisk-java-version>
     <asterisk-java-bundle-version>1.0.0-final_1</asterisk-java-bundle-version>
     <atmos-client-version>2.2.2</atmos-client-version>
@@ -4056,6 +4057,11 @@
         <groupId>httpunit</groupId>
         <artifactId>httpunit</artifactId>
         <version>${httpunit-version}</version>
+      </dependency>
+        <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>${assertj-version}</version>
       </dependency>
 
       <!-- default JPA support -->
