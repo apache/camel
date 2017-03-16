@@ -17,4 +17,5 @@
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 org.apache.camel.spring.boot.CamelAutoConfiguration,\
+org.apache.camel.spring.boot.CamelRestAutoConfiguration,\
 org.apache.camel.spring.boot.health.CamelHealthAutoConfiguration
