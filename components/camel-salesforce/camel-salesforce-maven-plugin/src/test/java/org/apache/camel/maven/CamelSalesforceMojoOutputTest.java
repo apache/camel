@@ -44,11 +44,20 @@ public class CamelSalesforceMojoOutputTest {
     private static final String TEST_CALCULATED_FORMULA_FILE = "complex_calculated_formula.json";
     private static final String FIXED_DATE = "Thu Mar 09 16:15:49 ART 2017";
 
-    private CamelSalesforceMojo mojo;
-    private CamelSalesforceMojo.GeneratorUtility utility = new CamelSalesforceMojo.GeneratorUtility(false);
-
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
+
+    @Parameter(0)
+    public String json;
+
+    @Parameter(1)
+    public SObjectDescription description;
+
+    @Parameter(2)
+    public String source;
+
+    private CamelSalesforceMojo mojo;
+    private CamelSalesforceMojo.GeneratorUtility utility = new CamelSalesforceMojo.GeneratorUtility(false);
 
     @Parameters(name = "json = {0}, source = {2}")
     public static Iterable<Object[]> parameters() throws IOException {
@@ -63,15 +72,6 @@ public class CamelSalesforceMojoOutputTest {
     static Object[] pair(String json, String source) throws IOException {
         return new Object[] {json, createSObjectDescription(json), source};
     }
-
-    @Parameter(0)
-    public String json;
-
-    @Parameter(1)
-    public SObjectDescription description;
-
-    @Parameter(2)
-    public String source;
 
     @Before
     public void setUp() throws Exception {
@@ -103,5 +103,4 @@ public class CamelSalesforceMojoOutputTest {
             return mapper.readValue(inputStream, SObjectDescription.class);
         }
     }
-
 }
