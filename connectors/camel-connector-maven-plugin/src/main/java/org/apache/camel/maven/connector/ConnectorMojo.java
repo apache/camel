@@ -95,37 +95,16 @@ public class ConnectorMojo extends AbstractJarMojo {
         File file = new File(classesDirectory, "camel-connector.json");
         if (file.exists()) {
 
-            if (includeGitUrl) {
-                // we want to include the git url of the project
-                File gitFolder = GitHelper.findGitFolder();
-                try {
-                    gitUrl = GitHelper.extractGitUrl(gitFolder);
-                } catch (IOException e) {
-                    throw new MojoExecutionException("Cannot extract gitUrl due " + e.getMessage(), e);
-                }
-                if (gitUrl == null) {
-                    getLog().warn("No .git directory found for connector");
-                }
-            }
+            // updating to use correct project version in camel-connector.json
+            String version = getProject().getVersion();
+            updateVersionInCamelConnectorJSon("version", version);
 
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 Map dto = mapper.readValue(file, Map.class);
 
-                // embed girUrl in camel-connector.json file
-                if (gitUrl != null) {
-                    String existingGitUrl = (String) dto.get("gitUrl");
-                    if (existingGitUrl == null || !existingGitUrl.equals(gitUrl)) {
-                        dto.put("gitUrl", gitUrl);
-                        // update file
-                        mapper.writerWithDefaultPrettyPrinter().writeValue(file, dto);
-                        // update source file also
-                        file = new File(root, "src/main/resources/camel-connector.json");
-                        if (file.exists()) {
-                            getLog().info("Updating gitUrl to " + file);
-                            mapper.writerWithDefaultPrettyPrinter().writeValue(file, dto);
-                        }
-                    }
+                if (includeGitUrl) {
+                    gitUrl = embedGitUrlInCamelConnectorJSon(mapper, dto);
                 }
 
                 File schema = embedCamelComponentSchema(file);
@@ -191,6 +170,37 @@ public class ConnectorMojo extends AbstractJarMojo {
         }
 
         return super.createArchive();
+    }
+
+    private String embedGitUrlInCamelConnectorJSon(ObjectMapper mapper, Map dto) throws MojoExecutionException {
+        // we want to include the git url of the project
+        File gitFolder = GitHelper.findGitFolder();
+        try {
+            String gitUrl = GitHelper.extractGitUrl(gitFolder);
+            if (gitUrl == null) {
+                return null;
+            }
+
+            // embed girUrl in camel-connector.json file
+            String existingGitUrl = (String) dto.get("gitUrl");
+            if (existingGitUrl == null || !existingGitUrl.equals(gitUrl)) {
+                dto.put("gitUrl", gitUrl);
+                // update file
+                File file = new File(classesDirectory, "camel-connector.json");
+                mapper.writerWithDefaultPrettyPrinter().writeValue(file, dto);
+                // update source file also
+                File root = classesDirectory.getParentFile().getParentFile();
+                File sourceFile = new File(root, "src/main/resources/camel-connector.json");
+                if (sourceFile.exists()) {
+                    getLog().info("Updating gitUrl to " + gitUrl + " in " + sourceFile);
+                    mapper.writerWithDefaultPrettyPrinter().writeValue(sourceFile, dto);
+                }
+            }
+            return gitUrl;
+            
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error in camel-connector-maven-plugin", e);
+        }
     }
 
     private String extractJavaType(String scheme) throws Exception {
@@ -400,8 +410,6 @@ public class ConnectorMojo extends AbstractJarMojo {
             String scheme = extractScheme(dto);
             String groupId = extractGroupId(dto);
             String artifactId = extractArtifactId(dto);
-            String version = extractVersion(dto);
-            String baseVersion = null;
 
             // find the artifact on the classpath that has the Camel component this connector is using
             // then we want to grab its json schema file to embed in this JAR so we have all files together
@@ -415,8 +423,6 @@ public class ConnectorMojo extends AbstractJarMojo {
                             // load the component file inside the file
                             URL url = new URL("file:" + artifact.getFile());
                             URLClassLoader child = new URLClassLoader(new URL[]{url}, this.getClass().getClassLoader());
-
-                            baseVersion = artifact.getVersion();
 
                             InputStream is = child.getResourceAsStream("META-INF/services/org/apache/camel/component/" + scheme);
                             if (is != null) {
@@ -445,7 +451,8 @@ public class ConnectorMojo extends AbstractJarMojo {
                                     getLog().info("Embedded camel-component-schema.json file for Camel component " + scheme);
 
                                     // updating to use correct base version in camel-connector.json
-                                    updateBaseVersionInCamelConnectorJSon(baseVersion);
+                                    String baseVersion = artifact.getVersion();
+                                    updateVersionInCamelConnectorJSon("baseVersion", baseVersion);
 
                                     return out;
                                 }
@@ -462,19 +469,17 @@ public class ConnectorMojo extends AbstractJarMojo {
         return null;
     }
 
-    private void updateBaseVersionInCamelConnectorJSon(String baseVersion) throws MojoExecutionException {
+    private void updateVersionInCamelConnectorJSon(String qualifier, String version) throws MojoExecutionException {
         File file = new File(classesDirectory, "camel-connector.json");
         if (file.exists()) {
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 Map dto = mapper.readValue(file, Map.class);
 
-                // find the component dependency and get its .json file
-                file = new File(classesDirectory, "camel-connector.json");
-                if (baseVersion != null) {
-                    String existingBaseVersion = (String) dto.get("baseVersion");
-                    if (existingBaseVersion == null || !existingBaseVersion.equals(baseVersion)) {
-                        dto.put("baseVersion", baseVersion);
+                if (version != null) {
+                    String existingVersion = (String) dto.get(qualifier);
+                    if (existingVersion == null || !existingVersion.equals(version)) {
+                        dto.put(qualifier, version);
                         // update file
                         mapper.writerWithDefaultPrettyPrinter().writeValue(file, dto);
                         // project root folder
@@ -482,7 +487,7 @@ public class ConnectorMojo extends AbstractJarMojo {
                         // update source file also
                         file = new File(root, "src/main/resources/camel-connector.json");
                         if (file.exists()) {
-                            getLog().info("Updating baseVersion to " + baseVersion + " in " + file);
+                            getLog().info("Updating " + qualifier + " to " + version + " in " + file);
                             mapper.writerWithDefaultPrettyPrinter().writeValue(file, dto);
                         }
                     }
