@@ -67,11 +67,11 @@ import static org.apache.camel.component.salesforce.SalesforceLoginConfig.DEFAUL
 @Metadata(label = "verifiers", enums = "PARAMETERS,CONNECTIVITY")
 public class SalesforceComponent extends UriEndpointComponent implements EndpointCompleter, VerifiableComponent {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SalesforceComponent.class);
+    static final int CONNECTION_TIMEOUT = 60000;
+    static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
+    static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
 
-    private static final int CONNECTION_TIMEOUT = 60000;
-    private static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
-    private static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
+    private static final Logger LOG = LoggerFactory.getLogger(SalesforceComponent.class);
 
     @Metadata(label = "security")
     private SalesforceLoginConfig loginConfig;
