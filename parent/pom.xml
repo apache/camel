@@ -4058,11 +4058,6 @@
         <artifactId>httpunit</artifactId>
         <version>${httpunit-version}</version>
       </dependency>
-        <dependency>
-        <groupId>org.assertj</groupId>
-        <artifactId>assertj-core</artifactId>
-        <version>${assertj-version}</version>
-      </dependency>
 
       <!-- default JPA support -->
       <dependency>
