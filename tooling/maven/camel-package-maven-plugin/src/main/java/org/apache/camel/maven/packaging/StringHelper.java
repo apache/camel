@@ -112,8 +112,19 @@ public final class StringHelper {
         text = wrapWords(text, "\n", watermark, false);
         text = text.replace(' ', '-');
         text = CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_CAMEL, text);
-        text = text.replaceAll("\\n", newLine);
-        return text;
+
+        // upper case first char on each line
+        String[] lines = text.split("\n");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < lines.length; i++) {
+            String line = lines[i];
+            line = Character.toUpperCase(line.charAt(0)) + line.substring(1);
+            sb.append(line);
+            if (i < lines.length - 1) {
+                sb.append(newLine);
+            }
+        }
+        return sb.toString();
     }
 
     /**

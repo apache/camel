@@ -16,6 +16,8 @@
  */
 package org.apache.camel.maven.packaging.model;
 
+import java.util.Calendar;
+
 import org.apache.camel.maven.packaging.StringHelper;
 
 import static org.apache.camel.maven.packaging.StringHelper.wrapCamelCaseWords;
@@ -143,6 +145,11 @@ public class ComponentOptionModel {
     }
 
     public String getShortJavaType() {
+        // TODO: use watermark in the others
+        return getShortJavaType(40);
+    }
+
+    public String getShortJavaType(int watermark) {
         if (javaType.startsWith("java.util.Map")) {
             return "Map";
         } else if (javaType.startsWith("java.util.Set")) {
@@ -150,12 +157,19 @@ public class ComponentOptionModel {
         } else if (javaType.startsWith("java.util.List")) {
             return "List";
         }
-        int pos = javaType.lastIndexOf(".");
+
+        String text = javaType;
+
+        int pos = text.lastIndexOf(".");
         if (pos != -1) {
-            return javaType.substring(pos + 1);
-        } else {
-            return javaType;
+            text = text.substring(pos + 1);
         }
+
+        // if its some kind of java object then lets wrap it as its long
+        if ("object".equals(type)) {
+            text = wrapCamelCaseWords(text, watermark, " ");
+        }
+        return text;
     }
 
     public String getShortGroup() {
@@ -166,14 +180,16 @@ public class ComponentOptionModel {
     }
 
     public String getShortDefaultValue(int watermark) {
+        if (defaultValue.isEmpty()) {
+            return "";
+        }
         String text = defaultValue;
         if (text.endsWith("<T>")) {
             text = text.substring(0, text.length() - 3);
         } else if (text.endsWith("<T>>")) {
             text = text.substring(0, text.length() - 4);
         }
-
-        return wrapCamelCaseWords(text, watermark, " ");
+        return text;
     }
 
     public String getShortName(int watermark) {
