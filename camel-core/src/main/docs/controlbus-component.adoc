@@ -76,28 +76,23 @@ with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| command |  | String | *Required* Command can be either route or language
-| language |  | Language | Allows you to specify the name of a Language to use for evaluating the message body. If there is any result from the evaluation then the result is put in the message body.
+| Name | Description | Default | Type
+| **command** | *Required* Command can be either route or language |  | String
+| **language** | Allows you to specify the name of a Language to use for evaluating the message body. If there is any result from the evaluation then the result is put in the message body. |  | Language
 |=======================================================================
 
 #### Query Parameters (5 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| action |  | String | To denote an action that can be either: start stop or status. To either start or stop a route or to get the status of the route as output in the message body. You can use suspend and resume from Camel 2.11.1 onwards to either suspend or resume a route. And from Camel 2.11.1 onwards you can use stats to get performance statics returned in XML format; the routeId option can be used to define which route to get the performance stats for if routeId is not defined then you get statistics for the entire CamelContext.
-
-| async | false | boolean | Whether to execute the control bus task asynchronously. Important: If this option is enabled then any result from the task is not set on the Exchange. This is only possible if executing tasks synchronously.
-
-| loggingLevel | INFO | LoggingLevel | Logging level used for logging when task is done or if any exceptions occurred during processing the task.
-
-| routeId |  | String | To specify a route by its id. The special keyword current indicates the current route.
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **action** (producer) | To denote an action that can be either: start stop or status. To either start or stop a route or to get the status of the route as output in the message body. You can use suspend and resume from Camel 2.11.1 onwards to either suspend or resume a route. And from Camel 2.11.1 onwards you can use stats to get performance statics returned in XML format; the routeId option can be used to define which route to get the performance stats for if routeId is not defined then you get statistics for the entire CamelContext. |  | String
+| **async** (producer) | Whether to execute the control bus task asynchronously. Important: If this option is enabled then any result from the task is not set on the Exchange. This is only possible if executing tasks synchronously. | false | boolean
+| **loggingLevel** (producer) | Logging level used for logging when task is done or if any exceptions occurred during processing the task. | INFO | LoggingLevel
+| **routeId** (producer) | To specify a route by its id. The special keyword current indicates the current route. |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

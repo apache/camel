@@ -48,17 +48,13 @@ The EHCache component supports 4 options which are listed below.
 
 
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
- 4+^s| advanced
-| cacheManagerFactory |  | CacheManagerFactory | To use the given CacheManagerFactory for creating the CacheManager. By default the DefaultCacheManagerFactory is used.
- 4+^s| common
-| configuration |  | CacheConfiguration | Sets the Cache configuration
-
-| configurationFile | classpath:ehcache.xml | String | Sets the location of the ehcache.xml file to load from classpath or file system. By default the file is loaded from classpath:ehcache.xml
- 4+^s| advanced
-| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Description | Default | Type
+| **cacheManagerFactory** (advanced) | To use the given CacheManagerFactory for creating the CacheManager. By default the DefaultCacheManagerFactory is used. |  | CacheManagerFactory
+| **configuration** (common) | Sets the Cache configuration |  | CacheConfiguration
+| **configurationFile** (common) | Sets the location of the ehcache.xml file to load from classpath or file system. By default the file is loaded from classpath:ehcache.xml | classpath:ehcache.xml | String
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
 
@@ -76,55 +72,36 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| cacheName |  | String | *Required* Name of the cache
+| Name | Description | Default | Type
+| **cacheName** | *Required* Name of the cache |  | String
 |=======================================================================
 
 #### Query Parameters (19 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| diskExpiryThreadIntervalSeconds |  | long | The number of seconds between runs of the disk expiry thread.
-
-| diskPersistent | false | boolean | Whether the disk store persists between restarts of the application.
-
-| diskStorePath |  | String | This parameter is ignored. CacheManager sets it using setter injection.
-
-| eternal | false | boolean | Sets whether elements are eternal. If eternal timeouts are ignored and the element never expires.
-
-| key |  | String | The default key to use. If a key is provided in the message header then the key from the header takes precedence.
-
-| maxElementsInMemory | 1000 | int | The number of elements that may be stored in the defined cache in memory.
-
-| memoryStoreEvictionPolicy | LFU | MemoryStoreEvictionPolicy | Which eviction strategy to use when maximum number of elements in memory is reached. The strategy defines which elements to be removed. LRU - Lest Recently Used LFU - Lest Frequently Used FIFO - First In First Out
-
-| objectCache | false | boolean | Whether to turn on allowing to store non serializable objects in the cache. If this option is enabled then overflow to disk cannot be enabled as well.
-
-| operation |  | String | The default cache operation to use. If an operation in the message header then the operation from the header takes precedence.
-
-| overflowToDisk | true | boolean | Specifies whether cache may overflow to disk
-
-| timeToIdleSeconds | 300 | long | The maximum amount of time between accesses before an element expires
-
-| timeToLiveSeconds | 300 | long | The maximum time between creation time and when an element expires. Is used only if the element is not eternal
- 4+^s| consumer
-| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
- 4+^s| consumer (advanced)
-| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
- 4+^s| advanced
-| cacheLoaderRegistry |  | CacheLoaderRegistry | To configure cache loader using the CacheLoaderRegistry
-
-| cacheManagerFactory |  | CacheManagerFactory | To use a custom CacheManagerFactory for creating the CacheManager to be used by this endpoint. By default the CacheManagerFactory configured on the component is used.
-
-| eventListenerRegistry |  | CacheEventListenerRegistry | To configure event listeners using the CacheEventListenerRegistry
-
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **diskExpiryThreadInterval Seconds** (common) | The number of seconds between runs of the disk expiry thread. |  | long
+| **diskPersistent** (common) | Whether the disk store persists between restarts of the application. | false | boolean
+| **diskStorePath** (common) | This parameter is ignored. CacheManager sets it using setter injection. |  | String
+| **eternal** (common) | Sets whether elements are eternal. If eternal timeouts are ignored and the element never expires. | false | boolean
+| **key** (common) | The default key to use. If a key is provided in the message header then the key from the header takes precedence. |  | String
+| **maxElementsInMemory** (common) | The number of elements that may be stored in the defined cache in memory. | 1000 | int
+| **memoryStoreEvictionPolicy** (common) | Which eviction strategy to use when maximum number of elements in memory is reached. The strategy defines which elements to be removed. LRU - Lest Recently Used LFU - Lest Frequently Used FIFO - First In First Out | LFU | MemoryStoreEviction Policy
+| **objectCache** (common) | Whether to turn on allowing to store non serializable objects in the cache. If this option is enabled then overflow to disk cannot be enabled as well. | false | boolean
+| **operation** (common) | The default cache operation to use. If an operation in the message header then the operation from the header takes precedence. |  | String
+| **overflowToDisk** (common) | Specifies whether cache may overflow to disk | true | boolean
+| **timeToIdleSeconds** (common) | The maximum amount of time between accesses before an element expires | 300 | long
+| **timeToLiveSeconds** (common) | The maximum time between creation time and when an element expires. Is used only if the element is not eternal | 300 | long
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **cacheLoaderRegistry** (advanced) | To configure cache loader using the CacheLoaderRegistry |  | CacheLoaderRegistry
+| **cacheManagerFactory** (advanced) | To use a custom CacheManagerFactory for creating the CacheManager to be used by this endpoint. By default the CacheManagerFactory configured on the component is used. |  | CacheManagerFactory
+| **eventListenerRegistry** (advanced) | To configure event listeners using the CacheEventListenerRegistry |  | CacheEventListener Registry
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

@@ -61,29 +61,23 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| url |  | String | *Required* Url to the SAP net-weaver gateway server.
+| Name | Description | Default | Type
+| **url** | *Required* Url to the SAP net-weaver gateway server. |  | String
 |=======================================================================
 
 #### Query Parameters (6 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| flatternMap | true | boolean | If the JSON Map contains only a single entry then flattern by storing that single entry value as the message body.
-
-| json | true | boolean | Whether to return data in JSON format. If this option is false then XML is returned in Atom format.
-
-| jsonAsMap | true | boolean | To transform the JSON from a String to a Map in the message body.
-
-| password |  | String | *Required* Password for account.
-
-| username |  | String | *Required* Username for account.
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **flatternMap** (producer) | If the JSON Map contains only a single entry then flattern by storing that single entry value as the message body. | true | boolean
+| **json** (producer) | Whether to return data in JSON format. If this option is false then XML is returned in Atom format. | true | boolean
+| **jsonAsMap** (producer) | To transform the JSON from a String to a Map in the message body. | true | boolean
+| **password** (producer) | *Required* Password for account. |  | String
+| **username** (producer) | *Required* Username for account. |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

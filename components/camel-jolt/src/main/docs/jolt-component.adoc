@@ -45,13 +45,11 @@ The JOLT component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
- 4+^s| advanced
-| transform |  | Transform | Explicitly sets the Transform to use. If not set a Transform specified by the transformDsl will be created
-
-| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Description | Default | Type
+| **transform** (advanced) | Explicitly sets the Transform to use. If not set a Transform specified by the transformDsl will be created |  | Transform
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
 
@@ -69,27 +67,22 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| resourceUri |  | String | *Required* Path to the resource. You can prefix with: classpath file http ref or bean. classpath file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot eg bean:myBean.myMethod.
+| Name | Description | Default | Type
+| **resourceUri** | *Required* Path to the resource. You can prefix with: classpath file http ref or bean. classpath file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot eg bean:myBean.myMethod. |  | String
 |=======================================================================
 
 #### Query Parameters (5 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| contentCache | false | boolean | Sets whether to use resource content cache or not
-
-| inputType | Hydrated | JoltInputOutputType | Specifies if the input is hydrated JSON or a JSON String.
-
-| outputType | Hydrated | JoltInputOutputType | Specifies if the output should be hydrated JSON or a JSON String.
-
-| transformDsl | Chainr | JoltTransformType | Specifies the Transform DSL of the endpoint resource. If none is specified Chainr will be used.
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **contentCache** (producer) | Sets whether to use resource content cache or not | false | boolean
+| **inputType** (producer) | Specifies if the input is hydrated JSON or a JSON String. | Hydrated | JoltInputOutputType
+| **outputType** (producer) | Specifies if the output should be hydrated JSON or a JSON String. | Hydrated | JoltInputOutputType
+| **transformDsl** (producer) | Specifies the Transform DSL of the endpoint resource. If none is specified Chainr will be used. | Chainr | JoltTransformType
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

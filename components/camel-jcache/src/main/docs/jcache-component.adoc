@@ -22,61 +22,39 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| cacheName |  | String | *Required* The name of the cache
+| Name | Description | Default | Type
+| **cacheName** | *Required* The name of the cache |  | String
 |=======================================================================
 
 #### Query Parameters (22 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| cacheConfiguration |  | Configuration | A Configuration for the Cache
-
-| cacheConfigurationProperties |  | Properties | The Properties for the javax.cache.spi.CachingProvider to create the CacheManager
-
-| cachingProvider |  | String | The fully qualified class name of the javax.cache.spi.CachingProvider
-
-| configurationUri |  | String | An implementation specific URI for the CacheManager
-
-| managementEnabled | false | boolean | Whether management gathering is enabled
-
-| readThrough | false | boolean | If read-through caching should be used
-
-| statisticsEnabled | false | boolean | Whether statistics gathering is enabled
-
-| storeByValue | true | boolean | If cache should use store-by-value or store-by-reference semantics
-
-| writeThrough | false | boolean | If write-through caching should be used
- 4+^s| consumer
-| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| filteredEvents |  | List | Events a consumer should filter. If using filteredEvents option then eventFilters one will be ignored
-
-| oldValueRequired | false | boolean | if the old value is required for events
-
-| synchronous | false | boolean | if the the event listener should block the thread causing the event
- 4+^s| consumer (advanced)
-| eventFilters |  | List | The CacheEntryEventFilter. If using eventFilters option then filteredEvents one will be ignored
-
-| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
- 4+^s| producer
-| action |  | String | To configure using a cache operation by default. If an operation in the message header then the operation from the header takes precedence.
- 4+^s| advanced
-| cacheLoaderFactory |  | CacheLoader> | The CacheLoader factory
-
-| cacheWriterFactory |  | CacheWriter> | The CacheWriter factory
-
-| createCacheIfNotExists | true | boolean | Configure if a cache need to be created if it does exist or can't be pre-configured.
-
-| expiryPolicyFactory |  | ExpiryPolicy> | The ExpiryPolicy factory
-
-| lookupProviders | false | boolean | Configure if a camel-cache should try to find implementations of jcache api in runtimes like OSGi.
+| Name | Description | Default | Type
+| **cacheConfiguration** (common) | A Configuration for the Cache |  | Configuration
+| **cacheConfigurationProperties** (common) | The Properties for the javax.cache.spi.CachingProvider to create the CacheManager |  | Properties
+| **cachingProvider** (common) | The fully qualified class name of the javax.cache.spi.CachingProvider |  | String
+| **configurationUri** (common) | An implementation specific URI for the CacheManager |  | String
+| **managementEnabled** (common) | Whether management gathering is enabled | false | boolean
+| **readThrough** (common) | If read-through caching should be used | false | boolean
+| **statisticsEnabled** (common) | Whether statistics gathering is enabled | false | boolean
+| **storeByValue** (common) | If cache should use store-by-value or store-by-reference semantics | true | boolean
+| **writeThrough** (common) | If write-through caching should be used | false | boolean
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **filteredEvents** (consumer) | Events a consumer should filter. If using filteredEvents option then eventFilters one will be ignored |  | List
+| **oldValueRequired** (consumer) | if the old value is required for events | false | boolean
+| **synchronous** (consumer) | if the the event listener should block the thread causing the event | false | boolean
+| **eventFilters** (consumer) | The CacheEntryEventFilter. If using eventFilters option then filteredEvents one will be ignored |  | List
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **action** (producer) | To configure using a cache operation by default. If an operation in the message header then the operation from the header takes precedence. |  | String
+| **cacheLoaderFactory** (advanced) | The CacheLoader factory |  | CacheLoader>
+| **cacheWriterFactory** (advanced) | The CacheWriter factory |  | CacheWriter>
+| **createCacheIfNotExists** (advanced) | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | boolean
+| **expiryPolicyFactory** (advanced) | The ExpiryPolicy factory |  | ExpiryPolicy>
+| **lookupProviders** (advanced) | Configure if a camel-cache should try to find implementations of jcache api in runtimes like OSGi. | false | boolean
 |=======================================================================
 // endpoint options: END
 
@@ -92,18 +70,13 @@ The JCache component supports 5 options which are listed below.
 
 
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
- 4+^s| common
-| cachingProvider |  | String | The fully qualified class name of the javax.cache.spi.CachingProvider
-
-| cacheConfiguration |  | Configuration | A Configuration for the Cache
-
-| cacheConfigurationProperties |  | Properties | The Properties for the javax.cache.spi.CachingProvider to create the CacheManager
-
-| configurationUri |  | String | An implementation specific URI for the CacheManager
- 4+^s| advanced
-| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Description | Default | Type
+| **cachingProvider** (common) | The fully qualified class name of the javax.cache.spi.CachingProvider |  | String
+| **cacheConfiguration** (common) | A Configuration for the Cache |  | Configuration
+| **cacheConfiguration Properties** (common) | The Properties for the javax.cache.spi.CachingProvider to create the CacheManager |  | Properties
+| **configurationUri** (common) | An implementation specific URI for the CacheManager |  | String
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END

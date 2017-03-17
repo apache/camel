@@ -56,29 +56,23 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| connectionBean |  | String | *Required* Connection to the influx database of class InfluxDB.class
+| Name | Description | Default | Type
+| **connectionBean** | *Required* Connection to the influx database of class InfluxDB.class |  | String
 |=======================================================================
 
 #### Query Parameters (6 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| batch | false | boolean | Define if this operation is a batch operation or not
-
-| databaseName |  | String | The name of the database where the time series will be stored
-
-| operation | insert | String | Define if this operation is an insert or a query
-
-| query |  | String | Define the query in case of operation query
-
-| retentionPolicy | default | String | The string that defines the retention policy to the data created by the endpoint
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **batch** (producer) | Define if this operation is a batch operation or not | false | boolean
+| **databaseName** (producer) | The name of the database where the time series will be stored |  | String
+| **operation** (producer) | Define if this operation is an insert or a query | insert | String
+| **query** (producer) | Define the query in case of operation query |  | String
+| **retentionPolicy** (producer) | The string that defines the retention policy to the data created by the endpoint | default | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

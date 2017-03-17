@@ -46,13 +46,11 @@ The JDBC component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
- 4+^s| producer
-| dataSource |  | DataSource | To use the DataSource instance instead of looking up the data source by name from the registry.
- 4+^s| advanced
-| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Description | Default | Type
+| **dataSource** (producer) | To use the DataSource instance instead of looking up the data source by name from the registry. |  | DataSource
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
 
@@ -70,43 +68,30 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| dataSourceName |  | String | *Required* Name of DataSource to lookup in the Registry.
+| Name | Description | Default | Type
+| **dataSourceName** | *Required* Name of DataSource to lookup in the Registry. |  | String
 |=======================================================================
 
 #### Query Parameters (13 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| allowNamedParameters | true | boolean | Whether to allow using named parameters in the queries.
-
-| outputClass |  | String | Specify the full package and class name to use as conversion when outputType=SelectOne or SelectList.
-
-| outputType | SelectList | JdbcOutputType | Determines the output the producer should use.
-
-| parameters |  | Map | Optional parameters to the java.sql.Statement. For example to set maxRows fetchSize etc.
-
-| readSize |  | int | The default maximum number of rows that can be read by a polling query. The default value is 0.
-
-| resetAutoCommit | true | boolean | Camel will set the autoCommit on the JDBC connection to be false commit the change after executed the statement and reset the autoCommit flag of the connection at the end if the resetAutoCommit is true. If the JDBC connection doesn't support to reset the autoCommit flag you can set the resetAutoCommit flag to be false and Camel will not try to reset the autoCommit flag. When used with XA transactions you most likely need to set it to false so that the transaction manager is in charge of committing this tx.
-
-| transacted | false | boolean | Whether transactions are in use.
-
-| useGetBytesForBlob | false | boolean | To read BLOB columns as bytes instead of string data. This may be needed for certain databases such as Oracle where you must read BLOB columns as bytes.
-
-| useHeadersAsParameters | false | boolean | Set this option to true to use the prepareStatementStrategy with named parameters. This allows to define queries with named placeholders and use headers with the dynamic values for the query placeholders.
-
-| useJDBC4ColumnNameAndLabelSemantics | true | boolean | Sets whether to use JDBC 4 or JDBC 3.0 or older semantic when retrieving column name. JDBC 4.0 uses columnLabel to get the column name where as JDBC 3.0 uses both columnName or columnLabel. Unfortunately JDBC drivers behave differently so you can use this option to work out issues around your JDBC driver if you get problem using this component This option is default true.
- 4+^s| advanced
-| beanRowMapper |  | BeanRowMapper | To use a custom org.apache.camel.component.jdbc.BeanRowMapper when using outputClass. The default implementation will lower case the row names and skip underscores and dashes. For example CUST_ID is mapped as custId.
-
-| prepareStatementStrategy |  | JdbcPrepareStatementStrategy | Allows to plugin to use a custom org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy to control preparation of the query and prepared statement.
-
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **allowNamedParameters** (producer) | Whether to allow using named parameters in the queries. | true | boolean
+| **outputClass** (producer) | Specify the full package and class name to use as conversion when outputType=SelectOne or SelectList. |  | String
+| **outputType** (producer) | Determines the output the producer should use. | SelectList | JdbcOutputType
+| **parameters** (producer) | Optional parameters to the java.sql.Statement. For example to set maxRows fetchSize etc. |  | Map
+| **readSize** (producer) | The default maximum number of rows that can be read by a polling query. The default value is 0. |  | int
+| **resetAutoCommit** (producer) | Camel will set the autoCommit on the JDBC connection to be false commit the change after executed the statement and reset the autoCommit flag of the connection at the end if the resetAutoCommit is true. If the JDBC connection doesn't support to reset the autoCommit flag you can set the resetAutoCommit flag to be false and Camel will not try to reset the autoCommit flag. When used with XA transactions you most likely need to set it to false so that the transaction manager is in charge of committing this tx. | true | boolean
+| **transacted** (producer) | Whether transactions are in use. | false | boolean
+| **useGetBytesForBlob** (producer) | To read BLOB columns as bytes instead of string data. This may be needed for certain databases such as Oracle where you must read BLOB columns as bytes. | false | boolean
+| **useHeadersAsParameters** (producer) | Set this option to true to use the prepareStatementStrategy with named parameters. This allows to define queries with named placeholders and use headers with the dynamic values for the query placeholders. | false | boolean
+| **useJDBC4ColumnNameAnd LabelSemantics** (producer) | Sets whether to use JDBC 4 or JDBC 3.0 or older semantic when retrieving column name. JDBC 4.0 uses columnLabel to get the column name where as JDBC 3.0 uses both columnName or columnLabel. Unfortunately JDBC drivers behave differently so you can use this option to work out issues around your JDBC driver if you get problem using this component This option is default true. | true | boolean
+| **beanRowMapper** (advanced) | To use a custom org.apache.camel.component.jdbc.BeanRowMapper when using outputClass. The default implementation will lower case the row names and skip underscores and dashes. For example CUST_ID is mapped as custId. |  | BeanRowMapper
+| **prepareStatementStrategy** (advanced) | Allows to plugin to use a custom org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy to control preparation of the query and prepared statement. |  | JdbcPrepareStatement Strategy
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

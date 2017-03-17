@@ -46,13 +46,11 @@ The Slack component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
- 4+^s| producer
-| webhookUrl |  | String | The incoming webhook URL
- 4+^s| advanced
-| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Description | Default | Type
+| **webhookUrl** (producer) | The incoming webhook URL |  | String
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
 
@@ -68,27 +66,22 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| channel |  | String | *Required* The channel name (syntax name) or slackuser (syntax userName) to send a message directly to an user.
+| Name | Description | Default | Type
+| **channel** | *Required* The channel name (syntax name) or slackuser (syntax userName) to send a message directly to an user. |  | String
 |=======================================================================
 
 #### Query Parameters (5 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| iconEmoji |  | String | Use a Slack emoji as an avatar
-
-| iconUrl |  | String | The avatar that the component will use when sending message to a channel or user.
-
-| username |  | String | This is the username that the bot will have when sending messages to a channel or user.
-
-| webhookUrl |  | String | The incoming webhook URL
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **iconEmoji** (producer) | Use a Slack emoji as an avatar |  | String
+| **iconUrl** (producer) | The avatar that the component will use when sending message to a channel or user. |  | String
+| **username** (producer) | This is the username that the bot will have when sending messages to a channel or user. |  | String
+| **webhookUrl** (producer) | The incoming webhook URL |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

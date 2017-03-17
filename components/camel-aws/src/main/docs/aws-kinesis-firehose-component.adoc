@@ -43,21 +43,19 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| streamName |  | String | *Required* Name of the stream
+| Name | Description | Default | Type
+| **streamName** | *Required* Name of the stream |  | String
 |=======================================================================
 
 #### Query Parameters (2 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| amazonKinesisFirehoseClient |  | AmazonKinesisFirehose | *Required* Amazon Kinesis Firehose client to use for all requests for this endpoint
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **amazonKinesisFirehoseClient** (producer) | *Required* Amazon Kinesis Firehose client to use for all requests for this endpoint |  | AmazonKinesisFirehose
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

@@ -44,25 +44,21 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| path |  | String | *Required* The path to the schematron rules file. Can either be in class path or location in the file system.
+| Name | Description | Default | Type
+| **path** | *Required* The path to the schematron rules file. Can either be in class path or location in the file system. |  | String
 |=======================================================================
 
 #### Query Parameters (4 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| abort | false | boolean | Flag to abort the route and throw a schematron validation exception.
-
-| rules |  | Templates | To use the given schematron rules instead of loading from the path
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-
-| uriResolver |  | URIResolver | Set the URIResolver to be used for resolving schematron includes in the rules file.
+| Name | Description | Default | Type
+| **abort** (producer) | Flag to abort the route and throw a schematron validation exception. | false | boolean
+| **rules** (producer) | To use the given schematron rules instead of loading from the path |  | Templates
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **uriResolver** (advanced) | Set the URIResolver to be used for resolving schematron includes in the rules file. |  | URIResolver
 |=======================================================================
 // endpoint options: END
 

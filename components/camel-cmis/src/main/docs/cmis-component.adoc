@@ -25,13 +25,11 @@ The CMIS component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
- 4+^s| common
-| sessionFacadeFactory |  | CMISSessionFacadeFactory | To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade instances
- 4+^s| advanced
-| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Description | Default | Type
+| **sessionFacadeFactory** (common) | To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade instances |  | CMISSessionFacade Factory
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
 
@@ -46,43 +44,30 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| cmsUrl |  | String | *Required* URL to the cmis repository
+| Name | Description | Default | Type
+| **cmsUrl** | *Required* URL to the cmis repository |  | String
 |=======================================================================
 
 #### Query Parameters (13 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| pageSize | 100 | int | Number of nodes to retrieve per page
-
-| readContent | false | boolean | If set to true the content of document node will be retrieved in addition to the properties
-
-| readCount |  | int | Max number of nodes to read
-
-| repositoryId |  | String | The Id of the repository to use. If not specified the first available repository is used
- 4+^s| consumer
-| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| query |  | String | The cmis query to execute against the repository. If not specified the consumer will retrieve every node from the content repository by iterating the content tree recursively
- 4+^s| consumer (advanced)
-| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
- 4+^s| producer
-| queryMode | false | boolean | If true will execute the cmis query from the message body and return result otherwise will create a node in the cmis repository
- 4+^s| advanced
-| sessionFacadeFactory |  | CMISSessionFacadeFactory | To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade instances
-
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
- 4+^s| security
-| password |  | String | Password for the cmis repository
-
-| username |  | String | Username for the cmis repository
+| Name | Description | Default | Type
+| **pageSize** (common) | Number of nodes to retrieve per page | 100 | int
+| **readContent** (common) | If set to true the content of document node will be retrieved in addition to the properties | false | boolean
+| **readCount** (common) | Max number of nodes to read |  | int
+| **repositoryId** (common) | The Id of the repository to use. If not specified the first available repository is used |  | String
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **query** (consumer) | The cmis query to execute against the repository. If not specified the consumer will retrieve every node from the content repository by iterating the content tree recursively |  | String
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **queryMode** (producer) | If true will execute the cmis query from the message body and return result otherwise will create a node in the cmis repository | false | boolean
+| **sessionFacadeFactory** (advanced) | To use a custom CMISSessionFacadeFactory to create the CMISSessionFacade instances |  | CMISSessionFacade Factory
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **password** (security) | Password for the cmis repository |  | String
+| **username** (security) | Username for the cmis repository |  | String
 |=======================================================================
 // endpoint options: END
 

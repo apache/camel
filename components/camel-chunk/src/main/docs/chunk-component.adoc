@@ -50,31 +50,24 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| resourceUri |  | String | *Required* Path to the resource. You can prefix with: classpath file http ref or bean. classpath file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot eg bean:myBean.myMethod.
+| Name | Description | Default | Type
+| **resourceUri** | *Required* Path to the resource. You can prefix with: classpath file http ref or bean. classpath file and http loads the resource using these protocols (classpath is default). ref will lookup the resource in the registry. bean will call a method on a bean to be used as the resource. For bean you can specify the method name after dot eg bean:myBean.myMethod. |  | String
 |=======================================================================
 
 #### Query Parameters (7 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| contentCache | false | boolean | Sets whether to use resource content cache or not
-
-| encoding |  | String | Define the encoding of the body
-
-| extension |  | String | Define the file extension of the template
-
-| themeFolder |  | String | Define the themes folder to scan
-
-| themeLayer |  | String | Define the theme layer to elaborate
-
-| themeSubfolder |  | String | Define the themes subfolder to scan
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **contentCache** (producer) | Sets whether to use resource content cache or not | false | boolean
+| **encoding** (producer) | Define the encoding of the body |  | String
+| **extension** (producer) | Define the file extension of the template |  | String
+| **themeFolder** (producer) | Define the themes folder to scan |  | String
+| **themeLayer** (producer) | Define the theme layer to elaborate |  | String
+| **themeSubfolder** (producer) | Define the themes subfolder to scan |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

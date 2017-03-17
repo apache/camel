@@ -57,86 +57,52 @@ with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| host |  | String | *Required* Hostname of the SNMP enabled device
-| port |  | Integer | *Required* Port number of the SNMP enabled device
+| Name | Description | Default | Type
+| **host** | *Required* Hostname of the SNMP enabled device |  | String
+| **port** | *Required* Port number of the SNMP enabled device |  | Integer
 |=======================================================================
 
 #### Query Parameters (34 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| delay | 60000 | long | Sets update rate in seconds
-
-| oids |  | String | Defines which values you are interested in. Please have a look at the Wikipedia to get a better understanding. You may provide a single OID or a coma separated list of OIDs. Example: oids=1.3.6.1.2.1.1.3.01.3.6.1.2.1.25.3.2.1.5.11.3.6.1.2.1.25.3.5.1.1.11.3.6.1.2.1.43.5.1.1.11.1
-
-| protocol | udp | String | Here you can select which protocol to use. You can use either udp or tcp.
-
-| retries | 2 | int | Defines how often a retry is made before canceling the request.
-
-| sendEmptyMessageWhenIdle | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-
-| snmpCommunity | public | String | Sets the community octet string for the snmp request.
-
-| snmpContextEngineId |  | String | Sets the context engine ID field of the scoped PDU.
-
-| snmpContextName |  | String | Sets the context name field of this scoped PDU.
-
-| snmpVersion | 0 | int | Sets the snmp version for the request. The value 0 means SNMPv1 1 means SNMPv2c and the value 3 means SNMPv3
-
-| timeout | 1500 | int | Sets the timeout value for the request in millis.
-
-| type |  | SnmpActionType | Which operation to perform such as poll trap etc.
- 4+^s| consumer (advanced)
-| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-
-| pollStrategy |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
- 4+^s| scheduler
-| backoffErrorThreshold |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
-
-| backoffIdleThreshold |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
-
-| backoffMultiplier |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
-
-| greedy | false | boolean | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages.
-
-| initialDelay | 1000 | long | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-
-| runLoggingLevel | TRACE | LoggingLevel | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.
-
-| scheduledExecutorService |  | ScheduledExecutorService | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool.
-
-| scheduler | none | ScheduledPollConsumerScheduler | To use a cron scheduler from either camel-spring or camel-quartz2 component
-
-| schedulerProperties |  | Map | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler.
-
-| startScheduler | true | boolean | Whether the scheduler should be auto started.
-
-| timeUnit | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
-
-| useFixedDelay | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
- 4+^s| security
-| authenticationPassphrase |  | String | The authentication passphrase. If not null authenticationProtocol must also be not null. RFC3414 11.2 requires passphrases to have a minimum length of 8 bytes. If the length of authenticationPassphrase is less than 8 bytes an IllegalArgumentException is thrown.
-
-| authenticationProtocol |  | String | Authentication protocol to use if security level is set to enable authentication The possible values are: MD5 SHA1
-
-| privacyPassphrase |  | String | The privacy passphrase. If not null privacyProtocol must also be not null. RFC3414 11.2 requires passphrases to have a minimum length of 8 bytes. If the length of authenticationPassphrase is less than 8 bytes an IllegalArgumentException is thrown.
-
-| privacyProtocol |  | String | The privacy protocol ID to be associated with this user. If set to null this user only supports unencrypted messages.
-
-| securityLevel | 3 | int | Sets the security level for this target. The supplied security level must be supported by the security model dependent information associated with the security name set for this target. The value 1 means: No authentication and no encryption. Anyone can create and read messages with this security level The value 2 means: Authentication and no encryption. Only the one with the right authentication key can create messages with this security level but anyone can read the contents of the message. The value 3 means: Authentication and encryption. Only the one with the right authentication key can create messages with this security level and only the one with the right encryption/decryption key can read the contents of the message.
-
-| securityName |  | String | Sets the security name to be used with this target.
+| Name | Description | Default | Type
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **delay** (consumer) | Sets update rate in seconds | 60000 | long
+| **oids** (consumer) | Defines which values you are interested in. Please have a look at the Wikipedia to get a better understanding. You may provide a single OID or a coma separated list of OIDs. Example: oids=1.3.6.1.2.1.1.3.01.3.6.1.2.1.25.3.2.1.5.11.3.6.1.2.1.25.3.5.1.1.11.3.6.1.2.1.43.5.1.1.11.1 |  | String
+| **protocol** (consumer) | Here you can select which protocol to use. You can use either udp or tcp. | udp | String
+| **retries** (consumer) | Defines how often a retry is made before canceling the request. | 2 | int
+| **sendEmptyMessageWhenIdle** (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean
+| **snmpCommunity** (consumer) | Sets the community octet string for the snmp request. | public | String
+| **snmpContextEngineId** (consumer) | Sets the context engine ID field of the scoped PDU. |  | String
+| **snmpContextName** (consumer) | Sets the context name field of this scoped PDU. |  | String
+| **snmpVersion** (consumer) | Sets the snmp version for the request. The value 0 means SNMPv1 1 means SNMPv2c and the value 3 means SNMPv3 | 0 | int
+| **timeout** (consumer) | Sets the timeout value for the request in millis. | 1500 | int
+| **type** (consumer) | Which operation to perform such as poll trap etc. |  | SnmpActionType
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **pollStrategy** (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **backoffErrorThreshold** (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffIdleThreshold** (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffMultiplier** (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| **greedy** (scheduler) | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages. | false | boolean
+| **initialDelay** (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 1000 | long
+| **runLoggingLevel** (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| **scheduledExecutorService** (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| **scheduler** (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| **schedulerProperties** (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler. |  | Map
+| **startScheduler** (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| **timeUnit** (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| **useFixedDelay** (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| **authenticationPassphrase** (security) | The authentication passphrase. If not null authenticationProtocol must also be not null. RFC3414 11.2 requires passphrases to have a minimum length of 8 bytes. If the length of authenticationPassphrase is less than 8 bytes an IllegalArgumentException is thrown. |  | String
+| **authenticationProtocol** (security) | Authentication protocol to use if security level is set to enable authentication The possible values are: MD5 SHA1 |  | String
+| **privacyPassphrase** (security) | The privacy passphrase. If not null privacyProtocol must also be not null. RFC3414 11.2 requires passphrases to have a minimum length of 8 bytes. If the length of authenticationPassphrase is less than 8 bytes an IllegalArgumentException is thrown. |  | String
+| **privacyProtocol** (security) | The privacy protocol ID to be associated with this user. If set to null this user only supports unencrypted messages. |  | String
+| **securityLevel** (security) | Sets the security level for this target. The supplied security level must be supported by the security model dependent information associated with the security name set for this target. The value 1 means: No authentication and no encryption. Anyone can create and read messages with this security level The value 2 means: Authentication and no encryption. Only the one with the right authentication key can create messages with this security level but anyone can read the contents of the message. The value 3 means: Authentication and encryption. Only the one with the right authentication key can create messages with this security level and only the one with the right encryption/decryption key can read the contents of the message. | 3 | int
+| **securityName** (security) | Sets the security name to be used with this target. |  | String
 |=======================================================================
 // endpoint options: END
 
