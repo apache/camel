@@ -32,6 +32,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.component.AbstractApiEndpoint;
 import org.apache.camel.util.component.ApiMethod;
@@ -78,10 +79,15 @@ public class ZendeskEndpoint extends AbstractApiEndpoint<ZendeskApiName, Zendesk
     }
 
     @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        // verify configuration is valid
+        getZendesk();
+    }
+
+    @Override
     public void doStop() throws Exception {
-        if (apiProxy != null && !apiProxy.isClosed()) {
-            apiProxy.close();
-        }
+        IOHelper.close(apiProxy);
         super.doStop();
     }
 
@@ -96,9 +102,6 @@ public class ZendeskEndpoint extends AbstractApiEndpoint<ZendeskApiName, Zendesk
 
     @Override
     protected void afterConfigureProperties() {
-        // create connection eagerly, a good way to validate configuration
-        getZendesk();
-
     }
 
     @Override
@@ -108,8 +111,13 @@ public class ZendeskEndpoint extends AbstractApiEndpoint<ZendeskApiName, Zendesk
 
     private Zendesk getZendesk() {
         if (apiProxy == null) {
-            apiProxy = ZendeskHelper.create(configuration);
+            if (getConfiguration().equals(getComponent().getConfiguration())) {
+                apiProxy = getComponent().getZendesk();
+            } else {
+                apiProxy = ZendeskHelper.create(getConfiguration());
+            }
         }
         return apiProxy;
     }
+
 }

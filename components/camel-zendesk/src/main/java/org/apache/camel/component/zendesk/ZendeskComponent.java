@@ -25,6 +25,7 @@ import org.apache.camel.component.zendesk.internal.ZendeskApiName;
 import org.apache.camel.component.zendesk.internal.ZendeskHelper;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.component.AbstractApiComponent;
 import org.zendesk.client.v2.Zendesk;
 
@@ -74,6 +75,10 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
         return zendesk;
     }
 
+    public void setZendesk(Zendesk zendesk) {
+        this.zendesk = zendesk;
+    }
+
     @Override
     protected Endpoint createEndpoint(String uri, String methodName, ZendeskApiName apiName,
             ZendeskConfiguration endpointConfiguration) {
@@ -85,29 +90,20 @@ public class ZendeskComponent extends AbstractApiComponent<ZendeskApiName, Zende
     protected void doStart() throws Exception {
         super.doStart();
 
-        if (zendesk == null) {
-            if (configuration != null) {
-                zendesk = ZendeskHelper.create(configuration);
-            } else {
-                throw new IllegalArgumentException("Unable to connect, Zendesk component configuration is missing");
-            }
+        if (zendesk == null && configuration != null) {
+            zendesk = ZendeskHelper.create(configuration);
         }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (zendesk != null) {
-            zendesk.close();
-            zendesk = null;
-        }
+        IOHelper.close(zendesk);
+        super.doStop();
     }
 
     @Override
     public void doShutdown() throws Exception {
-        if (zendesk != null) {
-            zendesk.close();
-            zendesk = null;
-        }
+        IOHelper.close(zendesk);
         super.doShutdown();
     }
 
