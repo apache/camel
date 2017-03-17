@@ -24,6 +24,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Component configuration for Zendesk component.
@@ -155,5 +156,30 @@ public class ZendeskConfiguration {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof ZendeskConfiguration) {
+            ZendeskConfiguration otherZendeskConf = (ZendeskConfiguration)other;
+            return ObjectHelper.equal(methodName, otherZendeskConf.getMethodName())
+                && ObjectHelper.equal(serverUrl, otherZendeskConf.getServerUrl())
+                && ObjectHelper.equal(username, otherZendeskConf.getUsername())
+                && ObjectHelper.equal(password, otherZendeskConf.getPassword())
+                && ObjectHelper.equal(token, otherZendeskConf.getToken())
+                && ObjectHelper.equal(oauthToken, otherZendeskConf.getOauthToken());
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ZendeskConfiguration:[methodName=%s, serverUrl=%s, username=%s, password=%s, token=%s, oauthToken=%s]",
+                             methodName, serverUrl, username, password, token, oauthToken);
+    }
+
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
     }
 }

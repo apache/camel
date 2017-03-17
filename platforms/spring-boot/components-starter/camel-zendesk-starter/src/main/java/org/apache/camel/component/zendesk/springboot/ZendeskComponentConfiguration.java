@@ -17,6 +17,8 @@
 package org.apache.camel.component.zendesk.springboot;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import org.zendesk.client.v2.Zendesk;
 
 /**
  * The zendesk endpoint interacts with the Zendesk server.
@@ -31,6 +33,11 @@ public class ZendeskComponentConfiguration {
      */
     private ZendeskConfigurationNestedConfiguration configuration;
     /**
+     * To use a shared Zendesk instance.
+     */
+    @NestedConfigurationProperty
+    private Zendesk zendesk;
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -44,6 +51,14 @@ public class ZendeskComponentConfiguration {
     public void setConfiguration(
             ZendeskConfigurationNestedConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public Zendesk getZendesk() {
+        return zendesk;
+    }
+
+    public void setZendesk(Zendesk zendesk) {
+        this.zendesk = zendesk;
     }
 
     public Boolean getResolvePropertyPlaceholders() {

@@ -21,7 +21,7 @@ for this component:
 ### Zendesk Options
 
 // component options: START
-The Zendesk component supports 2 options which are listed below.
+The Zendesk component supports 3 options which are listed below.
 
 
 
@@ -29,6 +29,7 @@ The Zendesk component supports 2 options which are listed below.
 |=======================================================================
 | Name | Group | Default | Java Type | Description
 | configuration | common |  | ZendeskConfiguration | To use the shared configuration
+| zendesk | advanced |  | Zendesk | To use a shared Zendesk instance.
 | resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
