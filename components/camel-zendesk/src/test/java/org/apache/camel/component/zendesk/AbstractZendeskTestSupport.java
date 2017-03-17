@@ -35,25 +35,48 @@ import org.apache.camel.util.IntrospectionSupport;
  * </p>
  */
 public class AbstractZendeskTestSupport extends CamelTestSupport {
-    private static final String TEST_OPTIONS_PROPERTIES = "/test-options.properties";
+    public static final String TEST_OPTIONS_PROPERTIES = "/test-options.properties";
+    public static final String SYSPROP_ZENDESK_SERVER_URL = "zendesk.serverUrl";
+    public static final String SYSPROP_ZENDESK_USERNAME = "zendesk.username";
+    public static final String SYSPROP_ZENDESK_PASSWORD = "zendesk.password";
+    public static final String SYSPROP_ZENDESK_TOKEN = "zendesk.token";
+    public static final String SYSPROP_ZENDESK_OAUTH_TOKEN = "zendesk.oauthToken";
+    public static final String ENV_ZENDESK_SERVER_URL = "ZENDESK_SERVER_URL";
+    public static final String ENV_ZENDESK_USERNAME = "ZENDESK_SERVER_URL";
+    public static final String ENV_ZENDESK_PASSWORD = "zendesk.password";
+    public static final String ENV_ZENDESK_TOKEN = "zendesk.token";
+    public static final String ENV_ZENDESK_OAUTH_TOKEN = "zendesk.oauthToken";
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext context = super.createCamelContext();
+        final ZendeskConfiguration configuration = new ZendeskConfiguration();
         final Properties properties = new Properties();
         try {
             properties.load(getClass().getResourceAsStream(TEST_OPTIONS_PROPERTIES));
-        } catch (Exception e) {
-            throw new IOException(String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()),
-                e);
-        }
-        Map<String, Object> options = new HashMap<String, Object>();
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-            options.put(entry.getKey().toString(), entry.getValue());
-        }
+            Map<String, Object> options = new HashMap<String, Object>();
+            for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+                options.put(entry.getKey().toString(), entry.getValue());
+            }
 
-        final ZendeskConfiguration configuration = new ZendeskConfiguration();
-        IntrospectionSupport.setProperties(configuration, options);
+            IntrospectionSupport.setProperties(configuration, options);
+        } catch (Exception e) {
+            // ignore - system property or ENV may be supplied
+        }
+        configuration.setServerUrl(System.getenv(ENV_ZENDESK_SERVER_URL) != null ? System.getenv(ENV_ZENDESK_SERVER_URL) : configuration.getServerUrl());
+        configuration.setUsername(System.getenv(ENV_ZENDESK_USERNAME) != null ? System.getenv(ENV_ZENDESK_USERNAME) : configuration.getUsername());
+        configuration.setPassword(System.getenv(ENV_ZENDESK_PASSWORD) != null ? System.getenv(ENV_ZENDESK_PASSWORD) : configuration.getPassword());
+        configuration.setToken(System.getenv(ENV_ZENDESK_TOKEN) != null ? System.getenv(ENV_ZENDESK_TOKEN) : configuration.getToken());
+        configuration.setOauthToken(System.getenv(ENV_ZENDESK_OAUTH_TOKEN) != null ? System.getenv(ENV_ZENDESK_OAUTH_TOKEN) : configuration.getOauthToken());
+        configuration.setServerUrl(System.getProperty(SYSPROP_ZENDESK_SERVER_URL, configuration.getServerUrl()));
+        configuration.setUsername(System.getProperty(SYSPROP_ZENDESK_USERNAME, configuration.getUsername()));
+        configuration.setPassword(System.getProperty(SYSPROP_ZENDESK_PASSWORD, configuration.getPassword()));
+        configuration.setToken(System.getProperty(SYSPROP_ZENDESK_TOKEN, configuration.getToken()));
+        configuration.setOauthToken(System.getProperty(SYSPROP_ZENDESK_OAUTH_TOKEN, configuration.getOauthToken()));
+        if (configuration.getServerUrl() == null || configuration.getUsername() == null
+            || (configuration.getPassword() == null && configuration.getToken() == null && configuration.getOauthToken() == null)) {
+            throw new IllegalArgumentException("Zendesk configuration is missing");
+        }
 
         // add ZendeskComponent to Camel context
         final ZendeskComponent component = new ZendeskComponent(context);
