@@ -77,6 +77,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     private String streamCache;
     private String trace;
     private String messageHistory;
+    private String logEipMask;
     private String handleFault;
     private String delayer;
     private String autoStartup;
@@ -478,6 +479,27 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     }
 
     /**
+     * Enable security mask in Log EIP for this route.
+     *
+     * @return the builder
+     */
+    public RouteDefinition logEipMask() {
+        setLogEipMask("true");
+        return this;
+    }
+
+    /**
+     * Sets whether security mask in Log EIP is enabled for this route.
+     *
+     * @param logEipMask whether to enable security mask in Log EIP (true or false), the value can be a property placeholder
+     * @return the builder
+     */
+    public RouteDefinition logEipMask(String logEipMask) {
+        setLogEipMask(logEipMask);
+        return this;
+    }
+
+    /**
      * Disable message history for this route.
      *
      * @return the builder
@@ -875,6 +897,21 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     }
 
     /**
+     * Whether security mask for Log EIP is enabled on this route.
+     */
+    public String getLogEipMask() {
+        return logEipMask;
+    }
+
+    /**
+     * Whether security mask for Log EIP is enabled on this route.
+     */
+    @XmlAttribute @Metadata(defaultValue = "false")
+    public void setLogEipMask(String logEipMask) {
+        this.logEipMask = logEipMask;
+    }
+
+    /**
      * Whether handle fault is enabled on this route.
      */
     public String getHandleFault() {
@@ -1128,6 +1165,17 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
                 routeContext.setMessageHistory(isMessageHistory);
                 if (isMessageHistory) {
                     log.debug("Message history is enabled on route: {}", getId());
+                }
+            }
+        }
+
+        // configure Log EIP mask
+        if (logEipMask != null) {
+            Boolean isLogEipMask = CamelContextHelper.parseBoolean(camelContext, getLogEipMask());
+            if (isLogEipMask != null) {
+                routeContext.setLogEipMask(isLogEipMask);
+                if (isLogEipMask) {
+                    log.debug("Security mask for Log EIP is enabled on route: {}", getId());
                 }
             }
         }

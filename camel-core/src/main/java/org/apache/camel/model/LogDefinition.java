@@ -28,8 +28,10 @@ import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.LogProcessor;
+import org.apache.camel.processor.MaskingStringFormatter;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.StringFormatter;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
@@ -123,7 +125,11 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         LoggingLevel level = getLoggingLevel() != null ? getLoggingLevel() : LoggingLevel.INFO;
         CamelLogger camelLogger = new CamelLogger(logger, level, getMarker());
 
-        return new LogProcessor(exp, camelLogger);
+        StringFormatter formatter = routeContext.getCamelContext().getRegistry().lookupByNameAndType("logEipFormatter", StringFormatter.class);
+        if (formatter == null && routeContext.isLogEipMask()) {
+            formatter = new MaskingStringFormatter();
+        }
+        return new LogProcessor(exp, camelLogger, formatter);
     }
 
     @Override
