@@ -6,16 +6,16 @@ with the following path and query parameters:
 
 #### Path Parameters (@{endpointPathOptions.size()} parameters):
 
-[width="100%",cols="2,1,1,6",options="header"]
+[width="100%",cols="2,1,6,1",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
-@foreach{row : endpointPathOptions}| **@{row.getShortName(35)}** | @{row.getShortDefaultValue(25)} | @{row.getShortJavaType(25)} | @{row.description}
+@foreach{row : endpointPathOptions}| **@{row.getShortName(35)}** | @{row.getShortDefaultValue(25)} | @{row.description} | @{row.getShortJavaType(25)}
 @end{}|=======================================================================
 
 #### Query Parameters (@{endpointOptions.size()} parameters):
 
-[width="100%",cols="2,1,1,6",options="header"]
+[width="100%",cols="2,1,6,1",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
-@foreach{row : endpointOptions}| **@{row.getShortName(35)}** (@{row.shortGroup}) | @{row.getShortDefaultValue(25)} | @{row.getShortJavaType(25)} | @{row.description}
+@foreach{row : endpointOptions}| **@{row.getShortName(35)}** (@{row.shortGroup}) | @{row.getShortDefaultValue(25)} | @{row.description} | @{row.getShortJavaType(25)}
 @end{}|=======================================================================
