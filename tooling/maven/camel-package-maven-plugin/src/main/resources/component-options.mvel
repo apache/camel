@@ -5,9 +5,9 @@ The @{title} component supports @{componentOptions.size()} options which are lis
 @end{}
 
 @if{!componentOptions.isEmpty()}
-[width="100%",cols="2,1,1,6",options="header"]
+[width="100%",cols="2,1,6,1",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-@foreach{row : componentOptions}| **@{row.getShortName(35)}** (@{row.shortGroup}) | @{row.getShortDefaultValue(25)} | @{row.getShortJavaType(25)} | @{row.description}
+| Name | Default | Description | Java Type
+@foreach{row : componentOptions}| **@{row.getShortName(35)}** (@{row.shortGroup}) | @{row.getShortDefaultValue(25)} | @{row.description} | @{row.getShortJavaType(25)}
 @end{}|=======================================================================
 @end{}
