@@ -8,6 +8,6 @@ The @{title} component supports @{componentOptions.size()} options which are lis
 [width="100%",cols="2,1,6,1",options="header"]
 |=======================================================================
 | Name | Default | Description | Java Type
-@foreach{row : componentOptions}| **@{row.getShortName(35)}** (@{row.shortGroup}) | @{row.getShortDefaultValue(25)} | @{row.description} | @{row.getShortJavaType(25)}
+@foreach{row : componentOptions}| **@{row.getShortName(30)}** (@{row.shortGroup}) | @{row.getShortDefaultValue(20)} | @{row.description} | @{row.getShortJavaType(25)}
 @end{}|=======================================================================
 @end{}
