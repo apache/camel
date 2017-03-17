@@ -6,7 +6,7 @@ with the following path and query parameters:
 
 #### Path Parameters (@{endpointPathOptions.size()} parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,1,1,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 @foreach{row : endpointPathOptions}| **@{row.getShortName(40)}** | @{row.getShortDefaultValue(50)} | @{row.shortJavaType} | @{row.description}
@@ -14,7 +14,7 @@ with the following path and query parameters:
 
 #### Query Parameters (@{endpointOptions.size()} parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,1,1,6",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
 @foreach{row : endpointOptions}| **@{row.getShortName(40)}** (@{row.shortGroup}) | @{row.getShortDefaultValue(40)} | @{row.shortJavaType} | @{row.description}
