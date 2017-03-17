@@ -27,7 +27,7 @@
 
   <artifactId>camel-example-rest-swagger</artifactId>
   <name>Camel :: Example :: REST Swagger</name>
-  <version>2.19.0-SNAPSHOT</version>
+  <description>This example shows how to call a REST service defined using Swagger specification</description>
 
   <properties>
     <category>Beginner</category>

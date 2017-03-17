@@ -34,7 +34,7 @@ Number of Examples: 90 (9 deprecated)
 
 | link:camel-example-reload/Readme.md[Reload] (camel-example-reload) | Beginner | An example that live reloads routes when the XML file is updated
 
-| link:camel-example-rest-swagger/README.md[Rest Swagger] (camel-example-rest-swagger) | Beginner | 
+| link:camel-example-rest-swagger/README.md[Rest Swagger] (camel-example-rest-swagger) | Beginner | This example shows how to call a REST service defined using Swagger specification
 
 | link:camel-example-servlet-tomcat/README.md[Servlet Tomcat] (camel-example-servlet-tomcat) | Beginner | An example using Camel Servlet with Apache Tomcat
 
