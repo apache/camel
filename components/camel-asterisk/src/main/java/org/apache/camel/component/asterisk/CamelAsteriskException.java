@@ -21,13 +21,7 @@ import org.apache.camel.CamelException;
 public class CamelAsteriskException extends CamelException {
     private static final long serialVersionUID = -8873987361491963823L;
 
-    public CamelAsteriskException() {
-        super();
-    }
-
     public CamelAsteriskException(String message) {
         super(message);
     }
-
-
 }

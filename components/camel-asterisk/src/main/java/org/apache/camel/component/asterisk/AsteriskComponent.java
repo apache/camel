@@ -20,19 +20,18 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
  * Represents the component that manages {@link AsteriskEndpoint}.
  */
-public class AsteriskComponent extends UriEndpointComponent {
+public class AsteriskComponent extends DefaultComponent {
 
     public AsteriskComponent() {
-        super(AsteriskEndpoint.class);
     }
 
     public AsteriskComponent(CamelContext context) {
-        super(context, AsteriskEndpoint.class);
+        super(context);
     }
 
     @Override
