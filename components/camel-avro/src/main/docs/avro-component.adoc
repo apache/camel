@@ -175,11 +175,13 @@ The Avro component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| configuration | advanced |  | AvroConfiguration | To use a shared AvroConfiguration to configure options once
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| advanced
+| configuration |  | AvroConfiguration | To use a shared AvroConfiguration to configure options once
+
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -208,19 +210,29 @@ with the following path and query parameters:
 
 #### Query Parameters (10 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| protocol | common |  | Protocol | Avro protocol to use
-| protocolClassName | common |  | String | Avro protocol to use defined by the FQN class name
-| protocolLocation | common |  | String | Avro protocol location
-| reflectionProtocol | common | false | boolean | If protocol object provided is reflection protocol. Should be used only with protocol parameter because for protocolClassName protocol type will be auto detected
-| singleParameter | common | false | boolean | If true consumer parameter won't be wrapped into array. Will fail if protocol specifies more then 1 parameter for the message
-| uriAuthority | common |  | String | Authority to use (username and password)
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| protocol |  | Protocol | Avro protocol to use
+
+| protocolClassName |  | String | Avro protocol to use defined by the FQN class name
+
+| protocolLocation |  | String | Avro protocol location
+
+| reflectionProtocol | false | boolean | If protocol object provided is reflection protocol. Should be used only with protocol parameter because for protocolClassName protocol type will be auto detected
+
+| singleParameter | false | boolean | If true consumer parameter won't be wrapped into array. Will fail if protocol specifies more then 1 parameter for the message
+
+| uriAuthority |  | String | Authority to use (username and password)
+ 4+^s| consumer
+| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+ 4+^s| consumer (advanced)
+| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

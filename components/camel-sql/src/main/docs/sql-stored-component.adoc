@@ -67,11 +67,13 @@ The SQL StoredProcedure component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| dataSource | producer |  | DataSource | Sets the DataSource to use to communicate with the database.
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| producer
+| dataSource |  | DataSource | Sets the DataSource to use to communicate with the database.
+ 4+^s| advanced
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -95,15 +97,21 @@ with the following path and query parameters:
 
 #### Query Parameters (6 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| batch | producer | false | boolean | Enables or disables batch mode
-| dataSource | producer |  | DataSource | Sets the DataSource to use to communicate with the database.
-| noop | producer | false | boolean | If set will ignore the results of the template and use the existing IN message as the OUT message for the continuation of processing
-| outputHeader | producer |  | String | Store the template result in a header instead of the message body. By default outputHeader == null and the template result is stored in the message body any existing content in the message body is discarded. If outputHeader is set the value is used as the name of the header to store the template result and the original message body is preserved.
-| useMessageBodyForTemplate | producer | false | boolean | Whether to use the message body as the template and then headers for parameters. If this option is enabled then the template in the uri is not used.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| batch | false | boolean | Enables or disables batch mode
+
+| dataSource |  | DataSource | Sets the DataSource to use to communicate with the database.
+
+| noop | false | boolean | If set will ignore the results of the template and use the existing IN message as the OUT message for the continuation of processing
+
+| outputHeader |  | String | Store the template result in a header instead of the message body. By default outputHeader == null and the template result is stored in the message body any existing content in the message body is discarded. If outputHeader is set the value is used as the name of the header to store the template result and the original message body is preserved.
+
+| useMessageBodyForTemplate | false | boolean | Whether to use the message body as the template and then headers for parameters. If this option is enabled then the template in the uri is not used.
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

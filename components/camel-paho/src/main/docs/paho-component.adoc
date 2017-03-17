@@ -121,13 +121,17 @@ The Paho component supports 4 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| brokerUrl | common |  | String | The URL of the MQTT broker.
-| clientId | common |  | String | MQTT client identifier.
-| connectOptions | advanced |  | MqttConnectOptions | Client connection options
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| common
+| brokerUrl |  | String | The URL of the MQTT broker.
+
+| clientId |  | String | MQTT client identifier.
+ 4+^s| advanced
+| connectOptions |  | MqttConnectOptions | Client connection options
+
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -151,20 +155,31 @@ with the following path and query parameters:
 
 #### Query Parameters (11 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| brokerUrl | common | tcp://localhost:1883 | String | The URL of the MQTT broker.
-| clientId | common |  | String | MQTT client identifier.
-| connectOptions | common |  | MqttConnectOptions | Client connection options
-| filePersistenceDirectory | common |  | String | Base directory used by the file persistence provider.
-| persistence | common | MEMORY | PahoPersistence | Client persistence to be used - memory or file.
-| qos | common | 2 | int | Client quality of service level (0-2).
-| retained | common | false | boolean | Retain option
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| brokerUrl | tcp://localhost:1883 | String | The URL of the MQTT broker.
+
+| clientId |  | String | MQTT client identifier.
+
+| connectOptions |  | MqttConnectOptions | Client connection options
+
+| filePersistenceDirectory |  | String | Base directory used by the file persistence provider.
+
+| persistence | MEMORY | PahoPersistence | Client persistence to be used - memory or file.
+
+| qos | 2 | int | Client quality of service level (0-2).
+
+| retained | false | boolean | Retain option
+ 4+^s| consumer
+| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+ 4+^s| consumer (advanced)
+| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

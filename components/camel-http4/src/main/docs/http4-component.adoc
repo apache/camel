@@ -55,23 +55,37 @@ The HTTP4 component supports 14 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| httpClientConfigurer | advanced |  | HttpClientConfigurer | To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.
-| clientConnectionManager | advanced |  | HttpClientConnectionManager | To use a custom and shared HttpClientConnectionManager to manage connections. If this has been configured then this is always used for all endpoints created by this component.
-| httpContext | advanced |  | HttpContext | To use a custom org.apache.http.protocol.HttpContext when executing requests.
-| sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances you need to define a new HttpComponent per instance you need.
-| x509HostnameVerifier | security |  | HostnameVerifier | To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or org.apache.http.conn.ssl.NoopHostnameVerifier.
-| maxTotalConnections | advanced | 200 | int | The maximum number of connections.
-| connectionsPerRoute | advanced | 20 | int | The maximum number of connections per route.
-| connectionTimeToLive | advanced |  | long | The time for connection to live the time unit is millisecond the default value is always keep alive.
-| cookieStore | producer |  | CookieStore | To use a custom org.apache.http.client.CookieStore. By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store. Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy).
-| httpBinding | advanced |  | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
-| httpConfiguration | advanced |  | HttpConfiguration | To use the shared HttpConfiguration as base configuration.
-| allowJavaSerializedObject | advanced | false | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
-| headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| advanced
+| httpClientConfigurer |  | HttpClientConfigurer | To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.
+
+| clientConnectionManager |  | HttpClientConnectionManager | To use a custom and shared HttpClientConnectionManager to manage connections. If this has been configured then this is always used for all endpoints created by this component.
+
+| httpContext |  | HttpContext | To use a custom org.apache.http.protocol.HttpContext when executing requests.
+ 4+^s| security
+| sslContextParameters |  | SSLContextParameters | To configure security using SSLContextParameters. Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent. If you need to use 2 or more different instances you need to define a new HttpComponent per instance you need.
+
+| x509HostnameVerifier |  | HostnameVerifier | To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or org.apache.http.conn.ssl.NoopHostnameVerifier.
+ 4+^s| advanced
+| maxTotalConnections | 200 | int | The maximum number of connections.
+
+| connectionsPerRoute | 20 | int | The maximum number of connections per route.
+
+| connectionTimeToLive |  | long | The time for connection to live the time unit is millisecond the default value is always keep alive.
+ 4+^s| producer
+| cookieStore |  | CookieStore | To use a custom org.apache.http.client.CookieStore. By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store. Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy).
+ 4+^s| advanced
+| httpBinding |  | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
+
+| httpConfiguration |  | HttpConfiguration | To use the shared HttpConfiguration as base configuration.
+
+| allowJavaSerializedObject | false | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
+ 4+^s| filter
+| headerFilterStrategy |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
+ 4+^s| advanced
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -101,57 +115,105 @@ with the following path and query parameters:
 
 #### Query Parameters (48 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| disableStreamCache | common | false | boolean | Determines whether or not the raw input stream from Servlet is cached or not (Camel will read the stream into a in memory/overflow to file Stream caching) cache. By default Camel will cache the Servlet input stream to support reading it multiple times to ensure it Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream such as streaming it directly to a file or other persistent store. DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body if this option is false to support reading the stream multiple times. If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance in case you do not need to read the message payload multiple times. The http/http4 producer will by default cache the response body stream. If setting this option to true then the producers will not cache the response body stream but use the response stream as-is as the message body.
-| headerFilterStrategy | common |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
-| httpBinding | common (advanced) |  | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
-| authenticationPreemptive | producer | false | boolean | If this option is true camel-http4 sends preemptive basic authentication to the server.
-| bridgeEndpoint | producer | false | boolean | If the option is true HttpProducer will ignore the Exchange.HTTP_URI header and use the endpoint's URI for request. You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back.
-| chunked | producer | true | boolean | If this option is false the Servlet will disable the HTTP streaming and set the content-length header on the response
-| clearExpiredCookies | producer | true | boolean | Whether to clear expired cookies before sending the HTTP request. This ensures the cookies store does not keep growing by adding new cookies which is newer removed when they are expired.
-| connectionClose | producer | false | boolean | Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false.
-| cookieStore | producer |  | CookieStore | To use a custom CookieStore. By default the BasicCookieStore is used which is an in-memory only cookie store. Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy). If a cookieHandler is set then the cookie store is also forced to be a noop cookie store as cookie handling is then performed by the cookieHandler.
-| copyHeaders | producer | true | boolean | If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy. Setting this to false allows to only include the headers from the HTTP response (not propagating IN headers).
-| deleteWithBody | producer | false | boolean | Whether the HTTP DELETE should include the message body or not. By default HTTP DELETE do not include any HTTP message. However in some rare cases users may need to be able to include the message body.
-| httpMethod | producer |  | HttpMethods | Configure the HTTP method to use. The HttpMethod header cannot override this option if set.
-| ignoreResponseBody | producer | false | boolean | If this option is true The http producer won't read response body and cache the input stream
-| preserveHostHeader | producer | false | boolean | If the option is true HttpProducer will set the Host header to the value contained in the current exchange Host header useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client this allows applications which use the Host header to generate accurate URL's for a proxied service
-| throwExceptionOnFailure | producer | true | boolean | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code.
-| transferException | producer | false | boolean | If enabled and an Exchange failed processing on the consumer side and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
-| cookieHandler | producer (advanced) |  | CookieHandler | Configure a cookie handler to maintain a HTTP session
-| okStatusCodeRange | producer (advanced) | 200-299 | String | The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.
-| urlRewrite | producer (advanced) |  | UrlRewrite | Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints. See more details at http://camel.apache.org/urlrewrite.html
-| clientBuilder | advanced |  | HttpClientBuilder | Provide access to the http client request parameters used on new RequestConfig instances used by producers or consumers of this endpoint.
-| clientConnectionManager | advanced |  | HttpClientConnectionManager | To use a custom HttpClientConnectionManager to manage connections
-| connectionsPerRoute | advanced | 20 | int | The maximum number of connections per route.
-| httpClient | advanced |  | HttpClient | Sets a custom HttpClient to be used by the producer
-| httpClientConfigurer | advanced |  | HttpClientConfigurer | Register a custom configuration strategy for new HttpClient instances created by producers or consumers such as to configure authentication mechanisms etc
-| httpClientOptions | advanced |  | Map | To configure the HttpClient using the key/values from the Map.
-| httpContext | advanced |  | HttpContext | To use a custom HttpContext instance
-| mapHttpMessageBody | advanced | true | boolean | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping.
-| mapHttpMessageFormUrlEncodedBody | advanced | true | boolean | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping.
-| mapHttpMessageHeaders | advanced | true | boolean | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping.
-| maxTotalConnections | advanced | 200 | int | The maximum number of connections.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| useSystemProperties | advanced | false | boolean | To use System Properties as fallback for configuration
-| proxyAuthDomain | proxy |  | String | Proxy authentication domain to use with NTML
-| proxyAuthHost | proxy |  | String | Proxy authentication host
-| proxyAuthMethod | proxy |  | String | Proxy authentication method to use
-| proxyAuthPassword | proxy |  | String | Proxy authentication password
-| proxyAuthPort | proxy |  | int | Proxy authentication port
-| proxyAuthScheme | proxy |  | String | Proxy authentication scheme to use
-| proxyAuthUsername | proxy |  | String | Proxy authentication username
-| proxyHost | proxy |  | String | Proxy hostname to use
-| proxyPort | proxy |  | int | Proxy port to use
-| authDomain | security |  | String | Authentication domain to use with NTML
-| authHost | security |  | String | Authentication host to use with NTML
-| authMethod | security |  | String | Authentication methods allowed to use as a comma separated list of values Basic Digest or NTLM.
-| authMethodPriority | security |  | String | Which authentication method to prioritize to use either as Basic Digest or NTLM.
-| authPassword | security |  | String | Authentication password
-| authUsername | security |  | String | Authentication username
-| x509HostnameVerifier | security |  | HostnameVerifier | To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or org.apache.http.conn.ssl.NoopHostnameVerifier.
+| Name | Default | Java Type | Description
+ 4+^s| common
+| disableStreamCache | false | boolean | Determines whether or not the raw input stream from Servlet is cached or not (Camel will read the stream into a in memory/overflow to file Stream caching) cache. By default Camel will cache the Servlet input stream to support reading it multiple times to ensure it Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream such as streaming it directly to a file or other persistent store. DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body if this option is false to support reading the stream multiple times. If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance in case you do not need to read the message payload multiple times. The http/http4 producer will by default cache the response body stream. If setting this option to true then the producers will not cache the response body stream but use the response stream as-is as the message body.
+
+| headerFilterStrategy |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+ 4+^s| common (advanced)
+| httpBinding |  | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
+ 4+^s| producer
+| authenticationPreemptive | false | boolean | If this option is true camel-http4 sends preemptive basic authentication to the server.
+
+| bridgeEndpoint | false | boolean | If the option is true HttpProducer will ignore the Exchange.HTTP_URI header and use the endpoint's URI for request. You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back.
+
+| chunked | true | boolean | If this option is false the Servlet will disable the HTTP streaming and set the content-length header on the response
+
+| clearExpiredCookies | true | boolean | Whether to clear expired cookies before sending the HTTP request. This ensures the cookies store does not keep growing by adding new cookies which is newer removed when they are expired.
+
+| connectionClose | false | boolean | Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false.
+
+| cookieStore |  | CookieStore | To use a custom CookieStore. By default the BasicCookieStore is used which is an in-memory only cookie store. Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy). If a cookieHandler is set then the cookie store is also forced to be a noop cookie store as cookie handling is then performed by the cookieHandler.
+
+| copyHeaders | true | boolean | If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy. Setting this to false allows to only include the headers from the HTTP response (not propagating IN headers).
+
+| deleteWithBody | false | boolean | Whether the HTTP DELETE should include the message body or not. By default HTTP DELETE do not include any HTTP message. However in some rare cases users may need to be able to include the message body.
+
+| httpMethod |  | HttpMethods | Configure the HTTP method to use. The HttpMethod header cannot override this option if set.
+
+| ignoreResponseBody | false | boolean | If this option is true The http producer won't read response body and cache the input stream
+
+| preserveHostHeader | false | boolean | If the option is true HttpProducer will set the Host header to the value contained in the current exchange Host header useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client this allows applications which use the Host header to generate accurate URL's for a proxied service
+
+| throwExceptionOnFailure | true | boolean | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code.
+
+| transferException | false | boolean | If enabled and an Exchange failed processing on the consumer side and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
+ 4+^s| producer (advanced)
+| cookieHandler |  | CookieHandler | Configure a cookie handler to maintain a HTTP session
+
+| okStatusCodeRange | 200-299 | String | The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.
+
+| urlRewrite |  | UrlRewrite | Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints. See more details at http://camel.apache.org/urlrewrite.html
+ 4+^s| advanced
+| clientBuilder |  | HttpClientBuilder | Provide access to the http client request parameters used on new RequestConfig instances used by producers or consumers of this endpoint.
+
+| clientConnectionManager |  | HttpClientConnectionManager | To use a custom HttpClientConnectionManager to manage connections
+
+| connectionsPerRoute | 20 | int | The maximum number of connections per route.
+
+| httpClient |  | HttpClient | Sets a custom HttpClient to be used by the producer
+
+| httpClientConfigurer |  | HttpClientConfigurer | Register a custom configuration strategy for new HttpClient instances created by producers or consumers such as to configure authentication mechanisms etc
+
+| httpClientOptions |  | Map | To configure the HttpClient using the key/values from the Map.
+
+| httpContext |  | HttpContext | To use a custom HttpContext instance
+
+| mapHttpMessageBody | true | boolean | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping.
+
+| mapHttpMessageFormUrlEncodedBody | true | boolean | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping.
+
+| mapHttpMessageHeaders | true | boolean | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping.
+
+| maxTotalConnections | 200 | int | The maximum number of connections.
+
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+
+| useSystemProperties | false | boolean | To use System Properties as fallback for configuration
+ 4+^s| proxy
+| proxyAuthDomain |  | String | Proxy authentication domain to use with NTML
+
+| proxyAuthHost |  | String | Proxy authentication host
+
+| proxyAuthMethod |  | String | Proxy authentication method to use
+
+| proxyAuthPassword |  | String | Proxy authentication password
+
+| proxyAuthPort |  | int | Proxy authentication port
+
+| proxyAuthScheme |  | String | Proxy authentication scheme to use
+
+| proxyAuthUsername |  | String | Proxy authentication username
+
+| proxyHost |  | String | Proxy hostname to use
+
+| proxyPort |  | int | Proxy port to use
+ 4+^s| security
+| authDomain |  | String | Authentication domain to use with NTML
+
+| authHost |  | String | Authentication host to use with NTML
+
+| authMethod |  | String | Authentication methods allowed to use as a comma separated list of values Basic Digest or NTLM.
+
+| authMethodPriority |  | String | Which authentication method to prioritize to use either as Basic Digest or NTLM.
+
+| authPassword |  | String | Authentication password
+
+| authUsername |  | String | Authentication username
+
+| x509HostnameVerifier |  | HostnameVerifier | To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or org.apache.http.conn.ssl.NoopHostnameVerifier.
 |=======================================================================
 // endpoint options: END
 

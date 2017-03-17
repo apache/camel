@@ -45,11 +45,13 @@ The ZooKeeper component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| configuration | advanced |  | ZooKeeperConfiguration | To use a shared ZooKeeperConfiguration
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| advanced
+| configuration |  | ZooKeeperConfiguration | To use a shared ZooKeeperConfiguration
+
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -71,21 +73,33 @@ with the following path and query parameters:
 
 #### Query Parameters (12 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| awaitExistence | common | true | boolean | Not in use
-| listChildren | common | false | boolean | Whether the children of the node should be listed
-| timeout | common | 5000 | int | The time interval to wait on connection before timing out.
-| backoff | consumer | 5000 | long | The time interval to backoff for after an error before retrying.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| repeat | consumer | false | boolean | Should changes to the znode be 'watched' and repeatedly processed.
-| sendEmptyMessageOnDelete | consumer | true | boolean | Upon the delete of a znode should an empty message be send to the consumer
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| create | producer | false | boolean | Should the endpoint create the node if it does not currently exist.
-| createMode | producer | EPHEMERAL | String | The create mode that should be used for the newly created node
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| awaitExistence | true | boolean | Not in use
+
+| listChildren | false | boolean | Whether the children of the node should be listed
+
+| timeout | 5000 | int | The time interval to wait on connection before timing out.
+ 4+^s| consumer
+| backoff | 5000 | long | The time interval to backoff for after an error before retrying.
+
+| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| repeat | false | boolean | Should changes to the znode be 'watched' and repeatedly processed.
+
+| sendEmptyMessageOnDelete | true | boolean | Upon the delete of a znode should an empty message be send to the consumer
+ 4+^s| consumer (advanced)
+| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+ 4+^s| producer
+| create | false | boolean | Should the endpoint create the node if it does not currently exist.
+
+| createMode | EPHEMERAL | String | The create mode that should be used for the newly created node
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

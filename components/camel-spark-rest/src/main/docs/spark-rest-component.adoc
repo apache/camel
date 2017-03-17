@@ -36,21 +36,33 @@ The Spark Rest component supports 12 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| port | consumer | 4567 | int | Port number. Will by default use 4567
-| ipAddress | consumer | 0.0.0.0 | String | Set the IP address that Spark should listen on. If not called the default address is '0.0.0.0'.
-| minThreads | advanced |  | int | Minimum number of threads in Spark thread-pool (shared globally)
-| maxThreads | advanced |  | int | Maximum number of threads in Spark thread-pool (shared globally)
-| timeOutMillis | advanced |  | int | Thread idle timeout in millis where threads that has been idle for a longer period will be terminated from the thread pool
-| keystoreFile | security |  | String | Configures connection to be secure to use the keystore file
-| keystorePassword | security |  | String | Configures connection to be secure to use the keystore password
-| truststoreFile | security |  | String | Configures connection to be secure to use the truststore file
-| truststorePassword | security |  | String | Configures connection to be secure to use the truststore password
-| sparkConfiguration | advanced |  | SparkConfiguration | To use the shared SparkConfiguration
-| sparkBinding | advanced |  | SparkBinding | To use a custom SparkBinding to map to/from Camel message.
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| consumer
+| port | 4567 | int | Port number. Will by default use 4567
+
+| ipAddress | 0.0.0.0 | String | Set the IP address that Spark should listen on. If not called the default address is '0.0.0.0'.
+ 4+^s| advanced
+| minThreads |  | int | Minimum number of threads in Spark thread-pool (shared globally)
+
+| maxThreads |  | int | Maximum number of threads in Spark thread-pool (shared globally)
+
+| timeOutMillis |  | int | Thread idle timeout in millis where threads that has been idle for a longer period will be terminated from the thread pool
+ 4+^s| security
+| keystoreFile |  | String | Configures connection to be secure to use the keystore file
+
+| keystorePassword |  | String | Configures connection to be secure to use the keystore password
+
+| truststoreFile |  | String | Configures connection to be secure to use the truststore file
+
+| truststorePassword |  | String | Configures connection to be secure to use the truststore password
+ 4+^s| advanced
+| sparkConfiguration |  | SparkConfiguration | To use the shared SparkConfiguration
+
+| sparkBinding |  | SparkBinding | To use a custom SparkBinding to map to/from Camel message.
+
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -75,20 +87,31 @@ with the following path and query parameters:
 
 #### Query Parameters (11 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| accept | consumer |  | String | Accept type such as: 'text/xml' or 'application/json'. By default we accept all kinds of types.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| disableStreamCache | consumer | false | boolean | Determines whether or not the raw input stream from Spark HttpRequestgetContent() is cached or not (Camel will read the stream into a in light-weight memory based Stream caching) cache. By default Camel will cache the Netty input stream to support reading it multiple times to ensure Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream such as streaming it directly to a file or other persistent store. Mind that if you enable this option then you cannot read the Netty stream multiple times out of the box and you would need manually to reset the reader index on the Spark raw stream.
-| mapHeaders | consumer | true | boolean | If this option is enabled then during binding from Spark to Camel Message then the headers will be mapped as well (eg added as header to the Camel Message as well). You can turn off this option to disable this. The headers can still be accessed from the org.apache.camel.component.sparkrest.SparkMessage message with the method getRequest() that returns the Spark HTTP request instance.
-| transferException | consumer | false | boolean | If enabled and an Exchange failed processing on the consumer side and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
-| urlDecodeHeaders | consumer | false | boolean | If this option is enabled then during binding from Spark to Camel Message then the header values will be URL decoded (eg 20 will be a space character.)
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| matchOnUriPrefix | advanced | false | boolean | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.
-| sparkBinding | advanced |  | SparkBinding | To use a custom SparkBinding to map to/from Camel message.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| accept |  | String | Accept type such as: 'text/xml' or 'application/json'. By default we accept all kinds of types.
+
+| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| disableStreamCache | false | boolean | Determines whether or not the raw input stream from Spark HttpRequestgetContent() is cached or not (Camel will read the stream into a in light-weight memory based Stream caching) cache. By default Camel will cache the Netty input stream to support reading it multiple times to ensure Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream such as streaming it directly to a file or other persistent store. Mind that if you enable this option then you cannot read the Netty stream multiple times out of the box and you would need manually to reset the reader index on the Spark raw stream.
+
+| mapHeaders | true | boolean | If this option is enabled then during binding from Spark to Camel Message then the headers will be mapped as well (eg added as header to the Camel Message as well). You can turn off this option to disable this. The headers can still be accessed from the org.apache.camel.component.sparkrest.SparkMessage message with the method getRequest() that returns the Spark HTTP request instance.
+
+| transferException | false | boolean | If enabled and an Exchange failed processing on the consumer side and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
+
+| urlDecodeHeaders | false | boolean | If this option is enabled then during binding from Spark to Camel Message then the header values will be URL decoded (eg 20 will be a space character.)
+ 4+^s| consumer (advanced)
+| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+ 4+^s| advanced
+| matchOnUriPrefix | false | boolean | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.
+
+| sparkBinding |  | SparkBinding | To use a custom SparkBinding to map to/from Camel message.
+
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

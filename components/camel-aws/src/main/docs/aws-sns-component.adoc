@@ -52,20 +52,31 @@ with the following path and query parameters:
 
 #### Query Parameters (11 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| accessKey | producer |  | String | Amazon AWS Access Key
-| amazonSNSClient | producer |  | AmazonSNS | To use the AmazonSNS as the client
-| amazonSNSEndpoint | producer |  | String | The region with which the AWS-SNS client wants to work with.
-| headerFilterStrategy | producer |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to map headers to/from Camel.
-| messageStructure | producer |  | String | The message structure to use such as json
-| policy | producer |  | String | The policy for this queue
-| proxyHost | producer |  | String | To define a proxy host when instantiating the SQS client
-| proxyPort | producer |  | Integer | To define a proxy port when instantiating the SQS client
-| secretKey | producer |  | String | Amazon AWS Secret Key
-| subject | producer |  | String | The subject which is used if the message header 'CamelAwsSnsSubject' is not present.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| accessKey |  | String | Amazon AWS Access Key
+
+| amazonSNSClient |  | AmazonSNS | To use the AmazonSNS as the client
+
+| amazonSNSEndpoint |  | String | The region with which the AWS-SNS client wants to work with.
+
+| headerFilterStrategy |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to map headers to/from Camel.
+
+| messageStructure |  | String | The message structure to use such as json
+
+| policy |  | String | The policy for this queue
+
+| proxyHost |  | String | To define a proxy host when instantiating the SQS client
+
+| proxyPort |  | Integer | To define a proxy port when instantiating the SQS client
+
+| secretKey |  | String | Amazon AWS Secret Key
+
+| subject |  | String | The subject which is used if the message header 'CamelAwsSnsSubject' is not present.
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

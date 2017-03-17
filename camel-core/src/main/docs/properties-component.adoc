@@ -18,26 +18,43 @@ The Properties component supports 17 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| locations | common |  | List | A list of locations to load properties. This option will override any default locations and only use the locations from this option.
-| location | common |  | String | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option.
-| encoding | common |  | String | Encoding to use when loading properties file from the file system or classpath. If no encoding has been set then the properties files is loaded using ISO-8859-1 encoding (latin-1) as documented by link java.util.Propertiesload(java.io.InputStream)
-| propertiesResolver | common |  | PropertiesResolver | To use a custom PropertiesResolver
-| propertiesParser | common |  | PropertiesParser | To use a custom PropertiesParser
-| cache | common | true | boolean | Whether or not to cache loaded properties. The default value is true.
-| propertyPrefix | common |  | String | Optional prefix prepended to property names before resolution.
-| propertySuffix | common |  | String | Optional suffix appended to property names before resolution.
-| fallbackToUnaugmentedProperty | common | true | boolean | If true first attempt resolution of property name augmented with propertyPrefix and propertySuffix before falling back the plain property name specified. If false only the augmented property name is searched.
-| defaultFallbackEnabled | common | true | boolean | If false the component does not attempt to find a default for the key by looking after the colon separator.
-| ignoreMissingLocation | common | false | boolean | Whether to silently ignore if a location cannot be located such as a properties file not found.
-| prefixToken | common | {{ | String | Sets the value of the prefix token used to identify properties to replace. Setting a value of null restores the default token (link link DEFAULT_PREFIX_TOKEN).
-| suffixToken | common | }} | String | Sets the value of the suffix token used to identify properties to replace. Setting a value of null restores the default token (link link DEFAULT_SUFFIX_TOKEN).
-| initialProperties | common |  | Properties | Sets initial properties which will be used before any locations are resolved.
-| overrideProperties | common |  | Properties | Sets a special list of override properties that take precedence and will use first if a property exist.
-| systemPropertiesMode | common | 2 | int | Sets the system property mode.
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| common
+| locations |  | List | A list of locations to load properties. This option will override any default locations and only use the locations from this option.
+
+| location |  | String | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option.
+
+| encoding |  | String | Encoding to use when loading properties file from the file system or classpath. If no encoding has been set then the properties files is loaded using ISO-8859-1 encoding (latin-1) as documented by link java.util.Propertiesload(java.io.InputStream)
+
+| propertiesResolver |  | PropertiesResolver | To use a custom PropertiesResolver
+
+| propertiesParser |  | PropertiesParser | To use a custom PropertiesParser
+
+| cache | true | boolean | Whether or not to cache loaded properties. The default value is true.
+
+| propertyPrefix |  | String | Optional prefix prepended to property names before resolution.
+
+| propertySuffix |  | String | Optional suffix appended to property names before resolution.
+
+| fallbackToUnaugmentedProperty | true | boolean | If true first attempt resolution of property name augmented with propertyPrefix and propertySuffix before falling back the plain property name specified. If false only the augmented property name is searched.
+
+| defaultFallbackEnabled | true | boolean | If false the component does not attempt to find a default for the key by looking after the colon separator.
+
+| ignoreMissingLocation | false | boolean | Whether to silently ignore if a location cannot be located such as a properties file not found.
+
+| prefixToken | {{ | String | Sets the value of the prefix token used to identify properties to replace. Setting a value of null restores the default token (link link DEFAULT_PREFIX_TOKEN).
+
+| suffixToken | }} | String | Sets the value of the suffix token used to identify properties to replace. Setting a value of null restores the default token (link link DEFAULT_SUFFIX_TOKEN).
+
+| initialProperties |  | Properties | Sets initial properties which will be used before any locations are resolved.
+
+| overrideProperties |  | Properties | Sets a special list of override properties that take precedence and will use first if a property exist.
+
+| systemPropertiesMode | 2 | int | Sets the system property mode.
+ 4+^s| advanced
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -59,15 +76,21 @@ with the following path and query parameters:
 
 #### Query Parameters (6 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| ignoreMissingLocation | common | false | boolean | Whether to silently ignore if a location cannot be located such as a properties file not found.
-| locations | common |  | String | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the default exchange pattern when creating an exchange.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| ignoreMissingLocation | false | boolean | Whether to silently ignore if a location cannot be located such as a properties file not found.
+
+| locations |  | String | A list of locations to load properties. You can use comma to separate multiple locations. This option will override any default locations and only use the locations from this option.
+ 4+^s| consumer
+| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN/ERROR level and ignored.
+ 4+^s| consumer (advanced)
+| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN/ERROR level and ignored.
+
+| exchangePattern |  | ExchangePattern | Sets the default exchange pattern when creating an exchange.
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

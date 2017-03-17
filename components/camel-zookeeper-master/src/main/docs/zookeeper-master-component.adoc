@@ -37,16 +37,23 @@ The ZooKeeper Master component supports 7 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| containerIdFactory | consumer |  | ContainerIdFactory | To use a custom ContainerIdFactory for creating container ids.
-| zkRoot | consumer | /camel/zookeepermaster/clusters/master | String | The root path to use in zookeeper where information is stored which nodes are master/slave etc. Will by default use: /camel/zookeepermaster/clusters/master
-| curator | advanced |  | CuratorFramework | To use a custom configured CuratorFramework as connection to zookeeper ensemble.
-| maximumConnectionTimeout | consumer | 10000 | int | Timeout in millis to use when connecting to the zookeeper ensemble
-| zooKeeperUrl | consumer | localhost:2181 | String | The url for the zookeeper ensemble
-| zooKeeperPassword | security |  | String | The password to use when connecting to the zookeeper ensemble
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| consumer
+| containerIdFactory |  | ContainerIdFactory | To use a custom ContainerIdFactory for creating container ids.
+
+| zkRoot | /camel/zookeepermaster/clusters/master | String | The root path to use in zookeeper where information is stored which nodes are master/slave etc. Will by default use: /camel/zookeepermaster/clusters/master
+ 4+^s| advanced
+| curator |  | CuratorFramework | To use a custom configured CuratorFramework as connection to zookeeper ensemble.
+ 4+^s| consumer
+| maximumConnectionTimeout | 10000 | int | Timeout in millis to use when connecting to the zookeeper ensemble
+
+| zooKeeperUrl | localhost:2181 | String | The url for the zookeeper ensemble
+ 4+^s| security
+| zooKeeperPassword |  | String | The password to use when connecting to the zookeeper ensemble
+ 4+^s| advanced
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -68,13 +75,17 @@ with the following path and query parameters:
 
 #### Query Parameters (4 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+ 4+^s| consumer (advanced)
+| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

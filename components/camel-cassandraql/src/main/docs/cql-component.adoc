@@ -79,23 +79,37 @@ with the following path and query parameters:
 
 #### Query Parameters (14 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| cluster | common |  | Cluster | To use the Cluster instance (you would normally not use this option)
-| clusterName | common |  | String | Cluster name
-| consistencyLevel | common |  | ConsistencyLevel | Consistency level to use
-| cql | common |  | String | CQL query to perform. Can be overridden with the message header with key CamelCqlQuery.
-| loadBalancingPolicy | common |  | String | To use a specific LoadBalancingPolicy
-| password | common |  | String | Password for session authentication
-| prepareStatements | common | true | boolean | Whether to use PreparedStatements or regular Statements
-| resultSetConversionStrategy | common |  | String | To use a custom class that implements logic for converting ResultSet into message body ALL ONE LIMIT_10 LIMIT_100...
-| session | common |  | Session | To use the Session instance (you would normally not use this option)
-| username | common |  | String | Username for session authentication
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| cluster |  | Cluster | To use the Cluster instance (you would normally not use this option)
+
+| clusterName |  | String | Cluster name
+
+| consistencyLevel |  | ConsistencyLevel | Consistency level to use
+
+| cql |  | String | CQL query to perform. Can be overridden with the message header with key CamelCqlQuery.
+
+| loadBalancingPolicy |  | String | To use a specific LoadBalancingPolicy
+
+| password |  | String | Password for session authentication
+
+| prepareStatements | true | boolean | Whether to use PreparedStatements or regular Statements
+
+| resultSetConversionStrategy |  | String | To use a custom class that implements logic for converting ResultSet into message body ALL ONE LIMIT_10 LIMIT_100...
+
+| session |  | Session | To use the Session instance (you would normally not use this option)
+
+| username |  | String | Username for session authentication
+ 4+^s| consumer
+| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+ 4+^s| consumer (advanced)
+| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

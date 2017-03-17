@@ -55,12 +55,15 @@ The Apache Spark component supports 3 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| rdd | producer |  | JavaRDDLike | RDD to compute against.
-| rddCallback | producer |  | RddCallback | Function performing action against an RDD.
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| producer
+| rdd |  | JavaRDDLike | RDD to compute against.
+
+| rddCallback |  | RddCallback | Function performing action against an RDD.
+ 4+^s| advanced
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -84,15 +87,21 @@ with the following path and query parameters:
 
 #### Query Parameters (6 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| collect | producer | true | boolean | Indicates if results should be collected or counted.
-| dataFrame | producer |  | DataFrame | DataFrame to compute against.
-| dataFrameCallback | producer |  | DataFrameCallback | Function performing action against an DataFrame.
-| rdd | producer |  | JavaRDDLike | RDD to compute against.
-| rddCallback | producer |  | RddCallback | Function performing action against an RDD.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| collect | true | boolean | Indicates if results should be collected or counted.
+
+| dataFrame |  | DataFrame | DataFrame to compute against.
+
+| dataFrameCallback |  | DataFrameCallback | Function performing action against an DataFrame.
+
+| rdd |  | JavaRDDLike | RDD to compute against.
+
+| rddCallback |  | RddCallback | Function performing action against an RDD.
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

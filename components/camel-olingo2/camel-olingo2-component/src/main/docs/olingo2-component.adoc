@@ -47,11 +47,13 @@ The Olingo2 component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| configuration | common |  | Olingo2Configuration | To use the shared configuration
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| common
+| configuration |  | Olingo2Configuration | To use the shared configuration
+ 4+^s| advanced
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -78,23 +80,37 @@ with the following path and query parameters:
 
 #### Query Parameters (14 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| connectTimeout | common | 30000 | int | HTTP connection creation timeout in milliseconds defaults to 30000 (30 seconds)
-| contentType | common | application/json;charset=utf-8 | String | Content-Type header value can be used to specify JSON or XML message format defaults to application/json;charset=utf-8
-| httpAsyncClientBuilder | common |  | HttpAsyncClientBuilder | Custom HTTP async client builder for more complex HTTP client configuration overrides connectionTimeout socketTimeout proxy and sslContext. Note that a socketTimeout MUST be specified in the builder otherwise OData requests could block indefinitely
-| httpClientBuilder | common |  | HttpClientBuilder | Custom HTTP client builder for more complex HTTP client configuration overrides connectionTimeout socketTimeout proxy and sslContext. Note that a socketTimeout MUST be specified in the builder otherwise OData requests could block indefinitely
-| httpHeaders | common |  | Map | Custom HTTP headers to inject into every request this could include OAuth tokens etc.
-| inBody | common |  | String | Sets the name of a parameter to be passed in the exchange In Body
-| proxy | common |  | HttpHost | HTTP proxy server configuration
-| serviceUri | common |  | String | Target OData service base URI e.g. http://services.odata.org/OData/OData.svc
-| socketTimeout | common | 30000 | int | HTTP request timeout in milliseconds defaults to 30000 (30 seconds)
-| sslContextParameters | common |  | SSLContextParameters | To configure security using SSLContextParameters
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| connectTimeout | 30000 | int | HTTP connection creation timeout in milliseconds defaults to 30000 (30 seconds)
+
+| contentType | application/json;charset=utf-8 | String | Content-Type header value can be used to specify JSON or XML message format defaults to application/json;charset=utf-8
+
+| httpAsyncClientBuilder |  | HttpAsyncClientBuilder | Custom HTTP async client builder for more complex HTTP client configuration overrides connectionTimeout socketTimeout proxy and sslContext. Note that a socketTimeout MUST be specified in the builder otherwise OData requests could block indefinitely
+
+| httpClientBuilder |  | HttpClientBuilder | Custom HTTP client builder for more complex HTTP client configuration overrides connectionTimeout socketTimeout proxy and sslContext. Note that a socketTimeout MUST be specified in the builder otherwise OData requests could block indefinitely
+
+| httpHeaders |  | Map | Custom HTTP headers to inject into every request this could include OAuth tokens etc.
+
+| inBody |  | String | Sets the name of a parameter to be passed in the exchange In Body
+
+| proxy |  | HttpHost | HTTP proxy server configuration
+
+| serviceUri |  | String | Target OData service base URI e.g. http://services.odata.org/OData/OData.svc
+
+| socketTimeout | 30000 | int | HTTP request timeout in milliseconds defaults to 30000 (30 seconds)
+
+| sslContextParameters |  | SSLContextParameters | To configure security using SSLContextParameters
+ 4+^s| consumer
+| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+ 4+^s| consumer (advanced)
+| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

@@ -60,30 +60,51 @@ with the following path and query parameters:
 
 #### Query Parameters (21 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| connectTimeoutMillis | common |  | Long | Connect timeout for OkHttpClient
-| dc | common |  | String | The data center
-| key | common |  | String | The default key. Can be overridden by CamelConsulKey
-| pingInstance | common | true | boolean | Configure if the AgentClient should attempt a ping before returning the Consul instance
-| readTimeoutMillis | common |  | Long | Read timeout for OkHttpClient
-| tags | common |  | String | Set tags. You can separate multiple tags by comma.
-| url | common |  | String | The Consul agent URL
-| writeTimeoutMillis | common |  | Long | Write timeout for OkHttpClient
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| action | producer |  | String | The default action. Can be overridden by CamelConsulAction
-| valueAsString | producer | false | boolean | Default to transform values retrieved from Consul i.e. on KV endpoint to string.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| blockSeconds | watch | 10 | Integer | The second to wait for a watch event default 10 seconds
-| firstIndex | watch | 0 | long | The first index for watch for default 0
-| recursive | watch | false | boolean | Recursively watch default false
-| aclToken | security |  | String | Sets the ACL token to be used with Consul
-| password | security |  | String | Sets the password to be used for basic authentication
-| sslContextParameters | security |  | SSLContextParameters | SSL configuration using an org.apache.camel.util.jsse.SSLContextParameters instance.
-| userName | security |  | String | Sets the username to be used for basic authentication
+| Name | Default | Java Type | Description
+
+| connectTimeoutMillis |  | Long | Connect timeout for OkHttpClient
+
+| dc |  | String | The data center
+
+| key |  | String | The default key. Can be overridden by CamelConsulKey
+
+| pingInstance | true | boolean | Configure if the AgentClient should attempt a ping before returning the Consul instance
+
+| readTimeoutMillis |  | Long | Read timeout for OkHttpClient
+
+| tags |  | String | Set tags. You can separate multiple tags by comma.
+
+| url |  | String | The Consul agent URL
+
+| writeTimeoutMillis |  | Long | Write timeout for OkHttpClient
+ 4+^s| consumer
+| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+ 4+^s| consumer (advanced)
+| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+ 4+^s| producer
+| action |  | String | The default action. Can be overridden by CamelConsulAction
+
+| valueAsString | false | boolean | Default to transform values retrieved from Consul i.e. on KV endpoint to string.
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+ 4+^s| watch
+| blockSeconds | 10 | Integer | The second to wait for a watch event default 10 seconds
+
+| firstIndex | 0 | long | The first index for watch for default 0
+
+| recursive | false | boolean | Recursively watch default false
+ 4+^s| security
+| aclToken |  | String | Sets the ACL token to be used with Consul
+
+| password |  | String | Sets the password to be used for basic authentication
+
+| sslContextParameters |  | SSLContextParameters | SSL configuration using an org.apache.camel.util.jsse.SSLContextParameters instance.
+
+| userName |  | String | Sets the username to be used for basic authentication
 |=======================================================================
 // endpoint options: END
 

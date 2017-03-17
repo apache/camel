@@ -117,27 +117,45 @@ with the following path and query parameters:
 
 #### Query Parameters (18 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| basicEncoding | producer |  | String | Sets the encoding for basic authentication null means UTF-8 is chosen.
-| connectionTimeout | producer |  | int | Set the connection timeout in milliseconds 0 is to disable it
-| contentLengthOptional | producer | false | boolean | Whether a Content-Length header may be omitted. The XML-RPC specification demands that such a header be present.
-| defaultMethodName | producer |  | String | The method name which would be used for the xmlrpc requests by default if the Message header CamelXmlRpcMethodName is not set.
-| enabledForExceptions | producer | false | boolean | Whether the response should contain a faultCause element in case of errors. The faultCause is an exception which the server has trapped and written into a byte stream as a serializable object.
-| enabledForExtensions | producer | false | boolean | Whether extensions are enabled. By default the client or server is strictly compliant to the XML-RPC specification and extensions are disabled.
-| encoding | producer |  | String | Sets the requests encoding null means UTF-8 is chosen.
-| gzipCompressing | producer | false | boolean | Whether gzip compression is being used for transmitting the request.
-| gzipRequesting | producer | false | boolean | Whether gzip compression is being used for transmitting the request.
-| replyTimeout | producer |  | int | Set the reply timeout in milliseconds 0 is to disable it.
-| clientConfig | advanced |  | XmlRpcClientConfigImpl | To use the given XmlRpcClientConfigImpl as configuration for the client.
-| clientConfigurer | advanced |  | XmlRpcClientConfigurer | To use a custom XmlRpcClientConfigurer to configure the client
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| timeZone | advanced |  | TimeZone | The timezone which is used to interpret date/time. Defaults to link TimeZonegetDefault().
-| userAgent | advanced |  | String | The http user agent header to set when doing xmlrpc requests
-| xmlRpcServer | advanced |  | XmlRpcRequestProcessor | To use a custom XmlRpcRequestProcessor as server.
-| basicPassword | security |  | String | The password for basic authentication.
-| basicUserName | security |  | String | The user name for basic authentication.
+| Name | Default | Java Type | Description
+
+| basicEncoding |  | String | Sets the encoding for basic authentication null means UTF-8 is chosen.
+
+| connectionTimeout |  | int | Set the connection timeout in milliseconds 0 is to disable it
+
+| contentLengthOptional | false | boolean | Whether a Content-Length header may be omitted. The XML-RPC specification demands that such a header be present.
+
+| defaultMethodName |  | String | The method name which would be used for the xmlrpc requests by default if the Message header CamelXmlRpcMethodName is not set.
+
+| enabledForExceptions | false | boolean | Whether the response should contain a faultCause element in case of errors. The faultCause is an exception which the server has trapped and written into a byte stream as a serializable object.
+
+| enabledForExtensions | false | boolean | Whether extensions are enabled. By default the client or server is strictly compliant to the XML-RPC specification and extensions are disabled.
+
+| encoding |  | String | Sets the requests encoding null means UTF-8 is chosen.
+
+| gzipCompressing | false | boolean | Whether gzip compression is being used for transmitting the request.
+
+| gzipRequesting | false | boolean | Whether gzip compression is being used for transmitting the request.
+
+| replyTimeout |  | int | Set the reply timeout in milliseconds 0 is to disable it.
+ 4+^s| advanced
+| clientConfig |  | XmlRpcClientConfigImpl | To use the given XmlRpcClientConfigImpl as configuration for the client.
+
+| clientConfigurer |  | XmlRpcClientConfigurer | To use a custom XmlRpcClientConfigurer to configure the client
+
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+
+| timeZone |  | TimeZone | The timezone which is used to interpret date/time. Defaults to link TimeZonegetDefault().
+
+| userAgent |  | String | The http user agent header to set when doing xmlrpc requests
+
+| xmlRpcServer |  | XmlRpcRequestProcessor | To use a custom XmlRpcRequestProcessor as server.
+ 4+^s| security
+| basicPassword |  | String | The password for basic authentication.
+
+| basicUserName |  | String | The user name for basic authentication.
 |=======================================================================
 // endpoint options: END
 

@@ -87,24 +87,39 @@ The Simple JMS2 component supports 15 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| connectionFactory | advanced |  | ConnectionFactory | A ConnectionFactory is required to enable the SjmsComponent. It can be set directly or set set as part of a ConnectionResource.
-| connectionResource | advanced |  | ConnectionResource | A ConnectionResource is an interface that allows for customization and container control of the ConnectionFactory. See Plugable Connection Resource Management for further details.
-| connectionCount | common | 1 | Integer | The maximum number of connections available to endpoints started under this component
-| jmsKeyFormatStrategy | advanced |  | JmsKeyFormatStrategy | Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification. Camel provides one implementation out of the box: default. The default strategy will safely marshal dots and hyphens (. and -). Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the notation.
-| transactionCommitStrategy | transaction |  | TransactionCommitStrategy | To configure which kind of commit strategy to use. Camel provides two implementations out of the box default and batch.
-| destinationCreationStrategy | advanced |  | DestinationCreationStrategy | To use a custom DestinationCreationStrategy.
-| timedTaskManager | advanced |  | TimedTaskManager | To use a custom TimedTaskManager
-| messageCreatedStrategy | advanced |  | MessageCreatedStrategy | To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of javax.jms.Message objects when Camel is sending a JMS message.
-| connectionTestOnBorrow | advanced | true | boolean | When using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource then should each javax.jms.Connection be tested (calling start) before returned from the pool.
-| connectionUsername | security |  | String | The username to use when creating javax.jms.Connection when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
-| connectionPassword | security |  | String | The password to use when creating javax.jms.Connection when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
-| connectionClientId | advanced |  | String | The client ID to use when creating javax.jms.Connection when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
-| connectionMaxWait | advanced | 5000 | long | The max wait time in millis to block and wait on free connection when the pool is exhausted when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
-| headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| advanced
+| connectionFactory |  | ConnectionFactory | A ConnectionFactory is required to enable the SjmsComponent. It can be set directly or set set as part of a ConnectionResource.
+
+| connectionResource |  | ConnectionResource | A ConnectionResource is an interface that allows for customization and container control of the ConnectionFactory. See Plugable Connection Resource Management for further details.
+ 4+^s| common
+| connectionCount | 1 | Integer | The maximum number of connections available to endpoints started under this component
+ 4+^s| advanced
+| jmsKeyFormatStrategy |  | JmsKeyFormatStrategy | Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification. Camel provides one implementation out of the box: default. The default strategy will safely marshal dots and hyphens (. and -). Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the notation.
+ 4+^s| transaction
+| transactionCommitStrategy |  | TransactionCommitStrategy | To configure which kind of commit strategy to use. Camel provides two implementations out of the box default and batch.
+ 4+^s| advanced
+| destinationCreationStrategy |  | DestinationCreationStrategy | To use a custom DestinationCreationStrategy.
+
+| timedTaskManager |  | TimedTaskManager | To use a custom TimedTaskManager
+
+| messageCreatedStrategy |  | MessageCreatedStrategy | To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of javax.jms.Message objects when Camel is sending a JMS message.
+
+| connectionTestOnBorrow | true | boolean | When using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource then should each javax.jms.Connection be tested (calling start) before returned from the pool.
+ 4+^s| security
+| connectionUsername |  | String | The username to use when creating javax.jms.Connection when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
+
+| connectionPassword |  | String | The password to use when creating javax.jms.Connection when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
+ 4+^s| advanced
+| connectionClientId |  | String | The client ID to use when creating javax.jms.Connection when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
+
+| connectionMaxWait | 5000 | long | The max wait time in millis to block and wait on free connection when the pool is exhausted when using the default org.apache.camel.component.sjms.jms.ConnectionFactoryResource.
+ 4+^s| filter
+| headerFilterStrategy |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
+ 4+^s| advanced
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -133,46 +148,83 @@ with the following path and query parameters:
 
 #### Query Parameters (37 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| acknowledgementMode | common | AUTO_ACKNOWLEDGE | SessionAcknowledgementType | The JMS acknowledgement name which is one of: SESSION_TRANSACTED CLIENT_ACKNOWLEDGE AUTO_ACKNOWLEDGE DUPS_OK_ACKNOWLEDGE
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| consumerCount | consumer | 1 | int | Sets the number of consumer listeners used for this endpoint.
-| durable | consumer | false | boolean | Sets topic consumer to durable.
-| durableSubscriptionId | consumer |  | String | Sets the durable subscription Id required for durable topics.
-| shared | consumer | false | boolean | Sets the consumer to shared.
-| subscriptionId | consumer |  | String | Sets the subscription Id required for durable or shared topics.
-| synchronous | consumer | true | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| messageSelector | consumer (advanced) |  | String | Sets the JMS Message selector syntax.
-| namedReplyTo | producer |  | String | Sets the reply to destination name used for InOut producer endpoints.
-| persistent | producer | true | boolean | Flag used to enable/disable message persistence.
-| producerCount | producer | 1 | int | Sets the number of producers used for this endpoint.
-| ttl | producer | -1 | long | Flag used to adjust the Time To Live value of produced messages.
-| allowNullBody | producer (advanced) | true | boolean | Whether to allow sending messages with no body. If this option is false and the message body is null then an JMSException is thrown.
-| prefillPool | producer (advanced) | true | boolean | Whether to prefill the producer connection pool on startup or create connections lazy when needed.
-| responseTimeOut | producer (advanced) | 5000 | long | Sets the amount of time we should wait before timing out a InOut response.
-| asyncStartListener | advanced | false | boolean | Whether to startup the consumer message listener asynchronously when starting a route. For example if a JmsConsumer cannot get a connection to a remote JMS broker then it may block while retrying and/or failover. This will cause Camel to block while starting routes. By setting this option to true you will let routes startup while the JmsConsumer connects to the JMS broker using a dedicated thread in asynchronous mode. If this option is used then beware that if the connection could not be established then an exception is logged at WARN level and the consumer will not be able to receive messages; You can then restart the route to retry.
-| asyncStopListener | advanced | false | boolean | Whether to stop the consumer message listener asynchronously when stopping a route.
-| connectionCount | advanced |  | Integer | The maximum number of connections available to this endpoint
-| connectionFactory | advanced |  | ConnectionFactory | Initializes the connectionFactory for the endpoint which takes precedence over the component's connectionFactory if any
-| connectionResource | advanced |  | ConnectionResource | Initializes the connectionResource for the endpoint which takes precedence over the component's connectionResource if any
-| destinationCreationStrategy | advanced |  | DestinationCreationStrategy | To use a custom DestinationCreationStrategy.
-| exceptionListener | advanced |  | ExceptionListener | Specifies the JMS Exception Listener that is to be notified of any underlying JMS exceptions.
-| headerFilterStrategy | advanced |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
-| includeAllJMSXProperties | advanced | false | boolean | Whether to include all JMSXxxx properties when mapping from JMS to Camel Message. Setting this to true will include properties such as JMSXAppID and JMSXUserID etc. Note: If you are using a custom headerFilterStrategy then this option does not apply.
-| jmsKeyFormatStrategy | advanced |  | JmsKeyFormatStrategy | Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification. Camel provides two implementations out of the box: default and passthrough. The default strategy will safely marshal dots and hyphens (. and -). The passthrough strategy leaves the key as is. Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the notation.
-| mapJmsMessage | advanced | true | boolean | Specifies whether Camel should auto map the received JMS message to a suited payload type such as javax.jms.TextMessage to a String etc. See section about how mapping works below for more details.
-| messageCreatedStrategy | advanced |  | MessageCreatedStrategy | To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of javax.jms.Message objects when Camel is sending a JMS message.
-| errorHandlerLoggingLevel | logging | WARN | LoggingLevel | Allows to configure the default errorHandler logging level for logging uncaught exceptions.
-| errorHandlerLogStackTrace | logging | true | boolean | Allows to control whether stacktraces should be logged or not by the default errorHandler.
-| transacted | transaction | false | boolean | Specifies whether to use transacted mode
-| transactionBatchCount | transaction | -1 | int | If transacted sets the number of messages to process before committing a transaction.
-| transactionBatchTimeout | transaction | 5000 | long | Sets timeout (in millis) for batch transactions the value should be 1000 or higher.
-| transactionCommitStrategy | transaction |  | TransactionCommitStrategy | Sets the commit strategy.
-| sharedJMSSession | transaction (advanced) | true | boolean | Specifies whether to share JMS session with other SJMS endpoints. Turn this off if your route is accessing to multiple JMS providers. If you need transaction against multiple JMS providers use jms component to leverage XA transaction.
+| Name | Default | Java Type | Description
+
+| acknowledgementMode | AUTO_ACKNOWLEDGE | SessionAcknowledgementType | The JMS acknowledgement name which is one of: SESSION_TRANSACTED CLIENT_ACKNOWLEDGE AUTO_ACKNOWLEDGE DUPS_OK_ACKNOWLEDGE
+ 4+^s| consumer
+| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| consumerCount | 1 | int | Sets the number of consumer listeners used for this endpoint.
+
+| durable | false | boolean | Sets topic consumer to durable.
+
+| durableSubscriptionId |  | String | Sets the durable subscription Id required for durable topics.
+
+| shared | false | boolean | Sets the consumer to shared.
+
+| subscriptionId |  | String | Sets the subscription Id required for durable or shared topics.
+
+| synchronous | true | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+ 4+^s| consumer (advanced)
+| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+
+| messageSelector |  | String | Sets the JMS Message selector syntax.
+ 4+^s| producer
+| namedReplyTo |  | String | Sets the reply to destination name used for InOut producer endpoints.
+
+| persistent | true | boolean | Flag used to enable/disable message persistence.
+
+| producerCount | 1 | int | Sets the number of producers used for this endpoint.
+
+| ttl | -1 | long | Flag used to adjust the Time To Live value of produced messages.
+ 4+^s| producer (advanced)
+| allowNullBody | true | boolean | Whether to allow sending messages with no body. If this option is false and the message body is null then an JMSException is thrown.
+
+| prefillPool | true | boolean | Whether to prefill the producer connection pool on startup or create connections lazy when needed.
+
+| responseTimeOut | 5000 | long | Sets the amount of time we should wait before timing out a InOut response.
+ 4+^s| advanced
+| asyncStartListener | false | boolean | Whether to startup the consumer message listener asynchronously when starting a route. For example if a JmsConsumer cannot get a connection to a remote JMS broker then it may block while retrying and/or failover. This will cause Camel to block while starting routes. By setting this option to true you will let routes startup while the JmsConsumer connects to the JMS broker using a dedicated thread in asynchronous mode. If this option is used then beware that if the connection could not be established then an exception is logged at WARN level and the consumer will not be able to receive messages; You can then restart the route to retry.
+
+| asyncStopListener | false | boolean | Whether to stop the consumer message listener asynchronously when stopping a route.
+
+| connectionCount |  | Integer | The maximum number of connections available to this endpoint
+
+| connectionFactory |  | ConnectionFactory | Initializes the connectionFactory for the endpoint which takes precedence over the component's connectionFactory if any
+
+| connectionResource |  | ConnectionResource | Initializes the connectionResource for the endpoint which takes precedence over the component's connectionResource if any
+
+| destinationCreationStrategy |  | DestinationCreationStrategy | To use a custom DestinationCreationStrategy.
+
+| exceptionListener |  | ExceptionListener | Specifies the JMS Exception Listener that is to be notified of any underlying JMS exceptions.
+
+| headerFilterStrategy |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+
+| includeAllJMSXProperties | false | boolean | Whether to include all JMSXxxx properties when mapping from JMS to Camel Message. Setting this to true will include properties such as JMSXAppID and JMSXUserID etc. Note: If you are using a custom headerFilterStrategy then this option does not apply.
+
+| jmsKeyFormatStrategy |  | JmsKeyFormatStrategy | Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification. Camel provides two implementations out of the box: default and passthrough. The default strategy will safely marshal dots and hyphens (. and -). The passthrough strategy leaves the key as is. Can be used for JMS brokers which do not care whether JMS header keys contain illegal characters. You can provide your own implementation of the org.apache.camel.component.jms.JmsKeyFormatStrategy and refer to it using the notation.
+
+| mapJmsMessage | true | boolean | Specifies whether Camel should auto map the received JMS message to a suited payload type such as javax.jms.TextMessage to a String etc. See section about how mapping works below for more details.
+
+| messageCreatedStrategy |  | MessageCreatedStrategy | To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of javax.jms.Message objects when Camel is sending a JMS message.
+ 4+^s| logging
+| errorHandlerLoggingLevel | WARN | LoggingLevel | Allows to configure the default errorHandler logging level for logging uncaught exceptions.
+
+| errorHandlerLogStackTrace | true | boolean | Allows to control whether stacktraces should be logged or not by the default errorHandler.
+ 4+^s| transaction
+| transacted | false | boolean | Specifies whether to use transacted mode
+
+| transactionBatchCount | -1 | int | If transacted sets the number of messages to process before committing a transaction.
+
+| transactionBatchTimeout | 5000 | long | Sets timeout (in millis) for batch transactions the value should be 1000 or higher.
+
+| transactionCommitStrategy |  | TransactionCommitStrategy | Sets the commit strategy.
+ 4+^s| transaction (advanced)
+| sharedJMSSession | true | boolean | Specifies whether to share JMS session with other SJMS endpoints. Turn this off if your route is accessing to multiple JMS providers. If you need transaction against multiple JMS providers use jms component to leverage XA transaction.
 |=======================================================================
 // endpoint options: END
 

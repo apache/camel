@@ -34,17 +34,25 @@ The ServiceNow component supports 8 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| configuration | advanced |  | ServiceNowConfiguration | The ServiceNow default configuration
-| apiUrl | producer |  | String | The ServiceNow REST API url
-| userName | security |  | String | ServiceNow user account name
-| password | security |  | String | ServiceNow account password
-| oauthClientId | security |  | String | OAuth2 ClientID
-| oauthClientSecret | security |  | String | OAuth2 ClientSecret
-| oauthTokenUrl | security |  | String | OAuth token Url
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| advanced
+| configuration |  | ServiceNowConfiguration | The ServiceNow default configuration
+ 4+^s| producer
+| apiUrl |  | String | The ServiceNow REST API url
+ 4+^s| security
+| userName |  | String | ServiceNow user account name
+
+| password |  | String | ServiceNow account password
+
+| oauthClientId |  | String | OAuth2 ClientID
+
+| oauthClientSecret |  | String | OAuth2 ClientSecret
+
+| oauthTokenUrl |  | String | OAuth token Url
+ 4+^s| advanced
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -66,49 +74,89 @@ with the following path and query parameters:
 
 #### Query Parameters (40 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| display | producer | true | String | Set this parameter to true to return only scorecards where the indicator Display field is selected. Set this parameter to all to return scorecards with any Display field value. This parameter is true by default.
-| displayValue | producer | false | String | Return the display value (true) actual value (false) or both (all) for reference fields (default: false)
-| excludeReferenceLink | producer |  | Boolean | True to exclude Table API links for reference fields (default: false)
-| favorites | producer |  | Boolean | Set this parameter to true to return only scorecards that are favorites of the querying user.
-| includeAggregates | producer |  | Boolean | Set this parameter to true to always return all available aggregates for an indicator including when an aggregate has already been applied. If a value is not specified this parameter defaults to false and returns no aggregates.
-| includeAvailableAggregates | producer |  | Boolean | Set this parameter to true to return all available aggregates for an indicator when no aggregate has been applied. If a value is not specified this parameter defaults to false and returns no aggregates.
-| includeAvailableBreakdowns | producer |  | Boolean | Set this parameter to true to return all available breakdowns for an indicator. If a value is not specified this parameter defaults to false and returns no breakdowns.
-| includeScoreNotes | producer |  | Boolean | Set this parameter to true to return all notes associated with the score. The note element contains the note text as well as the author and timestamp when the note was added.
-| includeScores | producer |  | Boolean | Set this parameter to true to return all scores for a scorecard. If a value is not specified this parameter defaults to false and returns only the most recent score value.
-| inputDisplayValue | producer |  | Boolean | True to set raw value of input fields (default: false)
-| key | producer |  | Boolean | Set this parameter to true to return only scorecards for key indicators.
-| models | producer |  | String | Defines both request and response models
-| perPage | producer | 10 | Integer | Enter the maximum number of scorecards each query can return. By default this value is 10 and the maximum is 100.
-| release | producer | HELSINKI | ServiceNowRelease | The ServiceNow release to target default to Helsinki See https://docs.servicenow.com
-| requestModels | producer |  | String | Defines the request model
-| resource | producer |  | String | The default resource can be overridden by header CamelServiceNowResource
-| responseModels | producer |  | String | Defines the response model
-| sortBy | producer |  | String | Specify the value to use when sorting results. By default queries sort records by value.
-| sortDir | producer |  | String | Specify the sort direction ascending or descending. By default queries sort records in descending order. Use sysparm_sortdir=asc to sort in ascending order.
-| suppressAutoSysField | producer |  | Boolean | True to suppress auto generation of system fields (default: false)
-| suppressPaginationHeader | producer |  | Boolean | Set this value to true to remove the Link header from the response. The Link header allows you to request additional pages of data when the number of records matching your query exceeds the query limit
-| table | producer |  | String | The default table can be overridden by header CamelServiceNowTable
-| target | producer |  | Boolean | Set this parameter to true to return only scorecards that have a target.
-| topLevelOnly | producer |  | Boolean | Gets only those categories whose parent is a catalog.
-| apiVersion | advanced |  | String | The ServiceNow REST API version default latest
-| httpClientPolicy | advanced |  | HTTPClientPolicy | To configure http-client
-| mapper | advanced |  | ObjectMapper | Sets Jackson's ObjectMapper to use for request/reply
-| proxyAuthorizationPolicy | advanced |  | ProxyAuthorizationPolicy | To configure proxy authentication
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| proxyHost | proxy |  | String | The proxy host name
-| proxyPort | proxy |  | Integer | The proxy port number
-| apiUrl | security |  | String | The ServiceNow REST API url
-| oauthClientId | security |  | String | OAuth2 ClientID
-| oauthClientSecret | security |  | String | OAuth2 ClientSecret
-| oauthTokenUrl | security |  | String | OAuth token Url
-| password | security |  | String | *Required* ServiceNow account password MUST be provided
-| proxyPassword | security |  | String | Password for proxy authentication
-| proxyUserName | security |  | String | Username for proxy authentication
-| sslContextParameters | security |  | SSLContextParameters | To configure security using SSLContextParameters. See http://camel.apache.org/camel-configuration-utilities.html
-| userName | security |  | String | *Required* ServiceNow user account name MUST be provided
+| Name | Default | Java Type | Description
+
+| display | true | String | Set this parameter to true to return only scorecards where the indicator Display field is selected. Set this parameter to all to return scorecards with any Display field value. This parameter is true by default.
+
+| displayValue | false | String | Return the display value (true) actual value (false) or both (all) for reference fields (default: false)
+
+| excludeReferenceLink |  | Boolean | True to exclude Table API links for reference fields (default: false)
+
+| favorites |  | Boolean | Set this parameter to true to return only scorecards that are favorites of the querying user.
+
+| includeAggregates |  | Boolean | Set this parameter to true to always return all available aggregates for an indicator including when an aggregate has already been applied. If a value is not specified this parameter defaults to false and returns no aggregates.
+
+| includeAvailableAggregates |  | Boolean | Set this parameter to true to return all available aggregates for an indicator when no aggregate has been applied. If a value is not specified this parameter defaults to false and returns no aggregates.
+
+| includeAvailableBreakdowns |  | Boolean | Set this parameter to true to return all available breakdowns for an indicator. If a value is not specified this parameter defaults to false and returns no breakdowns.
+
+| includeScoreNotes |  | Boolean | Set this parameter to true to return all notes associated with the score. The note element contains the note text as well as the author and timestamp when the note was added.
+
+| includeScores |  | Boolean | Set this parameter to true to return all scores for a scorecard. If a value is not specified this parameter defaults to false and returns only the most recent score value.
+
+| inputDisplayValue |  | Boolean | True to set raw value of input fields (default: false)
+
+| key |  | Boolean | Set this parameter to true to return only scorecards for key indicators.
+
+| models |  | String | Defines both request and response models
+
+| perPage | 10 | Integer | Enter the maximum number of scorecards each query can return. By default this value is 10 and the maximum is 100.
+
+| release | HELSINKI | ServiceNowRelease | The ServiceNow release to target default to Helsinki See https://docs.servicenow.com
+
+| requestModels |  | String | Defines the request model
+
+| resource |  | String | The default resource can be overridden by header CamelServiceNowResource
+
+| responseModels |  | String | Defines the response model
+
+| sortBy |  | String | Specify the value to use when sorting results. By default queries sort records by value.
+
+| sortDir |  | String | Specify the sort direction ascending or descending. By default queries sort records in descending order. Use sysparm_sortdir=asc to sort in ascending order.
+
+| suppressAutoSysField |  | Boolean | True to suppress auto generation of system fields (default: false)
+
+| suppressPaginationHeader |  | Boolean | Set this value to true to remove the Link header from the response. The Link header allows you to request additional pages of data when the number of records matching your query exceeds the query limit
+
+| table |  | String | The default table can be overridden by header CamelServiceNowTable
+
+| target |  | Boolean | Set this parameter to true to return only scorecards that have a target.
+
+| topLevelOnly |  | Boolean | Gets only those categories whose parent is a catalog.
+ 4+^s| advanced
+| apiVersion |  | String | The ServiceNow REST API version default latest
+
+| httpClientPolicy |  | HTTPClientPolicy | To configure http-client
+
+| mapper |  | ObjectMapper | Sets Jackson's ObjectMapper to use for request/reply
+
+| proxyAuthorizationPolicy |  | ProxyAuthorizationPolicy | To configure proxy authentication
+
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+ 4+^s| proxy
+| proxyHost |  | String | The proxy host name
+
+| proxyPort |  | Integer | The proxy port number
+ 4+^s| security
+| apiUrl |  | String | The ServiceNow REST API url
+
+| oauthClientId |  | String | OAuth2 ClientID
+
+| oauthClientSecret |  | String | OAuth2 ClientSecret
+
+| oauthTokenUrl |  | String | OAuth token Url
+
+| password |  | String | *Required* ServiceNow account password MUST be provided
+
+| proxyPassword |  | String | Password for proxy authentication
+
+| proxyUserName |  | String | Username for proxy authentication
+
+| sslContextParameters |  | SSLContextParameters | To configure security using SSLContextParameters. See http://camel.apache.org/camel-configuration-utilities.html
+
+| userName |  | String | *Required* ServiceNow user account name MUST be provided
 |=======================================================================
 // endpoint options: END
 

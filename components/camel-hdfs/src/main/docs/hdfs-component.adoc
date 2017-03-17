@@ -59,11 +59,13 @@ The HDFS component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| jAASConfiguration | common |  | Configuration | To use the given configuration for security with JAAS.
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| common
+| jAASConfiguration |  | Configuration | To use the given configuration for security with JAAS.
+ 4+^s| advanced
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -92,47 +94,85 @@ with the following path and query parameters:
 
 #### Query Parameters (38 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| connectOnStartup | common | true | boolean | Whether to connect to the HDFS file system on starting the producer/consumer. If false then the connection is created on-demand. Notice that HDFS may take up till 15 minutes to establish a connection as it has hardcoded 45 x 20 sec redelivery. By setting this option to false allows your application to startup and not block for up till 15 minutes.
-| fileSystemType | common | HDFS | HdfsFileSystemType | Set to LOCAL to not use HDFS but local java.io.File instead.
-| fileType | common | NORMAL_FILE | HdfsFileType | The file type to use. For more details see Hadoop HDFS documentation about the various files types.
-| keyType | common | NULL | WritableType | The type for the key in case of sequence or map files.
-| owner | common |  | String | The file owner must match this owner for the consumer to pickup the file. Otherwise the file is skipped.
-| valueType | common | BYTES | WritableType | The type for the key in case of sequence or map files
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| delay | consumer | 1000 | long | The interval (milliseconds) between the directory scans.
-| initialDelay | consumer |  | long | For the consumer how much to wait (milliseconds) before to start scanning the directory.
-| pattern | consumer | * | String | The pattern used for scanning the directory
-| sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
-| append | producer | false | boolean | Append to existing file. Notice that not all HDFS file systems support the append option.
-| overwrite | producer | true | boolean | Whether to overwrite existing files with the same name
-| blockSize | advanced | 67108864 | long | The size of the HDFS blocks
-| bufferSize | advanced | 4096 | int | The buffer size used by HDFS
-| checkIdleInterval | advanced | 500 | int | How often (time in millis) in to run the idle checker background task. This option is only in use if the splitter strategy is IDLE.
-| chunkSize | advanced | 4096 | int | When reading a normal file this is split into chunks producing a message per chunk.
-| compressionCodec | advanced | DEFAULT | HdfsCompressionCodec | The compression codec to use
-| compressionType | advanced | NONE | CompressionType | The compression type to use (is default not in use)
-| openedSuffix | advanced | opened | String | When a file is opened for reading/writing the file is renamed with this suffix to avoid to read it during the writing phase.
-| readSuffix | advanced | read | String | Once the file has been read is renamed with this suffix to avoid to read it again.
-| replication | advanced | 3 | short | The HDFS replication factor
-| splitStrategy | advanced |  | String | In the current version of Hadoop opening a file in append mode is disabled since it's not very reliable. So for the moment it's only possible to create new files. The Camel HDFS endpoint tries to solve this problem in this way: If the split strategy option has been defined the hdfs path will be used as a directory and files will be created using the configured UuidGenerator. Every time a splitting condition is met a new file is created. The splitStrategy option is defined as a string with the following syntax: splitStrategy=ST:valueST:value... where ST can be: BYTES a new file is created and the old is closed when the number of written bytes is more than value MESSAGES a new file is created and the old is closed when the number of written messages is more than value IDLE a new file is created and the old is closed when no writing happened in the last value milliseconds
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| backoffErrorThreshold | scheduler |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
-| backoffIdleThreshold | scheduler |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
-| backoffMultiplier | scheduler |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
-| greedy | scheduler | false | boolean | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages.
-| runLoggingLevel | scheduler | TRACE | LoggingLevel | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.
-| scheduledExecutorService | scheduler |  | ScheduledExecutorService | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool.
-| scheduler | scheduler | none | ScheduledPollConsumerScheduler | To use a cron scheduler from either camel-spring or camel-quartz2 component
-| schedulerProperties | scheduler |  | Map | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler.
-| startScheduler | scheduler | true | boolean | Whether the scheduler should be auto started.
-| timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
-| useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
+| Name | Default | Java Type | Description
+
+| connectOnStartup | true | boolean | Whether to connect to the HDFS file system on starting the producer/consumer. If false then the connection is created on-demand. Notice that HDFS may take up till 15 minutes to establish a connection as it has hardcoded 45 x 20 sec redelivery. By setting this option to false allows your application to startup and not block for up till 15 minutes.
+
+| fileSystemType | HDFS | HdfsFileSystemType | Set to LOCAL to not use HDFS but local java.io.File instead.
+
+| fileType | NORMAL_FILE | HdfsFileType | The file type to use. For more details see Hadoop HDFS documentation about the various files types.
+
+| keyType | NULL | WritableType | The type for the key in case of sequence or map files.
+
+| owner |  | String | The file owner must match this owner for the consumer to pickup the file. Otherwise the file is skipped.
+
+| valueType | BYTES | WritableType | The type for the key in case of sequence or map files
+ 4+^s| consumer
+| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| delay | 1000 | long | The interval (milliseconds) between the directory scans.
+
+| initialDelay |  | long | For the consumer how much to wait (milliseconds) before to start scanning the directory.
+
+| pattern | * | String | The pattern used for scanning the directory
+
+| sendEmptyMessageWhenIdle | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
+ 4+^s| consumer (advanced)
+| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+
+| pollStrategy |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
+ 4+^s| producer
+| append | false | boolean | Append to existing file. Notice that not all HDFS file systems support the append option.
+
+| overwrite | true | boolean | Whether to overwrite existing files with the same name
+ 4+^s| advanced
+| blockSize | 67108864 | long | The size of the HDFS blocks
+
+| bufferSize | 4096 | int | The buffer size used by HDFS
+
+| checkIdleInterval | 500 | int | How often (time in millis) in to run the idle checker background task. This option is only in use if the splitter strategy is IDLE.
+
+| chunkSize | 4096 | int | When reading a normal file this is split into chunks producing a message per chunk.
+
+| compressionCodec | DEFAULT | HdfsCompressionCodec | The compression codec to use
+
+| compressionType | NONE | CompressionType | The compression type to use (is default not in use)
+
+| openedSuffix | opened | String | When a file is opened for reading/writing the file is renamed with this suffix to avoid to read it during the writing phase.
+
+| readSuffix | read | String | Once the file has been read is renamed with this suffix to avoid to read it again.
+
+| replication | 3 | short | The HDFS replication factor
+
+| splitStrategy |  | String | In the current version of Hadoop opening a file in append mode is disabled since it's not very reliable. So for the moment it's only possible to create new files. The Camel HDFS endpoint tries to solve this problem in this way: If the split strategy option has been defined the hdfs path will be used as a directory and files will be created using the configured UuidGenerator. Every time a splitting condition is met a new file is created. The splitStrategy option is defined as a string with the following syntax: splitStrategy=ST:valueST:value... where ST can be: BYTES a new file is created and the old is closed when the number of written bytes is more than value MESSAGES a new file is created and the old is closed when the number of written messages is more than value IDLE a new file is created and the old is closed when no writing happened in the last value milliseconds
+
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+ 4+^s| scheduler
+| backoffErrorThreshold |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
+
+| backoffIdleThreshold |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
+
+| backoffMultiplier |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
+
+| greedy | false | boolean | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages.
+
+| runLoggingLevel | TRACE | LoggingLevel | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.
+
+| scheduledExecutorService |  | ScheduledExecutorService | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool.
+
+| scheduler | none | ScheduledPollConsumerScheduler | To use a cron scheduler from either camel-spring or camel-quartz2 component
+
+| schedulerProperties |  | Map | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler.
+
+| startScheduler | true | boolean | Whether the scheduler should be auto started.
+
+| timeUnit | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
+
+| useFixedDelay | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
 |=======================================================================
 // endpoint options: END
 

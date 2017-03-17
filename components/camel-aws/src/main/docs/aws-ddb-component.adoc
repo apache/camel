@@ -48,22 +48,35 @@ with the following path and query parameters:
 
 #### Query Parameters (13 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| accessKey | producer |  | String | Amazon AWS Access Key
-| amazonDDBClient | producer |  | AmazonDynamoDB | To use the AmazonDynamoDB as the client
-| amazonDdbEndpoint | producer |  | String | The region with which the AWS-DDB client wants to work with.
-| consistentRead | producer | false | boolean | Determines whether or not strong consistency should be enforced when data is read.
-| keyAttributeName | producer |  | String | Attribute name when creating table
-| keyAttributeType | producer |  | String | Attribute type when creating table
-| operation | producer | PutItem | DdbOperations | What operation to perform
-| proxyHost | producer |  | String | To define a proxy host when instantiating the SQS client
-| proxyPort | producer |  | Integer | To define a proxy port when instantiating the SQS client
-| readCapacity | producer |  | Long | The provisioned throughput to reserve for reading resources from your table
-| secretKey | producer |  | String | Amazon AWS Secret Key
-| writeCapacity | producer |  | Long | The provisioned throughput to reserved for writing resources to your table
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| accessKey |  | String | Amazon AWS Access Key
+
+| amazonDDBClient |  | AmazonDynamoDB | To use the AmazonDynamoDB as the client
+
+| amazonDdbEndpoint |  | String | The region with which the AWS-DDB client wants to work with.
+
+| consistentRead | false | boolean | Determines whether or not strong consistency should be enforced when data is read.
+
+| keyAttributeName |  | String | Attribute name when creating table
+
+| keyAttributeType |  | String | Attribute type when creating table
+
+| operation | PutItem | DdbOperations | What operation to perform
+
+| proxyHost |  | String | To define a proxy host when instantiating the SQS client
+
+| proxyPort |  | Integer | To define a proxy port when instantiating the SQS client
+
+| readCapacity |  | Long | The provisioned throughput to reserve for reading resources from your table
+
+| secretKey |  | String | Amazon AWS Secret Key
+
+| writeCapacity |  | Long | The provisioned throughput to reserved for writing resources to your table
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

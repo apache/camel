@@ -44,11 +44,13 @@ The Mustache component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| mustacheFactory | advanced |  | MustacheFactory | To use a custom MustacheFactory
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| advanced
+| mustacheFactory |  | MustacheFactory | To use a custom MustacheFactory
+
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -76,14 +78,19 @@ with the following path and query parameters:
 
 #### Query Parameters (5 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| contentCache | producer | false | boolean | Sets whether to use resource content cache or not
-| encoding | producer |  | String | Character encoding of the resource content.
-| endDelimiter | producer | }} | String | Characters used to mark template code end.
-| startDelimiter | producer | {{ | String | Characters used to mark template code beginning.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| contentCache | false | boolean | Sets whether to use resource content cache or not
+
+| encoding |  | String | Character encoding of the resource content.
+
+| endDelimiter | }} | String | Characters used to mark template code end.
+
+| startDelimiter | {{ | String | Characters used to mark template code beginning.
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

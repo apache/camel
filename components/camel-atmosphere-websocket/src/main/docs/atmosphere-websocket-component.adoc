@@ -38,17 +38,25 @@ The Atmosphere Websocket component supports 8 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| servletName | common |  | String | Default name of servlet to use. The default name is CamelServlet.
-| httpRegistry | common |  | HttpRegistry | To use a custom org.apache.camel.component.servlet.HttpRegistry.
-| attachmentMultipartBinding | common | false | boolean | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.
-| httpBinding | advanced |  | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
-| httpConfiguration | advanced |  | HttpConfiguration | To use the shared HttpConfiguration as base configuration.
-| allowJavaSerializedObject | advanced | false | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
-| headerFilterStrategy | filter |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| common
+| servletName |  | String | Default name of servlet to use. The default name is CamelServlet.
+
+| httpRegistry |  | HttpRegistry | To use a custom org.apache.camel.component.servlet.HttpRegistry.
+
+| attachmentMultipartBinding | false | boolean | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.
+ 4+^s| advanced
+| httpBinding |  | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
+
+| httpConfiguration |  | HttpConfiguration | To use the shared HttpConfiguration as base configuration.
+
+| allowJavaSerializedObject | false | boolean | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
+ 4+^s| filter
+| headerFilterStrategy |  | HeaderFilterStrategy | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message.
+ 4+^s| advanced
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -72,46 +80,83 @@ with the following path and query parameters:
 
 #### Query Parameters (37 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| chunked | common | true | boolean | If this option is false the Servlet will disable the HTTP streaming and set the content-length header on the response
-| disableStreamCache | common | false | boolean | Determines whether or not the raw input stream from Servlet is cached or not (Camel will read the stream into a in memory/overflow to file Stream caching) cache. By default Camel will cache the Servlet input stream to support reading it multiple times to ensure it Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream such as streaming it directly to a file or other persistent store. DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body if this option is false to support reading the stream multiple times. If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance in case you do not need to read the message payload multiple times. The http/http4 producer will by default cache the response body stream. If setting this option to true then the producers will not cache the response body stream but use the response stream as-is as the message body.
-| headerFilterStrategy | common |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
-| sendToAll | common | false | boolean | Whether to send to all (broadcast) or send to a single receiver.
-| transferException | common | false | boolean | If enabled and an Exchange failed processing on the consumer side and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
-| useStreaming | common | false | boolean | To enable streaming to send data as multiple text fragments.
-| httpBinding | common (advanced) |  | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
-| async | consumer | false | boolean | Configure the consumer to work in async mode
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| httpMethodRestrict | consumer |  | String | Used to only allow consuming if the HttpMethod matches such as GET/POST/PUT etc. Multiple methods can be specified separated by comma.
-| matchOnUriPrefix | consumer | false | boolean | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.
-| responseBufferSize | consumer |  | Integer | To use a custom buffer size on the javax.servlet.ServletResponse.
-| servletName | consumer | CamelServlet | String | Name of the servlet to use
-| attachmentMultipartBinding | consumer (advanced) | false | boolean | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.
-| eagerCheckContentAvailable | consumer (advanced) | false | boolean | Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present. This can be turned on in case HTTP clients do not send streamed data.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| optionsEnabled | consumer (advanced) | false | boolean | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off.
-| traceEnabled | consumer (advanced) | false | boolean | Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off.
-| bridgeEndpoint | producer | false | boolean | If the option is true HttpProducer will ignore the Exchange.HTTP_URI header and use the endpoint's URI for request. You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back.
-| connectionClose | producer | false | boolean | Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false.
-| copyHeaders | producer | true | boolean | If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy. Setting this to false allows to only include the headers from the HTTP response (not propagating IN headers).
-| httpMethod | producer |  | HttpMethods | Configure the HTTP method to use. The HttpMethod header cannot override this option if set.
-| ignoreResponseBody | producer | false | boolean | If this option is true The http producer won't read response body and cache the input stream
-| preserveHostHeader | producer | false | boolean | If the option is true HttpProducer will set the Host header to the value contained in the current exchange Host header useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client this allows applications which use the Host header to generate accurate URL's for a proxied service
-| throwExceptionOnFailure | producer | true | boolean | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code.
-| cookieHandler | producer (advanced) |  | CookieHandler | Configure a cookie handler to maintain a HTTP session
-| okStatusCodeRange | producer (advanced) | 200-299 | String | The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.
-| urlRewrite | producer (advanced) |  | UrlRewrite | Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints. See more details at http://camel.apache.org/urlrewrite.html
-| mapHttpMessageBody | advanced | true | boolean | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping.
-| mapHttpMessageFormUrlEncodedBody | advanced | true | boolean | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping.
-| mapHttpMessageHeaders | advanced | true | boolean | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| proxyAuthScheme | proxy |  | String | Proxy authentication scheme to use
-| proxyHost | proxy |  | String | Proxy hostname to use
-| proxyPort | proxy |  | int | Proxy port to use
-| authHost | security |  | String | Authentication host to use with NTML
+| Name | Default | Java Type | Description
+
+| chunked | true | boolean | If this option is false the Servlet will disable the HTTP streaming and set the content-length header on the response
+
+| disableStreamCache | false | boolean | Determines whether or not the raw input stream from Servlet is cached or not (Camel will read the stream into a in memory/overflow to file Stream caching) cache. By default Camel will cache the Servlet input stream to support reading it multiple times to ensure it Camel can retrieve all data from the stream. However you can set this option to true when you for example need to access the raw stream such as streaming it directly to a file or other persistent store. DefaultHttpBinding will copy the request input stream into a stream cache and put it into message body if this option is false to support reading the stream multiple times. If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance in case you do not need to read the message payload multiple times. The http/http4 producer will by default cache the response body stream. If setting this option to true then the producers will not cache the response body stream but use the response stream as-is as the message body.
+
+| headerFilterStrategy |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to filter header to and from Camel message.
+
+| sendToAll | false | boolean | Whether to send to all (broadcast) or send to a single receiver.
+
+| transferException | false | boolean | If enabled and an Exchange failed processing on the consumer side and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk.
+
+| useStreaming | false | boolean | To enable streaming to send data as multiple text fragments.
+ 4+^s| common (advanced)
+| httpBinding |  | HttpBinding | To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
+ 4+^s| consumer
+| async | false | boolean | Configure the consumer to work in async mode
+
+| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| httpMethodRestrict |  | String | Used to only allow consuming if the HttpMethod matches such as GET/POST/PUT etc. Multiple methods can be specified separated by comma.
+
+| matchOnUriPrefix | false | boolean | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found.
+
+| responseBufferSize |  | Integer | To use a custom buffer size on the javax.servlet.ServletResponse.
+
+| servletName | CamelServlet | String | Name of the servlet to use
+ 4+^s| consumer (advanced)
+| attachmentMultipartBinding | false | boolean | Whether to automatic bind multipart/form-data as attachments on the Camel Exchange. The options attachmentMultipartBinding=true and disableStreamCache=false cannot work together. Remove disableStreamCache to use AttachmentMultipartBinding. This is turn off by default as this may require servlet specific configuration to enable this when using Servlet's.
+
+| eagerCheckContentAvailable | false | boolean | Whether to eager check whether the HTTP requests has content if the content-length header is 0 or not present. This can be turned on in case HTTP clients do not send streamed data.
+
+| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+
+| optionsEnabled | false | boolean | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off.
+
+| traceEnabled | false | boolean | Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off.
+ 4+^s| producer
+| bridgeEndpoint | false | boolean | If the option is true HttpProducer will ignore the Exchange.HTTP_URI header and use the endpoint's URI for request. You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back.
+
+| connectionClose | false | boolean | Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false.
+
+| copyHeaders | true | boolean | If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy. Setting this to false allows to only include the headers from the HTTP response (not propagating IN headers).
+
+| httpMethod |  | HttpMethods | Configure the HTTP method to use. The HttpMethod header cannot override this option if set.
+
+| ignoreResponseBody | false | boolean | If this option is true The http producer won't read response body and cache the input stream
+
+| preserveHostHeader | false | boolean | If the option is true HttpProducer will set the Host header to the value contained in the current exchange Host header useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client this allows applications which use the Host header to generate accurate URL's for a proxied service
+
+| throwExceptionOnFailure | true | boolean | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code.
+ 4+^s| producer (advanced)
+| cookieHandler |  | CookieHandler | Configure a cookie handler to maintain a HTTP session
+
+| okStatusCodeRange | 200-299 | String | The status codes which is considered a success response. The values are inclusive. The range must be defined as from-to with the dash included.
+
+| urlRewrite |  | UrlRewrite | Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints. See more details at http://camel.apache.org/urlrewrite.html
+ 4+^s| advanced
+| mapHttpMessageBody | true | boolean | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping.
+
+| mapHttpMessageFormUrlEncodedBody | true | boolean | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping.
+
+| mapHttpMessageHeaders | true | boolean | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping.
+
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+ 4+^s| proxy
+| proxyAuthScheme |  | String | Proxy authentication scheme to use
+
+| proxyHost |  | String | Proxy hostname to use
+
+| proxyPort |  | int | Proxy port to use
+ 4+^s| security
+| authHost |  | String | Authentication host to use with NTML
 |=======================================================================
 // endpoint options: END
 
