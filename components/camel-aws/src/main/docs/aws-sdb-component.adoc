@@ -48,19 +48,29 @@ with the following path and query parameters:
 
 #### Query Parameters (10 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| accessKey | producer |  | String | Amazon AWS Access Key
-| amazonSDBClient | producer |  | AmazonSimpleDB | To use the AmazonSimpleDB as the client
-| amazonSdbEndpoint | producer |  | String | The region with which the AWS-SDB client wants to work with.
-| consistentRead | producer | false | boolean | Determines whether or not strong consistency should be enforced when data is read.
-| maxNumberOfDomains | producer |  | Integer | The maximum number of domain names you want returned. The range is 1 to 100.
-| operation | producer | PutAttributes | SdbOperations | Operation to perform
-| proxyHost | producer |  | String | To define a proxy host when instantiating the SQS client
-| proxyPort | producer |  | Integer | To define a proxy port when instantiating the SQS client
-| secretKey | producer |  | String | Amazon AWS Secret Key
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| accessKey |  | String | Amazon AWS Access Key
+
+| amazonSDBClient |  | AmazonSimpleDB | To use the AmazonSimpleDB as the client
+
+| amazonSdbEndpoint |  | String | The region with which the AWS-SDB client wants to work with.
+
+| consistentRead | false | boolean | Determines whether or not strong consistency should be enforced when data is read.
+
+| maxNumberOfDomains |  | Integer | The maximum number of domain names you want returned. The range is 1 to 100.
+
+| operation | PutAttributes | SdbOperations | Operation to perform
+
+| proxyHost |  | String | To define a proxy host when instantiating the SQS client
+
+| proxyPort |  | Integer | To define a proxy port when instantiating the SQS client
+
+| secretKey |  | String | Amazon AWS Secret Key
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

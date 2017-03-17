@@ -19,6 +19,7 @@ package org.apache.camel.maven;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -42,11 +44,20 @@ public class CamelSalesforceMojoOutputTest {
     private static final String TEST_CALCULATED_FORMULA_FILE = "complex_calculated_formula.json";
     private static final String FIXED_DATE = "Thu Mar 09 16:15:49 ART 2017";
 
-    private CamelSalesforceMojo mojo;
-    private CamelSalesforceMojo.GeneratorUtility utility = new CamelSalesforceMojo.GeneratorUtility(false);
-
     @Rule
     public TemporaryFolder temp = new TemporaryFolder();
+
+    @Parameter(0)
+    public String json;
+
+    @Parameter(1)
+    public SObjectDescription description;
+
+    @Parameter(2)
+    public String source;
+
+    private CamelSalesforceMojo mojo;
+    private CamelSalesforceMojo.GeneratorUtility utility = new CamelSalesforceMojo.GeneratorUtility(false);
 
     @Parameters(name = "json = {0}, source = {2}")
     public static Iterable<Object[]> parameters() throws IOException {
@@ -62,15 +73,6 @@ public class CamelSalesforceMojoOutputTest {
         return new Object[] {json, createSObjectDescription(json), source};
     }
 
-    @Parameter(0)
-    public String json;
-
-    @Parameter(1)
-    public SObjectDescription description;
-
-    @Parameter(2)
-    public String source;
-
     @Before
     public void setUp() throws Exception {
         mojo = new CamelSalesforceMojo();
@@ -84,17 +86,21 @@ public class CamelSalesforceMojoOutputTest {
         mojo.processDescription(pkgDir, description, utility, FIXED_DATE);
 
         File generatedFile = new File(pkgDir, source);
-        File expectedFile = FileUtils.toFile(CamelSalesforceMojoOutputTest.class.getResource("/generated/" + source));
+        String generatedContent = FileUtils.readFileToString(generatedFile, StandardCharsets.UTF_8);
 
-        Assert.assertTrue("Geberated source file in " + source + " must be equal to the one present in test/resources",
-            FileUtils.contentEquals(generatedFile, expectedFile));
+        String expectedContent = IOUtils
+            .toString(CamelSalesforceMojoOutputTest.class.getResource("/generated/" + source), StandardCharsets.UTF_8);
+
+        Assert.assertEquals(
+            "Generated source file in " + source + " must be equal to the one present in test/resources",
+            generatedContent, expectedContent);
     }
 
     static SObjectDescription createSObjectDescription(String name) throws IOException {
-        InputStream inputStream = CamelSalesforceMojoOutputTest.class.getResourceAsStream("/" + name);
-        ObjectMapper mapper = JsonUtils.createObjectMapper();
+        try (InputStream inputStream = CamelSalesforceMojoOutputTest.class.getResourceAsStream("/" + name)) {
+            ObjectMapper mapper = JsonUtils.createObjectMapper();
 
-        return mapper.readValue(inputStream, SObjectDescription.class);
+            return mapper.readValue(inputStream, SObjectDescription.class);
+        }
     }
-
 }

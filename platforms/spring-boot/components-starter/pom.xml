@@ -236,6 +236,7 @@
     <module>camel-quickfix-starter</module>
     <module>camel-rabbitmq-starter</module>
     <module>camel-reactive-streams-starter</module>
+    <module>camel-rest-swagger-starter</module>
     <module>camel-restlet-starter</module>
     <module>camel-ribbon-starter</module>
     <module>camel-rmi-starter</module>
@@ -255,6 +256,7 @@
     <module>camel-shiro-starter</module>
     <module>camel-sip-starter</module>
     <module>camel-sjms-starter</module>
+    <module>camel-sjms2-starter</module>
     <module>camel-slack-starter</module>
     <module>camel-smpp-starter</module>
     <module>camel-snakeyaml-starter</module>
@@ -307,4 +309,22 @@
     <module>camel-zookeeper-master-starter</module>
     <module>camel-zookeeper-starter</module>
   </modules>
+  <profiles>
+    <profile>
+      <id>jdk9-build</id>
+      <activation>
+        <jdk>9</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <argLine>--add-modules java.xml.bind --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>

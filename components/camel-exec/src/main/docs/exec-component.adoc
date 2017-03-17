@@ -54,17 +54,25 @@ with the following path and query parameters:
 
 #### Query Parameters (8 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| args | producer |  | String | The arguments may be one or many whitespace-separated tokens.
-| binding | producer |  | ExecBinding | A reference to a org.apache.commons.exec.ExecBinding in the Registry.
-| commandExecutor | producer |  | ExecCommandExecutor | A reference to a org.apache.commons.exec.ExecCommandExecutor in the Registry that customizes the command execution. The default command executor utilizes the commons-exec library which adds a shutdown hook for every executed command.
-| outFile | producer |  | String | The name of a file created by the executable that should be considered as its output. If no outFile is set the standard output (stdout) of the executable will be used instead.
-| timeout | producer |  | long | The timeout in milliseconds after which the executable should be terminated. If execution has not completed within the timeout the component will send a termination request.
-| useStderrOnEmptyStdout | producer | false | boolean | A boolean indicating that when stdout is empty this component will populate the Camel Message Body with stderr. This behavior is disabled (false) by default.
-| workingDir | producer |  | String | The directory in which the command should be executed. If null the working directory of the current process will be used.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| args |  | String | The arguments may be one or many whitespace-separated tokens.
+
+| binding |  | ExecBinding | A reference to a org.apache.commons.exec.ExecBinding in the Registry.
+
+| commandExecutor |  | ExecCommandExecutor | A reference to a org.apache.commons.exec.ExecCommandExecutor in the Registry that customizes the command execution. The default command executor utilizes the commons-exec library which adds a shutdown hook for every executed command.
+
+| outFile |  | String | The name of a file created by the executable that should be considered as its output. If no outFile is set the standard output (stdout) of the executable will be used instead.
+
+| timeout |  | long | The timeout in milliseconds after which the executable should be terminated. If execution has not completed within the timeout the component will send a termination request.
+
+| useStderrOnEmptyStdout | false | boolean | A boolean indicating that when stdout is empty this component will populate the Camel Message Body with stderr. This behavior is disabled (false) by default.
+
+| workingDir |  | String | The directory in which the command should be executed. If null the working directory of the current process will be used.
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

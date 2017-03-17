@@ -63,52 +63,95 @@ with the following path and query parameters:
 
 #### Query Parameters (43 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| appid | common |  | String | *Required* APPID ID used to authenticate the user connected to the API Server
-| headerName | common |  | String | To store the weather result in this header instead of the message body. This is useable if you want to keep current message body as-is.
-| language | common | en | WeatherLanguage | Language of the response.
-| mode | common | JSON | WeatherMode | The output format of the weather data.
-| period | common |  | String | If null the current weather will be returned else use values of 5 7 14 days. Only the numeric value for the forecast period is actually parsed so spelling capitalisation of the time period is up to you (its ignored)
-| units | common |  | WeatherUnits | The units for temperature measurement.
-| weatherApi | common |  | WeatherApi | The API to be use (current forecast/3 hour forecast daily station)
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| sendEmptyMessageWhenIdle | consumer | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| pollStrategy | consumer (advanced) |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
-| httpConnectionManager | advanced |  | HttpConnectionManager | To use a custom HttpConnectionManager to manage connections
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| backoffErrorThreshold | scheduler |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
-| backoffIdleThreshold | scheduler |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
-| backoffMultiplier | scheduler |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
-| delay | scheduler | 500 | long | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| greedy | scheduler | false | boolean | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages.
-| initialDelay | scheduler | 1000 | long | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-| runLoggingLevel | scheduler | TRACE | LoggingLevel | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.
-| scheduledExecutorService | scheduler |  | ScheduledExecutorService | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool.
-| scheduler | scheduler | none | ScheduledPollConsumerScheduler | To use a cron scheduler from either camel-spring or camel-quartz2 component
-| schedulerProperties | scheduler |  | Map | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler.
-| startScheduler | scheduler | true | boolean | Whether the scheduler should be auto started.
-| timeUnit | scheduler | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
-| useFixedDelay | scheduler | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
-| cnt | filter |  | Integer | Number of results to be found
-| ids | filter |  | String | List of id's of city/stations. You can separate multiple ids by comma.
-| lat | filter |  | String | Latitude of location. You can use lat and lon options instead of location. For boxed queries this is the bottom latitude.
-| location | filter |  | String | If null Camel will try and determine your current location using the geolocation of your ip address else specify the citycountry. For well known city names Open Weather Map will determine the best fit but multiple results may be returned. Hence specifying and country as well will return more accurate data. If you specify current as the location then the component will try to get the current latitude and longitude and use that to get the weather details. You can use lat and lon options instead of location.
-| lon | filter |  | String | Longitude of location. You can use lat and lon options instead of location. For boxed queries this is the left longtitude.
-| rightLon | filter |  | String | For boxed queries this is the right longtitude. Needs to be used in combination with topLat and zoom.
-| topLat | filter |  | String | For boxed queries this is the top latitude. Needs to be used in combination with rightLon and zoom.
-| zip | filter |  | String | Zip-code e.g. 94040us
-| zoom | filter |  | Integer | For boxed queries this is the zoom. Needs to be used in combination with rightLon and topLat.
-| proxyAuthDomain | proxy |  | String | Domain for proxy NTLM authentication
-| proxyAuthHost | proxy |  | String | Optional host for proxy NTLM authentication
-| proxyAuthMethod | proxy |  | String | Authentication method for proxy either as Basic Digest or NTLM.
-| proxyAuthPassword | proxy |  | String | Password for proxy authentication
-| proxyAuthUsername | proxy |  | String | Username for proxy authentication
-| proxyHost | proxy |  | String | The proxy host name
-| proxyPort | proxy |  | Integer | The proxy port number
+| Name | Default | Java Type | Description
+
+| appid |  | String | *Required* APPID ID used to authenticate the user connected to the API Server
+
+| headerName |  | String | To store the weather result in this header instead of the message body. This is useable if you want to keep current message body as-is.
+
+| language | en | WeatherLanguage | Language of the response.
+
+| mode | JSON | WeatherMode | The output format of the weather data.
+
+| period |  | String | If null the current weather will be returned else use values of 5 7 14 days. Only the numeric value for the forecast period is actually parsed so spelling capitalisation of the time period is up to you (its ignored)
+
+| units |  | WeatherUnits | The units for temperature measurement.
+
+| weatherApi |  | WeatherApi | The API to be use (current forecast/3 hour forecast daily station)
+ 4+^s| consumer
+| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| sendEmptyMessageWhenIdle | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
+ 4+^s| consumer (advanced)
+| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+
+| pollStrategy |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
+ 4+^s| advanced
+| httpConnectionManager |  | HttpConnectionManager | To use a custom HttpConnectionManager to manage connections
+
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+ 4+^s| scheduler
+| backoffErrorThreshold |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
+
+| backoffIdleThreshold |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
+
+| backoffMultiplier |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
+
+| delay | 500 | long | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
+
+| greedy | false | boolean | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages.
+
+| initialDelay | 1000 | long | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
+
+| runLoggingLevel | TRACE | LoggingLevel | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.
+
+| scheduledExecutorService |  | ScheduledExecutorService | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool.
+
+| scheduler | none | ScheduledPollConsumerScheduler | To use a cron scheduler from either camel-spring or camel-quartz2 component
+
+| schedulerProperties |  | Map | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler.
+
+| startScheduler | true | boolean | Whether the scheduler should be auto started.
+
+| timeUnit | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
+
+| useFixedDelay | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
+ 4+^s| filter
+| cnt |  | Integer | Number of results to be found
+
+| ids |  | String | List of id's of city/stations. You can separate multiple ids by comma.
+
+| lat |  | String | Latitude of location. You can use lat and lon options instead of location. For boxed queries this is the bottom latitude.
+
+| location |  | String | If null Camel will try and determine your current location using the geolocation of your ip address else specify the citycountry. For well known city names Open Weather Map will determine the best fit but multiple results may be returned. Hence specifying and country as well will return more accurate data. If you specify current as the location then the component will try to get the current latitude and longitude and use that to get the weather details. You can use lat and lon options instead of location.
+
+| lon |  | String | Longitude of location. You can use lat and lon options instead of location. For boxed queries this is the left longtitude.
+
+| rightLon |  | String | For boxed queries this is the right longtitude. Needs to be used in combination with topLat and zoom.
+
+| topLat |  | String | For boxed queries this is the top latitude. Needs to be used in combination with rightLon and zoom.
+
+| zip |  | String | Zip-code e.g. 94040us
+
+| zoom |  | Integer | For boxed queries this is the zoom. Needs to be used in combination with rightLon and topLat.
+ 4+^s| proxy
+| proxyAuthDomain |  | String | Domain for proxy NTLM authentication
+
+| proxyAuthHost |  | String | Optional host for proxy NTLM authentication
+
+| proxyAuthMethod |  | String | Authentication method for proxy either as Basic Digest or NTLM.
+
+| proxyAuthPassword |  | String | Password for proxy authentication
+
+| proxyAuthUsername |  | String | Username for proxy authentication
+
+| proxyHost |  | String | The proxy host name
+
+| proxyPort |  | Integer | The proxy port number
 |=======================================================================
 // endpoint options: END
 

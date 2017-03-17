@@ -22,6 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.ehcache.Cache;
+import org.ehcache.UserManagedCache;
 import org.ehcache.config.ResourcePools;
 import org.ehcache.config.ResourceType;
 import org.ehcache.config.SizedResourcePool;
@@ -32,10 +33,12 @@ import org.ehcache.config.units.MemoryUnit;
 import org.junit.Test;
 
 public class EhcacheConfigurationTest extends CamelTestSupport {
-    @EndpointInject(uri = "ehcache://myProgrammaticCacheConf?configuration=#myProgrammaticConfiguration")
-    private EhcacheEndpoint ehcacheConf;
-    @EndpointInject(uri = "ehcache://myFileCacheConf?keyType=java.lang.String&valueType=java.lang.String&configUri=classpath:ehcache/ehcache-file-config.xml")
+    @EndpointInject(uri = "ehcache:myProgrammaticCacheConf?configuration=#myProgrammaticConfiguration")
+    private EhcacheEndpoint ehcacheProgrammaticConf;
+    @EndpointInject(uri = "ehcache:myFileCacheConf?keyType=java.lang.String&valueType=java.lang.String&configUri=classpath:ehcache/ehcache-file-config.xml")
     private EhcacheEndpoint ehcacheFileConf;
+    @EndpointInject(uri = "ehcache:myUserCacheConf")
+    private EhcacheEndpoint ehcacheUserConf;
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -60,7 +63,7 @@ public class EhcacheConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testProgrammaticConfiguration() throws Exception {
-        Cache<String, String> cache = getCache(ehcacheConf, "myProgrammaticCacheConf");
+        Cache<String, String> cache = getCache(ehcacheProgrammaticConf, "myProgrammaticCacheConf");
         ResourcePools pools = cache.getRuntimeConfiguration().getResourcePools();
 
         SizedResourcePool h = pools.getPoolForResource(ResourceType.Core.HEAP);
@@ -85,6 +88,21 @@ public class EhcacheConfigurationTest extends CamelTestSupport {
         assertEquals(EntryUnit.ENTRIES, h.getUnit());
     }
 
+    @Test
+    public void testUserConfiguration() throws Exception {
+        fluentTemplate()
+            .withHeader(EhcacheConstants.ACTION, EhcacheConstants.ACTION_PUT)
+            .withHeader(EhcacheConstants.KEY, "user-key")
+            .withBody("user-val")
+            .to("direct:ehcacheUserConf")
+            .send();
+
+        Cache<Object, Object> cache = ehcacheUserConf.getManager().getCache("myUserCacheConf", Object.class, Object.class);
+
+        assertTrue(cache instanceof UserManagedCache);
+        assertEquals("user-val", cache.get("user-key"));
+    }
+
     protected Cache<String, String> getCache(EhcacheEndpoint endpoint, String cacheName) throws Exception {
         return endpoint.getManager().getCache(cacheName, String.class, String.class);
     }
@@ -97,9 +115,12 @@ public class EhcacheConfigurationTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct://start")
-                    //.to(ehcacheConf)
+                from("direct:ehcacheProgrammaticConf")
+                    .to(ehcacheProgrammaticConf);
+                from("direct:ehcacheFileConf")
                     .to(ehcacheFileConf);
+                from("direct:ehcacheUserConf")
+                    .to(ehcacheUserConf);
             }
         };
     }

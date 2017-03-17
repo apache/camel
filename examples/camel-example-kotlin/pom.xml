@@ -33,7 +33,7 @@
 
   <properties>
     <category>Other Languages</category>
-    <kotlin.version>1.0.6</kotlin.version>
+    <kotlin.version>1.1.0</kotlin.version>
   </properties>
 
   <dependencies>

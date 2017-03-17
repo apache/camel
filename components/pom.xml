@@ -221,6 +221,7 @@
     <module>camel-quickfix</module>
     <module>camel-rabbitmq</module>
     <module>camel-reactive-streams</module>
+    <module>camel-rest-swagger</module>
     <module>camel-restlet</module>
     <module>camel-rmi</module>
     <module>camel-routebox</module>
@@ -242,6 +243,7 @@
     <module>camel-snakeyaml</module>
     <module>camel-snmp</module>
     <module>camel-sjms</module>
+    <module>camel-sjms2</module>
     <module>camel-slack</module>
     <module>camel-soap</module>
     <module>camel-solr</module>

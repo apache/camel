@@ -37,6 +37,11 @@ public class HazelcastComponentConfiguration {
     @NestedConfigurationProperty
     private HazelcastInstance hazelcastInstance;
     /**
+     * The hazelcast mode reference which kind of instance should be used. If
+     * you don't specify the mode then the node mode will be the default.
+     */
+    private String hazelcastMode = "node";
+    /**
      * Whether the component should resolve property placeholders on itself when
      * starting. Only properties which are of String type can use property
      * placeholders.
@@ -49,6 +54,14 @@ public class HazelcastComponentConfiguration {
 
     public void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
         this.hazelcastInstance = hazelcastInstance;
+    }
+
+    public String getHazelcastMode() {
+        return hazelcastMode;
+    }
+
+    public void setHazelcastMode(String hazelcastMode) {
+        this.hazelcastMode = hazelcastMode;
     }
 
     public Boolean getResolvePropertyPlaceholders() {

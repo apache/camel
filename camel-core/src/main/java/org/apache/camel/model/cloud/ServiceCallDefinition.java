@@ -16,7 +16,7 @@
  */
 package org.apache.camel.model.cloud;
 
-import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -30,7 +30,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
-import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.cloud.LoadBalancer;
 import org.apache.camel.cloud.ServiceChooser;
@@ -49,8 +48,11 @@ import org.apache.camel.impl.cloud.RoundRobinServiceChooser;
 import org.apache.camel.model.NoOutputDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.function.Suppliers;
+
+import static org.apache.camel.util.CamelContextHelper.findByType;
+import static org.apache.camel.util.CamelContextHelper.lookup;
 
 /**
  * Remote service call definition
@@ -522,6 +524,15 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return conf;
     }
 
+    public ServiceCallDefinition consulServiceDiscovery(String url) {
+        ConsulServiceCallServiceDiscoveryConfiguration conf = new ConsulServiceCallServiceDiscoveryConfiguration(this);
+        conf.setUrl(url);
+
+        setServiceDiscoveryConfiguration(conf);
+
+        return this;
+    }
+
     public DnsServiceCallServiceDiscoveryConfiguration dnsServiceDiscovery() {
         DnsServiceCallServiceDiscoveryConfiguration conf = new DnsServiceCallServiceDiscoveryConfiguration(this);
         setServiceDiscoveryConfiguration(conf);
@@ -553,6 +564,25 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         setServiceDiscoveryConfiguration(conf);
 
         return conf;
+    }
+
+    public ServiceCallDefinition etcdServiceDiscovery(String uris) {
+        EtcdServiceCallServiceDiscoveryConfiguration conf = new EtcdServiceCallServiceDiscoveryConfiguration(this);
+        conf.setUris(uris);
+
+        setServiceDiscoveryConfiguration(conf);
+
+        return this;
+    }
+
+    public ServiceCallDefinition etcdServiceDiscovery(String uris, String servicePath) {
+        EtcdServiceCallServiceDiscoveryConfiguration conf = new EtcdServiceCallServiceDiscoveryConfiguration(this);
+        conf.setUris(uris);
+        conf.setServicePath(servicePath);
+
+        setServiceDiscoveryConfiguration(conf);
+
+        return this;
     }
 
     public KubernetesServiceCallServiceDiscoveryConfiguration kubernetesServiceDiscovery() {
@@ -682,13 +712,11 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         final CamelContext camelContext = routeContext.getCamelContext();
-        final ServiceCallConfigurationDefinition config = retrieveConfig(camelContext);
-
-        ServiceDiscovery serviceDiscovery = retrieveServiceDiscovery(camelContext, config);
-        ServiceFilter serviceFilter = retrieveServiceFilter(camelContext, config);
-        ServiceChooser serviceChooser = retrieveServiceChooser(camelContext, config);
-        LoadBalancer loadBalancer = retrieveLoadBalancer(camelContext, config);
-        Expression expression = retrieveExpression(camelContext, config);
+        final ServiceDiscovery serviceDiscovery = retrieveServiceDiscovery(camelContext);
+        final ServiceFilter serviceFilter = retrieveServiceFilter(camelContext);
+        final ServiceChooser serviceChooser = retrieveServiceChooser(camelContext);
+        final LoadBalancer loadBalancer = retrieveLoadBalancer(camelContext);
+        final Expression expression = retrieveExpression(camelContext);
 
         if (loadBalancer instanceof CamelContextAware) {
             ((CamelContextAware) loadBalancer).setCamelContext(camelContext);
@@ -703,11 +731,20 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             ((ServiceChooserAware) loadBalancer).setServiceChooser(serviceChooser);
         }
 
-        // The component is used to configure what the default scheme to use (eg camel component name).
+        // The component is used to configure the default scheme to use (eg camel component name).
         // The component configured on EIP takes precedence vs configured on configuration.
         String component = this.component;
         if (component == null) {
-            component = config != null ? config.getComponent() : null;
+            ServiceCallConfigurationDefinition conf = retrieveConfig(camelContext);
+            if (conf != null) {
+                component = conf.getComponent();
+            }
+        }
+        if (component == null) {
+            ServiceCallConfigurationDefinition conf = retrieveDefaultConfig(camelContext);
+            if (conf != null) {
+                component = conf.getComponent();
+            }
         }
 
         return new DefaultServiceCallProcessor(camelContext, name, component, uri, pattern, loadBalancer, expression);
@@ -717,62 +754,115 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
     // Helpers
     // *****************************
 
+    private ServiceCallConfigurationDefinition retrieveDefaultConfig(CamelContext camelContext) {
+        // check if a default configuration is bound to the registry
+        ServiceCallConfigurationDefinition config = camelContext.getServiceCallConfiguration(null);
+
+        if (config == null) {
+            // Or if it is in the registry
+            config = lookup(
+                camelContext,
+                ServiceCallConstants.DEFAULT_SERVICE_CALL_CONFIG_ID,
+                ServiceCallConfigurationDefinition.class);
+        }
+
+        if (config == null) {
+            // If no default is set either by searching by name or bound to the
+            // camel context, assume that if there is a single instance in the
+            // registry, that is the default one
+            config = findByType(camelContext, ServiceCallConfigurationDefinition.class);
+        }
+
+        return config;
+    }
+
     private ServiceCallConfigurationDefinition retrieveConfig(CamelContext camelContext) {
         ServiceCallConfigurationDefinition config = null;
         if (configurationRef != null) {
-            // lookup in registry first
-            config = CamelContextHelper.lookup(camelContext, configurationRef, ServiceCallConfigurationDefinition.class);
+            // lookup in registry firstNotNull
+            config = lookup(camelContext, configurationRef, ServiceCallConfigurationDefinition.class);
             if (config == null) {
                 // and fallback as service configuration
                 config = camelContext.getServiceCallConfiguration(configurationRef);
             }
         }
 
-        if (config == null) {
-            config = camelContext.getServiceCallConfiguration(null);
-        }
-        if (config == null) {
-            // if no default then try to find if there configuration in the registry of the given type
-            Set<ServiceCallConfigurationDefinition> set = camelContext.getRegistry().findByType(ServiceCallConfigurationDefinition.class);
-            if (set.size() == 1) {
-                config = set.iterator().next();
-            }
-        }
-
         return config;
     }
 
-    private ServiceDiscovery retrieveServiceDiscovery(CamelContext camelContext, ServiceCallConfigurationDefinition config) throws Exception {
-        ServiceDiscovery answer;
-        if (serviceDiscoveryConfiguration != null) {
-            answer = serviceDiscoveryConfiguration.newInstance(camelContext);
-        } else if (config != null && config.getServiceDiscoveryConfiguration() != null) {
-            answer = config.getServiceDiscoveryConfiguration().newInstance(camelContext);
-        } else {
-            answer = retrieve(ServiceDiscovery.class, camelContext, this::getServiceDiscovery, this::getServiceDiscoveryRef);
-            if (answer == null && config != null) {
-                answer = retrieve(ServiceDiscovery.class, camelContext, config::getServiceDiscovery, config::getServiceDiscoveryRef);
-            }
+    // ******************************************
+    // ServiceDiscovery
+    // ******************************************
 
-            if (answer == null) {
-                answer = camelContext.getRegistry().lookupByNameAndType("service-discovery", ServiceDiscovery.class);
-            }
-            if (answer == null) {
-                answer = findByType(camelContext, ServiceDiscovery.class);
+    private ServiceDiscovery retrieveServiceDiscovery(CamelContext camelContext, Function<CamelContext, ServiceCallConfigurationDefinition> function) throws Exception {
+        ServiceDiscovery answer = null;
+
+        ServiceCallConfigurationDefinition config = function.apply(camelContext);
+        if (config != null) {
+            if (config.getServiceDiscoveryConfiguration() != null) {
+                answer = config.getServiceDiscoveryConfiguration().newInstance(camelContext);
+            } else {
+                answer = retrieve(
+                    ServiceDiscovery.class,
+                    camelContext,
+                    config::getServiceDiscovery,
+                    config::getServiceDiscoveryRef
+                );
             }
         }
 
-        // If there's no configuration, let's try to find a suitable implementation
-        if (answer == null) {
-            for (ServiceCallServiceDiscoveryConfiguration configuration : ServiceCallConstants.SERVICE_DISCOVERY_CONFIGURATIONS) {
-                try {
-                    answer = configuration.newInstance(camelContext);
+        return answer;
+    }
 
-                    if (answer != null) {
-                        break;
-                    }
-                } catch (NoFactoryAvailableException e) {
-                    // skip
+    private ServiceDiscovery retrieveServiceDiscovery(CamelContext camelContext) throws Exception {
+        return Suppliers.firstNotNull(
+            () -> (serviceDiscoveryConfiguration != null) ?  serviceDiscoveryConfiguration.newInstance(camelContext) : null,
+            // Local configuration
+            () -> retrieve(ServiceDiscovery.class, camelContext, this::getServiceDiscovery, this::getServiceDiscoveryRef),
+            // Linked configuration
+            () -> retrieveServiceDiscovery(camelContext, this::retrieveConfig),
+            // Default configuration
+            () -> retrieveServiceDiscovery(camelContext, this::retrieveDefaultConfig),
+            // Check if there is a single instance in the registry
+            () -> findByType(camelContext, ServiceDiscovery.class),
+            // From registry
+            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_SERVICE_DISCOVERY_ID, ServiceDiscovery.class)
+        ).orElseGet(
+            // Default, that's s little ugly but a load balancer may live without
+            // (i.e. the Ribbon one) so let's delegate the null check to the actual
+            // impl.
+            () -> null
+        );
+    }
+
+    // ******************************************
+    // ServiceFilter
+    // ******************************************
+
+    private ServiceFilter retrieveServiceFilter(CamelContext camelContext, Function<CamelContext, ServiceCallConfigurationDefinition> function) throws Exception {
+        ServiceFilter answer = null;
+
+        ServiceCallConfigurationDefinition config = function.apply(camelContext);
+        if (config != null) {
+            if (config.getServiceFilterConfiguration() != null) {
+                answer = config.getServiceFilterConfiguration().newInstance(camelContext);
+            } else {
+                answer = retrieve(
+                    ServiceFilter.class,
+                    camelContext,
+                    config::getServiceFilter,
+                    config::getServiceFilterRef
+                );
+            }
+
+            if (answer == null) {
+                String ref = config.getServiceFilterRef();
+                if (ObjectHelper.equal("healthy", ref, true)) {
+                    answer = new HealthyServiceFilter();
+                } else if (ObjectHelper.equal("pass-through", ref, true)) {
+                    answer = new PassThroughServiceFilter();
+                } else if (ObjectHelper.equal("passthrough", ref, true)) {
+                    answer = new PassThroughServiceFilter();
                 }
             }
         }
@@ -780,55 +870,41 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         return answer;
     }
 
-    private ServiceFilter retrieveServiceFilter(CamelContext camelContext, ServiceCallConfigurationDefinition config) throws Exception {
-        ServiceFilter answer;
-
-        if (serviceFilterConfiguration != null) {
-            answer = serviceFilterConfiguration.newInstance(camelContext);
-        } else if (config != null && config.getServiceFilterConfiguration() != null) {
-            answer = config.getServiceFilterConfiguration().newInstance(camelContext);
-        } else {
-            answer = retrieve(ServiceFilter.class, camelContext, this::getServiceFilter, this::getServiceFilterRef);
-            if (answer == null && config != null) {
-                answer = retrieve(ServiceFilter.class, camelContext, config::getServiceFilter, config::getServiceFilterRef);
-
-                // If the ServiceFilter is not found but a ref is set, try to determine
-                // the implementation according to the ref name.
-                if (answer == null) {
-                    String ref = config.getServiceFilterRef();
-                    if (ObjectHelper.equal("healthy", ref, true)) {
-                        answer = new HealthyServiceFilter();
-                    } else if (ObjectHelper.equal("pass-through", ref, true)) {
-                        answer = new PassThroughServiceFilter();
-                    } else if (ObjectHelper.equal("passthrough", ref, true)) {
-                        answer = new PassThroughServiceFilter();
-                    }
-                }
-            }
-        }
-
-        if (answer == null) {
-            answer = camelContext.getRegistry().lookupByNameAndType("service-filter", ServiceFilter.class);
-        }
-        if (answer == null) {
-            answer = findByType(camelContext, ServiceFilter.class);
-        }
-
-        // If there's no configuration, let's use the healthy strategy
-        if (answer == null) {
-            answer = new HealthyServiceFilter();
-        }
-
-        return answer;
+    private ServiceFilter retrieveServiceFilter(CamelContext camelContext) throws Exception {
+        return Suppliers.firstNotNull(
+            () -> (serviceFilterConfiguration != null) ? serviceFilterConfiguration.newInstance(camelContext) : null,
+            // Local configuration
+            () -> retrieve(ServiceFilter.class, camelContext, this::getServiceFilter, this::getServiceFilterRef),
+            // Linked configuration
+            () -> retrieveServiceFilter(camelContext, this::retrieveConfig),
+            // Default configuration
+            () -> retrieveServiceFilter(camelContext, this::retrieveDefaultConfig),
+            // Check if there is a single instance in the registry
+            () -> findByType(camelContext, ServiceFilter.class),
+            // From registry
+            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_SERVICE_FILTER_ID, ServiceFilter.class)
+        ).orElseGet(
+            // Default
+            () -> new HealthyServiceFilter()
+        );
     }
 
-    private ServiceChooser retrieveServiceChooser(CamelContext camelContext, ServiceCallConfigurationDefinition config) {
-        ServiceChooser answer = retrieve(ServiceChooser.class, camelContext, this::getServiceChooser, this::getServiceChooserRef);
-        if (answer == null && config != null) {
-            answer = retrieve(ServiceChooser.class, camelContext, config::getServiceChooser, config::getServiceChooserRef);
+    // ******************************************
+    // ServiceChooser
+    // ******************************************
 
-            // If the ServiceChooser is not found but a ref is set, try to determine
-            // the implementation according to the ref name.
+    private ServiceChooser retrieveServiceChooser(CamelContext camelContext, Function<CamelContext, ServiceCallConfigurationDefinition> function) throws Exception {
+        ServiceChooser answer = null;
+
+        ServiceCallConfigurationDefinition config = function.apply(camelContext);
+        if (config != null) {
+            answer = retrieve(
+                ServiceChooser.class,
+                camelContext,
+                config::getServiceChooser,
+                config::getServiceChooserRef
+            );
+
             if (answer == null) {
                 String ref = config.getServiceChooserRef();
                 if (ObjectHelper.equal("roundrobin", ref, true)) {
@@ -841,86 +917,114 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
             }
         }
 
-        if (answer == null) {
-            answer = camelContext.getRegistry().lookupByNameAndType("service-chooser", ServiceChooser.class);
-        }
-        if (answer == null) {
-            answer = findByType(camelContext, ServiceChooser.class);
-        }
+        return answer;
+    }
 
-        // If there's no configuration, let's use the round-robin strategy
-        if (answer == null) {
-            answer = new RoundRobinServiceChooser();
+    private ServiceChooser retrieveServiceChooser(CamelContext camelContext) throws Exception {
+        return Suppliers.firstNotNull(
+            // Local configuration
+            () -> retrieve(ServiceChooser.class, camelContext, this::getServiceChooser, this::getServiceChooserRef),
+            // Linked configuration
+            () -> retrieveServiceChooser(camelContext, this::retrieveConfig),
+            // Default configuration
+            () -> retrieveServiceChooser(camelContext, this::retrieveDefaultConfig),
+            // Check if there is a single instance in the registry
+            () -> findByType(camelContext, ServiceChooser.class),
+            // From registry
+            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_SERVICE_CHOOSER_ID, ServiceChooser.class)
+        ).orElseGet(
+            // Default
+            () -> new RoundRobinServiceChooser()
+        );
+    }
+
+    // ******************************************
+    // LoadBalancer
+    // ******************************************
+
+    private LoadBalancer retrieveLoadBalancer(CamelContext camelContext, Function<CamelContext, ServiceCallConfigurationDefinition> function) throws Exception {
+        LoadBalancer answer = null;
+
+        ServiceCallConfigurationDefinition config = function.apply(camelContext);
+        if (config != null) {
+            if (config.getLoadBalancerConfiguration() != null) {
+                answer = config.getLoadBalancerConfiguration().newInstance(camelContext);
+            } else {
+                answer = retrieve(
+                    LoadBalancer.class,
+                    camelContext,
+                    config::getLoadBalancer,
+                    config::getLoadBalancerRef
+                );
+            }
         }
 
         return answer;
     }
 
-    private LoadBalancer retrieveLoadBalancer(CamelContext camelContext, ServiceCallConfigurationDefinition config) throws Exception {
-        LoadBalancer answer;
-        if (loadBalancerConfiguration != null) {
-            answer = loadBalancerConfiguration.newInstance(camelContext);
-        } else if (config != null && config.getLoadBalancerConfiguration() != null) {
-            answer = config.getLoadBalancerConfiguration().newInstance(camelContext);
-        } else {
-            answer = retrieve(LoadBalancer.class, camelContext, this::getLoadBalancer, this::getLoadBalancerRef);
-            if (answer == null && config != null) {
-                answer = retrieve(LoadBalancer.class, camelContext, config::getLoadBalancer, config::getLoadBalancerRef);
-            }
+    private LoadBalancer retrieveLoadBalancer(CamelContext camelContext) throws Exception {
+        return Suppliers.firstNotNull(
+            () -> (loadBalancerConfiguration != null) ? loadBalancerConfiguration.newInstance(camelContext) : null,
+            // Local configuration
+            () -> retrieve(LoadBalancer.class, camelContext, this::getLoadBalancer, this::getLoadBalancerRef),
+            // Linked configuration
+            () -> retrieveLoadBalancer(camelContext, this::retrieveConfig),
+            // Default configuration
+            () -> retrieveLoadBalancer(camelContext, this::retrieveDefaultConfig),
+            // Check if there is a single instance in the registry
+            () -> findByType(camelContext, LoadBalancer.class),
+            // From registry
+            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_LOAD_BALANCER_ID, LoadBalancer.class)
+        ).orElseGet(
+            // Default
+            () -> new DefaultLoadBalancer()
+        );
+    }
 
-            if (answer == null) {
-                answer = camelContext.getRegistry().lookupByNameAndType("load-balancer", LoadBalancer.class);
-            }
-            if (answer == null) {
-                answer = findByType(camelContext, LoadBalancer.class);
-            }
-        }
+    // ******************************************
+    // Expression
+    // ******************************************
 
-        // If there's no configuration, let's try to find a suitable implementation
-        if (answer == null) {
-            for (ServiceCallLoadBalancerConfiguration configuration : ServiceCallConstants.LOAD_BALANCER_CONFIGURATIONS) {
-                try {
-                    answer = configuration.newInstance(camelContext);
+    private Expression retrieveExpression(CamelContext camelContext, Function<CamelContext, ServiceCallConfigurationDefinition> function) throws Exception {
+        Expression answer = null;
 
-                    if (answer != null) {
-                        break;
-                    }
-                } catch (NoFactoryAvailableException e) {
-                    // skip
-                }
+        ServiceCallConfigurationDefinition config = function.apply(camelContext);
+        if (config != null) {
+            if (config.getExpressionConfiguration() != null) {
+                answer = config.getExpressionConfiguration().newInstance(camelContext);
+            } else {
+                answer = retrieve(
+                    Expression.class,
+                    camelContext,
+                    config::getExpression,
+                    config::getExpressionRef
+                );
             }
-        }
-
-        if (answer == null) {
-            answer = new DefaultLoadBalancer();
         }
 
         return answer;
     }
 
-    private Expression retrieveExpression(CamelContext camelContext, ServiceCallConfigurationDefinition config) throws Exception {
-        Expression answer;
-
-        if (expressionConfiguration != null) {
-            answer = expressionConfiguration.newInstance(camelContext);
-        } else if (config != null && config.getExpressionConfiguration() != null) {
-            answer = config.getExpressionConfiguration().newInstance(camelContext);
-        } else {
-            answer = retrieve(Expression.class, camelContext, this::getExpression, this::getExpressionRef);
-            if (answer == null && config != null) {
-                answer = retrieve(Expression.class, camelContext, config::getExpression, config::getExpressionRef);
-            }
-            if (answer == null) {
-                answer = findByType(camelContext, Expression.class);
-            }
-        }
-
-        if (answer == null) {
-            answer = new DefaultServiceCallExpression();
-        }
-
-        return answer;
+    private Expression retrieveExpression(CamelContext camelContext) throws Exception {
+        return Suppliers.firstNotNull(
+            () -> (expressionConfiguration != null) ? expressionConfiguration.newInstance(camelContext) : null,
+            // Local configuration
+            () -> retrieve(Expression.class, camelContext, this::getExpression, this::getExpressionRef),
+            // Linked configuration
+            () -> retrieveExpression(camelContext, this::retrieveConfig),
+            // Default configuration
+            () -> retrieveExpression(camelContext, this::retrieveDefaultConfig),
+            // From registry
+            () -> lookup(camelContext, ServiceCallConstants.DEFAULT_SERVICE_CALL_EXPRESSION_ID, Expression.class)
+        ).orElseGet(
+            // Default
+            () -> new DefaultServiceCallExpression()
+        );
     }
+
+    // ************************************
+    // Helpers
+    // ************************************
 
     private <T> T retrieve(Class<T> type, CamelContext camelContext, Supplier<T> instanceSupplier, Supplier<String> refSupplier) {
         T answer = null;
@@ -931,19 +1035,10 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         if (answer == null && refSupplier != null) {
             String ref = refSupplier.get();
             if (ref != null) {
-                answer = CamelContextHelper.lookup(camelContext, ref, type);
+                answer = lookup(camelContext, ref, type);
             }
         }
 
         return answer;
-    }
-
-    private <T> T findByType(CamelContext camelContext, Class<T> type) {
-        Set<T> set = camelContext.getRegistry().findByType(type);
-        if (set.size() == 1) {
-            return set.iterator().next();
-        }
-
-        return null;
     }
 }

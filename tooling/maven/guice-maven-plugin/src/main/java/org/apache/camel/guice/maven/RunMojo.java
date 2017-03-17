@@ -733,7 +733,7 @@ public class RunMojo extends AbstractExecMojo {
      * @return an artifact which refers to the actual executable tool (not a POM)
      * @throws org.apache.maven.plugin.MojoExecutionException
      */
-    private Artifact findExecutableArtifact() throws MojoExecutionException {
+    protected Artifact findExecutableArtifact() throws MojoExecutionException {
         // ILimitedArtifactIdentifier execToolAssembly =
         // this.getExecutableToolAssembly();
 

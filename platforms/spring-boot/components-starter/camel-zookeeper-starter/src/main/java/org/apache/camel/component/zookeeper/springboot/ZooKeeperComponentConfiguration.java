@@ -66,11 +66,11 @@ public class ZooKeeperComponentConfiguration {
         /**
          * The time interval to wait on connection before timing out.
          */
-        private Integer timeout;
+        private Integer timeout = 5000;
         /**
          * Whether the children of the node should be listed
          */
-        private Boolean listChildren;
+        private Boolean listChildren = false;
         /**
          * The node in the ZooKeeper server (aka znode)
          */
@@ -78,22 +78,22 @@ public class ZooKeeperComponentConfiguration {
         /**
          * Should changes to the znode be 'watched' and repeatedly processed.
          */
-        private Boolean repeat;
+        private Boolean repeat = false;
         /**
          * Not in use
          * 
          * @deprecated The usage of this option has no effect at all.
          */
         @Deprecated
-        private Boolean awaitExistence;
+        private Boolean awaitExistence = true;
         /**
          * The time interval to backoff for after an error before retrying.
          */
-        private Long backoff;
+        private Long backoff = 5000L;
         /**
          * Should the endpoint create the node if it does not currently exist.
          */
-        private Boolean create;
+        private Boolean create = false;
         /**
          * The create mode that should be used for the newly created node
          */
@@ -102,7 +102,7 @@ public class ZooKeeperComponentConfiguration {
          * Upon the delete of a znode, should an empty message be send to the
          * consumer
          */
-        private Boolean sendEmptyMessageOnDelete;
+        private Boolean sendEmptyMessageOnDelete = true;
 
         public List getServers() {
             return servers;

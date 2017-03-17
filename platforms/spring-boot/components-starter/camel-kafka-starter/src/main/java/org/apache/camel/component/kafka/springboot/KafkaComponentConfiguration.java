@@ -105,7 +105,7 @@ public class KafkaComponentConfiguration {
          * The partitioner class for partitioning messages amongst sub-topics.
          * The default partitioner is based on the hash of the key.
          */
-        private String partitioner = org.apache.camel.component.kafka.KafkaConstants.KAFKA_DEFAULT_PARTITIONER;
+        private String partitioner = "org.apache.kafka.clients.producer.internals.DefaultPartitioner";
         /**
          * Name of the topic to use. On the consumer you can use comma to
          * separate multiple topics. A producer can only send a message to a
@@ -115,11 +115,11 @@ public class KafkaComponentConfiguration {
         /**
          * Number of concurrent consumers on the consumer
          */
-        private Integer consumerStreams;
+        private Integer consumerStreams = 10;
         /**
          * The number of consumers that connect to kafka server
          */
-        private Integer consumersCount;
+        private Integer consumersCount = 1;
         /**
          * The client id is a user-specified string sent in each request to help
          * trace calls. It should logically identify the application making the
@@ -132,7 +132,7 @@ public class KafkaComponentConfiguration {
          * when the process fails as the position from which the new consumer
          * will begin.
          */
-        private Boolean autoCommitEnable;
+        private Boolean autoCommitEnable = true;
         /**
          * The offset repository to use in order to locally store the offset of
          * each partition of the topic. Defining one will disable the
@@ -143,20 +143,20 @@ public class KafkaComponentConfiguration {
          * The frequency in ms that the consumer offsets are committed to
          * zookeeper.
          */
-        private Integer autoCommitIntervalMs;
+        private Integer autoCommitIntervalMs = 5000;
         /**
          * The minimum amount of data the server should return for a fetch
          * request. If insufficient data is available the request will wait for
          * that much data to accumulate before answering the request.
          */
-        private Integer fetchMinBytes;
-        private Integer fetchMaxBytes;
+        private Integer fetchMinBytes = 1;
+        private Integer fetchMaxBytes = 52428800;
         /**
          * The maximum amount of time the server will block before answering the
          * fetch request if there isn't sufficient data to immediately satisfy
          * fetch.min.bytes
          */
-        private Integer fetchWaitMaxMs;
+        private Integer fetchWaitMaxMs = 500;
         /**
          * What to do when there is no initial offset in ZooKeeper or if an
          * offset is out of range: smallest : automatically reset the offset to
@@ -192,40 +192,40 @@ public class KafkaComponentConfiguration {
          * takes a bit of time, this property specifies the amount of time that
          * the producer waits before refreshing the metadata.
          */
-        private Integer retryBackoffMs;
+        private Integer retryBackoffMs = 100;
         /**
          * Socket write buffer size
          */
-        private Integer sendBufferBytes;
+        private Integer sendBufferBytes = 131072;
         /**
          * The amount of time the broker will wait trying to meet the
          * request.required.acks requirement before sending back an error to the
          * client.
          */
-        private Integer requestTimeoutMs;
+        private Integer requestTimeoutMs = 305000;
         /**
          * The maximum number of unsent messages that can be queued up the
          * producer when using async mode before either the producer must be
          * blocked or data must be dropped.
          */
-        private Integer queueBufferingMaxMessages;
+        private Integer queueBufferingMaxMessages = 10000;
         /**
          * The serializer class for messages.
          */
-        private String serializerClass = org.apache.camel.component.kafka.KafkaConstants.KAFKA_DEFAULT_SERIALIZER;
+        private String serializerClass = "org.apache.kafka.common.serialization.StringSerializer";
         /**
          * The serializer class for keys (defaults to the same as for messages
          * if nothing is given).
          */
-        private String keySerializerClass = org.apache.camel.component.kafka.KafkaConstants.KAFKA_DEFAULT_SERIALIZER;
+        private String keySerializerClass = "org.apache.kafka.common.serialization.StringSerializer";
         /**
          * Kerberos kinit command path. Default is /usr/bin/kinit
          */
-        private String kerberosInitCmd = org.apache.kafka.common.config.SaslConfigs.DEFAULT_KERBEROS_KINIT_CMD;
+        private String kerberosInitCmd = "/usr/bin/kinit";
         /**
          * Login thread sleep time between refresh attempts.
          */
-        private Integer kerberosBeforeReloginMinTime;
+        private Integer kerberosBeforeReloginMinTime = 60000;
         /**
          * Percentage of random jitter added to the renewal time.
          */
@@ -277,12 +277,12 @@ public class KafkaComponentConfiguration {
          * The list of protocols enabled for SSL connections. TLSv1.2, TLSv1.1
          * and TLSv1 are enabled by default.
          */
-        private String sslEnabledProtocols = org.apache.kafka.common.config.SslConfigs.DEFAULT_SSL_ENABLED_PROTOCOLS;
+        private String sslEnabledProtocols = "TLSv1.2,TLSv1.1,TLSv1";
         /**
          * The file format of the key store file. This is optional for client.
          * Default value is JKS
          */
-        private String sslKeystoreType = org.apache.kafka.common.config.SslConfigs.DEFAULT_SSL_KEYSTORE_TYPE;
+        private String sslKeystoreType = "JKS";
         /**
          * The SSL protocol used to generate the SSLContext. Default setting is
          * TLS, which is fine for most cases. Allowed values in recent JVMs are
@@ -290,7 +290,7 @@ public class KafkaComponentConfiguration {
          * older JVMs, but their usage is discouraged due to known security
          * vulnerabilities.
          */
-        private String sslProtocol = org.apache.kafka.common.config.SslConfigs.DEFAULT_SSL_PROTOCOL;
+        private String sslProtocol = "TLS";
         /**
          * The name of the security provider used for SSL connections. Default
          * value is the default security provider of the JVM.
@@ -299,7 +299,7 @@ public class KafkaComponentConfiguration {
         /**
          * The file format of the trust store file. Default value is JKS.
          */
-        private String sslTruststoreType = org.apache.kafka.common.config.SslConfigs.DEFAULT_SSL_TRUSTSTORE_TYPE;
+        private String sslTruststoreType = "JKS";
         /**
          * The Kerberos principal name that Kafka runs as. This can be defined
          * either in Kafka's JAAS config or in Kafka's config.
@@ -312,12 +312,12 @@ public class KafkaComponentConfiguration {
          * >http://www.iana.org/assignments/sasl-mechanisms/sasl-mechanisms.
          * xhtml</a>
          */
-        private String saslMechanism = org.apache.kafka.common.config.SaslConfigs.DEFAULT_SASL_MECHANISM;
+        private String saslMechanism = "GSSAPI";
         /**
          * Protocol used to communicate with brokers. Currently only PLAINTEXT
          * and SSL are supported.
          */
-        private String securityProtocol = org.apache.kafka.clients.CommonClientConfigs.DEFAULT_SECURITY_PROTOCOL;
+        private String securityProtocol = "PLAINTEXT";
         /**
          * SSL configuration using a Camel {@link SSLContextParameters} object.
          * If configured it's applied before the other SSL endpoint parameters.
@@ -358,7 +358,7 @@ public class KafkaComponentConfiguration {
          * memory will be used for compression (if compression is enabled) as
          * well as for maintaining in-flight requests.
          */
-        private Integer bufferMemorySize;
+        private Integer bufferMemorySize = 33554432;
         /**
          * The record key (or null if no key is specified). If this option has
          * been configured then it take precedence over header
@@ -401,7 +401,7 @@ public class KafkaComponentConfiguration {
          * partition, and the first fails and is retried but the second
          * succeeds, then the second record may appear first.
          */
-        private Integer retries;
+        private Integer retries = 0;
         /**
          * The producer will attempt to batch records together into fewer
          * requests whenever multiple records are being sent to the same
@@ -415,12 +415,12 @@ public class KafkaComponentConfiguration {
          * bit more wastefully as we will always allocate a buffer of the
          * specified batch size in anticipation of additional records.
          */
-        private Integer producerBatchSize;
+        private Integer producerBatchSize = 16384;
         /**
          * Close idle connections after the number of milliseconds specified by
          * this config.
          */
-        private Integer connectionMaxIdleMs;
+        private Integer connectionMaxIdleMs = 540000;
         /**
          * The producer groups together any records that arrive in between
          * request transmissions into a single batched request. Normally this
@@ -441,7 +441,7 @@ public class KafkaComponentConfiguration {
          * effect of reducing the number of requests sent but would add up to
          * 5ms of latency to records sent in the absense of load.
          */
-        private Integer lingerMs;
+        private Integer lingerMs = 0;
         /**
          * The configuration controls how long sending to kafka will block.
          * These methods can be blocked for multiple reasons. For e.g: buffer
@@ -451,7 +451,7 @@ public class KafkaComponentConfiguration {
          * send(). In case of partitionsFor(), this configuration imposes a
          * maximum time threshold on waiting for metadata
          */
-        private Integer maxBlockMs;
+        private Integer maxBlockMs = 60000;
         /**
          * The maximum size of a request. This is also effectively a cap on the
          * maximum record size. Note that the server has its own cap on record
@@ -459,25 +459,25 @@ public class KafkaComponentConfiguration {
          * number of record batches the producer will send in a single request
          * to avoid sending huge requests.
          */
-        private Integer maxRequestSize;
+        private Integer maxRequestSize = 1048576;
         /**
          * The size of the TCP receive buffer (SO_RCVBUF) to use when reading
          * data.
          */
-        private Integer receiveBufferBytes;
+        private Integer receiveBufferBytes = 65536;
         /**
          * The maximum number of unacknowledged requests the client will send on
          * a single connection before blocking. Note that if this setting is set
          * to be greater than 1 and there are failed sends, there is a risk of
          * message re-ordering due to retries (i.e., if retries are enabled).
          */
-        private Integer maxInFlightRequest;
+        private Integer maxInFlightRequest = 5;
         /**
          * The period of time in milliseconds after which we force a refresh of
          * metadata even if we haven't seen any partition leadership changes to
          * proactively discover any new brokers or partitions.
          */
-        private Integer metadataMaxAgeMs;
+        private Integer metadataMaxAgeMs = 300000;
         /**
          * A list of classes to use as metrics reporters. Implementing the
          * MetricReporter interface allows plugging in classes that will be
@@ -488,18 +488,18 @@ public class KafkaComponentConfiguration {
         /**
          * The number of samples maintained to compute metrics.
          */
-        private Integer noOfMetricsSample;
+        private Integer noOfMetricsSample = 2;
         /**
          * The number of samples maintained to compute metrics.
          */
-        private Integer metricsSampleWindowMs;
+        private Integer metricsSampleWindowMs = 30000;
         /**
          * The amount of time to wait before attempting to reconnect to a given
          * host. This avoids repeatedly connecting to a host in a tight loop.
          * This backoff applies to all requests sent by the consumer to the
          * broker.
          */
-        private Integer reconnectBackoffMs;
+        private Integer reconnectBackoffMs = 50;
         /**
          * The expected time between heartbeats to the consumer coordinator when
          * using Kafka's group management facilities. Heartbeats are used to
@@ -509,7 +509,7 @@ public class KafkaComponentConfiguration {
          * set no higher than 1/3 of that value. It can be adjusted even lower
          * to control the expected time for normal rebalances.
          */
-        private Integer heartbeatIntervalMs;
+        private Integer heartbeatIntervalMs = 3000;
         /**
          * The maximum amount of data per-partition the server will return. The
          * maximum total memory used for a request will be #partitions *
@@ -519,50 +519,50 @@ public class KafkaComponentConfiguration {
          * happens, the consumer can get stuck trying to fetch a large message
          * on a certain partition.
          */
-        private Integer maxPartitionFetchBytes;
+        private Integer maxPartitionFetchBytes = 1048576;
         /**
          * The timeout used to detect failures when using Kafka's group
          * management facilities.
          */
-        private Integer sessionTimeoutMs;
+        private Integer sessionTimeoutMs = 10000;
         /**
          * The maximum number of records returned in a single call to poll()
          */
-        private Integer maxPollRecords;
+        private Integer maxPollRecords = 500;
         /**
          * The timeout used when polling the KafkaConsumer.
          */
-        private Long pollTimeoutMs;
+        private Long pollTimeoutMs = 5000L;
         /**
          * The class name of the partition assignment strategy that the client
          * will use to distribute partition ownership amongst consumer instances
          * when group management is used
          */
-        private String partitionAssignor = org.apache.camel.component.kafka.KafkaConstants.PARTITIONER_RANGE_ASSIGNOR;
+        private String partitionAssignor = "org.apache.kafka.clients.consumer.RangeAssignor";
         /**
          * The configuration controls the maximum amount of time the client will
          * wait for the response of a request. If the response is not received
          * before the timeout elapses the client will resend the request if
          * necessary or fail the request if retries are exhausted.
          */
-        private Integer consumerRequestTimeoutMs;
+        private Integer consumerRequestTimeoutMs = 40000;
         /**
          * Automatically check the CRC32 of the records consumed. This ensures
          * no on-the-wire or on-disk corruption to the messages occurred. This
          * check adds some overhead, so it may be disabled in cases seeking
          * extreme performance.
          */
-        private Boolean checkCrcs;
+        private Boolean checkCrcs = true;
         /**
          * Deserializer class for key that implements the Deserializer
          * interface.
          */
-        private String keyDeserializer = org.apache.camel.component.kafka.KafkaConstants.KAFKA_DEFAULT_DESERIALIZER;
+        private String keyDeserializer = "org.apache.kafka.common.serialization.StringDeserializer";
         /**
          * Deserializer class for value that implements the Deserializer
          * interface.
          */
-        private String valueDeserializer = org.apache.camel.component.kafka.KafkaConstants.KAFKA_DEFAULT_DESERIALIZER;
+        private String valueDeserializer = "org.apache.kafka.common.serialization.StringDeserializer";
         /**
          * Set if KafkaConsumer will read from beginning or end on startup:
          * beginning : read from beginning end : read from end This is replacing
@@ -582,21 +582,21 @@ public class KafkaComponentConfiguration {
          * was sent to it from {@link KafkaProducer} using asynchronous
          * non-blocking processing.
          */
-        private Integer workerPoolCoreSize;
+        private Integer workerPoolCoreSize = 10;
         /**
          * Maximum number of threads for the worker pool for continue routing
          * {@link Exchange} after kafka server has acknowledge the message that
          * was sent to it from {@link KafkaProducer} using asynchronous
          * non-blocking processing.
          */
-        private Integer workerPoolMaxSize;
+        private Integer workerPoolMaxSize = 20;
         /**
          * Whether the producer should store the {@link RecordMetadata} results
          * from sending to Kafka. The results are stored in a {@link List}
          * containing the {@link RecordMetadata} metadata's. The list is stored
          * on a header with the key {@link KafkaConstants#KAFKA_RECORDMETA}
          */
-        private Boolean recordMetadata;
+        private Boolean recordMetadata = true;
         /**
          * Sets interceptors for producer or consumers. Producer interceptors
          * have to be classes implementing

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.opentracing.decorators;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import io.opentracing.Span;
@@ -57,19 +55,4 @@ public class MongoDBSpanDecorator extends AbstractSpanDecorator {
         span.setTag(Tags.DB_STATEMENT.getKey(), queryParameters.toString());
     }
 
-    public static Map<String, String> toQueryParameters(String uri) {
-        int index = uri.indexOf('?');
-        if (index != -1) {
-            String queryString = uri.substring(index + 1);
-            Map<String, String> map = new HashMap<>();
-            for (String param : queryString.split("&")) {
-                String[] parts = param.split("=");
-                if (parts.length == 2) {
-                    map.put(parts[0], parts[1]);
-                }
-            }
-            return map;
-        }
-        return Collections.emptyMap();
-    }
 }

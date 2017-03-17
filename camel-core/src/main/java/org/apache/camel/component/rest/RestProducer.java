@@ -27,6 +27,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.DataFormat;
@@ -40,11 +41,15 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 
+import static org.apache.camel.util.ObjectHelper.isEmpty;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+
 /**
  * Rest producer for calling remote REST services.
  */
 public class RestProducer extends DefaultAsyncProducer {
 
+    private static final String ACCEPT = "Accept";
     private final CamelContext camelContext;
     private final RestConfiguration configuration;
     private boolean prepareUriTemplate = true;
@@ -138,6 +143,7 @@ public class RestProducer extends DefaultAsyncProducer {
         // uri template may be optional and the user have entered the uri template in the path instead
         String resolvedUriTemplate = getEndpoint().getUriTemplate() != null ? getEndpoint().getUriTemplate() : getEndpoint().getPath();
 
+        Message inMessage = exchange.getIn();
         if (prepareUriTemplate) {
             if (resolvedUriTemplate.contains("{")) {
                 // resolve template and replace {key} with the values form the exchange
@@ -147,7 +153,7 @@ public class RestProducer extends DefaultAsyncProducer {
                 for (String a : arr) {
                     if (a.startsWith("{") && a.endsWith("}")) {
                         String key = a.substring(1, a.length() - 1);
-                        String value = exchange.getIn().getHeader(key, String.class);
+                        String value = inMessage.getHeader(key, String.class);
                         if (value != null) {
                             hasPath = true;
                             csb.append(value);
@@ -174,7 +180,7 @@ public class RestProducer extends DefaultAsyncProducer {
                     a = URLDecoder.decode(a, "UTF-8");
                     if (a.startsWith("{") && a.endsWith("}")) {
                         String key = a.substring(1, a.length() - 1);
-                        String value = exchange.getIn().getHeader(key, String.class);
+                        String value = inMessage.getHeader(key, String.class);
                         if (value != null) {
                             params.put(key, value);
                         } else {
@@ -190,7 +196,7 @@ public class RestProducer extends DefaultAsyncProducer {
 
         if (query != null) {
             // the query parameters for the rest call to be used
-            exchange.getIn().setHeader(Exchange.REST_HTTP_QUERY, query);
+            inMessage.setHeader(Exchange.REST_HTTP_QUERY, query);
         }
 
         if (hasPath) {
@@ -207,7 +213,17 @@ public class RestProducer extends DefaultAsyncProducer {
                 overrideUri += "/" + resolvedUriTemplate;
             }
             // the http uri for the rest call to be used
-            exchange.getIn().setHeader(Exchange.REST_HTTP_URI, overrideUri);
+            inMessage.setHeader(Exchange.REST_HTTP_URI, overrideUri);
+        }
+
+        final String produces = getEndpoint().getProduces();
+        if (isEmpty(inMessage.getHeader(Exchange.CONTENT_TYPE)) && isNotEmpty(produces)) {
+            inMessage.setHeader(Exchange.CONTENT_TYPE, produces);
+        }
+
+        final String consumes = getEndpoint().getConsumes();
+        if (isEmpty(inMessage.getHeader(ACCEPT)) && isNotEmpty(consumes)) {
+            inMessage.setHeader(ACCEPT, consumes);
         }
     }
 

@@ -106,7 +106,7 @@ public class YammerComponentConfiguration {
         /**
          * Delay between polling in millis
          */
-        private Long delay;
+        private Long delay = 5000L;
         /**
          * The access token
          */
@@ -123,13 +123,13 @@ public class YammerComponentConfiguration {
          * Set to true if you want to use raw JSON rather than converting to
          * POJOs.
          */
-        private Boolean useJson;
+        private Boolean useJson = false;
         private ApiRequestor requestor;
         /**
          * Return only the specified number of messages. Works for threaded=true
          * and threaded=extended.
          */
-        private Integer limit;
+        private Integer limit = -1;
         /**
          * Returns messages older than the message ID specified as a numeric
          * string. This is useful for paginating messages. For example, if
@@ -137,7 +137,7 @@ public class YammerComponentConfiguration {
          * you could append "?olderThan=2912″ to your request to get the 20
          * messages prior to those you're seeing.
          */
-        private Integer olderThan;
+        private Integer olderThan = -1;
         /**
          * Returns messages newer than the message ID specified as a numeric
          * string. This should be used when polling for new messages. If you're
@@ -146,7 +146,7 @@ public class YammerComponentConfiguration {
          * that you do not get duplicate copies of messages already on your
          * page.
          */
-        private Integer newerThan;
+        private Integer newerThan = -1;
         /**
          * threaded=true will only return the first message in each thread. This
          * parameter is intended for apps which display message threads

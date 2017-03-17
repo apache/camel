@@ -36,6 +36,8 @@
   </properties>
 
   <dependencies>
+
+    <!-- base component to use for this connector -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-salesforce</artifactId>
@@ -44,9 +46,22 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-salesforce-starter</artifactId>
     </dependency>
+
+    <!-- camel-connector -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-connector</artifactId>
+    </dependency>
+
+    <!-- camel and spring boot compiler plugins -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>apt</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <version>${spring-boot-version}</version>
     </dependency>
   </dependencies>
 
@@ -72,6 +87,8 @@
         </executions>
       </plugin>
 
+      <!-- this is needed due Apache Camel source code uses the OSGi plugin to build JARs -->
+      <!-- for end users whom create connectors you would not have this problem -->
       <!-- turn off jar plugin as we use connector plugin to jar instead -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -91,6 +108,12 @@
         <artifactId>camel-connector-maven-plugin</artifactId>
         <version>${project.version}</version>
         <executions>
+          <execution>
+            <id>boot</id>
+            <goals>
+              <goal>prepare-spring-boot-auto-configuration</goal>
+            </goals>
+          </execution>
           <execution>
             <id>connector</id>
             <goals>

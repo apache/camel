@@ -49,7 +49,7 @@ do
     fi 
   fi
 
-  if [ $found -eq 1 ] && [ $testname != "AbstractFeatureTest" ]
+  if [ $found -eq 1 ] && [ $testname != "BaseKarafTest" ]
   then
     echo "*******************************************************************"
     echo "Running test $testname"

@@ -58,16 +58,23 @@ with the following path and query parameters:
 
 #### Query Parameters (7 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| contentCache | producer | false | boolean | Sets whether to use resource content cache or not
-| encoding | producer |  | String | Define the encoding of the body
-| extension | producer |  | String | Define the file extension of the template
-| themeFolder | producer |  | String | Define the themes folder to scan
-| themeLayer | producer |  | String | Define the theme layer to elaborate
-| themeSubfolder | producer |  | String | Define the themes subfolder to scan
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| contentCache | false | boolean | Sets whether to use resource content cache or not
+
+| encoding |  | String | Define the encoding of the body
+
+| extension |  | String | Define the file extension of the template
+
+| themeFolder |  | String | Define the themes folder to scan
+
+| themeLayer |  | String | Define the theme layer to elaborate
+
+| themeSubfolder |  | String | Define the themes subfolder to scan
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

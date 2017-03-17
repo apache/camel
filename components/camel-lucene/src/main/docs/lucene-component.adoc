@@ -55,11 +55,13 @@ The Lucene component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| config | advanced |  | LuceneConfiguration | To use a shared lucene configuration
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| advanced
+| config |  | LuceneConfiguration | To use a shared lucene configuration
+
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -87,14 +89,19 @@ with the following path and query parameters:
 
 #### Query Parameters (5 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| analyzer | producer |  | Analyzer | An Analyzer builds TokenStreams which analyze text. It thus represents a policy for extracting index terms from text. The value for analyzer can be any class that extends the abstract class org.apache.lucene.analysis.Analyzer. Lucene also offers a rich set of analyzers out of the box
-| indexDir | producer |  | File | A file system directory in which index files are created upon analysis of the document by the specified analyzer
-| maxHits | producer |  | int | An integer value that limits the result set of the search operation
-| srcDir | producer |  | File | An optional directory containing files to be used to be analyzed and added to the index at producer startup.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| analyzer |  | Analyzer | An Analyzer builds TokenStreams which analyze text. It thus represents a policy for extracting index terms from text. The value for analyzer can be any class that extends the abstract class org.apache.lucene.analysis.Analyzer. Lucene also offers a rich set of analyzers out of the box
+
+| indexDir |  | File | A file system directory in which index files are created upon analysis of the document by the specified analyzer
+
+| maxHits |  | int | An integer value that limits the result set of the search operation
+
+| srcDir |  | File | An optional directory containing files to be used to be analyzed and added to the index at producer startup.
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

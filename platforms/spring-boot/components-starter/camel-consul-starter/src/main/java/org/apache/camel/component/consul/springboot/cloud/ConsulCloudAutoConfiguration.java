@@ -23,21 +23,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.component.consul.cloud.ConsulServiceDiscoveryFactory;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
+import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.IntrospectionSupport;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionMessage;
-import org.springframework.boot.autoconfigure.condition.ConditionOutcome;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.SpringBootCondition;
-import org.springframework.boot.bind.RelaxedPropertyResolver;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.type.AnnotatedTypeMetadata;
 
 @Configuration
 @ConditionalOnBean(CamelAutoConfiguration.class)
@@ -58,22 +53,16 @@ public class ConsulCloudAutoConfiguration {
         return factory.newInstance(camelContext);
     }
 
-    public static class Condition extends SpringBootCondition {
-        @Override
-        public ConditionOutcome getMatchOutcome(ConditionContext conditionContext, AnnotatedTypeMetadata annotatedTypeMetadata) {
-            boolean groupEnabled = isEnabled(conditionContext, "camel.cloud.", true);
+    // *******************************
+    // Condition
+    // *******************************
 
-            ConditionMessage.Builder message = ConditionMessage.forCondition("camel.cloud.consul");
-            if (isEnabled(conditionContext, "camel.cloud.consul.", groupEnabled)) {
-                return ConditionOutcome.match(message.because("enabled"));
-            }
-
-            return ConditionOutcome.noMatch(message.because("not enabled"));
-        }
-
-        private boolean isEnabled(ConditionContext context, String prefix, boolean defaultValue) {
-            RelaxedPropertyResolver resolver = new RelaxedPropertyResolver(context.getEnvironment(), prefix);
-            return resolver.getProperty("enabled", Boolean.class, defaultValue);
+    public static class Condition extends GroupCondition {
+        public Condition() {
+            super(
+                "camel.cloud",
+                "camel.cloud.consul"
+            );
         }
     }
 }

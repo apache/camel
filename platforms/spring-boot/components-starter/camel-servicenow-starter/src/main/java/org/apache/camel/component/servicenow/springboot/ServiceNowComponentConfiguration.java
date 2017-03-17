@@ -247,7 +247,7 @@ public class ServiceNowComponentConfiguration {
          * Enter the maximum number of scorecards each query can return. By
          * default this value is 10, and the maximum is 100.
          */
-        private Integer perPage;
+        private Integer perPage = 10;
         /**
          * Specify the value to use when sorting results. By default, queries
          * sort records by value.

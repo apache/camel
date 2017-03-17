@@ -16,26 +16,13 @@
  */
 package org.apache.camel.model.cloud;
 
-import java.util.Arrays;
-import java.util.List;
-
-final class ServiceCallConstants {
-    public static final List<ServiceCallServiceDiscoveryConfiguration> SERVICE_DISCOVERY_CONFIGURATIONS = Arrays.asList(
-        new ConsulServiceCallServiceDiscoveryConfiguration(),
-        new DnsServiceCallServiceDiscoveryConfiguration(),
-        new EtcdServiceCallServiceDiscoveryConfiguration(),
-        new KubernetesServiceCallServiceDiscoveryConfiguration()
-    );
-
-    public static final List<ServiceCallServiceFilterConfiguration> SERVICE_FILTER_CONFIGURATIONS = Arrays.asList(
-        new HealthyServiceCallServiceFilterConfiguration(),
-        new PassThroughServiceCallServiceFilterConfiguration()
-    );
-
-    public static final List<ServiceCallLoadBalancerConfiguration> LOAD_BALANCER_CONFIGURATIONS = Arrays.asList(
-        new RibbonServiceCallLoadBalancerConfiguration(),
-        new DefaultServiceCallLoadBalancerConfiguration()
-    );
+public final class ServiceCallConstants {
+    public static final String DEFAULT_SERVICE_CALL_CONFIG_ID = "service-call-configuration";
+    public static final String DEFAULT_SERVICE_CALL_EXPRESSION_ID = "service-call-expression";
+    public static final String DEFAULT_SERVICE_DISCOVERY_ID = "service-discovery";
+    public static final String DEFAULT_SERVICE_FILTER_ID = "service-filter";
+    public static final String DEFAULT_SERVICE_CHOOSER_ID = "service-chooser";
+    public static final String DEFAULT_LOAD_BALANCER_ID = "load-balancer";
 
     private ServiceCallConstants() {
     }

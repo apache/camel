@@ -54,11 +54,13 @@ The Ganglia component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| configuration | advanced |  | GangliaConfiguration | To use the shared configuration
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| advanced
+| configuration |  | GangliaConfiguration | To use the shared configuration
+
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -85,22 +87,35 @@ with the following path and query parameters:
 
 #### Query Parameters (13 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| dmax | producer | 0 | int | Minumum time in seconds before Ganglia will purge the metric value if it expires. Set to 0 and the value will remain in Ganglia indefinitely until a gmond agent restart.
-| groupName | producer | java | String | The group that the metric belongs to.
-| metricName | producer | metric | String | The name to use for the metric.
-| mode | producer | MULTICAST | UDPAddressingMode | Send the UDP metric packets using MULTICAST or UNICAST
-| prefix | producer |  | String | Prefix the metric name with this string and an underscore.
-| slope | producer | BOTH | GMetricSlope | The slope
-| spoofHostname | producer |  | String | Spoofing information IP:hostname
-| tmax | producer | 60 | int | Maximum time in seconds that the value can be considered current. After this Ganglia considers the value to have expired.
-| ttl | producer | 5 | int | If using multicast set the TTL of the packets
-| type | producer | STRING | GMetricType | The type of value
-| units | producer |  | String | Any unit of measurement that qualifies the metric e.g. widgets litres bytes. Do not include a prefix such as k (kilo) or m (milli) other tools may scale the units later. The value should be unscaled.
-| wireFormat31x | producer | true | boolean | Use the wire format of Ganglia 3.1.0 and later versions. Set this to false to use Ganglia 3.0.x or earlier.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| dmax | 0 | int | Minumum time in seconds before Ganglia will purge the metric value if it expires. Set to 0 and the value will remain in Ganglia indefinitely until a gmond agent restart.
+
+| groupName | java | String | The group that the metric belongs to.
+
+| metricName | metric | String | The name to use for the metric.
+
+| mode | MULTICAST | UDPAddressingMode | Send the UDP metric packets using MULTICAST or UNICAST
+
+| prefix |  | String | Prefix the metric name with this string and an underscore.
+
+| slope | BOTH | GMetricSlope | The slope
+
+| spoofHostname |  | String | Spoofing information IP:hostname
+
+| tmax | 60 | int | Maximum time in seconds that the value can be considered current. After this Ganglia considers the value to have expired.
+
+| ttl | 5 | int | If using multicast set the TTL of the packets
+
+| type | STRING | GMetricType | The type of value
+
+| units |  | String | Any unit of measurement that qualifies the metric e.g. widgets litres bytes. Do not include a prefix such as k (kilo) or m (milli) other tools may scale the units later. The value should be unscaled.
+
+| wireFormat31x | true | boolean | Use the wire format of Ganglia 3.1.0 and later versions. Set this to false to use Ganglia 3.0.x or earlier.
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

@@ -66,7 +66,7 @@ public class DockerComponentConfiguration {
         /**
          * Docker port
          */
-        private Integer port;
+        private Integer port = 2375;
         /**
          * User name to authenticate with
          */
@@ -90,7 +90,7 @@ public class DockerComponentConfiguration {
         /**
          * Use HTTPS communication
          */
-        private Boolean secure;
+        private Boolean secure = false;
         /**
          * Location containing the SSL certificate chain
          */
@@ -98,19 +98,19 @@ public class DockerComponentConfiguration {
         /**
          * Maximum total connections
          */
-        private Integer maxTotalConnections;
+        private Integer maxTotalConnections = 100;
         /**
          * Maximum route connections
          */
-        private Integer maxPerRouteConnections;
+        private Integer maxPerRouteConnections = 100;
         /**
          * Whether to use logging filter
          */
-        private Boolean loggingFilter;
+        private Boolean loggingFilter = false;
         /**
          * Whether to follow redirect filter
          */
-        private Boolean followRedirectFilter;
+        private Boolean followRedirectFilter = false;
         /**
          * Additional configuration parameters as key/value pairs
          */
@@ -122,11 +122,11 @@ public class DockerComponentConfiguration {
         /**
          * Check TLS
          */
-        private Boolean tlsVerify;
+        private Boolean tlsVerify = false;
         /**
          * Socket connection mode
          */
-        private Boolean socket;
+        private Boolean socket = true;
         /**
          * The fully qualified class name of the DockerCmdExecFactory
          * implementation to use

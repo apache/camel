@@ -40,10 +40,12 @@ import org.slf4j.LoggerFactory;
 final class ConnectorModel {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConnectorModel.class);
 
-    private static final Pattern NAME_PATTERN = Pattern.compile("\"name\"\\s?:\\s?\"([\\w|.]+)\".*");
+    private static final Pattern NAME_PATTERN = Pattern.compile("\"name\"\\s?:\\s?\"([\\w|.-]+)\".*");
     private static final Pattern JAVA_TYPE_PATTERN = Pattern.compile("\"javaType\"\\s?:\\s?\"([\\w|.]+)\".*");
     private static final Pattern BASE_JAVA_TYPE_PATTERN = Pattern.compile("\"baseJavaType\"\\s?:\\s?\"([\\w|.]+)\".*");
-    private static final Pattern BASE_SCHEME_PATTERN = Pattern.compile("\"baseScheme\"\\s?:\\s?\"([\\w|.]+)\".*");
+    private static final Pattern BASE_SCHEME_PATTERN = Pattern.compile("\"baseScheme\"\\s?:\\s?\"([\\w|.-]+)\".*");
+    private static final Pattern INPUT_DATA_TYPE_PATTERN = Pattern.compile("\"inputDataType\"\\s?:\\s?\"(\\*|[\\w|.:*]+)\".*");
+    private static final Pattern OUTPUT_DATA_TYPE_PATTERN = Pattern.compile("\"outputDataType\"\\s?:\\s?\"([\\w|.:*]+)\".*");
 
     private final String componentName;
     private final String className;
@@ -53,10 +55,12 @@ final class ConnectorModel {
     private String baseJavaType;
     private String connectorJSon;
     private String connectorName;
+    private DataType inputDataType;
+    private DataType outputDataType;
     private Map<String, String> defaultComponentOptions;
     private Map<String, String> defaultEndpointOptions;
 
-    public ConnectorModel(String componentName, String className) {
+    ConnectorModel(String componentName, String className) {
         this.componentName = componentName;
         this.className = className;
         this.lines = Suppliers.memorize(() -> findCamelConnectorJSonSchema());
@@ -116,6 +120,26 @@ final class ConnectorModel {
         }
 
         return defaultEndpointOptions;
+    }
+
+    public DataType getInputDataType() {
+        if (inputDataType == null) {
+            String line = extractInputDataType(lines.get());
+            if (line != null) {
+                inputDataType = new DataType(line);
+            }
+        }
+        return inputDataType;
+    }
+
+    public DataType getOutputDataType() {
+        if (outputDataType == null) {
+            String line = extractOutputDataType(lines.get());
+            if (line != null) {
+                outputDataType = new DataType(line);
+            }
+        }
+        return outputDataType;
     }
 
     // ***************************************
@@ -203,6 +227,28 @@ final class ConnectorModel {
         for (String line : json) {
             line = line.trim();
             Matcher matcher = BASE_SCHEME_PATTERN.matcher(line);
+            if (matcher.matches()) {
+                return matcher.group(1);
+            }
+        }
+        return null;
+    }
+
+    private static String extractInputDataType(List<String> json) {
+        for (String line : json) {
+            line = line.trim();
+            Matcher matcher = INPUT_DATA_TYPE_PATTERN.matcher(line);
+            if (matcher.matches()) {
+                return matcher.group(1);
+            }
+        }
+        return null;
+    }
+
+    private static String extractOutputDataType(List<String> json) {
+        for (String line : json) {
+            line = line.trim();
+            Matcher matcher = OUTPUT_DATA_TYPE_PATTERN.matcher(line);
             if (matcher.matches()) {
                 return matcher.group(1);
             }

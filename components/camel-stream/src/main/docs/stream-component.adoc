@@ -69,27 +69,45 @@ with the following path and query parameters:
 
 #### Query Parameters (18 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| encoding | common |  | String | You can configure the encoding (is a charset name) to use text-based streams (for example message body is a String object). If not provided Camel uses the JVM default Charset.
-| fileName | common |  | String | When using the stream:file URI format this option specifies the filename to stream to/from.
-| url | common |  | String | When using the stream:url URI format this option specifies the URL to stream to/from. The input/output stream will be opened using the JDK URLConnection facility.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| groupLines | consumer |  | int | To group X number of lines in the consumer. For example to group 10 lines and therefore only spit out an Exchange with 10 lines instead of 1 Exchange per line.
-| groupStrategy | consumer |  | GroupStrategy | Allows to use a custom GroupStrategy to control how to group lines.
-| initialPromptDelay | consumer | 2000 | long | Initial delay in milliseconds before showing the message prompt. This delay occurs only once. Can be used during system startup to avoid message prompts being written while other logging is done to the system out.
-| promptDelay | consumer |  | long | Optional delay in milliseconds before showing the message prompt.
-| promptMessage | consumer |  | String | Message prompt to use when reading from stream:in; for example you could set this to Enter a command:
-| retry | consumer | false | boolean | Will retry opening the file if it's overwritten somewhat like tail --retry
-| scanStream | consumer | false | boolean | To be used for continuously reading a stream such as the unix tail command.
-| scanStreamDelay | consumer |  | long | Delay in milliseconds between read attempts when using scanStream.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| autoCloseCount | producer |  | int | Number of messages to process before closing stream on Producer side. Never close stream by default (only when Producer is stopped). If more messages are sent the stream is reopened for another autoCloseCount batch.
-| closeOnDone | producer | false | boolean | This option is used in combination with Splitter and streaming to the same file. The idea is to keep the stream open and only close when the Splitter is done to improve performance. Mind this requires that you only stream to the same file and not 2 or more files.
-| delay | producer |  | long | Initial delay in milliseconds before producing the stream.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| encoding |  | String | You can configure the encoding (is a charset name) to use text-based streams (for example message body is a String object). If not provided Camel uses the JVM default Charset.
+
+| fileName |  | String | When using the stream:file URI format this option specifies the filename to stream to/from.
+
+| url |  | String | When using the stream:url URI format this option specifies the URL to stream to/from. The input/output stream will be opened using the JDK URLConnection facility.
+ 4+^s| consumer
+| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| groupLines |  | int | To group X number of lines in the consumer. For example to group 10 lines and therefore only spit out an Exchange with 10 lines instead of 1 Exchange per line.
+
+| groupStrategy |  | GroupStrategy | Allows to use a custom GroupStrategy to control how to group lines.
+
+| initialPromptDelay | 2000 | long | Initial delay in milliseconds before showing the message prompt. This delay occurs only once. Can be used during system startup to avoid message prompts being written while other logging is done to the system out.
+
+| promptDelay |  | long | Optional delay in milliseconds before showing the message prompt.
+
+| promptMessage |  | String | Message prompt to use when reading from stream:in; for example you could set this to Enter a command:
+
+| retry | false | boolean | Will retry opening the file if it's overwritten somewhat like tail --retry
+
+| scanStream | false | boolean | To be used for continuously reading a stream such as the unix tail command.
+
+| scanStreamDelay |  | long | Delay in milliseconds between read attempts when using scanStream.
+ 4+^s| consumer (advanced)
+| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+ 4+^s| producer
+| autoCloseCount |  | int | Number of messages to process before closing stream on Producer side. Never close stream by default (only when Producer is stopped). If more messages are sent the stream is reopened for another autoCloseCount batch.
+
+| closeOnDone | false | boolean | This option is used in combination with Splitter and streaming to the same file. The idea is to keep the stream open and only close when the Splitter is done to improve performance. Mind this requires that you only stream to the same file and not 2 or more files.
+
+| delay |  | long | Initial delay in milliseconds before producing the stream.
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

@@ -34,7 +34,6 @@ import org.apache.camel.VerifiableComponent;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.http.common.HttpBinding;
 import org.apache.camel.http.common.HttpCommonComponent;
-import org.apache.camel.http.common.HttpConfiguration;
 import org.apache.camel.http.common.HttpHelper;
 import org.apache.camel.http.common.HttpRestHeaderFilterStrategy;
 import org.apache.camel.http.common.UrlRewrite;
@@ -75,26 +74,32 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpComponent.class);
 
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "To use the custom HttpClientConfigurer to perform configuration of the HttpClient that will be used.")
     protected HttpClientConfigurer httpClientConfigurer;
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "To use a custom and shared HttpClientConnectionManager to manage connections."
+        + " If this has been configured then this is always used for all endpoints created by this component.")
     protected HttpClientConnectionManager clientConnectionManager;
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "To use a custom org.apache.http.protocol.HttpContext when executing requests.")
     protected HttpContext httpContext;
-    @Metadata(label = "security")
+    @Metadata(label = "security", description = "To configure security using SSLContextParameters."
+        + " Important: Only one instance of org.apache.camel.util.jsse.SSLContextParameters is supported per HttpComponent."
+        + " If you need to use 2 or more different instances, you need to define a new HttpComponent per instance you need.")
     protected SSLContextParameters sslContextParameters;
-    @Metadata(label = "security")
+    @Metadata(label = "security", description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier.")
     protected HostnameVerifier x509HostnameVerifier = new DefaultHostnameVerifier();
-    @Metadata(label = "producer")
+    @Metadata(label = "producer", description = "To use a custom org.apache.http.client.CookieStore."
+        + " By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store."
+        + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie"
+        + " shouldn't be stored as we are just bridging (eg acting as a proxy).")
     protected CookieStore cookieStore;
 
     // options to the default created http connection manager
-    @Metadata(label = "advanced", defaultValue = "200")
+    @Metadata(label = "advanced", defaultValue = "200", description = "The maximum number of connections.")
     protected int maxTotalConnections = 200;
-    @Metadata(label = "advanced", defaultValue = "20")
+    @Metadata(label = "advanced", defaultValue = "20", description = "The maximum number of connections per route.")
     protected int connectionsPerRoute = 20;
     // It's MILLISECONDS, the default value is always keep alive
-    @Metadata(label = "advanced")
+    @Metadata(label = "advanced", description = "The time for connection to live, the time unit is millisecond, the default value is always keep alive.")
     protected long connectionTimeToLive = -1;
 
     public HttpComponent() {
@@ -424,35 +429,6 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      */
     public void setClientConnectionManager(HttpClientConnectionManager clientConnectionManager) {
         this.clientConnectionManager = clientConnectionManager;
-    }
-
-    /**
-     * To use a custom HttpBinding to control the mapping between Camel message and HttpClient.
-     */
-    public void setHttpBinding(HttpBinding httpBinding) {
-        // need to override and call super for component docs
-        super.setHttpBinding(httpBinding);
-    }
-
-    /**
-     * To use the shared HttpConfiguration as base configuration.
-     */
-    @Override
-    public void setHttpConfiguration(HttpConfiguration httpConfiguration) {
-        // need to override and call super for component docs
-        super.setHttpConfiguration(httpConfiguration);
-    }
-
-    /**
-     * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object
-     * <p/>
-     * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
-     * data from the request to Java and that can be a potential security risk.
-     */
-    @Override
-    public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
-        // need to override and call super for component docs
-        super.setAllowJavaSerializedObject(allowJavaSerializedObject);
     }
 
     public HttpContext getHttpContext() {

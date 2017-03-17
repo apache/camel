@@ -20,7 +20,9 @@ import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.annotation.DirtiesContext;
 
+@DirtiesContext
 public class SpringHystrixRouteOkTest extends CamelSpringTestSupport {
 
     @Override

@@ -17,45 +17,40 @@
 package org.apache.camel.component.servicenow.auth;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.ext.Provider;
-import javax.xml.bind.DatatypeConverter;
 
 import org.apache.camel.component.servicenow.ServiceNowConfiguration;
 
 
 @Provider
 @Priority(Priorities.AUTHENTICATION)
-public class AuthenticationRequestFilter implements ClientRequestFilter {
-    private final ServiceNowConfiguration configuration;
-    private final OAuthToken token;
+public final class AuthenticationRequestFilter implements ClientRequestFilter {
+    private final OAuthToken authToken;
     private final String authString;
 
-    public AuthenticationRequestFilter(ServiceNowConfiguration configuration) throws IOException {
-        this.configuration = configuration;
-        this.token = configuration.hasOAuthAuthentication() ? new OAuthToken(this.configuration) : null;
-        this.authString = buildBasicAuthString(configuration);
+    public AuthenticationRequestFilter(ServiceNowConfiguration conf) throws IOException {
+        this.authToken = conf.hasOAuthAuthentication() ? new OAuthToken(conf) : null;
+        this.authString = conf.hasBasicAuthentication() ? getBasicAuthenticationString(conf) : null;
     }
 
     @Override
     public void filter(ClientRequestContext requestContext) throws IOException {
-        if (token != null) {
-            requestContext.getHeaders().add(HttpHeaders.AUTHORIZATION, token.getAuthString());
+        if (authToken != null) {
+            requestContext.getHeaders().add(HttpHeaders.AUTHORIZATION, authToken.getAuthString());
         } else if (authString != null) {
             requestContext.getHeaders().add(HttpHeaders.AUTHORIZATION, authString);
         }
     }
 
-    private static String buildBasicAuthString(final ServiceNowConfiguration configuration) throws IOException {
-        if (!configuration.hasBasicAuthentication()) {
-            return null;
-        }
-
-        String userAndPassword = configuration.getUserName() + ":" + configuration.getPassword();
-        return "Basic " + DatatypeConverter.printBase64Binary(userAndPassword.getBytes("UTF-8"));
+    private static String getBasicAuthenticationString(ServiceNowConfiguration conf) {
+        String userAndPassword = conf.getUserName() + ":" + conf.getPassword();
+        return "Basic " + Base64.getEncoder().encodeToString(userAndPassword.getBytes(StandardCharsets.UTF_8));
     }
 }

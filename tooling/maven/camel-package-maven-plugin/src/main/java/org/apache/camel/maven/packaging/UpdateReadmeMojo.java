@@ -774,6 +774,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
         component.setArtifactId(getSafeValue("artifactId", rows));
         component.setVersion(getSafeValue("version", rows));
 
+        String oldGroup = null;
         rows = parseJsonSchema("componentProperties", json, true);
         for (Map<String, String> row : rows) {
             ComponentOptionModel option = new ComponentOptionModel();
@@ -795,8 +796,15 @@ public class UpdateReadmeMojo extends AbstractMojo {
                 option.setDescription(desc);
             }
             component.addComponentOption(option);
+
+            // group separate between different options
+            if (oldGroup == null || !oldGroup.equals(option.getGroup())) {
+                option.setNewGroup(true);
+            }
+            oldGroup = option.getGroup();
         }
 
+        oldGroup = null;
         rows = parseJsonSchema("properties", json, true);
         for (Map<String, String> row : rows) {
             EndpointOptionModel option = new EndpointOptionModel();
@@ -825,6 +833,12 @@ public class UpdateReadmeMojo extends AbstractMojo {
             } else {
                 component.addEndpointOption(option);
             }
+
+            // group separate between different options
+            if (oldGroup == null || !oldGroup.equals(option.getGroup())) {
+                option.setNewGroup(true);
+            }
+            oldGroup = option.getGroup();
         }
 
         return component;

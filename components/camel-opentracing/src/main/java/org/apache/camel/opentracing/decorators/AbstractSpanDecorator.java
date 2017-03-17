@@ -17,6 +17,7 @@
 package org.apache.camel.opentracing.decorators;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,6 +83,32 @@ public abstract class AbstractSpanDecorator implements SpanDecorator {
                 span.log(logEvent);
             }
         }
+    }
+
+    @Override
+    public String getInitiatorSpanKind() {
+        return Tags.SPAN_KIND_CLIENT;
+    }
+
+    @Override
+    public String getReceiverSpanKind() {
+        return Tags.SPAN_KIND_SERVER;
+    }
+
+    public static Map<String, String> toQueryParameters(String uri) {
+        int index = uri.indexOf('?');
+        if (index != -1) {
+            String queryString = uri.substring(index + 1);
+            Map<String, String> map = new HashMap<>();
+            for (String param : queryString.split("&")) {
+                String[] parts = param.split("=");
+                if (parts.length == 2) {
+                    map.put(parts[0], parts[1]);
+                }
+            }
+            return map;
+        }
+        return Collections.emptyMap();
     }
 
 }

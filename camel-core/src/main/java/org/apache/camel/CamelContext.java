@@ -31,6 +31,7 @@ import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.model.DataFormatDefinition;
+import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
@@ -605,6 +606,37 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void addServiceCallConfiguration(String serviceName, ServiceCallConfigurationDefinition configuration);
 
     /**
+     * Gets the Hystrix configuration by the given name. If no name is given
+     * the default configuration is returned, see <tt>setHystrixConfiguration</tt>
+     *
+     * @param id id of the configuration, or <tt>null</tt> to return the default configuration
+     * @return the configuration, or <tt>null</tt> if no configuration has been registered
+     */
+    HystrixConfigurationDefinition getHystrixConfiguration(String id);
+
+    /**
+     * Sets the default Hystrix configuration
+     *
+     * @param configuration the configuration
+     */
+    void setHystrixConfiguration(HystrixConfigurationDefinition configuration);
+
+    /**
+     * Sets the Hystrix configurations
+     *
+     * @param configurations the configuration list
+     */
+    void setHystrixConfigurations(List<HystrixConfigurationDefinition> configurations);
+
+    /**
+     * Adds the Hystrix configuration
+     *
+     * @param id name of the configuration
+     * @param configuration the configuration
+     */
+    void addHystrixConfiguration(String id, HystrixConfigurationDefinition configuration);
+
+    /**
      * Returns the order in which the route inputs was started.
      * <p/>
      * The order may not be according to the startupOrder defined on the route.
@@ -1089,7 +1121,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * See this FAQ before use: <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">
      * Why does Camel use too many threads with ProducerTemplate?</a>
      * <p/>
-     * <b>Important:</b> Make sure to call {@link org.apache.camel.ProducerTemplate#stop()} when you are done using the template,
+     * <b>Important:</b> Make sure to call {@link org.apache.camel.FluentProducerTemplate#stop()} when you are done using the template,
      * to clean up any resources.
      * <p/>
      * Will use cache size defined in Camel property with key {@link Exchange#MAXIMUM_CACHE_POOL_SIZE}.

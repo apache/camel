@@ -84,11 +84,13 @@ The Crypto (JCE) component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| configuration | advanced |  | DigitalSignatureConfiguration | To use the shared DigitalSignatureConfiguration as configuration
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| advanced
+| configuration |  | DigitalSignatureConfiguration | To use the shared DigitalSignatureConfiguration as configuration
+
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -110,28 +112,47 @@ with the following path and query parameters:
 
 #### Query Parameters (19 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| algorithm | producer | SHA1WithDSA | String | Sets the JCE name of the Algorithm that should be used for the signer.
-| alias | producer |  | String | Sets the alias used to query the KeyStore for keys and link java.security.cert.Certificate Certificates to be used in signing and verifying exchanges. This value can be provided at runtime via the message header link org.apache.camel.component.crypto.DigitalSignatureConstantsKEYSTORE_ALIAS
-| certificateName | producer |  | String | Sets the reference name for a PrivateKey that can be fond in the registry.
-| keystore | producer |  | KeyStore | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges. A KeyStore is typically used with an alias either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore then this single entry will be used.
-| keystoreName | producer |  | String | Sets the reference name for a Keystore that can be fond in the registry.
-| privateKey | producer |  | PrivateKey | Set the PrivateKey that should be used to sign the exchange
-| privateKeyName | producer |  | String | Sets the reference name for a PrivateKey that can be fond in the registry.
-| provider | producer |  | String | Set the id of the security provider that provides the configured Signature algorithm.
-| publicKeyName | producer |  | String | references that should be resolved when the context changes
-| secureRandomName | producer |  | String | Sets the reference name for a SecureRandom that can be fond in the registry.
-| signatureHeaderName | producer |  | String | Set the name of the message header that should be used to store the base64 encoded signature. This defaults to 'CamelDigitalSignature'
-| bufferSize | advanced | 2048 | Integer | Set the size of the buffer used to read in the Exchange payload data.
-| certificate | advanced |  | Certificate | Set the Certificate that should be used to verify the signature in the exchange based on its payload.
-| clearHeaders | advanced | true | boolean | Determines if the Signature specific headers be cleared after signing and verification. Defaults to true and should only be made otherwise at your extreme peril as vital private information such as Keys and passwords may escape if unset.
-| keyStoreParameters | advanced |  | KeyStoreParameters | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges based on the given KeyStoreParameters. A KeyStore is typically used with an alias either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore then this single entry will be used.
-| publicKey | advanced |  | PublicKey | Set the PublicKey that should be used to verify the signature in the exchange.
-| secureRandom | advanced |  | SecureRandom | Set the SecureRandom used to initialize the Signature service
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| password | security |  | String | Sets the password used to access an aliased PrivateKey in the KeyStore.
+| Name | Default | Java Type | Description
+
+| algorithm | SHA1WithDSA | String | Sets the JCE name of the Algorithm that should be used for the signer.
+
+| alias |  | String | Sets the alias used to query the KeyStore for keys and link java.security.cert.Certificate Certificates to be used in signing and verifying exchanges. This value can be provided at runtime via the message header link org.apache.camel.component.crypto.DigitalSignatureConstantsKEYSTORE_ALIAS
+
+| certificateName |  | String | Sets the reference name for a PrivateKey that can be fond in the registry.
+
+| keystore |  | KeyStore | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges. A KeyStore is typically used with an alias either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore then this single entry will be used.
+
+| keystoreName |  | String | Sets the reference name for a Keystore that can be fond in the registry.
+
+| privateKey |  | PrivateKey | Set the PrivateKey that should be used to sign the exchange
+
+| privateKeyName |  | String | Sets the reference name for a PrivateKey that can be fond in the registry.
+
+| provider |  | String | Set the id of the security provider that provides the configured Signature algorithm.
+
+| publicKeyName |  | String | references that should be resolved when the context changes
+
+| secureRandomName |  | String | Sets the reference name for a SecureRandom that can be fond in the registry.
+
+| signatureHeaderName |  | String | Set the name of the message header that should be used to store the base64 encoded signature. This defaults to 'CamelDigitalSignature'
+ 4+^s| advanced
+| bufferSize | 2048 | Integer | Set the size of the buffer used to read in the Exchange payload data.
+
+| certificate |  | Certificate | Set the Certificate that should be used to verify the signature in the exchange based on its payload.
+
+| clearHeaders | true | boolean | Determines if the Signature specific headers be cleared after signing and verification. Defaults to true and should only be made otherwise at your extreme peril as vital private information such as Keys and passwords may escape if unset.
+
+| keyStoreParameters |  | KeyStoreParameters | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges based on the given KeyStoreParameters. A KeyStore is typically used with an alias either one supplied in the Route definition or dynamically via the message header CamelSignatureKeyStoreAlias. If no alias is supplied and there is only a single entry in the Keystore then this single entry will be used.
+
+| publicKey |  | PublicKey | Set the PublicKey that should be used to verify the signature in the exchange.
+
+| secureRandom |  | SecureRandom | Set the SecureRandom used to initialize the Signature service
+
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+ 4+^s| security
+| password |  | String | Sets the password used to access an aliased PrivateKey in the KeyStore.
 |=======================================================================
 // endpoint options: END
 

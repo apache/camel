@@ -90,7 +90,7 @@ public class SalesforceComponentVerifier extends DefaultComponentVerifier {
             httpClient.setConnectTimeout(SalesforceComponent.CONNECTION_TIMEOUT);
             configureHttpProxy(httpClient, parameters);
 
-            SalesforceSession session = new SalesforceSession(httpClient, httpClient.getTimeout(), loginConfig);
+            SalesforceSession session = new SalesforceSession(getCamelContext(), httpClient, httpClient.getTimeout(), loginConfig);
             DefaultRestClient client = new DefaultRestClient(httpClient, configuration.getApiVersion(), configuration.getFormat(), session);
 
             httpClient.setSession(session);

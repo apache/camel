@@ -216,6 +216,7 @@
         <include>org.apache.camel:camel-shiro</include>
         <include>org.apache.camel:camel-sip</include>
         <include>org.apache.camel:camel-sjms</include>
+        <include>org.apache.camel:camel-sjms2</include>
         <include>org.apache.camel:camel-slack</include>
         <include>org.apache.camel:camel-smpp</include>
         <include>org.apache.camel:camel-snakeyaml</include>
@@ -488,6 +489,7 @@
         <include>org.apache.camel:camel-shiro-starter</include>
         <include>org.apache.camel:camel-sip-starter</include>
         <include>org.apache.camel:camel-sjms-starter</include>
+        <include>org.apache.camel:camel-sjms2-starter</include>
         <include>org.apache.camel:camel-slack-starter</include>
         <include>org.apache.camel:camel-smpp-starter</include>
         <include>org.apache.camel:camel-snakeyaml-starter</include>

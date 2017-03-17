@@ -66,15 +66,21 @@ with the following path and query parameters:
 
 #### Query Parameters (6 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| constraintValidatorFactory | producer |  | ConstraintValidatorFactory | To use a custom ConstraintValidatorFactory
-| group | producer | javax.validation.groups.Default | String | To use a custom validation group
-| messageInterpolator | producer |  | MessageInterpolator | To use a custom MessageInterpolator
-| traversableResolver | producer |  | TraversableResolver | To use a custom TraversableResolver
-| validationProviderResolver | producer |  | ValidationProviderResolver | To use a a custom ValidationProviderResolver
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| constraintValidatorFactory |  | ConstraintValidatorFactory | To use a custom ConstraintValidatorFactory
+
+| group | javax.validation.groups.Default | String | To use a custom validation group
+
+| messageInterpolator |  | MessageInterpolator | To use a custom MessageInterpolator
+
+| traversableResolver |  | TraversableResolver | To use a custom TraversableResolver
+
+| validationProviderResolver |  | ValidationProviderResolver | To use a a custom ValidationProviderResolver
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

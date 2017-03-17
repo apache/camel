@@ -61,23 +61,37 @@ with the following path and query parameters:
 
 #### Query Parameters (14 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| cacheContainer | common |  | BasicCacheContainer | Specifies the cache Container to connect
-| cacheName | common |  | String | Specifies the cache name
-| queryBuilder | common |  | InfinispanQueryBuilder | Specifies the query builder.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| clusteredListener | consumer | false | boolean | If true the listener will be installed for the entire cluster
-| customListener | consumer |  | InfinispanCustomListener | Returns the custom listener in use if provided
-| eventTypes | consumer |  | String | Specifies the set of event types to register by the consumer. Multiple event can be separated by comma. The possible event types are: CACHE_ENTRY_ACTIVATED CACHE_ENTRY_PASSIVATED CACHE_ENTRY_VISITED CACHE_ENTRY_LOADED CACHE_ENTRY_EVICTED CACHE_ENTRY_CREATED CACHE_ENTRY_REMOVED CACHE_ENTRY_MODIFIED TRANSACTION_COMPLETED TRANSACTION_REGISTERED CACHE_ENTRY_INVALIDATED DATA_REHASHED TOPOLOGY_CHANGED PARTITION_STATUS_CHANGED
-| sync | consumer | true | boolean | If true the consumer will receive notifications synchronously
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| command | producer | put | String | The operation to perform.
-| configurationUri | advanced |  | String | An implementation specific URI for the CacheManager
-| flags | advanced |  | String | A comma separated list of Flag to be applied by default on each cache invocation not applicable to remote caches.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| cacheContainer |  | BasicCacheContainer | Specifies the cache Container to connect
+
+| cacheName |  | String | Specifies the cache name
+
+| queryBuilder |  | InfinispanQueryBuilder | Specifies the query builder.
+ 4+^s| consumer
+| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| clusteredListener | false | boolean | If true the listener will be installed for the entire cluster
+
+| customListener |  | InfinispanCustomListener | Returns the custom listener in use if provided
+
+| eventTypes |  | String | Specifies the set of event types to register by the consumer. Multiple event can be separated by comma. The possible event types are: CACHE_ENTRY_ACTIVATED CACHE_ENTRY_PASSIVATED CACHE_ENTRY_VISITED CACHE_ENTRY_LOADED CACHE_ENTRY_EVICTED CACHE_ENTRY_CREATED CACHE_ENTRY_REMOVED CACHE_ENTRY_MODIFIED TRANSACTION_COMPLETED TRANSACTION_REGISTERED CACHE_ENTRY_INVALIDATED DATA_REHASHED TOPOLOGY_CHANGED PARTITION_STATUS_CHANGED
+
+| sync | true | boolean | If true the consumer will receive notifications synchronously
+ 4+^s| consumer (advanced)
+| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+ 4+^s| producer
+| command | put | String | The operation to perform.
+ 4+^s| advanced
+| configurationUri |  | String | An implementation specific URI for the CacheManager
+
+| flags |  | String | A comma separated list of Flag to be applied by default on each cache invocation not applicable to remote caches.
+
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

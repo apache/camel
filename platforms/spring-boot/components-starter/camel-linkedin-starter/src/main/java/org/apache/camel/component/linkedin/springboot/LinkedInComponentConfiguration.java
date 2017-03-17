@@ -115,7 +115,7 @@ public class LinkedInComponentConfiguration {
          * OAuth token retrieval or generation is not done until the first REST
          * call
          */
-        private Boolean lazyAuth;
+        private Boolean lazyAuth = true;
 
         public LinkedInApiName getApiName() {
             return apiName;

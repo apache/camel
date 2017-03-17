@@ -16,4 +16,5 @@
 #
 
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.apache.camel.component.hystrix.springboot.HystrixAutoConfiguration,\
 org.apache.camel.component.hystrix.springboot.HystrixMappingAutoConfiguration

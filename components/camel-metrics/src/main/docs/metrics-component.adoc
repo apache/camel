@@ -48,11 +48,13 @@ The Metrics component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| metricRegistry | advanced |  | MetricRegistry | To use a custom configured MetricRegistry.
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| advanced
+| metricRegistry |  | MetricRegistry | To use a custom configured MetricRegistry.
+
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -75,16 +77,23 @@ with the following path and query parameters:
 
 #### Query Parameters (7 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| action | producer |  | MetricsTimerAction | Action when using timer type
-| decrement | producer |  | Long | Decrement value when using counter type
-| increment | producer |  | Long | Increment value when using counter type
-| mark | producer |  | Long | Mark when using meter type
-| subject | producer |  | Object | Subject value when using gauge type
-| value | producer |  | Long | Value value when using histogram type
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| action |  | MetricsTimerAction | Action when using timer type
+
+| decrement |  | Long | Decrement value when using counter type
+
+| increment |  | Long | Increment value when using counter type
+
+| mark |  | Long | Mark when using meter type
+
+| subject |  | Object | Subject value when using gauge type
+
+| value |  | Long | Value value when using histogram type
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

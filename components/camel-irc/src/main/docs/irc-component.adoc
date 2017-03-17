@@ -61,33 +61,57 @@ with the following path and query parameters:
 
 #### Query Parameters (24 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| autoRejoin | common | true | boolean | Whether to auto re-join when being kicked
-| namesOnJoin | common | false | boolean | Sends NAMES command to channel after joining it. link onReply has to be true in order to process the result which will have the header value irc.num = '353'.
-| nickname | common |  | String | The nickname used in chat.
-| persistent | common | true | boolean | Use persistent messages.
-| realname | common |  | String | The IRC user's actual name.
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| colors | advanced | true | boolean | Whether or not the server supports color codes.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| onJoin | filter | true | boolean | Handle user join events.
-| onKick | filter | true | boolean | Handle kick events.
-| onMode | filter | true | boolean | Handle mode change events.
-| onNick | filter | true | boolean | Handle nickname change events.
-| onPart | filter | true | boolean | Handle user part events.
-| onPrivmsg | filter | true | boolean | Handle private message events.
-| onQuit | filter | true | boolean | Handle user quit events.
-| onReply | filter | false | boolean | Whether or not to handle general responses to commands or informational messages.
-| onTopic | filter | true | boolean | Handle topic change events.
-| nickPassword | security |  | String | Your IRC server nickname password.
-| password | security |  | String | The IRC server password.
-| sslContextParameters | security |  | SSLContextParameters | Used for configuring security using SSL. Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. This reference overrides any configured SSLContextParameters at the component level. Note that this setting overrides the trustManager option.
-| trustManager | security |  | SSLTrustManager | The trust manager used to verify the SSL server's certificate.
-| username | security |  | String | The IRC server user name.
+| Name | Default | Java Type | Description
+
+| autoRejoin | true | boolean | Whether to auto re-join when being kicked
+
+| namesOnJoin | false | boolean | Sends NAMES command to channel after joining it. link onReply has to be true in order to process the result which will have the header value irc.num = '353'.
+
+| nickname |  | String | The nickname used in chat.
+
+| persistent | true | boolean | Use persistent messages.
+
+| realname |  | String | The IRC user's actual name.
+ 4+^s| consumer
+| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+ 4+^s| consumer (advanced)
+| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+ 4+^s| advanced
+| colors | true | boolean | Whether or not the server supports color codes.
+
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+ 4+^s| filter
+| onJoin | true | boolean | Handle user join events.
+
+| onKick | true | boolean | Handle kick events.
+
+| onMode | true | boolean | Handle mode change events.
+
+| onNick | true | boolean | Handle nickname change events.
+
+| onPart | true | boolean | Handle user part events.
+
+| onPrivmsg | true | boolean | Handle private message events.
+
+| onQuit | true | boolean | Handle user quit events.
+
+| onReply | false | boolean | Whether or not to handle general responses to commands or informational messages.
+
+| onTopic | true | boolean | Handle topic change events.
+ 4+^s| security
+| nickPassword |  | String | Your IRC server nickname password.
+
+| password |  | String | The IRC server password.
+
+| sslContextParameters |  | SSLContextParameters | Used for configuring security using SSL. Reference to a org.apache.camel.util.jsse.SSLContextParameters in the Registry. This reference overrides any configured SSLContextParameters at the component level. Note that this setting overrides the trustManager option.
+
+| trustManager |  | SSLTrustManager | The trust manager used to verify the SSL server's certificate.
+
+| username |  | String | The IRC server user name.
 |=======================================================================
 // endpoint options: END
 

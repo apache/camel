@@ -13,6 +13,8 @@
   "description": "Something cool",
   "labels": [ "foo", "timer" ],
   "pattern": "From",
+  "inputDataType": "none",
+  "outputDataType": "none",
   "endpointOptions": [ "timerName", "period", "repeatCount" ],
   "endpointValues": {
     "fixedRate": true,

@@ -37,7 +37,6 @@ import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
 import org.apache.camel.impl.DefaultCamelContextNameStrategy;
 import org.apache.camel.model.FromDefinition;
-import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.NamespaceAware;
@@ -148,9 +147,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("jmxAgent", CamelJMXAgentDefinition.class, false, false);
         addBeanDefinitionParser("streamCaching", CamelStreamCachingStrategyDefinition.class, false, false);
         addBeanDefinitionParser("propertyPlaceholder", CamelPropertyPlaceholderDefinition.class, false, false);
-        addBeanDefinitionParser("hystrixConfiguration", HystrixConfigurationDefinition.class, false, false);
 
-        // errorhandler could be the sub element of camelContext or defined outside camelContext
+        // error handler could be the sub element of camelContext or defined outside camelContext
         BeanDefinitionParser errorHandlerParser = new ErrorHandlerDefinitionParser();
         registerParser("errorHandler", errorHandlerParser);
         parserMap.put("errorHandler", errorHandlerParser);
@@ -403,7 +401,9 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("threadPoolProfiles", factoryBean.getThreadPoolProfiles());
                 builder.addPropertyValue("beansFactory", factoryBean.getBeansFactory());
                 builder.addPropertyValue("beans", factoryBean.getBeans());
+                builder.addPropertyValue("defaultServiceCallConfiguration", factoryBean.getDefaultServiceCallConfiguration());
                 builder.addPropertyValue("serviceCallConfigurations", factoryBean.getServiceCallConfigurations());
+                builder.addPropertyValue("defaultHystrixConfiguration", factoryBean.getDefaultHystrixConfiguration());
                 builder.addPropertyValue("hystrixConfigurations", factoryBean.getHystrixConfigurations());
                 // add any depends-on
                 addDependsOn(factoryBean, builder);

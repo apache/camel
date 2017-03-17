@@ -43,11 +43,13 @@ The Freemarker component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| configuration | advanced |  | Configuration | To use an existing freemarker.template.Configuration instance as the configuration.
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| advanced
+| configuration |  | Configuration | To use an existing freemarker.template.Configuration instance as the configuration.
+
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -72,14 +74,19 @@ with the following path and query parameters:
 
 #### Query Parameters (5 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| configuration | producer |  | Configuration | Sets the Freemarker configuration to use
-| contentCache | producer | false | boolean | Sets whether to use resource content cache or not
-| encoding | producer |  | String | Sets the encoding to be used for loading the template file.
-| templateUpdateDelay | producer |  | int | Number of seconds the loaded template resource will remain in the cache.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| configuration |  | Configuration | Sets the Freemarker configuration to use
+
+| contentCache | false | boolean | Sets whether to use resource content cache or not
+
+| encoding |  | String | Sets the encoding to be used for loading the template file.
+
+| templateUpdateDelay |  | int | Number of seconds the loaded template resource will remain in the cache.
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

@@ -222,8 +222,10 @@ public class CamelAutoConfiguration {
     // Camel handles the lifecycle of this bean
     @ConditionalOnMissingBean(ProducerTemplate.class)
     ProducerTemplate producerTemplate(CamelContext camelContext,
-                                      CamelConfigurationProperties config) {
-        return camelContext.createProducerTemplate(config.getProducerTemplateCacheSize());
+                                      CamelConfigurationProperties config) throws Exception {
+        final ProducerTemplate producerTemplate = camelContext.createProducerTemplate(config.getProducerTemplateCacheSize());
+        camelContext.addService(producerTemplate);
+        return producerTemplate;
     }
 
     /**
@@ -233,8 +235,10 @@ public class CamelAutoConfiguration {
     // Camel handles the lifecycle of this bean
     @ConditionalOnMissingBean(ConsumerTemplate.class)
     ConsumerTemplate consumerTemplate(CamelContext camelContext,
-                                      CamelConfigurationProperties config) {
-        return camelContext.createConsumerTemplate(config.getConsumerTemplateCacheSize());
+                                      CamelConfigurationProperties config) throws Exception {
+        final ConsumerTemplate consumerTemplate = camelContext.createConsumerTemplate(config.getConsumerTemplateCacheSize());
+        camelContext.addService(consumerTemplate);
+        return consumerTemplate;
     }
 
     // SpringCamelContext integration

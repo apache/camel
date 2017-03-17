@@ -38,6 +38,7 @@
     <abdera-version>1.1.3</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.14.4</activemq-version>
+    <activemq-artemis-version>1.5.4</activemq-artemis-version>
     <aether-version>1.0.2.v20150114</aether-version>
     <ahc-version>2.0.30</ahc-version>
     <ant-bundle-version>1.7.0_6</ant-bundle-version>
@@ -45,7 +46,7 @@
     <antlr-runtime-bundle-version>3.5.2_1</antlr-runtime-bundle-version>
     <aopalliance-bundle-version>1.0_6</aopalliance-bundle-version>
     <apacheds-version>2.0.0-M23</apacheds-version>
-    <apache-drill-version>1.9.0</apache-drill-version>
+    <apache-drill-version>1.10.0</apache-drill-version>
     <apache-gora-version>0.6.1</apache-gora-version>
     <apache-mime4j-version>0.7.2</apache-mime4j-version>
     <aries-blueprint-api-version>1.0.1</aries-blueprint-api-version>
@@ -61,6 +62,7 @@
     <asciidoctorj-version>1.5.4.1</asciidoctorj-version>
     <asm-version>5.0.4</asm-version>
     <aspectj-version>1.8.10</aspectj-version>
+    <assertj-version>3.6.2</assertj-version>
     <asterisk-java-version>1.0.0-final</asterisk-java-version>
     <asterisk-java-bundle-version>1.0.0-final_1</asterisk-java-bundle-version>
     <atmos-client-version>2.2.2</atmos-client-version>
@@ -187,7 +189,7 @@
     <!-- embedmongo 1.50.2 do not work -->
     <embedmongo-version>1.50.1</embedmongo-version>
     <etcd4j-version>2.13.0</etcd4j-version>
-    <exec-maven-plugin-version>1.5.0</exec-maven-plugin-version>
+    <exec-maven-plugin-version>1.6.0</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
     <facebook4j-core-version>2.4.8</facebook4j-core-version>
     <facebook4j-core-bundle-version>2.4.8_1</facebook4j-core-bundle-version>
@@ -221,6 +223,7 @@
     <geronimo-jcdi-1.0-spec-version>1.0</geronimo-jcdi-1.0-spec-version>
     <geronimo-jcdi-1.1-spec-version>1.0</geronimo-jcdi-1.1-spec-version>
     <geronimo-jms-spec-version>1.1.1</geronimo-jms-spec-version>
+    <geronimo-jms2-spec-version>1.0-alpha-2</geronimo-jms2-spec-version>
     <geronimo-jpa2-spec-version>1.1</geronimo-jpa2-spec-version>
     <geronimo-jsp-spec-version>1.1</geronimo-jsp-spec-version>
     <geronimo-json-spec-version>1.0-alpha-1</geronimo-json-spec-version>
@@ -322,7 +325,7 @@
     <jboss-transaction-spi.version>7.5.1.Final</jboss-transaction-spi.version>
     <jboss-xnio-version>3.4.3.Final</jboss-xnio-version>
     <jcache-bundle-version>1.0.0_1</jcache-bundle-version>
-    <jclouds-version>2.0.0</jclouds-version>
+    <jclouds-version>2.0.1</jclouds-version>
     <!-- jclouds must use this guava version -->
     <jclouds-google-guava-version>16.0.1</jclouds-google-guava-version>
     <jclouds-google-guava-version-range>[16.0,17.0)</jclouds-google-guava-version-range>
@@ -334,7 +337,7 @@
     <jedis-client-bundle-version>2.8.1_1</jedis-client-bundle-version>
     <jersey-version>2.11</jersey-version>
     <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
-    <jetty92-version>9.2.19.v20160908</jetty92-version>
+    <jetty92-version>9.2.21.v20170120</jetty92-version>
     <!-- Jetty version 9.3.15+ contains binary incopatible API changes that break -->
     <!-- CXF's websocket support (< 3.1.11) and camel-atmosphere-websocket -->
     <jetty9-version>9.3.14.v20161028</jetty9-version>
@@ -344,6 +347,7 @@
     <jettison-version>1.3.8</jettison-version>
     <jgit-version>4.6.1.201703071140-r</jgit-version>
     <jgroups-version>4.0.1.Final</jgroups-version>
+    <jgroups-infinispan-version>3.6.13.Final</jgroups-infinispan-version>
     <libthrift-version>0.9.3</libthrift-version>
     <jibx-version>1.2.6</jibx-version>
     <jing-bundle-version>20030619_5</jing-bundle-version>
@@ -392,7 +396,7 @@
     <kafka-bundle-version>0.10.1.1_1</kafka-bundle-version>
     <karaf-version>2.4.4</karaf-version>
     <karaf3-version>3.0.8</karaf3-version>
-    <karaf4-version>4.0.8</karaf4-version>
+    <karaf4-version>4.1.0</karaf4-version>
     <kie-version>6.5.0.Final</kie-version>
     <krati-version>0.4.9</krati-version>
     <kubernetes-client-version>2.2.7</kubernetes-client-version>
@@ -422,7 +426,7 @@
     <maven-archetype-plugin-version>2.0</maven-archetype-plugin-version>
     <maven-archetype-packaging-version>2.0</maven-archetype-packaging-version>
     <maven-bundle-version>${maven-bundle-plugin-version}</maven-bundle-version>
-    <maven-bundle-plugin-version>3.2.0</maven-bundle-plugin-version>
+    <maven-bundle-plugin-version>3.3.0</maven-bundle-plugin-version>
     <maven-checkstyle-plugin-version>2.17</maven-checkstyle-plugin-version>
     <!-- AtomicException.java causes a problem with Checksyle > 6.6 due to
         https://github.com/checkstyle/checkstyle/issues/1903
@@ -1747,6 +1751,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-sjms</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-sjms2</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -3709,6 +3718,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
+        <artifactId>geronimo-jms_2.0_spec</artifactId>
+        <version>${geronimo-jms2-spec-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jpa_2.0_spec</artifactId>
         <version>${geronimo-jpa2-spec-version}</version>
       </dependency>
@@ -5140,6 +5154,21 @@
                   <version>${jaxb-version}</version>
                 </dependency>
               </dependencies>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>${maven-compiler-plugin-version}</version>
+              <configuration>
+                <source>${jdk.version}</source>
+                <target>${jdk.version}</target>
+                <maxmem>512M</maxmem>
+                <fork>true</fork>
+                <compilerArgs>
+                  <arg>-J--add-modules</arg>
+                  <arg>-Jjava.xml.bind</arg>
+                </compilerArgs>
+              </configuration>
             </plugin>
           </plugins>
         </pluginManagement>

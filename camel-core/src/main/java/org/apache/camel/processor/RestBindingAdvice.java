@@ -415,11 +415,22 @@ public class RestBindingAdvice implements CamelInternalProcessorAdvice<Map<Strin
         if (maxAge == null) {
             maxAge = RestConfiguration.CORS_ACCESS_CONTROL_MAX_AGE;
         }
+        String allowCredentials = corsHeaders != null ? corsHeaders.get("Access-Control-Allow-Credentials") : null;
+
+        // Restrict the origin if credentials are allowed.
+        // https://www.w3.org/TR/cors/ - section 6.1, point 3
+        String origin = exchange.getIn().getHeader("Origin", String.class);
+        if ("true".equalsIgnoreCase(allowCredentials) && "*".equals(allowOrigin) && origin != null) {
+            allowOrigin = origin;
+        }
 
         msg.setHeader("Access-Control-Allow-Origin", allowOrigin);
         msg.setHeader("Access-Control-Allow-Methods", allowMethods);
         msg.setHeader("Access-Control-Allow-Headers", allowHeaders);
         msg.setHeader("Access-Control-Max-Age", maxAge);
+        if (allowCredentials != null) {
+            msg.setHeader("Access-Control-Allow-Credentials", allowCredentials);
+        }
     }
 
 }

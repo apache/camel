@@ -1,0 +1,10 @@
+{
+  "properties": [
+    {
+      "defaultValue": true,
+      "name": "camel.component.sjms2.enabled",
+      "description": "Enable sjms2 component",
+      "type": "java.lang.Boolean"
+    }
+  ]
+}

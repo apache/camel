@@ -55,6 +55,7 @@ import org.restlet.data.CacheDirective;
 import org.restlet.data.ChallengeResponse;
 import org.restlet.data.ChallengeScheme;
 import org.restlet.data.CharacterSet;
+import org.restlet.data.ClientInfo;
 import org.restlet.data.Form;
 import org.restlet.data.Header;
 import org.restlet.data.MediaType;
@@ -278,15 +279,19 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
 
         // accept
         String accept = exchange.getIn().getHeader("Accept", String.class);
+        final ClientInfo clientInfo = request.getClientInfo();
+        final List<Preference<MediaType>> acceptedMediaTypesList = clientInfo.getAcceptedMediaTypes();
         if (accept != null) {
-            MediaType acceptedMediaType = exchange.getContext().getTypeConverter().tryConvertTo(MediaType.class, exchange, accept);
-            if (acceptedMediaType != null) {
-                request.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(acceptedMediaType));
+            final MediaType[] acceptedMediaTypes = exchange.getContext().getTypeConverter().tryConvertTo(MediaType[].class, exchange, accept);
+            for (final MediaType acceptedMediaType : acceptedMediaTypes) {
+                acceptedMediaTypesList.add(new Preference<MediaType>(acceptedMediaType));
             }
         }
-        MediaType acceptedMediaType = exchange.getIn().getHeader(Exchange.ACCEPT_CONTENT_TYPE, MediaType.class);
-        if (acceptedMediaType != null) {
-            request.getClientInfo().getAcceptedMediaTypes().add(new Preference<MediaType>(acceptedMediaType));
+        final MediaType[] acceptedMediaTypes = exchange.getIn().getHeader(Exchange.ACCEPT_CONTENT_TYPE, MediaType[].class);
+        if (acceptedMediaTypes != null) {
+            for (final MediaType acceptedMediaType : acceptedMediaTypes) {
+                acceptedMediaTypesList.add(new Preference<MediaType>(acceptedMediaType));
+            }
         }
 
     }

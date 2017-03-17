@@ -80,6 +80,19 @@ public class DefaultServiceCallProcessor extends ServiceSupport implements Async
     }
 
     // *************************************
+    // Properties
+    // *************************************
+
+    public LoadBalancer getLoadBalancer() {
+        return loadBalancer;
+    }
+
+    public Expression getExpression() {
+        return expression;
+    }
+
+
+    // *************************************
     // Lifecycle
     // *************************************
 
@@ -111,6 +124,7 @@ public class DefaultServiceCallProcessor extends ServiceSupport implements Async
     // *************************************
     // Processor
     // *************************************
+
 
     @Override
     public void process(Exchange exchange) throws Exception {

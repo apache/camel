@@ -21,6 +21,7 @@ import java.util.EventObject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 import io.opentracing.Span;
 import io.opentracing.Tracer;
@@ -66,7 +67,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
 
     private final OpenTracingEventNotifier eventNotifier = new OpenTracingEventNotifier();
     private final SpanManager spanManager = DefaultSpanManager.getInstance();
-    private Tracer tracer = GlobalTracer.get();
+    private Tracer tracer;
     private CamelContext camelContext;
 
     static {
@@ -134,6 +135,14 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
         }
 
         if (tracer == null) {
+            Set<Tracer> tracers = camelContext.getRegistry().findByType(Tracer.class);
+            if (tracers.size() == 1) {
+                tracer = tracers.iterator().next();
+            }
+        }
+
+        if (tracer == null) {
+            // fallback to the global tracer if no tracers are configured
             tracer = GlobalTracer.get();
         }
 
@@ -167,7 +176,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 SpanManager.ManagedSpan parent = spanManager.current();
                 SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
                 SpanBuilder spanBuilder = tracer.buildSpan(sd.getOperationName(ese.getExchange(), ese.getEndpoint()))
-                    .withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_CLIENT);
+                    .withTag(Tags.SPAN_KIND.getKey(), sd.getInitiatorSpanKind());
                 // Temporary workaround to avoid adding 'null' span as a parent
                 if (parent != null && parent.getSpan() != null) {
                     spanBuilder.asChildOf(parent.getSpan());
@@ -216,7 +225,7 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
             Span span = tracer.buildSpan(sd.getOperationName(exchange, route.getEndpoint()))
                 .asChildOf(tracer.extract(Format.Builtin.TEXT_MAP,
                     new CamelHeadersExtractAdapter(exchange.getIn().getHeaders())))
-                .withTag(Tags.SPAN_KIND.getKey(), Tags.SPAN_KIND_SERVER)
+                .withTag(Tags.SPAN_KIND.getKey(), sd.getReceiverSpanKind())
                 .start();
             sd.pre(span, exchange, route.getEndpoint());
             spanManager.activate(span);
