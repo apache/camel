@@ -18,6 +18,8 @@ package org.apache.camel.maven.packaging;
 
 import java.util.Collection;
 
+import com.google.common.base.CaseFormat;
+
 public final class StringHelper {
 
     private StringHelper() {
@@ -97,4 +99,76 @@ public final class StringHelper {
         return answer;
     }
 
+    /**
+     * To wrap long camel cased texts by words.
+     *
+     * @param option  the option which is camel cased.
+     * @param watermark a watermark to denote the size to cut after
+     * @param newLine the new line to use when breaking into a new line
+     */
+    public static String wrapCamelCaseWords(String option, int watermark, String newLine) {
+        String text = CaseFormat.UPPER_CAMEL.to(CaseFormat.LOWER_HYPHEN, option);
+        text = text.replace('-', ' ');
+        text = wrapWords(text, "\n", watermark, false);
+        text = text.replace(' ', '-');
+        text = CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_CAMEL, text);
+        text = text.replaceAll("\\n", newLine);
+        return text;
+    }
+
+    /**
+     * To wrap a big line by words.
+     *
+     * @param line the big line
+     * @param newLine the new line to use when breaking into a new line
+     * @param watermark a watermark to denote the size to cut after
+     * @param wrapLongWords whether to wrap long words
+     */
+    private static String wrapWords(String line, String newLine, int watermark, boolean wrapLongWords) {
+        if (line == null) {
+            return null;
+        } else {
+            if (newLine == null) {
+                newLine = System.lineSeparator();
+            }
+
+            if (watermark < 1) {
+                watermark = 1;
+            }
+
+            int inputLineLength = line.length();
+            int offset = 0;
+            StringBuilder sb = new StringBuilder(inputLineLength + 32);
+
+            while (inputLineLength - offset > watermark) {
+                if (line.charAt(offset) == 32) {
+                    ++offset;
+                } else {
+                    int spaceToWrapAt = line.lastIndexOf(32, watermark + offset);
+                    if (spaceToWrapAt >= offset) {
+                        sb.append(line.substring(offset, spaceToWrapAt));
+                        sb.append(newLine);
+                        offset = spaceToWrapAt + 1;
+                    } else if (wrapLongWords) {
+                        sb.append(line.substring(offset, watermark + offset));
+                        sb.append(newLine);
+                        offset += watermark;
+                    } else {
+                        spaceToWrapAt = line.indexOf(32, watermark + offset);
+                        if (spaceToWrapAt >= 0) {
+                            sb.append(line.substring(offset, spaceToWrapAt));
+                            sb.append(newLine);
+                            offset = spaceToWrapAt + 1;
+                        } else {
+                            sb.append(line.substring(offset));
+                            offset = inputLineLength;
+                        }
+                    }
+                }
+            }
+
+            sb.append(line.substring(offset));
+            return sb.toString();
+        }
+    }
 }

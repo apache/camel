@@ -16,6 +16,8 @@
  */
 package org.apache.camel.maven.packaging.model;
 
+import static org.apache.camel.maven.packaging.StringHelper.wrapCamelCaseWords;
+
 public class EndpointOptionModel {
 
     private String name;
@@ -179,6 +181,30 @@ public class EndpointOptionModel {
         } else {
             return javaType;
         }
+    }
+
+    public String getShortGroup() {
+        if (group.endsWith(" (advanced)")) {
+            return group.substring(0, group.length() - 11);
+        }
+        return group;
+    }
+
+    public String getShortDefaultValue(int watermark) {
+        String text = defaultValue;
+        if (text.endsWith("<T>")) {
+            text = text.substring(0, text.length() - 3);
+        } else if (text.endsWith("<T>>")) {
+            text = text.substring(0, text.length() - 4);
+        }
+
+        return wrapCamelCaseWords(text, watermark, " ");
+    }
+
+    public String getShortName(int watermark) {
+        String text = wrapCamelCaseWords(name, watermark, " ");
+        // ensure the option name starts with lower-case
+        return Character.toLowerCase(text.charAt(0)) + text.substring(1);
     }
 
 }

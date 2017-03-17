@@ -452,7 +452,8 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                 }
 
                 // skip unwanted methods as they are inherited from default component and are not intended for end users to configure
-                if ("setEndpointClass".equals(methodName) || "setCamelContext".equals(methodName) || "setEndpointHeaderFilterStrategy".equals(methodName)) {
+                if ("setEndpointClass".equals(methodName) || "setCamelContext".equals(methodName)
+                    || "setEndpointHeaderFilterStrategy".equals(methodName) || "setApplicationContext".equals(methodName)) {
                     continue;
                 }
 
