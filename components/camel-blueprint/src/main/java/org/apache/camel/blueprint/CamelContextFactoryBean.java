@@ -93,6 +93,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute
     private String messageHistory;
     @XmlAttribute
+    private String logEipMask;
+    @XmlAttribute
     private String logExhaustedMessageBody;
     @XmlAttribute
     private String streamCache = "false";
@@ -534,6 +536,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
+    }
+
+    public String getLogEipMask() {
+        return logEipMask;
+    }
+
+    public void setLogEipMask(String logEipMask) {
+        this.logEipMask = logEipMask;
     }
 
     public String getLogExhaustedMessageBody() {

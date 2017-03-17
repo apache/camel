@@ -101,6 +101,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String trace;
     @XmlAttribute @Metadata(defaultValue = "true")
     private String messageHistory;
+    @XmlAttribute @Metadata(defaultValue = "false")
+    private String logEipMask;
     @XmlAttribute
     private String logExhaustedMessageBody;
     @XmlAttribute
@@ -633,6 +635,17 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
      */
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
+    }
+
+    public String getLogEipMask() {
+        return logEipMask;
+    }
+
+    /**
+     * Sets whether security mask for Log EIP is enabled or not.
+     */
+    public void setLogEipMask(String logEipMask) {
+        this.logEipMask = logEipMask;
     }
 
     public String getLogExhaustedMessageBody() {
