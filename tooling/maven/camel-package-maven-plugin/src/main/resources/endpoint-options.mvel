@@ -6,16 +6,16 @@ with the following path and query parameters:
 
 #### Path Parameters (@{endpointPathOptions.size()} parameters):
 
-[width="100%",cols="2,^1,5,2",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Description | Type
-@foreach{row : endpointPathOptions}| **@{row.getShortName(25)}** | @{row.getShortDefaultValue(18)} | @{row.description} | @{row.getShortJavaType(25)}
+| Name | Description | Default | Type
+@foreach{row : endpointPathOptions}| **@{row.getShortName(30)}** | @{row.description} | @{row.getShortDefaultValue(20)} | @{row.getShortJavaType(25)}
 @end{}|=======================================================================
 
 #### Query Parameters (@{endpointOptions.size()} parameters):
 
-[width="100%",cols="2,^1,5,2",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Description | Type
-@foreach{row : endpointOptions}| **@{row.getShortName(25)}** (@{row.shortGroup}) | @{row.getShortDefaultValue(18)} | @{row.description} | @{row.getShortJavaType(25)}
+| Name | Description | Default | Type
+@foreach{row : endpointOptions}| **@{row.getShortName(30)}** (@{row.shortGroup}) | @{row.description} | @{row.getShortDefaultValue(20)} | @{row.getShortJavaType(25)}
 @end{}|=======================================================================
