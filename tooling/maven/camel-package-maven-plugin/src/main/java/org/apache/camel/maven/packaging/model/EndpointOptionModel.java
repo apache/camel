@@ -34,6 +34,9 @@ public class EndpointOptionModel {
     private String description;
     private String enumValues;
 
+    // special for documentation rendering
+    private boolean newGroup;
+
     public String getName() {
         return name;
     }
@@ -152,6 +155,14 @@ public class EndpointOptionModel {
 
     public void setEnumValues(String enumValues) {
         this.enumValues = enumValues;
+    }
+
+    public boolean isNewGroup() {
+        return newGroup;
+    }
+
+    public void setNewGroup(boolean newGroup) {
+        this.newGroup = newGroup;
     }
 
     public String getShortJavaType() {

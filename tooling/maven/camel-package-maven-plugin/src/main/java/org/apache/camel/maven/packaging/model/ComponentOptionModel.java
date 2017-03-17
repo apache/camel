@@ -31,6 +31,9 @@ public class ComponentOptionModel {
     private String defaultValue;
     private String enums;
 
+    // special for documentation rendering
+    private boolean newGroup;
+
     public String getName() {
         return name;
     }
@@ -125,6 +128,14 @@ public class ComponentOptionModel {
 
     public void setEnums(String enums) {
         this.enums = enums;
+    }
+
+    public boolean isNewGroup() {
+        return newGroup;
+    }
+
+    public void setNewGroup(boolean newGroup) {
+        this.newGroup = newGroup;
     }
 
     public String getShortJavaType() {
