@@ -11,15 +11,11 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 89 (9 deprecated)
+Number of Examples: 90 (9 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |=======================================================================
 | Example | Category | Description
-
-| link:camel-example-cassandra-kubernetes/ReadMe.md[Cassandra Kubernetes] (camel-example-cassandra-kubernetes) |  | Kubernetes Example Cassandra Kubernetes
-
-| link:camel-example-hazelcast-kubernetes/ReadMe.md[Hazelcast Kubernetes] (camel-example-hazelcast-kubernetes) |  | Kubernetes Example Hazelcast Kubernetes
 
 | link:camel-example-cdi/README.md[CDI] (camel-example-cdi) | Beginner | An example showing how to work with Camel and CDI for dependency injection
 
@@ -37,6 +33,8 @@ Number of Examples: 89 (9 deprecated)
   
 
 | link:camel-example-reload/Readme.md[Reload] (camel-example-reload) | Beginner | An example that live reloads routes when the XML file is updated
+
+| link:camel-example-rest-swagger/README.md[Rest Swagger] (camel-example-rest-swagger) | Beginner | 
 
 | link:camel-example-servlet-tomcat/README.md[Servlet Tomcat] (camel-example-servlet-tomcat) | Beginner | An example using Camel Servlet with Apache Tomcat
 
@@ -58,9 +56,13 @@ Number of Examples: 89 (9 deprecated)
 
 | link:camel-example-widget-gadget-xml/README.md[Widget Gadget XML] (camel-example-widget-gadget-xml) | Beginner | The widget and gadget example from the EIP book
 
+| link:camel-example-cassandra-kubernetes/ReadMe.md[Cassandra Kubernetes] (camel-example-cassandra-kubernetes) | Cloud | An example with Camel and Cassandra running on Kubernetes
+
 | link:camel-example-cdi-aws-s3/README.md[CDI AWS S3] (camel-example-cdi-aws-s3) | Cloud | AWS S3 CDI example
 
-| link:camel-example-cdi-kubernetes/README.md[CDI Kubernetes] (camel-example-cdi-kubernetes) | Cloud | Kubernetes CDI example
+| link:camel-example-cdi-kubernetes/README.md[CDI Kubernetes] (camel-example-cdi-kubernetes) | Cloud | An example running Camel CDI on Kubernetes
+
+| link:camel-example-hazelcast-kubernetes/ReadMe.md[Hazelcast Kubernetes] (camel-example-hazelcast-kubernetes) | Cloud | An example with Camel and Hazelcast running on Kubernetes
 
 | link:camel-example-cdi-cassandraql/README.md[CDI Cassandra] (camel-example-cdi-cassandraql) | Database | Cassandraql CDI example
 
