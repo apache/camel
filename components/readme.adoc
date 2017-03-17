@@ -2,7 +2,7 @@ Components
 ^^^^^^^^^^
 
 // components: START
-Number of Components: 223 in 177 JAR artifacts (13 deprecated)
+Number of Components: 224 in 178 JAR artifacts (13 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -508,6 +508,9 @@ Number of Components: 223 in 177 JAR artifacts (13 deprecated)
 
 | link:../camel-core/src/main/docs/rest-api-component.adoc[REST API] (camel-core) +
 `rest-api:path/contextIdPattern` | 2.16 | The rest-api component is used for providing Swagger API of the REST services which has been defined using the rest-dsl in Camel.
+
+| link:camel-rest-swagger/src/main/docs/rest-swagger-component.adoc[REST Swagger] (camel-rest-swagger) +
+`rest-swagger:specificationUri#operationId` | 2.19 | An awesome REST endpoint backed by Swagger specifications.
 
 | link:camel-restlet/src/main/docs/restlet-component.adoc[Restlet] (camel-restlet) +
 `restlet:protocol:host:port/uriPattern` | 2.0 | Component for consuming and producing Restful resources using Restlet.
