@@ -47,46 +47,32 @@ with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| address |  | String | The geo address which should be prefixed with address:
-| latlng |  | String | The geo latitude and longitude which should be prefixed with latlng:
+| Name | Description | Default | Type
+| **address** | The geo address which should be prefixed with address: |  | String
+| **latlng** | The geo latitude and longitude which should be prefixed with latlng: |  | String
 |=======================================================================
 
 #### Query Parameters (14 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| clientId |  | String | To use google premium with this client id
-
-| clientKey |  | String | To use google premium with this client key
-
-| headersOnly | false | boolean | Whether to only enrich the Exchange with headers and leave the body as-is.
-
-| language | en | String | The language to use.
- 4+^s| advanced
-| httpClientConfigurer |  | HttpClientConfigurer | Register a custom configuration strategy for new HttpClient instances created by producers or consumers such as to configure authentication mechanisms etc
-
-| httpConnectionManager |  | HttpConnectionManager | To use a custom HttpConnectionManager to manage connections
-
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
- 4+^s| proxy
-| proxyAuthDomain |  | String | Domain for proxy NTML authentication
-
-| proxyAuthHost |  | String | Optional host for proxy NTML authentication
-
-| proxyAuthMethod |  | String | Authentication method for proxy either as Basic Digest or NTLM.
-
-| proxyAuthPassword |  | String | Password for proxy authentication
-
-| proxyAuthUsername |  | String | Username for proxy authentication
-
-| proxyHost |  | String | The proxy host name
-
-| proxyPort |  | Integer | The proxy port number
+| Name | Description | Default | Type
+| **clientId** (producer) | To use google premium with this client id |  | String
+| **clientKey** (producer) | To use google premium with this client key |  | String
+| **headersOnly** (producer) | Whether to only enrich the Exchange with headers and leave the body as-is. | false | boolean
+| **language** (producer) | The language to use. | en | String
+| **httpClientConfigurer** (advanced) | Register a custom configuration strategy for new HttpClient instances created by producers or consumers such as to configure authentication mechanisms etc |  | HttpClientConfigurer
+| **httpConnectionManager** (advanced) | To use a custom HttpConnectionManager to manage connections |  | HttpConnectionManager
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **proxyAuthDomain** (proxy) | Domain for proxy NTML authentication |  | String
+| **proxyAuthHost** (proxy) | Optional host for proxy NTML authentication |  | String
+| **proxyAuthMethod** (proxy) | Authentication method for proxy either as Basic Digest or NTLM. |  | String
+| **proxyAuthPassword** (proxy) | Password for proxy authentication |  | String
+| **proxyAuthUsername** (proxy) | Username for proxy authentication |  | String
+| **proxyHost** (proxy) | The proxy host name |  | String
+| **proxyPort** (proxy) | The proxy port number |  | Integer
 |=======================================================================
 // endpoint options: END
 

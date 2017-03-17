@@ -48,13 +48,11 @@ The Metrics component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
- 4+^s| advanced
-| metricRegistry |  | MetricRegistry | To use a custom configured MetricRegistry.
-
-| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Description | Default | Type
+| **metricRegistry** (advanced) | To use a custom configured MetricRegistry. |  | MetricRegistry
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
 
@@ -68,32 +66,25 @@ with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| metricsType |  | MetricsType | *Required* Type of metrics
-| metricsName |  | String | *Required* Name of metrics
+| Name | Description | Default | Type
+| **metricsType** | *Required* Type of metrics |  | MetricsType
+| **metricsName** | *Required* Name of metrics |  | String
 |=======================================================================
 
 #### Query Parameters (7 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| action |  | MetricsTimerAction | Action when using timer type
-
-| decrement |  | Long | Decrement value when using counter type
-
-| increment |  | Long | Increment value when using counter type
-
-| mark |  | Long | Mark when using meter type
-
-| subject |  | Object | Subject value when using gauge type
-
-| value |  | Long | Value value when using histogram type
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **action** (producer) | Action when using timer type |  | MetricsTimerAction
+| **decrement** (producer) | Decrement value when using counter type |  | Long
+| **increment** (producer) | Increment value when using counter type |  | Long
+| **mark** (producer) | Mark when using meter type |  | Long
+| **subject** (producer) | Subject value when using gauge type |  | Object
+| **value** (producer) | Value value when using histogram type |  | Long
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

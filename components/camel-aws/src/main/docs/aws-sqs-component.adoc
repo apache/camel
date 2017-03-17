@@ -45,105 +45,61 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| queueNameOrArn |  | String | *Required* Queue name or ARN
+| Name | Description | Default | Type
+| **queueNameOrArn** | *Required* Queue name or ARN |  | String
 |=======================================================================
 
 #### Query Parameters (44 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| accessKey |  | String | Amazon AWS Access Key
-
-| amazonSQSClient |  | AmazonSQS | To use the AmazonSQS as client
-
-| amazonSQSEndpoint |  | String | The region with which the AWS-SQS client wants to work with. Only works if Camel creates the AWS-SQS client i.e. if you explicitly set amazonSQSClient then this setting will have no effect. You would have to set it on the client you create directly
-
-| headerFilterStrategy |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to map headers to/from Camel.
-
-| queueOwnerAWSAccountId |  | String | Specify the queue owner aws account id when you need to connect the queue with different account owner.
-
-| region |  | String | Specify the queue region which could be used with queueOwnerAWSAccountId to build the service URL.
-
-| secretKey |  | String | Amazon AWS Secret Key
- 4+^s| consumer
-| attributeNames |  | String | A list of attribute names to receive when consuming. Multiple names can be separated by comma.
-
-| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| concurrentConsumers | 1 | int | Allows you to use multiple threads to poll the sqs queue to increase throughput
-
-| defaultVisibilityTimeout |  | Integer | The default visibility timeout (in seconds)
-
-| deleteAfterRead | true | boolean | Delete message from SQS after it has been read
-
-| deleteIfFiltered | true | boolean | Whether or not to send the DeleteMessage to the SQS queue if an exchange fails to get through a filter. If 'false' and exchange does not make it through a Camel filter upstream in the route then don't send DeleteMessage.
-
-| extendMessageVisibility | false | boolean | If enabled then a scheduled background task will keep extending the message visibility on SQS. This is needed if it takes a long time to process the message. If set to true defaultVisibilityTimeout must be set. See details at Amazon docs.
-
-| maxMessagesPerPoll |  | int | Gets the maximum number of messages as a limit to poll at each polling. Is default unlimited but use 0 or negative number to disable it as unlimited.
-
-| messageAttributeNames |  | String | A list of message attribute names to receive when consuming. Multiple names can be separated by comma.
-
-| sendEmptyMessageWhenIdle | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-
-| visibilityTimeout |  | Integer | The duration (in seconds) that the received messages are hidden from subsequent retrieve requests after being retrieved by a ReceiveMessage request to set in the com.amazonaws.services.sqs.model.SetQueueAttributesRequest. This only make sense if its different from defaultVisibilityTimeout. It changes the queue visibility timeout attribute permanently.
-
-| waitTimeSeconds |  | Integer | Duration in seconds (0 to 20) that the ReceiveMessage action call will wait until a message is in the queue to include in the response.
- 4+^s| consumer (advanced)
-| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-
-| pollStrategy |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
- 4+^s| producer
-| delaySeconds |  | Integer | Delay sending messages for a number of seconds.
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
- 4+^s| scheduler
-| backoffErrorThreshold |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
-
-| backoffIdleThreshold |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
-
-| backoffMultiplier |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
-
-| delay | 500 | long | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-
-| greedy | false | boolean | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages.
-
-| initialDelay | 1000 | long | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-
-| runLoggingLevel | TRACE | LoggingLevel | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.
-
-| scheduledExecutorService |  | ScheduledExecutorService | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool.
-
-| scheduler | none | ScheduledPollConsumerScheduler | To use a cron scheduler from either camel-spring or camel-quartz2 component
-
-| schedulerProperties |  | Map | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler.
-
-| startScheduler | true | boolean | Whether the scheduler should be auto started.
-
-| timeUnit | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
-
-| useFixedDelay | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
- 4+^s| proxy
-| proxyHost |  | String | To define a proxy host when instantiating the SQS client
-
-| proxyPort |  | Integer | To define a proxy port when instantiating the SQS client
- 4+^s| queue
-| maximumMessageSize |  | Integer | The maximumMessageSize (in bytes) an SQS message can contain for this queue.
-
-| messageRetentionPeriod |  | Integer | The messageRetentionPeriod (in seconds) a message will be retained by SQS for this queue.
-
-| policy |  | String | The policy for this queue
-
-| receiveMessageWaitTimeSeconds |  | Integer | If you do not specify WaitTimeSeconds in the request the queue attribute ReceiveMessageWaitTimeSeconds is used to determine how long to wait.
-
-| redrivePolicy |  | String | Specify the policy that send message to DeadLetter queue. See detail at Amazon docs.
+| Name | Description | Default | Type
+| **accessKey** (common) | Amazon AWS Access Key |  | String
+| **amazonSQSClient** (common) | To use the AmazonSQS as client |  | AmazonSQS
+| **amazonSQSEndpoint** (common) | The region with which the AWS-SQS client wants to work with. Only works if Camel creates the AWS-SQS client i.e. if you explicitly set amazonSQSClient then this setting will have no effect. You would have to set it on the client you create directly |  | String
+| **headerFilterStrategy** (common) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
+| **queueOwnerAWSAccountId** (common) | Specify the queue owner aws account id when you need to connect the queue with different account owner. |  | String
+| **region** (common) | Specify the queue region which could be used with queueOwnerAWSAccountId to build the service URL. |  | String
+| **secretKey** (common) | Amazon AWS Secret Key |  | String
+| **attributeNames** (consumer) | A list of attribute names to receive when consuming. Multiple names can be separated by comma. |  | String
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **concurrentConsumers** (consumer) | Allows you to use multiple threads to poll the sqs queue to increase throughput | 1 | int
+| **defaultVisibilityTimeout** (consumer) | The default visibility timeout (in seconds) |  | Integer
+| **deleteAfterRead** (consumer) | Delete message from SQS after it has been read | true | boolean
+| **deleteIfFiltered** (consumer) | Whether or not to send the DeleteMessage to the SQS queue if an exchange fails to get through a filter. If 'false' and exchange does not make it through a Camel filter upstream in the route then don't send DeleteMessage. | true | boolean
+| **extendMessageVisibility** (consumer) | If enabled then a scheduled background task will keep extending the message visibility on SQS. This is needed if it takes a long time to process the message. If set to true defaultVisibilityTimeout must be set. See details at Amazon docs. | false | boolean
+| **maxMessagesPerPoll** (consumer) | Gets the maximum number of messages as a limit to poll at each polling. Is default unlimited but use 0 or negative number to disable it as unlimited. |  | int
+| **messageAttributeNames** (consumer) | A list of message attribute names to receive when consuming. Multiple names can be separated by comma. |  | String
+| **sendEmptyMessageWhenIdle** (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean
+| **visibilityTimeout** (consumer) | The duration (in seconds) that the received messages are hidden from subsequent retrieve requests after being retrieved by a ReceiveMessage request to set in the com.amazonaws.services.sqs.model.SetQueueAttributesRequest. This only make sense if its different from defaultVisibilityTimeout. It changes the queue visibility timeout attribute permanently. |  | Integer
+| **waitTimeSeconds** (consumer) | Duration in seconds (0 to 20) that the ReceiveMessage action call will wait until a message is in the queue to include in the response. |  | Integer
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **pollStrategy** (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| **delaySeconds** (producer) | Delay sending messages for a number of seconds. |  | Integer
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **backoffErrorThreshold** (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffIdleThreshold** (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffMultiplier** (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| **delay** (scheduler) | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 500 | long
+| **greedy** (scheduler) | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages. | false | boolean
+| **initialDelay** (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 1000 | long
+| **runLoggingLevel** (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| **scheduledExecutorService** (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| **scheduler** (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| **schedulerProperties** (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler. |  | Map
+| **startScheduler** (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| **timeUnit** (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| **useFixedDelay** (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| **proxyHost** (proxy) | To define a proxy host when instantiating the SQS client |  | String
+| **proxyPort** (proxy) | To define a proxy port when instantiating the SQS client |  | Integer
+| **maximumMessageSize** (queue) | The maximumMessageSize (in bytes) an SQS message can contain for this queue. |  | Integer
+| **messageRetentionPeriod** (queue) | The messageRetentionPeriod (in seconds) a message will be retained by SQS for this queue. |  | Integer
+| **policy** (queue) | The policy for this queue |  | String
+| **receiveMessageWaitTime Seconds** (queue) | If you do not specify WaitTimeSeconds in the request the queue attribute ReceiveMessageWaitTimeSeconds is used to determine how long to wait. |  | Integer
+| **redrivePolicy** (queue) | Specify the policy that send message to DeadLetter queue. See detail at Amazon docs. |  | String
 |=======================================================================
 // endpoint options: END
 

@@ -41,113 +41,65 @@ with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| protocol |  | String | *Required* The protocol to use
-| hostname |  | String | *Required* The hostname to use
+| Name | Description | Default | Type
+| **protocol** | *Required* The protocol to use |  | String
+| **hostname** | *Required* The hostname to use |  | String
 |=======================================================================
 
 #### Query Parameters (48 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| bucket |  | String | The bucket to use
-
-| key |  | String | The key to use
-
-| port | 8091 | int | The port number to use
- 4+^s| consumer
-| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| consumerProcessedStrategy | none | String | Define the consumer Processed strategy to use
-
-| descending | false | boolean | Define if this operation is descending or not
-
-| designDocumentName | beer | String | The design document name to use
-
-| limit | -1 | int | The output limit to use
-
-| rangeEndKey |  | String | Define a range for the end key
-
-| rangeStartKey |  | String | Define a range for the start key
-
-| sendEmptyMessageWhenIdle | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
-
-| skip | -1 | int | Define the skip to use
-
-| viewName | brewery_beers | String | The view name to use
- 4+^s| consumer (advanced)
-| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-
-| pollStrategy |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
- 4+^s| producer
-| autoStartIdForInserts | false | boolean | Define if we want an autostart Id when we are doing an insert operation
-
-| operation | CCB_PUT | String | The operation to do
-
-| persistTo | 0 | int | Where to persist the data
-
-| producerRetryAttempts | 2 | int | Define the number of retry attempts
-
-| producerRetryPause | 5000 | int | Define the retry pause between different attempts
-
-| replicateTo | 0 | int | Where to replicate the data
-
-| startingIdForInsertsFrom |  | long | Define the starting Id where we are doing an insert operation
- 4+^s| advanced
-| additionalHosts |  | String | The additional hosts
-
-| maxReconnectDelay | 30000 | long | Define the max delay during a reconnection
-
-| obsPollInterval | 400 | long | Define the observation polling interval
-
-| obsTimeout | -1 | long | Define the observation timeout
-
-| opQueueMaxBlockTime | 10000 | long | Define the max time an operation can be in queue blocked
-
-| opTimeOut | 2500 | long | Define the operation timeout
-
-| readBufferSize | 16384 | int | Define the buffer size
-
-| shouldOptimize | false | boolean | Define if we want to use optimization or not where possible
-
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-
-| timeoutExceptionThreshold | 998 | int | Define the threshold for throwing a timeout Exception
- 4+^s| scheduler
-| backoffErrorThreshold |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
-
-| backoffIdleThreshold |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
-
-| backoffMultiplier |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
-
-| delay | 500 | long | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-
-| greedy | false | boolean | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages.
-
-| initialDelay | 1000 | long | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-
-| runLoggingLevel | TRACE | LoggingLevel | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.
-
-| scheduledExecutorService |  | ScheduledExecutorService | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool.
-
-| scheduler | none | ScheduledPollConsumerScheduler | To use a cron scheduler from either camel-spring or camel-quartz2 component
-
-| schedulerProperties |  | Map | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler.
-
-| startScheduler | true | boolean | Whether the scheduler should be auto started.
-
-| timeUnit | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
-
-| useFixedDelay | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
- 4+^s| security
-| password |  | String | The password to use
-
-| username |  | String | The username to use
+| Name | Description | Default | Type
+| **bucket** (common) | The bucket to use |  | String
+| **key** (common) | The key to use |  | String
+| **port** (common) | The port number to use | 8091 | int
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **consumerProcessedStrategy** (consumer) | Define the consumer Processed strategy to use | none | String
+| **descending** (consumer) | Define if this operation is descending or not | false | boolean
+| **designDocumentName** (consumer) | The design document name to use | beer | String
+| **limit** (consumer) | The output limit to use | -1 | int
+| **rangeEndKey** (consumer) | Define a range for the end key |  | String
+| **rangeStartKey** (consumer) | Define a range for the start key |  | String
+| **sendEmptyMessageWhenIdle** (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean
+| **skip** (consumer) | Define the skip to use | -1 | int
+| **viewName** (consumer) | The view name to use | brewery_beers | String
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **pollStrategy** (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| **autoStartIdForInserts** (producer) | Define if we want an autostart Id when we are doing an insert operation | false | boolean
+| **operation** (producer) | The operation to do | CCB_PUT | String
+| **persistTo** (producer) | Where to persist the data | 0 | int
+| **producerRetryAttempts** (producer) | Define the number of retry attempts | 2 | int
+| **producerRetryPause** (producer) | Define the retry pause between different attempts | 5000 | int
+| **replicateTo** (producer) | Where to replicate the data | 0 | int
+| **startingIdForInsertsFrom** (producer) | Define the starting Id where we are doing an insert operation |  | long
+| **additionalHosts** (advanced) | The additional hosts |  | String
+| **maxReconnectDelay** (advanced) | Define the max delay during a reconnection | 30000 | long
+| **obsPollInterval** (advanced) | Define the observation polling interval | 400 | long
+| **obsTimeout** (advanced) | Define the observation timeout | -1 | long
+| **opQueueMaxBlockTime** (advanced) | Define the max time an operation can be in queue blocked | 10000 | long
+| **opTimeOut** (advanced) | Define the operation timeout | 2500 | long
+| **readBufferSize** (advanced) | Define the buffer size | 16384 | int
+| **shouldOptimize** (advanced) | Define if we want to use optimization or not where possible | false | boolean
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **timeoutExceptionThreshold** (advanced) | Define the threshold for throwing a timeout Exception | 998 | int
+| **backoffErrorThreshold** (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffIdleThreshold** (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffMultiplier** (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| **delay** (scheduler) | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 500 | long
+| **greedy** (scheduler) | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages. | false | boolean
+| **initialDelay** (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 1000 | long
+| **runLoggingLevel** (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| **scheduledExecutorService** (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| **scheduler** (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| **schedulerProperties** (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler. |  | Map
+| **startScheduler** (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| **timeUnit** (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| **useFixedDelay** (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| **password** (security) | The password to use |  | String
+| **username** (security) | The username to use |  | String
 |=======================================================================
 // endpoint options: END

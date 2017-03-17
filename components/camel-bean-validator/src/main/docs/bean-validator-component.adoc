@@ -58,29 +58,23 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| label |  | String | *Required* Where label is an arbitrary text value describing the endpoint
+| Name | Description | Default | Type
+| **label** | *Required* Where label is an arbitrary text value describing the endpoint |  | String
 |=======================================================================
 
 #### Query Parameters (6 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| constraintValidatorFactory |  | ConstraintValidatorFactory | To use a custom ConstraintValidatorFactory
-
-| group | javax.validation.groups.Default | String | To use a custom validation group
-
-| messageInterpolator |  | MessageInterpolator | To use a custom MessageInterpolator
-
-| traversableResolver |  | TraversableResolver | To use a custom TraversableResolver
-
-| validationProviderResolver |  | ValidationProviderResolver | To use a a custom ValidationProviderResolver
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **constraintValidatorFactory** (producer) | To use a custom ConstraintValidatorFactory |  | ConstraintValidator Factory
+| **group** (producer) | To use a custom validation group | javax.validation.groups.Default | String
+| **messageInterpolator** (producer) | To use a custom MessageInterpolator |  | MessageInterpolator
+| **traversableResolver** (producer) | To use a custom TraversableResolver |  | TraversableResolver
+| **validationProviderResolver** (producer) | To use a a custom ValidationProviderResolver |  | ValidationProvider Resolver
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

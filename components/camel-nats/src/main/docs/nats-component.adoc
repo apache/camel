@@ -46,61 +46,39 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| servers |  | String | *Required* URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers.
+| Name | Description | Default | Type
+| **servers** | *Required* URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers. |  | String
 |=======================================================================
 
 #### Query Parameters (22 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| flushConnection | false | boolean | Define if we want to flush connection or not
-
-| flushTimeout | 1000 | int | Set the flush timeout
-
-| maxReconnectAttempts | 3 | int | Max reconnection attempts
-
-| noRandomizeServers | false | boolean | Whether or not randomizing the order of servers for the connection attempts
-
-| pedantic | false | boolean | Whether or not running in pedantic mode (this affects performace)
-
-| pingInterval | 4000 | int | Ping interval to be aware if connection is still alive (in milliseconds)
-
-| reconnect | true | boolean | Whether or not using reconnection feature
-
-| reconnectTimeWait | 2000 | int | Waiting time before attempts reconnection (in milliseconds)
-
-| topic |  | String | *Required* The name of topic we want to use
-
-| verbose | false | boolean | Whether or not running in verbose mode
- 4+^s| consumer
-| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| maxMessages |  | String | Stop receiving messages from a topic we are subscribing to after maxMessages
-
-| poolSize | 10 | int | Consumer pool size
-
-| queueName |  | String | The Queue name if we are using nats for a queue configuration
- 4+^s| consumer (advanced)
-| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
- 4+^s| producer
-| replySubject |  | String | the subject to which subscribers should send response
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
- 4+^s| security
-| secure | false | boolean | Set secure option indicating TLS is required
-
-| ssl | false | boolean | Whether or not using SSL
-
-| sslContextParameters |  | SSLContextParameters | To configure security using SSLContextParameters
-
-| tlsDebug | false | boolean | TLS Debug it will add additional console output
+| Name | Description | Default | Type
+| **flushConnection** (common) | Define if we want to flush connection or not | false | boolean
+| **flushTimeout** (common) | Set the flush timeout | 1000 | int
+| **maxReconnectAttempts** (common) | Max reconnection attempts | 3 | int
+| **noRandomizeServers** (common) | Whether or not randomizing the order of servers for the connection attempts | false | boolean
+| **pedantic** (common) | Whether or not running in pedantic mode (this affects performace) | false | boolean
+| **pingInterval** (common) | Ping interval to be aware if connection is still alive (in milliseconds) | 4000 | int
+| **reconnect** (common) | Whether or not using reconnection feature | true | boolean
+| **reconnectTimeWait** (common) | Waiting time before attempts reconnection (in milliseconds) | 2000 | int
+| **topic** (common) | *Required* The name of topic we want to use |  | String
+| **verbose** (common) | Whether or not running in verbose mode | false | boolean
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **maxMessages** (consumer) | Stop receiving messages from a topic we are subscribing to after maxMessages |  | String
+| **poolSize** (consumer) | Consumer pool size | 10 | int
+| **queueName** (consumer) | The Queue name if we are using nats for a queue configuration |  | String
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **replySubject** (producer) | the subject to which subscribers should send response |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **secure** (security) | Set secure option indicating TLS is required | false | boolean
+| **ssl** (security) | Whether or not using SSL | false | boolean
+| **sslContextParameters** (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+| **tlsDebug** (security) | TLS Debug it will add additional console output | false | boolean
 |=======================================================================
 // endpoint options: END
 

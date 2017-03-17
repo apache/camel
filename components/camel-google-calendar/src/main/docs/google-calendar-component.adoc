@@ -41,15 +41,12 @@ The Google Calendar component supports 3 options which are listed below.
 
 
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
- 4+^s| common
-| configuration |  | GoogleCalendarConfiguration | To use the shared configuration
- 4+^s| advanced
-| clientFactory |  | GoogleCalendarClientFactory | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleCalendarClientFactory
-
-| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Description | Default | Type
+| **configuration** (common) | To use the shared configuration |  | GoogleCalendar Configuration
+| **clientFactory** (advanced) | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleCalendarClientFactory |  | GoogleCalendarClient Factory
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
 
@@ -69,46 +66,32 @@ with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| apiName |  | GoogleCalendarApiName | *Required* What kind of operation to perform
-| methodName |  | String | *Required* What sub operation to use for the selected operation
+| Name | Description | Default | Type
+| **apiName** | *Required* What kind of operation to perform |  | GoogleCalendarApiName
+| **methodName** | *Required* What sub operation to use for the selected operation |  | String
 |=======================================================================
 
 #### Query Parameters (14 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| accessToken |  | String | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage.
-
-| applicationName |  | String | Google calendar application name. Example would be camel-google-calendar/1.0
-
-| clientId |  | String | Client ID of the calendar application
-
-| clientSecret |  | String | Client secret of the calendar application
-
-| emailAddress |  | String | The emailAddress of the Google Service Account.
-
-| inBody |  | String | Sets the name of a parameter to be passed in the exchange In Body
-
-| p12FileName |  | String | The name of the p12 file which has the private key to use with the Google Service Account.
-
-| refreshToken |  | String | OAuth 2 refresh token. Using this the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived.
-
-| scopes | https://www.googleapis.com/auth/calendar | String | Specifies the level of permissions you want a calendar application to have to a user account. You can separate multiple scopes by comma. See https://developers.google.com/google-apps/calendar/auth for more info.
-
-| user |  | String | The email address of the user the application is trying to impersonate in the service account flow
- 4+^s| consumer
-| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
- 4+^s| consumer (advanced)
-| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **accessToken** (common) | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
+| **applicationName** (common) | Google calendar application name. Example would be camel-google-calendar/1.0 |  | String
+| **clientId** (common) | Client ID of the calendar application |  | String
+| **clientSecret** (common) | Client secret of the calendar application |  | String
+| **emailAddress** (common) | The emailAddress of the Google Service Account. |  | String
+| **inBody** (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
+| **p12FileName** (common) | The name of the p12 file which has the private key to use with the Google Service Account. |  | String
+| **refreshToken** (common) | OAuth 2 refresh token. Using this the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
+| **scopes** (common) | Specifies the level of permissions you want a calendar application to have to a user account. You can separate multiple scopes by comma. See https://developers.google.com/google-apps/calendar/auth for more info. | https://www.googleapis.com/auth/calendar | String
+| **user** (common) | The email address of the user the application is trying to impersonate in the service account flow |  | String
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

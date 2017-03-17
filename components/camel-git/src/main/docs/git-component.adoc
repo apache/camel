@@ -44,43 +44,30 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| localPath |  | String | *Required* Local repository path
+| Name | Description | Default | Type
+| **localPath** | *Required* Local repository path |  | String
 |=======================================================================
 
 #### Query Parameters (13 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| branchName |  | String | The branch name to work on
-
-| password |  | String | Remote repository password
-
-| remoteName |  | String | The remote repository name to use in particular operation like pull
-
-| remotePath |  | String | The remote repository path
-
-| tagName |  | String | The tag name to work on
-
-| username |  | String | Remote repository username
- 4+^s| consumer
-| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| type |  | GitType | The consumer type
- 4+^s| consumer (advanced)
-| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
- 4+^s| producer
-| allowEmpty | true | boolean | The flag to manage empty git commits
-
-| operation |  | String | The operation to do on the repository
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **branchName** (common) | The branch name to work on |  | String
+| **password** (common) | Remote repository password |  | String
+| **remoteName** (common) | The remote repository name to use in particular operation like pull |  | String
+| **remotePath** (common) | The remote repository path |  | String
+| **tagName** (common) | The tag name to work on |  | String
+| **username** (common) | Remote repository username |  | String
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **type** (consumer) | The consumer type |  | GitType
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **allowEmpty** (producer) | The flag to manage empty git commits | true | boolean
+| **operation** (producer) | The operation to do on the repository |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

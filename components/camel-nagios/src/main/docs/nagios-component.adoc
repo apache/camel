@@ -42,13 +42,11 @@ The Nagios component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
- 4+^s| advanced
-| configuration |  | NagiosConfiguration | To use a shared NagiosConfiguration
-
-| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Description | Default | Type
+| **configuration** (advanced) | To use a shared NagiosConfiguration |  | NagiosConfiguration
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
 
@@ -67,30 +65,24 @@ with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| host |  | String | *Required* This is the address of the Nagios host where checks should be send.
-| port |  | int | *Required* The port number of the host.
+| Name | Description | Default | Type
+| **host** | *Required* This is the address of the Nagios host where checks should be send. |  | String
+| **port** | *Required* The port number of the host. |  | int
 |=======================================================================
 
 #### Query Parameters (6 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| connectionTimeout | 5000 | int | Connection timeout in millis.
-
-| sendSync | true | boolean | Whether or not to use synchronous when sending a passive check. Setting it to false will allow Camel to continue routing the message and the passive check message will be send asynchronously.
-
-| timeout | 5000 | int | Sending timeout in millis.
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
- 4+^s| security
-| encryptionMethod |  | NagiosEncryptionMethod | To specify an encryption method.
-
-| password |  | String | Password to be authenticated when sending checks to Nagios.
+| Name | Description | Default | Type
+| **connectionTimeout** (producer) | Connection timeout in millis. | 5000 | int
+| **sendSync** (producer) | Whether or not to use synchronous when sending a passive check. Setting it to false will allow Camel to continue routing the message and the passive check message will be send asynchronously. | true | boolean
+| **timeout** (producer) | Sending timeout in millis. | 5000 | int
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **encryptionMethod** (security) | To specify an encryption method. |  | NagiosEncryptionMethod
+| **password** (security) | Password to be authenticated when sending checks to Nagios. |  | String
 |=======================================================================
 // endpoint options: END
 

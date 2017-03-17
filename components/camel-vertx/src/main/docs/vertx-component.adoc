@@ -40,23 +40,16 @@ The Vert.x component supports 7 options which are listed below.
 
 
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
- 4+^s| advanced
-| vertxFactory |  | VertxFactory | To use a custom VertxFactory implementation
- 4+^s| common
-| host |  | String | Hostname for creating an embedded clustered EventBus
-
-| port |  | int | Port for creating an embedded clustered EventBus
-
-| vertxOptions |  | VertxOptions | Options to use for creating vertx
-
-| vertx |  | Vertx | To use the given vertx EventBus instead of creating a new embedded EventBus
-
-| timeout | 60 | int | Timeout in seconds to wait for clustered Vertx EventBus to be ready. The default value is 60.
- 4+^s| advanced
-| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Description | Default | Type
+| **vertxFactory** (advanced) | To use a custom VertxFactory implementation |  | VertxFactory
+| **host** (common) | Hostname for creating an embedded clustered EventBus |  | String
+| **port** (common) | Port for creating an embedded clustered EventBus |  | int
+| **vertxOptions** (common) | Options to use for creating vertx |  | VertxOptions
+| **vertx** (common) | To use the given vertx EventBus instead of creating a new embedded EventBus |  | Vertx
+| **timeout** (common) | Timeout in seconds to wait for clustered Vertx EventBus to be ready. The default value is 60. | 60 | int
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
 
@@ -72,27 +65,22 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| address |  | String | *Required* Sets the event bus address used to communicate
+| Name | Description | Default | Type
+| **address** | *Required* Sets the event bus address used to communicate |  | String
 |=======================================================================
 
 #### Query Parameters (5 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| pubSub |  | Boolean | Whether to use publish/subscribe instead of point to point when sending to a vertx endpoint.
- 4+^s| consumer
-| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
- 4+^s| consumer (advanced)
-| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **pubSub** (common) | Whether to use publish/subscribe instead of point to point when sending to a vertx endpoint. |  | Boolean
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

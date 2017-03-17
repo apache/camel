@@ -67,13 +67,11 @@ The SQL StoredProcedure component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
- 4+^s| producer
-| dataSource |  | DataSource | Sets the DataSource to use to communicate with the database.
- 4+^s| advanced
-| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Description | Default | Type
+| **dataSource** (producer) | Sets the DataSource to use to communicate with the database. |  | DataSource
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
 
@@ -89,29 +87,23 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| template |  | String | *Required* Sets the StoredProcedure template to perform
+| Name | Description | Default | Type
+| **template** | *Required* Sets the StoredProcedure template to perform |  | String
 |=======================================================================
 
 #### Query Parameters (6 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| batch | false | boolean | Enables or disables batch mode
-
-| dataSource |  | DataSource | Sets the DataSource to use to communicate with the database.
-
-| noop | false | boolean | If set will ignore the results of the template and use the existing IN message as the OUT message for the continuation of processing
-
-| outputHeader |  | String | Store the template result in a header instead of the message body. By default outputHeader == null and the template result is stored in the message body any existing content in the message body is discarded. If outputHeader is set the value is used as the name of the header to store the template result and the original message body is preserved.
-
-| useMessageBodyForTemplate | false | boolean | Whether to use the message body as the template and then headers for parameters. If this option is enabled then the template in the uri is not used.
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **batch** (producer) | Enables or disables batch mode | false | boolean
+| **dataSource** (producer) | Sets the DataSource to use to communicate with the database. |  | DataSource
+| **noop** (producer) | If set will ignore the results of the template and use the existing IN message as the OUT message for the continuation of processing | false | boolean
+| **outputHeader** (producer) | Store the template result in a header instead of the message body. By default outputHeader == null and the template result is stored in the message body any existing content in the message body is discarded. If outputHeader is set the value is used as the name of the header to store the template result and the original message body is preserved. |  | String
+| **useMessageBodyForTemplate** (producer) | Whether to use the message body as the template and then headers for parameters. If this option is enabled then the template in the uri is not used. | false | boolean
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

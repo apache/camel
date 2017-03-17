@@ -41,51 +41,34 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| connectionBean |  | String | *Required* Name of com.mongodb.Mongo to use.
+| Name | Description | Default | Type
+| **connectionBean** | *Required* Name of com.mongodb.Mongo to use. |  | String
 |=======================================================================
 
 #### Query Parameters (17 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| bucket | fs | String | Sets the name of the GridFS bucket within the database. Default is fs.
-
-| database |  | String | *Required* Sets the name of the MongoDB database to target
-
-| readPreference |  | ReadPreference | Sets a MongoDB ReadPreference on the Mongo connection. Read preferences set directly on the connection will be overridden by this setting. The link com.mongodb.ReadPreferencevalueOf(String) utility method is used to resolve the passed readPreference value. Some examples for the possible values are nearest primary or secondary etc.
-
-| writeConcern |  | WriteConcern | Set the WriteConcern for write operations on MongoDB using the standard ones. Resolved from the fields of the WriteConcern class by calling the link WriteConcernvalueOf(String) method.
-
-| writeConcernRef |  | WriteConcern | Set the WriteConcern for write operations on MongoDB passing in the bean ref to a custom WriteConcern which exists in the Registry. You can also use standard WriteConcerns by passing in their key. See the link setWriteConcern(String) setWriteConcern method.
- 4+^s| consumer
-| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| delay | 500 | long | Sets the delay between polls within the Consumer. Default is 500ms
-
-| fileAttributeName | camel-processed | String | If the QueryType uses a FileAttribute this sets the name of the attribute that is used. Default is camel-processed.
-
-| initialDelay | 1000 | long | Sets the initialDelay before the consumer will start polling. Default is 1000ms
-
-| persistentTSCollection | camel-timestamps | String | If the QueryType uses a persistent timestamp this sets the name of the collection within the DB to store the timestamp.
-
-| persistentTSObject | camel-timestamp | String | If the QueryType uses a persistent timestamp this is the ID of the object in the collection to store the timestamp.
-
-| query |  | String | Additional query parameters (in JSON) that are used to configure the query used for finding files in the GridFsConsumer
-
-| queryStrategy | TimeStamp | QueryStrategy | Sets the QueryStrategy that is used for polling for new files. Default is Timestamp
- 4+^s| consumer (advanced)
-| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
- 4+^s| producer
-| operation |  | String | Sets the operation this endpoint will execute against GridRS.
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **bucket** (common) | Sets the name of the GridFS bucket within the database. Default is fs. | fs | String
+| **database** (common) | *Required* Sets the name of the MongoDB database to target |  | String
+| **readPreference** (common) | Sets a MongoDB ReadPreference on the Mongo connection. Read preferences set directly on the connection will be overridden by this setting. The link com.mongodb.ReadPreferencevalueOf(String) utility method is used to resolve the passed readPreference value. Some examples for the possible values are nearest primary or secondary etc. |  | ReadPreference
+| **writeConcern** (common) | Set the WriteConcern for write operations on MongoDB using the standard ones. Resolved from the fields of the WriteConcern class by calling the link WriteConcernvalueOf(String) method. |  | WriteConcern
+| **writeConcernRef** (common) | Set the WriteConcern for write operations on MongoDB passing in the bean ref to a custom WriteConcern which exists in the Registry. You can also use standard WriteConcerns by passing in their key. See the link setWriteConcern(String) setWriteConcern method. |  | WriteConcern
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **delay** (consumer) | Sets the delay between polls within the Consumer. Default is 500ms | 500 | long
+| **fileAttributeName** (consumer) | If the QueryType uses a FileAttribute this sets the name of the attribute that is used. Default is camel-processed. | camel-processed | String
+| **initialDelay** (consumer) | Sets the initialDelay before the consumer will start polling. Default is 1000ms | 1000 | long
+| **persistentTSCollection** (consumer) | If the QueryType uses a persistent timestamp this sets the name of the collection within the DB to store the timestamp. | camel-timestamps | String
+| **persistentTSObject** (consumer) | If the QueryType uses a persistent timestamp this is the ID of the object in the collection to store the timestamp. | camel-timestamp | String
+| **query** (consumer) | Additional query parameters (in JSON) that are used to configure the query used for finding files in the GridFsConsumer |  | String
+| **queryStrategy** (consumer) | Sets the QueryStrategy that is used for polling for new files. Default is Timestamp | TimeStamp | QueryStrategy
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **operation** (producer) | Sets the operation this endpoint will execute against GridRS. |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

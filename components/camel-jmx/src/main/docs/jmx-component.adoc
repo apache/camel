@@ -34,75 +34,46 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| serverURL |  | String | server url comes from the remaining endpoint
+| Name | Description | Default | Type
+| **serverURL** | server url comes from the remaining endpoint |  | String
 |=======================================================================
 
 #### Query Parameters (29 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| format | xml | String | URI Property: Format for the message body. Either xml or raw. If xml the notification is serialized to xml. If raw then the raw java object is set as the body.
-
-| granularityPeriod | 10000 | long | URI Property: monitor types only The frequency to poll the bean to check the monitor.
-
-| monitorType |  | String | URI Property: monitor types only The type of monitor to create. One of string gauge counter.
-
-| objectDomain |  | String | *Required* URI Property: The domain for the mbean you're connecting to
-
-| objectName |  | String | URI Property: The name key for the mbean you're connecting to. This value is mutually exclusive with the object properties that get passed.
-
-| observedAttribute |  | String | URI Property: monitor types only The attribute to observe for the monitor bean.
- 4+^s| consumer (advanced)
-| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
- 4+^s| advanced
-| handback |  | Object | URI Property: Value to handback to the listener when a notification is received. This value will be put in the message header with the key jmx.handback
-
-| notificationFilter |  | NotificationFilter | URI Property: Reference to a bean that implements the NotificationFilter.
-
-| objectProperties |  | Map | URI Property: properties for the object name. These values will be used if the objectName param is not set
-
-| reconnectDelay | 10 | int | URI Property: The number of seconds to wait before attempting to retry establishment of the initial connection or attempt to reconnect a lost connection
-
-| reconnectOnConnectionFailure | false | boolean | URI Property: If true the consumer will attempt to reconnect to the JMX server when any connection failure occurs. The consumer will attempt to re-establish the JMX connection every 'x' seconds until the connection is made-- where 'x' is the configured reconnectionDelay
-
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-
-| testConnectionOnStartup | true | boolean | URI Property: If true the consumer will throw an exception if unable to establish the JMX connection upon startup. If false the consumer will attempt to establish the JMX connection every 'x' seconds until the connection is made -- where 'x' is the configured reconnectionDelay
- 4+^s| counter
-| initThreshold |  | int | URI Property: counter monitor only Initial threshold for the monitor. The value must exceed this before notifications are fired.
-
-| modulus |  | int | URI Property: counter monitor only The value at which the counter is reset to zero
-
-| offset |  | int | URI Property: counter monitor only The amount to increment the threshold after it's been exceeded.
- 4+^s| gauge
-| differenceMode | false | boolean | URI Property: counter gauge monitor only If true then the value reported in the notification is the difference from the threshold as opposed to the value itself.
-
-| notifyHigh | false | boolean | URI Property: gauge monitor only If true the gauge will fire a notification when the high threshold is exceeded
-
-| notifyLow | false | boolean | URI Property: gauge monitor only If true the gauge will fire a notification when the low threshold is exceeded
-
-| thresholdHigh |  | Double | URI Property: gauge monitor only Value for the gauge's high threshold
-
-| thresholdLow |  | Double | URI Property: gauge monitor only Value for the gauge's low threshold
- 4+^s| security
-| password |  | String | URI Property: credentials for making a remote connection
-
-| user |  | String | URI Property: credentials for making a remote connection
- 4+^s| string
-| notifyDiffer | false | boolean | URI Property: string monitor only If true the string monitor will fire a notification when the string attribute differs from the string to compare.
-
-| notifyMatch | false | boolean | URI Property: string monitor only If true the string monitor will fire a notification when the string attribute matches the string to compare.
-
-| stringToCompare |  | String | URI Property: string monitor only Value for the string monitor's string to compare.
+| Name | Description | Default | Type
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **format** (consumer) | URI Property: Format for the message body. Either xml or raw. If xml the notification is serialized to xml. If raw then the raw java object is set as the body. | xml | String
+| **granularityPeriod** (consumer) | URI Property: monitor types only The frequency to poll the bean to check the monitor. | 10000 | long
+| **monitorType** (consumer) | URI Property: monitor types only The type of monitor to create. One of string gauge counter. |  | String
+| **objectDomain** (consumer) | *Required* URI Property: The domain for the mbean you're connecting to |  | String
+| **objectName** (consumer) | URI Property: The name key for the mbean you're connecting to. This value is mutually exclusive with the object properties that get passed. |  | String
+| **observedAttribute** (consumer) | URI Property: monitor types only The attribute to observe for the monitor bean. |  | String
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **handback** (advanced) | URI Property: Value to handback to the listener when a notification is received. This value will be put in the message header with the key jmx.handback |  | Object
+| **notificationFilter** (advanced) | URI Property: Reference to a bean that implements the NotificationFilter. |  | NotificationFilter
+| **objectProperties** (advanced) | URI Property: properties for the object name. These values will be used if the objectName param is not set |  | Map
+| **reconnectDelay** (advanced) | URI Property: The number of seconds to wait before attempting to retry establishment of the initial connection or attempt to reconnect a lost connection | 10 | int
+| **reconnectOnConnection Failure** (advanced) | URI Property: If true the consumer will attempt to reconnect to the JMX server when any connection failure occurs. The consumer will attempt to re-establish the JMX connection every 'x' seconds until the connection is made-- where 'x' is the configured reconnectionDelay | false | boolean
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **testConnectionOnStartup** (advanced) | URI Property: If true the consumer will throw an exception if unable to establish the JMX connection upon startup. If false the consumer will attempt to establish the JMX connection every 'x' seconds until the connection is made -- where 'x' is the configured reconnectionDelay | true | boolean
+| **initThreshold** (counter) | URI Property: counter monitor only Initial threshold for the monitor. The value must exceed this before notifications are fired. |  | int
+| **modulus** (counter) | URI Property: counter monitor only The value at which the counter is reset to zero |  | int
+| **offset** (counter) | URI Property: counter monitor only The amount to increment the threshold after it's been exceeded. |  | int
+| **differenceMode** (gauge) | URI Property: counter gauge monitor only If true then the value reported in the notification is the difference from the threshold as opposed to the value itself. | false | boolean
+| **notifyHigh** (gauge) | URI Property: gauge monitor only If true the gauge will fire a notification when the high threshold is exceeded | false | boolean
+| **notifyLow** (gauge) | URI Property: gauge monitor only If true the gauge will fire a notification when the low threshold is exceeded | false | boolean
+| **thresholdHigh** (gauge) | URI Property: gauge monitor only Value for the gauge's high threshold |  | Double
+| **thresholdLow** (gauge) | URI Property: gauge monitor only Value for the gauge's low threshold |  | Double
+| **password** (security) | URI Property: credentials for making a remote connection |  | String
+| **user** (security) | URI Property: credentials for making a remote connection |  | String
+| **notifyDiffer** (string) | URI Property: string monitor only If true the string monitor will fire a notification when the string attribute differs from the string to compare. | false | boolean
+| **notifyMatch** (string) | URI Property: string monitor only If true the string monitor will fire a notification when the string attribute matches the string to compare. | false | boolean
+| **stringToCompare** (string) | URI Property: string monitor only Value for the string monitor's string to compare. |  | String
 |=======================================================================
 // endpoint options: END
 

@@ -68,48 +68,34 @@ with the following path and query parameters:
 
 #### Path Parameters (4 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| beanRef |  | String | beanRef is defined using bean:id
-| hosts |  | String | Hostname(s) cassansdra server(s). Multiple hosts can be separated by comma.
-| port |  | Integer | Port number of cassansdra server(s)
-| keyspace |  | String | Keyspace to use
+| Name | Description | Default | Type
+| **beanRef** | beanRef is defined using bean:id |  | String
+| **hosts** | Hostname(s) cassansdra server(s). Multiple hosts can be separated by comma. |  | String
+| **port** | Port number of cassansdra server(s) |  | Integer
+| **keyspace** | Keyspace to use |  | String
 |=======================================================================
 
 #### Query Parameters (14 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| cluster |  | Cluster | To use the Cluster instance (you would normally not use this option)
-
-| clusterName |  | String | Cluster name
-
-| consistencyLevel |  | ConsistencyLevel | Consistency level to use
-
-| cql |  | String | CQL query to perform. Can be overridden with the message header with key CamelCqlQuery.
-
-| loadBalancingPolicy |  | String | To use a specific LoadBalancingPolicy
-
-| password |  | String | Password for session authentication
-
-| prepareStatements | true | boolean | Whether to use PreparedStatements or regular Statements
-
-| resultSetConversionStrategy |  | String | To use a custom class that implements logic for converting ResultSet into message body ALL ONE LIMIT_10 LIMIT_100...
-
-| session |  | Session | To use the Session instance (you would normally not use this option)
-
-| username |  | String | Username for session authentication
- 4+^s| consumer
-| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
- 4+^s| consumer (advanced)
-| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **cluster** (common) | To use the Cluster instance (you would normally not use this option) |  | Cluster
+| **clusterName** (common) | Cluster name |  | String
+| **consistencyLevel** (common) | Consistency level to use |  | ConsistencyLevel
+| **cql** (common) | CQL query to perform. Can be overridden with the message header with key CamelCqlQuery. |  | String
+| **loadBalancingPolicy** (common) | To use a specific LoadBalancingPolicy |  | String
+| **password** (common) | Password for session authentication |  | String
+| **prepareStatements** (common) | Whether to use PreparedStatements or regular Statements | true | boolean
+| **resultSetConversionStrategy** (common) | To use a custom class that implements logic for converting ResultSet into message body ALL ONE LIMIT_10 LIMIT_100... |  | String
+| **session** (common) | To use the Session instance (you would normally not use this option) |  | Session
+| **username** (common) | Username for session authentication |  | String
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

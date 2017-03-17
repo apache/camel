@@ -39,13 +39,11 @@ The Braintree component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
- 4+^s| common
-| configuration |  | BraintreeConfiguration | To use the shared configuration
- 4+^s| advanced
-| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Description | Default | Type
+| **configuration** (common) | To use the shared configuration |  | BraintreeConfiguration
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
 
@@ -62,44 +60,31 @@ with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| apiName |  | BraintreeApiName | *Required* What kind of operation to perform
-| methodName |  | String | What sub operation to use for the selected operation
+| Name | Description | Default | Type
+| **apiName** | *Required* What kind of operation to perform |  | BraintreeApiName
+| **methodName** | What sub operation to use for the selected operation |  | String
 |=======================================================================
 
 #### Query Parameters (13 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| environment |  | String | *Required* The environment Either SANDBOX or PRODUCTION
-
-| inBody |  | String | Sets the name of a parameter to be passed in the exchange In Body
-
-| merchantId |  | String | *Required* The merchant id provided by Braintree.
-
-| privateKey |  | String | *Required* The private key provided by Braintree.
-
-| publicKey |  | String | *Required* The public key provided by Braintree.
- 4+^s| consumer
-| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
- 4+^s| consumer (advanced)
-| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
- 4+^s| advanced
-| httpReadTimeout |  | Integer | Set read timeout for http calls.
-
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
- 4+^s| logging
-| httpLogLevel |  | String | Set logging level for http calls see java.util.logging.Level
- 4+^s| proxy
-| proxyHost |  | String | The proxy host
-
-| proxyPort |  | Integer | The proxy port
+| Name | Description | Default | Type
+| **environment** (common) | *Required* The environment Either SANDBOX or PRODUCTION |  | String
+| **inBody** (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
+| **merchantId** (common) | *Required* The merchant id provided by Braintree. |  | String
+| **privateKey** (common) | *Required* The private key provided by Braintree. |  | String
+| **publicKey** (common) | *Required* The public key provided by Braintree. |  | String
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **httpReadTimeout** (advanced) | Set read timeout for http calls. |  | Integer
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **httpLogLevel** (logging) | Set logging level for http calls see java.util.logging.Level |  | String
+| **proxyHost** (proxy) | The proxy host |  | String
+| **proxyPort** (proxy) | The proxy port |  | Integer
 |=======================================================================
 // endpoint options: END
 

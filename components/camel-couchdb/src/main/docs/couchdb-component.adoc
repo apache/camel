@@ -56,44 +56,32 @@ with the following path and query parameters:
 
 #### Path Parameters (4 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| protocol |  | String | *Required* The protocol to use for communicating with the database.
-| hostname |  | String | *Required* Hostname of the running couchdb instance
-| port | 5984 | int | Port number for the running couchdb instance
-| database |  | String | *Required* Name of the database to use
+| Name | Description | Default | Type
+| **protocol** | *Required* The protocol to use for communicating with the database. |  | String
+| **hostname** | *Required* Hostname of the running couchdb instance |  | String
+| **port** | Port number for the running couchdb instance | 5984 | int
+| **database** | *Required* Name of the database to use |  | String
 |=======================================================================
 
 #### Query Parameters (12 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| createDatabase | false | boolean | Creates the database if it does not already exist
- 4+^s| consumer
-| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| deletes | true | boolean | Document deletes are published as events
-
-| heartbeat | 30000 | long | How often to send an empty message to keep socket alive in millis
-
-| since |  | String | Start tracking changes immediately after the given update sequence. The default null will start monitoring from the latest sequence.
-
-| style | main_only | String | Specifies how many revisions are returned in the changes array. The default main_only will only return the current winning revision; all_docs will return all leaf revisions (including conflicts and deleted former conflicts.)
-
-| updates | true | boolean | Document inserts/updates are published as events
- 4+^s| consumer (advanced)
-| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
- 4+^s| security
-| password |  | String | Password for authenticated databases
-
-| username |  | String | Username in case of authenticated databases
+| Name | Description | Default | Type
+| **createDatabase** (common) | Creates the database if it does not already exist | false | boolean
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **deletes** (consumer) | Document deletes are published as events | true | boolean
+| **heartbeat** (consumer) | How often to send an empty message to keep socket alive in millis | 30000 | long
+| **since** (consumer) | Start tracking changes immediately after the given update sequence. The default null will start monitoring from the latest sequence. |  | String
+| **style** (consumer) | Specifies how many revisions are returned in the changes array. The default main_only will only return the current winning revision; all_docs will return all leaf revisions (including conflicts and deleted former conflicts.) | main_only | String
+| **updates** (consumer) | Document inserts/updates are published as events | true | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **password** (security) | Password for authenticated databases |  | String
+| **username** (security) | Username in case of authenticated databases |  | String
 |=======================================================================
 // endpoint options: END
 

@@ -56,13 +56,11 @@ The Facebook component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
- 4+^s| advanced
-| configuration |  | FacebookConfiguration | To use the shared configuration
-
-| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Description | Default | Type
+| **configuration** (advanced) | To use the shared configuration |  | FacebookConfiguration
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
 
@@ -79,221 +77,119 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| methodName |  | String | *Required* What operation to perform
+| Name | Description | Default | Type
+| **methodName** | *Required* What operation to perform |  | String
 |=======================================================================
 
 #### Query Parameters (102 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| achievementURL |  | URL | The unique URL of the achievement
-
-| albumId |  | String | The album ID
-
-| albumUpdate |  | AlbumUpdate | The facebook Album to be created or updated
-
-| appId |  | String | The ID of the Facebook Application
-
-| center |  | GeoLocation | Location latitude and longitude
-
-| checkinId |  | String | The checkin ID
-
-| checkinUpdate |  | CheckinUpdate | The checkin to be created. Deprecated instead create a Post with an attached location
-
-| clientURL |  | String | Facebook4J API client URL
-
-| clientVersion |  | String | Facebook4J client API version
-
-| commentId |  | String | The comment ID
-
-| commentUpdate |  | CommentUpdate | The facebook Comment to be created or updated
-
-| debugEnabled | false | Boolean | Enables deubg output. Effective only with the embedded logger
-
-| description |  | String | The description text
-
-| distance |  | Integer | Distance in meters
-
-| domainId |  | String | The domain ID
-
-| domainName |  | String | The domain name
-
-| domainNames |  | List | The domain names
-
-| eventId |  | String | The event ID
-
-| eventUpdate |  | EventUpdate | The event to be created or updated
-
-| friendId |  | String | The friend ID
-
-| friendlistId |  | String | The friend list ID
-
-| friendlistName |  | String | The friend list Name
-
-| friendUserId |  | String | The friend user ID
-
-| groupId |  | String | The group ID
-
-| gzipEnabled | true | Boolean | Use Facebook GZIP encoding
-
-| httpConnectionTimeout | 20000 | Integer | Http connection timeout in milliseconds
-
-| httpDefaultMaxPerRoute | 2 | Integer | HTTP maximum connections per route
-
-| httpMaxTotalConnections | 20 | Integer | HTTP maximum total connections
-
-| httpReadTimeout | 120000 | Integer | Http read timeout in milliseconds
-
-| httpRetryCount | 0 | Integer | Number of HTTP retries
-
-| httpRetryIntervalSeconds | 5 | Integer | HTTP retry interval in seconds
-
-| httpStreamingReadTimeout | 40000 | Integer | HTTP streaming read timeout in milliseconds
-
-| ids |  | List | The ids of users
-
-| inBody |  | String | Sets the name of a parameter to be passed in the exchange In Body
-
-| includeRead |  | Boolean | Enables notifications that the user has already read in addition to unread ones
-
-| isHidden |  | Boolean | Whether hidden
-
-| jsonStoreEnabled | false | Boolean | If set to true raw JSON forms will be stored in DataObjectFactory
-
-| link |  | URL | Link URL
-
-| linkId |  | String | Link ID
-
-| locale |  | Locale | Desired FQL locale
-
-| mbeanEnabled | false | Boolean | If set to true Facebook4J mbean will be registerd
-
-| message |  | String | The message text
-
-| messageId |  | String | The message ID
-
-| metric |  | String | The metric name
-
-| milestoneId |  | String | The milestone id
-
-| name |  | String | Test user name must be of the form 'first last'
-
-| noteId |  | String | The note ID
-
-| notificationId |  | String | The notification ID
-
-| objectId |  | String | The insight object ID
-
-| offerId |  | String | The offer id
-
-| optionDescription |  | String | The question's answer option description
-
-| pageId |  | String | The page id
-
-| permissionName |  | String | The permission name
-
-| permissions |  | String | Test user permissions in the format perm1perm2...
-
-| photoId |  | String | The photo ID
-
-| pictureId |  | Integer | The picture id
-
-| pictureId2 |  | Integer | The picture2 id
-
-| pictureSize |  | PictureSize | The picture size
-
-| placeId |  | String | The place ID
-
-| postId |  | String | The post ID
-
-| postUpdate |  | PostUpdate | The post to create or update
-
-| prettyDebugEnabled | false | Boolean | Prettify JSON debug output if set to true
-
-| queries |  | Map | FQL queries
-
-| query |  | String | FQL query or search terms for search endpoints
-
-| questionId |  | String | The question id
-
-| reading |  | Reading | Optional reading parameters. See Reading Options(reading)
-
-| readingOptions |  | Map | To configure Reading using key/value pairs from the Map.
-
-| restBaseURL | https://graph.facebook.com/ | String | API base URL
-
-| scoreValue |  | Integer | The numeric score with value
-
-| size |  | PictureSize | The picture size one of large normal small or square
-
-| source |  | Media | The media content from either a java.io.File or java.io.Inputstream
-
-| subject |  | String | The note of the subject
-
-| tabId |  | String | The tab id
-
-| tagUpdate |  | TagUpdate | Photo tag information
-
-| testUser1 |  | TestUser | Test user 1
-
-| testUser2 |  | TestUser | Test user 2
-
-| testUserId |  | String | The ID of the test user
-
-| title |  | String | The title text
-
-| toUserId |  | String | The ID of the user to tag
-
-| toUserIds |  | List | The IDs of the users to tag
-
-| userId |  | String | The Facebook user ID
-
-| userId1 |  | String | The ID of a user 1
-
-| userId2 |  | String | The ID of a user 2
-
-| userIds |  | List | The IDs of users to invite to event
-
-| userLocale |  | String | The test user locale
-
-| useSSL | true | Boolean | Use SSL
-
-| videoBaseURL | https://graph-video.facebook.com/ | String | Video API base URL
-
-| videoId |  | String | The video ID
- 4+^s| consumer
-| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
- 4+^s| consumer (advanced)
-| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
- 4+^s| proxy
-| httpProxyHost |  | String | HTTP proxy server host name
-
-| httpProxyPassword |  | String | HTTP proxy server password
-
-| httpProxyPort |  | Integer | HTTP proxy server port
-
-| httpProxyUser |  | String | HTTP proxy server user name
- 4+^s| security
-| oAuthAccessToken |  | String | The user access token
-
-| oAuthAccessTokenURL | https://graph.facebook.com/oauth/access_token | String | OAuth access token URL
-
-| oAuthAppId |  | String | The application Id
-
-| oAuthAppSecret |  | String | The application Secret
-
-| oAuthAuthorizationURL | https://www.facebook.com/dialog/oauth | String | OAuth authorization URL
-
-| oAuthPermissions |  | String | Default OAuth permissions. Comma separated permission names. See https://developers.facebook.com/docs/reference/login/permissions for the detail
+| Name | Description | Default | Type
+| **achievementURL** (common) | The unique URL of the achievement |  | URL
+| **albumId** (common) | The album ID |  | String
+| **albumUpdate** (common) | The facebook Album to be created or updated |  | AlbumUpdate
+| **appId** (common) | The ID of the Facebook Application |  | String
+| **center** (common) | Location latitude and longitude |  | GeoLocation
+| **checkinId** (common) | The checkin ID |  | String
+| **checkinUpdate** (common) | The checkin to be created. Deprecated instead create a Post with an attached location |  | CheckinUpdate
+| **clientURL** (common) | Facebook4J API client URL |  | String
+| **clientVersion** (common) | Facebook4J client API version |  | String
+| **commentId** (common) | The comment ID |  | String
+| **commentUpdate** (common) | The facebook Comment to be created or updated |  | CommentUpdate
+| **debugEnabled** (common) | Enables deubg output. Effective only with the embedded logger | false | Boolean
+| **description** (common) | The description text |  | String
+| **distance** (common) | Distance in meters |  | Integer
+| **domainId** (common) | The domain ID |  | String
+| **domainName** (common) | The domain name |  | String
+| **domainNames** (common) | The domain names |  | List
+| **eventId** (common) | The event ID |  | String
+| **eventUpdate** (common) | The event to be created or updated |  | EventUpdate
+| **friendId** (common) | The friend ID |  | String
+| **friendlistId** (common) | The friend list ID |  | String
+| **friendlistName** (common) | The friend list Name |  | String
+| **friendUserId** (common) | The friend user ID |  | String
+| **groupId** (common) | The group ID |  | String
+| **gzipEnabled** (common) | Use Facebook GZIP encoding | true | Boolean
+| **httpConnectionTimeout** (common) | Http connection timeout in milliseconds | 20000 | Integer
+| **httpDefaultMaxPerRoute** (common) | HTTP maximum connections per route | 2 | Integer
+| **httpMaxTotalConnections** (common) | HTTP maximum total connections | 20 | Integer
+| **httpReadTimeout** (common) | Http read timeout in milliseconds | 120000 | Integer
+| **httpRetryCount** (common) | Number of HTTP retries | 0 | Integer
+| **httpRetryIntervalSeconds** (common) | HTTP retry interval in seconds | 5 | Integer
+| **httpStreamingReadTimeout** (common) | HTTP streaming read timeout in milliseconds | 40000 | Integer
+| **ids** (common) | The ids of users |  | List
+| **inBody** (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
+| **includeRead** (common) | Enables notifications that the user has already read in addition to unread ones |  | Boolean
+| **isHidden** (common) | Whether hidden |  | Boolean
+| **jsonStoreEnabled** (common) | If set to true raw JSON forms will be stored in DataObjectFactory | false | Boolean
+| **link** (common) | Link URL |  | URL
+| **linkId** (common) | Link ID |  | String
+| **locale** (common) | Desired FQL locale |  | Locale
+| **mbeanEnabled** (common) | If set to true Facebook4J mbean will be registerd | false | Boolean
+| **message** (common) | The message text |  | String
+| **messageId** (common) | The message ID |  | String
+| **metric** (common) | The metric name |  | String
+| **milestoneId** (common) | The milestone id |  | String
+| **name** (common) | Test user name must be of the form 'first last' |  | String
+| **noteId** (common) | The note ID |  | String
+| **notificationId** (common) | The notification ID |  | String
+| **objectId** (common) | The insight object ID |  | String
+| **offerId** (common) | The offer id |  | String
+| **optionDescription** (common) | The question's answer option description |  | String
+| **pageId** (common) | The page id |  | String
+| **permissionName** (common) | The permission name |  | String
+| **permissions** (common) | Test user permissions in the format perm1perm2... |  | String
+| **photoId** (common) | The photo ID |  | String
+| **pictureId** (common) | The picture id |  | Integer
+| **pictureId2** (common) | The picture2 id |  | Integer
+| **pictureSize** (common) | The picture size |  | PictureSize
+| **placeId** (common) | The place ID |  | String
+| **postId** (common) | The post ID |  | String
+| **postUpdate** (common) | The post to create or update |  | PostUpdate
+| **prettyDebugEnabled** (common) | Prettify JSON debug output if set to true | false | Boolean
+| **queries** (common) | FQL queries |  | Map
+| **query** (common) | FQL query or search terms for search endpoints |  | String
+| **questionId** (common) | The question id |  | String
+| **reading** (common) | Optional reading parameters. See Reading Options(reading) |  | Reading
+| **readingOptions** (common) | To configure Reading using key/value pairs from the Map. |  | Map
+| **restBaseURL** (common) | API base URL | https://graph.facebook.com/ | String
+| **scoreValue** (common) | The numeric score with value |  | Integer
+| **size** (common) | The picture size one of large normal small or square |  | PictureSize
+| **source** (common) | The media content from either a java.io.File or java.io.Inputstream |  | Media
+| **subject** (common) | The note of the subject |  | String
+| **tabId** (common) | The tab id |  | String
+| **tagUpdate** (common) | Photo tag information |  | TagUpdate
+| **testUser1** (common) | Test user 1 |  | TestUser
+| **testUser2** (common) | Test user 2 |  | TestUser
+| **testUserId** (common) | The ID of the test user |  | String
+| **title** (common) | The title text |  | String
+| **toUserId** (common) | The ID of the user to tag |  | String
+| **toUserIds** (common) | The IDs of the users to tag |  | List
+| **userId** (common) | The Facebook user ID |  | String
+| **userId1** (common) | The ID of a user 1 |  | String
+| **userId2** (common) | The ID of a user 2 |  | String
+| **userIds** (common) | The IDs of users to invite to event |  | List
+| **userLocale** (common) | The test user locale |  | String
+| **useSSL** (common) | Use SSL | true | Boolean
+| **videoBaseURL** (common) | Video API base URL | https://graph-video.facebook.com/ | String
+| **videoId** (common) | The video ID |  | String
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **httpProxyHost** (proxy) | HTTP proxy server host name |  | String
+| **httpProxyPassword** (proxy) | HTTP proxy server password |  | String
+| **httpProxyPort** (proxy) | HTTP proxy server port |  | Integer
+| **httpProxyUser** (proxy) | HTTP proxy server user name |  | String
+| **oAuthAccessToken** (security) | The user access token |  | String
+| **oAuthAccessTokenURL** (security) | OAuth access token URL | https://graph.facebook.com/oauth/access_token | String
+| **oAuthAppId** (security) | The application Id |  | String
+| **oAuthAppSecret** (security) | The application Secret |  | String
+| **oAuthAuthorizationURL** (security) | OAuth authorization URL | https://www.facebook.com/dialog/oauth | String
+| **oAuthPermissions** (security) | Default OAuth permissions. Comma separated permission names. See https://developers.facebook.com/docs/reference/login/permissions for the detail |  | String
 |=======================================================================
 // endpoint options: END
 

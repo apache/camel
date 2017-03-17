@@ -50,30 +50,24 @@ with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| languageName |  | String | *Required* Sets the name of the language to use
-| resourceUri |  | String | Path to the resource or a reference to lookup a bean in the Registry to use as the resource
+| Name | Description | Default | Type
+| **languageName** | *Required* Sets the name of the language to use |  | String
+| **resourceUri** | Path to the resource or a reference to lookup a bean in the Registry to use as the resource |  | String
 |=======================================================================
 
 #### Query Parameters (6 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| binary | false | boolean | Whether the script is binary content or text content. By default the script is read as text content (eg java.lang.String)
-
-| cacheScript | false | boolean | Whether to cache the compiled script and reuse Notice reusing the script can cause side effects from processing one Camel org.apache.camel.Exchange to the next org.apache.camel.Exchange.
-
-| contentCache | false | boolean | Sets whether to use resource content cache or not.
-
-| script |  | String | Sets the script to execute
-
-| transform | true | boolean | Whether or not the result of the script should be used as message body. This options is default true.
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **binary** (producer) | Whether the script is binary content or text content. By default the script is read as text content (eg java.lang.String) | false | boolean
+| **cacheScript** (producer) | Whether to cache the compiled script and reuse Notice reusing the script can cause side effects from processing one Camel org.apache.camel.Exchange to the next org.apache.camel.Exchange. | false | boolean
+| **contentCache** (producer) | Sets whether to use resource content cache or not. | false | boolean
+| **script** (producer) | Sets the script to execute |  | String
+| **transform** (producer) | Whether or not the result of the script should be used as message body. This options is default true. | true | boolean
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

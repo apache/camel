@@ -51,47 +51,32 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| cacheName |  | String | *Required* the cache name
+| Name | Description | Default | Type
+| **cacheName** | *Required* the cache name |  | String
 |=======================================================================
 
 #### Query Parameters (15 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| cacheManager |  | CacheManager | The cache manager
-
-| configUri |  | String | URI pointing to the Ehcache XML configuration file's location
-
-| createCacheIfNotExist | true | boolean | Configure if a cache need to be created if it does exist or can't be pre-configured.
- 4+^s| consumer
-| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| eventFiring | ASYNCHRONOUS | EventFiring | Set the the delivery mode (synchronous asynchronous)
-
-| eventOrdering | ORDERED | EventOrdering | Set the the delivery mode (ordered unordered)
-
-| eventTypes | EVICTED,EXPIRED,REMOVED,CREATED,UPDATED | Set | Set the type of events to listen for
- 4+^s| consumer (advanced)
-| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
- 4+^s| producer
-| action |  | String | To configure the default cache action. If an action is set in the message header then the operation from the header takes precedence.
-
-| key |  | Object | To configure the default action key. If a key is set in the message header then the key from the header takes precedence.
- 4+^s| advanced
-| configuration |  | CacheConfiguration<?,?> | The default cache configuration to be used to create caches.
-
-| keyType | java.lang.Object | String | The cache key type default Object.class
-
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-
-| valueType | java.lang.Object | String | The cache value type default Object.class
+| Name | Description | Default | Type
+| **cacheManager** (common) | The cache manager |  | CacheManager
+| **configUri** (common) | URI pointing to the Ehcache XML configuration file's location |  | String
+| **createCacheIfNotExist** (common) | Configure if a cache need to be created if it does exist or can't be pre-configured. | true | boolean
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **eventFiring** (consumer) | Set the the delivery mode (synchronous asynchronous) | ASYNCHRONOUS | EventFiring
+| **eventOrdering** (consumer) | Set the the delivery mode (ordered unordered) | ORDERED | EventOrdering
+| **eventTypes** (consumer) | Set the type of events to listen for | EVICTED,EXPIRED,REMOVED,CREATED,UPDATED | Set
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **action** (producer) | To configure the default cache action. If an action is set in the message header then the operation from the header takes precedence. |  | String
+| **key** (producer) | To configure the default action key. If a key is set in the message header then the key from the header takes precedence. |  | Object
+| **configuration** (advanced) | The default cache configuration to be used to create caches. |  | CacheConfiguration<?,?>
+| **keyType** (advanced) | The cache key type default Object.class | java.lang.Object | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **valueType** (advanced) | The cache value type default Object.class | java.lang.Object | String
 |=======================================================================
 // endpoint options: END
 

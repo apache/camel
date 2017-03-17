@@ -34,33 +34,21 @@ The SSH component supports 12 options which are listed below.
 
 
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
- 4+^s| advanced
-| configuration |  | SshConfiguration | To use the shared SSH configuration
- 4+^s| common
-| host |  | String | Sets the hostname of the remote SSH server.
-
-| port |  | int | Sets the port number for the remote SSH server.
- 4+^s| security
-| username |  | String | Sets the username to use in logging into the remote SSH server.
-
-| password |  | String | Sets the password to use in connecting to remote SSH server. Requires keyPairProvider to be set to null.
- 4+^s| common
-| pollCommand |  | String | Sets the command string to send to the remote SSH server during every poll cycle. Only works with camel-ssh component being used as a consumer i.e. from(ssh://...). You may need to end your command with a newline and that must be URL encoded 0A
- 4+^s| security
-| keyPairProvider |  | KeyPairProvider | Sets the KeyPairProvider reference to use when connecting using Certificates to the remote SSH Server.
-
-| keyType |  | String | Sets the key type to pass to the KeyPairProvider as part of authentication. KeyPairProvider.loadKey(...) will be passed this value. Defaults to ssh-rsa.
- 4+^s| common
-| timeout |  | long | Sets the timeout in milliseconds to wait in establishing the remote SSH server connection. Defaults to 30000 milliseconds.
- 4+^s| security
-| certFilename |  | String | Sets the resource path of the certificate to use for Authentication.
-
-| certResource |  | String | Sets the resource path of the certificate to use for Authentication. Will use ResourceHelperKeyPairProvider to resolve file based certificate and depends on keyType setting.
- 4+^s| advanced
-| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Description | Default | Type
+| **configuration** (advanced) | To use the shared SSH configuration |  | SshConfiguration
+| **host** (common) | Sets the hostname of the remote SSH server. |  | String
+| **port** (common) | Sets the port number for the remote SSH server. |  | int
+| **username** (security) | Sets the username to use in logging into the remote SSH server. |  | String
+| **password** (security) | Sets the password to use in connecting to remote SSH server. Requires keyPairProvider to be set to null. |  | String
+| **pollCommand** (common) | Sets the command string to send to the remote SSH server during every poll cycle. Only works with camel-ssh component being used as a consumer i.e. from(ssh://...). You may need to end your command with a newline and that must be URL encoded 0A |  | String
+| **keyPairProvider** (security) | Sets the KeyPairProvider reference to use when connecting using Certificates to the remote SSH Server. |  | KeyPairProvider
+| **keyType** (security) | Sets the key type to pass to the KeyPairProvider as part of authentication. KeyPairProvider.loadKey(...) will be passed this value. Defaults to ssh-rsa. |  | String
+| **timeout** (common) | Sets the timeout in milliseconds to wait in establishing the remote SSH server connection. Defaults to 30000 milliseconds. |  | long
+| **certFilename** (security) | Sets the resource path of the certificate to use for Authentication. |  | String
+| **certResource** (security) | Sets the resource path of the certificate to use for Authentication. Will use ResourceHelperKeyPairProvider to resolve file based certificate and depends on keyType setting. |  | String
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
 
@@ -76,70 +64,44 @@ with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| host |  | String | *Required* Sets the hostname of the remote SSH server.
-| port | 22 | int | Sets the port number for the remote SSH server.
+| Name | Description | Default | Type
+| **host** | *Required* Sets the hostname of the remote SSH server. |  | String
+| **port** | Sets the port number for the remote SSH server. | 22 | int
 |=======================================================================
 
 #### Query Parameters (26 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| timeout | 30000 | long | Sets the timeout in milliseconds to wait in establishing the remote SSH server connection. Defaults to 30000 milliseconds.
- 4+^s| consumer
-| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| pollCommand |  | String | Sets the command string to send to the remote SSH server during every poll cycle. Only works with camel-ssh component being used as a consumer i.e. from(ssh://...) You may need to end your command with a newline and that must be URL encoded 0A
-
-| sendEmptyMessageWhenIdle | false | boolean | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead.
- 4+^s| consumer (advanced)
-| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-
-| pollStrategy |  | PollingConsumerPollStrategy | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel.
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
- 4+^s| scheduler
-| backoffErrorThreshold |  | int | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in.
-
-| backoffIdleThreshold |  | int | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in.
-
-| backoffMultiplier |  | int | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured.
-
-| delay | 500 | long | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-
-| greedy | false | boolean | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages.
-
-| initialDelay | 1000 | long | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour).
-
-| runLoggingLevel | TRACE | LoggingLevel | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that.
-
-| scheduledExecutorService |  | ScheduledExecutorService | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool.
-
-| scheduler | none | ScheduledPollConsumerScheduler | To use a cron scheduler from either camel-spring or camel-quartz2 component
-
-| schedulerProperties |  | Map | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler.
-
-| startScheduler | true | boolean | Whether the scheduler should be auto started.
-
-| timeUnit | MILLISECONDS | TimeUnit | Time unit for initialDelay and delay options.
-
-| useFixedDelay | true | boolean | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details.
- 4+^s| security
-| certResource |  | String | Sets the resource path of the certificate to use for Authentication. Will use ResourceHelperKeyPairProvider to resolve file based certificate and depends on keyType setting.
-
-| keyPairProvider |  | KeyPairProvider | Sets the KeyPairProvider reference to use when connecting using Certificates to the remote SSH Server.
-
-| keyType | ssh-rsa | String | Sets the key type to pass to the KeyPairProvider as part of authentication. KeyPairProvider.loadKey(...) will be passed this value. Defaults to ssh-rsa.
-
-| password |  | String | Sets the password to use in connecting to remote SSH server. Requires keyPairProvider to be set to null.
-
-| username |  | String | Sets the username to use in logging into the remote SSH server.
+| Name | Description | Default | Type
+| **timeout** (common) | Sets the timeout in milliseconds to wait in establishing the remote SSH server connection. Defaults to 30000 milliseconds. | 30000 | long
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **pollCommand** (consumer) | Sets the command string to send to the remote SSH server during every poll cycle. Only works with camel-ssh component being used as a consumer i.e. from(ssh://...) You may need to end your command with a newline and that must be URL encoded 0A |  | String
+| **sendEmptyMessageWhenIdle** (consumer) | If the polling consumer did not poll any files you can enable this option to send an empty message (no body) instead. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **pollStrategy** (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **backoffErrorThreshold** (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffIdleThreshold** (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| **backoffMultiplier** (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| **delay** (scheduler) | Milliseconds before the next poll. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 500 | long
+| **greedy** (scheduler) | If greedy is enabled then the ScheduledPollConsumer will run immediately again if the previous run polled 1 or more messages. | false | boolean
+| **initialDelay** (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units such as 60s (60 seconds) 5m30s (5 minutes and 30 seconds) and 1h (1 hour). | 1000 | long
+| **runLoggingLevel** (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| **scheduledExecutorService** (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
+| **scheduler** (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
+| **schedulerProperties** (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2 Spring based scheduler. |  | Map
+| **startScheduler** (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| **timeUnit** (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| **useFixedDelay** (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
+| **certResource** (security) | Sets the resource path of the certificate to use for Authentication. Will use ResourceHelperKeyPairProvider to resolve file based certificate and depends on keyType setting. |  | String
+| **keyPairProvider** (security) | Sets the KeyPairProvider reference to use when connecting using Certificates to the remote SSH Server. |  | KeyPairProvider
+| **keyType** (security) | Sets the key type to pass to the KeyPairProvider as part of authentication. KeyPairProvider.loadKey(...) will be passed this value. Defaults to ssh-rsa. | ssh-rsa | String
+| **password** (security) | Sets the password to use in connecting to remote SSH server. Requires keyPairProvider to be set to null. |  | String
+| **username** (security) | Sets the username to use in logging into the remote SSH server. |  | String
 |=======================================================================
 // endpoint options: END
 

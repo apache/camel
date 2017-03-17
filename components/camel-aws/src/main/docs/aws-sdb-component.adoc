@@ -40,37 +40,27 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| domainName |  | String | *Required* The name of the domain currently worked with.
+| Name | Description | Default | Type
+| **domainName** | *Required* The name of the domain currently worked with. |  | String
 |=======================================================================
 
 #### Query Parameters (10 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| accessKey |  | String | Amazon AWS Access Key
-
-| amazonSDBClient |  | AmazonSimpleDB | To use the AmazonSimpleDB as the client
-
-| amazonSdbEndpoint |  | String | The region with which the AWS-SDB client wants to work with.
-
-| consistentRead | false | boolean | Determines whether or not strong consistency should be enforced when data is read.
-
-| maxNumberOfDomains |  | Integer | The maximum number of domain names you want returned. The range is 1 to 100.
-
-| operation | PutAttributes | SdbOperations | Operation to perform
-
-| proxyHost |  | String | To define a proxy host when instantiating the SQS client
-
-| proxyPort |  | Integer | To define a proxy port when instantiating the SQS client
-
-| secretKey |  | String | Amazon AWS Secret Key
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **accessKey** (producer) | Amazon AWS Access Key |  | String
+| **amazonSDBClient** (producer) | To use the AmazonSimpleDB as the client |  | AmazonSimpleDB
+| **amazonSdbEndpoint** (producer) | The region with which the AWS-SDB client wants to work with. |  | String
+| **consistentRead** (producer) | Determines whether or not strong consistency should be enforced when data is read. | false | boolean
+| **maxNumberOfDomains** (producer) | The maximum number of domain names you want returned. The range is 1 to 100. |  | Integer
+| **operation** (producer) | Operation to perform | PutAttributes | SdbOperations
+| **proxyHost** (producer) | To define a proxy host when instantiating the SQS client |  | String
+| **proxyPort** (producer) | To define a proxy port when instantiating the SQS client |  | Integer
+| **secretKey** (producer) | Amazon AWS Secret Key |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

@@ -51,13 +51,11 @@ The Box component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
- 4+^s| common
-| configuration |  | BoxConfiguration | To use the shared configuration
- 4+^s| advanced
-| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Description | Default | Type
+| **configuration** (common) | To use the shared configuration |  | BoxConfiguration
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
 
@@ -70,58 +68,38 @@ with the following path and query parameters:
 
 #### Path Parameters (2 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| apiName |  | BoxApiName | *Required* What kind of operation to perform
-| methodName |  | String | *Required* What sub operation to use for the selected operation
+| Name | Description | Default | Type
+| **apiName** | *Required* What kind of operation to perform |  | BoxApiName
+| **methodName** | *Required* What sub operation to use for the selected operation |  | String
 |=======================================================================
 
 #### Query Parameters (20 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| clientId |  | String | Box application client ID
-
-| enterpriseId |  | String | The enterprise ID to use for an App Enterprise.
-
-| inBody |  | String | Sets the name of a parameter to be passed in the exchange In Body
-
-| userId |  | String | The user ID to use for an App User.
- 4+^s| consumer
-| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
- 4+^s| consumer (advanced)
-| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
- 4+^s| advanced
-| httpParams |  | Map | Custom HTTP params for settings like proxy host
-
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
- 4+^s| security
-| accessTokenCache |  | IAccessTokenCache | Custom Access Token Cache for storing and retrieving access tokens.
-
-| clientSecret |  | String | Box application client secret
-
-| encryptionAlgorithm | RSA_SHA_256 | EncryptionAlgorithm | The type of encryption algorithm for JWT. Supported Algorithms: RSA_SHA_256 RSA_SHA_384 RSA_SHA_512
-
-| maxCacheEntries | 100 | int | The maximum number of access tokens in cache.
- 4+^s| authentication
-| authenticationType | APP_USER_AUTHENTICATION | String | The type of authentication for connection. Types of Authentication: STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION - OAuth 2.0 with JSON Web Tokens
- 4+^s| security
-| privateKeyFile |  | String | The private key for generating the JWT signature.
-
-| privateKeyPassword |  | String | The password for the private key.
-
-| publicKeyId |  | String | The ID for public key for validating the JWT signature.
-
-| sslContextParameters |  | SSLContextParameters | To configure security using SSLContextParameters.
-
-| userName |  | String | Box user name MUST be provided
-
-| userPassword |  | String | Box user password MUST be provided if authSecureStorage is not set or returns null on first call
+| Name | Description | Default | Type
+| **clientId** (common) | Box application client ID |  | String
+| **enterpriseId** (common) | The enterprise ID to use for an App Enterprise. |  | String
+| **inBody** (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
+| **userId** (common) | The user ID to use for an App User. |  | String
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **httpParams** (advanced) | Custom HTTP params for settings like proxy host |  | Map
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **accessTokenCache** (security) | Custom Access Token Cache for storing and retrieving access tokens. |  | IAccessTokenCache
+| **clientSecret** (security) | Box application client secret |  | String
+| **encryptionAlgorithm** (security) | The type of encryption algorithm for JWT. Supported Algorithms: RSA_SHA_256 RSA_SHA_384 RSA_SHA_512 | RSA_SHA_256 | EncryptionAlgorithm
+| **maxCacheEntries** (security) | The maximum number of access tokens in cache. | 100 | int
+| **authenticationType** (authentication) | The type of authentication for connection. Types of Authentication: STANDARD_AUTHENTICATION - OAuth 2.0 (3-legged) SERVER_AUTHENTICATION - OAuth 2.0 with JSON Web Tokens | APP_USER_AUTHENTICATION | String
+| **privateKeyFile** (security) | The private key for generating the JWT signature. |  | String
+| **privateKeyPassword** (security) | The password for the private key. |  | String
+| **publicKeyId** (security) | The ID for public key for validating the JWT signature. |  | String
+| **sslContextParameters** (security) | To configure security using SSLContextParameters. |  | SSLContextParameters
+| **userName** (security) | Box user name MUST be provided |  | String
+| **userPassword** (security) | Box user password MUST be provided if authSecureStorage is not set or returns null on first call |  | String
 |=======================================================================
 // endpoint options: END
 

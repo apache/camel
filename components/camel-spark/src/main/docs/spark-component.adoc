@@ -55,15 +55,12 @@ The Apache Spark component supports 3 options which are listed below.
 
 
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
- 4+^s| producer
-| rdd |  | JavaRDDLike | RDD to compute against.
-
-| rddCallback |  | RddCallback | Function performing action against an RDD.
- 4+^s| advanced
-| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Description | Default | Type
+| **rdd** (producer) | RDD to compute against. |  | JavaRDDLike
+| **rddCallback** (producer) | Function performing action against an RDD. |  | RddCallback
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
 
@@ -79,29 +76,23 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| endpointType |  | EndpointType | *Required* Type of the endpoint (rdd dataframe hive).
+| Name | Description | Default | Type
+| **endpointType** | *Required* Type of the endpoint (rdd dataframe hive). |  | EndpointType
 |=======================================================================
 
 #### Query Parameters (6 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| collect | true | boolean | Indicates if results should be collected or counted.
-
-| dataFrame |  | DataFrame | DataFrame to compute against.
-
-| dataFrameCallback |  | DataFrameCallback | Function performing action against an DataFrame.
-
-| rdd |  | JavaRDDLike | RDD to compute against.
-
-| rddCallback |  | RddCallback | Function performing action against an RDD.
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **collect** (producer) | Indicates if results should be collected or counted. | true | boolean
+| **dataFrame** (producer) | DataFrame to compute against. |  | DataFrame
+| **dataFrameCallback** (producer) | Function performing action against an DataFrame. |  | DataFrameCallback
+| **rdd** (producer) | RDD to compute against. |  | JavaRDDLike
+| **rddCallback** (producer) | Function performing action against an RDD. |  | RddCallback
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

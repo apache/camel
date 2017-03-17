@@ -76,23 +76,20 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| outputType |  | FopOutputType | *Required* The primary output format is PDF but other output formats are also supported.
+| Name | Description | Default | Type
+| **outputType** | *Required* The primary output format is PDF but other output formats are also supported. |  | FopOutputType
 |=======================================================================
 
 #### Query Parameters (3 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| fopFactory |  | FopFactory | Allows to use a custom configured or implementation of org.apache.fop.apps.FopFactory.
-
-| userConfigURL |  | String | The location of a configuration file which can be loaded from classpath or file system.
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **fopFactory** (producer) | Allows to use a custom configured or implementation of org.apache.fop.apps.FopFactory. |  | FopFactory
+| **userConfigURL** (producer) | The location of a configuration file which can be loaded from classpath or file system. |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

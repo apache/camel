@@ -101,37 +101,27 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| name |  | String | *Required* Name of mock endpoint
+| Name | Description | Default | Type
+| **name** | *Required* Name of mock endpoint |  | String
 |=======================================================================
 
 #### Query Parameters (10 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| assertPeriod | 0 | long | Sets a grace period after which the mock endpoint will re-assert to ensure the preliminary assertion is still valid. This is used for example to assert that exactly a number of messages arrives. For example if link expectedMessageCount(int) was set to 5 then the assertion is satisfied when 5 or more message arrives. To ensure that exactly 5 messages arrives then you would need to wait a little period to ensure no further message arrives. This is what you can use this link setAssertPeriod(long) method for. By default this period is disabled.
-
-| expectedCount | -1 | int | Specifies the expected number of message exchanges that should be received by this endpoint. Beware: If you want to expect that 0 messages then take extra care as 0 matches when the tests starts so you need to set a assert period time to let the test run for a while to make sure there are still no messages arrived; for that use link setAssertPeriod(long). An alternative is to use NotifyBuilder and use the notifier to know when Camel is done routing some messages before you call the link assertIsSatisfied() method on the mocks. This allows you to not use a fixed assert period to speedup testing times. If you want to assert that exactly n'th message arrives to this mock endpoint then see also the link setAssertPeriod(long) method for further details.
-
-| reportGroup |  | int | A number that is used to turn on throughput logging based on groups of the size.
-
-| resultMinimumWaitTime | 0 | long | Sets the minimum expected amount of time (in millis) the link assertIsSatisfied() will wait on a latch until it is satisfied
-
-| resultWaitTime | 0 | long | Sets the maximum amount of time (in millis) the link assertIsSatisfied() will wait on a latch until it is satisfied
-
-| retainFirst | -1 | int | Specifies to only retain the first n'th number of received Exchanges. This is used when testing with big data to reduce memory consumption by not storing copies of every Exchange this mock endpoint receives. Important: When using this limitation then the link getReceivedCounter() will still return the actual number of received Exchanges. For example if we have received 5000 Exchanges and have configured to only retain the first 10 Exchanges then the link getReceivedCounter() will still return 5000 but there is only the first 10 Exchanges in the link getExchanges() and link getReceivedExchanges() methods. When using this method then some of the other expectation methods is not supported for example the link expectedBodiesReceived(Object...) sets a expectation on the first number of bodies received. You can configure both link setRetainFirst(int) and link setRetainLast(int) methods to limit both the first and last received.
-
-| retainLast | -1 | int | Specifies to only retain the last n'th number of received Exchanges. This is used when testing with big data to reduce memory consumption by not storing copies of every Exchange this mock endpoint receives. Important: When using this limitation then the link getReceivedCounter() will still return the actual number of received Exchanges. For example if we have received 5000 Exchanges and have configured to only retain the last 20 Exchanges then the link getReceivedCounter() will still return 5000 but there is only the last 20 Exchanges in the link getExchanges() and link getReceivedExchanges() methods. When using this method then some of the other expectation methods is not supported for example the link expectedBodiesReceived(Object...) sets a expectation on the first number of bodies received. You can configure both link setRetainFirst(int) and link setRetainLast(int) methods to limit both the first and last received.
-
-| sleepForEmptyTest | 0 | long | Allows a sleep to be specified to wait to check that this endpoint really is empty when link expectedMessageCount(int) is called with zero
- 4+^s| producer (advanced)
-| copyOnExchange | true | boolean | Sets whether to make a deep copy of the incoming Exchange when received at this mock endpoint. Is by default true.
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **assertPeriod** (producer) | Sets a grace period after which the mock endpoint will re-assert to ensure the preliminary assertion is still valid. This is used for example to assert that exactly a number of messages arrives. For example if link expectedMessageCount(int) was set to 5 then the assertion is satisfied when 5 or more message arrives. To ensure that exactly 5 messages arrives then you would need to wait a little period to ensure no further message arrives. This is what you can use this link setAssertPeriod(long) method for. By default this period is disabled. | 0 | long
+| **expectedCount** (producer) | Specifies the expected number of message exchanges that should be received by this endpoint. Beware: If you want to expect that 0 messages then take extra care as 0 matches when the tests starts so you need to set a assert period time to let the test run for a while to make sure there are still no messages arrived; for that use link setAssertPeriod(long). An alternative is to use NotifyBuilder and use the notifier to know when Camel is done routing some messages before you call the link assertIsSatisfied() method on the mocks. This allows you to not use a fixed assert period to speedup testing times. If you want to assert that exactly n'th message arrives to this mock endpoint then see also the link setAssertPeriod(long) method for further details. | -1 | int
+| **reportGroup** (producer) | A number that is used to turn on throughput logging based on groups of the size. |  | int
+| **resultMinimumWaitTime** (producer) | Sets the minimum expected amount of time (in millis) the link assertIsSatisfied() will wait on a latch until it is satisfied | 0 | long
+| **resultWaitTime** (producer) | Sets the maximum amount of time (in millis) the link assertIsSatisfied() will wait on a latch until it is satisfied | 0 | long
+| **retainFirst** (producer) | Specifies to only retain the first n'th number of received Exchanges. This is used when testing with big data to reduce memory consumption by not storing copies of every Exchange this mock endpoint receives. Important: When using this limitation then the link getReceivedCounter() will still return the actual number of received Exchanges. For example if we have received 5000 Exchanges and have configured to only retain the first 10 Exchanges then the link getReceivedCounter() will still return 5000 but there is only the first 10 Exchanges in the link getExchanges() and link getReceivedExchanges() methods. When using this method then some of the other expectation methods is not supported for example the link expectedBodiesReceived(Object...) sets a expectation on the first number of bodies received. You can configure both link setRetainFirst(int) and link setRetainLast(int) methods to limit both the first and last received. | -1 | int
+| **retainLast** (producer) | Specifies to only retain the last n'th number of received Exchanges. This is used when testing with big data to reduce memory consumption by not storing copies of every Exchange this mock endpoint receives. Important: When using this limitation then the link getReceivedCounter() will still return the actual number of received Exchanges. For example if we have received 5000 Exchanges and have configured to only retain the last 20 Exchanges then the link getReceivedCounter() will still return 5000 but there is only the last 20 Exchanges in the link getExchanges() and link getReceivedExchanges() methods. When using this method then some of the other expectation methods is not supported for example the link expectedBodiesReceived(Object...) sets a expectation on the first number of bodies received. You can configure both link setRetainFirst(int) and link setRetainLast(int) methods to limit both the first and last received. | -1 | int
+| **sleepForEmptyTest** (producer) | Allows a sleep to be specified to wait to check that this endpoint really is empty when link expectedMessageCount(int) is called with zero | 0 | long
+| **copyOnExchange** (producer) | Sets whether to make a deep copy of the incoming Exchange when received at this mock endpoint. Is by default true. | true | boolean
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

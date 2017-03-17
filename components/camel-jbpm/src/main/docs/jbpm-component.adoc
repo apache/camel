@@ -46,67 +46,42 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| connectionURL |  | URL | *Required* The URL to the jBPM server.
+| Name | Description | Default | Type
+| **connectionURL** | *Required* The URL to the jBPM server. |  | URL
 |=======================================================================
 
 #### Query Parameters (25 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| attachmentId |  | Long | attachId to use when retrieving attachments
-
-| contentId |  | Long | contentId to use when retrieving attachments
-
-| deploymentId |  | String | *Required* The id of the deployment
-
-| event |  | Object | the data associated with this event when signalEvent operation is performed
-
-| eventType |  | String | the type of event to use when signalEvent operation is performed
-
-| identifier |  | String | identifier the global identifier
-
-| language |  | String | The language to use when filtering user tasks
-
-| maxNumber |  | Integer | the maximum number of rules that should be fired
-
-| operation | startProcess | String | The operation to perform
-
-| processId |  | String | the id of the process that should be acted upon
-
-| processInstanceId |  | Long | the id of the process instance
-
-| targetUserId |  | String | The targetUserId used when delegating a task
-
-| task |  | Task | The task instance to use with task operations
-
-| taskId |  | Long | the id of the task
-
-| timeout |  | Integer | A timeout value
-
-| userId |  | String | userId to use with task operations
-
-| value |  | Object | the value to assign to the global identifier
-
-| workItemId |  | Long | the id of the work item
- 4+^s| advanced
-| entities |  | List | The potentialOwners when nominateTask operation is performed
-
-| extraJaxbClasses |  | Class[] | To load additional classes when working with XML
-
-| parameters |  | Map | the variables that should be set for various operations
-
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
- 4+^s| filter
-| statuses |  | List | The list of status to use when filtering tasks
- 4+^s| security
-| password |  | String | Password for authentication
-
-| userName |  | String | Username for authentication
+| Name | Description | Default | Type
+| **attachmentId** (producer) | attachId to use when retrieving attachments |  | Long
+| **contentId** (producer) | contentId to use when retrieving attachments |  | Long
+| **deploymentId** (producer) | *Required* The id of the deployment |  | String
+| **event** (producer) | the data associated with this event when signalEvent operation is performed |  | Object
+| **eventType** (producer) | the type of event to use when signalEvent operation is performed |  | String
+| **identifier** (producer) | identifier the global identifier |  | String
+| **language** (producer) | The language to use when filtering user tasks |  | String
+| **maxNumber** (producer) | the maximum number of rules that should be fired |  | Integer
+| **operation** (producer) | The operation to perform | startProcess | String
+| **processId** (producer) | the id of the process that should be acted upon |  | String
+| **processInstanceId** (producer) | the id of the process instance |  | Long
+| **targetUserId** (producer) | The targetUserId used when delegating a task |  | String
+| **task** (producer) | The task instance to use with task operations |  | Task
+| **taskId** (producer) | the id of the task |  | Long
+| **timeout** (producer) | A timeout value |  | Integer
+| **userId** (producer) | userId to use with task operations |  | String
+| **value** (producer) | the value to assign to the global identifier |  | Object
+| **workItemId** (producer) | the id of the work item |  | Long
+| **entities** (advanced) | The potentialOwners when nominateTask operation is performed |  | List
+| **extraJaxbClasses** (advanced) | To load additional classes when working with XML |  | Class[]
+| **parameters** (advanced) | the variables that should be set for various operations |  | Map
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **statuses** (filter) | The list of status to use when filtering tasks |  | List
+| **password** (security) | Password for authentication |  | String
+| **userName** (security) | Username for authentication |  | String
 |=======================================================================
 // endpoint options: END
 

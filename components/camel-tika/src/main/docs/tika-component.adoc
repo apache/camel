@@ -48,27 +48,22 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| operation |  | TikaOperation | *Required* Tika Operation. parse or detect
+| Name | Description | Default | Type
+| **operation** | *Required* Tika Operation. parse or detect |  | TikaOperation
 |=======================================================================
 
 #### Query Parameters (5 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| tikaConfig |  | TikaConfig | Tika Config
-
-| tikaConfigUri |  | String | Tika Config Uri: The URI of tika-config.xml
-
-| tikaParseOutputEncoding |  | String | Tika Parse Output Encoding - Used to specify the character encoding of the parsed output. Defaults to Charset.defaultCharset() .
-
-| tikaParseOutputFormat | xml | TikaParseOutputFormat | Tika Output Format. Supported output formats. xml: Returns Parsed Content as XML. html: Returns Parsed Content as HTML. text: Returns Parsed Content as Text. textMain: Uses the boilerpipe library to automatically extract the main content from a web page.
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **tikaConfig** (producer) | Tika Config |  | TikaConfig
+| **tikaConfigUri** (producer) | Tika Config Uri: The URI of tika-config.xml |  | String
+| **tikaParseOutputEncoding** (producer) | Tika Parse Output Encoding - Used to specify the character encoding of the parsed output. Defaults to Charset.defaultCharset() . |  | String
+| **tikaParseOutputFormat** (producer) | Tika Output Format. Supported output formats. xml: Returns Parsed Content as XML. html: Returns Parsed Content as HTML. text: Returns Parsed Content as Text. textMain: Uses the boilerpipe library to automatically extract the main content from a web page. | xml | TikaParseOutputFormat
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

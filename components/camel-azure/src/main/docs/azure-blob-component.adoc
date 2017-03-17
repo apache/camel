@@ -56,55 +56,36 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| containerOrBlobUri |  | String | *Required* Container or Blob compact Uri
+| Name | Description | Default | Type
+| **containerOrBlobUri** | *Required* Container or Blob compact Uri |  | String
 |=======================================================================
 
 #### Query Parameters (19 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| azureBlobClient |  | CloudBlob | The blob service client
-
-| blobOffset | 0 | Long | Set the blob offset for the upload or download operations default is 0
-
-| blobType | blockblob | BlobType | Set a blob type 'blockblob' is default
-
-| closeStreamAfterRead | true | boolean | Close the stream after read or keep it open default is true
-
-| credentials |  | StorageCredentials | Set the storage credentials required in most cases
-
-| dataLength |  | Long | Set the data length for the download or page blob upload operations
-
-| fileDir |  | String | Set the file directory where the downloaded blobs will be saved to
-
-| publicForRead | false | boolean | Storage resources can be public for reading their content if this property is enabled then the credentials do not have to be set
-
-| streamReadSize |  | int | Set the minimum read size in bytes when reading the blob content
- 4+^s| consumer
-| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
- 4+^s| consumer (advanced)
-| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-
-| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
- 4+^s| producer
-| blobMetadata |  | Map | Set the blob meta-data
-
-| blobPrefix |  | String | Set a prefix which can be used for listing the blobs
-
-| closeStreamAfterWrite | true | boolean | Close the stream after write or keep it open default is true
-
-| operation | listBlobs | BlobServiceOperations | Blob service operation hint to the producer
-
-| streamWriteSize |  | int | Set the size of the buffer for writing block and page blocks
-
-| useFlatListing | true | boolean | Specify if the flat or hierarchical blob listing should be used
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **azureBlobClient** (common) | The blob service client |  | CloudBlob
+| **blobOffset** (common) | Set the blob offset for the upload or download operations default is 0 | 0 | Long
+| **blobType** (common) | Set a blob type 'blockblob' is default | blockblob | BlobType
+| **closeStreamAfterRead** (common) | Close the stream after read or keep it open default is true | true | boolean
+| **credentials** (common) | Set the storage credentials required in most cases |  | StorageCredentials
+| **dataLength** (common) | Set the data length for the download or page blob upload operations |  | Long
+| **fileDir** (common) | Set the file directory where the downloaded blobs will be saved to |  | String
+| **publicForRead** (common) | Storage resources can be public for reading their content if this property is enabled then the credentials do not have to be set | false | boolean
+| **streamReadSize** (common) | Set the minimum read size in bytes when reading the blob content |  | int
+| **bridgeErrorHandler** (consumer) | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored. | false | boolean
+| **exceptionHandler** (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| **exchangePattern** (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| **blobMetadata** (producer) | Set the blob meta-data |  | Map
+| **blobPrefix** (producer) | Set a prefix which can be used for listing the blobs |  | String
+| **closeStreamAfterWrite** (producer) | Close the stream after write or keep it open default is true | true | boolean
+| **operation** (producer) | Blob service operation hint to the producer | listBlobs | BlobServiceOperations
+| **streamWriteSize** (producer) | Set the size of the buffer for writing block and page blocks |  | int
+| **useFlatListing** (producer) | Specify if the flat or hierarchical blob listing should be used | true | boolean
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 

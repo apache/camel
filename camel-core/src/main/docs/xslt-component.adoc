@@ -71,27 +71,18 @@ The XSLT component supports 9 options which are listed below.
 
 
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
- 4+^s| advanced
-| xmlConverter |  | XmlConverter | To use a custom implementation of org.apache.camel.converter.jaxp.XmlConverter
-
-| uriResolverFactory |  | XsltUriResolverFactory | To use a custom javax.xml.transform.URIResolver which depends on a dynamic endpoint resource URI or which is a subclass of XsltUriResolver. Do not use in combination with uriResolver. See also link setUriResolver(URIResolver).
-
-| uriResolver |  | URIResolver | To use a custom javax.xml.transform.URIResolver. Do not use in combination with uriResolverFactory. See also link setUriResolverFactory(XsltUriResolverFactory).
- 4+^s| producer
-| contentCache | false | boolean | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation.
-
-| saxon | false | boolean | Whether to use Saxon as the transformerFactoryClass. If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath.
-
-| saxonExtensionFunctions |  | List | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry where you can comma to separate multiple values to lookup.
-
-| saxonConfiguration | true | Object | To use a custom Saxon configuration
- 4+^s| advanced
-| saxonConfigurationProperties |  | Map | To set custom Saxon configuration properties
-
-| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Description | Default | Type
+| **xmlConverter** (advanced) | To use a custom implementation of org.apache.camel.converter.jaxp.XmlConverter |  | XmlConverter
+| **uriResolverFactory** (advanced) | To use a custom javax.xml.transform.URIResolver which depends on a dynamic endpoint resource URI or which is a subclass of XsltUriResolver. Do not use in combination with uriResolver. See also link setUriResolver(URIResolver). |  | XsltUriResolverFactory
+| **uriResolver** (advanced) | To use a custom javax.xml.transform.URIResolver. Do not use in combination with uriResolverFactory. See also link setUriResolverFactory(XsltUriResolverFactory). |  | URIResolver
+| **contentCache** (producer) | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | false | boolean
+| **saxon** (producer) | Whether to use Saxon as the transformerFactoryClass. If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath. | false | boolean
+| **saxonExtensionFunctions** (producer) | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry where you can comma to separate multiple values to lookup. |  | List
+| **saxonConfiguration** (producer) | To use a custom Saxon configuration | true | Object
+| **saxonConfiguration Properties** (advanced) | To set custom Saxon configuration properties |  | Map
+| **resolveProperty Placeholders** (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 |=======================================================================
 // component options: END
 
@@ -105,51 +96,34 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| resourceUri |  | String | *Required* The name of the template to load from classpath or file system
+| Name | Description | Default | Type
+| **resourceUri** | *Required* The name of the template to load from classpath or file system |  | String
 |=======================================================================
 
 #### Query Parameters (17 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| allowStAX | true | boolean | Whether to allow using StAX as the javax.xml.transform.Source.
-
-| contentCache | true | boolean | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation.
-
-| deleteOutputFile | false | boolean | If you have output=file then this option dictates whether or not the output file should be deleted when the Exchange is done processing. For example suppose the output file is a temporary file then it can be a good idea to delete it after use.
-
-| failOnNullBody | true | boolean | Whether or not to throw an exception if the input body is null.
-
-| output | string | XsltOutput | Option to specify which output type to use. Possible values are: string bytes DOM file. The first three options are all in memory based where as file is streamed directly to a java.io.File. For file you must specify the filename in the IN header with the key Exchange.XSLT_FILE_NAME which is also CamelXsltFileName. Also any paths leading to the filename must be created beforehand otherwise an exception is thrown at runtime.
-
-| saxon | false | boolean | Whether to use Saxon as the transformerFactoryClass. If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath.
-
-| transformerCacheSize | 0 | int | The number of javax.xml.transform.Transformer object that are cached for reuse to avoid calls to Template.newTransformer().
- 4+^s| advanced
-| converter |  | XmlConverter | To use a custom implementation of org.apache.camel.converter.jaxp.XmlConverter
-
-| entityResolver |  | EntityResolver | To use a custom org.xml.sax.EntityResolver with javax.xml.transform.sax.SAXSource.
-
-| errorListener |  | ErrorListener | Allows to configure to use a custom javax.xml.transform.ErrorListener. Beware when doing this then the default error listener which captures any errors or fatal errors and store information on the Exchange as properties is not in use. So only use this option for special use-cases.
-
-| resultHandlerFactory |  | ResultHandlerFactory | Allows you to use a custom org.apache.camel.builder.xml.ResultHandlerFactory which is capable of using custom org.apache.camel.builder.xml.ResultHandler types.
-
-| saxonConfiguration |  | Object | To use a custom Saxon configuration
-
-| saxonExtensionFunctions |  | String | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry where you can comma to separate multiple values to lookup.
-
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-
-| transformerFactory |  | TransformerFactory | To use a custom XSLT transformer factory
-
-| transformerFactoryClass |  | String | To use a custom XSLT transformer factory specified as a FQN class name
-
-| uriResolver |  | URIResolver | To use a custom javax.xml.transform.URIResolver
+| Name | Description | Default | Type
+| **allowStAX** (producer) | Whether to allow using StAX as the javax.xml.transform.Source. | true | boolean
+| **contentCache** (producer) | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | true | boolean
+| **deleteOutputFile** (producer) | If you have output=file then this option dictates whether or not the output file should be deleted when the Exchange is done processing. For example suppose the output file is a temporary file then it can be a good idea to delete it after use. | false | boolean
+| **failOnNullBody** (producer) | Whether or not to throw an exception if the input body is null. | true | boolean
+| **output** (producer) | Option to specify which output type to use. Possible values are: string bytes DOM file. The first three options are all in memory based where as file is streamed directly to a java.io.File. For file you must specify the filename in the IN header with the key Exchange.XSLT_FILE_NAME which is also CamelXsltFileName. Also any paths leading to the filename must be created beforehand otherwise an exception is thrown at runtime. | string | XsltOutput
+| **saxon** (producer) | Whether to use Saxon as the transformerFactoryClass. If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath. | false | boolean
+| **transformerCacheSize** (producer) | The number of javax.xml.transform.Transformer object that are cached for reuse to avoid calls to Template.newTransformer(). | 0 | int
+| **converter** (advanced) | To use a custom implementation of org.apache.camel.converter.jaxp.XmlConverter |  | XmlConverter
+| **entityResolver** (advanced) | To use a custom org.xml.sax.EntityResolver with javax.xml.transform.sax.SAXSource. |  | EntityResolver
+| **errorListener** (advanced) | Allows to configure to use a custom javax.xml.transform.ErrorListener. Beware when doing this then the default error listener which captures any errors or fatal errors and store information on the Exchange as properties is not in use. So only use this option for special use-cases. |  | ErrorListener
+| **resultHandlerFactory** (advanced) | Allows you to use a custom org.apache.camel.builder.xml.ResultHandlerFactory which is capable of using custom org.apache.camel.builder.xml.ResultHandler types. |  | ResultHandlerFactory
+| **saxonConfiguration** (advanced) | To use a custom Saxon configuration |  | Object
+| **saxonExtensionFunctions** (advanced) | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry where you can comma to separate multiple values to lookup. |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| **transformerFactory** (advanced) | To use a custom XSLT transformer factory |  | TransformerFactory
+| **transformerFactoryClass** (advanced) | To use a custom XSLT transformer factory specified as a FQN class name |  | String
+| **uriResolver** (advanced) | To use a custom javax.xml.transform.URIResolver |  | URIResolver
 |=======================================================================
 // endpoint options: END
 

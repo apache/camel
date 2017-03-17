@@ -44,39 +44,28 @@ with the following path and query parameters:
 
 #### Path Parameters (1 parameters):
 
-[width="100%",cols="2,1,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-| topicNameOrArn |  | String | *Required* Topic name or ARN
+| Name | Description | Default | Type
+| **topicNameOrArn** | *Required* Topic name or ARN |  | String
 |=======================================================================
 
 #### Query Parameters (11 parameters):
 
-[width="100%",cols="2,1m,1m,6",options="header"]
+[width="100%",cols="2,5,^1,2",options="header"]
 |=======================================================================
-| Name | Default | Java Type | Description
-
-| accessKey |  | String | Amazon AWS Access Key
-
-| amazonSNSClient |  | AmazonSNS | To use the AmazonSNS as the client
-
-| amazonSNSEndpoint |  | String | The region with which the AWS-SNS client wants to work with.
-
-| headerFilterStrategy |  | HeaderFilterStrategy | To use a custom HeaderFilterStrategy to map headers to/from Camel.
-
-| messageStructure |  | String | The message structure to use such as json
-
-| policy |  | String | The policy for this queue
-
-| proxyHost |  | String | To define a proxy host when instantiating the SQS client
-
-| proxyPort |  | Integer | To define a proxy port when instantiating the SQS client
-
-| secretKey |  | String | Amazon AWS Secret Key
-
-| subject |  | String | The subject which is used if the message header 'CamelAwsSnsSubject' is not present.
- 4+^s| advanced
-| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Description | Default | Type
+| **accessKey** (producer) | Amazon AWS Access Key |  | String
+| **amazonSNSClient** (producer) | To use the AmazonSNS as the client |  | AmazonSNS
+| **amazonSNSEndpoint** (producer) | The region with which the AWS-SNS client wants to work with. |  | String
+| **headerFilterStrategy** (producer) | To use a custom HeaderFilterStrategy to map headers to/from Camel. |  | HeaderFilterStrategy
+| **messageStructure** (producer) | The message structure to use such as json |  | String
+| **policy** (producer) | The policy for this queue |  | String
+| **proxyHost** (producer) | To define a proxy host when instantiating the SQS client |  | String
+| **proxyPort** (producer) | To define a proxy port when instantiating the SQS client |  | Integer
+| **secretKey** (producer) | Amazon AWS Secret Key |  | String
+| **subject** (producer) | The subject which is used if the message header 'CamelAwsSnsSubject' is not present. |  | String
+| **synchronous** (advanced) | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |=======================================================================
 // endpoint options: END
 
