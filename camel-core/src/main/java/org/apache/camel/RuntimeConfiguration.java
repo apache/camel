@@ -67,6 +67,20 @@ public interface RuntimeConfiguration {
     Boolean isMessageHistory();
 
     /**
+     * Sets whether security mask for Log EIP is enabled or not (default is disabled).
+     * 
+     * @param logEipMask <tt>true</tt> if mask is enabled
+     */
+    void setLogEipMask(Boolean logEipMask);
+
+    /**
+     * Gets whether security mask for Log EIP is enabled or not.
+     * 
+     * @return <tt>true</tt> if mask is enabled
+     */
+    Boolean isLogEipMask();
+
+    /**
      * Sets whether to log exhausted message body with message history.
      *
      * @param logExhaustedMessageBody whether message body should be logged
