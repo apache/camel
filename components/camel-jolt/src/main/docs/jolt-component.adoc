@@ -45,11 +45,13 @@ The JOLT component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| transform | advanced |  | Transform | Explicitly sets the Transform to use. If not set a Transform specified by the transformDsl will be created
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| advanced
+| transform |  | Transform | Explicitly sets the Transform to use. If not set a Transform specified by the transformDsl will be created
+
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -75,14 +77,19 @@ with the following path and query parameters:
 
 #### Query Parameters (5 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| contentCache | producer | false | boolean | Sets whether to use resource content cache or not
-| inputType | producer | Hydrated | JoltInputOutputType | Specifies if the input is hydrated JSON or a JSON String.
-| outputType | producer | Hydrated | JoltInputOutputType | Specifies if the output should be hydrated JSON or a JSON String.
-| transformDsl | producer | Chainr | JoltTransformType | Specifies the Transform DSL of the endpoint resource. If none is specified Chainr will be used.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| contentCache | false | boolean | Sets whether to use resource content cache or not
+
+| inputType | Hydrated | JoltInputOutputType | Specifies if the input is hydrated JSON or a JSON String.
+
+| outputType | Hydrated | JoltInputOutputType | Specifies if the output should be hydrated JSON or a JSON String.
+
+| transformDsl | Chainr | JoltTransformType | Specifies the Transform DSL of the endpoint resource. If none is specified Chainr will be used.
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

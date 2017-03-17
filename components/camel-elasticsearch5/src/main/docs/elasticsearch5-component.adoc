@@ -55,18 +55,27 @@ with the following path and query parameters:
 
 #### Query Parameters (9 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| clientTransportSniff | producer | true | Boolean | Is the client allowed to sniff the rest of the cluster or not (default true). This setting map to the client.transport.sniff setting.
-| indexName | producer |  | String | The name of the index to act against
-| indexType | producer |  | String | The type of the index to act against
-| ip | producer |  | String | The TransportClient remote host ip to use
-| operation | producer |  | ElasticsearchOperation | What operation to perform
-| port | producer | 9300 | int | The TransportClient remote port to use (defaults to 9300)
-| transportAddresses | producer |  | String | Comma separated list with ip:port formatted remote transport addresses to use. The ip and port options must be left blank for transportAddresses to be considered instead.
-| waitForActiveShards | producer | 1 | int | Index creation waits for the write consistency number of shards to be available
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| clientTransportSniff | true | Boolean | Is the client allowed to sniff the rest of the cluster or not (default true). This setting map to the client.transport.sniff setting.
+
+| indexName |  | String | The name of the index to act against
+
+| indexType |  | String | The type of the index to act against
+
+| ip |  | String | The TransportClient remote host ip to use
+
+| operation |  | ElasticsearchOperation | What operation to perform
+
+| port | 9300 | int | The TransportClient remote port to use (defaults to 9300)
+
+| transportAddresses |  | String | Comma separated list with ip:port formatted remote transport addresses to use. The ip and port options must be left blank for transportAddresses to be considered instead.
+
+| waitForActiveShards | 1 | int | Index creation waits for the write consistency number of shards to be available
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

@@ -59,15 +59,21 @@ with the following path and query parameters:
 
 #### Query Parameters (6 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| binary | producer | false | boolean | Whether the script is binary content or text content. By default the script is read as text content (eg java.lang.String)
-| cacheScript | producer | false | boolean | Whether to cache the compiled script and reuse Notice reusing the script can cause side effects from processing one Camel org.apache.camel.Exchange to the next org.apache.camel.Exchange.
-| contentCache | producer | false | boolean | Sets whether to use resource content cache or not.
-| script | producer |  | String | Sets the script to execute
-| transform | producer | true | boolean | Whether or not the result of the script should be used as message body. This options is default true.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| binary | false | boolean | Whether the script is binary content or text content. By default the script is read as text content (eg java.lang.String)
+
+| cacheScript | false | boolean | Whether to cache the compiled script and reuse Notice reusing the script can cause side effects from processing one Camel org.apache.camel.Exchange to the next org.apache.camel.Exchange.
+
+| contentCache | false | boolean | Sets whether to use resource content cache or not.
+
+| script |  | String | Sets the script to execute
+
+| transform | true | boolean | Whether or not the result of the script should be used as message body. This options is default true.
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

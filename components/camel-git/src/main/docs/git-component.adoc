@@ -52,22 +52,35 @@ with the following path and query parameters:
 
 #### Query Parameters (13 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| branchName | common |  | String | The branch name to work on
-| password | common |  | String | Remote repository password
-| remoteName | common |  | String | The remote repository name to use in particular operation like pull
-| remotePath | common |  | String | The remote repository path
-| tagName | common |  | String | The tag name to work on
-| username | common |  | String | Remote repository username
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| type | consumer |  | GitType | The consumer type
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| allowEmpty | producer | true | boolean | The flag to manage empty git commits
-| operation | producer |  | String | The operation to do on the repository
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| branchName |  | String | The branch name to work on
+
+| password |  | String | Remote repository password
+
+| remoteName |  | String | The remote repository name to use in particular operation like pull
+
+| remotePath |  | String | The remote repository path
+
+| tagName |  | String | The tag name to work on
+
+| username |  | String | Remote repository username
+ 4+^s| consumer
+| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| type |  | GitType | The consumer type
+ 4+^s| consumer (advanced)
+| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+ 4+^s| producer
+| allowEmpty | true | boolean | The flag to manage empty git commits
+
+| operation |  | String | The operation to do on the repository
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

@@ -51,20 +51,31 @@ with the following path and query parameters:
 
 #### Query Parameters (11 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| accessKey | producer |  | String | Amazon AWS Access Key
-| amazonCwClient | producer |  | AmazonCloudWatch | To use the AmazonCloudWatch as the client
-| amazonCwEndpoint | producer |  | String | The region with which the AWS-CW client wants to work with.
-| name | producer |  | String | The metric name
-| proxyHost | producer |  | String | To define a proxy host when instantiating the SQS client
-| proxyPort | producer |  | Integer | To define a proxy port when instantiating the SQS client
-| secretKey | producer |  | String | Amazon AWS Secret Key
-| timestamp | producer |  | Date | The metric timestamp
-| unit | producer |  | String | The metric unit
-| value | producer |  | Double | The metric value
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| accessKey |  | String | Amazon AWS Access Key
+
+| amazonCwClient |  | AmazonCloudWatch | To use the AmazonCloudWatch as the client
+
+| amazonCwEndpoint |  | String | The region with which the AWS-CW client wants to work with.
+
+| name |  | String | The metric name
+
+| proxyHost |  | String | To define a proxy host when instantiating the SQS client
+
+| proxyPort |  | Integer | To define a proxy port when instantiating the SQS client
+
+| secretKey |  | String | Amazon AWS Secret Key
+
+| timestamp |  | Date | The metric timestamp
+
+| unit |  | String | The metric unit
+
+| value |  | Double | The metric value
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

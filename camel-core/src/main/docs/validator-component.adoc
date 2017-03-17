@@ -56,11 +56,13 @@ The Validator component supports 2 options which are listed below.
 
 
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| resourceResolverFactory | advanced |  | ValidatorResourceResolverFactory | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI
-| resolvePropertyPlaceholders | advanced | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
+| Name | Default | Java Type | Description
+ 4+^s| advanced
+| resourceResolverFactory |  | ValidatorResourceResolverFactory | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI
+
+| resolvePropertyPlaceholders | true | boolean | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders.
 |=======================================================================
 // component options: END
 
@@ -82,20 +84,31 @@ with the following path and query parameters:
 
 #### Query Parameters (11 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| failOnNullBody | producer | true | boolean | Whether to fail if no body exists.
-| failOnNullHeader | producer | true | boolean | Whether to fail if no header exists when validating against a header.
-| headerName | producer |  | String | To validate against a header instead of the message body.
-| errorHandler | advanced |  | ValidatorErrorHandler | To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler. The default error handler captures the errors and throws an exception.
-| resourceResolver | advanced |  | LSResourceResolver | To use a custom LSResourceResolver. See also link setResourceResolverFactory(ValidatorResourceResolverFactory)
-| resourceResolverFactory | advanced |  | ValidatorResourceResolverFactory | For creating a resource resolver which depends on the endpoint resource URI. Must not be used in combination with method link setResourceResolver(LSResourceResolver). If not set then DefaultValidatorResourceResolverFactory is used
-| schemaFactory | advanced |  | SchemaFactory | To use a custom javax.xml.validation.SchemaFactory
-| schemaLanguage | advanced | http://www.w3.org/2001/XMLSchema | String | Configures the W3C XML Schema Namespace URI.
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| useDom | advanced | false | boolean | Whether DOMSource/DOMResult or SaxSource/SaxResult should be used by the validator.
-| useSharedSchema | advanced | true | boolean | Whether the Schema instance should be shared or not. This option is introduced to work around a JDK 1.6.x bug. Xerces should not have this issue.
+| Name | Default | Java Type | Description
+
+| failOnNullBody | true | boolean | Whether to fail if no body exists.
+
+| failOnNullHeader | true | boolean | Whether to fail if no header exists when validating against a header.
+
+| headerName |  | String | To validate against a header instead of the message body.
+ 4+^s| advanced
+| errorHandler |  | ValidatorErrorHandler | To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler. The default error handler captures the errors and throws an exception.
+
+| resourceResolver |  | LSResourceResolver | To use a custom LSResourceResolver. See also link setResourceResolverFactory(ValidatorResourceResolverFactory)
+
+| resourceResolverFactory |  | ValidatorResourceResolverFactory | For creating a resource resolver which depends on the endpoint resource URI. Must not be used in combination with method link setResourceResolver(LSResourceResolver). If not set then DefaultValidatorResourceResolverFactory is used
+
+| schemaFactory |  | SchemaFactory | To use a custom javax.xml.validation.SchemaFactory
+
+| schemaLanguage | http://www.w3.org/2001/XMLSchema | String | Configures the W3C XML Schema Namespace URI.
+
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+
+| useDom | false | boolean | Whether DOMSource/DOMResult or SaxSource/SaxResult should be used by the validator.
+
+| useSharedSchema | true | boolean | Whether the Schema instance should be shared or not. This option is introduced to work around a JDK 1.6.x bug. Xerces should not have this issue.
 |=======================================================================
 // endpoint options: END
 

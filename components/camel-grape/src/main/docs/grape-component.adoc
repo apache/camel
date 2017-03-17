@@ -33,11 +33,13 @@ with the following path and query parameters:
 
 #### Query Parameters (2 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| exchangePattern |  | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange.
-| synchronous |  | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| exchangePattern | InOnly | ExchangePattern | Sets the default exchange pattern when creating an exchange.
+
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

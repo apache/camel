@@ -58,14 +58,19 @@ with the following path and query parameters:
 
 #### Query Parameters (5 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| clusterId | producer |  | String | Cluster ID https://drill.apache.org/docs/using-the-jdbc-driver/determining-the-cluster-id
-| directory | producer |  | String | Drill directory in ZooKeeper
-| mode | producer | ZK | DrillConnectionMode | Connection mode: zk: Zookeeper drillbit: Drillbit direct connection https://drill.apache.org/docs/using-the-jdbc-driver/
-| port | producer |  | Integer | ZooKeeper port number
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| clusterId |  | String | Cluster ID https://drill.apache.org/docs/using-the-jdbc-driver/determining-the-cluster-id
+
+| directory |  | String | Drill directory in ZooKeeper
+
+| mode | ZK | DrillConnectionMode | Connection mode: zk: Zookeeper drillbit: Drillbit direct connection https://drill.apache.org/docs/using-the-jdbc-driver/
+
+| port |  | Integer | ZooKeeper port number
+ 4+^s| advanced
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

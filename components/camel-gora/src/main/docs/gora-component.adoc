@@ -99,30 +99,51 @@ with the following path and query parameters:
 
 #### Query Parameters (21 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| dataStoreClass | common |  | String | The type of the dataStore
-| keyClass | common |  | String | The type class of the key
-| valueClass | common |  | String | The type of the value
-| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| concurrentConsumers | consumer | 1 | int | Number of concurrent consumers
-| endKey | consumer |  | Object | The End Key
-| endTime | consumer |  | long | The End Time
-| fields | consumer |  | Strings | The Fields
-| keyRangeFrom | consumer |  | Object | The Key Range From
-| keyRangeTo | consumer |  | Object | The Key Range To
-| limit | consumer |  | long | The Limit
-| startKey | consumer |  | Object | The Start Key
-| startTime | consumer |  | long | The Start Time
-| timeRangeFrom | consumer |  | long | The Time Range From
-| timeRangeTo | consumer |  | long | The Time Range To
-| timestamp | consumer |  | long | The Timestamp
-| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
-| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
-| flushOnEveryOperation | producer | true | boolean | Flush on every operation
-| hadoopConfiguration | advanced |  | Configuration | Hadoop Configuration
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+| Name | Default | Java Type | Description
+
+| dataStoreClass |  | String | The type of the dataStore
+
+| keyClass |  | String | The type class of the key
+
+| valueClass |  | String | The type of the value
+ 4+^s| consumer
+| bridgeErrorHandler | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| concurrentConsumers | 1 | int | Number of concurrent consumers
+
+| endKey |  | Object | The End Key
+
+| endTime |  | long | The End Time
+
+| fields |  | Strings | The Fields
+
+| keyRangeFrom |  | Object | The Key Range From
+
+| keyRangeTo |  | Object | The Key Range To
+
+| limit |  | long | The Limit
+
+| startKey |  | Object | The Start Key
+
+| startTime |  | long | The Start Time
+
+| timeRangeFrom |  | long | The Time Range From
+
+| timeRangeTo |  | long | The Time Range To
+
+| timestamp |  | long | The Timestamp
+ 4+^s| consumer (advanced)
+| exceptionHandler |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+
+| exchangePattern |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+ 4+^s| producer
+| flushOnEveryOperation | true | boolean | Flush on every operation
+ 4+^s| advanced
+| hadoopConfiguration |  | Configuration | Hadoop Configuration
+
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
 |=======================================================================
 // endpoint options: END
 

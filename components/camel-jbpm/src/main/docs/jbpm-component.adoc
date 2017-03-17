@@ -54,34 +54,59 @@ with the following path and query parameters:
 
 #### Query Parameters (25 parameters):
 
-[width="100%",cols="2,1,1m,1m,5",options="header"]
+[width="100%",cols="2,1m,1m,6",options="header"]
 |=======================================================================
-| Name | Group | Default | Java Type | Description
-| attachmentId | producer |  | Long | attachId to use when retrieving attachments
-| contentId | producer |  | Long | contentId to use when retrieving attachments
-| deploymentId | producer |  | String | *Required* The id of the deployment
-| event | producer |  | Object | the data associated with this event when signalEvent operation is performed
-| eventType | producer |  | String | the type of event to use when signalEvent operation is performed
-| identifier | producer |  | String | identifier the global identifier
-| language | producer |  | String | The language to use when filtering user tasks
-| maxNumber | producer |  | Integer | the maximum number of rules that should be fired
-| operation | producer | startProcess | String | The operation to perform
-| processId | producer |  | String | the id of the process that should be acted upon
-| processInstanceId | producer |  | Long | the id of the process instance
-| targetUserId | producer |  | String | The targetUserId used when delegating a task
-| task | producer |  | Task | The task instance to use with task operations
-| taskId | producer |  | Long | the id of the task
-| timeout | producer |  | Integer | A timeout value
-| userId | producer |  | String | userId to use with task operations
-| value | producer |  | Object | the value to assign to the global identifier
-| workItemId | producer |  | Long | the id of the work item
-| entities | advanced |  | List | The potentialOwners when nominateTask operation is performed
-| extraJaxbClasses | advanced |  | Class[] | To load additional classes when working with XML
-| parameters | advanced |  | Map | the variables that should be set for various operations
-| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
-| statuses | filter |  | List | The list of status to use when filtering tasks
-| password | security |  | String | Password for authentication
-| userName | security |  | String | Username for authentication
+| Name | Default | Java Type | Description
+
+| attachmentId |  | Long | attachId to use when retrieving attachments
+
+| contentId |  | Long | contentId to use when retrieving attachments
+
+| deploymentId |  | String | *Required* The id of the deployment
+
+| event |  | Object | the data associated with this event when signalEvent operation is performed
+
+| eventType |  | String | the type of event to use when signalEvent operation is performed
+
+| identifier |  | String | identifier the global identifier
+
+| language |  | String | The language to use when filtering user tasks
+
+| maxNumber |  | Integer | the maximum number of rules that should be fired
+
+| operation | startProcess | String | The operation to perform
+
+| processId |  | String | the id of the process that should be acted upon
+
+| processInstanceId |  | Long | the id of the process instance
+
+| targetUserId |  | String | The targetUserId used when delegating a task
+
+| task |  | Task | The task instance to use with task operations
+
+| taskId |  | Long | the id of the task
+
+| timeout |  | Integer | A timeout value
+
+| userId |  | String | userId to use with task operations
+
+| value |  | Object | the value to assign to the global identifier
+
+| workItemId |  | Long | the id of the work item
+ 4+^s| advanced
+| entities |  | List | The potentialOwners when nominateTask operation is performed
+
+| extraJaxbClasses |  | Class[] | To load additional classes when working with XML
+
+| parameters |  | Map | the variables that should be set for various operations
+
+| synchronous | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+ 4+^s| filter
+| statuses |  | List | The list of status to use when filtering tasks
+ 4+^s| security
+| password |  | String | Password for authentication
+
+| userName |  | String | Username for authentication
 |=======================================================================
 // endpoint options: END
 
