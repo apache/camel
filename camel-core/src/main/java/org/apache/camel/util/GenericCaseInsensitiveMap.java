@@ -63,13 +63,10 @@ public class GenericCaseInsensitiveMap<K, V> implements Map<K, V>, Cloneable, ja
     protected Map<K, V> copy(Map<K, V> source, Map dest) {
         for (Entry<K, V> entry : source.entrySet()) {
             K key = entry.getKey();
-            K altKey;
             if (key instanceof String) {
-                altKey = (K) new CaseInsensitiveString((String) key);
-            } else {
-                altKey = key;
+                key = (K) new CaseInsensitiveString((String) key);
             }
-            dest.put(altKey, entry.getValue());
+            dest.put(key, entry.getValue());
         }
         return dest;
     }
