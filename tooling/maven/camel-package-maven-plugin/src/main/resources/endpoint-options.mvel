@@ -9,7 +9,7 @@ with the following path and query parameters:
 [width="100%",cols="2,1,6,1",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
-@foreach{row : endpointPathOptions}| **@{row.getShortName(35)}** | @{row.getShortDefaultValue(25)} | @{row.description} | @{row.getShortJavaType(25)}
+@foreach{row : endpointPathOptions}| **@{row.getShortName(30)}** | @{row.getShortDefaultValue(20)} | @{row.description} | @{row.getShortJavaType(25)}
 @end{}|=======================================================================
 
 #### Query Parameters (@{endpointOptions.size()} parameters):
@@ -17,5 +17,5 @@ with the following path and query parameters:
 [width="100%",cols="2,1,6,1",options="header"]
 |=======================================================================
 | Name | Default | Java Type | Description
-@foreach{row : endpointOptions}| **@{row.getShortName(35)}** (@{row.shortGroup}) | @{row.getShortDefaultValue(25)} | @{row.description} | @{row.getShortJavaType(25)}
+@foreach{row : endpointOptions}| **@{row.getShortName(30)}** (@{row.shortGroup}) | @{row.getShortDefaultValue(20)} | @{row.description} | @{row.getShortJavaType(25)}
 @end{}|=======================================================================
