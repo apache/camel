@@ -486,6 +486,7 @@ public final class ArquillianPackager {
         pom = pom.replace("#{module}", config.getModuleName());
 
         File pomFile = new File(config.getModuleBasePath() + "/target/itest-spring-boot-pom.xml");
+        pomFile.getParentFile().mkdirs();
         try (FileWriter fw = new FileWriter(pomFile)) {
             IOUtils.write(pom, fw);
         }
