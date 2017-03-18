@@ -52,8 +52,9 @@ public class TarIterator implements Iterator<Message>, Closeable {
     private final Message inputMessage;
     private volatile TarArchiveInputStream tarInputStream;
     private volatile Message parent;
+    private boolean allowEmptyDirectory;
 
-    public TarIterator(Message inputMessage, InputStream inputStream) {
+	public TarIterator(Message inputMessage, InputStream inputStream) {
         this.inputMessage = inputMessage;
         //InputStream inputStream = inputMessage.getBody(InputStream.class);
 
@@ -151,6 +152,10 @@ public class TarIterator implements Iterator<Message>, Closeable {
         while ((entry = tarInputStream.getNextTarEntry()) != null) {
             if (!entry.isDirectory()) {
                 return entry;
+            } else {
+                if (allowEmptyDirectory) {
+                    return entry;
+                }
             }
         }
 
@@ -167,4 +172,12 @@ public class TarIterator implements Iterator<Message>, Closeable {
         IOHelper.close(tarInputStream);
         tarInputStream = null;
     }
+    
+    public boolean isAllowEmptyDirectory() {
+		return allowEmptyDirectory;
+	}
+
+	public void setAllowEmptyDirectory(boolean allowEmptyDirectory) {
+		this.allowEmptyDirectory = allowEmptyDirectory;
+	}
 }
