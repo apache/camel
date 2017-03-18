@@ -54,7 +54,7 @@ public class TarIterator implements Iterator<Message>, Closeable {
     private volatile Message parent;
     private boolean allowEmptyDirectory;
 
-	public TarIterator(Message inputMessage, InputStream inputStream) {
+    public TarIterator(Message inputMessage, InputStream inputStream) {
         this.inputMessage = inputMessage;
         //InputStream inputStream = inputMessage.getBody(InputStream.class);
 
@@ -174,10 +174,10 @@ public class TarIterator implements Iterator<Message>, Closeable {
     }
     
     public boolean isAllowEmptyDirectory() {
-		return allowEmptyDirectory;
-	}
+        return allowEmptyDirectory;
+    }
 
-	public void setAllowEmptyDirectory(boolean allowEmptyDirectory) {
-		this.allowEmptyDirectory = allowEmptyDirectory;
-	}
+    public void setAllowEmptyDirectory(boolean allowEmptyDirectory) {
+        this.allowEmptyDirectory = allowEmptyDirectory;
+    }
 }
