@@ -16,17 +16,14 @@
  */
 package org.apache.camel.util;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -46,10 +43,6 @@ import org.apache.camel.spi.BrowsableEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.util.JsonSchemaHelper.getPropertyDefaultValue;
-import static org.apache.camel.util.JsonSchemaHelper.getPropertyPrefix;
-import static org.apache.camel.util.JsonSchemaHelper.isPropertyMultiValue;
-import static org.apache.camel.util.JsonSchemaHelper.isPropertyRequired;
 import static org.apache.camel.util.ObjectHelper.after;
 
 /**
@@ -364,7 +357,9 @@ public final class EndpointHelper {
                 return (List) bean;
             } else {
                 // The bean is a list element
-                return Arrays.asList(elementType.cast(bean));
+                List<T> singleElementList = new ArrayList<T>();
+                singleElementList.add(elementType.cast(bean));
+                return singleElementList;
             }
         } else { // more than one list element
             List<T> result = new ArrayList<T>(elements.size());
