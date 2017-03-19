@@ -4172,12 +4172,6 @@
         <artifactId>zendesk-java-client</artifactId>
         <version>${zendesk-client-version}</version>
       </dependency>
-      <dependency>
-        <groupId>com.cloudbees.thirdparty</groupId>
-        <artifactId>zendesk-java-client</artifactId>
-        <classifier>javadoc</classifier>
-        <version>${zendesk-client-version}</version>
-      </dependency>
 
       <!-- Optional Jira -->
       <dependency>

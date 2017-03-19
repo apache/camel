@@ -49,11 +49,6 @@
       <groupId>com.cloudbees.thirdparty</groupId>
       <artifactId>zendesk-java-client</artifactId>
     </dependency>
-    <dependency>
-      <groupId>com.cloudbees.thirdparty</groupId>
-      <artifactId>zendesk-java-client</artifactId>
-      <classifier>javadoc</classifier>
-    </dependency>
 
     <!-- testing -->
     <dependency>
@@ -103,83 +98,83 @@
             <configuration>
               <apis>
                 <api>
-                  <apiName/>
+                  <apiName />
                   <proxyClass>org.zendesk.client.v2.Zendesk</proxyClass>
                   <fromJavadoc>
                     <excludeMethods>isClosed|close|getTicketsByStatus|createGroups</excludeMethods>
                   </fromJavadoc>
                   <substitutions>
                     <substitution>
-                        <method>deleteSuspendedTicket|checkHasId</method>
-                        <argType>SuspendedTicket</argType>
-                        <argName>ticket</argName>
-                        <replacement>suspendedTicket</replacement>
+                      <method>deleteSuspendedTicket|checkHasId</method>
+                      <argType>SuspendedTicket</argType>
+                      <argName>ticket</argName>
+                      <replacement>suspendedTicket</replacement>
                     </substitution>
                     <substitution>
-                        <method>deleteAutomation</method>
-                        <argType>long</argType>
-                        <argName>automationId</argName>
-                        <replacement>automationId0</replacement>
+                      <method>deleteAutomation</method>
+                      <argType>long</argType>
+                      <argName>automationId</argName>
+                      <replacement>automationId0</replacement>
                     </substitution>
                     <substitution>
-                        <method>createUsers|createUsersAsync</method>
-                        <argType>java.util.List</argType>
-                        <argName>users</argName>
-                        <replacement>userList</replacement>
+                      <method>createUsers|createUsersAsync</method>
+                      <argType>java.util.List</argType>
+                      <argName>users</argName>
+                      <replacement>userList</replacement>
                     </substitution>
                     <substitution>
-                        <method>getTicketAudits</method>
-                        <argType>java.lang.Long</argType>
-                        <argName>id</argName>
-                        <replacement>ticketId0</replacement>
+                      <method>getTicketAudits</method>
+                      <argType>java.lang.Long</argType>
+                      <argName>id</argName>
+                      <replacement>ticketId0</replacement>
                     </substitution>
                     <substitution>
-                        <method>updateMacro</method>
-                        <argType>java.lang.Long</argType>
-                        <argName>macroId</argName>
-                        <replacement>macroId0</replacement>
+                      <method>updateMacro</method>
+                      <argType>java.lang.Long</argType>
+                      <argName>macroId</argName>
+                      <replacement>macroId0</replacement>
                     </substitution>
                     <substitution>
-                        <method>deleteArticleAttachment</method>
-                        <argType>ArticleAttachments</argType>
-                        <argName>attachment</argName>
-                        <replacement>articleAttachments</replacement>
+                      <method>deleteArticleAttachment</method>
+                      <argType>ArticleAttachments</argType>
+                      <argName>attachment</argName>
+                      <replacement>articleAttachments</replacement>
                     </substitution>
                     <substitution>
-                        <method>createTickets|createTicketsAsync</method>
-                        <argType>java.util.List</argType>
-                        <argName>tickets</argName>
-                        <replacement>ticketList</replacement>
+                      <method>createTickets|createTicketsAsync</method>
+                      <argType>java.util.List</argType>
+                      <argName>tickets</argName>
+                      <replacement>ticketList</replacement>
                     </substitution>
                     <substitution>
-                        <method>updateInstallation</method>
-                        <argType>int</argType>
-                        <argName>id</argName>
-                        <replacement>installationId</replacement>
+                      <method>updateInstallation</method>
+                      <argType>int</argType>
+                      <argName>id</argName>
+                      <replacement>installationId</replacement>
                     </substitution>
                     <substitution>
-                        <method>getUserSubscriptions</method>
-                        <argType>java.lang.Long</argType>
-                        <argName>userId</argName>
-                        <replacement>userId0</replacement>
+                      <method>getUserSubscriptions</method>
+                      <argType>java.lang.Long</argType>
+                      <argName>userId</argName>
+                      <replacement>userId0</replacement>
                     </substitution>
                     <substitution>
-                        <method>createOrganizations|createOrganizationsAsync</method>
-                        <argType>java.util.List</argType>
-                        <argName>organizations</argName>
-                        <replacement>organizationList</replacement>
+                      <method>createOrganizations|createOrganizationsAsync</method>
+                      <argType>java.util.List</argType>
+                      <argName>organizations</argName>
+                      <replacement>organizationList</replacement>
                     </substitution>
                     <substitution>
-                        <method>updateTrigger</method>
-                        <argType>java.lang.Long</argType>
-                        <argName>triggerId</argName>
-                        <replacement>triggerId0</replacement>
+                      <method>updateTrigger</method>
+                      <argType>java.lang.Long</argType>
+                      <argName>triggerId</argName>
+                      <replacement>triggerId0</replacement>
                     </substitution>
                     <substitution>
-                        <method>createUploadArticle</method>
-                        <argType>long</argType>
-                        <argName>articleId</argName>
-                        <replacement>articleId0</replacement>
+                      <method>createUploadArticle</method>
+                      <argType>long</argType>
+                      <argName>articleId</argName>
+                      <replacement>articleId0</replacement>
                     </substitution>
                   </substitutions>
                 </api>
@@ -187,6 +182,14 @@
             </configuration>
           </execution>
         </executions>
+        <dependencies>
+          <dependency>
+            <groupId>com.cloudbees.thirdparty</groupId>
+            <artifactId>zendesk-java-client</artifactId>
+            <version>${zendesk-client-version}</version>
+            <classifier>javadoc</classifier>
+          </dependency>
+        </dependencies>
       </plugin>
 
       <!-- add generated source and test source to build -->
