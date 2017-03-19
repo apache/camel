@@ -35,6 +35,8 @@ import org.apache.camel.spi.Metadata;
 public class TarFileDataFormat extends DataFormatDefinition {
     @XmlAttribute
     private Boolean usingIterator;
+    @XmlAttribute
+    private Boolean allowEmptyDirectory;
 
     public TarFileDataFormat() {
         super("tarfile");
@@ -50,6 +52,10 @@ public class TarFileDataFormat extends DataFormatDefinition {
     public Boolean getUsingIterator() {
         return usingIterator;
     }
+    
+    public Boolean getAllowEmptyDirectory() {
+        return allowEmptyDirectory;
+    }
 
     /**
      * If the tar file has more then one entry, the setting this option to true, allows to work with the splitter EIP,
@@ -57,5 +63,13 @@ public class TarFileDataFormat extends DataFormatDefinition {
      */
     public void setUsingIterator(Boolean usingIterator) {
         this.usingIterator = usingIterator;
+    }
+    
+    /**
+     * If the tar file has more then one entry, setting this option to true, allows to get the iterator
+     * even if the directory is empty
+     */
+    public void setAllowEmptyDirectory(Boolean allowEmptyDirectory) {
+        this.allowEmptyDirectory = allowEmptyDirectory;
     }
 }
