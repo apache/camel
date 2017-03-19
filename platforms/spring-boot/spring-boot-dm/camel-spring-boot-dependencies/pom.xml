@@ -44,6 +44,11 @@
         <version>1.2-m01</version>
       </dependency>
       <dependency>
+        <groupId>com.cloudbees.thirdparty</groupId>
+        <artifactId>zendesk-java-client</artifactId>
+        <version>0.5.3</version>
+      </dependency>
+      <dependency>
         <groupId>com.dropbox.core</groupId>
         <artifactId>dropbox-core-sdk</artifactId>
         <version>1.8.2</version>
@@ -2680,6 +2685,16 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-yammer-starter</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-zendesk</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-zendesk-starter</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
