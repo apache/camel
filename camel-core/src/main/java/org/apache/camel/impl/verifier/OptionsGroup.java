@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 public final class OptionsGroup implements Serializable {
@@ -33,7 +34,7 @@ public final class OptionsGroup implements Serializable {
 
     public OptionsGroup(String name, Collection<String> options) {
         this.name = name;
-        this.options = new HashSet<>(options);
+        this.options = new LinkedHashSet<>(options);
     }
 
     public void addOption(String option) {
