@@ -127,8 +127,9 @@ public final class BOMResolver {
 
 
         RemoteRepository mavenCentral = new RemoteRepository.Builder("central", "default", "http://repo1.maven.org/maven2/").build();
+        RemoteRepository apacheSnapshots = new RemoteRepository.Builder("apache-snapshots", "default", "http://repository.apache.org/snapshots/").build();
 
-        ArtifactDescriptorRequest dReq = new ArtifactDescriptorRequest(camelSpringBootParent, Arrays.asList(localRepoDist, mavenCentral), null);
+        ArtifactDescriptorRequest dReq = new ArtifactDescriptorRequest(camelSpringBootParent, Arrays.asList(localRepoDist, mavenCentral, apacheSnapshots), null);
         ArtifactDescriptorResult dRes = system.readArtifactDescriptor(session, dReq);
 
         this.versions = new TreeMap<>();
