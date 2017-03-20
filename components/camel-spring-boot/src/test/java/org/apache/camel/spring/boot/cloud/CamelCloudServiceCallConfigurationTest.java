@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.spring.cloud;
+package org.apache.camel.spring.boot.cloud;
 
 import org.apache.camel.cloud.LoadBalancer;
 import org.apache.camel.cloud.ServiceChooser;

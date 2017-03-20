@@ -26,16 +26,16 @@ import org.springframework.cloud.client.DefaultServiceInstance;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 
-public class CamelCloudDiscoveryClient implements DiscoveryClient {
+public class CamelSpringCloudDiscoveryClient implements DiscoveryClient {
     private final String description;
     private final ServiceDiscovery serviceDiscovery;
     private ServiceInstance localInstance;
 
-    public CamelCloudDiscoveryClient(String description, ServiceDiscovery serviceDiscovery) {
+    public CamelSpringCloudDiscoveryClient(String description, ServiceDiscovery serviceDiscovery) {
         this(description, null, serviceDiscovery);
     }
 
-    public CamelCloudDiscoveryClient(String description, ServiceInstance localServiceDiscovery, ServiceDiscovery serviceDiscovery) {
+    public CamelSpringCloudDiscoveryClient(String description, ServiceInstance localServiceDiscovery, ServiceDiscovery serviceDiscovery) {
         this.description = description;
         this.serviceDiscovery = serviceDiscovery;
         this.localInstance = localServiceDiscovery;
@@ -49,11 +49,6 @@ public class CamelCloudDiscoveryClient implements DiscoveryClient {
     @Override
     public ServiceInstance getLocalServiceInstance() {
         return this.localInstance;
-    }
-
-    public CamelCloudDiscoveryClient setLocalServiceInstance(ServiceInstance instance) {
-        this.localInstance = instance;
-        return this;
     }
 
     @Override

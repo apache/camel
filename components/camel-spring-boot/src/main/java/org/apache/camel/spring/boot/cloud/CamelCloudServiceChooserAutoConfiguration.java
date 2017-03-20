@@ -14,46 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.cloud;
+package org.apache.camel.spring.boot.cloud;
 
-
-import org.apache.camel.cloud.LoadBalancer;
 import org.apache.camel.spring.boot.util.GroupCondition;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnBean({ CamelCloudAutoConfiguration.class, LoadBalancerClient.class })
-@AutoConfigureAfter({ LoadBalancerAutoConfiguration.class, CamelCloudServiceDiscoveryAutoConfiguration.class })
+@ConditionalOnBean(CamelCloudAutoConfiguration.class)
 @EnableConfigurationProperties(CamelCloudConfigurationProperties.class)
-@Conditional(CamelCloudLoadBalancerAutoConfiguration.LoadBalancerCondition.class)
-public class CamelCloudLoadBalancerAutoConfiguration {
-    @Bean(name = "load-balancer")
-    public LoadBalancer cloudLoadBalancer(LoadBalancerClient loadBalancerClient) {
-        return new CamelCloudLoadBalancer(loadBalancerClient);
-    }
-
-    @Bean(name = "load-balancer-discovery-client")
-    public DiscoveryClient serviceDiscoveryClient(CamelCloudServiceDiscovery serviceDiscovery) {
-        return new CamelCloudDiscoveryClient("service-discovery-client", serviceDiscovery);
-    }
+@Conditional(CamelCloudServiceChooserAutoConfiguration.ServiceChooserCondition.class)
+public class CamelCloudServiceChooserAutoConfiguration {
 
     // *******************************
     // Condition
     // *******************************
 
-    public static class LoadBalancerCondition extends GroupCondition {
-        public LoadBalancerCondition() {
+    public static class ServiceChooserCondition extends GroupCondition {
+        public ServiceChooserCondition() {
             super(
                 "camel.cloud",
-                "camel.cloud.load-balancer"
+                "camel.cloud.service-chooser"
             );
         }
     }
