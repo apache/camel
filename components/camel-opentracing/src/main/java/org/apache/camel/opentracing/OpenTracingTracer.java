@@ -27,7 +27,6 @@ import io.opentracing.Span;
 import io.opentracing.Tracer;
 import io.opentracing.Tracer.SpanBuilder;
 import io.opentracing.contrib.global.GlobalTracer;
-import io.opentracing.contrib.spanmanager.DefaultSpanManager;
 import io.opentracing.contrib.spanmanager.SpanManager;
 import io.opentracing.propagation.Format;
 import io.opentracing.tag.Tags;
@@ -41,6 +40,8 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.management.event.ExchangeSendingEvent;
 import org.apache.camel.management.event.ExchangeSentEvent;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.opentracing.concurrent.CamelSpanManager;
+import org.apache.camel.opentracing.concurrent.OpenTracingExecutorServiceManager;
 import org.apache.camel.opentracing.propagation.CamelHeadersExtractAdapter;
 import org.apache.camel.opentracing.propagation.CamelHeadersInjectAdapter;
 import org.apache.camel.spi.RoutePolicy;
@@ -65,10 +66,12 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenTracingTracer.class);
 
+    private static final String MANAGED_SPAN_PROPERTY = "ManagedSpan";
+
     private static Map<String, SpanDecorator> decorators = new HashMap<>();
 
     private final OpenTracingEventNotifier eventNotifier = new OpenTracingEventNotifier();
-    private final SpanManager spanManager = DefaultSpanManager.getInstance();
+    private final CamelSpanManager spanManager = CamelSpanManager.getInstance();
     private Tracer tracer;
     private CamelContext camelContext;
 
@@ -103,6 +106,10 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
             try {
                 // start this service eager so we init before Camel is starting up
                 camelContext.addService(this, true, true);
+
+                // Wrap the ExecutorServiceManager with a SpanManager aware version
+                camelContext.setExecutorServiceManager(
+                        new OpenTracingExecutorServiceManager(camelContext.getExecutorServiceManager(), spanManager));
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
@@ -187,18 +194,26 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 sd.pre(span, ese.getExchange(), ese.getEndpoint());
                 tracer.inject(span.context(), Format.Builtin.TEXT_MAP,
                     new CamelHeadersInjectAdapter(ese.getExchange().getIn().getHeaders()));
-                spanManager.activate(span);
+                ese.getExchange().setProperty(MANAGED_SPAN_PROPERTY, spanManager.activate(span));
+                spanManager.clear();
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("OpenTracing: start client span=" + span);
                 }
             } else if (event instanceof ExchangeSentEvent) {
-                SpanManager.ManagedSpan managedSpan = spanManager.current();
+                ExchangeSentEvent ese = (ExchangeSentEvent) event;
+                SpanManager.ManagedSpan managedSpan = (SpanManager.ManagedSpan)
+                        ese.getExchange().getProperty(MANAGED_SPAN_PROPERTY);
+                if (managedSpan != null) {
+                    spanManager.activate(managedSpan);
+                    ese.getExchange().setProperty(MANAGED_SPAN_PROPERTY, null);
+                } else {
+                    managedSpan = spanManager.current();
+                }
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("OpenTracing: start client span=" + managedSpan.getSpan());
                 }
-                SpanDecorator sd = getSpanDecorator(((ExchangeSentEvent) event).getEndpoint());
-                sd.post(managedSpan.getSpan(), ((ExchangeSentEvent) event).getExchange(),
-                    ((ExchangeSentEvent) event).getEndpoint());
+                SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
+                sd.post(managedSpan.getSpan(), ese.getExchange(), ese.getEndpoint());
                 managedSpan.getSpan().finish();
                 managedSpan.deactivate();
             }
@@ -223,6 +238,11 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
 
         @Override
         public void onExchangeBegin(Route route, Exchange exchange) {
+            // Check if continuing exchange on same thread
+            if (exchange.getProperties().containsKey(MANAGED_SPAN_PROPERTY)) {
+                spanManager.activate((SpanManager.ManagedSpan)exchange.getProperty(MANAGED_SPAN_PROPERTY));
+                exchange.setProperty(MANAGED_SPAN_PROPERTY, null);
+            }
             SpanDecorator sd = getSpanDecorator(route.getEndpoint());
             Span span = tracer.buildSpan(sd.getOperationName(exchange, route.getEndpoint()))
                 .asChildOf(tracer.extract(Format.Builtin.TEXT_MAP,
@@ -239,13 +259,17 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
         @Override
         public void onExchangeDone(Route route, Exchange exchange) {
             SpanManager.ManagedSpan managedSpan = spanManager.current();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("OpenTracing: finish server span=" + managedSpan.getSpan());
+            if (managedSpan.getSpan() != null) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("OpenTracing: finish server span=" + managedSpan.getSpan());
+                }
+                SpanDecorator sd = getSpanDecorator(route.getEndpoint());
+                sd.post(managedSpan.getSpan(), exchange, route.getEndpoint());
+                managedSpan.getSpan().finish();
+                managedSpan.deactivate();
+            } else {
+                LOG.warn("OpenTracing: could not find managed span for exchange=" + exchange);
             }
-            SpanDecorator sd = getSpanDecorator(route.getEndpoint());
-            sd.post(managedSpan.getSpan(), exchange, route.getEndpoint());
-            managedSpan.getSpan().finish();
-            managedSpan.deactivate();
         }
     }
 
