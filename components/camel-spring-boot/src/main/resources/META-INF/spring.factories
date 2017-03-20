@@ -18,4 +18,8 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 org.apache.camel.spring.boot.CamelAutoConfiguration,\
 org.apache.camel.spring.boot.CamelRestAutoConfiguration,\
+org.apache.camel.spring.boot.cloud.CamelCloudAutoConfiguration,\
+org.apache.camel.spring.boot.cloud.CamelCloudServiceDiscoveryAutoConfiguration,\
+org.apache.camel.spring.boot.cloud.CamelCloudServiceFilterAutoConfiguration,\
+org.apache.camel.spring.boot.cloud.CamelCloudServiceChooserAutoConfiguration,\
 org.apache.camel.spring.boot.health.CamelHealthAutoConfiguration

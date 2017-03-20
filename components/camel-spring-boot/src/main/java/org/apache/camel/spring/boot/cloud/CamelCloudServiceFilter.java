@@ -14,17 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.cloud;
+package org.apache.camel.spring.boot.cloud;
 
-import org.apache.camel.spring.boot.CamelAutoConfiguration;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.Configuration;
+import java.util.List;
 
-@Configuration
-@ConditionalOnBean(CamelAutoConfiguration.class)
-@AutoConfigureAfter(CamelAutoConfiguration.class)
-@ConditionalOnProperty(value = "camel.cloud.enabled", matchIfMissing = true)
-public class CamelCloudAutoConfiguration {
+import org.apache.camel.cloud.ServiceDefinition;
+import org.apache.camel.cloud.ServiceFilter;
+import org.apache.camel.impl.cloud.ChainedServiceFilter;
+
+public class CamelCloudServiceFilter implements ServiceFilter {
+    private final ChainedServiceFilter serviceFilter;
+
+    public CamelCloudServiceFilter(List<ServiceFilter> blacklistServiceFilter) {
+        this.serviceFilter = new ChainedServiceFilter(blacklistServiceFilter);
+    }
+
+    @Override
+    public List<ServiceDefinition> apply(List<ServiceDefinition> serviceDefinitions) {
+        return  this.serviceFilter.apply(serviceDefinitions);
+    }
 }

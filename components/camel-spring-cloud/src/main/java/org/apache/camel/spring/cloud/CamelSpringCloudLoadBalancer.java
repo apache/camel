@@ -30,13 +30,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 
-public class CamelCloudLoadBalancer extends ServiceSupport implements CamelContextAware, LoadBalancer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CamelCloudLoadBalancer.class);
+public class CamelSpringCloudLoadBalancer extends ServiceSupport implements CamelContextAware, LoadBalancer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CamelSpringCloudLoadBalancer.class);
 
     private final LoadBalancerClient loadBalancerClient;
     private CamelContext camelContext;
 
-    public CamelCloudLoadBalancer(LoadBalancerClient loadBalancerClient) {
+    public CamelSpringCloudLoadBalancer(LoadBalancerClient loadBalancerClient) {
         this.loadBalancerClient = loadBalancerClient;
     }
 
@@ -64,10 +64,7 @@ public class CamelCloudLoadBalancer extends ServiceSupport implements CamelConte
 
     @Override
     public <T> T process(String serviceName, LoadBalancerFunction<T> function) throws Exception {
-
-
-        return loadBalancerClient.execute(
-            serviceName,  i -> function.apply(instanceToDefinition(i)));
+        return loadBalancerClient.execute(serviceName,  i -> function.apply(instanceToDefinition(i)));
     }
 
     // *******************************

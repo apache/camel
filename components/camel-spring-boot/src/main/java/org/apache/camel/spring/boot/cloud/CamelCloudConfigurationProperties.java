@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.cloud;
+package org.apache.camel.spring.boot.cloud;
 
 import java.util.HashMap;
 import java.util.List;
