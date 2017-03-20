@@ -139,6 +139,11 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
     }
 
     @Override
+    public boolean isVerifySupported() {
+        return component instanceof VerifiableComponent;
+    }
+
+    @Override
     public ComponentVerifier.Result verify(String scope, Map<String, String> options) {
         try {
             ComponentVerifier.Scope scopeEnum = ComponentVerifier.Scope.valueOf(scope);
