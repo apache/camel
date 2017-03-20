@@ -645,7 +645,7 @@
     <velocity-bundle-version>1.7_6</velocity-bundle-version>
     <velocity-tools-version>2.0</velocity-tools-version>
     <velocity-version>1.7</velocity-version>
-    <vertx-version>3.4.0</vertx-version>
+    <vertx-version>3.4.1</vertx-version>
     <vysper-version>0.7</vysper-version>
     <weld1-version>1.1.28.Final</weld1-version>
     <weld2-version>2.4.2.Final</weld2-version>
