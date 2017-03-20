@@ -23,11 +23,13 @@ import java.util.Optional;
 
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.NoSuchOptionException;
+import org.apache.camel.component.salesforce.SalesforceLoginConfig.Type;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
 import org.apache.camel.impl.verifier.DefaultComponentVerifier;
+import org.apache.camel.impl.verifier.OptionsGroup;
 import org.apache.camel.impl.verifier.ResultBuilder;
 import org.apache.camel.impl.verifier.ResultErrorBuilder;
 import org.apache.camel.impl.verifier.ResultErrorHelper;
@@ -52,14 +54,22 @@ public class SalesforceComponentVerifier extends DefaultComponentVerifier {
     protected Result verifyParameters(Map<String, Object> parameters) {
         // Validate mandatory component options, needed to be done here as these
         // options are not properly marked as mandatory in the catalog.
+        //
+        // Validation rules are borrowed from SalesforceLoginConfig's validate
+        // method, which support 3 workflow:
+        //
+        // - OAuth Username/Password Flow
+        // - OAuth Refresh Token Flow:
+        // - OAuth JWT Flow
+        //
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
-            .error(ResultErrorHelper.requiresOption("clientId", parameters))
-            .error(ResultErrorHelper.requiresOption("clientSecret", parameters));
-
-            // TODO: either refreshToken or userName and password
-            //.error(ResultErrorHelper.requiresOption("refreshToken", parameters))
-            //.error(ResultErrorHelper.requiresOption("userName", parameters))
-            //.error(ResultErrorHelper.requiresOption("password", parameters));
+            .errors(ResultErrorHelper.requiresAny(
+                parameters,
+                OptionsGroup.withName(Type.USERNAME_PASSWORD).options("clientId", "clientSecret", "userName", "password"),
+                OptionsGroup.withName(Type.REFRESH_TOKEN).options("clientId", "clientSecret", "refreshToken"),
+                OptionsGroup.withName(Type.JWT).options("clientId", "userName", "keystore")
+            )
+        );
 
         // Validate using the catalog
         super.verifyParametersAgainstCatalog(builder, parameters);
