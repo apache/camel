@@ -65,6 +65,8 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenTracingTracer.class);
 
+    private static final String MANAGED_SPAN_PROPERTY = "ManagedSpan";
+
     private static Map<String, SpanDecorator> decorators = new HashMap<>();
 
     private final OpenTracingEventNotifier eventNotifier = new OpenTracingEventNotifier();
@@ -103,6 +105,10 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
             try {
                 // start this service eager so we init before Camel is starting up
                 camelContext.addService(this, true, true);
+
+                // Wrap the ExecutorServiceManager with a SpanManager aware version
+                camelContext.setExecutorServiceManager(
+                        new OpenTracingExecutorServiceManager(camelContext.getExecutorServiceManager(), spanManager));
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
@@ -187,20 +193,31 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
                 sd.pre(span, ese.getExchange(), ese.getEndpoint());
                 tracer.inject(span.context(), Format.Builtin.TEXT_MAP,
                     new CamelHeadersInjectAdapter(ese.getExchange().getIn().getHeaders()));
-                spanManager.activate(span);
+                ese.getExchange().setProperty(MANAGED_SPAN_PROPERTY, spanManager.activate(span));
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("OpenTracing: start client span=" + span);
                 }
             } else if (event instanceof ExchangeSentEvent) {
-                SpanManager.ManagedSpan managedSpan = spanManager.current();
+                ExchangeSentEvent ese = (ExchangeSentEvent) event;
+                // If managed span associated with exchange, then was final outbound component in the chain
+                // so should use that managed span. Otherwise check span manager for current managed span.
+                // This was required for situations (e.g. JMS component) where response was handled in
+                // a separate thread - but is only a temp short term solution as actually need to transfer
+                // the complete managed span stack, so won't work for more complex examples.
+                // See https://github.com/opentracing-contrib/java-spanmanager/issues/12 for more details.
+                SpanManager.ManagedSpan managedSpan = (SpanManager.ManagedSpan)
+                        ese.getExchange().getProperty(MANAGED_SPAN_PROPERTY);
+                if (managedSpan == null) {
+                    managedSpan = spanManager.current();
+                }
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("OpenTracing: start client span=" + managedSpan.getSpan());
                 }
-                SpanDecorator sd = getSpanDecorator(((ExchangeSentEvent) event).getEndpoint());
-                sd.post(managedSpan.getSpan(), ((ExchangeSentEvent) event).getExchange(),
-                    ((ExchangeSentEvent) event).getEndpoint());
+                SpanDecorator sd = getSpanDecorator(ese.getEndpoint());
+                sd.post(managedSpan.getSpan(), ese.getExchange(), ese.getEndpoint());
                 managedSpan.getSpan().finish();
                 managedSpan.deactivate();
+                ese.getExchange().setProperty(MANAGED_SPAN_PROPERTY, null);
             }
         }
 
@@ -239,13 +256,17 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
         @Override
         public void onExchangeDone(Route route, Exchange exchange) {
             SpanManager.ManagedSpan managedSpan = spanManager.current();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("OpenTracing: finish server span=" + managedSpan.getSpan());
+            if (managedSpan.getSpan() != null) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("OpenTracing: finish server span=" + managedSpan.getSpan());
+                }
+                SpanDecorator sd = getSpanDecorator(route.getEndpoint());
+                sd.post(managedSpan.getSpan(), exchange, route.getEndpoint());
+                managedSpan.getSpan().finish();
+                managedSpan.deactivate();
+            } else {
+                LOG.warn("OpenTracing: could not find managed span for exchange=" + exchange);
             }
-            SpanDecorator sd = getSpanDecorator(route.getEndpoint());
-            sd.post(managedSpan.getSpan(), exchange, route.getEndpoint());
-            managedSpan.getSpan().finish();
-            managedSpan.deactivate();
         }
     }
 
