@@ -57,6 +57,7 @@ public class SalesforceComponentVerifierTest extends CamelTestSupport {
         parameters.put("userName", USERNAME);
         parameters.put("password", PASSWORD);
 
+
         return parameters;
     }
 
@@ -81,6 +82,47 @@ public class SalesforceComponentVerifierTest extends CamelTestSupport {
     // Parameters validation
     // *********************************
 
+    @Test
+    public void testUsernamePasswordParameters() {
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("clientId", "clientId");
+        parameters.put("clientSecret", "clientSecret");
+        parameters.put("userName", "userName");
+        parameters.put("password", "password");
+
+        ComponentVerifier.Result result = getVerifier().verify(ComponentVerifier.Scope.PARAMETERS, parameters);
+
+        Assert.assertEquals(ComponentVerifier.Result.Status.OK, result.getStatus());
+    }
+
+    @Test
+    public void testRefreshTokenParameters() {
+        Map<String, Object> parameters = getParameters();
+        parameters.put("clientId", "clientId");
+        parameters.put("clientSecret", "clientSecret");
+        parameters.put("refreshToken", "refreshToken");
+
+        ComponentVerifier.Result result = getVerifier().verify(ComponentVerifier.Scope.PARAMETERS, parameters);
+
+        Assert.assertEquals(ComponentVerifier.Result.Status.OK, result.getStatus());
+    }
+
+    @Test
+    public void testWrongParameters() {
+        HashMap<String, Object> parameters = new HashMap<>();
+        parameters.put("clientId", "clientId");
+        parameters.put("clientSecret", "clientSecret");
+        parameters.put("password", "password");
+
+        ComponentVerifier.Result result = getVerifier().verify(ComponentVerifier.Scope.PARAMETERS, parameters);
+
+        Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
+        Assert.assertEquals(3, result.getErrors().size());
+
+        Assert.assertEquals(ComponentVerifier.CODE_INCOMPLETE_OPTION_GROUP, result.getErrors().get(0).getCode());
+        Assert.assertEquals(ComponentVerifier.CODE_INCOMPLETE_OPTION_GROUP, result.getErrors().get(1).getCode());
+        Assert.assertEquals(ComponentVerifier.CODE_INCOMPLETE_OPTION_GROUP, result.getErrors().get(2).getCode());
+    }
 
     // *********************************
     // Connectivity validation
@@ -100,8 +142,6 @@ public class SalesforceComponentVerifierTest extends CamelTestSupport {
         parameters.put("userName", "not-a-salesforce-user");
 
         ComponentVerifier.Result result = getVerifier().verify(ComponentVerifier.Scope.CONNECTIVITY, parameters);
-
-        Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
 
         Assert.assertEquals(ComponentVerifier.Result.Status.ERROR, result.getStatus());
         Assert.assertEquals(2, result.getErrors().size());

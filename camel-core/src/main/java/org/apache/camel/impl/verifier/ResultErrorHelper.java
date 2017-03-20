@@ -16,8 +16,15 @@
  */
 package org.apache.camel.impl.verifier;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.util.ObjectHelper;
@@ -39,5 +46,36 @@ public final class ResultErrorHelper {
         }
 
         return Optional.empty();
+    }
+
+    public static List<ComponentVerifier.Error> requiresAny(Map<String, Object> parameters, OptionsGroup... groups) {
+        return requiresAny(parameters, Arrays.asList(groups));
+    }
+
+    public static List<ComponentVerifier.Error> requiresAny(Map<String, Object> parameters, Collection<OptionsGroup> groups) {
+        final List<ComponentVerifier.Error> errors = new ArrayList<>();
+        final Set<String> keys = new HashSet<>(parameters.keySet());
+
+        for (OptionsGroup group : groups) {
+            if (keys.containsAll(group.getOptions())) {
+                // All the options of this group are found so we are good
+                return Collections.emptyList();
+            } else {
+                ResultErrorBuilder builder = new ResultErrorBuilder()
+                    .code(ComponentVerifier.CODE_INCOMPLETE_OPTION_GROUP)
+                    .attribute(ComponentVerifier.GROUP_NAME, group.getName())
+                    .attribute(ComponentVerifier.GROUP_OPTIONS, String.join(",", group.getOptions()));
+
+                for (String option : group.getOptions()) {
+                    if (!parameters.containsKey(option)) {
+                        builder.parameter(option);
+                    }
+                }
+
+                errors.add(builder.build());
+            }
+        }
+
+        return errors;
     }
 }

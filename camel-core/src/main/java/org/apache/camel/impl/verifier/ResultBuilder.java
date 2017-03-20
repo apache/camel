@@ -100,6 +100,11 @@ public final class ResultBuilder {
         return this;
     }
 
+    public ResultBuilder errors(List<ComponentVerifier.Error> errors) {
+        errors.forEach(this::error);
+        return this;
+    }
+
     // **********************************
     // Build
     // **********************************

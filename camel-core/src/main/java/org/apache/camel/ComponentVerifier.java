@@ -26,9 +26,12 @@ public interface ComponentVerifier {
     String CODE_EXCEPTION = "exception";
     String CODE_INTERNAL = "internal";
     String CODE_MISSING_OPTION = "missing-option";
+    String CODE_MISSING_OPTION_GROUP = "missing-option-group";
     String CODE_UNKNOWN_OPTION = "unknown-option";
     String CODE_ILLEGAL_OPTION = "illegal-option";
+    String CODE_ILLEGAL_OPTION_GROUP_COMBINATION = "illegal-option-group-combination";
     String CODE_ILLEGAL_OPTION_VALUE = "illegal-option-value";
+    String CODE_INCOMPLETE_OPTION_GROUP = "incomplete-option-group";
     String CODE_UNSUPPORTED = "unsupported";
     String CODE_UNSUPPORTED_SCOPE = "unsupported-scope";
     String ERROR_TYPE_ATTRIBUTE = "error.type";
@@ -40,6 +43,8 @@ public interface ComponentVerifier {
     String HTTP_REDIRECT_LOCATION = "http.redirect.location";
     String EXCEPTION_CLASS = "exception.class";
     String EXCEPTION_INSTANCE = "exception.instance";
+    String GROUP_NAME = "group.name";
+    String GROUP_OPTIONS = "group.options";
 
     enum Scope {
         NONE,
