@@ -54,9 +54,12 @@ public class SalesforceComponentVerifier extends DefaultComponentVerifier {
         // options are not properly marked as mandatory in the catalog.
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS)
             .error(ResultErrorHelper.requiresOption("clientId", parameters))
-            .error(ResultErrorHelper.requiresOption("clientSecret", parameters))
-            .error(ResultErrorHelper.requiresOption("userName", parameters))
-            .error(ResultErrorHelper.requiresOption("password", parameters));
+            .error(ResultErrorHelper.requiresOption("clientSecret", parameters));
+
+            // TODO: either refreshToken or userName and password
+            //.error(ResultErrorHelper.requiresOption("refreshToken", parameters))
+            //.error(ResultErrorHelper.requiresOption("userName", parameters))
+            //.error(ResultErrorHelper.requiresOption("password", parameters));
 
         // Validate using the catalog
         super.verifyParametersAgainstCatalog(builder, parameters);

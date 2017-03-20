@@ -121,7 +121,8 @@ public abstract class DefaultConnectorComponent extends DefaultComponent impleme
     @Override
     public ComponentVerifier getVerifier() {
         final String scheme = model.getBaseScheme();
-        final Component component = getCamelContext().getComponent(scheme);
+        // only get or create component but do NOT start it as component
+        final Component component = getCamelContext().getComponent(scheme, true, false);
 
         if (component instanceof VerifiableComponent) {
             return (scope, map) -> {

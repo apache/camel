@@ -176,9 +176,9 @@ public class SalesforceLoginConfig {
         ObjectHelper.notNull(loginUrl, "loginUrl");
         ObjectHelper.notNull(clientId, "clientId");
 
-        final boolean hasRefreshToken = ObjectHelper.isEmpty(refreshToken);
+        final boolean hasRefreshToken = ObjectHelper.isNotEmpty(refreshToken);
 
-        if (hasRefreshToken && keystore == null) {
+        if (!hasRefreshToken && keystore == null) {
             ObjectHelper.notNull(userName, "userName (username/password authentication)");
             ObjectHelper.notNull(password, "password (username/password authentication)");
             ObjectHelper.notNull(clientSecret, "clientSecret (username/password authentication)");
