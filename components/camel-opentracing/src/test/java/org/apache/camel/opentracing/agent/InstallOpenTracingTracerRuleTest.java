@@ -34,9 +34,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-/**
- * @author gbrown
- */
 public class InstallOpenTracingTracerRuleTest extends CamelTestSupport {
 
     private static MockTracer tracer = new MockTracer(Propagator.TEXT_MAP);
