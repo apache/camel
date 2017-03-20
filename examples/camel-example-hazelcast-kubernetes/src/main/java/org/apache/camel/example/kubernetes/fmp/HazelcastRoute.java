@@ -39,7 +39,7 @@ public class HazelcastRoute extends RouteBuilder {
 		ClientConfig config = new ClientConfig();
 		config.getNetworkConfig().addAddress("hazelcast");
 		config.getNetworkConfig().setSSLConfig(new SSLConfig().setEnabled(false));
-		config.setGroupConfig(new GroupConfig("someGroup", "someSecret"));
+                config.setGroupConfig(new GroupConfig("someGroup"));
 		HazelcastInstance instance = HazelcastClient.newHazelcastClient(config);
 		component.setHazelcastInstance(instance);
 		getContext().addComponent("hazelcast", component);
