@@ -18,8 +18,8 @@ package org.apache.camel.spring.cloud.netflix;
 
 import com.netflix.client.config.IClientConfig;
 import com.netflix.loadbalancer.ServerList;
-import org.apache.camel.spring.cloud.CamelCloudServiceDiscovery;
-import org.apache.camel.spring.cloud.CamelCloudServiceFilter;
+import org.apache.camel.spring.boot.cloud.CamelCloudServiceDiscovery;
+import org.apache.camel.spring.boot.cloud.CamelCloudServiceFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
