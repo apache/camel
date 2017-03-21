@@ -32,6 +32,8 @@
         </camel:trustManagers>
     </camel:sslContextParameters>
 
+    <camel:sslContextParameters id="sslClient" />
+
     <bean id="dynaPort" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <property name="targetClass">
             <value>org.apache.camel.test.AvailablePortFinder</value>
