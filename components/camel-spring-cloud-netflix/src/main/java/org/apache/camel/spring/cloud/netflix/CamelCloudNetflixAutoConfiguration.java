@@ -17,8 +17,8 @@
 package org.apache.camel.spring.cloud.netflix;
 
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
+import org.apache.camel.spring.boot.cloud.CamelCloudAutoConfiguration;
 import org.apache.camel.spring.boot.util.GroupCondition;
-import org.apache.camel.spring.cloud.CamelCloudAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.cloud.netflix.ribbon.RibbonAutoConfiguration;

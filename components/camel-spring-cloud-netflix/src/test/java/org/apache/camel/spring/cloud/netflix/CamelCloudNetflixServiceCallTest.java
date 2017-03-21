@@ -17,6 +17,7 @@
 package org.apache.camel.spring.cloud.netflix;
 
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.boot.CamelAutoConfiguration;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,6 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.netflix.ribbon.RibbonClientConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -35,7 +38,7 @@ import org.springframework.test.context.junit4.SpringRunner;
     classes = {
         CamelAutoConfiguration.class,
         CamelCloudNetflixAutoConfiguration.class,
-        CamelCloudNetflixServiceCallConfiguration.class,
+        CamelCloudNetflixServiceCallTest.TestConfiguration.class,
         RibbonClientConfiguration.class,
     },
     properties = {
@@ -56,6 +59,35 @@ public class CamelCloudNetflixServiceCallTest {
     public void testServiceCall() throws Exception {
         Assert.assertEquals("9090", template.requestBody("direct:start", null, String.class));
         Assert.assertEquals("9092", template.requestBody("direct:start", null, String.class));
+    }
+
+    // ***********************************************
+    // Configuration
+    // ***********************************************
+
+    @Configuration
+    public static class TestConfiguration {
+        @Bean
+        public RouteBuilder myRouteBuilder() {
+            return new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:start")
+                        .serviceCall()
+                        .name("custom-svc-list/hello");
+
+                    from("jetty:http://localhost:9090/hello")
+                        .transform()
+                        .constant("9090");
+                    from("jetty:http://localhost:9091/hello")
+                        .transform()
+                        .constant("9091");
+                    from("jetty:http://localhost:9092/hello")
+                        .transform()
+                        .constant("9092");
+                }
+            };
+        }
     }
 }
 
