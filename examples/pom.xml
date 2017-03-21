@@ -93,6 +93,7 @@
     <module>camel-example-spring-boot-metrics</module>
     <module>camel-example-spring-boot-rest-jpa</module>
     <module>camel-example-spring-boot-rest-swagger</module>
+    <module>camel-example-spring-boot-servicecall</module>
     <module>camel-example-spring-dm</module>
     <module>camel-example-spring-javaconfig</module>
     <module>camel-example-spring-jms</module>

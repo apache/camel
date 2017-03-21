@@ -19,6 +19,7 @@ package org.apache.camel.util.function;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public final class Suppliers {
@@ -35,6 +36,27 @@ public final class Suppliers {
                     if (supplied == null) {
                         supplied = Objects.requireNonNull(supplier.get(), "Supplier should not return null");
                         valueHolder.lazySet(supplied);
+                    }
+                }
+            }
+            return supplied;
+        };
+    }
+
+    public static <T> Supplier<T> memorize(ThrowingSupplier<T, ? extends Exception> supplier, Consumer<Exception> consumer) {
+        final AtomicReference<T> valueHolder = new AtomicReference<>();
+        return () -> {
+            T supplied = valueHolder.get();
+            if (supplied == null) {
+                synchronized (valueHolder) {
+                    supplied = valueHolder.get();
+                    if (supplied == null) {
+                        try {
+                            supplied = Objects.requireNonNull(supplier.get(), "Supplier should not return null");
+                            valueHolder.lazySet(supplied);
+                        } catch (Exception e) {
+                            consumer.accept(e);
+                        }
                     }
                 }
             }
