@@ -843,7 +843,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a>
      * set the {@link ExchangePattern} into the {@link Exchange}.
      * <p/>
-     * The pattern set on the {@link Exchange} will
+     * The pattern set on the {@link Exchange} will be changed from this point going foward.
      *
      * @param exchangePattern  instance of {@link ExchangePattern}
      * @return the builder
@@ -857,6 +857,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a>
      * set the exchange's ExchangePattern {@link ExchangePattern} to be InOnly
+     * <p/>
+     * The pattern set on the {@link Exchange} will be changed from this point going foward.
      *
      * @return the builder
      * @deprecated use {@link #setExchangePattern(org.apache.camel.ExchangePattern)} instead
