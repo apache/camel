@@ -21,8 +21,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Defines the interface used to validate component/endpoint parameters.
+ */
 public interface ComponentVerifier {
-    // Todo: should be an enum ?
     String CODE_EXCEPTION = "exception";
     String CODE_INTERNAL = "internal";
     String CODE_MISSING_OPTION = "missing-option";
@@ -56,14 +58,29 @@ public interface ComponentVerifier {
      * Represent an error
      */
     interface Error extends Serializable {
+        /**
+         * @return the error code
+         */
         String getCode();
+
+        /**
+         * @return the error description (if available)
+         */
         String getDescription();
+
+        /**
+         * @return the parameters in error
+         */
         Set<String> getParameters();
+
+        /**
+         * @return a number of key/value pair with additional information related to the validation.
+         */
         Map<String, Object> getAttributes();
     }
 
     /**
-     * Represent a Result
+     * Represent a validation Result.
      */
     interface Result extends Serializable {
         enum Status {
@@ -72,16 +89,35 @@ public interface ComponentVerifier {
             UNSUPPORTED
         }
 
+        /**
+         * @return the scope against which the parameters have been validated.
+         */
         Scope getScope();
+
+        /**
+         * @return the status
+         */
         Status getStatus();
+
+        /**
+         * @return a list of errors
+         */
         List<Error> getErrors();
     }
 
     /**
-     * TODO: document
-     * @param parameters
-     * @param scope
-     * @return
+     * Validate the given parameters against the provided scope.
+     *
+     * <p>
+     * The supported scopes are:
+     * <ul>
+     *   <li>PARAMETERS: to validate that all the mandatory options are provided and syntactically correct.
+     *   <li>CONNECTIVITY: to validate that the given options (i.e. credentials, addresses) are correct.
+     * </ul>
+     *
+     * @param scope the scope of the validation
+     * @param parameters the parameters to validate
+     * @return the validation result
      */
     Result verify(Scope scope, Map<String, Object> parameters);
 }
