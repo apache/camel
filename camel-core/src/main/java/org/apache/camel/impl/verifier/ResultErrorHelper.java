@@ -38,6 +38,12 @@ public final class ResultErrorHelper {
     // Helpers
     // **********************************
 
+    /**
+     *
+     * @param parameterName the required option
+     * @param parameters the
+     * @return
+     */
     public static Optional<ComponentVerifier.Error> requiresOption(String parameterName, Map<String, Object> parameters) {
         if (ObjectHelper.isEmpty(parameters.get(parameterName))) {
             return Optional.of(

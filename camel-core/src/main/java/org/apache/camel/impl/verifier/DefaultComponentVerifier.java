@@ -55,14 +55,14 @@ public class DefaultComponentVerifier implements ComponentVerifier {
                 .build();
         }
 
-        switch (scope) {
-        case PARAMETERS:
+        if (scope == Scope.PARAMETERS) {
             return verifyParameters(parameters);
-        case CONNECTIVITY:
-            return verifyConnectivity(parameters);
-        default:
-            throw new IllegalArgumentException("Unsupported Verifier scope: " + scope);
         }
+        if (scope == Scope.CONNECTIVITY) {
+            return verifyConnectivity(parameters);
+        }
+
+        throw new IllegalArgumentException("Unsupported Verifier scope: " + scope);
     }
 
     protected Result verifyConnectivity(Map<String, Object> parameters) {
