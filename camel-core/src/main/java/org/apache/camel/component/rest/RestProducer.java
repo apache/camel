@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.rest;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import javax.xml.bind.JAXBContext;
@@ -169,30 +172,7 @@ public class RestProducer extends DefaultAsyncProducer {
         }
 
         // resolve uri parameters
-        String query = getEndpoint().getQueryParameters();
-        if (query != null) {
-            Map<String, Object> params = URISupport.parseQuery(query);
-            for (Map.Entry<String, Object> entry : params.entrySet()) {
-                Object v = entry.getValue();
-                if (v != null) {
-                    String a = v.toString();
-                    // decode the key as { may be decoded to %NN
-                    a = URLDecoder.decode(a, "UTF-8");
-                    if (a.startsWith("{") && a.endsWith("}")) {
-                        String key = a.substring(1, a.length() - 1);
-                        String value = inMessage.getHeader(key, String.class);
-                        if (value != null) {
-                            params.put(key, value);
-                        } else {
-                            params.put(entry.getKey(), entry.getValue());
-                        }
-                    } else {
-                        params.put(entry.getKey(), entry.getValue());
-                    }
-                }
-            }
-            query = URISupport.createQueryString(params);
-        }
+        String query = createQueryParameters(getEndpoint().getQueryParameters(), inMessage);
 
         if (query != null) {
             // the query parameters for the rest call to be used
@@ -390,4 +370,37 @@ public class RestProducer extends DefaultAsyncProducer {
         return key.startsWith("json.in.") || key.startsWith("json.out.") || key.startsWith("xml.in.") || key.startsWith("xml.out.");
     }
 
+    static String createQueryParameters(String query, Message inMessage) throws URISyntaxException, UnsupportedEncodingException {
+        if (query != null) {
+            final Map<String, Object> givenParams = URISupport.parseQuery(query);
+            final Map<String, Object> params = new LinkedHashMap<>(givenParams.size());
+            for (Map.Entry<String, Object> entry : givenParams.entrySet()) {
+                Object v = entry.getValue();
+                if (v != null) {
+                    String a = v.toString();
+                    // decode the key as { may be decoded to %NN
+                    a = URLDecoder.decode(a, "UTF-8");
+                    if (a.startsWith("{") && a.endsWith("}")) {
+                        String key = a.substring(1, a.length() - 1);
+                        boolean optional = false;
+                        if (key.endsWith("?")) {
+                            key = key.substring(0, key.length() - 1);
+                            optional = true;
+                        }
+                        String value = inMessage.getHeader(key, String.class);
+                        if (value != null) {
+                            params.put(key, value);
+                        } else if (!optional) {
+                            // value is null and parameter is not optional
+                            params.put(entry.getKey(), entry.getValue());
+                        }
+                    } else {
+                        params.put(entry.getKey(), entry.getValue());
+                    }
+                }
+            }
+            query = URISupport.createQueryString(params);
+        }
+        return query;
+    }
 }
