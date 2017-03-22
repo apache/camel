@@ -37,6 +37,7 @@ import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
+import io.swagger.models.parameters.Parameter;
 import io.swagger.parser.SwaggerParser;
 import io.swagger.util.Json;
 
@@ -52,6 +53,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 
 import static org.apache.camel.component.rest.swagger.RestSwaggerHelper.isHostParam;
@@ -327,6 +329,12 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
             parameters.put("produces", determinedProducers);
         }
 
+        final String queryParameters = operation.getParameters().stream().filter(p -> "query".equals(p.getIn()))
+            .map(RestSwaggerEndpoint::queryParameterExpression).collect(Collectors.joining("&"));
+        if (isNotEmpty(queryParameters)) {
+            parameters.put("queryParameters", queryParameters);
+        }
+
         return parameters;
     }
 
@@ -485,6 +493,21 @@ public final class RestSwaggerEndpoint extends DefaultEndpoint {
         // there is no support for WebSocket (Scheme.WS, Scheme.WSS)
 
         return null;
+    }
+
+    static String queryParameterExpression(final Parameter parameter) {
+        final String name = parameter.getName();
+        if (ObjectHelper.isEmpty(name)) {
+            return "";
+        }
+
+        final StringBuilder expression = new StringBuilder(name).append("={").append(name);
+        if (!parameter.getRequired()) {
+            expression.append('?');
+        }
+        expression.append('}');
+
+        return expression.toString();
     }
 
 }

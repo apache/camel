@@ -51,6 +51,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.getRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 @RunWith(Parameterized.class)
@@ -98,6 +99,20 @@ public class RestSwaggerComponentTest extends CamelTestSupport {
             equalTo("application/xml, application/json")));
     }
 
+    @Test
+    public void shouldBeGettingPetsByStatus() {
+        final Pets pets = template.requestBodyAndHeader("direct:findPetsByStatus", NO_BODY, "status", "available",
+            Pets.class);
+
+        assertNotNull(pets);
+        assertNotNull(pets.pets);
+        assertEquals(2, pets.pets.size());
+
+        petstore.verify(
+            getRequestedFor(urlPathEqualTo("/v2/pet/findByStatus")).withQueryParam("status", equalTo("available"))
+                .withHeader("Accept", equalTo("application/xml, application/json")));
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext camelContext = super.createCamelContext();
@@ -116,14 +131,17 @@ public class RestSwaggerComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                final JAXBContext jaxbContext = JAXBContext.newInstance(Pet.class);
+                final JAXBContext jaxbContext = JAXBContext.newInstance(Pet.class, Pets.class);
 
                 final JaxbDataFormat jaxb = new JaxbDataFormat(jaxbContext);
+
                 jaxb.setJaxbProviderProperties(Collections.singletonMap(Marshaller.JAXB_FORMATTED_OUTPUT, false));
 
                 from("direct:getPetById").to("petStore:getPetById").unmarshal(jaxb);
 
                 from("direct:addPet").marshal(jaxb).to("petStore:addPet").unmarshal(jaxb);
+
+                from("direct:findPetsByStatus").to("petStore:findPetsByStatus").unmarshal(jaxb);
             }
         };
     }
@@ -147,6 +165,10 @@ public class RestSwaggerComponentTest extends CamelTestSupport {
         petstore.stubFor(
             get(urlEqualTo("/v2/pet/14")).willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id><name>Olafur Eliason Arnalds</name></Pet>")));
+
+        petstore.stubFor(get(urlPathEqualTo("/v2/pet/findByStatus")).withQueryParam("status", equalTo("available"))
+            .willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><pets><Pet><id>1</id><name>Olafur Eliason Arnalds</name></Pet><Pet><name>Jean-Luc Picard</name></Pet></pets>")));
     }
 
 }
