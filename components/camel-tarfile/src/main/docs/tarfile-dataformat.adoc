@@ -14,7 +14,7 @@ aggregate multiple messages into a single Tar File.
 
 
 // dataformat options: START
-The Tar File dataformat supports 2 options which are listed below.
+The Tar File dataformat supports 3 options which are listed below.
 
 
 
@@ -22,6 +22,7 @@ The Tar File dataformat supports 2 options which are listed below.
 |=======================================================================
 | Name | Default | Java Type | Description
 | usingIterator | false | Boolean | If the tar file has more then one entry the setting this option to true allows to work with the splitter EIP to split the data using an iterator in a streaming mode.
+| allowEmptyDirectory | false | Boolean | If the tar file has more then one entry setting this option to true allows to get the iterator even if the directory is empty
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML or application/json for data formats marshalling to JSon etc.
 |=======================================================================
 // dataformat options: END
