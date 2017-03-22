@@ -298,24 +298,34 @@ public class SjmsBatchConsumer extends DefaultConsumer {
         @Override
         public void run() {
             try {
-                // a batch corresponds to a single session that will be committed or rolled back by a background thread
-                final Session session = connection.createSession(TRANSACTED, Session.CLIENT_ACKNOWLEDGE);
-                try {
-                    // only batch consumption from queues is supported - it makes no sense to transactionally consume
-                    // from a topic as you don't car about message loss, users can just use a regular aggregator instead
-                    Queue queue = session.createQueue(destinationName);
-                    MessageConsumer consumer = session.createConsumer(queue);
-
+                // this loop is intended to keep the consumer up and running as long as it's supposed to be, but allow it to bail if signaled
+                while (running.get()) {
+                    // a batch corresponds to a single session that will be committed or rolled back by a background thread
+                    final Session session = connection.createSession(TRANSACTED, Session.CLIENT_ACKNOWLEDGE);
                     try {
-                        task.consumeBatchesOnLoop(session, consumer);
+                        // only batch consumption from queues is supported - it makes no sense to transactionally consume
+                        // from a topic as you don't car about message loss, users can just use a regular aggregator instead
+                        Queue queue = session.createQueue(destinationName);
+                        MessageConsumer consumer = session.createConsumer(queue);
+
+                        try {
+                            task.consumeBatchesOnLoop(session, consumer);
+                        } finally {
+                            closeJmsConsumer(consumer);
+                        }
+                    } catch (javax.jms.IllegalStateException ex) {
+                        // from consumeBatchesOnLoop
+                        // this will log the exception and the parent loop will create a new session
+                        getExceptionHandler().handleException("Exception caught consuming from " + destinationName, ex);
+                        //rest a minute to avoid destroying the logs
+                        Thread.sleep(2000);
                     } finally {
-                        closeJmsConsumer(consumer);
+                        closeJmsSession(session);
                     }
-                } finally {
-                    closeJmsSession(session);
                 }
             } catch (Throwable ex) {
                 // from consumeBatchesOnLoop
+                // catch anything besides the IllegalStateException and exit the application
                 getExceptionHandler().handleException("Exception caught consuming from " + destinationName, ex);
             } finally {
                 // indicate that we have shut down
