@@ -48,7 +48,7 @@ public final class UndertowHelper {
         // rest producer may provide an override url to be used which we should discard if using (hence the remove)
         String uri = (String) exchange.getIn().removeHeader(Exchange.REST_HTTP_URI);
         if (uri == null) {
-            uri = endpoint.getHttpURI().toASCIIString();
+            uri = endpoint.getHttpUri().toASCIIString();
         }
 
         // resolve placeholders in uri
@@ -98,7 +98,7 @@ public final class UndertowHelper {
             queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
         }
         if (queryString == null) {
-            queryString = endpoint.getHttpURI().getRawQuery();
+            queryString = endpoint.getHttpUri().getRawQuery();
         }
         // We should user the query string from the HTTP_URI header
         if (queryString == null) {
@@ -117,7 +117,9 @@ public final class UndertowHelper {
             Object existing = headers.get(key);
             List<Object> list;
             if (existing instanceof List) {
-                list = (List<Object>) existing;
+                @SuppressWarnings("unchecked")
+                final List<Object> tmp = (List<Object>) existing;
+                list = tmp;
             } else {
                 list = new ArrayList<Object>();
                 list.add(existing);
@@ -149,7 +151,7 @@ public final class UndertowHelper {
             queryString = uri.getQuery();
         }
         if (queryString == null) {
-            queryString = endpoint.getHttpURI().getRawQuery();
+            queryString = endpoint.getHttpUri().getRawQuery();
         }
 
         // compute what method to use either GET or POST

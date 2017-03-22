@@ -117,7 +117,7 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
         this.endpoint = endpoint;
         this.request = request;
         this.body = body;
-        throwExceptionOnFailure = endpoint.getThrowExceptionOnFailure();
+        throwExceptionOnFailure = endpoint.isThrowExceptionOnFailure();
     }
 
     @Override

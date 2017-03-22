@@ -70,9 +70,9 @@ public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
             UndertowEndpoint endpoint = getEndpoint();
 
             registrationInfo = new HttpHandlerRegistrationInfo();
-            registrationInfo.setUri(endpoint.getHttpURI());
+            registrationInfo.setUri(endpoint.getHttpUri());
             registrationInfo.setMethodRestrict(endpoint.getHttpMethodRestrict());
-            registrationInfo.setMatchOnUriPrefix(endpoint.getMatchOnUriPrefix());
+            registrationInfo.setMatchOnUriPrefix(endpoint.isMatchOnUriPrefix());
         }
         return registrationInfo;
     }
