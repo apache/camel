@@ -622,7 +622,7 @@
     <swagger-scala-guava-version>15.0</swagger-scala-guava-version>
     <swagger-scala-bundle-version>1.3.12_1</swagger-scala-bundle-version>
     <swagger-java-version>1.5.13</swagger-java-version>
-    <swagger-java-parser-version>1.0.25</swagger-java-parser-version>
+    <swagger-java-parser-version>1.0.28</swagger-java-parser-version>
     <swagger-java-guava-version>20.0</swagger-java-guava-version>
     <swagger-ui-version>2.2.10</swagger-ui-version>
     <stax-api-version>1.0.1</stax-api-version>
