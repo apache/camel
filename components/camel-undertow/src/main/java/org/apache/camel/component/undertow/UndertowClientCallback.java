@@ -68,7 +68,7 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
      * the exception to Camel {@link Exchange} and notifies Camel that the
      * exchange finished by calling {@link AsyncCallback#done(boolean)}.
      */
-    class ErrorHandlingClientCallback<T> implements ClientCallback<T> {
+    final class ErrorHandlingClientCallback<T> implements ClientCallback<T> {
 
         private final Consumer<T> consumer;
 
