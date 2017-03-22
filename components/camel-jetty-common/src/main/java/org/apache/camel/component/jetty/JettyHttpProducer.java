@@ -164,7 +164,7 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
                     String charset = IOHelper.getCharsetName(exchange, false);
                     httpExchange.setRequestContent(data, charset);
                 } else {
-                	// then fallback to input stream
+                    // then fallback to input stream
                     InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, exchange.getIn().getBody());
                     // setup the content length if it is possible
                     String length = exchange.getIn().getHeader(Exchange.CONTENT_LENGTH, String.class);
@@ -174,7 +174,7 @@ public class JettyHttpProducer extends DefaultAsyncProducer implements AsyncProc
                         httpExchange.setRequestContent(is, new Integer(length));
                         
                     } else {
-                    	//send chunked
+                        //send chunked
                         httpExchange.setRequestContent(is);
                     }
                 }
