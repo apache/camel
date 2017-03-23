@@ -26,7 +26,7 @@
     
   <artifactId>camel-servletlistener</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Servlet Listener</name>
+  <name>Camel :: Servlet Listener (deprecated)</name>
   <description>Bootstrapping Camel using Servet Listener</description>
   
   <properties>
