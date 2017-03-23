@@ -11,11 +11,15 @@ View the individual example READMEs for details.
 ### Examples
 
 // examples: START
-Number of Examples: 90 (9 deprecated)
+Number of Examples: 92 (10 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |=======================================================================
 | Example | Category | Description
+
+| link:camel-example-spring-boot-servicecall/README.adoc[Spring Boot Servicecall] (camel-example-spring-boot-servicecall) |  | An example showing how to work with Camel ServiceCall EIP and Spring Boot
+
+| link:camel-example-spring-cloud-servicecall/README.adoc[Spring Cloud Servicecall] (camel-example-spring-cloud-servicecall) |  | An example showing how to work with Camel ServiceCall EIP and Spring Cloud
 
 | link:camel-example-cdi/README.md[CDI] (camel-example-cdi) | Beginner | An example showing how to work with Camel and CDI for dependency injection
 
@@ -131,7 +135,7 @@ Number of Examples: 90 (9 deprecated)
 
 | link:camel-example-box-osgi/README.md[Box OSGi] (camel-example-box-osgi) | OSGi | An example which use a Box Endpoint in OSGi
 
-| link:camel-example-cdi-osgi/README.md[CDI OSGi] (camel-example-cdi-osgi) | OSGi | PAX CDI example
+| link:camel-example-cdi-osgi/README.md[CDI OSGi] (camel-example-cdi-osgi) | OSGi | *deprecated* PAX CDI example
 
 | link:camel-example-cxf-blueprint/README.md[CXF Blueprint] (camel-example-cxf-blueprint) | OSGi | An example which use a CXF consumer and the OSGI HTTP Service
 

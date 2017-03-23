@@ -38,13 +38,13 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnBean({ CamelCloudAutoConfiguration.class, LoadBalancerClient.class })
 @AutoConfigureAfter({ LoadBalancerAutoConfiguration.class, CamelCloudServiceDiscoveryAutoConfiguration.class })
 @EnableConfigurationProperties(CamelCloudConfigurationProperties.class)
-@Conditional(CamelSpringCloudLoadBalancerAutoConfiguration.LoadBalancerCondition.class)
-public class CamelSpringCloudLoadBalancerAutoConfiguration {
+@Conditional(CamelSpringCloudDiscoveryClientAutoConfiguration.LoadBalancerCondition.class)
+public class CamelSpringCloudDiscoveryClientAutoConfiguration {
 
-    @Bean(name = "load-balancer")
+    @Bean(name = "load-balancer-discovery-client")
     @ConditionalOnMissingBean
-    public LoadBalancer cloudLoadBalancer(LoadBalancerClient loadBalancerClient) {
-        return new CamelSpringCloudLoadBalancer(loadBalancerClient);
+    public DiscoveryClient serviceDiscoveryClient(CamelCloudServiceDiscovery serviceDiscovery) {
+        return new CamelSpringCloudDiscoveryClient("service-discovery-client", serviceDiscovery);
     }
 
     // *******************************
@@ -55,7 +55,7 @@ public class CamelSpringCloudLoadBalancerAutoConfiguration {
         public LoadBalancerCondition() {
             super(
                 "camel.cloud",
-                "camel.cloud.load-balancer"
+                "camel.cloud.discovery-client"
             );
         }
     }
