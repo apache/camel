@@ -37,6 +37,7 @@ import org.apache.camel.api.management.mbean.ManagedComponentMBean;
 import org.apache.camel.impl.verifier.ResultBuilder;
 import org.apache.camel.impl.verifier.ResultErrorBuilder;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.JsonSchemaHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -146,13 +147,10 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
     @Override
     public ComponentVerifier.Result verify(String scope, Map<String, String> options) {
         try {
-            ComponentVerifier.Scope scopeEnum = ComponentVerifier.Scope.valueOf(scope);
+            ComponentVerifier.Scope scopeEnum = ComponentVerifier.Scope.fromString(scope);
 
             if (component instanceof VerifiableComponent) {
-                @SuppressWarnings("unchecked")
-                final Map<String, Object> properties = (Map)options;
-
-                return ((VerifiableComponent) component).getVerifier().verify(scopeEnum, properties);
+                return ((VerifiableComponent) component).getVerifier().verify(scopeEnum, CastUtils.cast(options));
             } else {
                 return ResultBuilder.unsupported().build();
             }

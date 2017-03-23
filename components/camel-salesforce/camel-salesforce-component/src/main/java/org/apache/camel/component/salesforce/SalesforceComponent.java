@@ -64,7 +64,7 @@ import static org.apache.camel.component.salesforce.SalesforceLoginConfig.DEFAUL
 /**
  * Represents the component that manages {@link SalesforceEndpoint}.
  */
-@Metadata(label = "verifiers", enums = "PARAMETERS,CONNECTIVITY")
+@Metadata(label = "verifiers", enums = "parameters,connectivity")
 public class SalesforceComponent extends UriEndpointComponent implements EndpointCompleter, VerifiableComponent {
 
     static final int CONNECTION_TIMEOUT = 60000;

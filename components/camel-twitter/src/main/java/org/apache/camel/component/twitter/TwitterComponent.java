@@ -27,7 +27,7 @@ import org.apache.camel.spi.Metadata;
 /**
  * Twitter component
  */
-@Metadata(label = "verifiers", enums = "PARAMETERS,CONNECTIVITY")
+@Metadata(label = "verifiers", enums = "parameters,connectivity")
 public class TwitterComponent extends UriEndpointComponent implements VerifiableComponent {
 
     @Metadata(label = "security", secret = true)

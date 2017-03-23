@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.util.ObjectHelper;
+
 /**
  * Defines the interface used to validate component/endpoint parameters.
  */
@@ -51,7 +53,19 @@ public interface ComponentVerifier {
     enum Scope {
         NONE,
         PARAMETERS,
-        CONNECTIVITY
+        CONNECTIVITY;
+
+        private static final Scope[] VALUES = values();
+
+        public static Scope fromString(String scope) {
+            for (int i=0; i < VALUES.length; i++) {
+                if (ObjectHelper.equal(scope, VALUES[i].name(), true)) {
+                    return VALUES[i];
+                }
+            }
+
+            throw new IllegalArgumentException("Unknown scope <" + scope + ">");
+        }
     }
 
     /**

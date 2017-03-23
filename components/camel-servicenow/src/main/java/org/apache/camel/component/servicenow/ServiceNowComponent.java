@@ -30,7 +30,7 @@ import org.apache.camel.util.IntrospectionSupport;
 /**
  * Represents the component that manages {@link ServiceNowEndpoint}.
  */
-@Metadata(label = "verifiers", enums = "PARAMETERS,CONNECTIVITY")
+@Metadata(label = "verifiers", enums = "parameters,connectivity")
 public class ServiceNowComponent extends UriEndpointComponent implements VerifiableComponent {
 
     @Metadata(label = "advanced")

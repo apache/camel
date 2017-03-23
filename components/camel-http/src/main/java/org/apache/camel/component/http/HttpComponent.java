@@ -52,7 +52,7 @@ import org.apache.commons.httpclient.params.HttpConnectionManagerParams;
  * The <a href="http://camel.apache.org/http.html">HTTP Component</a>
  *
  */
-@Metadata(label = "verifiers", enums = "PARAMETERS,CONNECTIVITY")
+@Metadata(label = "verifiers", enums = "parameters,connectivity")
 public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, VerifiableComponent {
 
     @Metadata(label = "advanced")
