@@ -195,11 +195,6 @@ public class JettyContentExchange9 implements JettyContentExchange {
         this.request.content(new InputStreamContentProvider(ins), this.requestContentType);
     }
 
-	public void setRequestContent(InputStream ins, int contentLength) {
-		this.request.content(new CamelInputStreamContentProvider(ins, contentLength), this.requestContentType);
-		
-	}
-
     public void addRequestHeader(String key, String s) {
         this.request.header(key, s);
     }
