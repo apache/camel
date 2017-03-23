@@ -17,13 +17,13 @@
 package org.apache.camel;
 
 /**
- * TODO: document
+ * An interface to represent an object which support validation
  */
 public interface VerifiableComponent {
     /**
-     * TODO: document
+     * Get the {@link ComponentVerifier}
      *
-     * @return a Component Verifier
+     * @return the Component Verifier
      */
     ComponentVerifier getVerifier();
 }
