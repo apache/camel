@@ -65,13 +65,6 @@ public class DefaultSparkBinding implements SparkBinding {
 
     @Override
     public void populateCamelHeaders(Request request, Map<String, Object> headers, Exchange exchange, SparkConfiguration configuration) throws Exception {
-        // store the method and query and other info in headers as String types
-        headers.put(Exchange.HTTP_METHOD, request.raw().getMethod());
-        headers.put(Exchange.HTTP_QUERY, request.raw().getQueryString());
-        headers.put(Exchange.HTTP_URL, request.raw().getRequestURL().toString());
-        headers.put(Exchange.HTTP_URI, request.raw().getRequestURI());
-        headers.put(Exchange.CONTENT_TYPE, request.raw().getContentType());
-
         String path = request.raw().getPathInfo();
         SparkEndpoint endpoint = (SparkEndpoint) exchange.getFromEndpoint();
         if (endpoint.getPath() != null) {
@@ -126,6 +119,13 @@ public class DefaultSparkBinding implements SparkBinding {
                 && !headerFilterStrategy.applyFilterToExternalHeaders(key, splat, exchange)) {
             SparkHelper.appendHeader(headers, key, splat);
         }
+        
+        // store the method and query and other info in headers as String types
+        headers.putIfAbsent(Exchange.HTTP_METHOD, request.raw().getMethod());
+        headers.putIfAbsent(Exchange.HTTP_QUERY, request.raw().getQueryString());
+        headers.putIfAbsent(Exchange.HTTP_URL, request.raw().getRequestURL().toString());
+        headers.putIfAbsent(Exchange.HTTP_URI, request.raw().getRequestURI());
+        headers.putIfAbsent(Exchange.CONTENT_TYPE, request.raw().getContentType());
     }
 
     @Override
