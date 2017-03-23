@@ -69,7 +69,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-@Metadata(label = "verifiers", enums = "PARAMETERS,CONNECTIVITY")
+@Metadata(label = "verifiers", enums = "parameters,connectivity")
 public class HttpComponent extends HttpCommonComponent implements RestProducerFactory, VerifiableComponent {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpComponent.class);
