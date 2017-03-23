@@ -3,7 +3,7 @@
 *Available as of Camel version 2.14*
 
 The Olingo2 component utilizes http://olingo.apache.org/[Apache Olingo]
-version 2.0 APIs to interact with OData 2.0 and 3.0 compliant services.
+version 2.0 APIs to interact with OData 2.0 compliant services.
 A number of popular commercial and enterprise vendors and products
 support the OData protocol. A sample list of supporting products can be
 found on the OData http://www.odata.org/ecosystem/[website].
