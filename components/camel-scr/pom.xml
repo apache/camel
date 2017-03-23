@@ -25,7 +25,7 @@
   </parent>
 
   <artifactId>camel-scr</artifactId>
-  <name>Camel :: SCR</name>
+  <name>Camel :: SCR (deprecated)</name>
   <description>Camel with OSGi SCR (Declarative Services)</description>
   <packaging>jar</packaging>
 

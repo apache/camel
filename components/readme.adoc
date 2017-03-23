@@ -855,7 +855,7 @@ Miscellaneous Components
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 // others: START
-Number of Miscellaneous Components: 36 in 36 JAR artifacts (12 deprecated)
+Number of Miscellaneous Components: 36 in 36 JAR artifacts (13 deprecated)
 
 [width="100%",cols="4,1,5",options="header"]
 |=======================================================================
@@ -895,7 +895,7 @@ Number of Miscellaneous Components: 36 in 36 JAR artifacts (12 deprecated)
 
 | link:camel-scala/src/main/docs/scala.adoc[Scala DSL] (camel-scala) | 1.4 | *deprecated* Camel Scala DSL
 
-| link:camel-scr/src/main/docs/scr.adoc[SCR] (camel-scr) | 2.15 | Camel with OSGi SCR (Declarative Services)
+| link:camel-scr/src/main/docs/scr.adoc[SCR] (camel-scr) | 2.15 | *deprecated* Camel with OSGi SCR (Declarative Services)
 
 | link:camel-servletlistener/src/main/docs/servletlistener.adoc[Servlet Listener] (camel-servletlistener) | 2.11 | Bootstrapping Camel using Servet Listener
 

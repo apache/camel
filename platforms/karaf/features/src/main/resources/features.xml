@@ -285,7 +285,7 @@
     <bundle>mvn:org.apache.camel/camel-castor/${project.version}</bundle>
   </feature>
   <feature name='camel-cdi' version='${project.version}' resolver='(obr)' start-level='50'>
-    <details>camel-cdi requires that either pax-cdi-weld or pax-cdi-openwebbeans has been installed</details>
+    <details>camel-cdi in OSGi is deprecated. camel-cdi requires that either pax-cdi-weld or pax-cdi-openwebbeans has been installed</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${pax-cdi-version}'>pax-cdi</feature>
     <feature>eventadmin</feature>
