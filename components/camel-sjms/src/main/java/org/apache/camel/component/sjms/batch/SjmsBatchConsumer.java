@@ -128,7 +128,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
         super.doStart();
 
         boolean recovery = getEndpoint().isAsyncStartListener();
-        StartConsumerTask task = new StartConsumerTask(recovery, getEndpoint().getRecoveryInterval());
+        StartConsumerTask task = new StartConsumerTask(recovery, getEndpoint().getRecoveryInterval(), getEndpoint().getKeepAliveDelay());
 
         if (recovery) {
             // use a background thread to keep starting the consumer until
@@ -145,11 +145,13 @@ public class SjmsBatchConsumer extends DefaultConsumer {
 
         private boolean recoveryEnabled;
         private int recoveryInterval;
+        private int keepAliveDelay;
         private long attempt;
 
-        public StartConsumerTask(boolean recoveryEnabled, int recoveryInterval) {
+        public StartConsumerTask(boolean recoveryEnabled, int recoveryInterval, int keepAliveDelay) {
             this.recoveryEnabled = recoveryEnabled;
             this.recoveryInterval = recoveryInterval;
+            this.keepAliveDelay = keepAliveDelay;
         }
 
         @Override
@@ -183,6 +185,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                     final List<AtomicBoolean> triggers = new ArrayList<>();
                     for (int i = 0; i < consumerCount; i++) {
                         BatchConsumptionLoop loop = new BatchConsumptionLoop();
+                        loop.setKeepAliveDelay(keepAliveDelay);
                         triggers.add(loop.getCompletionTimeoutTrigger());
                         jmsConsumerExecutors.submit(loop);
                     }
@@ -290,16 +293,20 @@ public class SjmsBatchConsumer extends DefaultConsumer {
 
         private final AtomicBoolean completionTimeoutTrigger = new AtomicBoolean();
         private final BatchConsumptionTask task = new BatchConsumptionTask(completionTimeoutTrigger);
+        private int keepAliveDelay;
 
         public AtomicBoolean getCompletionTimeoutTrigger() {
             return completionTimeoutTrigger;
+        }
+        public void setKeepAliveDelay(int i){
+            keepAliveDelay = i;
         }
 
         @Override
         public void run() {
             try {
                 // this loop is intended to keep the consumer up and running as long as it's supposed to be, but allow it to bail if signaled
-                while (running.get()) {
+                while (running.get() || isStarting()) {
                     // a batch corresponds to a single session that will be committed or rolled back by a background thread
                     final Session session = connection.createSession(TRANSACTED, Session.CLIENT_ACKNOWLEDGE);
                     try {
@@ -315,10 +322,12 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                         }
                     } catch (javax.jms.IllegalStateException ex) {
                         // from consumeBatchesOnLoop
+                        // if keepAliveDelay was not specified just rethrow to break the loop. This preserves original default behavior
+                        if(keepAliveDelay == -1) throw ex;
                         // this will log the exception and the parent loop will create a new session
                         getExceptionHandler().handleException("Exception caught consuming from " + destinationName, ex);
-                        //rest a minute to avoid destroying the logs
-                        Thread.sleep(2000);
+                        //sleep to avoid log spamming
+                        Thread.sleep(keepAliveDelay);
                     } finally {
                         closeJmsSession(session);
                     }
@@ -401,6 +410,8 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                     long waitTime = (usingTimeout && (timeElapsed > 0))
                             ? getReceiveWaitTime(timeElapsed)
                             : pollDuration;
+
+
                     Message message = consumer.receive(waitTime);
 
                     if (running.get()) {

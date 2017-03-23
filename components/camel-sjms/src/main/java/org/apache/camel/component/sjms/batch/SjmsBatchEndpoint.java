@@ -93,6 +93,8 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     private boolean asyncStartListener;
     @UriParam(label = "advanced", defaultValue = "5000")
     private int recoveryInterval = 5000;
+    @UriParam(label = "advanced", defaultValue = "-1")
+    private int keepAliveDelay = -1;
 
     public SjmsBatchEndpoint() {
     }
@@ -394,6 +396,10 @@ public class SjmsBatchEndpoint extends DefaultEndpoint implements HeaderFilterSt
     }
 
     public int getRecoveryInterval() {
+        return recoveryInterval;
+    }
+
+    public int getKeepAliveDelay() {
         return recoveryInterval;
     }
 
