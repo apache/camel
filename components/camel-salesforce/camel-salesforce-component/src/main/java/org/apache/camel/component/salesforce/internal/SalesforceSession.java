@@ -263,10 +263,11 @@ public class SalesforceSession implements Service {
             case HttpStatus.BAD_REQUEST_400:
                 // parse the response to get error
                 final LoginError error = objectMapper.readValue(responseContent, LoginError.class);
+                final String errorCode = error.getError();
                 final String msg = String.format("Login error code:[%s] description:[%s]", error.getError(),
                     error.getErrorDescription());
                 final List<RestError> errors = new ArrayList<RestError>();
-                errors.add(new RestError(msg, error.getErrorDescription()));
+                errors.add(new RestError(errorCode, msg));
                 throw new SalesforceException(errors, HttpStatus.BAD_REQUEST_400);
 
             default:
