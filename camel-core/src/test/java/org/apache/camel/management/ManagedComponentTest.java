@@ -31,7 +31,9 @@ import org.apache.camel.impl.verifier.DefaultComponentVerifier;
 import org.apache.camel.impl.verifier.ResultBuilder;
 
 public class ManagedComponentTest extends ManagementTestSupport {
-    private static final String[] VERIFY_SIGNATURE = new String[]{ "java.lang.String", "java.util.Map" };
+    private static final String[] VERIFY_SIGNATURE = new String[] {
+        "java.lang.String", "java.util.Map"
+    };
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -76,17 +78,17 @@ public class ManagedComponentTest extends ManagementTestSupport {
         ComponentVerifier.Result res;
 
         // check lowercase
-        res = invoke(mbeanServer, on, "verify", new Object[]{ "connectivity", Collections.emptyMap() }, VERIFY_SIGNATURE);
+        res = invoke(mbeanServer, on, "verify", new Object[]{"connectivity", Collections.emptyMap()}, VERIFY_SIGNATURE);
         assertEquals(ComponentVerifier.Result.Status.OK, res.getStatus());
         assertEquals(ComponentVerifier.Scope.CONNECTIVITY, res.getScope());
 
         // check mixed case
-        res = invoke(mbeanServer, on, "verify", new Object[]{ "ConnEctivIty", Collections.emptyMap() }, VERIFY_SIGNATURE);
+        res = invoke(mbeanServer, on, "verify", new Object[]{"ConnEctivIty", Collections.emptyMap()}, VERIFY_SIGNATURE);
         assertEquals(ComponentVerifier.Result.Status.OK, res.getStatus());
         assertEquals(ComponentVerifier.Scope.CONNECTIVITY, res.getScope());
 
         // check uppercase
-        res = invoke(mbeanServer, on, "verify", new Object[]{ "PARAMETERS", Collections.emptyMap() }, VERIFY_SIGNATURE);
+        res = invoke(mbeanServer, on, "verify", new Object[]{"PARAMETERS", Collections.emptyMap()}, VERIFY_SIGNATURE);
         assertEquals(ComponentVerifier.Result.Status.OK, res.getStatus());
         assertEquals(ComponentVerifier.Scope.PARAMETERS, res.getScope());
     }

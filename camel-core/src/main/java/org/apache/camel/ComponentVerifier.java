@@ -58,7 +58,7 @@ public interface ComponentVerifier {
         private static final Scope[] VALUES = values();
 
         public static Scope fromString(String scope) {
-            for (int i=0; i < VALUES.length; i++) {
+            for (int i = 0; i < VALUES.length; i++) {
                 if (ObjectHelper.equal(scope, VALUES[i].name(), true)) {
                     return VALUES[i];
                 }
