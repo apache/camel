@@ -17,6 +17,7 @@
 package org.apache.camel.model.cloud;
 
 public final class ServiceCallConstants {
+    public static final String DEFAULT_COMPONENT = "http";
     public static final String DEFAULT_SERVICE_CALL_CONFIG_ID = "service-call-configuration";
     public static final String DEFAULT_SERVICE_CALL_EXPRESSION_ID = "service-call-expression";
     public static final String DEFAULT_SERVICE_DISCOVERY_ID = "service-discovery";

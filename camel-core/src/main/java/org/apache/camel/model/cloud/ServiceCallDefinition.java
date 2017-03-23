@@ -63,9 +63,9 @@ import static org.apache.camel.util.CamelContextHelper.lookup;
 public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinition> {
     @XmlAttribute @Metadata(required = "true")
     private String name;
-    @XmlAttribute @Metadata(defaultValue = "http")
-    private String uri;
     @XmlAttribute
+    private String uri;
+    @XmlAttribute @Metadata(defaultValue = ServiceCallConstants.DEFAULT_COMPONENT)
     private String component;
     @XmlAttribute
     private ExchangePattern pattern;
@@ -733,21 +733,31 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
 
         // The component is used to configure the default scheme to use (eg camel component name).
         // The component configured on EIP takes precedence vs configured on configuration.
-        String component = this.component;
-        if (component == null) {
+        String scheme = this.component;
+        if (scheme == null) {
             ServiceCallConfigurationDefinition conf = retrieveConfig(camelContext);
             if (conf != null) {
-                component = conf.getComponent();
+                scheme = conf.getComponent();
             }
         }
-        if (component == null) {
+        if (scheme == null) {
             ServiceCallConfigurationDefinition conf = retrieveDefaultConfig(camelContext);
             if (conf != null) {
-                component = conf.getComponent();
+                scheme = conf.getComponent();
             }
         }
 
-        return new DefaultServiceCallProcessor(camelContext, name, component, uri, pattern, loadBalancer, expression);
+        // Service name is mandatory
+        ObjectHelper.notNull(name, "Service name");
+
+        return new DefaultServiceCallProcessor(
+            camelContext,
+            camelContext.resolvePropertyPlaceholders(name),
+            ObjectHelper.applyIfNotEmpty(scheme, camelContext::resolvePropertyPlaceholders, () -> ServiceCallConstants.DEFAULT_COMPONENT),
+            ObjectHelper.applyIfNotEmpty(uri, camelContext::resolvePropertyPlaceholders, () -> null),
+            pattern,
+            loadBalancer,
+            expression);
     }
 
     // *****************************
