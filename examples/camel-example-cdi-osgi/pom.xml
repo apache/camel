@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>camel-example-cdi-osgi</artifactId>
-  <name>Camel :: Example :: CDI :: OSGi</name>
+  <name>Camel :: Example :: CDI :: OSGi (deprecated)</name>
   <description>PAX CDI example</description>
   <packaging>jar</packaging>
 
