@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channel;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,6 +43,7 @@ import org.apache.camel.Message;
 import org.apache.camel.util.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xnio.ChannelExceptionHandler;
 import org.xnio.ChannelListener;
 import org.xnio.ChannelListeners;
 import org.xnio.IoUtils;
@@ -258,8 +260,12 @@ class UndertowClientCallback implements ClientCallback<ClientConnection> {
         // the canonical way of flushing Xnio channels
         channel.shutdownWrites();
         if (!channel.flush()) {
-            channel.getWriteSetter().set(ChannelListeners.flushingChannelListener(IoUtils::safeClose,
-                ChannelListeners.closingChannelExceptionHandler()));
+            final ChannelListener<StreamSinkChannel> safeClose = IoUtils::safeClose;
+            final ChannelExceptionHandler<Channel> closingChannelExceptionHandler = ChannelListeners
+                .closingChannelExceptionHandler();
+            final ChannelListener<StreamSinkChannel> flushingChannelListener = ChannelListeners
+                .flushingChannelListener(safeClose, closingChannelExceptionHandler);
+            channel.getWriteSetter().set(flushingChannelListener);
             channel.resumeWrites();
         }
     }
