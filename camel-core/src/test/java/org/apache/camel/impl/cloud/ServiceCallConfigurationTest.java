@@ -269,6 +269,56 @@ public class ServiceCallConfigurationTest {
     }
 
     // **********************************************
+    // test placeholders
+    // **********************************************
+
+    @Test
+    public void testPlaceholders() throws Exception {
+        CamelContext context = null;
+
+        try {
+            System.setProperty("scall.name", "service-name");
+            System.setProperty("scall.scheme", "file");
+
+            context = new DefaultCamelContext();
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:start")
+                        .routeId("default")
+                        .serviceCall()
+                            .name("{{scall.name}}")
+                            .component("{{scall.scheme}}")
+                            .uri("direct:{{scall.name}}")
+                            .serviceDiscovery(new StaticServiceDiscovery())
+                        .end();
+                }
+            });
+
+            context.start();
+
+            DefaultServiceCallProcessor proc = findServiceCallProcessor(context.getRoute("default"));
+
+            Assert.assertNotNull(proc);
+            Assert.assertTrue(proc.getLoadBalancer() instanceof DefaultLoadBalancer);
+            Assert.assertEquals("service-name", proc.getName());
+            Assert.assertEquals("file", proc.getScheme());
+            Assert.assertEquals("direct:service-name", proc.getUri());
+
+        } finally {
+            if (context != null) {
+                context.stop();
+            }
+
+            // Cleanup system properties
+            System.clearProperty("scall.name");
+            System.clearProperty("scall.component");
+        }
+
+        context.stop();
+    }
+
+    // **********************************************
     // Helper
     // **********************************************
 

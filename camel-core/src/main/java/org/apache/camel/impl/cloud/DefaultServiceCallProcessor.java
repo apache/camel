@@ -83,6 +83,27 @@ public class DefaultServiceCallProcessor extends ServiceSupport implements Async
     // Properties
     // *************************************
 
+
+    public ExchangePattern getExchangePattern() {
+        return exchangePattern;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getScheme() {
+        return scheme;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public String getContextPath() {
+        return contextPath;
+    }
+
     public LoadBalancer getLoadBalancer() {
         return loadBalancer;
     }
@@ -90,7 +111,6 @@ public class DefaultServiceCallProcessor extends ServiceSupport implements Async
     public Expression getExpression() {
         return expression;
     }
-
 
     // *************************************
     // Lifecycle
