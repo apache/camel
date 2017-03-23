@@ -2,17 +2,17 @@
 
 *Available as of Camel version 2.19.0*
 
-The Olingo2 component utilizes http://olingo.apache.org/[Apache Olingo]
-version 2.0 APIs to interact with OData 2.0 and 3.0 compliant services.
-A number of popular commercial and enterprise vendors and products
-support the OData protocol. A sample list of supporting products can be
-found on the OData http://www.odata.org/ecosystem/[website].
+The Olingo4 component utilizes http://olingo.apache.org/[Apache Olingo]
+version 4.0 APIs to interact with OData 4.0 compliant service.
+Since verison 4.0 OData is OASIS standard and number of popular commercial
+and enterprise vendors and products support this protocol.
+A sample list of supporting products can be found on the OData 
+http://www.odata.org/ecosystem/[website].
 
-The Olingo2 component supports reading feeds, delta feeds, entities,
-simple and complex properties, links, counts, using custom and OData
-system query parameters. It supports updating entities, properties, and
-association links. It also supports submitting queries and change
-requests as a single OData batch operation. 
+The Olingo4 component supports reading entitiy sets, entities,
+simple and complex properties, counts, using custom and OData
+system query parameters. It supports updating entities and properties.
+It also supports submitting queries and change requests as a single OData batch operation. 
 
 The component supports configuring HTTP connection parameters and
 headers for OData service connection. This allows configuring use of
@@ -25,7 +25,7 @@ for this component:
 ----------------------------------------------
     <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-olingo2</artifactId>
+        <artifactId>camel-olingo4</artifactId>
         <version>${camel-version}</version>
     </dependency>
 ----------------------------------------------
@@ -34,10 +34,10 @@ for this component:
 
 [source,java]
 ------------------------------------------------
-    olingo2://endpoint/<resource-path>?[options]
+    olingo4://endpoint/<resource-path>?[options]
 ------------------------------------------------
 
-### Olingo2 Options
+### Olingo4 Options
 
 
 
@@ -77,7 +77,7 @@ The Olingo4 component supports 16 endpoint options which are listed below:
 | httpHeaders | common |  | Map | Custom HTTP headers to inject into every request this could include OAuth tokens etc.
 | inBody | common |  | String | Sets the name of a parameter to be passed in the exchange In Body
 | proxy | common |  | HttpHost | HTTP proxy server configuration
-| serviceUri | common |  | String | Target OData service base URI e.g. http://services.odata.org/OData/OData.svc
+| serviceUri | common |  | String | Target OData service base URI e.g. http://services.odata.org/TripPinRESTierService/
 | socketTimeout | common | 30000 | int | HTTP request timeout in milliseconds defaults to 30000 (30 seconds)
 | sslContextParameters | common |  | SSLContextParameters | To configure security using SSLContextParameters
 | bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
@@ -99,16 +99,16 @@ defaults to *data* for endpoints that take that option. 
 
 Any of the endpoint options can be provided in either the endpoint URI,
 or dynamically in a message header. The message header name must be of
-the format *`CamelOlingo2.<option>`*. Note that the *`inBody`* option
+the format *`CamelOlingo4.<option>`*. Note that the *`inBody`* option
 overrides message header, i.e. the endpoint
 option *`inBody=option`* would override
-a *`CamelOlingo2.option`* header. In addition, query parameters can be
+a *`CamelOlingo4.option`* header. In addition, query parameters can be
 specified 
 
 Note that the resourcePath option can either in specified in the URI as
 a part of the URI path, as an endpoint option
 ?resourcePath=<resource-path> or as a header value
-CamelOlingo2.resourcePath. The OData entity key predicate can either be
+CamelOlingo4.resourcePath. The OData entity key predicate can either be
 a part of the resource path, e.g. _Manufacturers('1')_, where _'__1'_ is
 the key predicate, or be specified separately with resource path
 _Manufacturers_ and keyPredicate option _'1'_. 
@@ -117,20 +117,20 @@ _Manufacturers_ and keyPredicate option _'1'_. 
 |=======================================================================
 |Endpoint |Options |HTTP Method |Result Body Type
 
-|batch |data |POST with multipart/mixed batch request |java.util.List<org.apache.camel.component.olingo2.api.batch.Olingo2BatchResponse>
+|batch |data |POST with multipart/mixed batch request |java.util.List<org.apache.camel.component.olingo4.api.batch.Olingo4BatchResponse>
 
-|create |data, resourcePath |POST |org.apache.olingo.odata2.api.ep.entry.ODataEntry for new entries
-org.apache.olingo.odata2.api.commons.HttpStatusCodes for other OData resources
+|create |data, resourcePath |POST |org.apache.olingo.client.api.domain.ClientEntity for new entries
+org.apache.olingo.commons.api.http.HttpStatusCode for other OData resources
 
-|delete |resourcePath |DELETE |org.apache.olingo.odata2.api.commons.HttpStatusCodes
+|delete |resourcePath |DELETE |org.apache.olingo.commons.api.http.HttpStatusCode
 
-|merge |data, resourcePath |MERGE |org.apache.olingo.odata2.api.commons.HttpStatusCodes
+|merge |data, resourcePath |MERGE |org.apache.olingo.commons.api.http.HttpStatusCode
 
-|patch |data, resourcePath |PATCH |org.apache.olingo.odata2.api.commons.HttpStatusCodes
+|patch |data, resourcePath |PATCH |org.apache.olingo.commons.api.http.HttpStatusCode
 
 |read |queryParams, resourcePath |GET |Depends on OData resource being queried as described next
 
-|update |data, resourcePath |PUT |org.apache.olingo.odata2.api.commons.HttpStatusCodes
+|update |data, resourcePath |PUT |org.apache.olingo.commons.api.http.HttpStatusCode
 |=======================================================================
 
 ### OData Resource Type Mapping
@@ -142,26 +142,20 @@ the OData resource being queried, created or modified. 
 |=======================================================================
 |OData Resource Type |Resource URI from resourcePath and keyPredicate |In or Out Body Type
 
-|Entity data model |$metadata |org.apache.olingo.odata2.api.edm.Edm
+|Entity data model |$metadata |org.apache.olingo.commons.api.edm.Edm
 
-|Service document |/ |org.apache.olingo.odata2.api.servicedocument.ServiceDocument
+|Service document |/ |org.apache.olingo.client.api.domain.ClientServiceDocument
 
-|OData feed |<entity-set> |org.apache.olingo.odata2.api.ep.feed.ODataFeed
+|OData entity set |<entity-set> |org.apache.olingo.client.api.domain.ClientEntitySet
 
-|OData entry |<entity-set>(<key-predicate>) |org.apache.olingo.odata2.api.ep.entry.ODataEntry for Out body (response)
+|OData entity |<entity-set>(<key-predicate>) |org.apache.olingo.client.api.domain.ClientEntity for Out body (response)
 java.util.Map<String, Object> for In body (request)
 
-|Simple property |<entity-set>(<key-predicate>)/<simple-property> |Appropriate Java data type as described by Olingo EdmProperty
+|Simple property |<entity-set>(<key-predicate>)/<simple-property> |org.apache.olingo.client.api.domain.ClientPrimitiveValue
 
-|Simple property value |<entity-set>(<key-predicate>)/<simple-property>/$value |Appropriate Java data type as described by Olingo EdmProperty
+|Simple property value |<entity-set>(<key-predicate>)/<simple-property>/$value |org.apache.olingo.client.api.domain.ClientPrimitiveValue
 
-|Complex property |<entity-set>(<key-predicate>)/<complex-property> |java.util.Map<String, Object>
-
-|Zero or one association link |<entity-set>(<key-predicate>/$link/<one-to-one-entity-set-property> |String for response
-java.util.Map<String, Object> with key property names and values for request
-
-|Zero or many association links |<entity-set>(<key-predicate>/$link/<one-to-many-entity-set-property> |java.util.List<String> for response
-java.util.List<java.util.Map<String, Object>> containing list of key property names and values for request
+|Complex property |<entity-set>(<key-predicate>)/<complex-property> |org.apache.olingo.client.api.domain.ClientComplexValue
 
 |Count |<resource-uri>/$count |java.lang.Long
 |=======================================================================
@@ -180,13 +174,13 @@ setting the endpoint property *consumer.splitResult=false*. 
 ### Message Headers
 
 Any URI option can be provided in a message header for producer
-endpoints with a *`CamelOlingo2.`* prefix.
+endpoints with a *`CamelOlingo4.`* prefix.
 
 ### Message Body
 
 All result message bodies utilize objects provided by the underlying
-http://olingo.apache.org/javadoc/odata2/index.html[Apache Olingo 2.0
-API] used by the Olingo2Component. Producer endpoints can specify the
+http://olingo.apache.org/javadoc/odata4/index.html[Apache Olingo 4.0
+API] used by the Olingo4Component. Producer endpoints can specify the
 option name for incoming message body in the *`inBody`* endpoint URI
 parameter. For endpoints that return an array or collection, a consumer
 endpoint will map every element to distinct messages, unless
@@ -194,21 +188,21 @@ endpoint will map every element to distinct messages, unless
 
 ### Use cases
 
-The following route reads top 5 entries from the Manufacturer feed
-ordered by ascending Name property. 
+The following route reads top 5 entries from the People entity
+ordered by ascending FirstName property. 
 
  
 
 [source,java]
 ------------------------------------------------------------
 from("direct:...")
-    .setHeader("CamelOlingo2.$top", "5");
-    .to("olingo2://read/Manufacturers?orderBy=Name%20asc");
+    .setHeader("CamelOlingo4.$top", "5");
+    .to("olingo4://read/People?orderBy=FirstName%20asc");
 ------------------------------------------------------------
 
  
 
-The following route reads Manufacturer entry using the key property
+The following route reads Airports entity using the key property
 value in incoming *id* header. 
 
  
@@ -216,37 +210,21 @@ value in incoming *id* header. 
 [source,java]
 ------------------------------------------------------------
 from("direct:...")
-    .setHeader("CamelOlingo2.keyPredicate", header("id"))
-    .to("olingo2://read/Manufacturers");
+    .setHeader("CamelOlingo4.keyPredicate", header("id"))
+    .to("olingo4://read/Airports");
 ------------------------------------------------------------
 
  
 
-The following route creates Manufacturer entry using the
-*java.util.Map<String, Object>* in body message. 
+The following route creates People entity using the
+*ClientEntity* in body message. 
 
  
 
 [source,java]
 ------------------------------------------------------------
 from("direct:...")
-    .to("olingo2://create/Manufacturers");
+    .to("olingo4://create/People");
 ------------------------------------------------------------
 
- 
-
-The following route polls Manufacturer
-http://olingo.apache.org/doc/tutorials/deltaClient.html[delta
-feed] every 30 seconds. The bean *blah* updates the bean *paramsBean* to
-add an updated *!deltatoken* property with the value returned in the
-*ODataDeltaFeed* result. Since the initial delta token is not known, the
-consumer endpoint will produce an *ODataFeed* value the first time, and
-*ODataDeltaFeed* on subsequent polls. 
-
- 
-
-[source,java]
----------------------------------------------------------------------------------------------------------
-from("olingo2://read/Manufacturers?queryParams=#paramsBean&consumer.timeUnit=SECONDS&consumer.delay=30")
-    .to("bean:blah");
 ---------------------------------------------------------------------------------------------------------
