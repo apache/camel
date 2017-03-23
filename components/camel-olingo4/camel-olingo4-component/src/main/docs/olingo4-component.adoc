@@ -1,0 +1,252 @@
+## Olingo4 Component
+
+*Available as of Camel version 2.19.0*
+
+The Olingo2 component utilizes http://olingo.apache.org/[Apache Olingo]
+version 2.0 APIs to interact with OData 2.0 and 3.0 compliant services.
+A number of popular commercial and enterprise vendors and products
+support the OData protocol. A sample list of supporting products can be
+found on the OData http://www.odata.org/ecosystem/[website].
+
+The Olingo2 component supports reading feeds, delta feeds, entities,
+simple and complex properties, links, counts, using custom and OData
+system query parameters. It supports updating entities, properties, and
+association links. It also supports submitting queries and change
+requests as a single OData batch operation. 
+
+The component supports configuring HTTP connection parameters and
+headers for OData service connection. This allows configuring use of
+SSL, OAuth2.0, etc. as required by the target OData service. 
+
+Maven users will need to add the following dependency to their pom.xml
+for this component:
+
+[source,java]
+----------------------------------------------
+    <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-olingo2</artifactId>
+        <version>${camel-version}</version>
+    </dependency>
+----------------------------------------------
+
+### URI format
+
+[source,java]
+------------------------------------------------
+    olingo2://endpoint/<resource-path>?[options]
+------------------------------------------------
+
+### Olingo2 Options
+
+
+
+
+// component options: START
+The Olingo4 component supports 1 options which are listed below.
+
+
+
+{% raw %}
+[width="100%",cols="2,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| configuration | common |  | Olingo4Configuration | To use the shared configuration
+|=======================================================================
+{% endraw %}
+// component options: END
+
+
+
+
+
+
+// endpoint options: START
+The Olingo4 component supports 16 endpoint options which are listed below:
+
+{% raw %}
+[width="100%",cols="2,1,1m,1m,5",options="header"]
+|=======================================================================
+| Name | Group | Default | Java Type | Description
+| apiName | common |  | Olingo4ApiName | *Required* What kind of operation to perform
+| methodName | common |  | String | *Required* What sub operation to use for the selected operation
+| connectTimeout | common | 30000 | int | HTTP connection creation timeout in milliseconds defaults to 30000 (30 seconds)
+| contentType | common | application/json;charset=utf-8 | String | Content-Type header value can be used to specify JSON or XML message format defaults to application/json;charset=utf-8
+| httpAsyncClientBuilder | common |  | HttpAsyncClientBuilder | Custom HTTP async client builder for more complex HTTP client configuration overrides connectionTimeout socketTimeout proxy and sslContext. Note that a socketTimeout MUST be specified in the builder otherwise OData requests could block indefinitely
+| httpClientBuilder | common |  | HttpClientBuilder | Custom HTTP client builder for more complex HTTP client configuration overrides connectionTimeout socketTimeout proxy and sslContext. Note that a socketTimeout MUST be specified in the builder otherwise OData requests could block indefinitely
+| httpHeaders | common |  | Map | Custom HTTP headers to inject into every request this could include OAuth tokens etc.
+| inBody | common |  | String | Sets the name of a parameter to be passed in the exchange In Body
+| proxy | common |  | HttpHost | HTTP proxy server configuration
+| serviceUri | common |  | String | Target OData service base URI e.g. http://services.odata.org/OData/OData.svc
+| socketTimeout | common | 30000 | int | HTTP request timeout in milliseconds defaults to 30000 (30 seconds)
+| sslContextParameters | common |  | SSLContextParameters | To configure security using SSLContextParameters
+| bridgeErrorHandler | consumer | false | boolean | Allows for bridging the consumer to the Camel routing Error Handler which mean any exceptions occurred while the consumer is trying to pickup incoming messages or the likes will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exceptionHandler | consumer (advanced) |  | ExceptionHandler | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this options is not in use. By default the consumer will deal with exceptions that will be logged at WARN or ERROR level and ignored.
+| exchangePattern | consumer (advanced) |  | ExchangePattern | Sets the exchange pattern when the consumer creates an exchange.
+| synchronous | advanced | false | boolean | Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported).
+|=======================================================================
+{% endraw %}
+// endpoint options: END
+
+
+### Producer Endpoints
+
+Producer endpoints can use endpoint names and options listed
+next. Producer endpoints can also use a special option *`inBody`* that
+in turn should contain the name of the endpoint option whose value will
+be contained in the Camel Exchange In message. The *inBody* option
+defaults to *data* for endpoints that take that option. 
+
+Any of the endpoint options can be provided in either the endpoint URI,
+or dynamically in a message header. The message header name must be of
+the format *`CamelOlingo2.<option>`*. Note that the *`inBody`* option
+overrides message header, i.e. the endpoint
+option *`inBody=option`* would override
+a *`CamelOlingo2.option`* header. In addition, query parameters can be
+specified 
+
+Note that the resourcePath option can either in specified in the URI as
+a part of the URI path, as an endpoint option
+?resourcePath=<resource-path> or as a header value
+CamelOlingo2.resourcePath. The OData entity key predicate can either be
+a part of the resource path, e.g. _Manufacturers('1')_, where _'__1'_ is
+the key predicate, or be specified separately with resource path
+_Manufacturers_ and keyPredicate option _'1'_. 
+
+[width="100%",cols="10%,10%,10%,70%",options="header",]
+|=======================================================================
+|Endpoint |Options |HTTP Method |Result Body Type
+
+|batch |data |POST with multipart/mixed batch request |java.util.List<org.apache.camel.component.olingo2.api.batch.Olingo2BatchResponse>
+
+|create |data, resourcePath |POST |org.apache.olingo.odata2.api.ep.entry.ODataEntry for new entries
+org.apache.olingo.odata2.api.commons.HttpStatusCodes for other OData resources
+
+|delete |resourcePath |DELETE |org.apache.olingo.odata2.api.commons.HttpStatusCodes
+
+|merge |data, resourcePath |MERGE |org.apache.olingo.odata2.api.commons.HttpStatusCodes
+
+|patch |data, resourcePath |PATCH |org.apache.olingo.odata2.api.commons.HttpStatusCodes
+
+|read |queryParams, resourcePath |GET |Depends on OData resource being queried as described next
+
+|update |data, resourcePath |PUT |org.apache.olingo.odata2.api.commons.HttpStatusCodes
+|=======================================================================
+
+### OData Resource Type Mapping
+
+The result of *read* endpoint and data type of *data* option depends on
+the OData resource being queried, created or modified. 
+
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|OData Resource Type |Resource URI from resourcePath and keyPredicate |In or Out Body Type
+
+|Entity data model |$metadata |org.apache.olingo.odata2.api.edm.Edm
+
+|Service document |/ |org.apache.olingo.odata2.api.servicedocument.ServiceDocument
+
+|OData feed |<entity-set> |org.apache.olingo.odata2.api.ep.feed.ODataFeed
+
+|OData entry |<entity-set>(<key-predicate>) |org.apache.olingo.odata2.api.ep.entry.ODataEntry for Out body (response)
+java.util.Map<String, Object> for In body (request)
+
+|Simple property |<entity-set>(<key-predicate>)/<simple-property> |Appropriate Java data type as described by Olingo EdmProperty
+
+|Simple property value |<entity-set>(<key-predicate>)/<simple-property>/$value |Appropriate Java data type as described by Olingo EdmProperty
+
+|Complex property |<entity-set>(<key-predicate>)/<complex-property> |java.util.Map<String, Object>
+
+|Zero or one association link |<entity-set>(<key-predicate>/$link/<one-to-one-entity-set-property> |String for response
+java.util.Map<String, Object> with key property names and values for request
+
+|Zero or many association links |<entity-set>(<key-predicate>/$link/<one-to-many-entity-set-property> |java.util.List<String> for response
+java.util.List<java.util.Map<String, Object>> containing list of key property names and values for request
+
+|Count |<resource-uri>/$count |java.lang.Long
+|=======================================================================
+
+### Consumer Endpoints
+
+Only the *read* endpoint can be used as a consumer endpoint. Consumer
+endpoints can
+use http://camel.apache.org/polling-consumer.html#PollingConsumer-ScheduledPollConsumerOptions[Scheduled
+Poll Consumer Options] with a *`consumer.`* prefix to schedule endpoint
+invocation. By default consumer endpoints that return an array or
+collection will generate one exchange per element, and their routes will
+be executed once for each exchange. This behavior can be disabled by
+setting the endpoint property *consumer.splitResult=false*. 
+
+### Message Headers
+
+Any URI option can be provided in a message header for producer
+endpoints with a *`CamelOlingo2.`* prefix.
+
+### Message Body
+
+All result message bodies utilize objects provided by the underlying
+http://olingo.apache.org/javadoc/odata2/index.html[Apache Olingo 2.0
+API] used by the Olingo2Component. Producer endpoints can specify the
+option name for incoming message body in the *`inBody`* endpoint URI
+parameter. For endpoints that return an array or collection, a consumer
+endpoint will map every element to distinct messages, unless
+*consumer.splitResult* is set to *false*.
+
+### Use cases
+
+The following route reads top 5 entries from the Manufacturer feed
+ordered by ascending Name property. 
+
+ 
+
+[source,java]
+------------------------------------------------------------
+from("direct:...")
+    .setHeader("CamelOlingo2.$top", "5");
+    .to("olingo2://read/Manufacturers?orderBy=Name%20asc");
+------------------------------------------------------------
+
+ 
+
+The following route reads Manufacturer entry using the key property
+value in incoming *id* header. 
+
+ 
+
+[source,java]
+------------------------------------------------------------
+from("direct:...")
+    .setHeader("CamelOlingo2.keyPredicate", header("id"))
+    .to("olingo2://read/Manufacturers");
+------------------------------------------------------------
+
+ 
+
+The following route creates Manufacturer entry using the
+*java.util.Map<String, Object>* in body message. 
+
+ 
+
+[source,java]
+------------------------------------------------------------
+from("direct:...")
+    .to("olingo2://create/Manufacturers");
+------------------------------------------------------------
+
+ 
+
+The following route polls Manufacturer
+http://olingo.apache.org/doc/tutorials/deltaClient.html[delta
+feed] every 30 seconds. The bean *blah* updates the bean *paramsBean* to
+add an updated *!deltatoken* property with the value returned in the
+*ODataDeltaFeed* result. Since the initial delta token is not known, the
+consumer endpoint will produce an *ODataFeed* value the first time, and
+*ODataDeltaFeed* on subsequent polls. 
+
+ 
+
+[source,java]
+---------------------------------------------------------------------------------------------------------
+from("olingo2://read/Manufacturers?queryParams=#paramsBean&consumer.timeUnit=SECONDS&consumer.delay=30")
+    .to("bean:blah");
+---------------------------------------------------------------------------------------------------------
