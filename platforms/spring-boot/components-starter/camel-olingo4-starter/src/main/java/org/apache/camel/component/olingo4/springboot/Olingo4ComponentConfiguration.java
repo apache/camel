@@ -37,6 +37,12 @@ public class Olingo4ComponentConfiguration {
      * To use the shared configuration
      */
     private Olingo4ConfigurationNestedConfiguration configuration;
+    /**
+     * Whether the component should resolve property placeholders on itself when
+     * starting. Only properties which are of String type can use property
+     * placeholders.
+     */
+    private Boolean resolvePropertyPlaceholders = true;
 
     public Olingo4ConfigurationNestedConfiguration getConfiguration() {
         return configuration;
@@ -45,6 +51,15 @@ public class Olingo4ComponentConfiguration {
     public void setConfiguration(
             Olingo4ConfigurationNestedConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public Boolean getResolvePropertyPlaceholders() {
+        return resolvePropertyPlaceholders;
+    }
+
+    public void setResolvePropertyPlaceholders(
+            Boolean resolvePropertyPlaceholders) {
+        this.resolvePropertyPlaceholders = resolvePropertyPlaceholders;
     }
 
     public static class Olingo4ConfigurationNestedConfiguration {
@@ -76,11 +91,11 @@ public class Olingo4ComponentConfiguration {
          * HTTP connection creation timeout in milliseconds, defaults to 30,000
          * (30 seconds)
          */
-        private Integer connectTimeout;
+        private Integer connectTimeout = 30000;
         /**
          * HTTP request timeout in milliseconds, defaults to 30,000 (30 seconds)
          */
-        private Integer socketTimeout;
+        private Integer socketTimeout = 30000;
         /**
          * HTTP proxy server configuration
          */
