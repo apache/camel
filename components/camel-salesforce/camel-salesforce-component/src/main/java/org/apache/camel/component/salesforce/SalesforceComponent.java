@@ -91,8 +91,8 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
     private String password;
     @Metadata(label = "security", secret = true)
     private KeyStoreParameters keystore;
-    @Metadata(description="Explicit authentication type to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN or JWT.",
-        label = "security", secret = false, enums="USERNAME_PASSWORD,REFRESH_TOKEN,JWT")
+    @Metadata(description = "Explicit authentication type to be used, one of USERNAME_PASSWORD, REFRESH_TOKEN or JWT.",
+        label = "security", secret = false, enums = "USERNAME_PASSWORD,REFRESH_TOKEN,JWT")
     private AuthenticationType authenticationType;
     @Metadata(label = "security")
     private boolean lazyLogin;

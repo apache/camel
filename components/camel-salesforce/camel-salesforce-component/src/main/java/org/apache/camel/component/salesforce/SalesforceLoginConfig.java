@@ -221,6 +221,8 @@ public class SalesforceLoginConfig {
             ObjectHelper.notNull(userName, "userName (JWT authentication)");
             ObjectHelper.notNull(keystore, "keystore (JWT authentication)");
             break;
+        default:
+            throw new IllegalArgumentException("Unknown authentication type: " + type);
         }
     }
 
