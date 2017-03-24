@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spring.cloud;
 
-
-import org.apache.camel.cloud.LoadBalancer;
 import org.apache.camel.spring.boot.cloud.CamelCloudAutoConfiguration;
 import org.apache.camel.spring.boot.cloud.CamelCloudConfigurationProperties;
 import org.apache.camel.spring.boot.cloud.CamelCloudServiceDiscovery;

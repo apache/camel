@@ -20,11 +20,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.impl.cloud.BlacklistServiceFilter;
 import org.apache.camel.impl.cloud.HealthyServiceFilter;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -34,25 +44,43 @@ import org.springframework.context.annotation.Lazy;
 @Configuration
 @EnableConfigurationProperties(CamelCloudConfigurationProperties.class)
 @Conditional(CamelCloudServiceFilterAutoConfiguration.Condition.class)
-public class CamelCloudServiceFilterAutoConfiguration {
+public class CamelCloudServiceFilterAutoConfiguration implements BeanFactoryAware {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CamelCloudServiceFilterAutoConfiguration.class);
+
+    private BeanFactory beanFactory;
+
+    @Autowired
+    private CamelContext camelContext;
+    @Autowired
+    private CamelCloudConfigurationProperties configurationProperties;
+
+    @Override
+    public void setBeanFactory(BeanFactory factory) throws BeansException {
+        beanFactory = factory;
+    }
+
     @Lazy
     @Bean(name = "service-filter")
-    public CamelCloudServiceFilter serviceFilter(CamelCloudConfigurationProperties properties) {
-        BlacklistServiceFilter blacklist = new BlacklistServiceFilter();
+    public CamelCloudServiceFilter serviceFilter() {
+        return createServiceFilter(configurationProperties.getServiceFilter());
+    }
 
-        Map<String, List<String>> services = properties.getServiceFilter().getBlacklist();
-        for (Map.Entry<String, List<String>> entry : services.entrySet()) {
-            for (String part : entry.getValue()) {
-                String host = StringHelper.before(part, ":");
-                String port = StringHelper.after(part, ":");
-
-                if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
-                    blacklist.addServer(entry.getKey(), host, Integer.parseInt(port));
-                }
-            }
+    @PostConstruct
+    public void addServiceFilterConfigurations() {
+        if (!(beanFactory instanceof ConfigurableBeanFactory)) {
+            LOGGER.warn("BeanFactory is not of type ConfigurableBeanFactory");
+            return;
         }
 
-        return new CamelCloudServiceFilter(Arrays.asList(new HealthyServiceFilter(), blacklist));
+        final ConfigurableBeanFactory factory = (ConfigurableBeanFactory) beanFactory;
+
+        configurationProperties.getServiceFilter().getConfigurations().entrySet().stream()
+            .forEach(
+                entry -> factory.registerSingleton(
+                    entry.getKey(),
+                    createServiceFilter(entry.getValue())
+                )
+            );
     }
 
     // *******************************
@@ -66,5 +94,27 @@ public class CamelCloudServiceFilterAutoConfiguration {
                 "camel.cloud.service-filter"
             );
         }
+    }
+
+    // *******************************
+    // Helper
+    // *******************************
+
+    private CamelCloudServiceFilter createServiceFilter(CamelCloudConfigurationProperties.ServiceFilterConfiguration configuration) {
+        BlacklistServiceFilter blacklist = new BlacklistServiceFilter();
+
+        Map<String, List<String>> services = configuration.getBlacklist();
+        for (Map.Entry<String, List<String>> entry : services.entrySet()) {
+            for (String part : entry.getValue()) {
+                String host = StringHelper.before(part, ":");
+                String port = StringHelper.after(part, ":");
+
+                if (ObjectHelper.isNotEmpty(host) && ObjectHelper.isNotEmpty(port)) {
+                    blacklist.addServer(entry.getKey(), host, Integer.parseInt(port));
+                }
+            }
+        }
+
+        return new CamelCloudServiceFilter(Arrays.asList(new HealthyServiceFilter(), blacklist));
     }
 }

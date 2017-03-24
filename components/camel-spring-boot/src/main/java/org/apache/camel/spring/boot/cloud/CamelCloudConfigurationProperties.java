@@ -20,11 +20,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.Expression;
+import org.apache.camel.model.cloud.ServiceCallConstants;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "camel.cloud")
 public class CamelCloudConfigurationProperties {
     private boolean enabled = true;
+    private ServiceCall serviceCall = new ServiceCall();
     private LoadBalancer loadBalancer = new LoadBalancer();
     private ServiceDiscovery serviceDiscovery = new ServiceDiscovery();
     private ServiceFilter serviceFilter = new ServiceFilter();
@@ -36,6 +39,10 @@ public class CamelCloudConfigurationProperties {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public ServiceCall getServiceCall() {
+        return serviceCall;
     }
 
     public LoadBalancer getLoadBalancer() {
@@ -55,7 +62,105 @@ public class CamelCloudConfigurationProperties {
     }
 
     // *****************************************
-    // Nested configurations
+    // Service Call
+    // *****************************************
+
+    public class ServiceCall {
+        /**
+         * The uri of the endpoint to send to.
+         * The uri can be dynamic computed using the {@link org.apache.camel.language.simple.SimpleLanguage} expression.
+         */
+        private String uri;
+
+        /**
+         * The component to use.
+         */
+        private String component = ServiceCallConstants.DEFAULT_COMPONENT;
+
+        /**
+         * A reference to the {@link org.apache.camel.cloud.ServiceDiscovery} to use.
+         */
+        private String serviceDiscovery;
+
+        /**
+         * A reference to the {@link org.apache.camel.cloud.ServiceFilter} to use.
+         */
+        private String serviceFilter;
+
+        /**
+         * A reference to the {@link org.apache.camel.cloud.ServiceChooser} to use.
+         */
+        private String serviceChooser;
+
+        /**
+         * A reference to the {@link org.apache.camel.cloud.LoadBalancer} to use.
+         */
+        private String loadBalancer;
+
+        /**
+         * Set a custom {@link Expression} using the {@link org.apache.camel.language.simple.SimpleLanguage}
+         */
+        private String expression;
+
+        public String getUri() {
+            return uri;
+        }
+
+        public void setUri(String uri) {
+            this.uri = uri;
+        }
+
+        public String getComponent() {
+            return component;
+        }
+
+        public void setComponent(String component) {
+            this.component = component;
+        }
+
+        public String getServiceDiscovery() {
+            return serviceDiscovery;
+        }
+
+        public void setServiceDiscovery(String serviceDiscovery) {
+            this.serviceDiscovery = serviceDiscovery;
+        }
+
+        public String getServiceFilter() {
+            return serviceFilter;
+        }
+
+        public void setServiceFilter(String serviceFilter) {
+            this.serviceFilter = serviceFilter;
+        }
+
+        public String getServiceChooser() {
+            return serviceChooser;
+        }
+
+        public void setServiceChooser(String serviceChooser) {
+            this.serviceChooser = serviceChooser;
+        }
+
+        public String getLoadBalancer() {
+            return loadBalancer;
+        }
+
+        public void setLoadBalancer(String loadBalancer) {
+            this.loadBalancer = loadBalancer;
+        }
+
+        public String getExpression() {
+            return expression;
+        }
+
+        public void setExpression(String expression) {
+            this.expression = expression;
+        }
+    }
+
+    // *****************************************
+    // Load Balancer
     // *****************************************
 
     public static class LoadBalancer {
@@ -70,18 +175,13 @@ public class CamelCloudConfigurationProperties {
         }
     }
 
-    public static class ServiceDiscovery {
-        private boolean enabled = true;
+    // *****************************************
+    // Service Discovery
+    // *****************************************
+
+    public static class ServiceDiscoveryConfiguration {
         private Map<String, List<String>> services = new HashMap<>();
         private String cacheTimeout;
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(boolean enabled) {
-            this.enabled = enabled;
-        }
 
         public Map<String, List<String>> getServices() {
             return services;
@@ -96,9 +196,9 @@ public class CamelCloudConfigurationProperties {
         }
     }
 
-    public static class ServiceFilter {
+    public static class ServiceDiscovery extends ServiceDiscoveryConfiguration {
         private boolean enabled = true;
-        private Map<String, List<String>> blacklist = new HashMap<>();
+        private Map<String, ServiceDiscoveryConfiguration> configurations = new HashMap<>();
 
         public boolean isEnabled() {
             return enabled;
@@ -108,10 +208,43 @@ public class CamelCloudConfigurationProperties {
             this.enabled = enabled;
         }
 
+        public Map<String, ServiceDiscoveryConfiguration> getConfigurations() {
+            return configurations;
+        }
+    }
+
+    // *****************************************
+    // Service Filter
+    // *****************************************
+
+    public static class ServiceFilterConfiguration {
+        private Map<String, List<String>> blacklist = new HashMap<>();
+
         public Map<String, List<String>> getBlacklist() {
             return blacklist;
         }
     }
+
+    public static class ServiceFilter extends ServiceFilterConfiguration {
+        private boolean enabled = true;
+        private Map<String, ServiceFilterConfiguration> configurations = new HashMap<>();
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public Map<String, ServiceFilterConfiguration> getConfigurations() {
+            return configurations;
+        }
+    }
+
+    // *****************************************
+    // Service Chooser
+    // *****************************************
 
     public static class ServiceChooser {
         private boolean enabled = true;

@@ -17,14 +17,25 @@
 
 package org.apache.camel.spring.boot.cloud;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.PostConstruct;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.impl.cloud.StaticServiceDiscovery;
+import org.apache.camel.model.HystrixConfigurationDefinition;
 import org.apache.camel.spring.boot.util.GroupCondition;
+import org.apache.camel.util.IntrospectionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
@@ -34,27 +45,31 @@ import org.springframework.context.annotation.Lazy;
 @Configuration
 @EnableConfigurationProperties(CamelCloudConfigurationProperties.class)
 @Conditional(CamelCloudServiceDiscoveryAutoConfiguration.Condition.class)
-public class CamelCloudServiceDiscoveryAutoConfiguration {
+public class CamelCloudServiceDiscoveryAutoConfiguration implements BeanFactoryAware {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CamelCloudServiceDiscoveryAutoConfiguration.class);
+
+    private BeanFactory beanFactory;
+
+    @Autowired
+    private CamelContext camelContext;
+    @Autowired
+    private CamelCloudConfigurationProperties configurationProperties;
+
+    @Override
+    public void setBeanFactory(BeanFactory factory) throws BeansException {
+        beanFactory = factory;
+    }
 
     @Lazy
     @Bean(name = "static-service-discovery")
-    public ServiceDiscovery staticServiceDiscovery(CamelCloudConfigurationProperties properties) {
-        StaticServiceDiscovery staticServiceDiscovery = new StaticServiceDiscovery();
-
-        Map<String, List<String>> services = properties.getServiceDiscovery().getServices();
-        for (Map.Entry<String, List<String>> entry : services.entrySet()) {
-            staticServiceDiscovery.addServers(entry.getKey(), entry.getValue());
-        }
-
-        return staticServiceDiscovery;
+    public ServiceDiscovery staticServiceDiscovery() {
+        return createStaticServiceDiscovery(configurationProperties.getServiceDiscovery());
     }
 
     @Lazy
     @Bean(name = "service-discovery")
-    public CamelCloudServiceDiscovery serviceDiscovery(
-            CamelContext camelContext, CamelCloudConfigurationProperties properties, List<ServiceDiscovery> serviceDiscoveryList) throws NoTypeConversionAvailableException {
-
-        String cacheTimeout = properties.getServiceDiscovery().getCacheTimeout();
+    public CamelCloudServiceDiscovery serviceDiscovery(List<ServiceDiscovery> serviceDiscoveryList) throws NoTypeConversionAvailableException {
+        String cacheTimeout = configurationProperties.getServiceDiscovery().getCacheTimeout();
         Long timeout = null;
 
         if (cacheTimeout != null) {
@@ -62,6 +77,24 @@ public class CamelCloudServiceDiscoveryAutoConfiguration {
         }
 
         return new CamelCloudServiceDiscovery(timeout, serviceDiscoveryList);
+    }
+
+    @PostConstruct
+    public void addServiceDiscoveryConfigurations() {
+        if (!(beanFactory instanceof ConfigurableBeanFactory)) {
+            LOGGER.warn("BeanFactory is not of type ConfigurableBeanFactory");
+            return;
+        }
+
+        final ConfigurableBeanFactory factory = (ConfigurableBeanFactory) beanFactory;
+
+        configurationProperties.getServiceDiscovery().getConfigurations().entrySet().stream()
+            .forEach(
+                entry -> factory.registerSingleton(
+                    entry.getKey(),
+                    createStaticServiceDiscovery(entry.getValue())
+                )
+            );
     }
 
     // *******************************
@@ -75,5 +108,20 @@ public class CamelCloudServiceDiscoveryAutoConfiguration {
                 "camel.cloud.service-discovery"
             );
         }
+    }
+
+    // *******************************
+    // Helper
+    // *******************************
+
+    private ServiceDiscovery createStaticServiceDiscovery(CamelCloudConfigurationProperties.ServiceDiscoveryConfiguration configuration) {
+        StaticServiceDiscovery staticServiceDiscovery = new StaticServiceDiscovery();
+
+        Map<String, List<String>> services = configuration.getServices();
+        for (Map.Entry<String, List<String>> entry : services.entrySet()) {
+            staticServiceDiscovery.addServers(entry.getKey(), entry.getValue());
+        }
+
+        return staticServiceDiscovery;
     }
 }
