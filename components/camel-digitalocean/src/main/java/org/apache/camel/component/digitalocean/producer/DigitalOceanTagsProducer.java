@@ -16,12 +16,13 @@
  */
 package org.apache.camel.component.digitalocean.producer;
 
-import com.myjeeva.digitalocean.pojo.*;
-import org.apache.camel.component.digitalocean.DigitalOceanConfiguration;
-import org.apache.camel.component.digitalocean.constants.DigitalOceanHeaders;
-import org.apache.camel.component.digitalocean.DigitalOceanEndpoint;
+import com.myjeeva.digitalocean.pojo.Delete;
+import com.myjeeva.digitalocean.pojo.Tag;
+import com.myjeeva.digitalocean.pojo.Tags;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.digitalocean.constants.DigitalOceanOperations;
+import org.apache.camel.component.digitalocean.DigitalOceanConfiguration;
+import org.apache.camel.component.digitalocean.DigitalOceanEndpoint;
+import org.apache.camel.component.digitalocean.constants.DigitalOceanHeaders;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -34,25 +35,24 @@ public class DigitalOceanTagsProducer extends DigitalOceanProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        switch(determineOperation(exchange)) {
-
-            case list:
-                getTags(exchange);
-                break;
-            case create:
-                createTag(exchange);
-                break;
-            case get:
-                getTag(exchange);
-                break;
-            case delete:
-                deleteTag(exchange);
-                break;
-            case update:
-                updateTag(exchange);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported operation");
+        switch (determineOperation(exchange)) {
+        case list:
+            getTags(exchange);
+            break;
+        case create:
+            createTag(exchange);
+            break;
+        case get:
+            getTag(exchange);
+            break;
+        case delete:
+            deleteTag(exchange);
+            break;
+        case update:
+            updateTag(exchange);
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported operation");
         }
 
     }
@@ -60,8 +60,9 @@ public class DigitalOceanTagsProducer extends DigitalOceanProducer {
     private void createTag(Exchange exchange) throws Exception {
         String name = exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class);
 
-        if (ObjectHelper.isEmpty(name))
+        if (ObjectHelper.isEmpty(name)) {
             throw new IllegalArgumentException(DigitalOceanHeaders.NAME + " must be specified");
+        }
         Tag tag = getEndpoint().getDigitalOceanClient().createTag(name);
         LOG.trace("Create Tag [{}] ", tag);
         exchange.getOut().setBody(tag);
@@ -71,8 +72,9 @@ public class DigitalOceanTagsProducer extends DigitalOceanProducer {
     private void getTag(Exchange exchange) throws Exception {
         String name = exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class);
 
-        if (ObjectHelper.isEmpty(name))
+        if (ObjectHelper.isEmpty(name)) {
             throw new IllegalArgumentException(DigitalOceanHeaders.NAME + " must be specified");
+        }
         Tag tag = getEndpoint().getDigitalOceanClient().getTag(name);
         LOG.trace("Tag [{}] ", tag);
         exchange.getOut().setBody(tag);
@@ -87,8 +89,9 @@ public class DigitalOceanTagsProducer extends DigitalOceanProducer {
     private void deleteTag(Exchange exchange) throws Exception {
         String name = exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class);
 
-        if (ObjectHelper.isEmpty(name))
+        if (ObjectHelper.isEmpty(name)) {
             throw new IllegalArgumentException(DigitalOceanHeaders.NAME + " must be specified");
+        }
         Delete delete = getEndpoint().getDigitalOceanClient().deleteTag(name);
         LOG.trace("Delete Tag [{}] ", delete);
         exchange.getOut().setBody(delete);
@@ -97,14 +100,15 @@ public class DigitalOceanTagsProducer extends DigitalOceanProducer {
     private void updateTag(Exchange exchange) throws Exception {
         String name = exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class);
 
-        if (ObjectHelper.isEmpty(name))
+        if (ObjectHelper.isEmpty(name)) {
             throw new IllegalArgumentException(DigitalOceanHeaders.NAME + " must be specified");
-
+        }
 
         String newName = exchange.getIn().getHeader(DigitalOceanHeaders.NEW_NAME, String.class);
 
-        if (ObjectHelper.isEmpty(newName))
+        if (ObjectHelper.isEmpty(newName)) {
             throw new IllegalArgumentException(DigitalOceanHeaders.NEW_NAME + " must be specified");
+        }
 
         Tag tag = getEndpoint().getDigitalOceanClient().updateTag(name, newName);
         LOG.trace("Update Tag [{}] ", tag);

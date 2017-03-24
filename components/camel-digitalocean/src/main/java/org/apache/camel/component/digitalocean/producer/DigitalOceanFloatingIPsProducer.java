@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.digitalocean.producer;
 
-import com.myjeeva.digitalocean.pojo.*;
-import org.apache.camel.component.digitalocean.DigitalOceanConfiguration;
-import org.apache.camel.component.digitalocean.constants.DigitalOceanHeaders;
-import org.apache.camel.component.digitalocean.DigitalOceanEndpoint;
+import com.myjeeva.digitalocean.pojo.Action;
+import com.myjeeva.digitalocean.pojo.Actions;
+import com.myjeeva.digitalocean.pojo.Delete;
+import com.myjeeva.digitalocean.pojo.FloatingIP;
+import com.myjeeva.digitalocean.pojo.FloatingIPs;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.digitalocean.constants.DigitalOceanOperations;
+import org.apache.camel.component.digitalocean.DigitalOceanConfiguration;
+import org.apache.camel.component.digitalocean.DigitalOceanEndpoint;
+import org.apache.camel.component.digitalocean.constants.DigitalOceanHeaders;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -34,31 +37,31 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        switch(determineOperation(exchange)) {
+        switch (determineOperation(exchange)) {
 
-            case list:
-                getFloatingIPs(exchange);
-                break;
-            case create:
-                createFloatingIp(exchange);
-                break;
-            case get:
-                getFloatingIP(exchange);
-                break;
-            case delete:
-                deleteFloatingIP(exchange);
-                break;
-            case assign:
-                assignFloatingIPToDroplet(exchange);
-                break;
-            case unassign:
-                unassignFloatingIP(exchange);
-                break;
-            case listActions:
-                getFloatingIPActions(exchange);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported operation");
+        case list:
+            getFloatingIPs(exchange);
+            break;
+        case create:
+            createFloatingIp(exchange);
+            break;
+        case get:
+            getFloatingIP(exchange);
+            break;
+        case delete:
+            deleteFloatingIP(exchange);
+            break;
+        case assign:
+            assignFloatingIPToDroplet(exchange);
+            break;
+        case unassign:
+            unassignFloatingIP(exchange);
+            break;
+        case listActions:
+            getFloatingIPActions(exchange);
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
@@ -67,12 +70,13 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
         String region = exchange.getIn().getHeader(DigitalOceanHeaders.REGION, String.class);
         FloatingIP ip;
 
-        if (ObjectHelper.isNotEmpty(dropletId))
+        if (ObjectHelper.isNotEmpty(dropletId)) {
             ip = getEndpoint().getDigitalOceanClient().createFloatingIP(dropletId);
-        else if (ObjectHelper.isNotEmpty(region))
+        } else if (ObjectHelper.isNotEmpty(region)) {
             ip = getEndpoint().getDigitalOceanClient().createFloatingIP(region);
-        else
-            throw new IllegalArgumentException(DigitalOceanHeaders.DROPLET_ID + " or " +  DigitalOceanHeaders.REGION + " must be specified");
+        } else {
+            throw new IllegalArgumentException(DigitalOceanHeaders.DROPLET_ID + " or " + DigitalOceanHeaders.REGION + " must be specified");
+        }
 
         LOG.trace("FloatingIP [{}] ", ip);
         exchange.getOut().setBody(ip);
@@ -89,8 +93,9 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
     private void getFloatingIP(Exchange exchange) throws Exception {
         String ipAddress = exchange.getIn().getHeader(DigitalOceanHeaders.FLOATING_IP_ADDRESS, String.class);
 
-        if (ObjectHelper.isEmpty(ipAddress))
+        if (ObjectHelper.isEmpty(ipAddress)) {
             throw new IllegalArgumentException(DigitalOceanHeaders.FLOATING_IP_ADDRESS + " must be specified");
+        }
 
 
         FloatingIP ip = getEndpoint().getDigitalOceanClient().getFloatingIPInfo(ipAddress);
@@ -102,8 +107,9 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
     private void deleteFloatingIP(Exchange exchange) throws Exception {
         String ipAddress = exchange.getIn().getHeader(DigitalOceanHeaders.FLOATING_IP_ADDRESS, String.class);
 
-        if (ObjectHelper.isEmpty(ipAddress))
+        if (ObjectHelper.isEmpty(ipAddress)) {
             throw new IllegalArgumentException(DigitalOceanHeaders.FLOATING_IP_ADDRESS + " must be specified");
+        }
 
 
         Delete delete = getEndpoint().getDigitalOceanClient().deleteFloatingIP(ipAddress);
@@ -114,13 +120,15 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
     private void assignFloatingIPToDroplet(Exchange exchange) throws Exception {
         Integer dropletId = exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_ID, Integer.class);
 
-        if(ObjectHelper.isEmpty(dropletId))
+        if (ObjectHelper.isEmpty(dropletId)) {
             throw new IllegalArgumentException(DigitalOceanHeaders.DROPLET_ID + " must be specified");
+        }
 
         String ipAddress = exchange.getIn().getHeader(DigitalOceanHeaders.FLOATING_IP_ADDRESS, String.class);
 
-        if (ObjectHelper.isEmpty(ipAddress))
+        if (ObjectHelper.isEmpty(ipAddress)) {
             throw new IllegalArgumentException(DigitalOceanHeaders.FLOATING_IP_ADDRESS + " must be specified");
+        }
 
         Action action = getEndpoint().getDigitalOceanClient().assignFloatingIP(dropletId, ipAddress);
         LOG.trace("Assign Floating IP to Droplet {} ", action);
@@ -130,8 +138,9 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
     private void unassignFloatingIP(Exchange exchange) throws Exception {
         String ipAddress = exchange.getIn().getHeader(DigitalOceanHeaders.FLOATING_IP_ADDRESS, String.class);
 
-        if (ObjectHelper.isEmpty(ipAddress))
+        if (ObjectHelper.isEmpty(ipAddress)) {
             throw new IllegalArgumentException(DigitalOceanHeaders.FLOATING_IP_ADDRESS + " must be specified");
+        }
 
         Action action = getEndpoint().getDigitalOceanClient().unassignFloatingIP(ipAddress);
         LOG.trace("Unassign Floating IP {} ", action);
@@ -141,8 +150,9 @@ public class DigitalOceanFloatingIPsProducer extends DigitalOceanProducer {
     private void getFloatingIPActions(Exchange exchange) throws Exception {
         String ipAddress = exchange.getIn().getHeader(DigitalOceanHeaders.FLOATING_IP_ADDRESS, String.class);
 
-        if (ObjectHelper.isEmpty(ipAddress))
+        if (ObjectHelper.isEmpty(ipAddress)) {
             throw new IllegalArgumentException(DigitalOceanHeaders.FLOATING_IP_ADDRESS + " must be specified");
+        }
 
         Actions actions = getEndpoint().getDigitalOceanClient().getAvailableFloatingIPActions(ipAddress, configuration.getPage(), configuration.getPerPage());
         LOG.trace("Actions for FloatingIP {} : page {} / {} per page [{}] ", ipAddress, configuration.getPage(), configuration.getPerPage(), actions.getActions());

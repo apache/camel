@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.digitalocean.producer;
 
-import com.myjeeva.digitalocean.pojo.*;
+import com.myjeeva.digitalocean.pojo.Regions;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.digitalocean.DigitalOceanConfiguration;
 import org.apache.camel.component.digitalocean.DigitalOceanEndpoint;
-import org.apache.camel.Exchange;
 
 /**
  * The DigitalOcean producer for Regions API.
