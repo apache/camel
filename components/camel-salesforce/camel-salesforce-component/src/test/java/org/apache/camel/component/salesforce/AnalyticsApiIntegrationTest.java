@@ -63,7 +63,7 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
     private static final int NUM_OPTIONS = REPORT_OPTIONS.length;
     private static final int[] POWERS = new int[] {4, 2, 1};
 
-    private static String TEST_REPORT_NAME = "Test_Report";
+    private static final String TEST_REPORT_NAME = "Test_Report";
     private boolean bodyMetadata;
 
     /**
@@ -73,7 +73,7 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
      */
     @DataPoints
     public static String[] getTestReportDeveloperNames() throws Exception {
-        return new String[] { TEST_REPORT_NAME };
+        return new String[] {TEST_REPORT_NAME};
     }
 
     @Test
