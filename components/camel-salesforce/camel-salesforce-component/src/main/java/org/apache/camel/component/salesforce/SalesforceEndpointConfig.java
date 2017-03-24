@@ -341,7 +341,9 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     public Map<String, Object> getApexQueryParams() {
-        return apexQueryParams == null ? Collections.EMPTY_MAP : Collections.unmodifiableMap(apexQueryParams);
+        final Map<String, Object> value = Optional.ofNullable(apexQueryParams).orElse(Collections.emptyMap());
+
+        return Collections.unmodifiableMap(value);
     }
 
     /**
