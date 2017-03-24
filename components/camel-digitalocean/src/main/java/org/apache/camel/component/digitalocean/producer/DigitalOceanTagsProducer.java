@@ -36,19 +36,19 @@ public class DigitalOceanTagsProducer extends DigitalOceanProducer {
     public void process(Exchange exchange) throws Exception {
         switch(determineOperation(exchange)) {
 
-            case DigitalOceanOperations.list:
+            case list:
                 getTags(exchange);
                 break;
-            case DigitalOceanOperations.create:
+            case create:
                 createTag(exchange);
                 break;
-            case DigitalOceanOperations.get:
+            case get:
                 getTag(exchange);
                 break;
-            case DigitalOceanOperations.delete:
+            case delete:
                 deleteTag(exchange);
                 break;
-            case DigitalOceanOperations.update:
+            case update:
                 updateTag(exchange);
                 break;
             default:
