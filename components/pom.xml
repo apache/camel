@@ -217,6 +217,7 @@
     <module>camel-pgevent</module>
     <module>camel-printer</module>
     <module>camel-protobuf</module>
+    <module>camel-pubnub</module>
     <module>camel-quartz</module>
     <module>camel-quartz2</module>
     <module>camel-quickfix</module>
