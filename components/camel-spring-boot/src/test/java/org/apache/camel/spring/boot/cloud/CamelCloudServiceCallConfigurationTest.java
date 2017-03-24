@@ -58,7 +58,7 @@ public class CamelCloudServiceCallConfigurationTest {
     private ApplicationContext ctx;
 
     @Test
-    public void doTest() throws Exception {
+    public void testConfiguration() throws Exception {
         Environment env = ctx.getEnvironment();
 
         assertFalse(env.getProperty("camel.cloud.enabled", Boolean.class));

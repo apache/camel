@@ -16,18 +16,15 @@
  */
 package org.apache.camel.spring.cloud;
 
-
 import org.apache.camel.cloud.LoadBalancer;
 import org.apache.camel.spring.boot.cloud.CamelCloudAutoConfiguration;
 import org.apache.camel.spring.boot.cloud.CamelCloudConfigurationProperties;
-import org.apache.camel.spring.boot.cloud.CamelCloudServiceDiscovery;
 import org.apache.camel.spring.boot.cloud.CamelCloudServiceDiscoveryAutoConfiguration;
 import org.apache.camel.spring.boot.util.GroupCondition;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.context.annotation.Bean;

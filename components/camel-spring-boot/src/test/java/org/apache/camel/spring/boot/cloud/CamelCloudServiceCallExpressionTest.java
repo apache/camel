@@ -36,17 +36,20 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(
     classes = {
         CamelAutoConfiguration.class,
-        CamelCloudServiceCallTest.TestConfiguration.class
+        CamelCloudServiceCallExpressionTest.TestConfiguration.class
     },
     properties = {
+        "service.name=custom-svc-list",
         "camel.cloud.load-balancer.enabled=false",
+        "camel.cloud.service-call.component=netty4-http",
+        "camel.cloud.service-call.expression=${header.CamelServiceCallScheme}:http://${header.CamelServiceCallServiceHost}:${header.CamelServiceCallServicePort}/hello",
         "camel.cloud.service-discovery.services[custom-svc-list]=localhost:9090,localhost:9091,localhost:9092",
         "camel.cloud.service-filter.blacklist[custom-svc-list]=localhost:9091",
         "ribbon.enabled=false",
-        "debug=false"
+        "debug=true"
     }
 )
-public class CamelCloudServiceCallTest {
+public class CamelCloudServiceCallExpressionTest {
     @Autowired
     private ProducerTemplate template;
 
@@ -68,9 +71,7 @@ public class CamelCloudServiceCallTest {
                 @Override
                 public void configure() throws Exception {
                     from("direct:start")
-                        .serviceCall()
-                            .name("custom-svc-list/hello")
-                            .uri("netty4-http:http://custom-svc-list");
+                        .serviceCall("{{service.name}}");
 
                     from("netty4-http:http://localhost:9090/hello")
                         .transform()

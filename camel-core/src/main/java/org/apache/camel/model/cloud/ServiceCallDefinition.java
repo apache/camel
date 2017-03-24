@@ -46,6 +46,7 @@ import org.apache.camel.impl.cloud.PassThroughServiceFilter;
 import org.apache.camel.impl.cloud.RandomServiceChooser;
 import org.apache.camel.impl.cloud.RoundRobinServiceChooser;
 import org.apache.camel.model.NoOutputDefinition;
+import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
@@ -306,6 +307,13 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
         this.expression = expression;
     }
 
+    /**
+     * Set a custom {@link Expression} using the {@link org.apache.camel.language.simple.SimpleLanguage}
+     */
+    public void setSimpleExpression(String expression) {
+        setExpression(new SimpleExpression(expression));
+    }
+
     public ServiceCallServiceDiscoveryConfiguration getServiceDiscoveryConfiguration() {
         return serviceDiscoveryConfiguration;
     }
@@ -471,6 +479,14 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
      */
     public ServiceCallDefinition expression(Expression expression) {
         setExpression(expression);
+        return this;
+    }
+
+    /**
+     * Set a custom {@link Expression} using the {@link org.apache.camel.language.simple.SimpleLanguage}
+     */
+    public ServiceCallDefinition simpleExpression(String expression) {
+        setExpression(new SimpleExpression(expression));
         return this;
     }
 
