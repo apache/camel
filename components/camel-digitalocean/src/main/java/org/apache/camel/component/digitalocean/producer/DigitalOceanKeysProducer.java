@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.digitalocean.producer;
 
-import com.myjeeva.digitalocean.pojo.*;
-import org.apache.camel.component.digitalocean.DigitalOceanConfiguration;
-import org.apache.camel.component.digitalocean.constants.DigitalOceanHeaders;
-import org.apache.camel.component.digitalocean.DigitalOceanEndpoint;
+import com.myjeeva.digitalocean.pojo.Delete;
+import com.myjeeva.digitalocean.pojo.Key;
+import com.myjeeva.digitalocean.pojo.Keys;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.digitalocean.DigitalOceanConfiguration;
+import org.apache.camel.component.digitalocean.DigitalOceanEndpoint;
+import org.apache.camel.component.digitalocean.constants.DigitalOceanHeaders;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -34,25 +36,25 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
 
     public void process(Exchange exchange) throws Exception {
 
-        switch(determineOperation(exchange)) {
+        switch (determineOperation(exchange)) {
 
-            case list:
-                getKeys(exchange);
-                break;
-            case create:
-                createKey(exchange);
-                break;
-            case get:
-                getKey(exchange);
-                break;
-            case update:
-                updateKey(exchange);
-                break;
-            case delete:
-                deleteKey(exchange);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported operation");
+        case list:
+            getKeys(exchange);
+            break;
+        case create:
+            createKey(exchange);
+            break;
+        case get:
+            getKey(exchange);
+            break;
+        case update:
+            updateKey(exchange);
+            break;
+        case delete:
+            deleteKey(exchange);
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported operation");
         }
     }
 
@@ -62,13 +64,13 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
         String fingerprint = exchange.getIn().getHeader(DigitalOceanHeaders.KEY_FINGERPRINT, String.class);
         Key key;
 
-        if (ObjectHelper.isNotEmpty(keyId))
+        if (ObjectHelper.isNotEmpty(keyId)) {
             key = getEndpoint().getDigitalOceanClient().getKeyInfo(keyId);
-        else if (ObjectHelper.isNotEmpty(fingerprint))
+        } else if (ObjectHelper.isNotEmpty(fingerprint)) {
             key = getEndpoint().getDigitalOceanClient().getKeyInfo(fingerprint);
-        else
-            throw new IllegalArgumentException(DigitalOceanHeaders.ID + " or " +  DigitalOceanHeaders.KEY_FINGERPRINT + " must be specified");
-
+        } else {
+            throw new IllegalArgumentException(DigitalOceanHeaders.ID + " or " + DigitalOceanHeaders.KEY_FINGERPRINT + " must be specified");
+        }
         LOG.trace("Key [{}] ", key);
         exchange.getOut().setBody(key);
     }
@@ -84,12 +86,13 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
         String fingerprint = exchange.getIn().getHeader(DigitalOceanHeaders.KEY_FINGERPRINT, String.class);
         Delete delete;
 
-        if (ObjectHelper.isNotEmpty(keyId))
+        if (ObjectHelper.isNotEmpty(keyId)) {
             delete = getEndpoint().getDigitalOceanClient().deleteKey(keyId);
-        else if (ObjectHelper.isNotEmpty(fingerprint))
+        } else if (ObjectHelper.isNotEmpty(fingerprint)) {
             delete = getEndpoint().getDigitalOceanClient().deleteKey(fingerprint);
-        else
-            throw new IllegalArgumentException(DigitalOceanHeaders.ID + " or " +  DigitalOceanHeaders.KEY_FINGERPRINT + " must be specified");
+        } else {
+            throw new IllegalArgumentException(DigitalOceanHeaders.ID + " or " + DigitalOceanHeaders.KEY_FINGERPRINT + " must be specified");
+        }
 
         LOG.trace("Delete Key {} ", delete);
         exchange.getOut().setBody(delete);
@@ -101,17 +104,20 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
 
         String name = exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class);
 
-        if (ObjectHelper.isEmpty(name))
+        if (ObjectHelper.isEmpty(name)) {
             throw new IllegalArgumentException(DigitalOceanHeaders.NAME + " must be specified");
-        else
+
+        } else {
             key.setName(name);
+        }
 
         String publicKey = exchange.getIn().getHeader(DigitalOceanHeaders.KEY_PUBLIC_KEY, String.class);
 
-        if (ObjectHelper.isEmpty(publicKey))
+        if (ObjectHelper.isEmpty(publicKey)) {
             throw new IllegalArgumentException(DigitalOceanHeaders.KEY_PUBLIC_KEY + " must be specified");
-        else
+        } else {
             key.setPublicKey(publicKey);
+        }
 
         key = getEndpoint().getDigitalOceanClient().createKey(key);
         LOG.trace("Key created {} ", key);
@@ -126,15 +132,17 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
 
         String name = exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class);
 
-        if (ObjectHelper.isEmpty(name))
+        if (ObjectHelper.isEmpty(name)) {
             throw new IllegalArgumentException(DigitalOceanHeaders.NAME + " must be specified");
+        }
 
-        if (ObjectHelper.isNotEmpty(keyId))
+        if (ObjectHelper.isNotEmpty(keyId)) {
             key = getEndpoint().getDigitalOceanClient().updateKey(keyId, name);
-        else if (ObjectHelper.isNotEmpty(fingerprint))
+        } else if (ObjectHelper.isNotEmpty(fingerprint)) {
             key = getEndpoint().getDigitalOceanClient().updateKey(fingerprint, name);
-        else
-            throw new IllegalArgumentException(DigitalOceanHeaders.ID + " or " +  DigitalOceanHeaders.KEY_FINGERPRINT + " must be specified");
+        } else {
+            throw new IllegalArgumentException(DigitalOceanHeaders.ID + " or " + DigitalOceanHeaders.KEY_FINGERPRINT + " must be specified");
+        }
 
         LOG.trace("Update Key [{}] ", key);
         exchange.getOut().setBody(key);

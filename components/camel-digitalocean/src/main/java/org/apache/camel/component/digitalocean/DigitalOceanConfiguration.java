@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.digitalocean;
 
+
 import com.myjeeva.digitalocean.impl.DigitalOceanClient;
-import org.apache.camel.component.digitalocean.constants.DigitalOceanResources;
 import org.apache.camel.component.digitalocean.constants.DigitalOceanOperations;
+import org.apache.camel.component.digitalocean.constants.DigitalOceanResources;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -32,10 +33,10 @@ public class DigitalOceanConfiguration {
     @Metadata(required = "true")
     private DigitalOceanResources resource;
 
-    @UriPath(enums = "create,update,delete,list,ownList,get,listBackups,listActions,listNeighbors,listSnapshots,listKernels,listAllNeighbors," +
-            "enableBackups,disableBackups,reboot,powerCycle,shutdown,powerOn,powerOff,restore,resetPassword," +
-            "resize,rebuild,rename,changeKernel,enableIpv6,enablePrivateNetworking,takeSnapshot,transfer,convert," +
-            "attach,detach,assign,unassign,tag,untag")
+    @UriPath(enums = "create,update,delete,list,ownList,get,listBackups,listActions,listNeighbors,listSnapshots,listKernels,listAllNeighbors,"
+        + "enableBackups,disableBackups,reboot,powerCycle,shutdown,powerOn,powerOff,restore,resetPassword,"
+        + "resize,rebuild,rename,changeKernel,enableIpv6,enablePrivateNetworking,takeSnapshot,transfer,convert,"
+        + "attach,detach,assign,unassign,tag,untag")
     private DigitalOceanOperations operation;
 
     @UriParam

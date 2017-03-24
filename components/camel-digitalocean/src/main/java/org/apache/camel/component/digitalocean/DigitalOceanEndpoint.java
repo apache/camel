@@ -20,7 +20,17 @@ import com.myjeeva.digitalocean.impl.DigitalOceanClient;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.digitalocean.producer.*;
+import org.apache.camel.component.digitalocean.producer.DigitalOceanAccountProducer;
+import org.apache.camel.component.digitalocean.producer.DigitalOceanActionsProducer;
+import org.apache.camel.component.digitalocean.producer.DigitalOceanBlockStoragesProducer;
+import org.apache.camel.component.digitalocean.producer.DigitalOceanDropletsProducer;
+import org.apache.camel.component.digitalocean.producer.DigitalOceanFloatingIPsProducer;
+import org.apache.camel.component.digitalocean.producer.DigitalOceanImagesProducer;
+import org.apache.camel.component.digitalocean.producer.DigitalOceanKeysProducer;
+import org.apache.camel.component.digitalocean.producer.DigitalOceanRegionsProducer;
+import org.apache.camel.component.digitalocean.producer.DigitalOceanSizesProducer;
+import org.apache.camel.component.digitalocean.producer.DigitalOceanSnapshotsProducer;
+import org.apache.camel.component.digitalocean.producer.DigitalOceanTagsProducer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -36,7 +46,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Represents the DigitalOcean endpoint.
  */
-@UriEndpoint(scheme = "digitalocean", title = "DigitalOcean", syntax="digitalocean:label", producerOnly = true, label = "cloud,management")
+@UriEndpoint(scheme = "digitalocean", title = "DigitalOcean", syntax = "digitalocean:label", producerOnly = true, label = "cloud,management")
 public class DigitalOceanEndpoint extends DefaultEndpoint {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DigitalOceanEndpoint.class);
@@ -55,30 +65,30 @@ public class DigitalOceanEndpoint extends DefaultEndpoint {
         LOG.trace("Resolve producer digitalocean endpoint {" + configuration.getResource() + "}");
 
         switch (configuration.getResource()) {
-            case account:
-                return new DigitalOceanAccountProducer(this, configuration);
-            case actions:
-                return new DigitalOceanActionsProducer(this, configuration);
-            case blockStorages:
-                return new DigitalOceanBlockStoragesProducer(this, configuration);
-            case droplets:
-                return new DigitalOceanDropletsProducer(this, configuration);
-            case images:
-                return new DigitalOceanImagesProducer(this, configuration);
-            case snapshots:
-                return new DigitalOceanSnapshotsProducer(this, configuration);
-            case keys:
-                return new DigitalOceanKeysProducer(this, configuration);
-            case regions:
-                return new DigitalOceanRegionsProducer(this, configuration);
-            case sizes:
-                return new DigitalOceanSizesProducer(this, configuration);
-            case floatingIPs:
-                return new DigitalOceanFloatingIPsProducer(this, configuration);
-            case tags:
-                return new DigitalOceanTagsProducer(this, configuration);
-            default:
-                throw new UnsupportedOperationException("Operation specified is not valid for producer");
+        case account:
+            return new DigitalOceanAccountProducer(this, configuration);
+        case actions:
+            return new DigitalOceanActionsProducer(this, configuration);
+        case blockStorages:
+            return new DigitalOceanBlockStoragesProducer(this, configuration);
+        case droplets:
+            return new DigitalOceanDropletsProducer(this, configuration);
+        case images:
+            return new DigitalOceanImagesProducer(this, configuration);
+        case snapshots:
+            return new DigitalOceanSnapshotsProducer(this, configuration);
+        case keys:
+            return new DigitalOceanKeysProducer(this, configuration);
+        case regions:
+            return new DigitalOceanRegionsProducer(this, configuration);
+        case sizes:
+            return new DigitalOceanSizesProducer(this, configuration);
+        case floatingIPs:
+            return new DigitalOceanFloatingIPsProducer(this, configuration);
+        case tags:
+            return new DigitalOceanTagsProducer(this, configuration);
+        default:
+            throw new UnsupportedOperationException("Operation specified is not valid for producer");
         }
 
     }
@@ -96,33 +106,36 @@ public class DigitalOceanEndpoint extends DefaultEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        if(configuration.getDigitalOceanClient() != null)
+        if (configuration.getDigitalOceanClient() != null) {
             digitalOceanClient = configuration.getDigitalOceanClient();
-        else
-            if(configuration.getHttpProxyHost() != null && configuration.getHttpProxyPort() != null) {
+        } else if (configuration.getHttpProxyHost() != null && configuration.getHttpProxyPort() != null) {
 
-                 HttpClientBuilder builder = HttpClients.custom()
-                        .useSystemProperties()
-                        .setProxy(new HttpHost(configuration.getHttpProxyHost(), configuration.getHttpProxyPort()));
+            HttpClientBuilder builder = HttpClients.custom()
+                .useSystemProperties()
+                .setProxy(new HttpHost(configuration.getHttpProxyHost(), configuration.getHttpProxyPort()));
 
-                if(configuration.getHttpProxyUser() != null && configuration.getHttpProxyPassword() != null) {
-                    BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
-                    credsProvider.setCredentials(
-                            new AuthScope(configuration.getHttpProxyHost(), configuration.getHttpProxyPort()),
-                            new UsernamePasswordCredentials(configuration.getHttpProxyUser() , configuration.getHttpProxyPassword()));
-                    builder.setDefaultCredentialsProvider(credsProvider);
+            if (configuration.getHttpProxyUser() != null && configuration.getHttpProxyPassword() != null) {
+                BasicCredentialsProvider credsProvider = new BasicCredentialsProvider();
+                credsProvider.setCredentials(
+                    new AuthScope(configuration.getHttpProxyHost(), configuration.getHttpProxyPort()),
+                    new UsernamePasswordCredentials(configuration.getHttpProxyUser(), configuration.getHttpProxyPassword()));
+                builder.setDefaultCredentialsProvider(credsProvider);
 
-                }
+            }
 
-                digitalOceanClient =  new DigitalOceanClient("v2", configuration.getOAuthToken(), builder.build());
+            digitalOceanClient = new DigitalOceanClient("v2", configuration.getOAuthToken(), builder.build());
 
-            } else
-                digitalOceanClient =  new DigitalOceanClient(configuration.getOAuthToken());
+        } else {
+            digitalOceanClient = new DigitalOceanClient(configuration.getOAuthToken());
+        }
 
 
     }
 
-    public DigitalOceanConfiguration getConfiguration() { return configuration; }
+    public DigitalOceanConfiguration getConfiguration() {
+        return configuration;
+    }
+
     public DigitalOceanClient getDigitalOceanClient() {
         return digitalOceanClient;
     }

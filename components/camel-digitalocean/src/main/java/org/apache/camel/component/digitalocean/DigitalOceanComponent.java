@@ -18,10 +18,9 @@ package org.apache.camel.component.digitalocean;
 
 import java.util.Map;
 
-import org.apache.camel.component.digitalocean.constants.DigitalOceanResources;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-
+import org.apache.camel.component.digitalocean.constants.DigitalOceanResources;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -49,11 +48,11 @@ public class DigitalOceanComponent extends UriEndpointComponent {
         setProperties(configuration, parameters);
         configuration.setResource(DigitalOceanResources.valueOf(remaining));
 
-        if (ObjectHelper.isEmpty(configuration.getOAuthToken()) && ObjectHelper.isEmpty(configuration.getDigitalOceanClient()))
+        if (ObjectHelper.isEmpty(configuration.getOAuthToken()) && ObjectHelper.isEmpty(configuration.getDigitalOceanClient())) {
             throw new DigitalOceanException("oAuthToken or digitalOceanClient must be specified");
+        }
 
-        Endpoint endpoint = new DigitalOceanEndpoint(uri, this, configuration);
-        return endpoint;
+        return new DigitalOceanEndpoint(uri, this, configuration);
     }
 
 }

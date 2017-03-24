@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.digitalocean.producer;
 
-import org.apache.camel.component.digitalocean.DigitalOceanConfiguration;
-import org.apache.camel.component.digitalocean.constants.DigitalOceanHeaders;
-import org.apache.camel.component.digitalocean.DigitalOceanEndpoint;
-import org.apache.camel.component.digitalocean.constants.DigitalOceanOperations;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.digitalocean.DigitalOceanConfiguration;
+import org.apache.camel.component.digitalocean.DigitalOceanEndpoint;
+import org.apache.camel.component.digitalocean.constants.DigitalOceanHeaders;
+import org.apache.camel.component.digitalocean.constants.DigitalOceanOperations;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -31,9 +31,8 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class DigitalOceanProducer extends DefaultProducer {
     protected static final Logger LOG = LoggerFactory.getLogger(DigitalOceanProducer.class);
-
-    private DigitalOceanEndpoint endpoint;
     protected DigitalOceanConfiguration configuration;
+    private DigitalOceanEndpoint endpoint;
 
     public DigitalOceanProducer(DigitalOceanEndpoint endpoint, DigitalOceanConfiguration configuration) {
         super(endpoint);

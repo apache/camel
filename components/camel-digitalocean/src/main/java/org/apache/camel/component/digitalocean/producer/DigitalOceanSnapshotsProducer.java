@@ -19,11 +19,11 @@ package org.apache.camel.component.digitalocean.producer;
 import com.myjeeva.digitalocean.pojo.Delete;
 import com.myjeeva.digitalocean.pojo.Snapshot;
 import com.myjeeva.digitalocean.pojo.Snapshots;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.digitalocean.DigitalOceanConfiguration;
 import org.apache.camel.component.digitalocean.DigitalOceanEndpoint;
 import org.apache.camel.component.digitalocean.constants.DigitalOceanHeaders;
 import org.apache.camel.component.digitalocean.constants.DigitalOceanSnapshotTypes;
-import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -39,18 +39,18 @@ public class DigitalOceanSnapshotsProducer extends DigitalOceanProducer {
 
         switch (determineOperation(exchange)) {
 
-            case list:
-                getSnapshots(exchange);
-                break;
-            case get:
-                getSnapshot(exchange);
-                break;
-            case delete:
-                deleteSnapshot(exchange);
-                break;
+        case list:
+            getSnapshots(exchange);
+            break;
+        case get:
+            getSnapshot(exchange);
+            break;
+        case delete:
+            deleteSnapshot(exchange);
+            break;
 
-            default:
-                throw new IllegalArgumentException("Unsupported operation");
+        default:
+            throw new IllegalArgumentException("Unsupported operation");
         }
 
 
@@ -61,13 +61,15 @@ public class DigitalOceanSnapshotsProducer extends DigitalOceanProducer {
         DigitalOceanSnapshotTypes type = exchange.getIn().getHeader(DigitalOceanHeaders.TYPE, DigitalOceanSnapshotTypes.class);
         Snapshots snapshots;
 
-        if (ObjectHelper.isNotEmpty(type))
-            if(type == DigitalOceanSnapshotTypes.droplet)
+        if (ObjectHelper.isNotEmpty(type)) {
+            if (type == DigitalOceanSnapshotTypes.droplet) {
                 snapshots = getEndpoint().getDigitalOceanClient().getAllDropletSnapshots(configuration.getPage(), configuration.getPerPage());
-            else
+            } else {
                 snapshots = getEndpoint().getDigitalOceanClient().getAllVolumeSnapshots(configuration.getPage(), configuration.getPerPage());
-        else
+            }
+        } else {
             snapshots = getEndpoint().getDigitalOceanClient().getAvailableSnapshots(configuration.getPage(), configuration.getPerPage());
+        }
 
         LOG.trace("All Snapshots : page {} / {} per page [{}] ", configuration.getPage(), configuration.getPerPage(), snapshots.getSnapshots());
         exchange.getOut().setBody(snapshots.getSnapshots());
@@ -76,8 +78,9 @@ public class DigitalOceanSnapshotsProducer extends DigitalOceanProducer {
     private void getSnapshot(Exchange exchange) throws Exception {
         String snapshotId = exchange.getIn().getHeader(DigitalOceanHeaders.ID, String.class);
 
-        if (ObjectHelper.isEmpty(snapshotId))
+        if (ObjectHelper.isEmpty(snapshotId)) {
             throw new IllegalArgumentException(DigitalOceanHeaders.ID + " must be specified");
+        }
 
         Snapshot snapshot = getEndpoint().getDigitalOceanClient().getSnaphotInfo(snapshotId);
         LOG.trace("Snapshot [{}] ", snapshot);
@@ -88,8 +91,9 @@ public class DigitalOceanSnapshotsProducer extends DigitalOceanProducer {
     private void deleteSnapshot(Exchange exchange) throws Exception {
         String snapshotId = exchange.getIn().getHeader(DigitalOceanHeaders.ID, String.class);
 
-        if (ObjectHelper.isEmpty(snapshotId))
+        if (ObjectHelper.isEmpty(snapshotId)) {
             throw new IllegalArgumentException(DigitalOceanHeaders.ID + " must be specified");
+        }
 
         Delete delete = getEndpoint().getDigitalOceanClient().deleteSnapshot(snapshotId);
         LOG.trace("Delete Snapshot [{}] ", delete);
