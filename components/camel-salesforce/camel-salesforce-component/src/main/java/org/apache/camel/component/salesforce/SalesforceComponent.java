@@ -16,36 +16,27 @@
  */
 package org.apache.camel.component.salesforce;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.ComponentVerifier;
 import org.apache.camel.Endpoint;
 import org.apache.camel.VerifiableComponent;
 import org.apache.camel.component.salesforce.api.SalesforceException;
-import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
-import org.apache.camel.impl.UriEndpointComponent;
-import org.apache.camel.spi.EndpointCompleter;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpProxy;
@@ -65,7 +56,7 @@ import static org.apache.camel.component.salesforce.SalesforceLoginConfig.DEFAUL
  * Represents the component that manages {@link SalesforceEndpoint}.
  */
 @Metadata(label = "verifiers", enums = "parameters,connectivity")
-public class SalesforceComponent extends UriEndpointComponent implements EndpointCompleter, VerifiableComponent {
+public class SalesforceComponent extends DefaultComponent implements VerifiableComponent {
 
     static final int CONNECTION_TIMEOUT = 60000;
     static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
@@ -202,11 +193,10 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
     private SubscriptionHelper subscriptionHelper;
 
     public SalesforceComponent() {
-        super(SalesforceEndpoint.class);
     }
 
     public SalesforceComponent(CamelContext context) {
-        super(context, SalesforceEndpoint.class);
+        super(context);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -340,8 +330,8 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         }
         if (this.httpProxyUsername != null && httpProxyPassword != null) {
 
-            ObjectHelper.notEmpty(httpProxyAuthUri, "httpProxyAuthUri");
-            ObjectHelper.notEmpty(httpProxyRealm, "httpProxyRealm");
+            StringHelper.notEmpty(httpProxyAuthUri, "httpProxyAuthUri");
+            StringHelper.notEmpty(httpProxyRealm, "httpProxyRealm");
 
             final Authentication authentication;
             if (httpProxyUseDigestAuth) {
@@ -426,70 +416,6 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
             ServiceHelper.startService(subscriptionHelper);
         }
         return subscriptionHelper;
-    }
-
-    @Override
-    public List<String> completeEndpointPath(ComponentConfiguration configuration, String completionText) {
-        final List<String> result = new ArrayList<String>();
-        // return operations names on empty completion text
-        final boolean empty = ObjectHelper.isEmpty(completionText);
-        if (empty || completionText.indexOf('?') == -1) {
-            if (empty) {
-                completionText = "";
-            }
-            final OperationName[] values = OperationName.values();
-            for (OperationName val : values) {
-                final String strValue = val.value();
-                if (strValue.startsWith(completionText)) {
-                    result.add(strValue);
-                }
-            }
-            // also add place holder for user defined push topic name for empty completionText
-            if (empty) {
-                result.add("[PushTopicName]");
-            }
-        } else {
-            // handle package parameters
-            if (completionText.matches("^.*[\\?&]sObjectName=$")) {
-                result.addAll(classMap.keySet());
-            } else if (completionText.matches("^.*[\\?&]sObjectFields=$")) {
-                // find sObjectName from configuration or completionText
-                String sObjectName = (String) configuration.getParameter("sObjectName");
-                if (sObjectName == null) {
-                    final Matcher matcher = SOBJECT_NAME_PATTERN.matcher(completionText);
-                    if (matcher.matches()) {
-                        sObjectName = matcher.group(1);
-                    }
-                }
-                // return all fields of sObject
-                if (sObjectName != null) {
-                    final Class<?> aClass = classMap.get(sObjectName);
-                    ReflectionHelper.doWithFields(aClass, new ReflectionHelper.FieldCallback() {
-                        @Override
-                        public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                            // get non-static fields
-                            if ((field.getModifiers() & Modifier.STATIC) == 0) {
-                                result.add(field.getName());
-                            }
-                        }
-                    });
-                }
-            } else if (completionText.matches("^.*[\\?&]sObjectClass=$")) {
-                for (Class c : classMap.values()) {
-                    result.add(c.getName());
-                }
-                // also add Query records classes
-                Set<Class<?>> classes = getCamelContext().getPackageScanClassResolver().
-                    findImplementations(AbstractQueryRecordsBase.class, packages);
-                for (Class<?> aClass : classes) {
-                    // findImplementations also returns AbstractQueryRecordsBase for some reason!!!
-                    if (AbstractQueryRecordsBase.class != aClass) {
-                        result.add(aClass.getName());
-                    }
-                }
-            }
-        }
-        return result;
     }
 
     public AuthenticationType getAuthenticationType() {
