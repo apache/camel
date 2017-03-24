@@ -33,6 +33,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.StopWatch;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -48,6 +49,9 @@ public class SjmsBatchConsumerTest extends CamelTestSupport {
     public CamelContext createCamelContext() throws Exception {
         SimpleRegistry registry = new SimpleRegistry();
         registry.put("testStrategy", new ListAggregationStrategy());
+        // the only thing special about this MockConnectionFactor is it allows us to call returnBadSessionNTimes(int)
+        // which will cause the MockSession to throw an IllegalStateException <int> times before returning a valid one.
+        // This gives us the ability to test bad sessions
         ConnectionFactory connectionFactory = new MockConnectionFactory(broker.getTcpConnectorUri());
 
         SjmsComponent sjmsComponent = new SjmsComponent();
