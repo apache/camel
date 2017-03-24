@@ -343,6 +343,7 @@
 	* [Jasypt](jasypt.adoc)
 	* [Kura](kura.adoc)
 	* [LevelDB](leveldb.adoc)
+	* [Olingo4 Parent](olingo4-parent.adoc)
 	* [OpenTracing](opentracing.adoc)
 	* [Ribbon](ribbon.adoc)
 	* [Ruby](ruby.adoc)
