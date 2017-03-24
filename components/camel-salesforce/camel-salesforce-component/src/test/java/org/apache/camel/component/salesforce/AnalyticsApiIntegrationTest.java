@@ -63,7 +63,7 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
     private static final int NUM_OPTIONS = REPORT_OPTIONS.length;
     private static final int[] POWERS = new int[] {4, 2, 1};
 
-    private static String[] testReportNames;
+    private static String TEST_REPORT_NAME = "Test_Report";
     private boolean bodyMetadata;
 
     /**
@@ -73,27 +73,7 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
      */
     @DataPoints
     public static String[] getTestReportDeveloperNames() throws Exception {
-        return testReportNames;
-    }
-
-    @BeforeClass
-    public static void getReportNames() throws Exception {
-        // get test report names
-        Properties testProperties = new Properties();
-        testProperties.load(new FileInputStream(LoginConfigHelper.TEST_LOGIN_PROPERTIES));
-
-        Map<String, String> reports = new TreeMap<String, String>();
-        for (Map.Entry<Object, Object> entry : testProperties.entrySet()) {
-            final String key = entry.getKey().toString();
-            if (key.matches("report.[0-9]+")) {
-                reports.put(key, entry.getValue().toString());
-            }
-        }
-        assertFalse("Missing entries report.[0-9]+=<Report DeveloperName> in "
-            + LoginConfigHelper.TEST_LOGIN_PROPERTIES, reports.isEmpty());
-
-        final Collection<String> reportNames = reports.values();
-        testReportNames = reportNames.toArray(new String[reportNames.size()]);
+        return new String[] { TEST_REPORT_NAME };
     }
 
     @Test

@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.component.salesforce.AuthenticationType;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
@@ -42,6 +43,11 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 @ConfigurationProperties(prefix = "camel.component.salesforce")
 public class SalesforceComponentConfiguration {
 
+    /**
+     * Explicit authentication type to be used one of USERNAME_PASSWORD
+     * REFRESH_TOKEN or JWT.
+     */
+    private AuthenticationType authenticationType;
     /**
      * To use the shared SalesforceLoginConfig as login configuration
      */
@@ -148,6 +154,14 @@ public class SalesforceComponentConfiguration {
      * placeholders.
      */
     private Boolean resolvePropertyPlaceholders = true;
+
+    public AuthenticationType getAuthenticationType() {
+        return authenticationType;
+    }
+
+    public void setAuthenticationType(AuthenticationType authenticationType) {
+        this.authenticationType = authenticationType;
+    }
 
     public SalesforceLoginConfigNestedConfiguration getLoginConfig() {
         return loginConfig;
@@ -378,6 +392,7 @@ public class SalesforceComponentConfiguration {
          * Salesforce connected application Consumer token
          */
         private String refreshToken;
+        private AuthenticationType type;
         /**
          * Salesforce account user name
          */
@@ -431,6 +446,14 @@ public class SalesforceComponentConfiguration {
 
         public void setRefreshToken(String refreshToken) {
             this.refreshToken = refreshToken;
+        }
+
+        public AuthenticationType getType() {
+            return type;
+        }
+
+        public void setType(AuthenticationType type) {
+            this.type = type;
         }
 
         public String getUserName() {

@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.salesforce;
 
-import java.util.Properties;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.salesforce.api.dto.Limits;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.junit.Test;
+
+import static org.junit.Assume.assumeNotNull;
 
 public class SalesforceJwtBearerTokenFlowIntegrationTest extends CamelTestSupport {
 
@@ -38,16 +37,14 @@ public class SalesforceJwtBearerTokenFlowIntegrationTest extends CamelTestSuppor
         final CamelContext camelContext = super.createCamelContext();
 
         final SalesforceComponent salesforce = new SalesforceComponent();
-        final Properties properties = LoginConfigHelper.testLoginProperties();
-        salesforce.setClientId(properties.getProperty("clientId"));
-        salesforce.setUserName(properties.getProperty("userName"));
-        salesforce.setLoginUrl(properties.getProperty("loginUrl"));
+        final SalesforceLoginConfig loginConfig = LoginConfigHelper.getLoginConfig();
 
-        KeyStoreParameters keystore = new KeyStoreParameters();
-        keystore.setResource(properties.getProperty("keystore.resource"));
-        keystore.setType(properties.getProperty("keystore.type"));
-        keystore.setPassword(properties.getProperty("keystore.password"));
-        salesforce.setKeystore(keystore);
+        assumeNotNull(loginConfig.getKeystore());
+        assumeNotNull(loginConfig.getKeystore().getResource());
+        // force authentication type to JWT
+        loginConfig.setType(AuthenticationType.JWT);
+
+        salesforce.setLoginConfig(loginConfig);
 
         camelContext.addComponent("salesforce", salesforce);
 
