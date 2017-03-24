@@ -32,5 +32,4 @@ public enum DigitalOceanResources {
     tags
 
 
-
 }

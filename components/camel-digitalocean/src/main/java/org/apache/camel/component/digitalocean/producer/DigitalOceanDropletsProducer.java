@@ -16,131 +16,144 @@
  */
 package org.apache.camel.component.digitalocean.producer;
 
-import com.myjeeva.digitalocean.common.ResourceType;
-import com.myjeeva.digitalocean.pojo.*;
-import com.myjeeva.digitalocean.pojo.Response;
-import org.apache.camel.component.digitalocean.DigitalOceanConfiguration;
-import org.apache.camel.component.digitalocean.constants.DigitalOceanHeaders;
-import org.apache.camel.component.digitalocean.DigitalOceanEndpoint;
-import org.apache.camel.component.digitalocean.constants.DigitalOceanOperations;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.util.ObjectHelper;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.myjeeva.digitalocean.common.ResourceType;
+import com.myjeeva.digitalocean.pojo.Action;
+import com.myjeeva.digitalocean.pojo.Actions;
+import com.myjeeva.digitalocean.pojo.Backups;
+import com.myjeeva.digitalocean.pojo.Delete;
+import com.myjeeva.digitalocean.pojo.Droplet;
+import com.myjeeva.digitalocean.pojo.Droplets;
+import com.myjeeva.digitalocean.pojo.Image;
+import com.myjeeva.digitalocean.pojo.Kernels;
+import com.myjeeva.digitalocean.pojo.Key;
+import com.myjeeva.digitalocean.pojo.Neighbors;
+import com.myjeeva.digitalocean.pojo.Region;
+import com.myjeeva.digitalocean.pojo.Resource;
+import com.myjeeva.digitalocean.pojo.Response;
+import com.myjeeva.digitalocean.pojo.Snapshots;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.component.digitalocean.DigitalOceanConfiguration;
+import org.apache.camel.component.digitalocean.DigitalOceanEndpoint;
+import org.apache.camel.component.digitalocean.constants.DigitalOceanHeaders;
+import org.apache.camel.component.digitalocean.constants.DigitalOceanOperations;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The DigitalOcean producer for Droplets API.
  */
 public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
 
+    private Integer dropletId;
+
     public DigitalOceanDropletsProducer(DigitalOceanEndpoint endpoint, DigitalOceanConfiguration configuration) {
         super(endpoint, configuration);
     }
-
-    private Integer dropletId;
 
     public void process(Exchange exchange) throws Exception {
 
         DigitalOceanOperations op = determineOperation(exchange);
         if (op != DigitalOceanOperations.create && op != DigitalOceanOperations.list && op != DigitalOceanOperations.listAllNeighbors) {
             dropletId = exchange.getIn().getHeader(DigitalOceanHeaders.ID, Integer.class);
-            if (ObjectHelper.isEmpty(dropletId))
+            if (ObjectHelper.isEmpty(dropletId)) {
                 throw new IllegalArgumentException(DigitalOceanHeaders.ID + " must be specified");
+            }
+
         }
 
         switch (op) {
-            case create:
-                createDroplet(exchange);
-                break;
-            case list:
-                getDroplets(exchange);
-                break;
-            case delete:
-                deleteDroplet(exchange);
-                break;
-            case get:
-                getDroplet(exchange);
-                break;
-            case listActions:
-                getDropletActions(exchange);
-                break;
-            case listSnapshots:
-                getDropletSnapshots(exchange);
-                break;
-            case listKernels:
-                getDropletKernels(exchange);
-                break;
-            case listBackups:
-                getDropletBackups(exchange);
-                break;
-            case listNeighbors:
-                getDropletNeighbors(exchange);
-                break;
-            case listAllNeighbors:
-                getAllDropletNeighbors(exchange);
-                break;
-            case enableBackups:
-                enableDropletBackups(exchange);
-                break;
-            case disableBackups:
-                disableDropletBackups(exchange);
-                break;
-            case reboot:
-                rebootDroplet(exchange);
-                break;
-            case powerCycle:
-                powerCycleDroplet(exchange);
-                break;
-            case shutdown:
-                shutdownDroplet(exchange);
-                break;
-            case powerOn:
-                powerOnDroplet(exchange);
-                break;
-            case powerOff:
-                powerOffDroplet(exchange);
-                break;
-            case restore:
-                restoreDroplet(exchange);
-                break;
-            case resetPassword:
-                resetDropletPassword(exchange);
-                break;
-            case resize:
-                resizeDroplet(exchange);
-                break;
-            case rebuild:
-                rebuildDroplet(exchange);
-                break;
-            case rename:
-                renameDroplet(exchange);
-                break;
-            case changeKernel:
-                changeDropletKernel(exchange);
-                break;
-            case enableIpv6:
-                enableDropletIpv6(exchange);
-                break;
-            case enablePrivateNetworking:
-                enableDropletPrivateNetworking(exchange);
-                break;
-            case takeSnapshot:
-                takeDropletSnapshot(exchange);
-                break;
-            case tag:
-                tagDroplet(exchange);
-                break;
-            case untag:
-                untagDroplet(exchange);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported operation");
+        case create:
+            createDroplet(exchange);
+            break;
+        case list:
+            getDroplets(exchange);
+            break;
+        case delete:
+            deleteDroplet(exchange);
+            break;
+        case get:
+            getDroplet(exchange);
+            break;
+        case listActions:
+            getDropletActions(exchange);
+            break;
+        case listSnapshots:
+            getDropletSnapshots(exchange);
+            break;
+        case listKernels:
+            getDropletKernels(exchange);
+            break;
+        case listBackups:
+            getDropletBackups(exchange);
+            break;
+        case listNeighbors:
+            getDropletNeighbors(exchange);
+            break;
+        case listAllNeighbors:
+            getAllDropletNeighbors(exchange);
+            break;
+        case enableBackups:
+            enableDropletBackups(exchange);
+            break;
+        case disableBackups:
+            disableDropletBackups(exchange);
+            break;
+        case reboot:
+            rebootDroplet(exchange);
+            break;
+        case powerCycle:
+            powerCycleDroplet(exchange);
+            break;
+        case shutdown:
+            shutdownDroplet(exchange);
+            break;
+        case powerOn:
+            powerOnDroplet(exchange);
+            break;
+        case powerOff:
+            powerOffDroplet(exchange);
+            break;
+        case restore:
+            restoreDroplet(exchange);
+            break;
+        case resetPassword:
+            resetDropletPassword(exchange);
+            break;
+        case resize:
+            resizeDroplet(exchange);
+            break;
+        case rebuild:
+            rebuildDroplet(exchange);
+            break;
+        case rename:
+            renameDroplet(exchange);
+            break;
+        case changeKernel:
+            changeDropletKernel(exchange);
+            break;
+        case enableIpv6:
+            enableDropletIpv6(exchange);
+            break;
+        case enablePrivateNetworking:
+            enableDropletPrivateNetworking(exchange);
+            break;
+        case takeSnapshot:
+            takeDropletSnapshot(exchange);
+            break;
+        case tag:
+            tagDroplet(exchange);
+            break;
+        case untag:
+            untagDroplet(exchange);
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported operation");
         }
     }
-
 
 
     private void getDroplet(Exchange exchange) throws Exception {
@@ -205,62 +218,73 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
 
         Droplet droplet = new Droplet();
 
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.REGION)))
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.REGION))) {
             droplet.setRegion(new Region(in.getHeader(DigitalOceanHeaders.REGION, String.class)));
-        else
+        } else {
             throw new IllegalArgumentException(DigitalOceanHeaders.REGION + " must be specified");
+        }
 
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_SIZE)))
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_SIZE))) {
             droplet.setSize(in.getHeader(DigitalOceanHeaders.DROPLET_SIZE, String.class));
-        else
+        } else {
             throw new IllegalArgumentException(DigitalOceanHeaders.DROPLET_SIZE + " must be specified");
+        }
 
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_IMAGE)))
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_IMAGE))) {
             droplet.setImage(new Image(in.getHeader(DigitalOceanHeaders.DROPLET_IMAGE, String.class)));
-        else
+        } else {
             throw new IllegalArgumentException(DigitalOceanHeaders.DROPLET_IMAGE + " must be specified");
+        }
 
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_KEYS))) {
             List<String> keys = (List<String>) exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_KEYS);
             droplet.setKeys(keys.stream().map(Key::new).collect(Collectors.toList()));
         }
 
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_ENABLE_BACKUPS)))
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_ENABLE_BACKUPS))) {
             droplet.setEnableBackup(in.getHeader(DigitalOceanHeaders.DROPLET_ENABLE_BACKUPS, Boolean.class));
+        }
 
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_ENABLE_IPV6)))
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_ENABLE_IPV6))) {
             droplet.setEnableIpv6(in.getHeader(DigitalOceanHeaders.DROPLET_ENABLE_IPV6, Boolean.class));
+        }
 
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_ENABLE_PRIVATE_NETWORKING)))
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_ENABLE_PRIVATE_NETWORKING))) {
             droplet.setEnablePrivateNetworking(in.getHeader(DigitalOceanHeaders.DROPLET_ENABLE_PRIVATE_NETWORKING, Boolean.class));
+        }
 
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_USER_DATA)))
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_USER_DATA))) {
             droplet.setUserData(in.getHeader(DigitalOceanHeaders.DROPLET_USER_DATA, String.class));
+        }
 
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_VOLUMES)))
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_VOLUMES))) {
             droplet.setVolumeIds((List<String>) exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_VOLUMES));
+        }
 
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_TAGS)))
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_TAGS))) {
             droplet.setTags((List<String>) exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_TAGS));
+        }
 
         if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.NAMES))) {
             droplet.setNames((List<String>) in.getHeader(DigitalOceanHeaders.NAMES));
             Droplets droplets = getEndpoint().getDigitalOceanClient().createDroplets(droplet);
             LOG.trace("Droplets created {} ", droplets);
             exchange.getOut().setBody(droplets.getDroplets());
-        } else if(ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.NAME))) {
+        } else if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.NAME))) {
             droplet.setName(in.getHeader(DigitalOceanHeaders.NAME, String.class));
             droplet = getEndpoint().getDigitalOceanClient().createDroplet(droplet);
             LOG.trace("Droplet created {} ", droplet);
             exchange.getOut().setBody(droplet);
-        } else
+        } else {
             throw new IllegalArgumentException(DigitalOceanHeaders.NAMES + " or " + DigitalOceanHeaders.NAME + " must be specified");
+        }
 
     }
 
     private void restoreDroplet(Exchange exchange) throws Exception {
-        if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.IMAGE_ID)))
+        if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.IMAGE_ID))) {
             throw new IllegalArgumentException(DigitalOceanHeaders.IMAGE_ID + " must be specified");
+        }
 
         Action action = getEndpoint().getDigitalOceanClient().restoreDroplet(dropletId, exchange.getIn().getHeader(DigitalOceanHeaders.IMAGE_ID, Integer.class));
         LOG.trace("DropletAction Restore [{}] ", action);
@@ -269,8 +293,9 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
     }
 
     private void resizeDroplet(Exchange exchange) throws Exception {
-        if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_SIZE)))
+        if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_SIZE))) {
             throw new IllegalArgumentException(DigitalOceanHeaders.DROPLET_SIZE + " must be specified");
+        }
 
         Action action = getEndpoint().getDigitalOceanClient().resizeDroplet(dropletId, exchange.getIn().getHeader(DigitalOceanHeaders.DROPLET_SIZE, String.class));
         LOG.trace("DropletAction Resize [{}] ", action);
@@ -279,8 +304,9 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
 
 
     private void rebuildDroplet(Exchange exchange) throws Exception {
-        if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.IMAGE_ID)))
+        if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.IMAGE_ID))) {
             throw new IllegalArgumentException(DigitalOceanHeaders.IMAGE_ID + " must be specified");
+        }
 
         Action action = getEndpoint().getDigitalOceanClient().rebuildDroplet(dropletId, exchange.getIn().getHeader(DigitalOceanHeaders.IMAGE_ID, Integer.class));
         LOG.trace("Rebuild Droplet {} : [{}] ", dropletId, action);
@@ -288,8 +314,9 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
     }
 
     private void renameDroplet(Exchange exchange) throws Exception {
-        if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.NAME)))
+        if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.NAME))) {
             throw new IllegalArgumentException(DigitalOceanHeaders.NAME + " must be specified");
+        }
 
         Action action = getEndpoint().getDigitalOceanClient().renameDroplet(dropletId, exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class));
         LOG.trace("Rename Droplet {} : [{}] ", dropletId, action);
@@ -298,8 +325,9 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
 
 
     private void changeDropletKernel(Exchange exchange) throws Exception {
-        if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.KERNEL_ID)))
+        if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.KERNEL_ID))) {
             throw new IllegalArgumentException(DigitalOceanHeaders.KERNEL_ID + " must be specified");
+        }
 
         Action action = getEndpoint().getDigitalOceanClient().changeDropletKernel(dropletId, exchange.getIn().getHeader(DigitalOceanHeaders.KERNEL_ID, Integer.class));
         LOG.trace("Rename Droplet {} : [{}] ", dropletId, action);
@@ -371,18 +399,20 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
     private void takeDropletSnapshot(Exchange exchange) throws Exception {
         Action action;
 
-        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.NAME)))
+        if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.NAME))) {
             action = getEndpoint().getDigitalOceanClient().takeDropletSnapshot(dropletId, exchange.getIn().getHeader(DigitalOceanHeaders.NAME, String.class));
-        else
+        } else {
             action = getEndpoint().getDigitalOceanClient().takeDropletSnapshot(dropletId);
+        }
 
         LOG.trace("Take Snapshot for Droplet {} : [{}] ", dropletId, action);
         exchange.getOut().setBody(action);
     }
 
     private void tagDroplet(Exchange exchange) throws Exception {
-        if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.NAME)))
+        if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.NAME))) {
             throw new IllegalArgumentException(DigitalOceanHeaders.NAME + " must be specified");
+        }
 
         ArrayList<Resource> resources = new ArrayList<>(1);
         resources.add(new Resource(dropletId.toString(), ResourceType.DROPLET));
@@ -392,8 +422,9 @@ public class DigitalOceanDropletsProducer extends DigitalOceanProducer {
     }
 
     private void untagDroplet(Exchange exchange) throws Exception {
-        if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.NAME)))
+        if (ObjectHelper.isEmpty(exchange.getIn().getHeader(DigitalOceanHeaders.NAME))) {
             throw new IllegalArgumentException(DigitalOceanHeaders.NAME + " must be specified");
+        }
 
         ArrayList<Resource> resources = new ArrayList<>(1);
         resources.add(new Resource(dropletId.toString(), ResourceType.DROPLET));

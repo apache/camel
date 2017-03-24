@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.digitalocean.producer;
 
-import com.myjeeva.digitalocean.pojo.*;
+import com.myjeeva.digitalocean.pojo.Action;
+import com.myjeeva.digitalocean.pojo.Actions;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.digitalocean.DigitalOceanConfiguration;
 import org.apache.camel.component.digitalocean.DigitalOceanEndpoint;
 import org.apache.camel.component.digitalocean.constants.DigitalOceanHeaders;
-import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -33,16 +34,16 @@ public class DigitalOceanActionsProducer extends DigitalOceanProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        switch(determineOperation(exchange)) {
+        switch (determineOperation(exchange)) {
 
-            case list:
-                getActions(exchange);
-                break;
-            case get:
-                getAction(exchange);
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported operation");
+        case list:
+            getActions(exchange);
+            break;
+        case get:
+            getAction(exchange);
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported operation");
         }
 
     }
@@ -51,8 +52,9 @@ public class DigitalOceanActionsProducer extends DigitalOceanProducer {
     private void getAction(Exchange exchange) throws Exception {
         Integer actionId = exchange.getIn().getHeader(DigitalOceanHeaders.ID, Integer.class);
 
-        if (ObjectHelper.isEmpty(actionId))
+        if (ObjectHelper.isEmpty(actionId)) {
             throw new IllegalArgumentException(DigitalOceanHeaders.ID + " must be specified");
+        }
         Action action = getEndpoint().getDigitalOceanClient().getActionInfo(actionId);
         LOG.trace("Action [{}] ", action);
         exchange.getOut().setBody(action);
