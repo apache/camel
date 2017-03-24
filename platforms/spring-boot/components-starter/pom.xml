@@ -223,6 +223,7 @@
     <module>camel-netty4-starter</module>
     <module>camel-ognl-starter</module>
     <module>camel-olingo2-starter</module>
+    <module>camel-olingo4-starter</module>
     <module>camel-openshift-starter</module>
     <module>camel-openstack-starter</module>
     <module>camel-opentracing-starter</module>
