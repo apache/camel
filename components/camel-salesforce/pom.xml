@@ -46,10 +46,6 @@
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-package-maven-plugin</artifactId>
         <version>${project.version}</version>
-        <configuration>
-          <!-- TODO: remove all this when we have salesforce documented -->
-          <validate>false</validate>
-        </configuration>
         <executions>
           <execution>
             <id>prepare</id>
