@@ -20,7 +20,7 @@ limitations under the License.
   <groupId>com.viwilo.camel</groupId>
   <artifactId>camel-digitalocean</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>2.19.0-SNAPSHOT</version>
 
   <name>Camel DigitalOcean Component</name>
   <description>A Camel DigitalOcean Services Components</description>
