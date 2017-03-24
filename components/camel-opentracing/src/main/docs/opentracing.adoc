@@ -1,6 +1,5 @@
 [[OpenTracing-OpenTracingComponent]]
-OpenTracing Component
-~~~~~~~~~~~~~~~~~~~~~
+## OpenTracing Component
 
 *Available as of Camel 2.19*
 
@@ -15,44 +14,65 @@ project to obtain an OpenTracing provider. See the http://opentracing.io/[OpenTr
 website for a list of supported tracers.
 
 
-[[camel-opentracing-Example]]
-Example
-^^^^^^^
+### Configuration
 
-To enable camel-opentracing you need to configure first
+There are three ways in which an OpenTracing tracer can be configured to provide distributed tracing for a Camel application:
+
+#### Explicit
+
+Include the `camel-opentracing` component in your POM, along with any specific dependencies associated with the chosen OpenTracing compliant Tracer.
+
+To explicitly configure OpenTracing support, instantiate the `OpenTracingTracer` and initialize the camel
+context. You can optionally specify a `Tracer`, or alternatively it can be implicitly discovered using the
+`GlobalTracer`.
 
 [source,java]
 --------------------------------------------------------------------------------------------------
 OpenTracingTracer ottracer = new OpenTracingTracer();
 // By default it uses the Global Tracer, but you can override it with a specific OpenTracing implementation.
-// As an alternative, you can also set a tracer in the registry and it it will be looked up.
 ottracer.setTracer(...);
-// And then set the CamelContext
-ottracer.setCamelContext(camelContext);
+// And then initialize the context
+ottracer.init(camelContext);
 --------------------------------------------------------------------------------------------------
-
-The configuration above will trace all incoming and outgoing
-messages in Camel routes. 
 
 To use OpenTracingTracer in XML, all you need to do is to define the
 OpenTracing tracer beans. Camel will automatically discover and use them.
 
 [source,xml]
 ---------------------------------------------------------------------------------------------------------
-  <!-- setup opentracing tracer -->
+  <bean id="tracer" class="..."/>
   <bean id="ottracer" class="org.apache.camel.opentracing.OpenTracingTracer">
-    <!-- Optional - use if want to specific tracer explicitly, rather than use the java-globaltracer -->
     <property name="tracer" ref="tracer"/>
   </bean>
 ---------------------------------------------------------------------------------------------------------
 
-[[camel-opentracing-camel-opentracing-starter]]
-camel-opentracing-starter
-^^^^^^^^^^^^^^^^^^^^^^^^^
+#### Spring Boot
 
 If you are using link:spring-boot.html[Spring Boot] then you can add
 the `camel-opentracing-starter` dependency, and turn on OpenTracing by annotating
 the main class with `@CamelOpenTracing`.
 
-You can find an example of this in
-the https://github.com/apache/camel/tree/master/examples/camel-example-opentracing[camel-example-opentracing]
+#### Java Agent
+
+The third approach is to use a Java Agent to automatically configure the OpenTracing support.
+
+Include the `camel-opentracing` component in your POM, along with any specific dependencies associated with the chosen OpenTracing compliant Tracer.
+
+The OpenTracing Java Agent is associated with the following dependency:
+
+[source,xml]
+---------------------------------------------------------------------------------------------------------
+    <dependency>
+      <groupId>io.opentracing.contrib</groupId>
+      <artifactId>opentracing-agent</artifactId>
+    </dependency>
+---------------------------------------------------------------------------------------------------------
+
+How this agent is used will be specific to how you execute your application. _Service2_ in the https://github.com/apache/camel/tree/master/examples/camel-example-opentracing[camel-example-opentracing] downloads the agent into a local folder and then uses the `exec-maven-plugin` to launch the service with the `-javaagent` command line option. 
+
+
+### Example
+
+You can find an example demonstrating the three ways to configure OpenTracing here:
+https://github.com/apache/camel/tree/master/examples/camel-example-opentracing[camel-example-opentracing]
+
