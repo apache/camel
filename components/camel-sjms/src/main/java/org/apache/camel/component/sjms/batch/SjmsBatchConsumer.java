@@ -305,8 +305,10 @@ public class SjmsBatchConsumer extends DefaultConsumer {
         @Override
         public void run() {
             try {
-                // this loop is intended to keep the consumer up and running as long as it's supposed to be, but allow it to bail if signaled
-                while (running.get() || isStarting()) {
+                // This loop is intended to keep the consumer up and running as long as it's supposed to be, but allow it to bail if signaled.
+                // I'm using a do/while loop because the first time through we want to attempt it regardless of any other conditions... we
+                // only want to try AGAIN if the keepAlive is set.
+                do {
                     // a batch corresponds to a single session that will be committed or rolled back by a background thread
                     final Session session = connection.createSession(TRANSACTED, Session.CLIENT_ACKNOWLEDGE);
                     try {
@@ -331,7 +333,7 @@ public class SjmsBatchConsumer extends DefaultConsumer {
                     } finally {
                         closeJmsSession(session);
                     }
-                }
+                }while (running.get() || isStarting());
             } catch (Throwable ex) {
                 // from consumeBatchesOnLoop
                 // catch anything besides the IllegalStateException and exit the application
