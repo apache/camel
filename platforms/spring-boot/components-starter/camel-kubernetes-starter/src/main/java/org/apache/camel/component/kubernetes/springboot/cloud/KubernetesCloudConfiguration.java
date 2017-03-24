@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.kubernetes.springboot.cloud;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -41,6 +44,7 @@ public class KubernetesCloudConfiguration {
     // *************************************************************************
 
     public class ServiceDiscoveryConfiguration extends KubernetesConfiguration {
+        private final Map<String, KubernetesConfiguration> configurations = new HashMap<>();
         private String lookup;
 
         public String getLookup() {
@@ -49,6 +53,10 @@ public class KubernetesCloudConfiguration {
 
         public void setLookup(String lookup) {
             this.lookup = lookup;
+        }
+
+        public Map<String, KubernetesConfiguration> getConfigurations() {
+            return configurations;
         }
     }
 }

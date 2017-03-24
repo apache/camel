@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.consul.springboot.cloud;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -41,5 +44,10 @@ public class ConsulCloudConfiguration {
     // *************************************************************************
 
     public class ServiceDiscoveryConfiguration extends ConsulConfiguration {
+        private final Map<String, ConsulConfiguration> configurations = new HashMap<>();
+
+        public Map<String, ConsulConfiguration> getConfigurations() {
+            return configurations;
+        }
     }
 }
