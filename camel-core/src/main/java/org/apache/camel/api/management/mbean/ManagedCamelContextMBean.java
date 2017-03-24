@@ -148,6 +148,9 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Whether message history is enabled")
     boolean isMessageHistory();
 
+    @ManagedAttribute(description = "Whether security mask for Log EIP is enabled")
+    boolean isLogEipMask();
+
     @ManagedAttribute(description = "Whether MDC logging is supported")
     boolean isUseMDCLogging();
 
