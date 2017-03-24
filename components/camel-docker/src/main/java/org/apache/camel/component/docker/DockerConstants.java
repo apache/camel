@@ -239,6 +239,8 @@ public final class DockerConstants {
         DOCKER_DEFAULT_PARAMETERS.put(DOCKER_SERVER_ADDRESS, String.class);
         DOCKER_DEFAULT_PARAMETERS.put(DOCKER_USERNAME, String.class);
         DOCKER_DEFAULT_PARAMETERS.put(DOCKER_CMD_EXEC_FACTORY, String.class);
+        DOCKER_DEFAULT_PARAMETERS.put(DOCKER_SOCKET_ENABLED, Boolean.class);
+
     }
 
     private DockerConstants() {

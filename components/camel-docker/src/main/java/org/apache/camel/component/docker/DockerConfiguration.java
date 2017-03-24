@@ -61,8 +61,8 @@ public class DockerConfiguration implements Cloneable {
     private boolean followRedirectFilter;
     @UriParam(label = "security", defaultValue = "false")
     private boolean tlsVerify;
-    @UriParam(label = "advanced", defaultValue = "true")
-    private boolean socket;
+    @UriParam(label = "advanced", defaultValue = "false")
+    private boolean socketEnabled;
     @UriParam(label = "advanced", defaultValue = "com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory")
     private String cmdExecFactory = "com.github.dockerjava.jaxrs.JerseyDockerCmdExecFactory";
     
@@ -245,14 +245,14 @@ public class DockerConfiguration implements Cloneable {
     }
     
     public boolean isSocket() {
-        return socket;
+        return socketEnabled;
     }
 
     /**
      * Socket connection mode
      */
     public void setSocket(boolean socket) {
-        this.socket = socket;
+        this.socketEnabled = socket;
     }
 
     public String getCmdExecFactory() {
