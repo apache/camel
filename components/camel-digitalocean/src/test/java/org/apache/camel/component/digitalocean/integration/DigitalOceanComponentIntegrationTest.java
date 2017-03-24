@@ -7,6 +7,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 
 
-//@Ignore("Must be manually tested. Provide your own oAuthToken")
+@Ignore("Must be manually tested. Provide your own oAuthToken")
 public class DigitalOceanComponentIntegrationTest extends DigitalOceanTestSupport {
 
     @Override
