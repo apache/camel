@@ -67,6 +67,9 @@ Number of EIPs: 61 (2 deprecated)
 | link:src/main/docs/eips/loadBalance-eip.adoc[Load Balance] +
 `<loadBalance>` | Balances message processing among a number of nodes
 
+| link:src/main/docs/eips/log-eip.adoc[Log] +
+`<log>` | Logs a message to the underlying logging mechanism
+
 | link:src/main/docs/eips/loop-eip.adoc[Loop] +
 `<loop>` | Processes a message multiple times
 
